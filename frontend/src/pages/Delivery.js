@@ -53,7 +53,10 @@ export default function Delivery() {
   const [novoClienteGenero, setNovoClienteGenero] = useState("");
   const [novoClienteFoto, setNovoClienteFoto] = useState("");
   const [novoClienteEndereco, setNovoClienteEndereco] = useState("");
+  const [novoClienteNumero, setNovoClienteNumero] = useState("");
   const [novoClienteComplemento, setNovoClienteComplemento] = useState("");
+  const [novoClienteBairro, setNovoClienteBairro] = useState("");
+  const [novoClienteCep, setNovoClienteCep] = useState("");
   const [clienteDialogOpen, setClienteDialogOpen] = useState(false);
   
   // Carrinho
