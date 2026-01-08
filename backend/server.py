@@ -719,6 +719,8 @@ async def delete_purchase_batch(batch_id: str, current_user: User = Depends(get_
 # Product endpoints
 @api_router.post("/products", response_model=Product)
 async def create_product(product_data: ProductCreate, current_user: User = Depends(get_current_user)):
+    check_role(current_user, ["proprietario", "administrador"])
+    
     # Calculate CMV
     cmv = 0.0
     for recipe_item in product_data.recipe:
@@ -735,6 +737,10 @@ async def create_product(product_data: ProductCreate, current_user: User = Depen
     doc = product.model_dump()
     doc["created_at"] = doc["created_at"].isoformat()
     await db.products.insert_one(doc)
+    
+    # Registrar auditoria
+    await log_audit("CREATE", "product", product_data.name, current_user, "baixa")
+    
     return product
 
 @api_router.get("/products", response_model=List[Product])
