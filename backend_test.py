@@ -324,36 +324,42 @@ class CMVMasterAPITester:
         
         return len(self.created_products) >= 1
 
-    def test_reports(self):
-        """Test reports endpoints"""
-        print("\n=== REPORTS TESTS ===")
+    def test_dashboard_and_reports(self):
+        """Test dashboard and reports as specified in review"""
+        print("\n=== DASHBOARD AND REPORTS TESTS ===")
         
         # Test dashboard stats
+        print("🔍 Testing dashboard statistics...")
         success, stats = self.run_test("Get dashboard stats", "GET", "reports/dashboard", 200)
         if success:
-            print(f"   Total ingredients: {stats['total_ingredients']}")
-            print(f"   Total products: {stats['total_products']}")
-            print(f"   Total purchases: {stats['total_purchases']}")
-            print(f"   Average CMV: R$ {stats['avg_cmv']:.2f}")
+            print(f"   ✅ Dashboard stats retrieved:")
+            print(f"   - Total ingredients: {stats['total_ingredients']}")
+            print(f"   - Total products: {stats['total_products']}")
+            print(f"   - Total purchases: {stats['total_purchases']}")
+            print(f"   - Average CMV: R$ {stats['avg_cmv']:.2f}")
+        else:
+            print("   ❌ Failed to get dashboard stats")
+            return False
         
-        # Test price history for Carne Bovina
-        success, ingredients = self.run_test("Get ingredients for price history", "GET", "ingredients", 200)
-        if success:
-            carne_id = None
-            for ing in ingredients:
-                if ing['name'] == 'Carne Bovina':
-                    carne_id = ing['id']
-                    break
-            
-            if carne_id:
-                success, history = self.run_test(
-                    "Get Carne Bovina price history",
-                    "GET",
-                    f"reports/price-history/{carne_id}",
-                    200
-                )
-                if success:
-                    print(f"   Price history entries: {len(history.get('history', []))}")
+        # Test price history for ingredients
+        if self.created_ingredients:
+            ingredient_id = self.created_ingredients[0]
+            print(f"🔍 Testing price history for ingredient {ingredient_id}...")
+            success, history = self.run_test(
+                "Get ingredient price history",
+                "GET",
+                f"reports/price-history/{ingredient_id}",
+                200
+            )
+            if success:
+                print(f"   ✅ Price history retrieved:")
+                print(f"   - Ingredient: {history['ingredient']['name']}")
+                print(f"   - History entries: {len(history.get('history', []))}")
+                for entry in history.get('history', [])[:3]:  # Show first 3 entries
+                    print(f"     {entry['date']}: R$ {entry['price']:.2f}")
+            else:
+                print("   ❌ Failed to get price history")
+                return False
         
         return True
 
