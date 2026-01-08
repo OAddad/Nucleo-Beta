@@ -195,15 +195,17 @@ export default function Moderation() {
   };
 
   const fetchUsers = async () => {
+    // Só buscar se for proprietário
+    if (currentUser?.role !== "proprietario") {
+      return;
+    }
+    
     try {
       const response = await axios.get(`${API}/users/management`, getAuthHeader());
       setUsers(response.data);
     } catch (error) {
-      if (error.response?.status === 403) {
-        // Usuário não é proprietário, não mostra erro
-      } else {
-        toast.error("Erro ao carregar usuários");
-      }
+      console.error("Erro ao carregar usuários:", error);
+      toast.error("Erro ao carregar usuários");
     }
   };
 
