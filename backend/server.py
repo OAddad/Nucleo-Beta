@@ -1215,6 +1215,19 @@ async def restore_from_excel():
                             await db.users.insert_one(u)
                 logger.info(f"[BACKUP] Restaurados {len(users)} usuários do Excel")
         
+        # Verificar se precisa restaurar histórico de auditoria
+        audit_count = await db.audit_logs.count_documents({})
+        if audit_count == 0:
+            audit_logs = excel_backup.load_audit_logs()
+            if audit_logs:
+                for log in audit_logs:
+                    log = {k: v for k, v in log.items() if v is not None and v != '' and str(v) != 'nan'}
+                    if 'id' in log:
+                        existing = await db.audit_logs.find_one({"id": log["id"]})
+                        if not existing:
+                            await db.audit_logs.insert_one(log)
+                logger.info(f"[BACKUP] Restaurados {len(audit_logs)} logs de auditoria do Excel")
+        
         logger.info("[BACKUP] Restauração do Excel concluída")
     except Exception as e:
         logger.error(f"[BACKUP] Erro ao restaurar do Excel: {e}")
