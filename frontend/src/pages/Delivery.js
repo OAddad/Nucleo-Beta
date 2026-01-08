@@ -162,6 +162,12 @@ export default function Delivery() {
     return `${numbers.slice(0, 2)}/${numbers.slice(2, 4)}/${numbers.slice(4, 8)}`;
   };
 
+  const formatCEP = (value) => {
+    const numbers = value.replace(/\D/g, "");
+    if (numbers.length <= 5) return numbers;
+    return `${numbers.slice(0, 5)}-${numbers.slice(5, 8)}`;
+  };
+
   // Abrir dialog de cadastro de cliente
   const handleOpenClienteDialog = () => {
     // Se estava pesquisando por nome, preencher automaticamente
@@ -177,7 +183,10 @@ export default function Delivery() {
     setNovoClienteGenero("");
     setNovoClienteFoto("");
     setNovoClienteEndereco("");
+    setNovoClienteNumero("");
     setNovoClienteComplemento("");
+    setNovoClienteBairro("");
+    setNovoClienteCep("");
     setClienteDialogOpen(true);
   };
 
