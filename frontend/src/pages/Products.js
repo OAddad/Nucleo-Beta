@@ -350,6 +350,40 @@ export default function Products() {
               </DialogHeader>
               <form onSubmit={handleSubmit} className="space-y-4 mt-4">
                 <div>
+                  <Label htmlFor="photo">
+                    Foto do Produto (opcional)
+                  </Label>
+                  <div className="mt-1 flex items-center gap-4">
+                    {(photoUrl || photoFile) && (
+                      <div className="w-24 h-24 rounded-lg border overflow-hidden bg-muted">
+                        <img
+                          src={photoFile ? URL.createObjectURL(photoFile) : `${BACKEND_URL}${photoUrl}`}
+                          alt="Preview"
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    )}
+                    <div className="flex-1">
+                      <Input
+                        id="photo"
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => {
+                          const file = e.target.files[0];
+                          if (file) {
+                            setPhotoFile(file);
+                          }
+                        }}
+                        className="h-11"
+                      />
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Tamanho recomendado: 1080x1080px
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
                   <Label htmlFor="name">
                     Nome do Produto
                   </Label>
