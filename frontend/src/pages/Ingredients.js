@@ -283,6 +283,7 @@ export default function Ingredients() {
               </form>
             </DialogContent>
           </Dialog>
+          )}
         </div>
 
         <div className="bg-card rounded-xl border shadow-sm overflow-hidden">
