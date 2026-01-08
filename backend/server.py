@@ -826,6 +826,15 @@ async def upload_product_photo(file: UploadFile = File(...), current_user: User 
     # Retornar URL relativa
     return {"photo_url": f"/uploads/products/{unique_filename}"}
 
+# Endpoint para servir imagens de produtos
+@api_router.get("/uploads/products/{filename}")
+async def serve_product_image(filename: str):
+    file_path = Path(f"/app/backend/uploads/products/{filename}")
+    if not file_path.exists():
+        raise HTTPException(status_code=404, detail="Image not found")
+    return FileResponse(file_path)
+
+
 @api_router.delete("/products/{product_id}")
 async def delete_product(product_id: str, current_user: User = Depends(get_current_user)):
     check_role(current_user, ["proprietario", "administrador"])
