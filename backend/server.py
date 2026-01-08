@@ -679,6 +679,8 @@ async def delete_purchase(purchase_id: str, current_user: User = Depends(get_cur
 
 @api_router.delete("/purchases/batch/{batch_id}")
 async def delete_purchase_batch(batch_id: str, current_user: User = Depends(get_current_user)):
+    check_role(current_user, ["proprietario", "administrador"])
+    
     purchases = await db.purchases.find({"batch_id": batch_id}, {"_id": 0}).to_list(1000)
     if not purchases:
         raise HTTPException(status_code=404, detail="Purchase batch not found")
