@@ -44,11 +44,17 @@ export default function Delivery() {
   const [selectedCliente, setSelectedCliente] = useState(null);
   const [showClienteForm, setShowClienteForm] = useState(false);
   
-  // Form novo cliente
+  // Form novo cliente - Campos expandidos
   const [novoClienteNome, setNovoClienteNome] = useState("");
   const [novoClienteTelefone, setNovoClienteTelefone] = useState("");
+  const [novoClienteEmail, setNovoClienteEmail] = useState("");
+  const [novoClienteCpf, setNovoClienteCpf] = useState("");
+  const [novoClienteDataNascimento, setNovoClienteDataNascimento] = useState("");
+  const [novoClienteGenero, setNovoClienteGenero] = useState("");
+  const [novoClienteFoto, setNovoClienteFoto] = useState("");
   const [novoClienteEndereco, setNovoClienteEndereco] = useState("");
   const [novoClienteComplemento, setNovoClienteComplemento] = useState("");
+  const [clienteDialogOpen, setClienteDialogOpen] = useState(false);
   
   // Carrinho
   const [cart, setCart] = useState([]);
