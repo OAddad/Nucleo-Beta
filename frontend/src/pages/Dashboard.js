@@ -112,6 +112,88 @@ export default function Dashboard({ setIsAuthenticated }) {
         </div>
       </aside>
 
+      {/* Menu Mobile com Overlay */}
+      {mobileMenuOpen && (
+        <>
+          {/* Overlay escuro */}
+          <div 
+            className="fixed inset-0 bg-black/50 z-40 md:hidden"
+            onClick={() => setMobileMenuOpen(false)}
+          />
+          
+          {/* Menu Lateral */}
+          <aside className="fixed left-0 top-0 bottom-0 w-64 bg-sidebar text-sidebar-foreground flex flex-col border-r z-50 md:hidden">
+            <div className="p-6 border-b flex items-center justify-between">
+              <button 
+                onClick={() => handleNavigate("/")}
+                className="flex items-center gap-3 hover:opacity-80 transition-opacity"
+              >
+                <div className="bg-primary p-2 rounded-lg">
+                  <ChefHat className="w-6 h-6 text-primary-foreground" strokeWidth={1.5} />
+                </div>
+                <div className="text-left">
+                  <h1 className="text-sidebar-foreground font-bold text-lg tracking-tight">Núcleo</h1>
+                  <p className="text-xs text-muted-foreground">o centro da sua gestão</p>
+                </div>
+              </button>
+              <button
+                onClick={() => setMobileMenuOpen(false)}
+                className="p-2 hover:bg-muted rounded-lg transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <nav className="flex-1 p-4 space-y-1 overflow-auto">
+              {tabs.map((tab) => {
+                const Icon = tab.icon;
+                const active = isActive(tab.path);
+                return (
+                  <button
+                    key={tab.path}
+                    onClick={() => handleNavigate(tab.path)}
+                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 ${
+                      active
+                        ? "bg-primary text-primary-foreground font-medium shadow-lg"
+                        : "text-sidebar-foreground hover:bg-muted"
+                    }`}
+                  >
+                    <Icon className="w-5 h-5" strokeWidth={1.5} />
+                    <span className="text-sm">{tab.label}</span>
+                  </button>
+                );
+              })}
+            </nav>
+
+            <div className="p-4 border-t space-y-2">
+              <div className="flex justify-center pb-2">
+                <DarkModeToggle />
+              </div>
+              <Button
+                onClick={handleLogout}
+                variant="outline"
+                className="w-full shadow-sm"
+              >
+                <LogOut className="w-5 h-5 mr-3" strokeWidth={1.5} />
+                Sair
+              </Button>
+            </div>
+          </aside>
+        </>
+      )}
+
+      {/* Botão Hamburger Mobile */}
+      <div className="md:hidden fixed top-4 left-4 z-30">
+        <Button
+          onClick={() => setMobileMenuOpen(true)}
+          size="icon"
+          variant="outline"
+          className="shadow-lg bg-background"
+        >
+          <Menu className="w-5 h-5" />
+        </Button>
+      </div>
+
       <main className="flex-1 overflow-auto">
         <Routes>
           <Route path="/" element={<Reports />} />
