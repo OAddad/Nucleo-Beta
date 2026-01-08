@@ -367,21 +367,40 @@ export default function Products() {
                 </DialogTitle>
               </DialogHeader>
               <form onSubmit={handleSubmit} className="space-y-4 mt-4">
-                <div>
-                  <Label htmlFor="photo">
-                    Foto do Produto (opcional)
-                  </Label>
-                  <div className="mt-1 flex items-center gap-4">
-                    {(photoUrl || photoFile) && (
-                      <div className="w-24 h-24 rounded-lg border overflow-hidden bg-muted">
-                        <img
-                          src={photoFile ? URL.createObjectURL(photoFile) : `${BACKEND_URL}/api${photoUrl}`}
-                          alt="Preview"
-                          className="w-full h-full object-cover"
-                        />
+                {/* Foto e Nome lado a lado */}
+                <div className="flex gap-4">
+                  {/* Foto do Produto */}
+                  <div className="flex-shrink-0">
+                    <Label>Foto do Produto</Label>
+                    <div className="mt-1">
+                      <div className="w-32 h-32 rounded-lg border-2 border-dashed overflow-hidden bg-muted flex items-center justify-center relative">
+                        {(photoUrl || photoFile) ? (
+                          <>
+                            <img
+                              src={photoFile ? URL.createObjectURL(photoFile) : `${BACKEND_URL}/api${photoUrl}`}
+                              alt="Preview"
+                              className="w-full h-full object-cover"
+                            />
+                            <Button
+                              type="button"
+                              variant="destructive"
+                              size="icon"
+                              className="absolute top-1 right-1 h-6 w-6"
+                              onClick={() => {
+                                setPhotoFile(null);
+                                setPhotoUrl("");
+                              }}
+                            >
+                              <Trash2 className="w-3 h-3" />
+                            </Button>
+                          </>
+                        ) : (
+                          <label htmlFor="photo" className="cursor-pointer flex flex-col items-center justify-center w-full h-full">
+                            <ImageOff className="w-8 h-8 text-muted-foreground mb-1" />
+                            <span className="text-xs text-muted-foreground text-center px-2">Clique para adicionar</span>
+                          </label>
+                        )}
                       </div>
-                    )}
-                    <div className="flex-1">
                       <Input
                         id="photo"
                         type="file"
@@ -392,28 +411,61 @@ export default function Products() {
                             setPhotoFile(file);
                           }
                         }}
-                        className="h-11"
+                        className="hidden"
                       />
                       <p className="text-xs text-muted-foreground mt-1">
-                        Tamanho recomendado: 1080x1080px
+                        1080x1080px
                       </p>
                     </div>
                   </div>
-                </div>
 
-                <div>
-                  <Label htmlFor="name">
-                    Nome do Produto
-                  </Label>
-                  <Input
-                    id="name"
-                    data-testid="product-name-input"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder="Ex: X-Burger Clássico"
-                    required
-                    className="mt-1 h-11"
-                  />
+                  {/* Nome e Categoria */}
+                  <div className="flex-1 space-y-4">
+                    <div>
+                      <Label htmlFor="name">
+                        Nome do Produto
+                      </Label>
+                      <Input
+                        id="name"
+                        data-testid="product-name-input"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        placeholder="Ex: X-Burger Clássico"
+                        required
+                        className="mt-1 h-11"
+                      />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="category">
+                        Categoria
+                      </Label>
+                      <div className="flex gap-2 mt-1">
+                        <Select value={category} onValueChange={setCategory}>
+                          <SelectTrigger id="category" className="h-11">
+                            <SelectValue placeholder="Selecione ou digite nova" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="">Sem categoria</SelectItem>
+                            {categories.map((cat) => (
+                              <SelectItem key={cat} value={cat}>
+                                {cat}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <Input
+                          placeholder="Nova categoria"
+                          value={categories.includes(category) ? "" : category}
+                          onChange={(e) => setCategory(e.target.value)}
+                          className="h-11"
+                        />
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Ex: Sanduíches, Bebidas, Pizzas, Porções
+                      </p>
+                    </div>
+                  </div>
                 </div>
 
                 <div>
