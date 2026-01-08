@@ -174,15 +174,16 @@ export default function Dashboard({ setIsAuthenticated }) {
 
         {/* Conteúdo das Rotas */}
         <main className="flex-1 overflow-auto">
-        <Routes>
-          <Route path="/" element={<Reports />} />
-          <Route path="/ingredientes" element={<Ingredients />} />
-          <Route path="/compras" element={<Purchases />} />
-          <Route path="/produtos" element={<Products />} />
-          <Route path="/moderacao" element={<Moderation />} />
-          <Route path="/configuracao" element={<div className="p-8"><h1 className="text-3xl font-bold">Configuração</h1><p className="text-muted-foreground mt-2">Em breve...</p></div>} />
-        </Routes>
-      </main>
+          <Routes>
+            <Route path="/" element={<Reports />} />
+            <Route path="/ingredientes" element={<Ingredients />} />
+            <Route path="/compras" element={<Purchases />} />
+            <Route path="/produtos" element={<Products />} />
+            <Route path="/moderacao" element={<Moderation />} />
+            <Route path="/configuracao" element={<div className="p-8"><h1 className="text-3xl font-bold">Configuração</h1><p className="text-muted-foreground mt-2">Em breve...</p></div>} />
+          </Routes>
+        </main>
+      </div>
     </div>
   );
 }
