@@ -290,6 +290,7 @@ export default function Products() {
         sale_price: salePrice ? parseFloat(salePrice) : null,
         photo_url: uploadedPhotoUrl || null,
         recipe: allRecipe,
+        is_insumo: isInsumo,
       };
 
       if (editMode) {
