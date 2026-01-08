@@ -572,6 +572,47 @@ async def update_product(product_id: str, product_data: ProductCreate, current_u
         updated["created_at"] = datetime.fromisoformat(updated["created_at"])
     return Product(**updated)
 
+@api_router.post("/upload/product-photo")
+async def upload_product_photo(file: UploadFile = File(...), current_user: User = Depends(get_current_user)):
+    # Criar diretório para uploads se não existir
+    upload_dir = Path("/app/backend/uploads/products")
+    upload_dir.mkdir(parents=True, exist_ok=True)
+    
+    # Validar tipo de arquivo
+    if not file.content_type.startswith("image/"):
+        raise HTTPException(status_code=400, detail="File must be an image")
+    
+    # Gerar nome único
+    file_extension = file.filename.split(".")[-1]
+    unique_filename = f"{uuid.uuid4()}.{file_extension}"
+    file_path = upload_dir / unique_filename
+    
+    # Salvar arquivo temporário
+    with open(file_path, "wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
+    
+    # Redimensionar imagem para 1080x1080
+    try:
+        img = Image.open(file_path)
+        img = img.convert("RGB")
+        img.thumbnail((1080, 1080), Image.Resampling.LANCZOS)
+        
+        # Criar canvas quadrado
+        if img.size[0] != img.size[1]:
+            size = max(img.size)
+            new_img = Image.new("RGB", (size, size), (255, 255, 255))
+            offset = ((size - img.size[0]) // 2, (size - img.size[1]) // 2)
+            new_img.paste(img, offset)
+            img = new_img
+        
+        img.save(file_path, "JPEG", quality=85)
+    except Exception as e:
+        os.remove(file_path)
+        raise HTTPException(status_code=400, detail=f"Error processing image: {str(e)}")
+    
+    # Retornar URL relativa
+    return {"photo_url": f"/uploads/products/{unique_filename}"}
+
 @api_router.delete("/products/{product_id}")
 async def delete_product(product_id: str, current_user: User = Depends(get_current_user)):
     result = await db.products.delete_one({"id": product_id})
