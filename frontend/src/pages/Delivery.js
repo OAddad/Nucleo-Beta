@@ -619,18 +619,20 @@ export default function Delivery() {
                             ${(pedido.status === 'aguardando' || pedido.status === 'producao') ? 'bg-yellow-100 text-yellow-700' : ''}
                             ${pedido.status === 'transito' ? 'bg-blue-100 text-blue-700' : ''}
                             ${pedido.status === 'concluido' ? 'bg-green-100 text-green-700' : ''}
+                            ${pedido.status === 'cancelado' ? 'bg-red-100 text-red-700' : ''}
                           `}>
-                            {pedido.status === 'aguardando' && 'Aguardando'}
-                            {pedido.status === 'transito' && 'Em trânsito'}
-                            {pedido.status === 'entregue' && 'Entregue'}
+                            {(pedido.status === 'aguardando' || pedido.status === 'producao') && 'Em Produção'}
+                            {pedido.status === 'transito' && 'Em Trânsito'}
+                            {pedido.status === 'concluido' && 'Concluído'}
+                            {pedido.status === 'cancelado' && 'Cancelado'}
                           </span>
                         </div>
                         <div className="flex items-center justify-between mt-2">
                           <span className="text-xs text-muted-foreground">
-                            {pedido.items.length} item(s)
+                            {pedido.items?.length || 0} item(s)
                           </span>
                           <span className="font-bold text-primary">
-                            R$ {pedido.total.toFixed(2)}
+                            R$ {(pedido.total || 0).toFixed(2)}
                           </span>
                         </div>
                       </button>
