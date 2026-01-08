@@ -88,6 +88,38 @@ export default function Purchases() {
     }
   };
 
+
+  const getFilteredAndSortedBatches = () => {
+    let filtered = [...purchaseBatches];
+    
+    // Aplicar pesquisa
+    if (searchTerm) {
+      filtered = filtered.filter(batch => {
+        switch (searchType) {
+          case "supplier":
+            return batch.supplier.toLowerCase().includes(searchTerm.toLowerCase());
+          case "value":
+            const totalValue = batch.purchases.reduce((sum, p) => sum + p.price, 0);
+            return totalValue.toString().includes(searchTerm);
+          case "date":
+            return batch.purchase_date.includes(searchTerm);
+          default:
+            return true;
+        }
+      });
+    }
+    
+    // Aplicar ordenação por data
+    filtered.sort((a, b) => {
+      const dateA = new Date(a.purchase_date);
+      const dateB = new Date(b.purchase_date);
+      return sortOrder === "desc" ? dateB - dateA : dateA - dateB;
+    });
+    
+    return filtered;
+  };
+
+
   const addToCart = () => {
     if (!selectedIngredient || !quantity || !price) {
       toast.error("Preencha todos os campos");
