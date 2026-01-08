@@ -391,12 +391,13 @@ export default function Pedidos() {
             <TableHeader>
               <TableRow>
                 <TableHead className="w-24">Código</TableHead>
+                <TableHead className="w-24">Módulo</TableHead>
                 <TableHead>Cliente</TableHead>
                 <TableHead className="w-32">Data/Hora</TableHead>
-                <TableHead className="w-24 text-center">Itens</TableHead>
-                <TableHead className="w-32">Pagamento</TableHead>
-                <TableHead className="w-32">Status</TableHead>
-                <TableHead className="w-28 text-right">Total</TableHead>
+                <TableHead className="w-20 text-center">Itens</TableHead>
+                <TableHead className="w-28">Pagamento</TableHead>
+                <TableHead className="w-28">Status</TableHead>
+                <TableHead className="w-24 text-right">Total</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -404,6 +405,8 @@ export default function Pedidos() {
                 const status = statusConfig[getNormalizedStatus(pedido.status)] || statusConfig.producao;
                 const StatusIcon = status.icon;
                 const pagamento = formasPagamento[pedido.formaPagamento];
+                const modulo = modulosConfig[pedido.modulo];
+                const ModuloIcon = modulo?.icon || Package;
                 
                 return (
                   <TableRow 
@@ -412,6 +415,16 @@ export default function Pedidos() {
                     className="cursor-pointer hover:bg-muted/50"
                   >
                     <TableCell className="font-mono font-bold">{pedido.codigo || "#-----"}</TableCell>
+                    <TableCell>
+                      {modulo ? (
+                        <span className={`px-2 py-0.5 rounded text-xs font-medium flex items-center gap-1 w-fit ${modulo.color}`}>
+                          <ModuloIcon className="w-3 h-3" />
+                          {modulo.label}
+                        </span>
+                      ) : (
+                        <span className="text-xs text-muted-foreground">-</span>
+                      )}
+                    </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">
                         <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center overflow-hidden">
