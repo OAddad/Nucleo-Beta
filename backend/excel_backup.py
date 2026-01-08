@@ -208,8 +208,8 @@ def load_products() -> list:
         df = df.fillna('')
         products = df.to_dict('records')
         
-        # Converter recipe de JSON string de volta para lista
         for p in products:
+            # Converter recipe de JSON string de volta para lista
             if 'recipe' in p and isinstance(p['recipe'], str) and p['recipe']:
                 try:
                     p['recipe'] = json.loads(p['recipe'])
@@ -217,6 +217,19 @@ def load_products() -> list:
                     p['recipe'] = []
             elif 'recipe' not in p or not p['recipe']:
                 p['recipe'] = []
+            
+            # Converter order_steps de JSON string de volta para lista
+            if 'order_steps' in p and isinstance(p['order_steps'], str) and p['order_steps']:
+                try:
+                    p['order_steps'] = json.loads(p['order_steps'])
+                except:
+                    p['order_steps'] = []
+            elif 'order_steps' not in p or not p['order_steps']:
+                p['order_steps'] = []
+            
+            # Garantir que code seja string
+            if 'code' in p and p['code']:
+                p['code'] = str(p['code'])
         
         print(f"[BACKUP] Produtos carregados: {len(products)} itens")
         return products
