@@ -419,7 +419,7 @@ async def delete_user(user_id: str, current_user: User = Depends(get_current_use
 async def get_audit_logs(current_user: User = Depends(get_current_user)):
     check_role(current_user, ["proprietario", "administrador"])
     
-    logs = sqlite_db.get_all_audit_logs()
+    logs = await db.audit_logs.find({}, {"_id": 0}).sort("timestamp", -1).to_list(1000)
     for log in logs:
         if isinstance(log.get("timestamp"), str):
             log["timestamp"] = datetime.fromisoformat(log["timestamp"].replace('Z', '+00:00'))
