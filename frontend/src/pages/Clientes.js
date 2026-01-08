@@ -177,7 +177,10 @@ export default function Clientes() {
     setGenero(cliente.genero || "");
     setFotoPreview(cliente.foto || "");
     setEndereco(cliente.endereco || "");
+    setNumero(cliente.numero || "");
     setComplemento(cliente.complemento || "");
+    setBairro(cliente.bairro || "");
+    setCep(cliente.cep || "");
     setDialogOpen(true);
   };
 
