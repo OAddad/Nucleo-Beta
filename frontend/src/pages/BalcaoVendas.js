@@ -579,6 +579,17 @@ export default function BalcaoVendas() {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Popup de Produto */}
+      <ProductPopup
+        product={selectedProduct}
+        open={productPopupOpen}
+        onClose={() => {
+          setProductPopupOpen(false);
+          setSelectedProduct(null);
+        }}
+        onAddToCart={addToCart}
+      />
     </div>
   );
 }
