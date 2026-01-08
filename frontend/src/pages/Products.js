@@ -606,7 +606,7 @@ export default function Products() {
                             Ingredientes
                           </h4>
                           <div className="space-y-2">
-                            {product.recipe.map((item, idx) => {
+                            {product.recipe.filter(item => item.item_type === "ingredient").map((item, idx) => {
                               const ingredient = getIngredientDetails(item.ingredient_id);
                               const displayUnit = getIngredientUnit(ingredient);
                               
@@ -643,17 +643,44 @@ export default function Products() {
                                 </div>
                               );
                             })}
+                            {product.recipe.filter(item => item.item_type === "ingredient").length === 0 && (
+                              <p className="text-sm text-muted-foreground">Nenhum ingrediente</p>
+                            )}
                           </div>
                         </div>
 
-                        {/* Embalagens (por enquanto vazio, mas estrutura pronta) */}
+                        {/* Embalagens */}
                         <div>
                           <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
                             Embalagens
                           </h4>
-                          <p className="text-sm text-muted-foreground">
-                            Adicione embalagens ao cadastrar o produto
-                          </p>
+                          <div className="space-y-2">
+                            {product.recipe.filter(item => item.item_type === "packaging").map((item, idx) => {
+                              const ingredient = getIngredientDetails(item.ingredient_id);
+                              const displayUnit = getIngredientUnit(ingredient);
+                              let itemCost = ingredient.average_price * item.quantity;
+                              
+                              return (
+                                <div
+                                  key={idx}
+                                  className="flex justify-between items-center text-sm py-2 border-b border-border/50 last:border-0"
+                                >
+                                  <span className="font-medium flex-1">
+                                    {ingredient.name}
+                                  </span>
+                                  <span className="font-mono mx-4">
+                                    {item.quantity.toFixed(2)} {displayUnit}
+                                  </span>
+                                  <span className="font-mono font-medium">
+                                    R$ {itemCost.toFixed(2)}
+                                  </span>
+                                </div>
+                              );
+                            })}
+                            {product.recipe.filter(item => item.item_type === "packaging").length === 0 && (
+                              <p className="text-sm text-muted-foreground">Nenhuma embalagem</p>
+                            )}
+                          </div>
                         </div>
                       </div>
 
