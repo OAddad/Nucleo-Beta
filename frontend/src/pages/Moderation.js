@@ -157,12 +157,16 @@ export default function Moderation() {
   const [newUsername, setNewUsername] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [newRole, setNewRole] = useState("observador");
-  
   const [oldPassword, setOldPassword] = useState("");
   const [changeNewPassword, setChangeNewPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
   const [currentUser, setCurrentUser] = useState(null);
+  
+  // Filtros de auditoria
+  const [sortOrder, setSortOrder] = useState("desc");
+  const [filterUser, setFilterUser] = useState("all");
+  const [filterPriority, setFilterPriority] = useState("all");
 
   useEffect(() => {
     fetchAuditLogs();
