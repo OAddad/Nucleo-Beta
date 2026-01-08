@@ -144,10 +144,30 @@ export default function Ingredients() {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="kg">Quilograma (kg)</SelectItem>
-                      <SelectItem value="unidade">Unidade</SelectItem>
+                      <SelectItem value="un">Unidade (un)</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
+                
+                {unit === "un" && (
+                  <div>
+                    <Label htmlFor="unitsPerPackage" className="text-slate-700">
+                      Unidades por Embalagem (opcional)
+                    </Label>
+                    <Input
+                      id="unitsPerPackage"
+                      data-testid="ingredient-units-per-package-input"
+                      type="number"
+                      value={unitsPerPackage}
+                      onChange={(e) => setUnitsPerPackage(e.target.value)}
+                      placeholder="Ex: 182 (para caixa com 182 sachês)"
+                      className="mt-1 h-11 bg-white border-slate-200 focus:ring-2 focus:ring-rose-100 focus:border-rose-500"
+                    />
+                    <p className="text-xs text-slate-500 mt-1">
+                      Use quando comprar caixas/pacotes. O preço será dividido automaticamente.
+                    </p>
+                  </div>
+                )}
                 <Button
                   type="submit"
                   data-testid="create-ingredient-button"
