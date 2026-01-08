@@ -191,8 +191,6 @@ export default function Products() {
   const getIngredientUnit = (ingredient) => {
     if (ingredient.units_per_package && ingredient.units_per_package > 0) {
       return "un";
-    } else if (ingredient.slices_per_package && ingredient.slices_per_package > 0) {
-      return "fatias";
     }
     return ingredient.unit;
   };
