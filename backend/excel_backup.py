@@ -70,12 +70,14 @@ def save_products(products: list):
         except:
             pass
     
-    # Converter recipe para JSON string para salvar no Excel
+    # Converter recipe e order_steps para JSON string para salvar no Excel
     products_to_save = []
     for p in products:
         p_copy = p.copy()
         if 'recipe' in p_copy and isinstance(p_copy['recipe'], list):
             p_copy['recipe'] = json.dumps(p_copy['recipe'])
+        if 'order_steps' in p_copy and isinstance(p_copy['order_steps'], list):
+            p_copy['order_steps'] = json.dumps(p_copy['order_steps'])
         products_to_save.append(p_copy)
     
     df = pd.DataFrame(products_to_save)
