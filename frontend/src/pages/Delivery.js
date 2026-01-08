@@ -1148,24 +1148,52 @@ export default function Delivery() {
 
             {/* Terceira Linha: Endereços */}
             <div className="border-t pt-4">
-              <Label className="text-base font-semibold">Endereços</Label>
-              <div className="grid grid-cols-2 gap-4 mt-3">
-                <div>
-                  <Label className="text-sm">Endereço</Label>
+              <Label className="text-base font-semibold">Endereço</Label>
+              <div className="grid grid-cols-12 gap-3 mt-3">
+                <div className="col-span-6">
+                  <Label className="text-sm">Rua/Logradouro</Label>
                   <Input
                     value={novoClienteEndereco}
                     onChange={(e) => setNovoClienteEndereco(e.target.value)}
-                    placeholder="Rua, número, bairro"
+                    placeholder="Ex: Rua das Flores"
                     className="mt-1"
                   />
                 </div>
-                <div>
+                <div className="col-span-2">
+                  <Label className="text-sm">Número</Label>
+                  <Input
+                    value={novoClienteNumero}
+                    onChange={(e) => setNovoClienteNumero(e.target.value)}
+                    placeholder="123"
+                    className="mt-1"
+                  />
+                </div>
+                <div className="col-span-4">
                   <Label className="text-sm">Complemento</Label>
                   <Input
                     value={novoClienteComplemento}
                     onChange={(e) => setNovoClienteComplemento(e.target.value)}
-                    placeholder="Apt, bloco..."
+                    placeholder="Apt 101, Bloco A..."
                     className="mt-1"
+                  />
+                </div>
+                <div className="col-span-5">
+                  <Label className="text-sm">Bairro</Label>
+                  <Input
+                    value={novoClienteBairro}
+                    onChange={(e) => setNovoClienteBairro(e.target.value)}
+                    placeholder="Ex: Centro"
+                    className="mt-1"
+                  />
+                </div>
+                <div className="col-span-3">
+                  <Label className="text-sm">CEP</Label>
+                  <Input
+                    value={novoClienteCep}
+                    onChange={(e) => setNovoClienteCep(formatCEP(e.target.value))}
+                    placeholder="XXXXX-XXX"
+                    className="mt-1"
+                    maxLength={9}
                   />
                 </div>
               </div>
