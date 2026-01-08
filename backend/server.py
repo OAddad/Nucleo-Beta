@@ -294,6 +294,35 @@ async def create_purchase(purchase_data: PurchaseCreate, current_user: User = De
     
     return purchase
 
+@api_router.get("/purchases/grouped", response_model=List[PurchaseBatch])
+async def get_purchases_grouped(current_user: User = Depends(get_current_user)):
+    purchases = await db.purchases.find({}, {"_id": 0}).sort("purchase_date", -1).to_list(1000)
+    
+    # Group by batch_id
+    batches_dict = {}
+    for p in purchases:
+        if isinstance(p["purchase_date"], str):
+            p["purchase_date"] = datetime.fromisoformat(p["purchase_date"])
+        
+        batch_id = p.get("batch_id", p["id"])
+        if batch_id not in batches_dict:
+            batches_dict[batch_id] = {
+                "batch_id": batch_id,
+                "supplier": p.get("supplier", ""),
+                "purchase_date": p["purchase_date"],
+                "total_quantity": 0,
+                "total_price": 0,
+                "items": []
+            }
+        
+        batches_dict[batch_id]["total_quantity"] += p["quantity"]
+        batches_dict[batch_id]["total_price"] += p["price"]
+        batches_dict[batch_id]["items"].append(Purchase(**p))
+    
+    batches = [PurchaseBatch(**batch) for batch in batches_dict.values()]
+    batches.sort(key=lambda x: x.purchase_date, reverse=True)
+    return batches
+
 @api_router.get("/purchases", response_model=List[Purchase])
 async def get_purchases(current_user: User = Depends(get_current_user)):
     purchases = await db.purchases.find({}, {"_id": 0}).sort("purchase_date", -1).to_list(1000)
