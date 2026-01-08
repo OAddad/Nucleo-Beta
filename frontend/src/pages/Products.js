@@ -92,6 +92,8 @@ export default function Products() {
     setName("");
     setDescription("");
     setSalePrice("");
+    setPhotoUrl("");
+    setPhotoFile(null);
     setRecipeIngredients([{ ingredient_id: "", quantity: "" }]);
     setRecipePackaging([{ ingredient_id: "", quantity: "" }]);
     setEditMode(false);
@@ -104,6 +106,7 @@ export default function Products() {
     setName(product.name);
     setDescription(product.description || "");
     setSalePrice(product.sale_price ? product.sale_price.toString() : "");
+    setPhotoUrl(product.photo_url || "");
     
     // Separar ingredientes e embalagens baseado no item_type
     const ingredients = product.recipe
