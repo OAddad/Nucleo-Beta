@@ -68,6 +68,20 @@ export default function Dashboard({ setIsAuthenticated }) {
     ]
   };
 
+  // Estrutura hierárquica de Vendas
+  const salesModule = {
+    label: "Vendas",
+    icon: DollarSign,
+    expanded: salesExpanded,
+    toggle: () => setSalesExpanded(!salesExpanded),
+    children: [
+      { path: "/vendas/relatorio", label: "Relatório de Vendas", icon: BarChart3 },
+      { path: "/vendas/pedidos", label: "Pedidos", icon: ClipboardList },
+      { path: "/vendas/entregas", label: "Entregas", icon: Truck },
+      { path: "/vendas/clientes", label: "Clientes", icon: Users },
+    ]
+  };
+
 
   const isActive = (path) => {
     if (path === "/") return location.pathname === "/";
@@ -76,6 +90,10 @@ export default function Dashboard({ setIsAuthenticated }) {
 
   const isStockControlActive = () => {
     return ["/produtos", "/estoque", "/compras"].some(path => location.pathname.startsWith(path));
+  };
+
+  const isSalesActive = () => {
+    return location.pathname.startsWith("/vendas");
   };
 
   return (
