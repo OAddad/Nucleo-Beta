@@ -159,6 +159,11 @@ export default function Products() {
     return ing ? `${ing.name} (${ing.unit})` : "-";
   };
 
+  const getIngredientDetails = (ingredientId) => {
+    const ing = ingredients.find((i) => i.id === ingredientId);
+    return ing || { name: "-", unit: "", average_price: 0 };
+  };
+
   return (
     <div className="p-8" data-testid="products-page">
       <div className="max-w-7xl mx-auto">
