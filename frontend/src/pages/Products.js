@@ -601,7 +601,7 @@ export default function Products() {
                         </Button>
                         <Button
                           data-testid={`delete-product-${product.id}`}
-                          onClick={() => handleDelete(product.id)}
+                          onClick={() => confirmDelete(product.id, product.name)}
                           variant="outline"
                           size="sm"
                           className="flex-1 text-destructive hover:text-destructive hover:bg-destructive/10"
