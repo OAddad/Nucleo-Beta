@@ -710,6 +710,10 @@ async def delete_purchase_batch(batch_id: str, current_user: User = Depends(get_
             {"$set": {"average_price": avg_price}}
         )
     
+    # Registrar auditoria
+    supplier = purchases[0].get("supplier", "Unknown") if purchases else "Unknown"
+    await log_audit("DELETE", "purchase", f"Lote de {supplier}", current_user, "alta", {"items": len(purchases)})
+    
     return {"message": "Purchase batch deleted", "purchases_deleted": len(purchases)}
 
 # Product endpoints
