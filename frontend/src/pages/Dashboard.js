@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import { toast } from "sonner";
-import { ChefHat, Package, ShoppingCart, FileText, BarChart3, LogOut, Shield } from "lucide-react";
+import { ChefHat, Package, ShoppingCart, FileText, BarChart3, LogOut, Shield, Settings } from "lucide-react";
 import { Button } from "../components/ui/button";
 import DarkModeToggle from "../components/DarkModeToggle";
 import Ingredients from "./Ingredients";
