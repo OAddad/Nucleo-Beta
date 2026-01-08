@@ -3,7 +3,7 @@ import { toast } from "sonner";
 import { 
   Search, Grid3X3, List, Clock, Truck, CheckCircle, XCircle, 
   Package, User, Phone, MapPin, CreditCard, Banknote, QrCode,
-  Calendar, X, ChevronRight, ShoppingBag
+  Calendar, X, ChevronRight, ShoppingBag, UtensilsCrossed, MessageCircle, Bike, Store
 } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
