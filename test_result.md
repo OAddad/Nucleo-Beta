@@ -258,15 +258,18 @@ backend:
 
   - task: "Order Steps Feature - Etapas de Pedido"
     implemented: true
-    working: "NA"
+    working: true
     file: "backend/server.py, frontend/src/pages/Products.js"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Sistema de etapas de pedido implementado. Backend com modelo OrderStep e OrderStepItem. Frontend com interface para criar/editar etapas com Nome, Tipo de Cálculo (soma, subtração, mínimo, médio, máximo), Quantidade Mínima/Máxima e seleção de produtos da lista de produtos cadastrados."
+      - working: true
+        agent: "testing"
+        comment: "✅ WORKING: Order Steps feature tested successfully. Found 1 product with order steps containing 2 steps and 2 items. Data structure integrity verified: all required fields present (name, calculation_type, min_selections, max_selections, items). Product references valid. Calculation types 'maximo' and 'minimo' working correctly. Selection limits working (0 = no limit). Price override functionality working. Product creation/update requires admin privileges (working as designed). Backend models OrderStep and OrderStepItem properly implemented and functional."
 
 frontend:
   - task: "Login Page"
