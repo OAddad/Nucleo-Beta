@@ -520,10 +520,14 @@ async def create_purchase_batch(batch_data: PurchaseBatchCreate, current_user: U
         # If ingredient has units_per_package (for 'un'), divide by it to get unit price
         if ingredient.get("units_per_package") and ingredient["units_per_package"] > 0:
             avg_price = avg_price / ingredient["units_per_package"]
-        # If ingredient has slices_per_package (for 'kg'), divide by it to get slice price
+        
+        # Atualizar preço médio E quantidade em estoque
+        current_stock = ingredient.get("stock_quantity", 0) or 0
+        new_stock = current_stock + item.quantity
+        
         await db.ingredients.update_one(
             {"id": item.ingredient_id},
-            {"$set": {"average_price": avg_price}}
+            {"$set": {"average_price": avg_price, "stock_quantity": new_stock}}
         )
     
     # Registrar auditoria
