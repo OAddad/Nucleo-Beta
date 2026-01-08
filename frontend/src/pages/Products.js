@@ -383,16 +383,31 @@ export default function Products() {
                     {product.recipe.map((item, idx) => {
                       const ingredient = getIngredientDetails(item.ingredient_id);
                       const itemCost = ingredient.average_price * item.quantity;
+                      
+                      // Determinar unidade de exibição baseado no fracionamento
+                      let displayUnit = ingredient.unit;
+                      let displayQuantity = item.quantity;
+                      
+                      if (ingredient.units_per_package && ingredient.units_per_package > 0) {
+                        // Para unidades fracionadas (sachês, etc)
+                        displayUnit = "un";
+                        // Quantidade já é em unidades
+                      } else if (ingredient.slices_per_package && ingredient.slices_per_package > 0) {
+                        // Para kg fracionado em fatias
+                        displayUnit = "fatias";
+                        // Quantidade já é em fatias
+                      }
+                      
                       return (
                         <div
                           key={idx}
                           className="flex justify-between items-center text-sm py-2 border-b border-slate-100 last:border-0"
                         >
                           <span className="text-slate-700 font-medium flex-1">
-                            {ingredient.name} ({ingredient.unit})
+                            {ingredient.name} ({displayUnit})
                           </span>
                           <span className="font-mono text-slate-900 mx-4">
-                            {item.quantity.toFixed(2)} {ingredient.unit}
+                            {displayQuantity.toFixed(displayUnit === "fatias" || displayUnit === "un" ? 0 : 2)} {displayUnit}
                           </span>
                           <span className="font-mono text-slate-900 font-medium">
                             R$ {itemCost.toFixed(2)}
