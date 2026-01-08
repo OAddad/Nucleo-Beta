@@ -82,6 +82,17 @@ export default function Products() {
     }
   };
 
+
+
+  const fetchCategories = async () => {
+    try {
+      const response = await axios.get(`${API}/categories`, getAuthHeader());
+      setCategories(response.data.categories || []);
+    } catch (error) {
+      console.error("Erro ao carregar categorias:", error);
+    }
+  };
+
   const fetchIngredients = async () => {
     try {
       const response = await axios.get(`${API}/ingredients`, getAuthHeader());
