@@ -57,8 +57,18 @@ def save_ingredients(ingredients: list):
     print(f"[BACKUP] Ingredientes salvos: {len(ingredients)} itens")
 
 def save_products(products: list):
-    """Salva produtos no Excel"""
+    """Salva produtos no Excel - NÃO sobrescreve se lista vazia e já existe backup"""
     ensure_backup_dir()
+    
+    # Se a lista está vazia e já existe backup, não sobrescrever
+    if not products and BACKUP_FILE.exists():
+        try:
+            existing_df = pd.read_excel(BACKUP_FILE, sheet_name='Produtos')
+            if len(existing_df) > 0:
+                print(f"[BACKUP] Produtos: lista vazia, mantendo backup existente com {len(existing_df)} itens")
+                return
+        except:
+            pass
     
     # Converter recipe para JSON string para salvar no Excel
     products_to_save = []
@@ -91,8 +101,18 @@ def save_products(products: list):
     print(f"[BACKUP] Produtos salvos: {len(products)} itens")
 
 def save_purchases(purchases: list):
-    """Salva compras no Excel"""
+    """Salva compras no Excel - NÃO sobrescreve se lista vazia e já existe backup"""
     ensure_backup_dir()
+    
+    # Se a lista está vazia e já existe backup, não sobrescrever
+    if not purchases and BACKUP_FILE.exists():
+        try:
+            existing_df = pd.read_excel(BACKUP_FILE, sheet_name='Compras')
+            if len(existing_df) > 0:
+                print(f"[BACKUP] Compras: lista vazia, mantendo backup existente com {len(existing_df)} itens")
+                return
+        except:
+            pass
     df = pd.DataFrame(purchases)
     
     try:
