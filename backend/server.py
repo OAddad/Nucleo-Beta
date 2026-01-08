@@ -44,6 +44,7 @@ class User(BaseModel):
     model_config = ConfigDict(extra="ignore")
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     username: str
+    role: str = "observador"  # proprietario, administrador, observador
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class Token(BaseModel):
