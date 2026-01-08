@@ -56,7 +56,15 @@ export default function Ingredients() {
 
   useEffect(() => {
     fetchIngredients();
+    loadCurrentUser();
   }, []);
+
+  const loadCurrentUser = () => {
+    const user = localStorage.getItem("user");
+    if (user) {
+      setCurrentUser(JSON.parse(user));
+    }
+  };
 
   const fetchIngredients = async () => {
     try {
