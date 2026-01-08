@@ -488,7 +488,7 @@ export default function Purchases() {
                         </Button>
                         <Button
                           data-testid={`delete-batch-${batch.batch_id}`}
-                          onClick={() => handleDeleteBatch(batch.batch_id)}
+                          onClick={() => confirmDeleteBatch(batch.batch_id, batch.supplier)}
                           variant="ghost"
                           size="sm"
                           className="text-destructive hover:text-destructive hover:bg-destructive/10"
