@@ -32,6 +32,8 @@ export default function Purchases() {
   const [ingredients, setIngredients] = useState([]);
   const [open, setOpen] = useState(false);
   const [expandedBatches, setExpandedBatches] = useState(new Set());
+  const [editMode, setEditMode] = useState(false);
+  const [currentBatchId, setCurrentBatchId] = useState(null);
   
   // Form states
   const [supplier, setSupplier] = useState("");
