@@ -238,6 +238,27 @@ export default function Ingredients() {
                     </p>
                   </div>
                 )}
+
+                {unit === "kg" && (
+                  <div>
+                    <Label htmlFor="unitWeight">
+                      Peso por Unidade em kg (opcional)
+                    </Label>
+                    <Input
+                      id="unitWeight"
+                      data-testid="ingredient-unit-weight-input"
+                      type="number"
+                      step="0.001"
+                      value={unitWeight}
+                      onChange={(e) => setUnitWeight(e.target.value)}
+                      placeholder="Ex: 0.130 (hambúrguer de 130g)"
+                      className="mt-1 h-11"
+                    />
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Use quando trabalhar por unidade. Ex: 1 hambúrguer = 0.130kg. Na ficha técnica você usará unidades ao invés de kg.
+                    </p>
+                  </div>
+                )}
                 
                 <Button
                   type="submit"
