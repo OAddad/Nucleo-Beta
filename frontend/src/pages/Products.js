@@ -496,6 +496,30 @@ export default function Products() {
           </Dialog>
         </div>
 
+        {/* Filtros de Ordenação */}
+        {products.length > 0 && (
+          <div className="mb-4 flex items-center gap-3">
+            <Label htmlFor="sort-products" className="text-sm font-medium">
+              Ordenar por:
+            </Label>
+            <Select value={sortBy} onValueChange={setSortBy}>
+              <SelectTrigger id="sort-products" className="w-64">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="alfabetica-az">Nome (A → Z)</SelectItem>
+                <SelectItem value="alfabetica-za">Nome (Z → A)</SelectItem>
+                <SelectItem value="cmv-maior">Maior CMV</SelectItem>
+                <SelectItem value="cmv-menor">Menor CMV</SelectItem>
+                <SelectItem value="margem-maior">Maior Margem</SelectItem>
+                <SelectItem value="margem-menor">Menor Margem</SelectItem>
+                <SelectItem value="preco-maior">Maior Preço de Venda</SelectItem>
+                <SelectItem value="preco-menor">Menor Preço de Venda</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        )}
+
         <div className="space-y-3">
           {products.length === 0 ? (
             <div className="bg-card rounded-xl border shadow-sm p-12 text-center">
@@ -504,7 +528,7 @@ export default function Products() {
               </p>
             </div>
           ) : (
-            products.map((product) => {
+            sortedProducts.map((product) => {
               const isExpanded = expandedProducts.has(product.id);
               
               return (
