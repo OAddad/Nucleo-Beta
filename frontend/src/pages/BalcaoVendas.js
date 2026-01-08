@@ -395,7 +395,7 @@ export default function BalcaoVendas() {
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
               {filteredProducts.map(product => (
-                <ProductCard key={product.id} product={product} onAddToCart={addToCart} />
+                <ProductCard key={product.id} product={product} onClick={openProductPopup} />
               ))}
             </div>
           )}
