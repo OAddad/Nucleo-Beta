@@ -374,6 +374,67 @@ export default function Moderation() {
           </TabsList>
 
           <TabsContent value="audit" className="mt-6">
+            {/* Filtros */}
+            {auditLogs.length > 0 && (
+              <div className="bg-card rounded-xl border shadow-sm p-4 mb-4">
+                <div className="flex flex-col sm:flex-row gap-4">
+                  {/* Ordenação */}
+                  <div className="flex items-center gap-2">
+                    <Label htmlFor="sort-order" className="text-sm font-medium whitespace-nowrap">
+                      Ordenar:
+                    </Label>
+                    <Select value={sortOrder} onValueChange={setSortOrder}>
+                      <SelectTrigger id="sort-order" className="w-40">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="desc">Mais Recentes</SelectItem>
+                        <SelectItem value="asc">Mais Antigas</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {/* Filtro por Usuário */}
+                  <div className="flex items-center gap-2">
+                    <Label htmlFor="filter-user" className="text-sm font-medium whitespace-nowrap">
+                      Usuário:
+                    </Label>
+                    <Select value={filterUser} onValueChange={setFilterUser}>
+                      <SelectTrigger id="filter-user" className="w-40">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">Todos</SelectItem>
+                        {getUniqueUsers().map((username) => (
+                          <SelectItem key={username} value={username}>
+                            {username}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {/* Filtro por Prioridade */}
+                  <div className="flex items-center gap-2">
+                    <Label htmlFor="filter-priority" className="text-sm font-medium whitespace-nowrap">
+                      Prioridade:
+                    </Label>
+                    <Select value={filterPriority} onValueChange={setFilterPriority}>
+                      <SelectTrigger id="filter-priority" className="w-40">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">Todas</SelectItem>
+                        <SelectItem value="baixa">Baixa</SelectItem>
+                        <SelectItem value="media">Média</SelectItem>
+                        <SelectItem value="alta">Alta</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              </div>
+            )}
+
             <div className="bg-card rounded-xl border shadow-sm overflow-hidden">
               <div className="overflow-x-auto">
                 <Table>
@@ -388,10 +449,10 @@ export default function Moderation() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {auditLogs.length === 0 ? (
+                    {getFilteredAndSortedLogs().length === 0 ? (
                       <TableRow>
                         <TableCell colSpan={6} className="text-center text-muted-foreground py-8">
-                          Nenhum log de auditoria encontrado
+                          Nenhum log encontrado com os filtros aplicados
                         </TableCell>
                       </TableRow>
                     ) : (
