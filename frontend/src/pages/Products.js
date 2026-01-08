@@ -190,6 +190,7 @@ export default function Products() {
     setSalePrice("");
     setPhotoUrl("");
     setPhotoFile(null);
+    setIsInsumo(false);
     setRecipeIngredients([{ ingredient_id: "", quantity: "" }]);
     setRecipePackaging([{ ingredient_id: "", quantity: "" }]);
     setEditMode(false);
@@ -204,6 +205,7 @@ export default function Products() {
     setCategory(product.category || "");
     setSalePrice(product.sale_price ? product.sale_price.toString() : "");
     setPhotoUrl(product.photo_url || "");
+    setIsInsumo(product.is_insumo || false);
     
     // Separar ingredientes e embalagens baseado no item_type
     const ingredients = product.recipe
