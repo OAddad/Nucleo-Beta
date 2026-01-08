@@ -462,6 +462,9 @@ async def delete_ingredient(ingredient_id: str, current_user: User = Depends(get
     # Registrar auditoria
     await log_audit("DELETE", "ingredient", ingredient["name"], current_user, "alta")
     
+    # Sincronizar com Excel
+    await sync_all_to_excel()
+    
     return {"message": "Ingredient deleted"}
 
 # Purchase endpoints
