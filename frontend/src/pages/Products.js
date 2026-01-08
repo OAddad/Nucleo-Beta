@@ -82,7 +82,15 @@ export default function Products() {
     fetchIngredients();
     fetchCategories();
     initializeCategories();
+    loadCurrentUser();
   }, []);
+
+  const loadCurrentUser = () => {
+    const user = localStorage.getItem("user");
+    if (user) {
+      setCurrentUser(JSON.parse(user));
+    }
+  };
 
   const fetchProducts = async () => {
     try {
