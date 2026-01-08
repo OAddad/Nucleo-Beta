@@ -374,12 +374,12 @@ export default function Ingredients() {
                         
                         <div>
                           <Label htmlFor="category">Categoria</Label>
-                          <Select value={category} onValueChange={setCategory}>
+                          <Select value={category || "none"} onValueChange={(val) => setCategory(val === "none" ? "" : val)}>
                             <SelectTrigger className="mt-1 h-11">
                               <SelectValue placeholder="Selecione" />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="">Sem categoria</SelectItem>
+                              <SelectItem value="none">Sem categoria</SelectItem>
                               {categories.map((cat) => (
                                 <SelectItem key={cat.id} value={cat.name}>
                                   {cat.name}
