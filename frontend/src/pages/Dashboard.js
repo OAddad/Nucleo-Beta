@@ -73,6 +73,10 @@ export default function Dashboard({ setIsAuthenticated }) {
     return location.pathname.startsWith(path);
   };
 
+  const isStockControlActive = () => {
+    return ["/produtos", "/estoque", "/compras"].some(path => location.pathname.startsWith(path));
+  };
+
   return (
     <div className="flex min-h-screen bg-background">
       {/* Sidebar - Sempre relativo, empurra o conteúdo */}
