@@ -201,7 +201,7 @@ export default function Dashboard({ setIsAuthenticated }) {
                   return (
                     <button
                       key={child.path}
-                      onClick={() => navigate(child.path)}
+                      onClick={() => handleSidebarClick(child.path)}
                       className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 text-sm ${
                         active
                           ? "bg-primary text-primary-foreground font-medium"
@@ -223,7 +223,7 @@ export default function Dashboard({ setIsAuthenticated }) {
             <button
               onClick={() => setSalesExpanded(!salesExpanded)}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 ${
-                isSalesActive()
+                isSalesActive() && !activeTopMenu
                   ? "bg-primary/10 text-primary font-medium"
                   : "text-sidebar-foreground hover:bg-muted"
               } ${!sidebarOpen ? 'lg:justify-center lg:px-2' : ''}`}
@@ -247,11 +247,11 @@ export default function Dashboard({ setIsAuthenticated }) {
               <div className="ml-4 mt-1 space-y-1 border-l-2 border-border pl-4">
                 {salesModule.children.map((child) => {
                   const ChildIcon = child.icon;
-                  const active = isActive(child.path);
+                  const active = isActive(child.path) && !activeTopMenu;
                   return (
                     <button
                       key={child.path}
-                      onClick={() => navigate(child.path)}
+                      onClick={() => handleSidebarClick(child.path)}
                       className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 text-sm ${
                         active
                           ? "bg-primary text-primary-foreground font-medium"
