@@ -106,13 +106,13 @@ export default function Dashboard({ setIsAuthenticated }) {
           </div>
 
         <nav className="flex-1 p-4 space-y-1 overflow-auto">
-          {tabs.map((tab) => {
+          {/* Tabs Principais */}
+          {mainTabs.map((tab) => {
             const Icon = tab.icon;
             const active = isActive(tab.path);
             return (
               <button
                 key={tab.path}
-                data-testid={`nav-${tab.label.toLowerCase()}`}
                 onClick={() => navigate(tab.path)}
                 className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 ${
                   active
@@ -126,6 +126,56 @@ export default function Dashboard({ setIsAuthenticated }) {
               </button>
             );
           })}
+
+          {/* Controle de Estoque (Hierárquico) */}
+          <div>
+            {/* Header do módulo */}
+            <button
+              onClick={() => setStockControlExpanded(!stockControlExpanded)}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 ${
+                isStockControlActive()
+                  ? "bg-primary/10 text-primary font-medium"
+                  : "text-sidebar-foreground hover:bg-muted"
+              } ${!sidebarOpen ? 'lg:justify-center lg:px-2' : ''}`}
+              title={!sidebarOpen ? stockControlModule.label : ''}
+            >
+              <BarChart3 className="w-5 h-5 flex-shrink-0" strokeWidth={1.5} />
+              {sidebarOpen && (
+                <>
+                  <span className="text-sm flex-1 text-left">{stockControlModule.label}</span>
+                  {stockControlExpanded ? (
+                    <ChevronDown className="w-4 h-4" strokeWidth={1.5} />
+                  ) : (
+                    <ChevronRight className="w-4 h-4" strokeWidth={1.5} />
+                  )}
+                </>
+              )}
+            </button>
+
+            {/* Sub-itens */}
+            {sidebarOpen && stockControlExpanded && (
+              <div className="ml-4 mt-1 space-y-1 border-l-2 border-border pl-4">
+                {stockControlModule.children.map((child) => {
+                  const ChildIcon = child.icon;
+                  const active = isActive(child.path);
+                  return (
+                    <button
+                      key={child.path}
+                      onClick={() => navigate(child.path)}
+                      className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 text-sm ${
+                        active
+                          ? "bg-primary text-primary-foreground font-medium"
+                          : "text-sidebar-foreground hover:bg-muted"
+                      }`}
+                    >
+                      <ChildIcon className="w-4 h-4 flex-shrink-0" strokeWidth={1.5} />
+                      <span>{child.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
         </nav>
 
         <div className="p-4 border-t space-y-2">
