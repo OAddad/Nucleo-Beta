@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import { 
   Home, Clock, Truck, Plus, Search, X, Phone, MapPin, User, Package, 
   ChevronLeft, ChevronRight, RefreshCw, ImageOff, Minus, ShoppingBasket,
-  CreditCard, Banknote, QrCode, Check, Edit, MoreVertical, Trash2
+  CreditCard, Banknote, QrCode, Check, Edit, MoreVertical, Trash2, Mail
 } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
