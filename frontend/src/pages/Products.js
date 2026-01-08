@@ -390,10 +390,13 @@ export default function Products() {
         name: duplicateName.trim(),
         description: productToDuplicate.description || null,
         category: productToDuplicate.category || null,
+        product_type: productToDuplicate.product_type || "produto",
         sale_price: productToDuplicate.sale_price || null,
         photo_url: productToDuplicate.photo_url || null,
         recipe: productToDuplicate.recipe || [],
         is_insumo: productToDuplicate.is_insumo || false,
+        is_divisible: productToDuplicate.is_divisible || false,
+        order_steps: productToDuplicate.order_steps || [],
       };
 
       await axios.post(`${API}/products`, productData, getAuthHeader());
@@ -408,6 +411,46 @@ export default function Products() {
     } finally {
       setDuplicatingProduct(false);
     }
+  };
+
+  // Funções para gerenciar etapas de pedido
+  const addOrderStep = () => {
+    setOrderSteps([...orderSteps, {
+      name: "",
+      description: "",
+      step_type: "single",
+      options: [],
+      min_selections: 0,
+      max_selections: 1
+    }]);
+  };
+
+  const updateOrderStep = (index, field, value) => {
+    const newSteps = [...orderSteps];
+    newSteps[index] = { ...newSteps[index], [field]: value };
+    setOrderSteps(newSteps);
+  };
+
+  const removeOrderStep = (index) => {
+    setOrderSteps(orderSteps.filter((_, i) => i !== index));
+  };
+
+  const addOptionToStep = (stepIndex) => {
+    const newSteps = [...orderSteps];
+    newSteps[stepIndex].options = [...(newSteps[stepIndex].options || []), { name: "", price: 0, is_required: false }];
+    setOrderSteps(newSteps);
+  };
+
+  const updateStepOption = (stepIndex, optionIndex, field, value) => {
+    const newSteps = [...orderSteps];
+    newSteps[stepIndex].options[optionIndex] = { ...newSteps[stepIndex].options[optionIndex], [field]: value };
+    setOrderSteps(newSteps);
+  };
+
+  const removeStepOption = (stepIndex, optionIndex) => {
+    const newSteps = [...orderSteps];
+    newSteps[stepIndex].options = newSteps[stepIndex].options.filter((_, i) => i !== optionIndex);
+    setOrderSteps(newSteps);
   };
 
   const addRecipeItem = (type) => {
