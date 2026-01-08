@@ -260,6 +260,73 @@ def load_users() -> list:
         print(f"[BACKUP] Nenhum usuário encontrado no backup: {e}")
         return []
 
+def save_audit_logs(audit_logs: list):
+    """Salva histórico de auditoria no Excel"""
+    ensure_backup_dir()
+    
+    # Se a lista está vazia e já existe backup, não sobrescrever
+    if not audit_logs and BACKUP_FILE.exists():
+        try:
+            existing_df = pd.read_excel(BACKUP_FILE, sheet_name='AuditLogs')
+            if len(existing_df) > 0:
+                print(f"[BACKUP] AuditLogs: lista vazia, mantendo backup existente com {len(existing_df)} itens")
+                return
+        except:
+            pass
+    
+    # Converter details para JSON string
+    logs_to_save = []
+    for log in audit_logs:
+        log_copy = log.copy()
+        if 'details' in log_copy and isinstance(log_copy['details'], dict):
+            log_copy['details'] = json.dumps(log_copy['details'])
+        logs_to_save.append(log_copy)
+    
+    df = pd.DataFrame(logs_to_save)
+    
+    try:
+        with pd.ExcelFile(BACKUP_FILE) as xls:
+            existing_sheets = xls.sheet_names
+    except FileNotFoundError:
+        existing_sheets = []
+    
+    if existing_sheets:
+        with pd.ExcelFile(BACKUP_FILE) as xls:
+            all_data = {sheet: pd.read_excel(xls, sheet_name=sheet) for sheet in existing_sheets if sheet != 'AuditLogs'}
+    else:
+        all_data = {}
+    
+    all_data['AuditLogs'] = df
+    
+    with pd.ExcelWriter(BACKUP_FILE, engine='openpyxl') as writer:
+        for sheet_name, data in all_data.items():
+            data.to_excel(writer, sheet_name=sheet_name, index=False)
+    
+    print(f"[BACKUP] AuditLogs salvos: {len(audit_logs)} itens")
+
+def load_audit_logs() -> list:
+    """Carrega histórico de auditoria do Excel"""
+    try:
+        df = pd.read_excel(BACKUP_FILE, sheet_name='AuditLogs')
+        df = df.fillna('')
+        logs = df.to_dict('records')
+        
+        # Converter details de JSON string de volta para dict
+        for log in logs:
+            if 'details' in log and isinstance(log['details'], str) and log['details']:
+                try:
+                    log['details'] = json.loads(log['details'])
+                except:
+                    log['details'] = None
+            elif 'details' not in log or not log['details']:
+                log['details'] = None
+        
+        print(f"[BACKUP] AuditLogs carregados: {len(logs)} itens")
+        return logs
+    except Exception as e:
+        print(f"[BACKUP] Nenhum log de auditoria encontrado no backup: {e}")
+        return []
+
 def backup_exists() -> bool:
     """Verifica se o arquivo de backup existe"""
     return BACKUP_FILE.exists()
