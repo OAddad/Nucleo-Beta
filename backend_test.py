@@ -62,21 +62,48 @@ class CMVMasterAPITester:
             print(f"❌ Failed - Error: {str(e)}")
             return False, {}
 
-    def test_login(self):
-        """Test login with demo credentials"""
+    def test_authentication(self):
+        """Test complete authentication flow as specified in review"""
         print("\n=== AUTHENTICATION TESTS ===")
+        
+        # 1. Register new user "teste_admin" with password "senha123"
+        print("🔍 Testing user registration...")
         success, response = self.run_test(
-            "Login with demo credentials",
+            "Register teste_admin user",
             "POST",
-            "auth/login",
+            "auth/register",
             200,
-            data={"username": "demo", "password": "demo123"}
+            data={"username": "teste_admin", "password": "senha123"}
         )
+        
         if success and 'access_token' in response:
             self.token = response['access_token']
+            self.user_id = response['user']['id']
+            print(f"   ✅ User registered successfully")
+            print(f"   User role: {response['user']['role']}")
             print(f"   Token obtained: {self.token[:20]}...")
-            return True
-        return False
+        else:
+            # Try login if user already exists
+            print("   User might already exist, trying login...")
+            success, response = self.run_test(
+                "Login with teste_admin",
+                "POST",
+                "auth/login",
+                200,
+                data={"username": "teste_admin", "password": "senha123"}
+            )
+            
+            if success and 'access_token' in response:
+                self.token = response['access_token']
+                self.user_id = response['user']['id']
+                print(f"   ✅ Login successful")
+                print(f"   User role: {response['user']['role']}")
+                print(f"   Token obtained: {self.token[:20]}...")
+            else:
+                print("   ❌ Authentication failed")
+                return False
+        
+        return True
 
     def test_ingredients(self):
         """Test ingredient CRUD operations"""
