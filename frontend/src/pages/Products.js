@@ -1074,6 +1074,16 @@ export default function Products() {
                           Editar
                         </Button>
                         <Button
+                          data-testid={`duplicate-product-${product.id}`}
+                          onClick={() => openDuplicateDialog(product)}
+                          variant="outline"
+                          size="sm"
+                          className="flex-1"
+                        >
+                          <Copy className="w-4 h-4 mr-2" strokeWidth={1.5} />
+                          Duplicar
+                        </Button>
+                        <Button
                           data-testid={`delete-product-${product.id}`}
                           onClick={() => confirmDelete(product.id, product.name)}
                           variant="outline"
@@ -1109,6 +1119,44 @@ export default function Products() {
                 className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               >
                 Excluir
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+
+        {/* Dialog de Duplicar Produto */}
+        <AlertDialog open={duplicateDialogOpen} onOpenChange={setDuplicateDialogOpen}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Duplicar Produto</AlertDialogTitle>
+              <AlertDialogDescription className="space-y-4">
+                <p>
+                  Você está duplicando o produto <strong>{productToDuplicate?.name}</strong>.
+                </p>
+                <p className="text-sm">
+                  O novo produto terá a mesma ficha técnica, categoria, preço e configurações.
+                </p>
+                <div className="pt-2">
+                  <Label htmlFor="duplicateName" className="text-foreground">Nome do novo produto</Label>
+                  <Input
+                    id="duplicateName"
+                    value={duplicateName}
+                    onChange={(e) => setDuplicateName(e.target.value)}
+                    placeholder="Digite o nome do novo produto"
+                    className="mt-2"
+                    autoFocus
+                  />
+                </div>
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel disabled={duplicatingProduct}>Cancelar</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={handleDuplicateProduct}
+                disabled={duplicatingProduct || !duplicateName.trim()}
+                className="bg-primary"
+              >
+                {duplicatingProduct ? "Duplicando..." : "Duplicar"}
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
