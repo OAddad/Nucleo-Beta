@@ -844,8 +844,15 @@ export default function Products() {
                     </div>
                     
                     <div className="flex-1 grid grid-cols-12 gap-4 items-center">
-                      <div className="col-span-4 font-bold text-lg">
-                        {product.name}
+                      <div className="col-span-4">
+                        <div className="flex items-center gap-2">
+                          <span className="font-bold text-lg">{product.name}</span>
+                          {product.is_insumo && (
+                            <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400">
+                              Insumo
+                            </span>
+                          )}
+                        </div>
                       </div>
                       <div className="col-span-2 text-center">
                         <div className="text-xs text-muted-foreground uppercase tracking-wider mb-1">CMV</div>
