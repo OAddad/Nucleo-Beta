@@ -527,7 +527,7 @@ export default function Products() {
                                     {ingredient.name}
                                   </span>
                                   <span className="font-mono mx-4">
-                                    {displayUnit === "fatias" || displayUnit === "un" 
+                                    {displayUnit === "un" 
                                       ? Math.round(item.quantity) 
                                       : item.quantity.toFixed(2)
                                     } {displayUnit}
