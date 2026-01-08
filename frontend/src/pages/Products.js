@@ -59,6 +59,8 @@ export default function Products() {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [salePrice, setSalePrice] = useState("");
+  const [photoUrl, setPhotoUrl] = useState("");
+  const [photoFile, setPhotoFile] = useState(null);
   const [recipeIngredients, setRecipeIngredients] = useState([{ ingredient_id: "", quantity: "" }]);
   const [recipePackaging, setRecipePackaging] = useState([{ ingredient_id: "", quantity: "" }]);
   const [loading, setLoading] = useState(false);
