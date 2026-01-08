@@ -893,8 +893,17 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+# Criar diretórios de upload no startup
+@app.on_event("startup")
+async def create_upload_dirs():
+    upload_dir = Path("/app/backend/uploads/products")
+    upload_dir.mkdir(parents=True, exist_ok=True)
+
 # Servir arquivos estáticos de upload
-app.mount("/uploads", StaticFiles(directory="/app/backend/uploads"), name="uploads")
+from pathlib import Path as PathLib
+uploads_path = PathLib("/app/backend/uploads")
+uploads_path.mkdir(parents=True, exist_ok=True)
+app.mount("/uploads", StaticFiles(directory=str(uploads_path)), name="uploads")
 
 @app.on_event("shutdown")
 async def shutdown_db_client():
