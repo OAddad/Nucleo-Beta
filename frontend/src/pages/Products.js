@@ -62,10 +62,12 @@ export default function Products() {
   const [salePrice, setSalePrice] = useState("");
   const [photoUrl, setPhotoUrl] = useState("");
   const [photoFile, setPhotoFile] = useState(null);
+  const [isInsumo, setIsInsumo] = useState(false);
   const [recipeIngredients, setRecipeIngredients] = useState([{ ingredient_id: "", quantity: "" }]);
   const [recipePackaging, setRecipePackaging] = useState([{ ingredient_id: "", quantity: "" }]);
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState([]);
+  const [currentUser, setCurrentUser] = useState(null);
   
   // Category management states
   const [categoryDialogOpen, setCategoryDialogOpen] = useState(false);
