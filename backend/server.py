@@ -854,6 +854,22 @@ async def delete_product(product_id: str, current_user: User = Depends(get_curre
     
     return {"message": "Product deleted"}
 
+
+# Category endpoints
+@api_router.get("/categories")
+async def get_categories(current_user: User = Depends(get_current_user)):
+    """Retorna categorias únicas dos produtos"""
+    products = await db.products.find({}, {"category": 1, "_id": 0}).to_list(1000)
+    categories = list(set([p.get("category") for p in products if p.get("category")]))
+    categories.sort()
+    return {"categories": categories}
+
+@api_router.post("/categories")
+async def create_category(category_data: dict, current_user: User = Depends(get_current_user)):
+    """Cria uma nova categoria (não precisa fazer nada, categorias são criadas ao adicionar produtos)"""
+    check_role(current_user, ["proprietario", "administrador"])
+    return {"message": "Category created", "category": category_data.get("name")}
+
 # Reports endpoints
 @api_router.get("/reports/price-history/{ingredient_id}", response_model=IngredientWithHistory)
 async def get_price_history(ingredient_id: str, current_user: User = Depends(get_current_user)):
