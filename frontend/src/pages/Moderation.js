@@ -169,10 +169,15 @@ export default function Moderation() {
   const [filterPriority, setFilterPriority] = useState("all");
 
   useEffect(() => {
-    fetchAuditLogs();
-    fetchUsers();
     loadCurrentUser();
+    fetchAuditLogs();
   }, []);
+
+  useEffect(() => {
+    if (currentUser) {
+      fetchUsers();
+    }
+  }, [currentUser]);
 
   const loadCurrentUser = () => {
     const user = localStorage.getItem("user");
