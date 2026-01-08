@@ -51,12 +51,14 @@ class Token(BaseModel):
 class IngredientCreate(BaseModel):
     name: str
     unit: str
+    units_per_package: Optional[int] = None
 
 class Ingredient(BaseModel):
     model_config = ConfigDict(extra="ignore")
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     name: str
     unit: str
+    units_per_package: Optional[int] = None
     average_price: float = 0.0
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
