@@ -84,8 +84,8 @@ export default function Delivery() {
   }, []);
 
   const fetchPedidos = () => {
-    // Carregar pedidos do localStorage
-    const savedPedidos = localStorage.getItem("delivery_pedidos");
+    // Carregar pedidos do localStorage (unificado)
+    const savedPedidos = localStorage.getItem("pedidos");
     if (savedPedidos) {
       setPedidos(JSON.parse(savedPedidos));
     }
@@ -93,7 +93,7 @@ export default function Delivery() {
 
   const savePedidos = (newPedidos) => {
     setPedidos(newPedidos);
-    localStorage.setItem("delivery_pedidos", JSON.stringify(newPedidos));
+    localStorage.setItem("pedidos", JSON.stringify(newPedidos));
   };
 
   const fetchClientes = () => {
