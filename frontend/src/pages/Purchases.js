@@ -100,6 +100,34 @@ export default function Purchases() {
     toast.success("Item removido do carrinho");
   };
 
+  const resetForm = () => {
+    setCart([]);
+    setSupplier("");
+    setPurchaseDate(new Date().toISOString().split("T")[0]);
+    setEditMode(false);
+    setCurrentBatchId(null);
+  };
+
+  const handleEdit = (batch) => {
+    setEditMode(true);
+    setCurrentBatchId(batch.batch_id);
+    setSupplier(batch.supplier || "");
+    setPurchaseDate(new Date(batch.purchase_date).toISOString().split("T")[0]);
+    
+    // Load items into cart
+    const cartItems = batch.items.map((item, index) => ({
+      id: `edit-${index}`,
+      ingredient_id: item.ingredient_id,
+      ingredient_name: item.ingredient_name,
+      ingredient_unit: item.ingredient_unit,
+      quantity: item.quantity,
+      price: item.price,
+      unit_price: item.unit_price,
+    }));
+    setCart(cartItems);
+    setOpen(true);
+  };
+
   const finalizePurchase = async () => {
     if (cart.length === 0) {
       toast.error("Carrinho vazio");
@@ -119,24 +147,25 @@ export default function Purchases() {
         price: item.price,
       }));
 
-      await axios.post(
-        `${API}/purchases/batch`,
-        {
-          supplier: supplier,
-          purchase_date: new Date(purchaseDate).toISOString(),
-          items: items,
-        },
-        getAuthHeader()
-      );
+      const payload = {
+        supplier: supplier,
+        purchase_date: new Date(purchaseDate).toISOString(),
+        items: items,
+      };
+
+      if (editMode) {
+        await axios.put(`${API}/purchases/batch/${currentBatchId}`, payload, getAuthHeader());
+        toast.success("Compra atualizada com sucesso!");
+      } else {
+        await axios.post(`${API}/purchases/batch`, payload, getAuthHeader());
+        toast.success("Compra finalizada com sucesso!");
+      }
       
-      toast.success("Compra finalizada com sucesso!");
-      setCart([]);
-      setSupplier("");
-      setPurchaseDate(new Date().toISOString().split("T")[0]);
+      resetForm();
       setOpen(false);
       fetchPurchases();
     } catch (error) {
-      toast.error("Erro ao finalizar compra");
+      toast.error(editMode ? "Erro ao atualizar compra" : "Erro ao finalizar compra");
       console.error(error);
     } finally {
       setLoading(false);
