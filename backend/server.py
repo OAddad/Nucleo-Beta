@@ -769,6 +769,9 @@ async def create_product(product_data: ProductCreate, current_user: User = Depen
     # Registrar auditoria
     await log_audit("CREATE", "product", product_data.name, current_user, "baixa")
     
+    # Sincronizar com Excel
+    await sync_all_to_excel()
+    
     return product
 
 @api_router.get("/products", response_model=List[Product])
@@ -806,6 +809,9 @@ async def update_product(product_id: str, product_data: ProductCreate, current_u
     
     # Registrar auditoria
     await log_audit("UPDATE", "product", product_data.name, current_user, "media")
+    
+    # Sincronizar com Excel
+    await sync_all_to_excel()
     
     updated = await db.products.find_one({"id": product_id}, {"_id": 0})
     if isinstance(updated["created_at"], str):
