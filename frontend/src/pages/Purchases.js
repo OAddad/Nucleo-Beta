@@ -102,7 +102,9 @@ export default function Purchases() {
             const totalValue = batch.purchases.reduce((sum, p) => sum + p.price, 0);
             return totalValue.toString().includes(searchTerm);
           case "date":
-            return batch.purchase_date.includes(searchTerm);
+            // Comparar datas (formato YYYY-MM-DD)
+            const batchDate = batch.purchase_date.split("T")[0];
+            return batchDate === searchTerm;
           default:
             return true;
         }
