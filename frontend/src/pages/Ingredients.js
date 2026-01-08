@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "sonner";
-import { Plus, Trash2, Edit, Moon, Sun } from "lucide-react";
+import { Plus, Trash2, Edit, Package, AlertTriangle, Settings, ArrowUp, ArrowDown } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
@@ -40,15 +40,31 @@ const getAuthHeader = () => ({
 
 export default function Ingredients() {
   const [ingredients, setIngredients] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [open, setOpen] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [currentIngredientId, setCurrentIngredientId] = useState(null);
   const [name, setName] = useState("");
   const [unit, setUnit] = useState("");
+  const [category, setCategory] = useState("");
   const [unitsPerPackage, setUnitsPerPackage] = useState("");
   const [unitWeight, setUnitWeight] = useState("");
+  const [stockMin, setStockMin] = useState("");
+  const [stockMax, setStockMax] = useState("");
   const [loading, setLoading] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
+  
+  // Category management
+  const [categoryDialogOpen, setCategoryDialogOpen] = useState(false);
+  const [newCategoryName, setNewCategoryName] = useState("");
+  const [editingCategory, setEditingCategory] = useState(null);
+  
+  // Stock adjustment dialog
+  const [stockDialogOpen, setStockDialogOpen] = useState(false);
+  const [stockIngredient, setStockIngredient] = useState(null);
+  const [stockAdjustment, setStockAdjustment] = useState("");
+  const [stockOperation, setStockOperation] = useState("add");
+  const [stockReason, setStockReason] = useState("");
   
   // Delete warning dialog (when ingredient is in use)
   const [deleteWarningOpen, setDeleteWarningOpen] = useState(false);
@@ -60,6 +76,7 @@ export default function Ingredients() {
 
   useEffect(() => {
     fetchIngredients();
+    fetchCategories();
     loadCurrentUser();
   }, []);
 
@@ -79,11 +96,23 @@ export default function Ingredients() {
     }
   };
 
+  const fetchCategories = async () => {
+    try {
+      const response = await axios.get(`${API}/categories`, getAuthHeader());
+      setCategories(response.data);
+    } catch (error) {
+      console.error("Erro ao carregar categorias");
+    }
+  };
+
   const resetForm = () => {
     setName("");
     setUnit("");
+    setCategory("");
     setUnitsPerPackage("");
     setUnitWeight("");
+    setStockMin("");
+    setStockMax("");
     setEditMode(false);
     setCurrentIngredientId(null);
   };
@@ -93,8 +122,11 @@ export default function Ingredients() {
     setCurrentIngredientId(ingredient.id);
     setName(ingredient.name);
     setUnit(ingredient.unit);
+    setCategory(ingredient.category || "");
     setUnitsPerPackage(ingredient.units_per_package ? ingredient.units_per_package.toString() : "");
     setUnitWeight(ingredient.unit_weight ? ingredient.unit_weight.toString() : "");
+    setStockMin(ingredient.stock_min ? ingredient.stock_min.toString() : "");
+    setStockMax(ingredient.stock_max ? ingredient.stock_max.toString() : "");
     setOpen(true);
   };
 
@@ -105,7 +137,10 @@ export default function Ingredients() {
     try {
       const payload = { 
         name, 
-        unit: unit === "unidade" ? "un" : unit 
+        unit: unit === "unidade" ? "un" : unit,
+        category: category || null,
+        stock_min: stockMin ? parseFloat(stockMin) : 0,
+        stock_max: stockMax ? parseFloat(stockMax) : 0
       };
       
       if (unitsPerPackage && parseInt(unitsPerPackage) > 0) {
@@ -143,7 +178,6 @@ export default function Ingredients() {
         setIngredientToDelete(ingredientName);
         setDeleteWarningOpen(true);
       } else {
-        // Can delete safely - show confirmation dialog
         setIngredientToDelete({ id, name: ingredientName });
         setDeleteConfirmOpen(true);
       }
@@ -170,7 +204,90 @@ export default function Ingredients() {
     }
   };
 
+  // Stock adjustment
+  const openStockDialog = (ingredient) => {
+    setStockIngredient(ingredient);
+    setStockAdjustment("");
+    setStockOperation("add");
+    setStockReason("");
+    setStockDialogOpen(true);
+  };
+
+  const handleStockAdjustment = async () => {
+    if (!stockIngredient || !stockAdjustment) return;
+    
+    try {
+      await axios.put(
+        `${API}/ingredients/${stockIngredient.id}/stock`,
+        {
+          quantity: parseFloat(stockAdjustment),
+          operation: stockOperation,
+          reason: stockReason || null
+        },
+        getAuthHeader()
+      );
+      toast.success(`Estoque ${stockOperation === "add" ? "adicionado" : "removido"} com sucesso!`);
+      setStockDialogOpen(false);
+      fetchIngredients();
+    } catch (error) {
+      toast.error("Erro ao ajustar estoque");
+    }
+  };
+
+  // Category management
+  const handleCreateCategory = async () => {
+    if (!newCategoryName.trim()) return;
+    
+    try {
+      await axios.post(`${API}/categories`, { name: newCategoryName }, getAuthHeader());
+      toast.success("Categoria criada!");
+      setNewCategoryName("");
+      fetchCategories();
+    } catch (error) {
+      toast.error(error.response?.data?.detail || "Erro ao criar categoria");
+    }
+  };
+
+  const handleUpdateCategory = async () => {
+    if (!editingCategory || !newCategoryName.trim()) return;
+    
+    try {
+      await axios.put(`${API}/categories/${editingCategory.id}`, { name: newCategoryName }, getAuthHeader());
+      toast.success("Categoria atualizada!");
+      setEditingCategory(null);
+      setNewCategoryName("");
+      fetchCategories();
+      fetchIngredients();
+    } catch (error) {
+      toast.error(error.response?.data?.detail || "Erro ao atualizar categoria");
+    }
+  };
+
+  const handleDeleteCategory = async (categoryId) => {
+    try {
+      await axios.delete(`${API}/categories/${categoryId}`, getAuthHeader());
+      toast.success("Categoria excluída!");
+      fetchCategories();
+    } catch (error) {
+      toast.error(error.response?.data?.detail || "Erro ao excluir categoria");
+    }
+  };
+
   const canEdit = currentUser?.role === "proprietario" || currentUser?.role === "administrador";
+
+  const getStockStatus = (ingredient) => {
+    const qty = ingredient.stock_quantity || 0;
+    const min = ingredient.stock_min || 0;
+    const max = ingredient.stock_max || 0;
+    
+    if (min > 0 && qty <= min) {
+      return { color: "text-red-500", bg: "bg-red-50 dark:bg-red-900/20", icon: AlertTriangle };
+    }
+    if (max > 0 && qty >= max) {
+      return { color: "text-blue-500", bg: "bg-blue-50 dark:bg-blue-900/20", icon: Package };
+    }
+    return { color: "text-green-500", bg: "bg-green-50 dark:bg-green-900/20", icon: Package };
+  };
 
   return (
     <div className="p-8" data-testid="ingredients-page">
@@ -178,215 +295,450 @@ export default function Ingredients() {
         <div className="flex justify-between items-center mb-8">
           <div>
             <h1 className="text-3xl font-bold tracking-tight">
-              Ingredientes
+              Estoque
             </h1>
             <p className="text-muted-foreground mt-1">
-              Gerencie os ingredientes e veja o preço médio calculado
+              Gerencie os ingredientes, categorias e controle de estoque
             </p>
           </div>
 
-          {canEdit && (
-            <Dialog open={open} onOpenChange={(isOpen) => {
-              setOpen(isOpen);
-              if (!isOpen) resetForm();
-            }}>
-              <DialogTrigger asChild>
-                <Button
-                  data-testid="add-ingredient-button"
-                  className="shadow-sm transition-all active:scale-95"
-                >
-                  <Plus className="w-5 h-5 mr-2" strokeWidth={1.5} />
-                  Novo Ingrediente
-                </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-md">
-              <DialogHeader>
-                <DialogTitle>
-                  {editMode ? "Editar Ingrediente" : "Novo Ingrediente"}
-                </DialogTitle>
-              </DialogHeader>
-              <form onSubmit={handleSubmit} className="space-y-4 mt-4">
-                <div>
-                  <Label htmlFor="name">
-                    Nome do Ingrediente
-                  </Label>
-                  <Input
-                    id="name"
-                    data-testid="ingredient-name-input"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder="Ex: Carne Bovina"
-                    required
-                    className="mt-1 h-11"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="unit">
-                    Unidade de Medida
-                  </Label>
-                  <Select value={unit} onValueChange={setUnit} required>
-                    <SelectTrigger
-                      data-testid="ingredient-unit-select"
-                      className="mt-1 h-11"
-                    >
-                      <SelectValue placeholder="Selecione a unidade" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="kg">Quilograma (kg)</SelectItem>
-                      <SelectItem value="un">Unidade (un)</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                
-                {unit === "un" && (
-                  <div>
-                    <Label htmlFor="unitsPerPackage">
-                      Unidades por Embalagem (opcional)
-                    </Label>
-                    <Input
-                      id="unitsPerPackage"
-                      data-testid="ingredient-units-per-package-input"
-                      type="number"
-                      value={unitsPerPackage}
-                      onChange={(e) => setUnitsPerPackage(e.target.value)}
-                      placeholder="Ex: 182 (para caixa com 182 sachês)"
-                      className="mt-1 h-11"
-                    />
-                    <p className="text-xs text-muted-foreground mt-1">
-                      Use quando comprar caixas/pacotes. O preço será dividido automaticamente.
-                    </p>
-                  </div>
-                )}
+          <div className="flex gap-3">
+            {canEdit && (
+              <>
+                {/* Botão Gerenciar Categorias */}
+                <Dialog open={categoryDialogOpen} onOpenChange={setCategoryDialogOpen}>
+                  <DialogTrigger asChild>
+                    <Button variant="outline" className="shadow-sm">
+                      <Settings className="w-5 h-5 mr-2" strokeWidth={1.5} />
+                      Categorias
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-md">
+                    <DialogHeader>
+                      <DialogTitle>Gerenciar Categorias</DialogTitle>
+                      <DialogDescription>
+                        Categorias usadas tanto em produtos quanto em estoque
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div className="space-y-4 mt-4">
+                      <div className="flex gap-2">
+                        <Input
+                          value={newCategoryName}
+                          onChange={(e) => setNewCategoryName(e.target.value)}
+                          placeholder={editingCategory ? "Novo nome" : "Nova categoria"}
+                          className="h-10"
+                        />
+                        {editingCategory ? (
+                          <div className="flex gap-2">
+                            <Button onClick={handleUpdateCategory} size="sm" className="h-10">
+                              Salvar
+                            </Button>
+                            <Button 
+                              onClick={() => { setEditingCategory(null); setNewCategoryName(""); }} 
+                              variant="ghost" 
+                              size="sm"
+                              className="h-10"
+                            >
+                              Cancelar
+                            </Button>
+                          </div>
+                        ) : (
+                          <Button onClick={handleCreateCategory} size="sm" className="h-10">
+                            <Plus className="w-4 h-4" />
+                          </Button>
+                        )}
+                      </div>
+                      
+                      <div className="border rounded-lg divide-y max-h-64 overflow-y-auto">
+                        {categories.map((cat) => (
+                          <div key={cat.id} className="flex items-center justify-between p-3 hover:bg-muted/50">
+                            <span className="font-medium">{cat.name}</span>
+                            <div className="flex gap-1">
+                              <Button
+                                onClick={() => { setEditingCategory(cat); setNewCategoryName(cat.name); }}
+                                variant="ghost"
+                                size="sm"
+                              >
+                                <Edit className="w-4 h-4" />
+                              </Button>
+                              <Button
+                                onClick={() => handleDeleteCategory(cat.id)}
+                                variant="ghost"
+                                size="sm"
+                                className="text-destructive hover:text-destructive"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </Button>
+                            </div>
+                          </div>
+                        ))}
+                        {categories.length === 0 && (
+                          <div className="p-4 text-center text-muted-foreground">
+                            Nenhuma categoria cadastrada
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </DialogContent>
+                </Dialog>
 
-                {unit === "kg" && (
-                  <div>
-                    <Label htmlFor="unitWeight">
-                      Peso por Unidade em kg (opcional)
-                    </Label>
-                    <Input
-                      id="unitWeight"
-                      data-testid="ingredient-unit-weight-input"
-                      type="number"
-                      step="0.001"
-                      value={unitWeight}
-                      onChange={(e) => setUnitWeight(e.target.value)}
-                      placeholder="Ex: 0.130 (hambúrguer de 130g)"
-                      className="mt-1 h-11"
-                    />
-                    <p className="text-xs text-muted-foreground mt-1">
-                      Use quando trabalhar por unidade. Ex: 1 hambúrguer = 0.130kg. Na ficha técnica você usará unidades ao invés de kg.
-                    </p>
-                  </div>
-                )}
-                
-                <Button
-                  type="submit"
-                  data-testid="create-ingredient-button"
-                  disabled={loading || !unit}
-                  className="w-full h-11 font-medium shadow-sm transition-all active:scale-95"
-                >
-                  {loading ? (editMode ? "Atualizando..." : "Criando...") : (editMode ? "Atualizar Ingrediente" : "Criar Ingrediente")}
-                </Button>
-              </form>
-            </DialogContent>
-          </Dialog>
-          )}
+                {/* Botão Novo Ingrediente */}
+                <Dialog open={open} onOpenChange={(isOpen) => {
+                  setOpen(isOpen);
+                  if (!isOpen) resetForm();
+                }}>
+                  <DialogTrigger asChild>
+                    <Button
+                      data-testid="add-ingredient-button"
+                      className="shadow-sm transition-all active:scale-95"
+                    >
+                      <Plus className="w-5 h-5 mr-2" strokeWidth={1.5} />
+                      Novo Item
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-md">
+                    <DialogHeader>
+                      <DialogTitle>
+                        {editMode ? "Editar Item" : "Novo Item de Estoque"}
+                      </DialogTitle>
+                    </DialogHeader>
+                    <form onSubmit={handleSubmit} className="space-y-4 mt-4">
+                      <div>
+                        <Label htmlFor="name">Nome do Item</Label>
+                        <Input
+                          id="name"
+                          data-testid="ingredient-name-input"
+                          value={name}
+                          onChange={(e) => setName(e.target.value)}
+                          placeholder="Ex: Carne Bovina"
+                          required
+                          className="mt-1 h-11"
+                        />
+                      </div>
+                      
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <Label htmlFor="unit">Unidade</Label>
+                          <Select value={unit} onValueChange={setUnit} required>
+                            <SelectTrigger className="mt-1 h-11">
+                              <SelectValue placeholder="Selecione" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="kg">Quilograma (kg)</SelectItem>
+                              <SelectItem value="un">Unidade (un)</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        
+                        <div>
+                          <Label htmlFor="category">Categoria</Label>
+                          <Select value={category} onValueChange={setCategory}>
+                            <SelectTrigger className="mt-1 h-11">
+                              <SelectValue placeholder="Selecione" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="">Sem categoria</SelectItem>
+                              {categories.map((cat) => (
+                                <SelectItem key={cat.id} value={cat.name}>
+                                  {cat.name}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+                      
+                      {unit === "un" && (
+                        <div>
+                          <Label htmlFor="unitsPerPackage">Unidades por Embalagem (opcional)</Label>
+                          <Input
+                            id="unitsPerPackage"
+                            type="number"
+                            value={unitsPerPackage}
+                            onChange={(e) => setUnitsPerPackage(e.target.value)}
+                            placeholder="Ex: 182"
+                            className="mt-1 h-11"
+                          />
+                          <p className="text-xs text-muted-foreground mt-1">
+                            Use quando comprar caixas/pacotes.
+                          </p>
+                        </div>
+                      )}
+
+                      {unit === "kg" && (
+                        <div>
+                          <Label htmlFor="unitWeight">Peso por Unidade em kg (opcional)</Label>
+                          <Input
+                            id="unitWeight"
+                            type="number"
+                            step="0.001"
+                            value={unitWeight}
+                            onChange={(e) => setUnitWeight(e.target.value)}
+                            placeholder="Ex: 0.130"
+                            className="mt-1 h-11"
+                          />
+                          <p className="text-xs text-muted-foreground mt-1">
+                            Ex: 1 hambúrguer = 0.130kg
+                          </p>
+                        </div>
+                      )}
+                      
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <Label htmlFor="stockMin">Qtd Mínima</Label>
+                          <Input
+                            id="stockMin"
+                            type="number"
+                            step="0.01"
+                            value={stockMin}
+                            onChange={(e) => setStockMin(e.target.value)}
+                            placeholder="0"
+                            className="mt-1 h-11"
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="stockMax">Qtd Máxima</Label>
+                          <Input
+                            id="stockMax"
+                            type="number"
+                            step="0.01"
+                            value={stockMax}
+                            onChange={(e) => setStockMax(e.target.value)}
+                            placeholder="0"
+                            className="mt-1 h-11"
+                          />
+                        </div>
+                      </div>
+                      
+                      <Button
+                        type="submit"
+                        data-testid="create-ingredient-button"
+                        disabled={loading || !unit}
+                        className="w-full h-11 font-medium shadow-sm transition-all active:scale-95"
+                      >
+                        {loading ? (editMode ? "Atualizando..." : "Criando...") : (editMode ? "Atualizar Item" : "Criar Item")}
+                      </Button>
+                    </form>
+                  </DialogContent>
+                </Dialog>
+              </>
+            )}
+          </div>
         </div>
 
         <div className="bg-card rounded-xl border shadow-sm overflow-hidden">
-          <table className="w-full" data-testid="ingredients-table">
-            <thead className="bg-muted/50 border-b">
-              <tr>
-                <th className="text-left py-3 px-6 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                  Ingrediente
-                </th>
-                <th className="text-left py-3 px-6 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                  Unidade
-                </th>
-                <th className="text-right py-3 px-6 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                  Preço Médio
-                </th>
-                <th className="text-right py-3 px-6 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                  Ações
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {ingredients.length === 0 ? (
+          <div className="overflow-x-auto">
+            <table className="w-full" data-testid="ingredients-table">
+              <thead className="bg-muted/50 border-b">
                 <tr>
-                  <td colSpan="4" className="text-center py-12 text-muted-foreground">
-                    Nenhum ingrediente cadastrado. Clique em "Novo Ingrediente" para começar.
-                  </td>
+                  <th className="text-left py-3 px-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                    Ingrediente
+                  </th>
+                  <th className="text-left py-3 px-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                    Categoria
+                  </th>
+                  <th className="text-center py-3 px-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                    Unidade
+                  </th>
+                  <th className="text-right py-3 px-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                    Preço Médio
+                  </th>
+                  <th className="text-center py-3 px-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                    Qtd Estoque
+                  </th>
+                  <th className="text-center py-3 px-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                    Qtd Máx
+                  </th>
+                  <th className="text-center py-3 px-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                    Qtd Mín
+                  </th>
+                  <th className="text-right py-3 px-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                    Ações
+                  </th>
                 </tr>
-              ) : (
-                ingredients.map((ingredient) => (
-                  <tr
-                    key={ingredient.id}
-                    data-testid={`ingredient-row-${ingredient.id}`}
-                    className="border-b hover:bg-muted/30 transition-colors"
-                  >
-                    <td className="py-3 px-6 font-medium">
-                      {ingredient.name}
-                      {ingredient.units_per_package && (
-                        <span className="text-xs text-muted-foreground ml-2">
-                          ({ingredient.units_per_package} un/emb)
-                        </span>
-                      )}
-                      {ingredient.unit_weight && (
-                        <span className="text-xs text-muted-foreground ml-2">
-                          (1 un = {ingredient.unit_weight}kg)
-                        </span>
-                      )}
-                    </td>
-                    <td className="py-3 px-6 text-muted-foreground">{ingredient.unit}</td>
-                    <td className="py-3 px-6 text-right font-mono font-medium">
-                      {ingredient.average_price > 0
-                        ? `R$ ${ingredient.average_price.toFixed(2)}`
-                        : "-"}
-                    </td>
-                    <td className="py-3 px-6 text-right">
-                      {canEdit && (
-                        <div className="flex gap-2 justify-end">
-                          <Button
-                            data-testid={`edit-ingredient-${ingredient.id}`}
-                            onClick={() => handleEdit(ingredient)}
-                            variant="ghost"
-                            size="sm"
-                            className="hover:bg-muted"
-                          >
-                            <Edit className="w-4 h-4" strokeWidth={1.5} />
-                          </Button>
-                          <Button
-                            data-testid={`delete-ingredient-${ingredient.id}`}
-                            onClick={() => checkUsageAndDelete(ingredient.id, ingredient.name)}
-                            variant="ghost"
-                            size="sm"
-                            className="text-destructive hover:text-destructive hover:bg-destructive/10"
-                          >
-                            <Trash2 className="w-4 h-4" strokeWidth={1.5} />
-                          </Button>
-                        </div>
-                      )}
-                      {!canEdit && (
-                        <span className="text-xs text-muted-foreground">Somente leitura</span>
-                      )}
+              </thead>
+              <tbody>
+                {ingredients.length === 0 ? (
+                  <tr>
+                    <td colSpan="8" className="text-center py-12 text-muted-foreground">
+                      Nenhum item cadastrado. Clique em "Novo Item" para começar.
                     </td>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+                ) : (
+                  ingredients.map((ingredient) => {
+                    const stockStatus = getStockStatus(ingredient);
+                    const StockIcon = stockStatus.icon;
+                    
+                    return (
+                      <tr
+                        key={ingredient.id}
+                        data-testid={`ingredient-row-${ingredient.id}`}
+                        className="border-b hover:bg-muted/30 transition-colors"
+                      >
+                        <td className="py-3 px-4 font-medium">
+                          <div className="flex items-center gap-2">
+                            {ingredient.name}
+                            {ingredient.units_per_package && (
+                              <span className="text-xs text-muted-foreground">
+                                ({ingredient.units_per_package} un/emb)
+                              </span>
+                            )}
+                            {ingredient.unit_weight && (
+                              <span className="text-xs text-muted-foreground">
+                                (1 un = {ingredient.unit_weight}kg)
+                              </span>
+                            )}
+                          </div>
+                        </td>
+                        <td className="py-3 px-4">
+                          {ingredient.category ? (
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary">
+                              {ingredient.category}
+                            </span>
+                          ) : (
+                            <span className="text-muted-foreground text-sm">-</span>
+                          )}
+                        </td>
+                        <td className="py-3 px-4 text-center text-muted-foreground">
+                          {ingredient.unit}
+                        </td>
+                        <td className="py-3 px-4 text-right font-mono font-medium">
+                          {ingredient.average_price > 0
+                            ? `R$ ${ingredient.average_price.toFixed(2)}`
+                            : "-"}
+                        </td>
+                        <td className="py-3 px-4 text-center">
+                          <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg ${stockStatus.bg}`}>
+                            <StockIcon className={`w-4 h-4 ${stockStatus.color}`} />
+                            <span className={`font-mono font-medium ${stockStatus.color}`}>
+                              {(ingredient.stock_quantity || 0).toFixed(2)}
+                            </span>
+                          </div>
+                        </td>
+                        <td className="py-3 px-4 text-center font-mono text-muted-foreground">
+                          {ingredient.stock_max > 0 ? ingredient.stock_max.toFixed(2) : "-"}
+                        </td>
+                        <td className="py-3 px-4 text-center font-mono text-muted-foreground">
+                          {ingredient.stock_min > 0 ? ingredient.stock_min.toFixed(2) : "-"}
+                        </td>
+                        <td className="py-3 px-4 text-right">
+                          {canEdit && (
+                            <div className="flex gap-1 justify-end">
+                              <Button
+                                onClick={() => openStockDialog(ingredient)}
+                                variant="ghost"
+                                size="sm"
+                                className="hover:bg-green-100 dark:hover:bg-green-900/30"
+                                title="Ajustar Estoque"
+                              >
+                                <Package className="w-4 h-4 text-green-600" strokeWidth={1.5} />
+                              </Button>
+                              <Button
+                                data-testid={`edit-ingredient-${ingredient.id}`}
+                                onClick={() => handleEdit(ingredient)}
+                                variant="ghost"
+                                size="sm"
+                                className="hover:bg-muted"
+                              >
+                                <Edit className="w-4 h-4" strokeWidth={1.5} />
+                              </Button>
+                              <Button
+                                data-testid={`delete-ingredient-${ingredient.id}`}
+                                onClick={() => checkUsageAndDelete(ingredient.id, ingredient.name)}
+                                variant="ghost"
+                                size="sm"
+                                className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                              >
+                                <Trash2 className="w-4 h-4" strokeWidth={1.5} />
+                              </Button>
+                            </div>
+                          )}
+                          {!canEdit && (
+                            <span className="text-xs text-muted-foreground">Somente leitura</span>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
+
+      {/* Stock Adjustment Dialog */}
+      <Dialog open={stockDialogOpen} onOpenChange={setStockDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Ajustar Estoque</DialogTitle>
+            <DialogDescription>
+              {stockIngredient?.name} - Estoque atual: {(stockIngredient?.stock_quantity || 0).toFixed(2)} {stockIngredient?.unit}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 mt-4">
+            <div className="grid grid-cols-2 gap-4">
+              <Button
+                type="button"
+                variant={stockOperation === "add" ? "default" : "outline"}
+                onClick={() => setStockOperation("add")}
+                className="h-12"
+              >
+                <ArrowUp className="w-5 h-5 mr-2" />
+                Entrada
+              </Button>
+              <Button
+                type="button"
+                variant={stockOperation === "remove" ? "default" : "outline"}
+                onClick={() => setStockOperation("remove")}
+                className="h-12"
+              >
+                <ArrowDown className="w-5 h-5 mr-2" />
+                Saída
+              </Button>
+            </div>
+            
+            <div>
+              <Label>Quantidade</Label>
+              <Input
+                type="number"
+                step="0.01"
+                value={stockAdjustment}
+                onChange={(e) => setStockAdjustment(e.target.value)}
+                placeholder="0.00"
+                className="mt-1 h-11"
+              />
+            </div>
+            
+            <div>
+              <Label>Motivo (opcional)</Label>
+              <Input
+                value={stockReason}
+                onChange={(e) => setStockReason(e.target.value)}
+                placeholder="Ex: Perda, Ajuste de inventário, etc"
+                className="mt-1 h-11"
+              />
+            </div>
+            
+            <Button
+              onClick={handleStockAdjustment}
+              disabled={!stockAdjustment || parseFloat(stockAdjustment) <= 0}
+              className="w-full h-11"
+            >
+              Confirmar Ajuste
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* Warning Dialog */}
       <AlertDialog open={deleteWarningOpen} onOpenChange={setDeleteWarningOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Não é possível excluir este ingrediente</AlertDialogTitle>
+            <AlertDialogTitle>Não é possível excluir este item</AlertDialogTitle>
             <AlertDialogDescription className="space-y-3">
               <p>
-                O ingrediente <strong>{ingredientToDelete}</strong> está sendo usado nos seguintes produtos:
+                O item <strong>{ingredientToDelete}</strong> está sendo usado nos seguintes produtos:
               </p>
               <ul className="list-disc list-inside space-y-1 text-sm">
                 {productsUsingIngredient.map((product) => (
@@ -394,7 +746,7 @@ export default function Ingredients() {
                 ))}
               </ul>
               <p className="text-sm pt-2">
-                Para excluir este ingrediente, primeiro remova-o das fichas técnicas dos produtos acima.
+                Para excluir este item, primeiro remova-o das fichas técnicas dos produtos acima.
               </p>
             </AlertDialogDescription>
           </AlertDialogHeader>
@@ -404,13 +756,13 @@ export default function Ingredients() {
         </AlertDialogContent>
       </AlertDialog>
 
-      {/* AlertDialog de confirmação de exclusão */}
+      {/* Delete Confirmation Dialog */}
       <AlertDialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Confirmar Exclusão</AlertDialogTitle>
             <AlertDialogDescription>
-              Tem certeza que deseja excluir o ingrediente <strong>{ingredientToDelete?.name}</strong>?
+              Tem certeza que deseja excluir o item <strong>{ingredientToDelete?.name}</strong>?
               Esta ação não pode ser desfeita.
             </AlertDialogDescription>
           </AlertDialogHeader>
