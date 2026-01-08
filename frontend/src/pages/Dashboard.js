@@ -342,6 +342,10 @@ export default function Dashboard({ setIsAuthenticated }) {
           {/* Se a aba Balcão está ativa, mostrar a tela de vendas */}
           {activeTopMenu === "balcao" ? (
             <BalcaoVendas />
+          ) : activeTopMenu === "mesas" ? (
+            <Mesas />
+          ) : activeTopMenu === "chatbot" ? (
+            <ChatBot />
           ) : activeTopMenu ? (
             <div className="p-8 flex flex-col items-center justify-center min-h-[60vh]">
               <div className="text-center">
