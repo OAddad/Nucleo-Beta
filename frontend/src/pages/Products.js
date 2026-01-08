@@ -633,19 +633,27 @@ export default function Products() {
                     className="flex items-center px-6 py-4 cursor-pointer hover:bg-muted/30 transition-colors"
                     onClick={() => toggleProduct(product.id)}
                   >
-                    {/* Foto do produto */}
-                    {product.photo_url && (
-                      <div className="w-16 h-16 rounded-lg border overflow-hidden bg-muted mr-4 flex-shrink-0">
+                    {/* Foto do produto ou placeholder */}
+                    <div className="w-16 h-16 rounded-lg border overflow-hidden bg-muted mr-4 flex-shrink-0 flex items-center justify-center">
+                      {product.photo_url ? (
                         <img
                           src={`${BACKEND_URL}${product.photo_url}`}
                           alt={product.name}
                           className="w-full h-full object-cover"
+                          onError={(e) => {
+                            e.target.style.display = 'none';
+                            e.target.parentElement.innerHTML = '<div class="text-xs text-muted-foreground text-center p-1">Sem foto</div>';
+                          }}
                         />
-                      </div>
-                    )}
+                      ) : (
+                        <div className="text-xs text-muted-foreground text-center p-1">
+                          Sem foto
+                        </div>
+                      )}
+                    </div>
                     
                     <div className="flex-1 grid grid-cols-12 gap-4 items-center">
-                      <div className={`${product.photo_url ? 'col-span-4' : 'col-span-5'} font-bold text-lg`}>
+                      <div className="col-span-4 font-bold text-lg">
                         {product.name}
                       </div>
                       <div className="col-span-2 text-center">
