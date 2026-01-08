@@ -405,25 +405,25 @@ export default function Products() {
   return (
     <div className="p-8" data-testid="products-page">
       <div className="max-w-7xl mx-auto">
-        <div className="flex justify-between items-center mb-8">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">
-              Produtos
-            </h1>
-            <p className="text-muted-foreground mt-1">
-              Cadastre produtos com suas fichas técnicas e calcule o CMV
-            </p>
-          </div>
+        {/* Título da Página */}
+        <div className="mb-6">
+          <h1 className="text-3xl font-bold tracking-tight">
+            Produtos
+          </h1>
+          <p className="text-muted-foreground mt-1">
+            Cadastre produtos com suas fichas técnicas e calcule o CMV
+          </p>
         </div>
 
+        {/* Sub-abas */}
         <Tabs defaultValue="products" className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
+          <TabsList className="grid w-full grid-cols-2 mb-6">
             <TabsTrigger value="products">Produtos</TabsTrigger>
             <TabsTrigger value="categories">Categorias</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="products" className="mt-6">
-            <div className="flex justify-end mb-4">
+          <TabsContent value="products" className="space-y-4">
+            <div className="flex justify-end">
               <Dialog
                 open={open}
                 onOpenChange={(isOpen) => {
