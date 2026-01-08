@@ -229,6 +229,33 @@ export default function Products() {
     setExpandedProducts(newExpanded);
   };
 
+  const getSortedProducts = () => {
+    const sorted = [...products];
+    
+    switch (sortBy) {
+      case "alfabetica-az":
+        return sorted.sort((a, b) => a.name.localeCompare(b.name));
+      case "alfabetica-za":
+        return sorted.sort((a, b) => b.name.localeCompare(a.name));
+      case "cmv-maior":
+        return sorted.sort((a, b) => b.cmv - a.cmv);
+      case "cmv-menor":
+        return sorted.sort((a, b) => a.cmv - b.cmv);
+      case "margem-maior":
+        return sorted.sort((a, b) => (b.profit_margin || 0) - (a.profit_margin || 0));
+      case "margem-menor":
+        return sorted.sort((a, b) => (a.profit_margin || 0) - (b.profit_margin || 0));
+      case "preco-maior":
+        return sorted.sort((a, b) => (b.sale_price || 0) - (a.sale_price || 0));
+      case "preco-menor":
+        return sorted.sort((a, b) => (a.sale_price || 0) - (b.sale_price || 0));
+      default:
+        return sorted;
+    }
+  };
+
+  const sortedProducts = getSortedProducts();
+
   return (
     <div className="p-8" data-testid="products-page">
       <div className="max-w-7xl mx-auto">
