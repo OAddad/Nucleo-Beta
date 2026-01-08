@@ -278,15 +278,22 @@ export default function Purchases() {
             <Button 
               variant="outline" 
               onClick={() => {
-                // Flatten purchases for export
-                const flatPurchases = purchases.map(p => ({
-                  data: p.purchase_date,
-                  fornecedor: p.supplier,
-                  ingrediente: p.ingredient_name,
-                  quantidade: p.quantity,
-                  valor_total: p.price,
-                  valor_unitario: p.unit_price
-                }));
+                // Flatten purchases for export - extract items from each batch
+                const flatPurchases = [];
+                purchaseBatches.forEach(batch => {
+                  if (batch.purchases && batch.purchases.length > 0) {
+                    batch.purchases.forEach(p => {
+                      flatPurchases.push({
+                        data: batch.purchase_date,
+                        fornecedor: batch.supplier,
+                        ingrediente: p.ingredient_name,
+                        quantidade: p.quantity,
+                        valor_total: p.price,
+                        valor_unitario: p.unit_price
+                      });
+                    });
+                  }
+                });
                 exportToExcel(flatPurchases, "compras", {
                   data: "Data",
                   fornecedor: "Fornecedor",
