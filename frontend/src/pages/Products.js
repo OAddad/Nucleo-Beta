@@ -1028,7 +1028,7 @@ export default function Products() {
                       <div>
                         <Label className="text-base">Etapas do Pedido</Label>
                         <p className="text-xs text-muted-foreground mt-1">
-                          Configure as etapas que o cliente deve seguir ao pedir este produto (adicionais, observações, combos, etc.)
+                          Configure as etapas que o cliente deve seguir ao pedir este produto (adicionais, combos, etc.)
                         </p>
                       </div>
                       <Button
@@ -1052,92 +1052,135 @@ export default function Products() {
                     ) : (
                       <div className="space-y-4">
                         {orderSteps.map((step, stepIndex) => (
-                          <div key={stepIndex} className="bg-muted/30 rounded-lg p-4 border space-y-3">
+                          <div key={stepIndex} className="bg-muted/30 rounded-lg p-4 border space-y-4">
                             <div className="flex items-start gap-3">
-                              <div className="flex-1 space-y-3">
-                                <div className="flex gap-3">
-                                  <div className="flex-1">
+                              <div className="flex-1 space-y-4">
+                                {/* Linha 1: Nome da Etapa e Tipo */}
+                                <div className="grid grid-cols-2 gap-3">
+                                  <div>
                                     <Label className="text-xs">Nome da Etapa</Label>
                                     <Input
                                       value={step.name}
                                       onChange={(e) => updateOrderStep(stepIndex, "name", e.target.value)}
-                                      placeholder="Ex: Escolha o Acompanhamento"
+                                      placeholder="Ex: Adicionais, Acompanhamentos"
                                       className="h-9 mt-1"
                                     />
                                   </div>
-                                  <div className="w-40">
-                                    <Label className="text-xs">Tipo</Label>
+                                  <div>
+                                    <Label className="text-xs">Tipo de Cálculo</Label>
                                     <Select
-                                      value={step.step_type}
-                                      onValueChange={(value) => updateOrderStep(stepIndex, "step_type", value)}
+                                      value={step.calculation_type || "soma"}
+                                      onValueChange={(value) => updateOrderStep(stepIndex, "calculation_type", value)}
                                     >
                                       <SelectTrigger className="h-9 mt-1">
                                         <SelectValue />
                                       </SelectTrigger>
                                       <SelectContent>
-                                        <SelectItem value="single">Única escolha</SelectItem>
-                                        <SelectItem value="multiple">Múltipla escolha</SelectItem>
-                                        <SelectItem value="text">Texto livre</SelectItem>
+                                        <SelectItem value="soma">Soma</SelectItem>
+                                        <SelectItem value="subtracao">Subtração</SelectItem>
+                                        <SelectItem value="minimo">Mínimo</SelectItem>
+                                        <SelectItem value="medio">Médio</SelectItem>
+                                        <SelectItem value="maximo">Máximo</SelectItem>
                                       </SelectContent>
                                     </Select>
                                   </div>
                                 </div>
 
-                                <div>
-                                  <Label className="text-xs">Descrição (opcional)</Label>
-                                  <Input
-                                    value={step.description || ""}
-                                    onChange={(e) => updateOrderStep(stepIndex, "description", e.target.value)}
-                                    placeholder="Ex: Escolha até 2 acompanhamentos"
-                                    className="h-9 mt-1"
-                                  />
+                                {/* Linha 2: Qtd Mínima e Máxima */}
+                                <div className="grid grid-cols-2 gap-3">
+                                  <div>
+                                    <Label className="text-xs">Quantidade Mínima</Label>
+                                    <Input
+                                      type="number"
+                                      min="0"
+                                      value={step.min_selections || 0}
+                                      onChange={(e) => updateOrderStep(stepIndex, "min_selections", parseInt(e.target.value) || 0)}
+                                      placeholder="0 = sem limite"
+                                      className="h-9 mt-1"
+                                    />
+                                    <p className="text-[10px] text-muted-foreground mt-0.5">0 = sem limitador</p>
+                                  </div>
+                                  <div>
+                                    <Label className="text-xs">Quantidade Máxima</Label>
+                                    <Input
+                                      type="number"
+                                      min="0"
+                                      value={step.max_selections || 0}
+                                      onChange={(e) => updateOrderStep(stepIndex, "max_selections", parseInt(e.target.value) || 0)}
+                                      placeholder="0 = sem limite"
+                                      className="h-9 mt-1"
+                                    />
+                                    <p className="text-[10px] text-muted-foreground mt-0.5">0 = sem limitador</p>
+                                  </div>
                                 </div>
 
-                                {step.step_type !== "text" && (
-                                  <div className="space-y-2">
-                                    <div className="flex items-center justify-between">
-                                      <Label className="text-xs">Opções</Label>
-                                      <Button
-                                        type="button"
-                                        onClick={() => addOptionToStep(stepIndex)}
-                                        variant="ghost"
-                                        size="sm"
-                                        className="h-7 text-xs"
-                                      >
-                                        <Plus className="w-3 h-3 mr-1" />
-                                        Adicionar
-                                      </Button>
-                                    </div>
-                                    {(step.options || []).map((option, optionIndex) => (
-                                      <div key={optionIndex} className="flex gap-2 items-center">
-                                        <Input
-                                          value={option.name}
-                                          onChange={(e) => updateStepOption(stepIndex, optionIndex, "name", e.target.value)}
-                                          placeholder="Nome da opção"
-                                          className="h-8 flex-1"
-                                        />
-                                        <Input
-                                          type="number"
-                                          step="0.01"
-                                          value={option.price || ""}
-                                          onChange={(e) => updateStepOption(stepIndex, optionIndex, "price", parseFloat(e.target.value) || 0)}
-                                          placeholder="+ R$"
-                                          className="h-8 w-24"
-                                        />
-                                        <Button
-                                          type="button"
-                                          onClick={() => removeStepOption(stepIndex, optionIndex)}
-                                          variant="ghost"
-                                          size="icon"
-                                          className="h-8 w-8 text-destructive"
-                                        >
-                                          <Trash2 className="w-3 h-3" />
-                                        </Button>
-                                      </div>
-                                    ))}
+                                {/* Linha 3: Produtos da Etapa */}
+                                <div className="space-y-2">
+                                  <div className="flex items-center justify-between">
+                                    <Label className="text-xs">Produtos da Etapa</Label>
                                   </div>
-                                )}
+                                  
+                                  {/* Selector para adicionar produto */}
+                                  <div className="flex gap-2">
+                                    <Select
+                                      onValueChange={(value) => addItemToStep(stepIndex, value)}
+                                    >
+                                      <SelectTrigger className="h-9 flex-1">
+                                        <SelectValue placeholder="Selecione um produto para adicionar" />
+                                      </SelectTrigger>
+                                      <SelectContent>
+                                        {products
+                                          .filter(p => p.id !== currentProductId) // Não incluir o próprio produto
+                                          .map((prod) => (
+                                            <SelectItem key={prod.id} value={prod.id}>
+                                              {prod.code && `#${prod.code} - `}{prod.name} {prod.sale_price ? `(R$ ${prod.sale_price.toFixed(2)})` : ''}
+                                            </SelectItem>
+                                          ))
+                                        }
+                                      </SelectContent>
+                                    </Select>
+                                  </div>
+                                  
+                                  {/* Lista de produtos adicionados */}
+                                  {(step.items || []).length > 0 ? (
+                                    <div className="space-y-2 mt-2">
+                                      {(step.items || []).map((item, itemIndex) => (
+                                        <div key={itemIndex} className="flex gap-2 items-center bg-background p-2 rounded-lg border">
+                                          <div className="flex-1">
+                                            <span className="text-sm font-medium">{item.product_name}</span>
+                                          </div>
+                                          <div className="flex items-center gap-2">
+                                            <Label className="text-xs text-muted-foreground">Preço:</Label>
+                                            <Input
+                                              type="number"
+                                              step="0.01"
+                                              value={item.price_override || ""}
+                                              onChange={(e) => updateStepItem(stepIndex, itemIndex, "price_override", parseFloat(e.target.value) || 0)}
+                                              placeholder="R$"
+                                              className="h-8 w-24"
+                                            />
+                                          </div>
+                                          <Button
+                                            type="button"
+                                            onClick={() => removeStepItem(stepIndex, itemIndex)}
+                                            variant="ghost"
+                                            size="icon"
+                                            className="h-8 w-8 text-destructive hover:text-destructive"
+                                          >
+                                            <Trash2 className="w-3 h-3" />
+                                          </Button>
+                                        </div>
+                                      ))}
+                                    </div>
+                                  ) : (
+                                    <p className="text-xs text-muted-foreground text-center py-2">
+                                      Nenhum produto adicionado. Selecione produtos acima.
+                                    </p>
+                                  )}
+                                </div>
                               </div>
+                              
+                              {/* Botão excluir etapa */}
                               <Button
                                 type="button"
                                 onClick={() => removeOrderStep(stepIndex)}
