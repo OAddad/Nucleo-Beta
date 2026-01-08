@@ -205,7 +205,7 @@ export default function Delivery() {
   // Filtrar pedidos por status
   const getPedidosByStatus = (status) => {
     if (status === "inicio") return pedidos;
-    if (status === "aguardando") return pedidos.filter(p => p.status === "aguardando");
+    if (status === "aguardando") return pedidos.filter(p => p.status === "aguardando" || p.status === "producao");
     if (status === "transito") return pedidos.filter(p => p.status === "transito");
     return pedidos;
   };
