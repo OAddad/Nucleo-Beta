@@ -3,7 +3,7 @@ import axios from "axios";
 import { toast } from "sonner";
 import { 
   Search, Plus, MoreVertical, Edit, Trash2, X, Users, Receipt, 
-  ShoppingCart, ImageOff, Minus, CreditCard, Banknote, QrCode, ShoppingBasket
+  ShoppingCart, ImageOff, Minus, CreditCard, Banknote, QrCode, ShoppingBasket, ArrowLeft
 } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
@@ -120,172 +120,174 @@ function MesaCard({ mesa, onClick, onEdit, onDelete }) {
   );
 }
 
-// Popup de Produto para Mesa
-function ProductPopup({ product, open, onClose, onAddToCart }) {
-  const [imageError, setImageError] = useState(false);
-  const [quantity, setQuantity] = useState(1);
-  const [observation, setObservation] = useState("");
-  const [customPrice, setCustomPrice] = useState(product?.sale_price || 0);
-  const [isEditingPrice, setIsEditingPrice] = useState(false);
-
-  useEffect(() => {
-    if (open && product) {
-      setQuantity(1);
-      setObservation("");
-      setCustomPrice(product.sale_price || 0);
-      setIsEditingPrice(false);
-      setImageError(false);
-    }
-  }, [open, product]);
-
-  if (!product) return null;
-
-  const totalPrice = customPrice * quantity;
-
-  const handleAdd = () => {
-    onAddToCart({
-      ...product,
-      sale_price: customPrice,
-      quantity,
-      observation: observation.trim() || null
-    });
-    onClose();
-  };
-
-  return (
-    <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-lg p-0 gap-0 overflow-hidden">
-        <div className="absolute top-4 right-4 z-10">
-          <button onClick={onClose} className="rounded-full p-2 bg-background/80 hover:bg-background border shadow-sm">
-            <X className="w-5 h-5" />
-          </button>
-        </div>
-
-        <div className="p-6">
-          <div className="flex gap-6 mb-6">
-            <div className="w-44 h-44 rounded-xl bg-muted overflow-hidden flex-shrink-0 border shadow-sm">
-              {product.photo_url && !imageError ? (
-                <img
-                  src={`${BACKEND_URL}/api${product.photo_url}`}
-                  alt={product.name}
-                  className="w-full h-full object-cover"
-                  onError={() => setImageError(true)}
-                />
-              ) : (
-                <div className="w-full h-full flex flex-col items-center justify-center text-muted-foreground">
-                  <ImageOff className="w-12 h-12" />
-                </div>
-              )}
-            </div>
-
-            <div className="flex-1">
-              <h2 className="text-2xl font-bold mb-1">{product.name}</h2>
-              {product.description && (
-                <p className="text-muted-foreground text-sm mb-4">{product.description}</p>
-              )}
-              
-              <div className="flex items-center gap-2">
-                {isEditingPrice ? (
-                  <div className="flex items-center gap-2">
-                    <span className="text-primary text-xl">R$</span>
-                    <Input
-                      type="number"
-                      step="0.01"
-                      value={customPrice}
-                      onChange={(e) => setCustomPrice(parseFloat(e.target.value) || 0)}
-                      onBlur={() => setIsEditingPrice(false)}
-                      autoFocus
-                      className="w-28 h-10 text-xl font-bold text-primary"
-                    />
-                  </div>
-                ) : (
-                  <button
-                    onClick={() => setIsEditingPrice(true)}
-                    className="flex items-center gap-1 text-2xl font-bold text-primary hover:opacity-80"
-                  >
-                    R$ {customPrice.toFixed(2)}
-                    <span className="text-xs text-muted-foreground ml-1">✏️</span>
-                  </button>
-                )}
-              </div>
-            </div>
-          </div>
-
-          <div className="mb-6">
-            <Label className="text-base font-medium mb-2 block">Alguma observação?</Label>
-            <Textarea
-              value={observation}
-              onChange={(e) => setObservation(e.target.value)}
-              placeholder="Ex: tirar cebola, maionese à parte, etc..."
-              className="resize-none"
-              maxLength={255}
-              rows={3}
-            />
-            <p className="text-xs text-muted-foreground text-right mt-1">{observation.length} / 255</p>
-          </div>
-        </div>
-
-        <div className="border-t bg-muted/30 p-4">
-          <div className="flex items-center justify-between gap-4">
-            <div className="flex items-center gap-1 bg-background rounded-full border p-1">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-12 w-12 rounded-full"
-                onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                disabled={quantity <= 1}
-              >
-                <Minus className="w-5 h-5" />
-              </Button>
-              <span className="w-10 text-center text-xl font-bold">{quantity}</span>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-12 w-12 rounded-full"
-                onClick={() => setQuantity(quantity + 1)}
-              >
-                <Plus className="w-5 h-5" />
-              </Button>
-            </div>
-
-            <Button
-              onClick={handleAdd}
-              className="flex-1 h-14 text-lg font-bold rounded-full bg-orange-500 hover:bg-orange-600 text-white shadow-lg"
-            >
-              <ShoppingBasket className="w-6 h-6 mr-2" />
-              Adicionar R$ {totalPrice.toFixed(2)}
-            </Button>
-          </div>
-        </div>
-      </DialogContent>
-    </Dialog>
-  );
-}
-
-// Tela de Vendas da Mesa
-function MesaVendas({ mesa, onClose, onUpdate }) {
+// Componente Principal - Mesas
+export default function Mesas() {
+  const [mesas, setMesas] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [mesaDialogOpen, setMesaDialogOpen] = useState(false);
+  const [editMode, setEditMode] = useState(false);
+  const [currentMesa, setCurrentMesa] = useState(null);
+  const [mesaNome, setMesaNome] = useState("");
+  const [mesaNumero, setMesaNumero] = useState("");
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [mesaToDelete, setMesaToDelete] = useState(null);
+  
+  // Tela de vendas
+  const [mesaVendasOpen, setMesaVendasOpen] = useState(false);
+  const [selectedMesa, setSelectedMesa] = useState(null);
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("all");
-  const [cart, setCart] = useState(mesa.items || []);
-  const [loading, setLoading] = useState(true);
-  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [cart, setCart] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [clienteNome, setClienteNome] = useState("");
+  
+  // Popup de produto
   const [productPopupOpen, setProductPopupOpen] = useState(false);
-  const [clienteNome, setClienteNome] = useState(mesa.cliente || "");
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [productQuantity, setProductQuantity] = useState(1);
+  const [productObservation, setProductObservation] = useState("");
+  const [productPrice, setProductPrice] = useState(0);
+  const [isEditingPrice, setIsEditingPrice] = useState(false);
+  const [imageError, setImageError] = useState(false);
+  
+  // Pagamento
   const [paymentDialogOpen, setPaymentDialogOpen] = useState(false);
   const [selectedPayment, setSelectedPayment] = useState(null);
   const [cashReceived, setCashReceived] = useState("");
 
+  // Carregar mesas do localStorage
   useEffect(() => {
-    fetchProducts();
-    fetchCategories();
+    const savedMesas = localStorage.getItem("mesas");
+    if (savedMesas) {
+      setMesas(JSON.parse(savedMesas));
+    } else {
+      // Criar mesas iniciais (1-10)
+      const initialMesas = Array.from({ length: 10 }, (_, i) => ({
+        id: `mesa-${i + 1}`,
+        numero: i + 1,
+        nome: `Mesa ${i + 1}`,
+        status: "fechada",
+        items: [],
+        total: 0,
+        cliente: "",
+        comanda: null
+      }));
+      setMesas(initialMesas);
+      localStorage.setItem("mesas", JSON.stringify(initialMesas));
+    }
   }, []);
 
-  const fetchProducts = async () => {
+  // Salvar mesas no localStorage
+  const saveMesas = (newMesas) => {
+    setMesas(newMesas);
+    localStorage.setItem("mesas", JSON.stringify(newMesas));
+  };
+
+  // Filtrar mesas
+  const filteredMesas = mesas.filter(mesa => {
+    if (!searchTerm) return true;
+    const search = searchTerm.toLowerCase();
+    return (
+      String(mesa.numero).includes(search) ||
+      (mesa.comanda && String(mesa.comanda).includes(search)) ||
+      (mesa.cliente && mesa.cliente.toLowerCase().includes(search)) ||
+      (mesa.nome && mesa.nome.toLowerCase().includes(search))
+    );
+  });
+
+  // Separar abertas e fechadas
+  const mesasAbertas = filteredMesas.filter(m => m.status === "aberta").sort((a, b) => a.numero - b.numero);
+  const mesasFechadas = filteredMesas.filter(m => m.status === "fechada").sort((a, b) => a.numero - b.numero);
+
+  // Handlers de Mesa
+  const handleCreateMesa = () => {
+    setEditMode(false);
+    setCurrentMesa(null);
+    setMesaNome("");
+    setMesaNumero(String(mesas.length + 1));
+    setMesaDialogOpen(true);
+  };
+
+  const handleEditMesa = (mesa) => {
+    setEditMode(true);
+    setCurrentMesa(mesa);
+    setMesaNome(mesa.nome);
+    setMesaNumero(String(mesa.numero));
+    setMesaDialogOpen(true);
+  };
+
+  const handleSaveMesa = () => {
+    if (!mesaNumero) {
+      toast.error("Informe o número da mesa");
+      return;
+    }
+
+    const numero = parseInt(mesaNumero);
+    
+    if (!editMode || (editMode && currentMesa.numero !== numero)) {
+      if (mesas.some(m => m.numero === numero)) {
+        toast.error("Já existe uma mesa com este número");
+        return;
+      }
+    }
+
+    if (editMode && currentMesa) {
+      const updatedMesas = mesas.map(m =>
+        m.id === currentMesa.id
+          ? { ...m, nome: mesaNome || `Mesa ${numero}`, numero }
+          : m
+      );
+      saveMesas(updatedMesas);
+      toast.success("Mesa atualizada!");
+    } else {
+      const newMesa = {
+        id: `mesa-${Date.now()}`,
+        numero,
+        nome: mesaNome || `Mesa ${numero}`,
+        status: "fechada",
+        items: [],
+        total: 0,
+        cliente: "",
+        comanda: null
+      };
+      saveMesas([...mesas, newMesa]);
+      toast.success("Mesa criada!");
+    }
+
+    setMesaDialogOpen(false);
+  };
+
+  const handleDeleteMesa = (mesa) => {
+    setMesaToDelete(mesa);
+    setDeleteDialogOpen(true);
+  };
+
+  const confirmDelete = () => {
+    if (mesaToDelete) {
+      saveMesas(mesas.filter(m => m.id !== mesaToDelete.id));
+      toast.success("Mesa deletada!");
+    }
+    setDeleteDialogOpen(false);
+    setMesaToDelete(null);
+  };
+
+  // Tela de Vendas
+  const handleMesaClick = async (mesa) => {
+    setSelectedMesa(mesa);
+    setCart(mesa.items || []);
+    setClienteNome(mesa.cliente || "");
+    setMesaVendasOpen(true);
+    
+    // Carregar produtos
     try {
       setLoading(true);
-      const response = await axios.get(`${API}/products/for-sale`, getAuthHeader());
-      setProducts(response.data);
+      const [productsRes, categoriesRes] = await Promise.all([
+        axios.get(`${API}/products/for-sale`, getAuthHeader()),
+        axios.get(`${API}/categories`, getAuthHeader())
+      ]);
+      setProducts(productsRes.data);
+      setCategories(categoriesRes.data);
     } catch (error) {
       toast.error("Erro ao carregar produtos");
     } finally {
@@ -293,39 +295,62 @@ function MesaVendas({ mesa, onClose, onUpdate }) {
     }
   };
 
-  const fetchCategories = async () => {
-    try {
-      const response = await axios.get(`${API}/categories`, getAuthHeader());
-      setCategories(response.data);
-    } catch (error) {
-      console.error("Erro ao carregar categorias:", error);
-    }
+  const closeMesaVendas = () => {
+    setMesaVendasOpen(false);
+    setSelectedMesa(null);
+    setCart([]);
+    setClienteNome("");
+    setSelectedCategory("all");
   };
 
+  // Produtos
   const filteredProducts = selectedCategory === "all"
     ? products
     : products.filter(p => p.category === selectedCategory);
 
-  const addToCart = (productWithDetails) => {
-    const { quantity = 1, observation = null, ...product } = productWithDetails;
+  const openProductPopup = (product) => {
+    setSelectedProduct(product);
+    setProductQuantity(1);
+    setProductObservation("");
+    setProductPrice(product.sale_price || 0);
+    setIsEditingPrice(false);
+    setImageError(false);
+    setProductPopupOpen(true);
+  };
+
+  const closeProductPopup = () => {
+    setProductPopupOpen(false);
+    setSelectedProduct(null);
+  };
+
+  const addProductToCart = () => {
+    if (!selectedProduct) return;
     
-    if (observation) {
-      setCart([...cart, { ...product, quantity, observation, cartItemId: Date.now() }]);
-      toast.success(`${product.name} adicionado!`);
-      return;
-    }
+    const productToAdd = {
+      ...selectedProduct,
+      sale_price: productPrice,
+      quantity: productQuantity,
+      observation: productObservation.trim() || null,
+      cartItemId: Date.now()
+    };
     
-    const existingItem = cart.find(item => item.id === product.id && !item.observation);
-    if (existingItem) {
-      setCart(cart.map(item =>
-        item.id === product.id && !item.observation
-          ? { ...item, quantity: item.quantity + quantity }
-          : item
-      ));
+    if (productToAdd.observation) {
+      setCart([...cart, productToAdd]);
     } else {
-      setCart([...cart, { ...product, quantity, cartItemId: Date.now() }]);
+      const existingItem = cart.find(item => item.id === selectedProduct.id && !item.observation);
+      if (existingItem) {
+        setCart(cart.map(item =>
+          item.id === selectedProduct.id && !item.observation
+            ? { ...item, quantity: item.quantity + productQuantity }
+            : item
+        ));
+      } else {
+        setCart([...cart, productToAdd]);
+      }
     }
-    toast.success(`${product.name} adicionado!`);
+    
+    toast.success(`${selectedProduct.name} adicionado!`);
+    closeProductPopup();
   };
 
   const updateQuantity = (cartItemId, delta) => {
@@ -345,22 +370,27 @@ function MesaVendas({ mesa, onClose, onUpdate }) {
   const cartTotal = cart.reduce((total, item) => total + (item.sale_price || 0) * item.quantity, 0);
   const cartItemsCount = cart.reduce((count, item) => count + item.quantity, 0);
 
-  const handleSave = async () => {
-    // Atualizar mesa com os itens
+  const handleSaveMesaVendas = () => {
+    if (!selectedMesa) return;
+    
     const updatedMesa = {
-      ...mesa,
+      ...selectedMesa,
       status: cart.length > 0 ? "aberta" : "fechada",
       items: cart,
       total: cartTotal,
       cliente: clienteNome,
-      comanda: mesa.comanda || String(Date.now()).slice(-6)
+      comanda: selectedMesa.comanda || String(Date.now()).slice(-6)
     };
     
-    onUpdate(updatedMesa);
+    const updatedMesas = mesas.map(m =>
+      m.id === updatedMesa.id ? updatedMesa : m
+    );
+    saveMesas(updatedMesas);
     toast.success("Mesa atualizada!");
-    onClose();
+    closeMesaVendas();
   };
 
+  // Pagamento
   const handlePayment = () => {
     if (cart.length === 0) {
       toast.error("Nenhum item na mesa!");
@@ -377,9 +407,8 @@ function MesaVendas({ mesa, onClose, onUpdate }) {
 
     toast.success(`Venda de R$ ${cartTotal.toFixed(2)} finalizada!`);
     
-    // Fechar mesa
     const updatedMesa = {
-      ...mesa,
+      ...selectedMesa,
       status: "fechada",
       items: [],
       total: 0,
@@ -387,9 +416,12 @@ function MesaVendas({ mesa, onClose, onUpdate }) {
       comanda: null
     };
     
-    onUpdate(updatedMesa);
+    const updatedMesas = mesas.map(m =>
+      m.id === updatedMesa.id ? updatedMesa : m
+    );
+    saveMesas(updatedMesas);
     setPaymentDialogOpen(false);
-    onClose();
+    closeMesaVendas();
   };
 
   const change = selectedPayment === "dinheiro" && cashReceived
@@ -403,28 +435,32 @@ function MesaVendas({ mesa, onClose, onUpdate }) {
     { id: "pix", label: "PIX", icon: QrCode, color: "bg-teal-500" },
   ];
 
-  return (
-    <Dialog open={true} onOpenChange={onClose}>
-      <DialogContent className="max-w-6xl h-[90vh] p-0 gap-0">
-        <div className="flex h-full">
-          {/* Área de Produtos */}
-          <div className="flex-1 flex flex-col overflow-hidden border-r">
-            {/* Header */}
-            <div className="p-4 border-b bg-muted/30">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h2 className="text-xl font-bold">Mesa {String(mesa.numero).padStart(2, '0')}</h2>
-                  <p className="text-sm text-muted-foreground">{mesa.nome || `Mesa ${mesa.numero}`}</p>
-                </div>
-                <Input
-                  placeholder="Nome do cliente"
-                  value={clienteNome}
-                  onChange={(e) => setClienteNome(e.target.value)}
-                  className="w-48"
-                />
-              </div>
+  // Se tela de vendas está aberta, mostrar ela
+  if (mesaVendasOpen && selectedMesa) {
+    return (
+      <div className="h-full flex flex-col">
+        {/* Header */}
+        <div className="p-4 border-b bg-card flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <Button variant="ghost" size="icon" onClick={closeMesaVendas}>
+              <ArrowLeft className="w-5 h-5" />
+            </Button>
+            <div>
+              <h2 className="text-xl font-bold">Mesa {String(selectedMesa.numero).padStart(2, '0')}</h2>
+              <p className="text-sm text-muted-foreground">{selectedMesa.nome}</p>
             </div>
+          </div>
+          <Input
+            placeholder="Nome do cliente"
+            value={clienteNome}
+            onChange={(e) => setClienteNome(e.target.value)}
+            className="w-48"
+          />
+        </div>
 
+        <div className="flex-1 flex overflow-hidden">
+          {/* Área de Produtos */}
+          <div className="flex-1 flex flex-col overflow-hidden">
             {/* Filtro de Categorias */}
             <div className="p-3 border-b">
               <div className="flex gap-2 overflow-x-auto">
@@ -455,11 +491,11 @@ function MesaVendas({ mesa, onClose, onUpdate }) {
                   <p className="text-muted-foreground">Carregando...</p>
                 </div>
               ) : (
-                <div className="grid grid-cols-3 lg:grid-cols-4 gap-3">
+                <div className="grid grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
                   {filteredProducts.map(product => (
                     <button
                       key={product.id}
-                      onClick={() => { setSelectedProduct(product); setProductPopupOpen(true); }}
+                      onClick={() => openProductPopup(product)}
                       className="bg-card rounded-lg border p-3 hover:shadow-md hover:border-primary/50 transition-all text-left"
                     >
                       <div className="aspect-square bg-muted rounded-lg mb-2 overflow-hidden">
@@ -485,7 +521,7 @@ function MesaVendas({ mesa, onClose, onUpdate }) {
           </div>
 
           {/* Carrinho da Mesa */}
-          <div className="w-80 flex flex-col bg-muted/20">
+          <div className="w-80 flex flex-col border-l bg-muted/20">
             <div className="p-4 border-b">
               <div className="flex items-center gap-2">
                 <ShoppingCart className="w-5 h-5 text-primary" />
@@ -553,7 +589,7 @@ function MesaVendas({ mesa, onClose, onUpdate }) {
                 <span className="text-xl font-bold text-primary">R$ {cartTotal.toFixed(2)}</span>
               </div>
               <div className="grid grid-cols-2 gap-2">
-                <Button variant="outline" onClick={handleSave}>
+                <Button variant="outline" onClick={handleSaveMesaVendas}>
                   Salvar
                 </Button>
                 <Button onClick={handlePayment} disabled={cart.length === 0}>
@@ -565,13 +601,117 @@ function MesaVendas({ mesa, onClose, onUpdate }) {
           </div>
         </div>
 
-        {/* Popup de Produto */}
-        <ProductPopup
-          product={selectedProduct}
-          open={productPopupOpen}
-          onClose={() => { setProductPopupOpen(false); setSelectedProduct(null); }}
-          onAddToCart={addToCart}
-        />
+        {/* Dialog de Produto */}
+        <Dialog open={productPopupOpen} onOpenChange={setProductPopupOpen}>
+          <DialogContent className="sm:max-w-lg p-0 gap-0 overflow-hidden">
+            <div className="absolute top-4 right-4 z-10">
+              <button onClick={closeProductPopup} className="rounded-full p-2 bg-background/80 hover:bg-background border shadow-sm">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {selectedProduct && (
+              <>
+                <div className="p-6">
+                  <div className="flex gap-6 mb-6">
+                    <div className="w-44 h-44 rounded-xl bg-muted overflow-hidden flex-shrink-0 border shadow-sm">
+                      {selectedProduct.photo_url && !imageError ? (
+                        <img
+                          src={`${BACKEND_URL}/api${selectedProduct.photo_url}`}
+                          alt={selectedProduct.name}
+                          className="w-full h-full object-cover"
+                          onError={() => setImageError(true)}
+                        />
+                      ) : (
+                        <div className="w-full h-full flex flex-col items-center justify-center text-muted-foreground">
+                          <ImageOff className="w-12 h-12" />
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="flex-1">
+                      <h2 className="text-2xl font-bold mb-1">{selectedProduct.name}</h2>
+                      {selectedProduct.description && (
+                        <p className="text-muted-foreground text-sm mb-4">{selectedProduct.description}</p>
+                      )}
+                      
+                      <div className="flex items-center gap-2">
+                        {isEditingPrice ? (
+                          <div className="flex items-center gap-2">
+                            <span className="text-primary text-xl">R$</span>
+                            <Input
+                              type="number"
+                              step="0.01"
+                              value={productPrice}
+                              onChange={(e) => setProductPrice(parseFloat(e.target.value) || 0)}
+                              onBlur={() => setIsEditingPrice(false)}
+                              autoFocus
+                              className="w-28 h-10 text-xl font-bold text-primary"
+                            />
+                          </div>
+                        ) : (
+                          <button
+                            onClick={() => setIsEditingPrice(true)}
+                            className="flex items-center gap-1 text-2xl font-bold text-primary hover:opacity-80"
+                          >
+                            R$ {productPrice.toFixed(2)}
+                            <span className="text-xs text-muted-foreground ml-1">✏️</span>
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="mb-6">
+                    <Label className="text-base font-medium mb-2 block">Alguma observação?</Label>
+                    <Textarea
+                      value={productObservation}
+                      onChange={(e) => setProductObservation(e.target.value)}
+                      placeholder="Ex: tirar cebola, maionese à parte, etc..."
+                      className="resize-none"
+                      maxLength={255}
+                      rows={3}
+                    />
+                    <p className="text-xs text-muted-foreground text-right mt-1">{productObservation.length} / 255</p>
+                  </div>
+                </div>
+
+                <div className="border-t bg-muted/30 p-4">
+                  <div className="flex items-center justify-between gap-4">
+                    <div className="flex items-center gap-1 bg-background rounded-full border p-1">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-12 w-12 rounded-full"
+                        onClick={() => setProductQuantity(Math.max(1, productQuantity - 1))}
+                        disabled={productQuantity <= 1}
+                      >
+                        <Minus className="w-5 h-5" />
+                      </Button>
+                      <span className="w-10 text-center text-xl font-bold">{productQuantity}</span>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-12 w-12 rounded-full"
+                        onClick={() => setProductQuantity(productQuantity + 1)}
+                      >
+                        <Plus className="w-5 h-5" />
+                      </Button>
+                    </div>
+
+                    <Button
+                      onClick={addProductToCart}
+                      className="flex-1 h-14 text-lg font-bold rounded-full bg-orange-500 hover:bg-orange-600 text-white shadow-lg"
+                    >
+                      <ShoppingBasket className="w-6 h-6 mr-2" />
+                      Adicionar R$ {(productPrice * productQuantity).toFixed(2)}
+                    </Button>
+                  </div>
+                </div>
+              </>
+            )}
+          </DialogContent>
+        </Dialog>
 
         {/* Dialog de Pagamento */}
         <Dialog open={paymentDialogOpen} onOpenChange={setPaymentDialogOpen}>
@@ -639,156 +779,11 @@ function MesaVendas({ mesa, onClose, onUpdate }) {
             </div>
           </DialogContent>
         </Dialog>
-      </DialogContent>
-    </Dialog>
-  );
-}
-
-// Componente Principal - Mesas
-export default function Mesas() {
-  const [mesas, setMesas] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [mesaDialogOpen, setMesaDialogOpen] = useState(false);
-  const [editMode, setEditMode] = useState(false);
-  const [currentMesa, setCurrentMesa] = useState(null);
-  const [mesaNome, setMesaNome] = useState("");
-  const [mesaNumero, setMesaNumero] = useState("");
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [mesaToDelete, setMesaToDelete] = useState(null);
-  const [mesaVendasOpen, setMesaVendasOpen] = useState(false);
-  const [selectedMesa, setSelectedMesa] = useState(null);
-
-  // Carregar mesas do localStorage
-  useEffect(() => {
-    const savedMesas = localStorage.getItem("mesas");
-    if (savedMesas) {
-      setMesas(JSON.parse(savedMesas));
-    } else {
-      // Criar mesas iniciais (1-10)
-      const initialMesas = Array.from({ length: 10 }, (_, i) => ({
-        id: `mesa-${i + 1}`,
-        numero: i + 1,
-        nome: `Mesa ${i + 1}`,
-        status: "fechada",
-        items: [],
-        total: 0,
-        cliente: "",
-        comanda: null
-      }));
-      setMesas(initialMesas);
-      localStorage.setItem("mesas", JSON.stringify(initialMesas));
-    }
-  }, []);
-
-  // Salvar mesas no localStorage
-  const saveMesas = (newMesas) => {
-    setMesas(newMesas);
-    localStorage.setItem("mesas", JSON.stringify(newMesas));
-  };
-
-  // Filtrar mesas
-  const filteredMesas = mesas.filter(mesa => {
-    if (!searchTerm) return true;
-    const search = searchTerm.toLowerCase();
-    return (
-      String(mesa.numero).includes(search) ||
-      (mesa.comanda && String(mesa.comanda).includes(search)) ||
-      (mesa.cliente && mesa.cliente.toLowerCase().includes(search)) ||
-      (mesa.nome && mesa.nome.toLowerCase().includes(search))
+      </div>
     );
-  });
+  }
 
-  // Separar abertas e fechadas
-  const mesasAbertas = filteredMesas.filter(m => m.status === "aberta").sort((a, b) => a.numero - b.numero);
-  const mesasFechadas = filteredMesas.filter(m => m.status === "fechada").sort((a, b) => a.numero - b.numero);
-
-  // Handlers
-  const handleCreateMesa = () => {
-    setEditMode(false);
-    setCurrentMesa(null);
-    setMesaNome("");
-    setMesaNumero(String(mesas.length + 1));
-    setMesaDialogOpen(true);
-  };
-
-  const handleEditMesa = (mesa) => {
-    setEditMode(true);
-    setCurrentMesa(mesa);
-    setMesaNome(mesa.nome);
-    setMesaNumero(String(mesa.numero));
-    setMesaDialogOpen(true);
-  };
-
-  const handleSaveMesa = () => {
-    if (!mesaNumero) {
-      toast.error("Informe o número da mesa");
-      return;
-    }
-
-    const numero = parseInt(mesaNumero);
-    
-    // Verificar duplicata
-    if (!editMode || (editMode && currentMesa.numero !== numero)) {
-      if (mesas.some(m => m.numero === numero)) {
-        toast.error("Já existe uma mesa com este número");
-        return;
-      }
-    }
-
-    if (editMode && currentMesa) {
-      // Atualizar mesa existente
-      const updatedMesas = mesas.map(m =>
-        m.id === currentMesa.id
-          ? { ...m, nome: mesaNome || `Mesa ${numero}`, numero }
-          : m
-      );
-      saveMesas(updatedMesas);
-      toast.success("Mesa atualizada!");
-    } else {
-      // Criar nova mesa
-      const newMesa = {
-        id: `mesa-${Date.now()}`,
-        numero,
-        nome: mesaNome || `Mesa ${numero}`,
-        status: "fechada",
-        items: [],
-        total: 0,
-        cliente: "",
-        comanda: null
-      };
-      saveMesas([...mesas, newMesa]);
-      toast.success("Mesa criada!");
-    }
-
-    setMesaDialogOpen(false);
-  };
-
-  const handleDeleteMesa = (mesa) => {
-    setMesaToDelete(mesa);
-    setDeleteDialogOpen(true);
-  };
-
-  const confirmDelete = () => {
-    if (mesaToDelete) {
-      saveMesas(mesas.filter(m => m.id !== mesaToDelete.id));
-      toast.success("Mesa deletada!");
-    }
-    setDeleteDialogOpen(false);
-    setMesaToDelete(null);
-  };
-
-  const handleMesaClick = (mesa) => {
-    setSelectedMesa(mesa);
-    setMesaVendasOpen(true);
-  };
-
-  const handleMesaUpdate = (updatedMesa) => {
-    const updatedMesas = mesas.map(m =>
-      m.id === updatedMesa.id ? updatedMesa : m
-    );
-    saveMesas(updatedMesas);
-  };
-
+  // Tela principal de Mesas
   return (
     <div className="p-6">
       {/* Header */}
@@ -910,15 +905,6 @@ export default function Mesas() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-
-      {/* Tela de Vendas da Mesa */}
-      {mesaVendasOpen && selectedMesa && (
-        <MesaVendas
-          mesa={selectedMesa}
-          onClose={() => { setMesaVendasOpen(false); setSelectedMesa(null); }}
-          onUpdate={handleMesaUpdate}
-        />
-      )}
     </div>
   );
 }
