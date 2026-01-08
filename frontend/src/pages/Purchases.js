@@ -215,7 +215,10 @@ export default function Purchases() {
             </p>
           </div>
 
-          <Dialog open={open} onOpenChange={setOpen}>
+          <Dialog open={open} onOpenChange={(isOpen) => {
+            setOpen(isOpen);
+            if (!isOpen) resetForm();
+          }}>
             <DialogTrigger asChild>
               <Button
                 data-testid="add-purchase-button"
@@ -227,7 +230,7 @@ export default function Purchases() {
             </DialogTrigger>
             <DialogContent className="sm:max-w-2xl">
               <DialogHeader>
-                <DialogTitle>Lançar Compras</DialogTitle>
+                <DialogTitle>{editMode ? "Editar Compra" : "Lançar Compras"}</DialogTitle>
               </DialogHeader>
               
               <div className="space-y-4 mt-4">
