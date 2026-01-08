@@ -1020,11 +1020,163 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+
+# ============================================
+# FUNÇÕES DE SINCRONIZAÇÃO COM EXCEL
+# ============================================
+
+async def sync_all_to_excel():
+    """Sincroniza todos os dados do MongoDB para o Excel"""
+    try:
+        # Ingredientes
+        ingredients = await db.ingredients.find({}, {"_id": 0}).to_list(1000)
+        if ingredients:
+            for ing in ingredients:
+                if isinstance(ing.get("created_at"), datetime):
+                    ing["created_at"] = ing["created_at"].isoformat()
+            excel_backup.save_ingredients(ingredients)
+        
+        # Produtos
+        products = await db.products.find({}, {"_id": 0}).to_list(1000)
+        if products:
+            for p in products:
+                if isinstance(p.get("created_at"), datetime):
+                    p["created_at"] = p["created_at"].isoformat()
+            excel_backup.save_products(products)
+        
+        # Compras
+        purchases = await db.purchases.find({}, {"_id": 0}).to_list(1000)
+        if purchases:
+            for pur in purchases:
+                if isinstance(pur.get("purchase_date"), datetime):
+                    pur["purchase_date"] = pur["purchase_date"].isoformat()
+            excel_backup.save_purchases(purchases)
+        
+        # Categorias
+        categories = await db.categories.find({}, {"_id": 0}).to_list(1000)
+        if categories:
+            for cat in categories:
+                if isinstance(cat.get("created_at"), datetime):
+                    cat["created_at"] = cat["created_at"].isoformat()
+            excel_backup.save_categories(categories)
+        
+        # Usuários (com senha hash para restauração)
+        users = await db.users.find({}, {"_id": 0}).to_list(1000)
+        if users:
+            for u in users:
+                if isinstance(u.get("created_at"), datetime):
+                    u["created_at"] = u["created_at"].isoformat()
+            excel_backup.save_users(users)
+        
+        logger.info("[BACKUP] Sincronização completa com Excel realizada")
+    except Exception as e:
+        logger.error(f"[BACKUP] Erro ao sincronizar com Excel: {e}")
+
+
+async def restore_from_excel():
+    """Restaura dados do Excel para o MongoDB se o banco estiver vazio"""
+    try:
+        if not excel_backup.backup_exists():
+            logger.info("[BACKUP] Nenhum arquivo de backup encontrado")
+            return
+        
+        # Verificar se precisa restaurar ingredientes
+        ing_count = await db.ingredients.count_documents({})
+        if ing_count == 0:
+            ingredients = excel_backup.load_ingredients()
+            if ingredients:
+                for ing in ingredients:
+                    # Limpar campos NaN/None problemáticos
+                    ing = {k: v for k, v in ing.items() if v is not None and v != '' and str(v) != 'nan'}
+                    if 'id' in ing:
+                        existing = await db.ingredients.find_one({"id": ing["id"]})
+                        if not existing:
+                            await db.ingredients.insert_one(ing)
+                logger.info(f"[BACKUP] Restaurados {len(ingredients)} ingredientes do Excel")
+        
+        # Verificar se precisa restaurar produtos
+        prod_count = await db.products.count_documents({})
+        if prod_count == 0:
+            products = excel_backup.load_products()
+            if products:
+                for p in products:
+                    p = {k: v for k, v in p.items() if v is not None and v != '' and str(v) != 'nan'}
+                    if 'id' in p:
+                        existing = await db.products.find_one({"id": p["id"]})
+                        if not existing:
+                            await db.products.insert_one(p)
+                logger.info(f"[BACKUP] Restaurados {len(products)} produtos do Excel")
+        
+        # Verificar se precisa restaurar compras
+        pur_count = await db.purchases.count_documents({})
+        if pur_count == 0:
+            purchases = excel_backup.load_purchases()
+            if purchases:
+                for pur in purchases:
+                    pur = {k: v for k, v in pur.items() if v is not None and v != '' and str(v) != 'nan'}
+                    if 'id' in pur:
+                        existing = await db.purchases.find_one({"id": pur["id"]})
+                        if not existing:
+                            await db.purchases.insert_one(pur)
+                logger.info(f"[BACKUP] Restauradas {len(purchases)} compras do Excel")
+        
+        # Verificar se precisa restaurar categorias
+        cat_count = await db.categories.count_documents({})
+        if cat_count == 0:
+            categories = excel_backup.load_categories()
+            if categories:
+                for cat in categories:
+                    cat = {k: v for k, v in cat.items() if v is not None and v != '' and str(v) != 'nan'}
+                    if 'id' in cat:
+                        existing = await db.categories.find_one({"id": cat["id"]})
+                        if not existing:
+                            await db.categories.insert_one(cat)
+                logger.info(f"[BACKUP] Restauradas {len(categories)} categorias do Excel")
+        
+        # Verificar se precisa restaurar usuários
+        user_count = await db.users.count_documents({})
+        if user_count == 0:
+            users = excel_backup.load_users()
+            if users:
+                for u in users:
+                    u = {k: v for k, v in u.items() if v is not None and v != '' and str(v) != 'nan'}
+                    if 'id' in u:
+                        existing = await db.users.find_one({"id": u["id"]})
+                        if not existing:
+                            await db.users.insert_one(u)
+                logger.info(f"[BACKUP] Restaurados {len(users)} usuários do Excel")
+        
+        logger.info("[BACKUP] Restauração do Excel concluída")
+    except Exception as e:
+        logger.error(f"[BACKUP] Erro ao restaurar do Excel: {e}")
+
+
+# Endpoint para verificar status do backup
+@api_router.get("/backup/status")
+async def get_backup_status(current_user: User = Depends(get_current_user)):
+    """Retorna informações sobre o backup em Excel"""
+    return excel_backup.get_backup_info()
+
+
+# Endpoint para forçar backup manual
+@api_router.post("/backup/sync")
+async def force_backup_sync(current_user: User = Depends(get_current_user)):
+    """Força sincronização manual com o Excel"""
+    check_role(current_user, ["proprietario"])
+    await sync_all_to_excel()
+    return {"message": "Backup sincronizado com sucesso", "info": excel_backup.get_backup_info()}
+
+
 # Criar diretórios de upload no startup
 @app.on_event("startup")
-async def create_upload_dirs():
+async def startup_event():
     upload_dir = Path("/app/backend/uploads/products")
     upload_dir.mkdir(parents=True, exist_ok=True)
+    
+    # Restaurar dados do Excel se o banco estiver vazio
+    logger.info("[STARTUP] Verificando backup em Excel...")
+    await restore_from_excel()
+    logger.info("[STARTUP] Sistema iniciado com sucesso")
 
 @app.on_event("shutdown")
 async def shutdown_db_client():
