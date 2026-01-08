@@ -278,37 +278,45 @@ def check_role(user: User, allowed_roles: List[str]):
 # Auth endpoints
 @api_router.post("/auth/register", response_model=Token)
 async def register(user_data: UserCreate):
-    existing = await db.users.find_one({"username": user_data.username}, {"_id": 0})
+    # Usar SQLite - verificar se usuário existe
+    existing = sqlite_db.get_user_by_username(user_data.username)
     if existing:
         raise HTTPException(status_code=400, detail="Username already exists")
     
-    hashed_password = pwd_context.hash(user_data.password)
-    
-    # Primeiro usuário (Addad) é proprietário, demais são observadores
-    user_count = await db.users.count_documents({})
+    # Primeiro usuário é proprietário, demais são observadores
+    user_count = sqlite_db.count_users()
     role = "proprietario" if user_count == 0 or user_data.username == "Addad" else "observador"
     
-    user = User(username=user_data.username, role=role)
-    user_dict = user.model_dump()
-    user_dict["password"] = hashed_password
-    user_dict["created_at"] = user_dict["created_at"].isoformat()
+    user_id = str(uuid.uuid4())
+    created_at = datetime.now(timezone.utc)
     
-    await db.users.insert_one(user_dict)
+    # Senha em TEXTO SIMPLES (sem criptografia)
+    sqlite_db.create_user({
+        'id': user_id,
+        'username': user_data.username,
+        'password': user_data.password,  # Texto simples!
+        'role': role,
+        'created_at': created_at.isoformat()
+    })
     
     # Sincronizar com Excel
     await sync_all_to_excel()
     
+    user = User(id=user_id, username=user_data.username, role=role, created_at=created_at)
     access_token = create_access_token(data={"sub": user.id})
     return Token(access_token=access_token, token_type="bearer", user=user)
 
 @api_router.post("/auth/login", response_model=Token)
 async def login(user_data: UserLogin):
-    user_doc = await db.users.find_one({"username": user_data.username}, {"_id": 0})
-    if not user_doc or not pwd_context.verify(user_data.password, user_doc["password"]):
+    # Usar SQLite - verificar senha em texto simples
+    user_doc = sqlite_db.get_user_by_username(user_data.username)
+    
+    # Verificar senha em texto simples
+    if not user_doc or user_doc.get("password") != user_data.password:
         raise HTTPException(status_code=401, detail="Invalid credentials")
     
     if isinstance(user_doc["created_at"], str):
-        user_doc["created_at"] = datetime.fromisoformat(user_doc["created_at"])
+        user_doc["created_at"] = datetime.fromisoformat(user_doc["created_at"].replace('Z', '+00:00'))
     
     user = User(**user_doc)
     access_token = create_access_token(data={"sub": user.id})
@@ -319,10 +327,10 @@ async def login(user_data: UserLogin):
 @api_router.get("/users/management", response_model=List[UserWithPassword])
 async def get_users_management(current_user: User = Depends(get_current_user)):
     check_role(current_user, ["proprietario"])
-    users = await db.users.find({}, {"_id": 0}).to_list(1000)
+    users = sqlite_db.get_all_users()
     for u in users:
-        if isinstance(u["created_at"], str):
-            u["created_at"] = datetime.fromisoformat(u["created_at"])
+        if isinstance(u.get("created_at"), str):
+            u["created_at"] = datetime.fromisoformat(u["created_at"].replace('Z', '+00:00'))
     return users
 
 @api_router.post("/users/create", response_model=User)
