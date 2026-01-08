@@ -105,6 +105,7 @@ export default function Products() {
   const resetForm = () => {
     setName("");
     setDescription("");
+    setCategory("");
     setSalePrice("");
     setPhotoUrl("");
     setPhotoFile(null);
@@ -119,6 +120,7 @@ export default function Products() {
     setCurrentProductId(product.id);
     setName(product.name);
     setDescription(product.description || "");
+    setCategory(product.category || "");
     setSalePrice(product.sale_price ? product.sale_price.toString() : "");
     setPhotoUrl(product.photo_url || "");
     
