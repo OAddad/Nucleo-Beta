@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "sonner";
-import { Plus, Trash2, ChevronDown, ChevronUp, Check } from "lucide-react";
+import { Plus, Trash2, ChevronDown, ChevronUp, Check, Edit } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
@@ -141,6 +141,18 @@ export default function Purchases() {
     }
   };
 
+  const handleDeleteBatch = async (batchId) => {
+    if (!window.confirm("Deseja realmente excluir toda esta compra?")) return;
+
+    try {
+      await axios.delete(`${API}/purchases/batch/${batchId}`, getAuthHeader());
+      toast.success("Compra excluída!");
+      fetchPurchases();
+    } catch (error) {
+      toast.error("Erro ao excluir compra");
+    }
+  };
+
   const toggleBatch = (batchId) => {
     const newExpanded = new Set(expandedBatches);
     if (newExpanded.has(batchId)) {
@@ -164,10 +176,10 @@ export default function Purchases() {
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-slate-900 tracking-tight">
+            <h1 className="text-3xl font-bold tracking-tight">
               Compras
             </h1>
-            <p className="text-slate-500 mt-1">
+            <p className="text-muted-foreground mt-1">
               Registre compras agrupadas por fornecedor
             </p>
           </div>
@@ -176,7 +188,7 @@ export default function Purchases() {
             <DialogTrigger asChild>
               <Button
                 data-testid="add-purchase-button"
-                className="bg-rose-700 hover:bg-rose-800 shadow-sm transition-all active:scale-95"
+                className="shadow-sm transition-all active:scale-95"
               >
                 <Plus className="w-5 h-5 mr-2" strokeWidth={1.5} />
                 Lançar Compras
@@ -184,13 +196,13 @@ export default function Purchases() {
             </DialogTrigger>
             <DialogContent className="sm:max-w-2xl">
               <DialogHeader>
-                <DialogTitle className="text-slate-900">Lançar Compras</DialogTitle>
+                <DialogTitle>Lançar Compras</DialogTitle>
               </DialogHeader>
               
               <div className="space-y-4 mt-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="supplier" className="text-slate-700">
+                    <Label htmlFor="supplier">
                       Fornecedor
                     </Label>
                     <Input
@@ -200,12 +212,12 @@ export default function Purchases() {
                       onChange={(e) => setSupplier(e.target.value)}
                       placeholder="Ex: Supermercado BH"
                       required
-                      className="mt-1 h-11 bg-white border-slate-200 focus:ring-2 focus:ring-rose-100 focus:border-rose-500"
+                      className="mt-1 h-11"
                     />
                   </div>
 
                   <div>
-                    <Label htmlFor="date" className="text-slate-700">
+                    <Label htmlFor="date">
                       Data da Compra
                     </Label>
                     <Input
@@ -215,19 +227,19 @@ export default function Purchases() {
                       value={purchaseDate}
                       onChange={(e) => setPurchaseDate(e.target.value)}
                       required
-                      className="mt-1 h-11 bg-white border-slate-200 focus:ring-2 focus:ring-rose-100 focus:border-rose-500"
+                      className="mt-1 h-11"
                     />
                   </div>
                 </div>
 
                 <div className="border-t pt-4">
-                  <h3 className="font-semibold text-slate-900 mb-3">Adicionar itens</h3>
+                  <h3 className="font-semibold mb-3">Adicionar itens</h3>
                   <div className="grid grid-cols-12 gap-2">
                     <div className="col-span-5">
                       <Select value={selectedIngredient} onValueChange={setSelectedIngredient}>
                         <SelectTrigger
                           data-testid="purchase-ingredient-select"
-                          className="h-11 bg-white border-slate-200 focus:ring-2 focus:ring-rose-100 focus:border-rose-500"
+                          className="h-11"
                         >
                           <SelectValue placeholder="Ingrediente" />
                         </SelectTrigger>
@@ -249,7 +261,7 @@ export default function Purchases() {
                         value={quantity}
                         onChange={(e) => setQuantity(e.target.value)}
                         placeholder="Quantidade"
-                        className="h-11 bg-white border-slate-200 focus:ring-2 focus:ring-rose-100 focus:border-rose-500"
+                        className="h-11"
                       />
                     </div>
                     
@@ -261,7 +273,7 @@ export default function Purchases() {
                         value={price}
                         onChange={(e) => setPrice(e.target.value)}
                         placeholder="Preço (R$)"
-                        className="h-11 bg-white border-slate-200 focus:ring-2 focus:ring-rose-100 focus:border-rose-500"
+                        className="h-11"
                       />
                     </div>
                     
@@ -280,13 +292,13 @@ export default function Purchases() {
 
                 {cart.length > 0 && (
                   <div className="border-t pt-4">
-                    <h3 className="font-semibold text-slate-900 mb-3">
+                    <h3 className="font-semibold mb-3">
                       Carrinho ({cart.length} {cart.length === 1 ? 'item' : 'itens'})
                     </h3>
-                    <div className="bg-slate-50 rounded-lg p-3 max-h-64 overflow-y-auto">
+                    <div className="bg-muted rounded-lg p-3 max-h-64 overflow-y-auto">
                       <table className="w-full text-sm">
                         <thead>
-                          <tr className="text-left text-xs text-slate-500 uppercase">
+                          <tr className="text-left text-xs text-muted-foreground uppercase">
                             <th className="pb-2">Item</th>
                             <th className="pb-2 text-right">Qtd</th>
                             <th className="pb-2 text-right">Preço</th>
@@ -296,17 +308,17 @@ export default function Purchases() {
                         </thead>
                         <tbody>
                           {cart.map((item) => (
-                            <tr key={item.id} className="border-t border-slate-200">
-                              <td className="py-2 text-slate-700">
+                            <tr key={item.id} className="border-t border-border">
+                              <td className="py-2">
                                 {item.ingredient_name}
                               </td>
-                              <td className="py-2 text-right font-mono text-slate-900">
+                              <td className="py-2 text-right font-mono">
                                 {item.quantity.toFixed(2)}
                               </td>
-                              <td className="py-2 text-right font-mono text-slate-900">
+                              <td className="py-2 text-right font-mono">
                                 R$ {item.price.toFixed(2)}
                               </td>
-                              <td className="py-2 text-right font-mono text-slate-600 text-xs">
+                              <td className="py-2 text-right font-mono text-muted-foreground text-xs">
                                 R$ {item.unit_price.toFixed(2)}
                               </td>
                               <td className="py-2 text-right">
@@ -315,19 +327,19 @@ export default function Purchases() {
                                   onClick={() => removeFromCart(item.id)}
                                   variant="ghost"
                                   size="sm"
-                                  className="h-7 w-7 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
+                                  className="h-7 w-7 p-0 text-destructive hover:text-destructive hover:bg-destructive/10"
                                 >
                                   <Trash2 className="w-3.5 h-3.5" strokeWidth={1.5} />
                                 </Button>
                               </td>
                             </tr>
                           ))}
-                          <tr className="border-t-2 border-slate-300 font-semibold">
-                            <td className="py-2 text-slate-900">Total</td>
-                            <td className="py-2 text-right font-mono text-slate-900">
+                          <tr className="border-t-2 border-border font-semibold">
+                            <td className="py-2">Total</td>
+                            <td className="py-2 text-right font-mono">
                               {cartTotalQty.toFixed(2)}
                             </td>
-                            <td className="py-2 text-right font-mono text-slate-900">
+                            <td className="py-2 text-right font-mono">
                               R$ {cartTotal.toFixed(2)}
                             </td>
                             <td></td>
@@ -357,7 +369,7 @@ export default function Purchases() {
                     data-testid="finalize-purchase-button"
                     onClick={finalizePurchase}
                     disabled={loading || cart.length === 0}
-                    className="flex-1 bg-rose-700 hover:bg-rose-800 shadow-sm transition-all active:scale-95"
+                    className="flex-1 shadow-sm transition-all active:scale-95"
                   >
                     {loading ? (
                       "Finalizando..."
@@ -375,51 +387,62 @@ export default function Purchases() {
         </div>
 
         {/* Grouped Purchases Table */}
-        <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+        <div className="bg-card rounded-xl border shadow-sm overflow-hidden">
           {purchaseBatches.length === 0 ? (
-            <div className="text-center py-12 text-slate-500">
+            <div className="text-center py-12 text-muted-foreground">
               Nenhuma compra registrada. Clique em "Lançar Compras" para começar.
             </div>
           ) : (
-            <div className="divide-y divide-slate-200">
+            <div className="divide-y divide-border">
               {purchaseBatches.map((batch) => {
                 const isExpanded = expandedBatches.has(batch.batch_id);
                 return (
                   <div key={batch.batch_id} data-testid={`purchase-batch-${batch.batch_id}`}>
                     {/* Batch Summary Row */}
-                    <div
-                      className="flex items-center px-6 py-4 hover:bg-slate-50 cursor-pointer transition-colors"
-                      onClick={() => toggleBatch(batch.batch_id)}
-                    >
-                      <div className="flex-1 grid grid-cols-12 gap-4 items-center">
-                        <div className="col-span-3 text-slate-600">
+                    <div className="flex items-center px-6 py-4 hover:bg-muted/30 transition-colors">
+                      <div 
+                        className="flex-1 grid grid-cols-12 gap-4 items-center cursor-pointer"
+                        onClick={() => toggleBatch(batch.batch_id)}
+                      >
+                        <div className="col-span-3 text-muted-foreground">
                           {formatDate(batch.purchase_date)}
                         </div>
-                        <div className="col-span-4 text-slate-900 font-medium">
+                        <div className="col-span-3 font-medium">
                           {batch.supplier || "Sem fornecedor"}
                         </div>
-                        <div className="col-span-2 text-right font-mono text-slate-900">
+                        <div className="col-span-2 text-right font-mono">
                           {batch.total_quantity.toFixed(2)}
                         </div>
-                        <div className="col-span-2 text-right font-mono text-slate-900 font-bold">
+                        <div className="col-span-2 text-right font-mono font-bold">
                           R$ {batch.total_price.toFixed(2)}
                         </div>
-                        <div className="col-span-1 text-right">
+                        <div className="col-span-2 flex items-center justify-end gap-2">
                           {isExpanded ? (
-                            <ChevronUp className="w-5 h-5 text-slate-400" strokeWidth={1.5} />
+                            <ChevronUp className="w-5 h-5 text-muted-foreground" strokeWidth={1.5} />
                           ) : (
-                            <ChevronDown className="w-5 h-5 text-slate-400" strokeWidth={1.5} />
+                            <ChevronDown className="w-5 h-5 text-muted-foreground" strokeWidth={1.5} />
                           )}
                         </div>
+                      </div>
+                      <div className="flex gap-2 ml-4">
+                        <Button
+                          data-testid={`delete-batch-${batch.batch_id}`}
+                          onClick={() => handleDeleteBatch(batch.batch_id)}
+                          variant="ghost"
+                          size="sm"
+                          className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                        >
+                          <Trash2 className="w-4 h-4" strokeWidth={1.5} />
+                        </Button>
                       </div>
                     </div>
 
                     {/* Expanded Items */}
                     {isExpanded && (
-                      <div className="bg-slate-50 px-6 py-4">
+                      <div className="bg-muted/50 px-6 py-4">
                         <table className="w-full text-sm">
                           <thead>
-                            <tr className="text-left text-xs text-slate-500 uppercase border-b border-slate-200">
+                            <tr className="text-left text-xs text-muted-foreground uppercase border-b border-border">
                               <th className="pb-2">Item</th>
                               <th className="pb-2 text-right">Quantidade</th>
                               <th className="pb-2 text-right">Preço Total</th>
@@ -428,17 +451,17 @@ export default function Purchases() {
                           </thead>
                           <tbody>
                             {batch.items.map((item) => (
-                              <tr key={item.id} className="border-b border-slate-100">
-                                <td className="py-2 text-slate-700">
+                              <tr key={item.id} className="border-b border-border/50">
+                                <td className="py-2">
                                   {item.ingredient_name}
                                 </td>
-                                <td className="py-2 text-right font-mono text-slate-900">
+                                <td className="py-2 text-right font-mono">
                                   {item.quantity.toFixed(2)} {item.ingredient_unit}
                                 </td>
-                                <td className="py-2 text-right font-mono text-slate-900 font-medium">
+                                <td className="py-2 text-right font-mono font-medium">
                                   R$ {item.price.toFixed(2)}
                                 </td>
-                                <td className="py-2 text-right font-mono text-slate-600">
+                                <td className="py-2 text-right font-mono text-muted-foreground">
                                   R$ {item.unit_price.toFixed(2)}/{item.ingredient_unit}
                                 </td>
                               </tr>
