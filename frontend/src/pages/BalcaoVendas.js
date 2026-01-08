@@ -19,6 +19,44 @@ const getAuthHeader = () => ({
   headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
 });
 
+// Componente de card do produto com gerenciamento de erro de imagem via estado React
+function ProductCard({ product, onAddToCart }) {
+  const [imageError, setImageError] = useState(false);
+
+  return (
+    <button
+      onClick={() => onAddToCart(product)}
+      className="bg-card rounded-xl border shadow-sm overflow-hidden hover:shadow-lg hover:border-primary/50 transition-all text-left group"
+    >
+      {/* Imagem do produto */}
+      <div className="aspect-square bg-muted flex items-center justify-center overflow-hidden">
+        {product.photo_url && !imageError ? (
+          <img
+            src={`${BACKEND_URL}/api${product.photo_url}`}
+            alt={product.name}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+            onError={() => setImageError(true)}
+          />
+        ) : (
+          <div className="flex flex-col items-center justify-center text-muted-foreground">
+            <ImageOff className="w-8 h-8" />
+          </div>
+        )}
+      </div>
+      {/* Info do produto */}
+      <div className="p-3">
+        <h3 className="font-medium text-sm line-clamp-2 mb-1">{product.name}</h3>
+        {product.category && (
+          <p className="text-xs text-muted-foreground mb-2">{product.category}</p>
+        )}
+        <p className="text-lg font-bold text-primary">
+          {product.sale_price ? `R$ ${product.sale_price.toFixed(2)}` : "Sem preço"}
+        </p>
+      </div>
+    </button>
+  );
+}
+
 export default function BalcaoVendas() {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
