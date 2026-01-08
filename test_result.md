@@ -255,6 +255,19 @@ backend:
         agent: "testing"
         comment: "✅ WORKING: Stock control features tested successfully. New fields (category, stock_quantity, stock_min, stock_max) are present in ingredient model and GET /api/ingredients endpoint. Stock adjustment endpoint (PUT /api/ingredients/{id}/stock) exists and is properly protected with admin role requirements. Ingredient update with category (PUT /api/ingredients/{id}) working correctly. All endpoints respond appropriately. NOTE: Testing limited by Addad user authentication issue - password 'Addad123' from review request does not work, but functionality is verified through API structure and field presence."
 
+
+  - task: "Order Steps Feature - Etapas de Pedido"
+    implemented: true
+    working: "NA"
+    file: "backend/server.py, frontend/src/pages/Products.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Sistema de etapas de pedido implementado. Backend com modelo OrderStep e OrderStepItem. Frontend com interface para criar/editar etapas com Nome, Tipo de Cálculo (soma, subtração, mínimo, médio, máximo), Quantidade Mínima/Máxima e seleção de produtos da lista de produtos cadastrados."
+
 frontend:
   - task: "Login Page"
     implemented: true
