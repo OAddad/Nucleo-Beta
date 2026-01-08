@@ -337,25 +337,29 @@ async def get_users_management(current_user: User = Depends(get_current_user)):
 async def create_user_management(user_data: UserManagementCreate, current_user: User = Depends(get_current_user)):
     check_role(current_user, ["proprietario"])
     
-    existing = await db.users.find_one({"username": user_data.username}, {"_id": 0})
+    existing = sqlite_db.get_user_by_username(user_data.username)
     if existing:
         raise HTTPException(status_code=400, detail="Username already exists")
     
     if user_data.role not in ["proprietario", "administrador", "observador"]:
         raise HTTPException(status_code=400, detail="Role inválido")
     
-    hashed_password = pwd_context.hash(user_data.password)
-    user = User(username=user_data.username, role=user_data.role)
-    user_dict = user.model_dump()
-    user_dict["password"] = hashed_password
-    user_dict["created_at"] = user_dict["created_at"].isoformat()
+    user_id = str(uuid.uuid4())
+    created_at = datetime.now(timezone.utc)
     
-    await db.users.insert_one(user_dict)
+    # Senha em TEXTO SIMPLES
+    sqlite_db.create_user({
+        'id': user_id,
+        'username': user_data.username,
+        'password': user_data.password,  # Texto simples!
+        'role': user_data.role,
+        'created_at': created_at.isoformat()
+    })
     
     # Registrar auditoria
     await log_audit("CREATE", "user", user_data.username, current_user, "media", {"role": user_data.role})
     
-    return user
+    return User(id=user_id, username=user_data.username, role=user_data.role, created_at=created_at)
 
 @api_router.put("/users/{user_id}/role", response_model=User)
 async def update_user_role(user_id: str, role_data: UserManagementUpdate, current_user: User = Depends(get_current_user)):
@@ -364,28 +368,29 @@ async def update_user_role(user_id: str, role_data: UserManagementUpdate, curren
     if role_data.role not in ["proprietario", "administrador", "observador"]:
         raise HTTPException(status_code=400, detail="Role inválido")
     
-    user = await db.users.find_one({"id": user_id}, {"_id": 0})
+    user = sqlite_db.get_user_by_id(user_id)
     if not user:
         raise HTTPException(status_code=404, detail="Usuário não encontrado")
     
-    await db.users.update_one({"id": user_id}, {"$set": {"role": role_data.role}})
+    sqlite_db.update_user(user_id, {"role": role_data.role})
     
     # Registrar auditoria
     await log_audit("UPDATE", "user", user["username"], current_user, "media", {"new_role": role_data.role})
     
-    updated = await db.users.find_one({"id": user_id}, {"_id": 0})
-    if isinstance(updated["created_at"], str):
-        updated["created_at"] = datetime.fromisoformat(updated["created_at"])
+    updated = sqlite_db.get_user_by_id(user_id)
+    if isinstance(updated.get("created_at"), str):
+        updated["created_at"] = datetime.fromisoformat(updated["created_at"].replace('Z', '+00:00'))
     return User(**updated)
 
 @api_router.put("/users/change-password")
 async def change_password(password_data: ChangePassword, current_user: User = Depends(get_current_user)):
-    user_doc = await db.users.find_one({"id": current_user.id}, {"_id": 0})
-    if not user_doc or not pwd_context.verify(password_data.old_password, user_doc["password"]):
+    user_doc = sqlite_db.get_user_by_id(current_user.id)
+    # Verificar senha em texto simples
+    if not user_doc or user_doc.get("password") != password_data.old_password:
         raise HTTPException(status_code=401, detail="Senha atual incorreta")
     
-    new_hashed = pwd_context.hash(password_data.new_password)
-    await db.users.update_one({"id": current_user.id}, {"$set": {"password": new_hashed}})
+    # Atualizar senha em texto simples
+    sqlite_db.update_user(current_user.id, {"password": password_data.new_password})
     
     return {"message": "Senha alterada com sucesso"}
 
@@ -396,11 +401,11 @@ async def delete_user(user_id: str, current_user: User = Depends(get_current_use
     if user_id == current_user.id:
         raise HTTPException(status_code=400, detail="Você não pode deletar sua própria conta")
     
-    user = await db.users.find_one({"id": user_id}, {"_id": 0})
+    user = sqlite_db.get_user_by_id(user_id)
     if not user:
         raise HTTPException(status_code=404, detail="Usuário não encontrado")
     
-    await db.users.delete_one({"id": user_id})
+    sqlite_db.delete_user(user_id)
     
     # Registrar auditoria
     await log_audit("DELETE", "user", user["username"], current_user, "alta")
@@ -412,10 +417,10 @@ async def delete_user(user_id: str, current_user: User = Depends(get_current_use
 async def get_audit_logs(current_user: User = Depends(get_current_user)):
     check_role(current_user, ["proprietario", "administrador"])
     
-    logs = await db.audit_logs.find({}, {"_id": 0}).sort("timestamp", -1).to_list(1000)
+    logs = sqlite_db.get_all_audit_logs()
     for log in logs:
-        if isinstance(log["timestamp"], str):
-            log["timestamp"] = datetime.fromisoformat(log["timestamp"])
+        if isinstance(log.get("timestamp"), str):
+            log["timestamp"] = datetime.fromisoformat(log["timestamp"].replace('Z', '+00:00'))
     return logs
 
 # Ingredient endpoints
