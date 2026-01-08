@@ -118,14 +118,16 @@ class CMVMasterAPITester:
                 
                 return True
         
-        # If no existing users work, try to register a new admin user
-        print("🔍 Trying to register a new admin user for testing...")
+        # If no existing users work, try to register a new admin user with unique name
+        import time
+        unique_suffix = str(int(time.time()))[-6:]  # Last 6 digits of timestamp
+        print(f"🔍 Trying to register a new admin user for testing...")
         success, response = self.run_test(
             "Register test admin user",
             "POST",
             "auth/register",
             200,
-            data={"username": "test_admin_order_steps", "password": "admin123"}
+            data={"username": f"test_admin_{unique_suffix}", "password": "admin123"}
         )
         
         if success and 'access_token' in response:
