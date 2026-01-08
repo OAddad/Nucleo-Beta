@@ -519,7 +519,19 @@ export default function Products() {
                             {product.recipe.map((item, idx) => {
                               const ingredient = getIngredientDetails(item.ingredient_id);
                               const displayUnit = getIngredientUnit(ingredient);
-                              const itemCost = ingredient.average_price * item.quantity;
+                              
+                              // Calcular custo baseado no tipo de ingrediente
+                              let itemCost;
+                              let displayQuantity = item.quantity;
+                              
+                              if (ingredient.unit_weight && ingredient.unit_weight > 0) {
+                                // Para ingredientes com peso por unidade (hambúrguer)
+                                // item.quantity está em kg, converter para unidades
+                                displayQuantity = item.quantity / ingredient.unit_weight;
+                                itemCost = ingredient.average_price * item.quantity;
+                              } else {
+                                itemCost = ingredient.average_price * item.quantity;
+                              }
                               
                               return (
                                 <div
@@ -531,8 +543,8 @@ export default function Products() {
                                   </span>
                                   <span className="font-mono mx-4">
                                     {displayUnit === "un" 
-                                      ? Math.round(item.quantity) 
-                                      : item.quantity.toFixed(2)
+                                      ? Math.round(displayQuantity) 
+                                      : displayQuantity.toFixed(2)
                                     } {displayUnit}
                                   </span>
                                   <span className="font-mono font-medium">
