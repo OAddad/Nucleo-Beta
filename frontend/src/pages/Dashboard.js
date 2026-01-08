@@ -76,11 +76,6 @@ export default function Dashboard({ setIsAuthenticated }) {
     { path: "/", label: "Visão Geral", icon: Home, type: "single" },
   ];
 
-  // Adicionar Moderação apenas para proprietários e administradores
-  if (currentUser?.role === "proprietario" || currentUser?.role === "administrador") {
-    mainTabs.push({ path: "/moderacao", label: "Moderação", icon: Shield, type: "single" });
-  }
-
   // Estrutura hierárquica de Controle de Estoque
   const stockControlModule = {
     label: "Controle de Estoque",
