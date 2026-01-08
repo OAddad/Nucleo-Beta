@@ -215,6 +215,11 @@ export default function Ingredients() {
                   >
                     <td className="py-3 px-6 text-slate-700 font-medium">
                       {ingredient.name}
+                      {ingredient.units_per_package && (
+                        <span className="text-xs text-slate-500 ml-2">
+                          ({ingredient.units_per_package} un/emb)
+                        </span>
+                      )}
                     </td>
                     <td className="py-3 px-6 text-slate-600">{ingredient.unit}</td>
                     <td className="py-3 px-6 text-right font-mono text-slate-900 font-medium">
