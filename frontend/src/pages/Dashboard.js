@@ -3,6 +3,7 @@ import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import { toast } from "sonner";
 import { ChefHat, Package, ShoppingCart, FileText, BarChart3, LogOut } from "lucide-react";
 import { Button } from "../components/ui/button";
+import DarkModeToggle from "../components/DarkModeToggle";
 import Ingredients from "./Ingredients";
 import Purchases from "./Purchases";
 import Products from "./Products";
