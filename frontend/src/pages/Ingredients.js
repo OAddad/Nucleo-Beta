@@ -96,10 +96,6 @@ export default function Ingredients() {
         payload.units_per_package = parseInt(unitsPerPackage);
       }
 
-      if (slicesPerPackage && parseInt(slicesPerPackage) > 0) {
-        payload.slices_per_package = parseInt(slicesPerPackage);
-      }
-
       if (editMode) {
         await axios.put(`${API}/ingredients/${currentIngredientId}`, payload, getAuthHeader());
         toast.success("Ingrediente atualizado!");
