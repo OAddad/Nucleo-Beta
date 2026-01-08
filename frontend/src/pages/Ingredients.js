@@ -238,6 +238,26 @@ export default function Ingredients() {
                     </p>
                   </div>
                 )}
+
+                {unit === "kg" && (
+                  <div>
+                    <Label htmlFor="slicesPerPackage">
+                      Fatias/Porções por Embalagem (opcional)
+                    </Label>
+                    <Input
+                      id="slicesPerPackage"
+                      data-testid="ingredient-slices-per-package-input"
+                      type="number"
+                      value={slicesPerPackage}
+                      onChange={(e) => setSlicesPerPackage(e.target.value)}
+                      placeholder="Ex: 160 (para barra com 160 fatias)"
+                      className="mt-1 h-11"
+                    />
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Use quando comprar barras/peças que você fatia. O preço será dividido automaticamente pelas fatias.
+                    </p>
+                  </div>
+                )}
                 
                 <Button
                   type="submit"
