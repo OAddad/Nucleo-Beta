@@ -1173,24 +1173,7 @@ export default function Products() {
                   >
                     {/* Foto do produto ou placeholder */}
                     <div className="w-16 h-16 rounded-lg border overflow-hidden bg-muted mr-4 flex-shrink-0 flex items-center justify-center">
-                      {product.photo_url ? (
-                        <img
-                          src={`${BACKEND_URL}/api${product.photo_url}`}
-                          alt={product.name}
-                          className="w-full h-full object-cover"
-                          onError={(e) => {
-                            console.error('Erro ao carregar imagem:', `${BACKEND_URL}/api${product.photo_url}`);
-                            e.target.style.display = 'none';
-                            const parent = e.target.parentElement;
-                            parent.innerHTML = '<div class="flex flex-col items-center justify-center w-full h-full"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-muted-foreground"><line x1="2" x2="22" y1="2" y2="22"/><path d="M10.41 10.41a2 2 0 1 1-2.83-2.83"/><line x1="13.5" x2="6" y1="13.5" y2="21"/><line x1="18" x2="21" y1="12" y2="15"/><path d="M3.59 3.59A1.99 1.99 0 0 0 3 5v14a2 2 0 0 0 2 2h14c.55 0 1.052-.22 1.41-.59"/><path d="M21 15V5a2 2 0 0 0-2-2H9"/></svg><span class="text-xs text-muted-foreground mt-1">Erro</span></div>';
-                          }}
-                        />
-                      ) : (
-                        <div className="flex flex-col items-center justify-center">
-                          <ImageOff className="w-6 h-6 text-muted-foreground mb-1" strokeWidth={1.5} />
-                          <span className="text-xs text-muted-foreground">Sem foto</span>
-                        </div>
-                      )}
+                      <ProductThumbnail photoUrl={product.photo_url} name={product.name} />
                     </div>
                     
                     <div className="flex-1 grid grid-cols-12 gap-4 items-center">
