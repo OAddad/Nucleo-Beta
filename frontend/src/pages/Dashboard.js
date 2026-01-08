@@ -33,7 +33,7 @@ export default function Dashboard({ setIsAuthenticated }) {
 
   const handleNavigate = (path) => {
     navigate(path);
-    setMobileMenuOpen(false); // Fecha o menu mobile ao navegar
+    setSidebarOpen(false); // Fecha o menu ao navegar em mobile
   };
 
   const tabs = [
