@@ -53,10 +53,20 @@ export default function Ingredients() {
     setLoading(true);
 
     try {
-      await axios.post(`${API}/ingredients`, { name, unit }, getAuthHeader());
+      const payload = { 
+        name, 
+        unit: unit === "unidade" ? "un" : unit 
+      };
+      
+      if (unitsPerPackage && parseInt(unitsPerPackage) > 0) {
+        payload.units_per_package = parseInt(unitsPerPackage);
+      }
+      
+      await axios.post(`${API}/ingredients`, payload, getAuthHeader());
       toast.success("Ingrediente criado!");
       setName("");
       setUnit("");
+      setUnitsPerPackage("");
       setOpen(false);
       fetchIngredients();
     } catch (error) {
