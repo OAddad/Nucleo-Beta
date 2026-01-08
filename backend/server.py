@@ -264,7 +264,8 @@ async def log_audit(action: str, resource_type: str, resource_name: str, user: U
     )
     doc = audit.model_dump()
     doc["timestamp"] = doc["timestamp"].isoformat()
-    await db.audit_logs.insert_one(doc)
+    # Usar SQLite
+    sqlite_db.create_audit_log(doc)
 
 def check_role(user: User, allowed_roles: List[str]):
     """Verifica se o usuário tem permissão baseada no role"""
