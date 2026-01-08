@@ -244,7 +244,10 @@ export default function Delivery() {
       genero: novoClienteGenero,
       foto: novoClienteFoto,
       endereco: novoClienteEndereco,
+      numero: novoClienteNumero,
       complemento: novoClienteComplemento,
+      bairro: novoClienteBairro,
+      cep: novoClienteCep,
       created_at: new Date().toISOString(),
       pedidos_count: 0,
       total_gasto: 0
@@ -263,7 +266,10 @@ export default function Delivery() {
     setNovoClienteGenero("");
     setNovoClienteFoto("");
     setNovoClienteEndereco("");
+    setNovoClienteNumero("");
     setNovoClienteComplemento("");
+    setNovoClienteBairro("");
+    setNovoClienteCep("");
     setClienteSearch("");
     toast.success("Cliente cadastrado!");
   };
