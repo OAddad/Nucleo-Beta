@@ -52,6 +52,38 @@ class Token(BaseModel):
     token_type: str
     user: User
 
+
+class AuditLog(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    action: str  # CREATE, UPDATE, DELETE
+    resource_type: str  # ingredient, product, purchase, user
+    resource_name: str
+    user_id: str
+    username: str
+    priority: str  # baixa, media, alta
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    details: Optional[dict] = None
+
+class UserManagementCreate(BaseModel):
+    username: str
+    password: str
+    role: str  # proprietario, administrador, observador
+
+class UserManagementUpdate(BaseModel):
+    role: str
+
+class ChangePassword(BaseModel):
+    old_password: str
+    new_password: str
+
+class UserWithPassword(BaseModel):
+    id: str
+    username: str
+    role: str
+    created_at: datetime
+    password: str
+
 class IngredientCreate(BaseModel):
     name: str
     unit: str
