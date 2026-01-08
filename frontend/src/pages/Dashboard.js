@@ -130,7 +130,7 @@ export default function Dashboard({ setIsAuthenticated }) {
         <div className={`${sidebarOpen ? 'block' : 'hidden lg:block'} w-64 lg:w-full`}>
           <div className="p-6 border-b flex items-center justify-between">
             <button 
-              onClick={() => navigate("/")}
+              onClick={() => handleSidebarClick("/")}
               className={`flex items-center gap-3 hover:opacity-80 transition-opacity ${sidebarOpen ? '' : 'lg:justify-center lg:w-full'}`}
             >
               <div className="bg-primary p-2 rounded-lg flex-shrink-0">
@@ -149,11 +149,11 @@ export default function Dashboard({ setIsAuthenticated }) {
           {/* Tabs Principais */}
           {mainTabs.map((tab) => {
             const Icon = tab.icon;
-            const active = isActive(tab.path);
+            const active = isActive(tab.path) && !activeTopMenu;
             return (
               <button
                 key={tab.path}
-                onClick={() => navigate(tab.path)}
+                onClick={() => handleSidebarClick(tab.path)}
                 className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 ${
                   active
                     ? "bg-primary text-primary-foreground font-medium shadow-lg"
@@ -173,7 +173,7 @@ export default function Dashboard({ setIsAuthenticated }) {
             <button
               onClick={() => setStockControlExpanded(!stockControlExpanded)}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 ${
-                isStockControlActive()
+                isStockControlActive() && !activeTopMenu
                   ? "bg-primary/10 text-primary font-medium"
                   : "text-sidebar-foreground hover:bg-muted"
               } ${!sidebarOpen ? 'lg:justify-center lg:px-2' : ''}`}
@@ -197,7 +197,7 @@ export default function Dashboard({ setIsAuthenticated }) {
               <div className="ml-4 mt-1 space-y-1 border-l-2 border-border pl-4">
                 {stockControlModule.children.map((child) => {
                   const ChildIcon = child.icon;
-                  const active = isActive(child.path);
+                  const active = isActive(child.path) && !activeTopMenu;
                   return (
                     <button
                       key={child.path}
