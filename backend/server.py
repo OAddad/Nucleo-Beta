@@ -518,6 +518,9 @@ async def create_purchase_batch(batch_data: PurchaseBatchCreate, current_user: U
     # Registrar auditoria
     await log_audit("CREATE", "purchase", f"Lote de {batch_data.supplier}", current_user, "baixa", {"items": len(purchases_created)})
     
+    # Sincronizar com Excel
+    await sync_all_to_excel()
+    
     return {"message": "Purchase batch created", "batch_id": batch_id, "items_created": len(purchases_created)}
 
 @api_router.put("/purchases/batch/{batch_id}", response_model=dict)
