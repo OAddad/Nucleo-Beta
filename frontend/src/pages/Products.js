@@ -341,6 +341,58 @@ export default function Products() {
     setDeleteDialogOpen(true);
   };
 
+  // Função para abrir o dialog de duplicação
+  const openDuplicateDialog = (product) => {
+    setProductToDuplicate(product);
+    setDuplicateName(`${product.name} (Cópia)`);
+    setDuplicateDialogOpen(true);
+  };
+
+  // Função para duplicar o produto
+  const handleDuplicateProduct = async () => {
+    if (!productToDuplicate || !duplicateName.trim()) {
+      toast.error("Digite um nome para o novo produto");
+      return;
+    }
+
+    // Verificar se já existe produto com mesmo nome na mesma categoria
+    const existingProduct = products.find(
+      p => p.name.toLowerCase() === duplicateName.trim().toLowerCase() && 
+           p.category === productToDuplicate.category
+    );
+
+    if (existingProduct) {
+      toast.error("Já existe um produto com este nome nesta categoria");
+      return;
+    }
+
+    setDuplicatingProduct(true);
+
+    try {
+      const productData = {
+        name: duplicateName.trim(),
+        description: productToDuplicate.description || null,
+        category: productToDuplicate.category || null,
+        sale_price: productToDuplicate.sale_price || null,
+        photo_url: productToDuplicate.photo_url || null,
+        recipe: productToDuplicate.recipe || [],
+        is_insumo: productToDuplicate.is_insumo || false,
+      };
+
+      await axios.post(`${API}/products`, productData, getAuthHeader());
+      toast.success(`Produto "${duplicateName}" criado com sucesso!`);
+      setDuplicateDialogOpen(false);
+      setProductToDuplicate(null);
+      setDuplicateName("");
+      fetchProducts();
+    } catch (error) {
+      console.error("Erro ao duplicar produto:", error);
+      toast.error(error.response?.data?.detail || "Erro ao duplicar produto");
+    } finally {
+      setDuplicatingProduct(false);
+    }
+  };
+
   const addRecipeItem = (type) => {
     if (type === "ingredient") {
       setRecipeIngredients([...recipeIngredients, { ingredient_id: "", quantity: "" }]);
