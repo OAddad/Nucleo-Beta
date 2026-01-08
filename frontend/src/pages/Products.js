@@ -415,14 +415,15 @@ export default function Products() {
           </p>
         </div>
 
-        {/* Sub-abas */}
-        <Tabs defaultValue="products" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 mb-6">
-            <TabsTrigger value="products">Produtos</TabsTrigger>
-            <TabsTrigger value="categories">Categorias</TabsTrigger>
-          </TabsList>
+        {/* Sub-abas - Container com posição relativa */}
+        <div className="relative">
+          <Tabs defaultValue="products" className="w-full">
+            <TabsList className="grid w-full grid-cols-2 mb-6 relative">
+              <TabsTrigger value="products">Produtos</TabsTrigger>
+              <TabsTrigger value="categories">Categorias</TabsTrigger>
+            </TabsList>
 
-          <TabsContent value="products" className="space-y-4">
+            <TabsContent value="products" className="space-y-4">
             <div className="flex justify-end">
               <Dialog
                 open={open}
