@@ -354,6 +354,7 @@ export default function Delivery() {
     const novoPedido = {
       id: `pedido-${Date.now()}`,
       codigo: generateUniqueCode(),
+      modulo: "Delivery",
       cliente: selectedCliente,
       items: cart,
       total: cartTotal,
