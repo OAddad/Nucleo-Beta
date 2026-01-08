@@ -108,6 +108,13 @@ export default function Clientes() {
     return `${numbers.slice(0, 2)}/${numbers.slice(2, 4)}/${numbers.slice(4, 8)}`;
   };
 
+  // Formatar CEP XXXXX-XXX
+  const formatCEP = (value) => {
+    const numbers = value.replace(/\D/g, "");
+    if (numbers.length <= 5) return numbers;
+    return `${numbers.slice(0, 5)}-${numbers.slice(5, 8)}`;
+  };
+
   const handleTelefoneChange = (e) => {
     setTelefone(formatTelefone(e.target.value));
   };
@@ -118,6 +125,10 @@ export default function Clientes() {
 
   const handleDataNascimentoChange = (e) => {
     setDataNascimento(formatData(e.target.value));
+  };
+
+  const handleCEPChange = (e) => {
+    setCep(formatCEP(e.target.value));
   };
 
   const handleFotoChange = (e) => {
@@ -142,7 +153,10 @@ export default function Clientes() {
     setFoto(null);
     setFotoPreview("");
     setEndereco("");
+    setNumero("");
     setComplemento("");
+    setBairro("");
+    setCep("");
     setEditMode(false);
     setCurrentCliente(null);
   };
