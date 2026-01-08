@@ -1129,6 +1129,14 @@ async def sync_all_to_excel():
                     u["created_at"] = u["created_at"].isoformat()
             excel_backup.save_users(users)
         
+        # Histórico de Auditoria (Moderação)
+        audit_logs = await db.audit_logs.find({}, {"_id": 0}).to_list(10000)
+        if audit_logs:
+            for log in audit_logs:
+                if isinstance(log.get("timestamp"), datetime):
+                    log["timestamp"] = log["timestamp"].isoformat()
+            excel_backup.save_audit_logs(audit_logs)
+        
         logger.info("[BACKUP] Sincronização completa com Excel realizada")
     except Exception as e:
         logger.error(f"[BACKUP] Erro ao sincronizar com Excel: {e}")
