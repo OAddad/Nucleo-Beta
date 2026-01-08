@@ -192,6 +192,9 @@ export default function Products() {
     if (ingredient.units_per_package && ingredient.units_per_package > 0) {
       return "un";
     }
+    if (ingredient.unit_weight && ingredient.unit_weight > 0) {
+      return "un";
+    }
     return ingredient.unit;
   };
 
