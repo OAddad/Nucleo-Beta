@@ -459,6 +459,15 @@ export default function Purchases() {
                       </div>
                       <div className="flex gap-2 ml-4">
                         <Button
+                          data-testid={`edit-batch-${batch.batch_id}`}
+                          onClick={() => handleEdit(batch)}
+                          variant="ghost"
+                          size="sm"
+                          className="hover:bg-muted"
+                        >
+                          <Edit className="w-4 h-4" strokeWidth={1.5} />
+                        </Button>
+                        <Button
                           data-testid={`delete-batch-${batch.batch_id}`}
                           onClick={() => handleDeleteBatch(batch.batch_id)}
                           variant="ghost"
