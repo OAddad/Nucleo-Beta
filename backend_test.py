@@ -63,67 +63,47 @@ class CMVMasterAPITester:
             return False, {}
 
     def test_authentication(self):
-        """Test complete authentication flow as specified in review"""
+        """Test authentication with Addad user as specified in review request"""
         print("\n=== AUTHENTICATION TESTS ===")
         
-        # Try with "Addad" username first (gets proprietario role according to backend logic)
-        print("🔍 Testing with 'Addad' username (gets proprietario role)...")
+        # Try login with Addad and password "Addad123" as specified in review
+        print("🔍 Testing login with 'Addad' user (password: Addad123)...")
         success, response = self.run_test(
-            "Register Addad user",
+            "Login with Addad",
             "POST",
-            "auth/register",
+            "auth/login",
             200,
-            data={"username": "Addad", "password": "senha123"}
+            data={"username": "Addad", "password": "Addad123"}
         )
         
         if success and 'access_token' in response:
             self.token = response['access_token']
             self.user_id = response['user']['id']
-            print(f"   ✅ Addad user registered successfully")
+            print(f"   ✅ Addad login successful")
             print(f"   User role: {response['user']['role']}")
             print(f"   Token obtained: {self.token[:20]}...")
+            return True
         else:
-            # Try login with Addad if already exists
-            print("   Addad might already exist, trying login...")
+            # Try to register Addad if login fails
+            print("   Login failed, trying to register Addad...")
             success, response = self.run_test(
-                "Login with Addad",
+                "Register Addad user",
                 "POST",
-                "auth/login",
+                "auth/register",
                 200,
-                data={"username": "Addad", "password": "senha123"}
+                data={"username": "Addad", "password": "Addad123"}
             )
             
             if success and 'access_token' in response:
                 self.token = response['access_token']
                 self.user_id = response['user']['id']
-                print(f"   ✅ Addad login successful")
+                print(f"   ✅ Addad user registered successfully")
                 print(f"   User role: {response['user']['role']}")
                 print(f"   Token obtained: {self.token[:20]}...")
+                return True
             else:
-                # Fallback: try with teste_admin
-                print("   Trying with teste_admin...")
-                success, response = self.run_test(
-                    "Login with teste_admin",
-                    "POST",
-                    "auth/login",
-                    200,
-                    data={"username": "teste_admin", "password": "senha123"}
-                )
-                
-                if success and 'access_token' in response:
-                    self.token = response['access_token']
-                    self.user_id = response['user']['id']
-                    print(f"   ✅ teste_admin login successful")
-                    print(f"   User role: {response['user']['role']}")
-                    print(f"   Token obtained: {self.token[:20]}...")
-                    
-                    if response['user']['role'] not in ['proprietario', 'administrador']:
-                        print("   ⚠️ Warning: User has observer role - some tests may fail due to permissions")
-                else:
-                    print("   ❌ Authentication failed")
-                    return False
-        
-        return True
+                print("   ❌ Authentication failed - cannot login or register Addad")
+                return False
 
     def test_ingredients_crud(self):
         """Test ingredient CRUD operations as specified in review"""
