@@ -164,68 +164,62 @@ class CMVMasterAPITester:
         
         return len(self.created_ingredients) == 2
 
-    def test_purchases(self):
-        """Test purchase CRUD operations"""
-        print("\n=== PURCHASE TESTS ===")
+    def test_batch_purchases(self):
+        """Test batch purchase operations as specified in review"""
+        print("\n=== BATCH PURCHASE TESTS ===")
         
-        # Get existing ingredients to use for purchases
-        success, ingredients = self.run_test("Get ingredients for purchases", "GET", "ingredients", 200)
-        if not success:
+        if len(self.created_ingredients) < 2:
+            print("❌ Need at least 2 ingredients for batch purchase test")
             return False
         
-        # Find Carne Bovina and Queijo Cheddar
-        carne_id = None
-        queijo_id = None
+        carne_id = self.created_ingredients[0]
+        pao_id = self.created_ingredients[1]
         
-        for ing in ingredients:
-            if ing['name'] == 'Carne Bovina':
-                carne_id = ing['id']
-            elif ing['name'] == 'Queijo Cheddar':
-                queijo_id = ing['id']
+        # Create batch purchase
+        print("🔍 Creating batch purchase...")
+        batch_data = {
+            "supplier": "Fornecedor Teste",
+            "purchase_date": "2025-01-08",
+            "items": [
+                {"ingredient_id": carne_id, "quantity": 10, "price": 450.00},
+                {"ingredient_id": pao_id, "quantity": 3, "price": 45.00}
+            ]
+        }
         
-        if not carne_id:
-            print("❌ Carne Bovina ingredient not found")
-            return False
-        
-        # Create purchase for Carne Bovina
-        success, purchase1 = self.run_test(
-            "Create Carne Bovina purchase",
+        success, response = self.run_test(
+            "Create batch purchase",
             "POST",
-            "purchases",
+            "purchases/batch",
             200,
-            data={
-                "ingredient_id": carne_id,
-                "quantity": 10.0,
-                "price": 250.0
-            }
+            data=batch_data
         )
+        
         if success:
-            self.created_purchases.append(purchase1['id'])
-            print(f"   Unit price: R$ {purchase1['unit_price']:.2f}")
+            batch_id = response.get('batch_id')
+            self.batch_ids.append(batch_id)
+            print(f"   ✅ Batch purchase created with ID: {batch_id}")
+            print(f"   Items created: {response.get('items_created', 0)}")
+        else:
+            print("   ❌ Failed to create batch purchase")
+            return False
         
-        # Create purchase for Queijo Cheddar if available
-        if queijo_id:
-            success, purchase2 = self.run_test(
-                "Create Queijo Cheddar purchase",
-                "POST",
-                "purchases",
-                200,
-                data={
-                    "ingredient_id": queijo_id,
-                    "quantity": 5.0,
-                    "price": 75.0
-                }
-            )
-            if success:
-                self.created_purchases.append(purchase2['id'])
-                print(f"   Unit price: R$ {purchase2['unit_price']:.2f}")
-        
-        # Get all purchases
-        success, purchases = self.run_test("Get all purchases", "GET", "purchases", 200)
+        # List grouped purchases
+        print("🔍 Listing grouped purchases...")
+        success, grouped = self.run_test("Get grouped purchases", "GET", "purchases/grouped", 200)
         if success:
-            print(f"   Total purchases: {len(purchases)}")
+            print(f"   ✅ Found {len(grouped)} purchase batches")
+            for batch in grouped:
+                print(f"   - Batch: {batch['supplier']} - Items: {len(batch['items'])} - Total: R$ {batch['total_price']:.2f}")
         
-        return len(self.created_purchases) >= 1
+        # Verify average price calculation
+        print("🔍 Verifying price calculations...")
+        success, ingredients = self.run_test("Get ingredients after batch purchase", "GET", "ingredients", 200)
+        if success:
+            for ing in ingredients:
+                if ing['id'] in [carne_id, pao_id]:
+                    print(f"   {ing['name']} - Average price: R$ {ing.get('average_price', 0):.2f}")
+        
+        return True
 
     def test_price_recalculation(self):
         """Test that ingredient prices are recalculated after purchases"""
