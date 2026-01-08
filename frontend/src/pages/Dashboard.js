@@ -30,6 +30,11 @@ export default function Dashboard({ setIsAuthenticated }) {
     toast.success("Logout realizado!");
   };
 
+  const handleNavigate = (path) => {
+    navigate(path);
+    setMobileMenuOpen(false); // Fecha o menu mobile ao navegar
+  };
+
   const tabs = [
     { path: "/", label: "Relatórios", icon: BarChart3 },
     { path: "/ingredientes", label: "Ingredientes", icon: Package },
