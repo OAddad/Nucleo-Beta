@@ -407,7 +407,10 @@ export default function Products() {
                             {ingredient.name} ({displayUnit})
                           </span>
                           <span className="font-mono text-slate-900 mx-4">
-                            {displayQuantity.toFixed(displayUnit === "fatias" || displayUnit === "un" ? 0 : 2)} {displayUnit}
+                            {displayUnit === "fatias" || displayUnit === "un" 
+                              ? Math.round(displayQuantity) 
+                              : displayQuantity.toFixed(2)
+                            } {displayUnit}
                           </span>
                           <span className="font-mono text-slate-900 font-medium">
                             R$ {itemCost.toFixed(2)}
