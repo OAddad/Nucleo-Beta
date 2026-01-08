@@ -437,48 +437,56 @@ class CMVMasterAPITester:
         return True
 
 def main():
-    print("🚀 Starting CMV Master API Tests")
-    print("=" * 50)
+    print("🚀 Starting CMV Master API Tests - Complete System Test")
+    print("=" * 60)
     
     tester = CMVMasterAPITester()
     
-    # Run all tests
+    # Run all tests in the exact order specified in the review
     tests = [
-        ("Authentication", tester.test_login),
-        ("Ingredients", tester.test_ingredients),
-        ("Purchases", tester.test_purchases),
-        ("Price Recalculation", tester.test_price_recalculation),
-        ("Products", tester.test_products),
-        ("Reports", tester.test_reports),
-        ("Purchase Deletion", tester.test_purchase_deletion),
+        ("1. Authentication", tester.test_authentication),
+        ("2. Ingredients CRUD", tester.test_ingredients_crud),
+        ("3. Batch Purchases", tester.test_batch_purchases),
+        ("4. Categories", tester.test_categories),
+        ("5. Products with CMV", tester.test_products_with_cmv),
+        ("6. Dashboard & Reports", tester.test_dashboard_and_reports),
+        ("7. Audit Logs", tester.test_audit_logs),
+        ("8. Cleanup Operations", tester.test_cleanup_operations),
     ]
     
     failed_tests = []
     
     for test_name, test_func in tests:
         try:
+            print(f"\n{'='*60}")
+            print(f"Running {test_name}")
+            print(f"{'='*60}")
+            
             if not test_func():
                 failed_tests.append(test_name)
+                print(f"❌ {test_name} FAILED")
+            else:
+                print(f"✅ {test_name} PASSED")
         except Exception as e:
-            print(f"❌ {test_name} test failed with exception: {str(e)}")
+            print(f"❌ {test_name} failed with exception: {str(e)}")
             failed_tests.append(test_name)
     
-    # Cleanup
-    try:
-        tester.cleanup()
-    except Exception as e:
-        print(f"⚠️ Cleanup failed: {str(e)}")
-    
     # Print final results
-    print("\n" + "=" * 50)
-    print(f"📊 FINAL RESULTS")
+    print("\n" + "=" * 60)
+    print(f"📊 FINAL TEST RESULTS")
+    print("=" * 60)
     print(f"Tests passed: {tester.tests_passed}/{tester.tests_run}")
+    print(f"Success rate: {(tester.tests_passed/tester.tests_run)*100:.1f}%" if tester.tests_run > 0 else "No tests run")
     
     if failed_tests:
-        print(f"❌ Failed test categories: {', '.join(failed_tests)}")
+        print(f"\n❌ FAILED TEST CATEGORIES:")
+        for failed in failed_tests:
+            print(f"   - {failed}")
+        print(f"\n🔧 Please check the backend logs and fix the issues above.")
         return 1
     else:
-        print("✅ All test categories passed!")
+        print("\n✅ ALL TESTS PASSED!")
+        print("🎉 CMV Master system is working correctly!")
         return 0
 
 if __name__ == "__main__":
