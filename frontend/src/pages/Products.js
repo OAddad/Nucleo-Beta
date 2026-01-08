@@ -357,7 +357,7 @@ export default function Products() {
                     {(photoUrl || photoFile) && (
                       <div className="w-24 h-24 rounded-lg border overflow-hidden bg-muted">
                         <img
-                          src={photoFile ? URL.createObjectURL(photoFile) : `${BACKEND_URL}${photoUrl}`}
+                          src={photoFile ? URL.createObjectURL(photoFile) : `${BACKEND_URL}/api${photoUrl}`}
                           alt="Preview"
                           className="w-full h-full object-cover"
                         />
