@@ -316,6 +316,47 @@ export default function Dashboard({ setIsAuthenticated }) {
             <Route path="/produtos" element={<Products />} />
             <Route path="/moderacao" element={<Moderation />} />
             <Route path="/configuracao" element={<div className="p-8"><h1 className="text-3xl font-bold">Configuração</h1><p className="text-muted-foreground mt-2">Em breve...</p></div>} />
+            {/* Rotas de Vendas */}
+            <Route path="/vendas/relatorio" element={
+              <div className="p-8">
+                <h1 className="text-3xl font-bold">Relatório de Vendas</h1>
+                <p className="text-muted-foreground mt-2">Em breve...</p>
+                <div className="mt-8 p-6 bg-muted/50 rounded-xl border text-center">
+                  <BarChart3 className="w-16 h-16 mx-auto text-muted-foreground/50 mb-4" />
+                  <p className="text-muted-foreground">Esta funcionalidade está em desenvolvimento.</p>
+                </div>
+              </div>
+            } />
+            <Route path="/vendas/pedidos" element={
+              <div className="p-8">
+                <h1 className="text-3xl font-bold">Pedidos</h1>
+                <p className="text-muted-foreground mt-2">Em breve...</p>
+                <div className="mt-8 p-6 bg-muted/50 rounded-xl border text-center">
+                  <ClipboardList className="w-16 h-16 mx-auto text-muted-foreground/50 mb-4" />
+                  <p className="text-muted-foreground">Esta funcionalidade está em desenvolvimento.</p>
+                </div>
+              </div>
+            } />
+            <Route path="/vendas/entregas" element={
+              <div className="p-8">
+                <h1 className="text-3xl font-bold">Entregas</h1>
+                <p className="text-muted-foreground mt-2">Em breve...</p>
+                <div className="mt-8 p-6 bg-muted/50 rounded-xl border text-center">
+                  <Truck className="w-16 h-16 mx-auto text-muted-foreground/50 mb-4" />
+                  <p className="text-muted-foreground">Esta funcionalidade está em desenvolvimento.</p>
+                </div>
+              </div>
+            } />
+            <Route path="/vendas/clientes" element={
+              <div className="p-8">
+                <h1 className="text-3xl font-bold">Clientes</h1>
+                <p className="text-muted-foreground mt-2">Em breve...</p>
+                <div className="mt-8 p-6 bg-muted/50 rounded-xl border text-center">
+                  <Users className="w-16 h-16 mx-auto text-muted-foreground/50 mb-4" />
+                  <p className="text-muted-foreground">Esta funcionalidade está em desenvolvimento.</p>
+                </div>
+              </div>
+            } />
           </Routes>
         </main>
       </div>
