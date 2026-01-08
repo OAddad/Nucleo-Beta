@@ -196,27 +196,36 @@ export default function Products() {
 
   const resetForm = () => {
     setName("");
+    setProductCode("");
     setDescription("");
     setCategory("");
+    setProductType("produto");
     setSalePrice("");
     setPhotoUrl("");
     setPhotoFile(null);
     setIsInsumo(false);
+    setIsDivisible(false);
     setRecipeIngredients([{ ingredient_id: "", quantity: "" }]);
     setRecipePackaging([{ ingredient_id: "", quantity: "" }]);
+    setOrderSteps([]);
     setEditMode(false);
     setCurrentProductId(null);
+    setActiveFormTab("ficha");
   };
 
   const handleEdit = (product) => {
     setEditMode(true);
     setCurrentProductId(product.id);
     setName(product.name);
+    setProductCode(product.code || "");
     setDescription(product.description || "");
     setCategory(product.category || "");
+    setProductType(product.product_type || "produto");
     setSalePrice(product.sale_price ? product.sale_price.toString() : "");
     setPhotoUrl(product.photo_url || "");
     setIsInsumo(product.is_insumo || false);
+    setIsDivisible(product.is_divisible || false);
+    setOrderSteps(product.order_steps || []);
     
     // Separar ingredientes e embalagens baseado no item_type
     const ingredients = product.recipe
