@@ -52,7 +52,7 @@ export default function Products() {
   const [editMode, setEditMode] = useState(false);
   const [currentProductId, setCurrentProductId] = useState(null);
   const [expandedProducts, setExpandedProducts] = useState(new Set());
-  const [sortBy, setSortBy] = useState("alfabetica");
+  const [sortBy, setSortBy] = useState("alfabetica-az");
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [productToDelete, setProductToDelete] = useState(null);
   
