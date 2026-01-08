@@ -93,6 +93,68 @@ export default function Products() {
 
 
 
+
+  const initializeCategories = async () => {
+    try {
+      await axios.post(`${API}/categories/initialize`, {}, getAuthHeader());
+      fetchCategories();
+    } catch (error) {
+      console.error("Erro ao inicializar categorias:", error);
+    }
+  };
+
+  const handleCreateCategory = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      if (editCategoryMode) {
+        await axios.put(`${API}/categories/${currentCategoryId}`, { name: categoryName }, getAuthHeader());
+        toast.success("Categoria atualizada!");
+      } else {
+        await axios.post(`${API}/categories`, { name: categoryName }, getAuthHeader());
+        toast.success("Categoria criada!");
+      }
+      
+      setCategoryName("");
+      setCategoryDialogOpen(false);
+      setEditCategoryMode(false);
+      setCurrentCategoryId(null);
+      fetchCategories();
+    } catch (error) {
+      toast.error(error.response?.data?.detail || "Erro ao salvar categoria");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleEditCategory = (category) => {
+    setEditCategoryMode(true);
+    setCurrentCategoryId(category.id);
+    setCategoryName(category.name);
+    setCategoryDialogOpen(true);
+  };
+
+  const handleDeleteCategory = async () => {
+    if (!categoryToDelete) return;
+
+    try {
+      await axios.delete(`${API}/categories/${categoryToDelete.id}`, getAuthHeader());
+      toast.success("Categoria deletada!");
+      setDeleteCategoryDialogOpen(false);
+      setCategoryToDelete(null);
+      fetchCategories();
+    } catch (error) {
+      toast.error(error.response?.data?.detail || "Erro ao deletar categoria");
+    }
+  };
+
+  const confirmDeleteCategory = (category) => {
+    setCategoryToDelete(category);
+    setDeleteCategoryDialogOpen(true);
+  };
+
+
   const fetchCategories = async () => {
     try {
       const response = await axios.get(`${API}/categories`, getAuthHeader());
