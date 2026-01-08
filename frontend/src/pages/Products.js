@@ -622,7 +622,21 @@ export default function Products() {
             </TabsList>
 
             <TabsContent value="products" className="space-y-4">
-            <div className="flex justify-end">
+            <div className="flex justify-end gap-2">
+              <Button 
+                variant="outline" 
+                onClick={() => exportToExcel(products, "produtos", {
+                  code: "Código",
+                  name: "Nome",
+                  category: "Categoria",
+                  sale_price: "Preço de Venda",
+                  cmv: "Custo (CMV)",
+                  profit_margin: "Margem %"
+                })}
+              >
+                <Download className="w-4 h-4 mr-2" />
+                Exportar Excel
+              </Button>
               <Dialog
                 open={open}
                 onOpenChange={(isOpen) => {
