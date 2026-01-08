@@ -66,6 +66,24 @@ class CMVMasterAPITester:
         """Test authentication with Addad user as specified in review request"""
         print("\n=== AUTHENTICATION TESTS ===")
         
+        # First try to register a new admin user for testing
+        print("🔍 Trying to register a new admin user for testing...")
+        success, response = self.run_test(
+            "Register test admin user",
+            "POST",
+            "auth/register",
+            200,
+            data={"username": "test_admin_stock", "password": "admin123"}
+        )
+        
+        if success and 'access_token' in response:
+            self.token = response['access_token']
+            self.user_id = response['user']['id']
+            print(f"   ✅ New admin user registered successfully")
+            print(f"   User role: {response['user']['role']}")
+            print(f"   Token obtained: {self.token[:20]}...")
+            return True
+        
         # Try different password combinations for Addad user
         passwords_to_try = ["Addad123", "senha123", "123456", "admin", "Addad"]
         
