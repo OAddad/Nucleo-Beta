@@ -391,8 +391,7 @@ export default function Purchases() {
                     variant="outline"
                     onClick={() => {
                       setOpen(false);
-                      setCart([]);
-                      setSupplier("");
+                      resetForm();
                     }}
                     className="flex-1"
                   >
@@ -406,11 +405,11 @@ export default function Purchases() {
                     className="flex-1 shadow-sm transition-all active:scale-95"
                   >
                     {loading ? (
-                      "Finalizando..."
+                      editMode ? "Atualizando..." : "Finalizando..."
                     ) : (
                       <>
                         <Check className="w-5 h-5 mr-2" strokeWidth={1.5} />
-                        Finalizar Compra
+                        {editMode ? "Atualizar Compra" : "Finalizar Compra"}
                       </>
                     )}
                   </Button>
