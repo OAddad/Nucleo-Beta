@@ -623,7 +623,7 @@ export default function Delivery() {
                   <div className="relative">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                     <Input
-                      placeholder="Procurar cliente..."
+                      placeholder="Nome, CPF, email ou telefone..."
                       value={clienteSearch}
                       onChange={(e) => setClienteSearch(e.target.value)}
                       className="pl-10"
@@ -631,87 +631,61 @@ export default function Delivery() {
                   </div>
 
                   {/* Lista de clientes */}
-                  <div className="space-y-2 max-h-48 overflow-auto">
-                    {filteredClientes.map(cliente => (
-                      <button
-                        key={cliente.id}
-                        onClick={() => handleSelectCliente(cliente)}
-                        className="w-full p-3 text-left bg-card rounded-lg border hover:border-primary/50 transition-all"
-                      >
-                        <p className="font-medium">{cliente.nome}</p>
-                        <p className="text-xs text-muted-foreground">{cliente.telefone}</p>
-                        <p className="text-xs text-muted-foreground truncate">{cliente.endereco}</p>
-                      </button>
-                    ))}
-                  </div>
+                  {filteredClientes.length > 0 && (
+                    <div className="space-y-2 max-h-48 overflow-auto">
+                      {filteredClientes.map(cliente => (
+                        <button
+                          key={cliente.id}
+                          onClick={() => handleSelectCliente(cliente)}
+                          className="w-full p-3 text-left bg-card rounded-lg border hover:border-primary/50 transition-all"
+                        >
+                          <div className="flex items-center gap-2">
+                            <div className="w-8 h-8 rounded-full bg-muted overflow-hidden flex items-center justify-center">
+                              {cliente.foto ? (
+                                <img src={cliente.foto} alt="" className="w-full h-full object-cover" />
+                              ) : (
+                                <User className="w-4 h-4 text-muted-foreground" />
+                              )}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="font-medium truncate">{cliente.nome}</p>
+                              <p className="text-xs text-muted-foreground">{cliente.telefone}</p>
+                            </div>
+                          </div>
+                          {cliente.endereco && (
+                            <p className="text-xs text-muted-foreground mt-1 truncate pl-10">{cliente.endereco}</p>
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                  )}
 
-                  {/* Cadastrar novo cliente */}
-                  {!showClienteForm ? (
+                  {/* Sugestão de cadastro quando não encontrar */}
+                  {showCadastroSuggestion && (
+                    <div className="p-4 bg-orange-50 dark:bg-orange-950/30 rounded-lg border border-orange-200 dark:border-orange-800">
+                      <p className="text-sm text-center text-orange-800 dark:text-orange-200 mb-3">
+                        Nenhum cliente encontrado para "{clienteSearch}"
+                      </p>
+                      <Button 
+                        className="w-full"
+                        onClick={handleOpenClienteDialog}
+                      >
+                        <Plus className="w-4 h-4 mr-2" />
+                        Cadastrar Novo Cliente
+                      </Button>
+                    </div>
+                  )}
+
+                  {/* Botão cadastrar - mostrar quando não está pesquisando */}
+                  {!showCadastroSuggestion && (
                     <Button 
                       variant="outline" 
                       className="w-full"
-                      onClick={() => setShowClienteForm(true)}
+                      onClick={handleOpenClienteDialog}
                     >
                       <Plus className="w-4 h-4 mr-2" />
                       Cadastrar Cliente
                     </Button>
-                  ) : (
-                    <div className="space-y-3 p-3 bg-card rounded-lg border">
-                      <h4 className="font-medium">Novo Cliente</h4>
-                      <div>
-                        <Label className="text-xs">Nome *</Label>
-                        <Input
-                          value={novoClienteNome}
-                          onChange={(e) => setNovoClienteNome(e.target.value)}
-                          placeholder="Nome completo"
-                          className="mt-1 h-9"
-                        />
-                      </div>
-                      <div>
-                        <Label className="text-xs">Telefone *</Label>
-                        <Input
-                          value={novoClienteTelefone}
-                          onChange={(e) => setNovoClienteTelefone(e.target.value)}
-                          placeholder="(00) 00000-0000"
-                          className="mt-1 h-9"
-                        />
-                      </div>
-                      <div>
-                        <Label className="text-xs">Endereço *</Label>
-                        <Input
-                          value={novoClienteEndereco}
-                          onChange={(e) => setNovoClienteEndereco(e.target.value)}
-                          placeholder="Rua, número, bairro"
-                          className="mt-1 h-9"
-                        />
-                      </div>
-                      <div>
-                        <Label className="text-xs">Complemento</Label>
-                        <Input
-                          value={novoClienteComplemento}
-                          onChange={(e) => setNovoClienteComplemento(e.target.value)}
-                          placeholder="Apt, bloco..."
-                          className="mt-1 h-9"
-                        />
-                      </div>
-                      <div className="flex gap-2">
-                        <Button 
-                          variant="outline" 
-                          size="sm"
-                          onClick={() => setShowClienteForm(false)}
-                          className="flex-1"
-                        >
-                          Cancelar
-                        </Button>
-                        <Button 
-                          size="sm"
-                          onClick={handleNovoCliente}
-                          className="flex-1"
-                        >
-                          Salvar
-                        </Button>
-                      </div>
-                    </div>
                   )}
                 </div>
               ) : (
