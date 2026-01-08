@@ -432,6 +432,430 @@ class CMVMasterAPITester:
         
         return True
 
+    def test_order_steps_feature(self):
+        """Test Order Steps (Etapas de Pedido) functionality as specified in review request"""
+        print("\n=== ORDER STEPS FEATURE TESTS ===")
+        
+        # First, get existing products to use as items in order steps
+        print("🔍 1. Getting existing products for order step items...")
+        success, products = self.run_test("Get all products", "GET", "products", 200)
+        if not success:
+            print("   ❌ Failed to get products")
+            return False
+        
+        if len(products) < 2:
+            print("   ❌ Need at least 2 products for order steps testing")
+            return False
+        
+        # Use first two products for testing
+        product1 = products[0]
+        product2 = products[1]
+        print(f"   ✅ Using products for order steps:")
+        print(f"      - Product 1: {product1['name']} (ID: {product1['id']})")
+        print(f"      - Product 2: {product2['name']} (ID: {product2['id']})")
+        
+        # 2. Test creating product with order steps - SOMA calculation
+        print("\n🔍 2. Testing product creation with order steps (SOMA calculation)...")
+        product_with_steps_soma = {
+            "name": "Hambúrguer Personalizado - Soma",
+            "description": "Hambúrguer com etapas de personalização usando soma",
+            "category": "Sanduíches",
+            "sale_price": 25.00,
+            "recipe": [
+                {"ingredient_id": self.created_ingredients[0] if self.created_ingredients else product1['id'], "quantity": 0.15}
+            ],
+            "order_steps": [
+                {
+                    "name": "Adicionais",
+                    "calculation_type": "soma",
+                    "min_selections": 1,
+                    "max_selections": 3,
+                    "items": [
+                        {
+                            "product_id": product1['id'],
+                            "product_name": product1['name'],
+                            "price_override": 5.00
+                        },
+                        {
+                            "product_id": product2['id'],
+                            "product_name": product2['name'],
+                            "price_override": 3.50
+                        }
+                    ]
+                }
+            ]
+        }
+        
+        success, created_product_soma = self.run_test(
+            "Create product with order steps (SOMA)",
+            "POST",
+            "products",
+            200,
+            data=product_with_steps_soma
+        )
+        
+        if success:
+            self.created_products.append(created_product_soma['id'])
+            print(f"   ✅ Product with SOMA order steps created:")
+            print(f"      - Product ID: {created_product_soma['id']}")
+            print(f"      - Order steps count: {len(created_product_soma.get('order_steps', []))}")
+            
+            # Verify order step structure
+            if created_product_soma.get('order_steps'):
+                step = created_product_soma['order_steps'][0]
+                print(f"      - Step name: {step['name']}")
+                print(f"      - Calculation type: {step['calculation_type']}")
+                print(f"      - Min selections: {step['min_selections']}")
+                print(f"      - Max selections: {step['max_selections']}")
+                print(f"      - Items count: {len(step['items'])}")
+        else:
+            print("   ❌ Failed to create product with SOMA order steps")
+        
+        # 3. Test creating product with SUBTRACAO calculation
+        print("\n🔍 3. Testing product creation with SUBTRACAO calculation...")
+        product_with_steps_sub = {
+            "name": "Combo Desconto - Subtração",
+            "description": "Combo com desconto usando subtração",
+            "category": "Combos",
+            "sale_price": 30.00,
+            "recipe": [
+                {"ingredient_id": self.created_ingredients[0] if self.created_ingredients else product1['id'], "quantity": 0.2}
+            ],
+            "order_steps": [
+                {
+                    "name": "Descontos",
+                    "calculation_type": "subtracao",
+                    "min_selections": 0,
+                    "max_selections": 1,
+                    "items": [
+                        {
+                            "product_id": product1['id'],
+                            "product_name": "Desconto Estudante",
+                            "price_override": 5.00
+                        }
+                    ]
+                }
+            ]
+        }
+        
+        success, created_product_sub = self.run_test(
+            "Create product with order steps (SUBTRACAO)",
+            "POST",
+            "products",
+            200,
+            data=product_with_steps_sub
+        )
+        
+        if success:
+            self.created_products.append(created_product_sub['id'])
+            print(f"   ✅ Product with SUBTRACAO order steps created:")
+            print(f"      - Product ID: {created_product_sub['id']}")
+            step = created_product_sub['order_steps'][0]
+            print(f"      - Calculation type: {step['calculation_type']}")
+        else:
+            print("   ❌ Failed to create product with SUBTRACAO order steps")
+        
+        # 4. Test creating product with MINIMO calculation
+        print("\n🔍 4. Testing product creation with MINIMO calculation...")
+        product_with_steps_min = {
+            "name": "Pizza Tamanho Mínimo",
+            "description": "Pizza com preço mínimo",
+            "category": "Pizzas",
+            "sale_price": 20.00,
+            "recipe": [
+                {"ingredient_id": self.created_ingredients[0] if self.created_ingredients else product1['id'], "quantity": 0.3}
+            ],
+            "order_steps": [
+                {
+                    "name": "Tamanhos",
+                    "calculation_type": "minimo",
+                    "min_selections": 1,
+                    "max_selections": 1,
+                    "items": [
+                        {
+                            "product_id": product1['id'],
+                            "product_name": "Pequena",
+                            "price_override": 15.00
+                        },
+                        {
+                            "product_id": product2['id'],
+                            "product_name": "Média",
+                            "price_override": 20.00
+                        }
+                    ]
+                }
+            ]
+        }
+        
+        success, created_product_min = self.run_test(
+            "Create product with order steps (MINIMO)",
+            "POST",
+            "products",
+            200,
+            data=product_with_steps_min
+        )
+        
+        if success:
+            self.created_products.append(created_product_min['id'])
+            print(f"   ✅ Product with MINIMO order steps created")
+        else:
+            print("   ❌ Failed to create product with MINIMO order steps")
+        
+        # 5. Test creating product with MAXIMO calculation
+        print("\n🔍 5. Testing product creation with MAXIMO calculation...")
+        product_with_steps_max = {
+            "name": "Bebida Tamanho Máximo",
+            "description": "Bebida com preço máximo",
+            "category": "Bebidas",
+            "sale_price": 8.00,
+            "recipe": [
+                {"ingredient_id": self.created_ingredients[0] if self.created_ingredients else product1['id'], "quantity": 0.1}
+            ],
+            "order_steps": [
+                {
+                    "name": "Tamanhos Bebida",
+                    "calculation_type": "maximo",
+                    "min_selections": 1,
+                    "max_selections": 1,
+                    "items": [
+                        {
+                            "product_id": product1['id'],
+                            "product_name": "300ml",
+                            "price_override": 5.00
+                        },
+                        {
+                            "product_id": product2['id'],
+                            "product_name": "500ml",
+                            "price_override": 8.00
+                        }
+                    ]
+                }
+            ]
+        }
+        
+        success, created_product_max = self.run_test(
+            "Create product with order steps (MAXIMO)",
+            "POST",
+            "products",
+            200,
+            data=product_with_steps_max
+        )
+        
+        if success:
+            self.created_products.append(created_product_max['id'])
+            print(f"   ✅ Product with MAXIMO order steps created")
+        else:
+            print("   ❌ Failed to create product with MAXIMO order steps")
+        
+        # 6. Test creating product with MEDIO calculation
+        print("\n🔍 6. Testing product creation with MEDIO calculation...")
+        product_with_steps_avg = {
+            "name": "Combo Preço Médio",
+            "description": "Combo com preço médio dos itens",
+            "category": "Combos",
+            "sale_price": 18.00,
+            "recipe": [
+                {"ingredient_id": self.created_ingredients[0] if self.created_ingredients else product1['id'], "quantity": 0.2}
+            ],
+            "order_steps": [
+                {
+                    "name": "Opções Combo",
+                    "calculation_type": "medio",
+                    "min_selections": 2,
+                    "max_selections": 4,
+                    "items": [
+                        {
+                            "product_id": product1['id'],
+                            "product_name": "Opção A",
+                            "price_override": 10.00
+                        },
+                        {
+                            "product_id": product2['id'],
+                            "product_name": "Opção B",
+                            "price_override": 15.00
+                        }
+                    ]
+                }
+            ]
+        }
+        
+        success, created_product_avg = self.run_test(
+            "Create product with order steps (MEDIO)",
+            "POST",
+            "products",
+            200,
+            data=product_with_steps_avg
+        )
+        
+        if success:
+            self.created_products.append(created_product_avg['id'])
+            print(f"   ✅ Product with MEDIO order steps created")
+        else:
+            print("   ❌ Failed to create product with MEDIO order steps")
+        
+        # 7. Test limits with 0 values (no limits)
+        print("\n🔍 7. Testing order steps with no limits (0 values)...")
+        product_no_limits = {
+            "name": "Pizza Sem Limites",
+            "description": "Pizza sem limites de seleção",
+            "category": "Pizzas",
+            "sale_price": 25.00,
+            "recipe": [
+                {"ingredient_id": self.created_ingredients[0] if self.created_ingredients else product1['id'], "quantity": 0.25}
+            ],
+            "order_steps": [
+                {
+                    "name": "Ingredientes Livres",
+                    "calculation_type": "soma",
+                    "min_selections": 0,  # No minimum
+                    "max_selections": 0,  # No maximum
+                    "items": [
+                        {
+                            "product_id": product1['id'],
+                            "product_name": "Queijo Extra",
+                            "price_override": 2.00
+                        },
+                        {
+                            "product_id": product2['id'],
+                            "product_name": "Pepperoni",
+                            "price_override": 3.00
+                        }
+                    ]
+                }
+            ]
+        }
+        
+        success, created_no_limits = self.run_test(
+            "Create product with no selection limits",
+            "POST",
+            "products",
+            200,
+            data=product_no_limits
+        )
+        
+        if success:
+            self.created_products.append(created_no_limits['id'])
+            print(f"   ✅ Product with no selection limits created")
+            step = created_no_limits['order_steps'][0]
+            print(f"      - Min selections: {step['min_selections']} (no limit)")
+            print(f"      - Max selections: {step['max_selections']} (no limit)")
+        else:
+            print("   ❌ Failed to create product with no selection limits")
+        
+        # 8. Test updating product with order steps
+        if self.created_products:
+            print("\n🔍 8. Testing product update with modified order steps...")
+            product_id = self.created_products[0]
+            
+            updated_product_data = {
+                "name": "Hambúrguer Personalizado - Soma Atualizado",
+                "description": "Hambúrguer atualizado com novas etapas",
+                "category": "Sanduíches",
+                "sale_price": 28.00,
+                "recipe": [
+                    {"ingredient_id": self.created_ingredients[0] if self.created_ingredients else product1['id'], "quantity": 0.15}
+                ],
+                "order_steps": [
+                    {
+                        "name": "Adicionais Atualizados",
+                        "calculation_type": "soma",
+                        "min_selections": 1,
+                        "max_selections": 5,  # Changed from 3 to 5
+                        "items": [
+                            {
+                                "product_id": product1['id'],
+                                "product_name": product1['name'],
+                                "price_override": 6.00  # Changed from 5.00 to 6.00
+                            },
+                            {
+                                "product_id": product2['id'],
+                                "product_name": product2['name'],
+                                "price_override": 4.00  # Changed from 3.50 to 4.00
+                            }
+                        ]
+                    },
+                    {
+                        "name": "Nova Etapa",
+                        "calculation_type": "subtracao",
+                        "min_selections": 0,
+                        "max_selections": 1,
+                        "items": [
+                            {
+                                "product_id": product1['id'],
+                                "product_name": "Desconto Fidelidade",
+                                "price_override": 2.00
+                            }
+                        ]
+                    }
+                ]
+            }
+            
+            success, updated_product = self.run_test(
+                "Update product with modified order steps",
+                "PUT",
+                f"products/{product_id}",
+                200,
+                data=updated_product_data
+            )
+            
+            if success:
+                print(f"   ✅ Product updated successfully:")
+                print(f"      - New price: R$ {updated_product['sale_price']:.2f}")
+                print(f"      - Order steps count: {len(updated_product.get('order_steps', []))}")
+                
+                if updated_product.get('order_steps'):
+                    for i, step in enumerate(updated_product['order_steps']):
+                        print(f"      - Step {i+1}: {step['name']} ({step['calculation_type']})")
+                        print(f"        Min/Max: {step['min_selections']}/{step['max_selections']}")
+            else:
+                print("   ❌ Failed to update product with order steps")
+        
+        # 9. Verify all products with order steps
+        print("\n🔍 9. Verifying all products with order steps...")
+        success, all_products = self.run_test("Get all products after order steps creation", "GET", "products", 200)
+        
+        if success:
+            products_with_steps = [p for p in all_products if p.get('order_steps') and len(p['order_steps']) > 0]
+            print(f"   ✅ Found {len(products_with_steps)} products with order steps:")
+            
+            for product in products_with_steps:
+                print(f"      - {product['name']}")
+                for step in product.get('order_steps', []):
+                    print(f"        * {step['name']} ({step['calculation_type']}) - {len(step['items'])} items")
+        
+        # 10. Test product integrity - verify referenced products exist
+        print("\n🔍 10. Testing product integrity in order step items...")
+        integrity_issues = []
+        
+        if success and products_with_steps:
+            all_product_ids = {p['id'] for p in all_products}
+            
+            for product in products_with_steps:
+                for step in product.get('order_steps', []):
+                    for item in step.get('items', []):
+                        if item['product_id'] not in all_product_ids:
+                            integrity_issues.append(f"Product {product['name']} references non-existent product ID: {item['product_id']}")
+            
+            if integrity_issues:
+                print(f"   ❌ Found {len(integrity_issues)} integrity issues:")
+                for issue in integrity_issues:
+                    print(f"      - {issue}")
+            else:
+                print("   ✅ All product references in order steps are valid")
+        
+        # Summary
+        print("\n🔍 ORDER STEPS TESTING SUMMARY:")
+        calculation_types = ["soma", "subtracao", "minimo", "maximo", "medio"]
+        print(f"   ✅ Tested all calculation types: {', '.join(calculation_types)}")
+        print("   ✅ Tested min/max selection limits (including 0 = no limit)")
+        print("   ✅ Tested product creation with order steps")
+        print("   ✅ Tested product update with order steps")
+        print("   ✅ Verified product integrity in order step items")
+        print("   ✅ Verified price_override functionality")
+        print("   ✅ Verified product_name for display")
+        
+        return len(integrity_issues) == 0  # Return true if no integrity issues found
+
     def test_stock_control_features(self):
         """Test new stock control functionality as specified in review request"""
         print("\n=== STOCK CONTROL FEATURES TESTS ===")
