@@ -1262,9 +1262,9 @@ export default function Products() {
                       <ProductThumbnail photoUrl={product.photo_url} name={product.name} />
                     </div>
                     
-                    <div className="flex-1 flex items-center gap-4">
+                    <div className="flex-1 flex items-center gap-6">
                       {/* Nome e código do produto */}
-                      <div className="min-w-[180px]">
+                      <div className="w-[200px] flex-shrink-0">
                         <div className="flex items-center gap-2 flex-wrap">
                           <span className="font-bold text-lg">{product.name}</span>
                           {product.code && (
@@ -1272,50 +1272,52 @@ export default function Products() {
                               #{product.code}
                             </span>
                           )}
-                          {product.is_insumo && (
-                            <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400">
-                              Insumo
-                            </span>
-                          )}
                         </div>
+                        {product.is_insumo && (
+                          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400 mt-1">
+                            Insumo
+                          </span>
+                        )}
                       </div>
                       
-                      {/* Card de Preço, Custo e Lucro */}
-                      <div className="flex-1 bg-muted/30 rounded-xl px-4 py-2 flex items-center justify-center gap-6">
-                        <div className="text-center">
-                          <div className="text-xs text-muted-foreground mb-0.5">Preço de Venda</div>
-                          <div className="text-xl font-bold font-mono">
-                            {product.sale_price ? `R$${product.sale_price.toFixed(2)}` : "-"}
+                      {/* Card de Preço, Custo e Lucro - Simétrico */}
+                      <div className="flex-1 bg-muted/40 rounded-2xl border border-border/50 px-6 py-3 flex items-center justify-between">
+                        <div className="text-center flex-1">
+                          <div className="text-xs text-muted-foreground mb-1">Preço de Venda</div>
+                          <div className="text-2xl font-bold font-mono">
+                            R${product.sale_price ? product.sale_price.toFixed(2) : "0,00"}
                           </div>
                         </div>
-                        <div className="text-center border-l border-border pl-6">
-                          <div className="text-xs text-muted-foreground mb-0.5">Custo de Produção</div>
-                          <div className="text-xl font-bold font-mono text-red-500">
+                        <div className="w-px h-10 bg-border mx-4"></div>
+                        <div className="text-center flex-1">
+                          <div className="text-xs text-muted-foreground mb-1">Custo de Produção</div>
+                          <div className="text-2xl font-bold font-mono text-red-500">
                             R${product.cmv.toFixed(2)}
                           </div>
                         </div>
-                        <div className="text-center border-l border-border pl-6">
-                          <div className="text-xs text-muted-foreground mb-0.5">Lucro</div>
-                          <div className="text-xl font-bold font-mono text-green-500">
-                            {product.sale_price ? `R$${(product.sale_price - product.cmv).toFixed(2)}` : "-"}
+                        <div className="w-px h-10 bg-border mx-4"></div>
+                        <div className="text-center flex-1">
+                          <div className="text-xs text-muted-foreground mb-1">Lucro</div>
+                          <div className="text-2xl font-bold font-mono text-green-500">
+                            R${product.sale_price ? (product.sale_price - product.cmv).toFixed(2) : "0,00"}
                           </div>
                         </div>
                       </div>
 
-                      {/* Card de CMV% */}
-                      <div className="bg-muted/30 rounded-xl px-4 py-2 text-center min-w-[100px]">
-                        <div className="text-xs text-muted-foreground mb-0.5">C.M.V.</div>
-                        <div className="text-xl font-bold font-mono text-orange-500">
+                      {/* Card de CMV% - Tamanho igual ao de Margem */}
+                      <div className="bg-muted/40 rounded-2xl border border-border/50 px-5 py-3 text-center w-[130px] flex-shrink-0">
+                        <div className="text-xs text-muted-foreground mb-1">C.M.V.</div>
+                        <div className="text-2xl font-bold font-mono text-orange-500">
                           {product.sale_price && product.sale_price > 0 
                             ? `${((product.cmv / product.sale_price) * 100).toFixed(2)}%`
                             : "-"}
                         </div>
                       </div>
 
-                      {/* Card de Margem Contribuição% */}
-                      <div className="bg-muted/30 rounded-xl px-4 py-2 text-center min-w-[140px]">
-                        <div className="text-xs text-muted-foreground mb-0.5">Margem Contribuição</div>
-                        <div className="text-xl font-bold font-mono text-orange-500">
+                      {/* Card de Margem Contribuição% - Tamanho igual ao de CMV */}
+                      <div className="bg-muted/40 rounded-2xl border border-border/50 px-5 py-3 text-center w-[130px] flex-shrink-0">
+                        <div className="text-xs text-muted-foreground mb-1">Margem Contr.</div>
+                        <div className="text-2xl font-bold font-mono text-orange-500">
                           {product.sale_price && product.sale_price > 0 
                             ? `${(((product.sale_price - product.cmv) / product.sale_price) * 100).toFixed(2)}%`
                             : "-"}
@@ -1323,7 +1325,7 @@ export default function Products() {
                       </div>
 
                       {/* Seta expandir */}
-                      <div className="flex-shrink-0">
+                      <div className="flex-shrink-0 w-8 flex justify-center">
                         {isExpanded ? (
                           <ChevronUp className="w-5 h-5 text-muted-foreground" strokeWidth={1.5} />
                         ) : (
