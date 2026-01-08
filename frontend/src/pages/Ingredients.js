@@ -45,6 +45,7 @@ export default function Ingredients() {
   const [name, setName] = useState("");
   const [unit, setUnit] = useState("");
   const [unitsPerPackage, setUnitsPerPackage] = useState("");
+  const [slicesPerPackage, setSlicesPerPackage] = useState("");
   const [loading, setLoading] = useState(false);
   
   // Delete warning dialog
