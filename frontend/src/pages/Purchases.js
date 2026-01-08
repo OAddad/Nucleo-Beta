@@ -47,6 +47,11 @@ export default function Purchases() {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [batchToDelete, setBatchToDelete] = useState(null);
   
+  // Filtros e pesquisa
+  const [sortOrder, setSortOrder] = useState("desc"); // desc = mais recente primeiro
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchType, setSearchType] = useState("supplier"); // supplier, value, date
+  
   // Form states
   const [supplier, setSupplier] = useState("");
   const [purchaseDate, setPurchaseDate] = useState(
