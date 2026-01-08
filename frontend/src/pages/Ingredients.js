@@ -382,7 +382,22 @@ export default function Ingredients() {
 
           {/* Tab: Estoque */}
           <TabsContent value="estoque">
-            <div className="flex justify-end mb-4">
+            <div className="flex justify-end gap-2 mb-4">
+              <Button 
+                variant="outline" 
+                onClick={() => exportToExcel(ingredients, "estoque", {
+                  name: "Nome",
+                  category: "Categoria", 
+                  unit: "Unidade",
+                  average_price: "Preço Médio",
+                  stock_quantity: "Qtd Estoque",
+                  stock_min: "Estoque Mín",
+                  stock_max: "Estoque Máx"
+                })}
+              >
+                <Download className="w-4 h-4 mr-2" />
+                Exportar Excel
+              </Button>
               {canEdit && (
                 <Dialog open={open} onOpenChange={(isOpen) => {
                   setOpen(isOpen);
