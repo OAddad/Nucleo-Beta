@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import { toast } from "sonner";
-import { ChefHat, Package, ShoppingCart, FileText, BarChart3, LogOut, Shield, Settings, Menu, X, ChevronDown, ChevronRight, Home } from "lucide-react";
+import { ChefHat, Package, ShoppingCart, FileText, BarChart3, LogOut, Shield, Settings, Menu, X, ChevronDown, ChevronRight, Home, DollarSign, ClipboardList, Truck, Users } from "lucide-react";
 import { Button } from "../components/ui/button";
 import DarkModeToggle from "../components/DarkModeToggle";
 import Overview from "./Overview";
@@ -18,6 +18,7 @@ export default function Dashboard({ setIsAuthenticated }) {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [activeTopMenu, setActiveTopMenu] = useState("mesas");
   const [stockControlExpanded, setStockControlExpanded] = useState(true); // Controla expansão do Controle de Estoque
+  const [salesExpanded, setSalesExpanded] = useState(true); // Controla expansão de Vendas
 
   useEffect(() => {
     const user = localStorage.getItem("user");
