@@ -91,17 +91,25 @@ class UserWithPassword(BaseModel):
 class IngredientCreate(BaseModel):
     name: str
     unit: str
+    category: Optional[str] = None
     units_per_package: Optional[int] = None
     unit_weight: Optional[float] = None
+    stock_quantity: Optional[float] = 0.0
+    stock_min: Optional[float] = 0.0
+    stock_max: Optional[float] = 0.0
 
 class Ingredient(BaseModel):
     model_config = ConfigDict(extra="ignore")
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     name: str
     unit: str
+    category: Optional[str] = None
     units_per_package: Optional[int] = None
     unit_weight: Optional[float] = None
     average_price: float = 0.0
+    stock_quantity: float = 0.0
+    stock_min: float = 0.0
+    stock_max: float = 0.0
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class PurchaseItemCreate(BaseModel):
