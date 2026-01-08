@@ -101,3 +101,207 @@
 #====================================================================================================
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
+
+user_problem_statement: "Sistema de gestão de CMV (Custo de Mercadoria Vendida) para restaurantes - Núcleo. Sistema completo com autenticação, gestão de ingredientes, produtos, compras, categorias, relatórios e moderação."
+
+backend:
+  - task: "Authentication - Register & Login"
+    implemented: true
+    working: "NA"
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Endpoints /api/auth/register e /api/auth/login implementados com JWT"
+
+  - task: "User Management - CRUD Users"
+    implemented: true
+    working: "NA"
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Endpoints para criar, listar, atualizar role e deletar usuários"
+
+  - task: "Ingredients - CRUD"
+    implemented: true
+    working: "NA"
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Endpoints /api/ingredients para criar, listar, atualizar e deletar ingredientes"
+
+  - task: "Purchases - Batch & Single"
+    implemented: true
+    working: "NA"
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Endpoints para compras em lote e individuais, agrupamento por batch_id"
+
+  - task: "Products - CRUD with CMV Calculation"
+    implemented: true
+    working: "NA"
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Endpoints /api/products com cálculo automático de CMV e margem de lucro"
+
+  - task: "Categories - CRUD"
+    implemented: true
+    working: "NA"
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Endpoints /api/categories para gerenciar categorias de produtos"
+
+  - task: "Audit Logs - Moderation"
+    implemented: true
+    working: "NA"
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Sistema de auditoria com logs de todas as ações"
+
+  - task: "Reports & Dashboard"
+    implemented: true
+    working: "NA"
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Endpoints /api/reports/dashboard e /api/reports/price-history"
+
+  - task: "Excel Backup System"
+    implemented: true
+    working: "NA"
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "low"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Sistema de backup automático em Excel"
+
+frontend:
+  - task: "Login Page"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/pages/Login.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Página de login funcional"
+
+  - task: "Dashboard/Overview Page"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/pages/Dashboard.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Dashboard com estatísticas gerais"
+
+  - task: "Ingredients Page"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/pages/Ingredients.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Página para gerenciar ingredientes"
+
+  - task: "Products Page"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/pages/Products.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Página para gerenciar produtos com receitas"
+
+  - task: "Purchases Page"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/pages/Purchases.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Página para gerenciar compras"
+
+  - task: "Moderation Page"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/pages/Moderation.js"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Página de moderação/auditoria"
+
+metadata:
+  created_by: "main_agent"
+  version: "1.0"
+  test_sequence: 1
+  run_ui: false
+
+test_plan:
+  current_focus:
+    - "Authentication - Register & Login"
+    - "Ingredients - CRUD"
+    - "Purchases - Batch & Single"
+    - "Products - CRUD with CMV Calculation"
+  stuck_tasks: []
+  test_all: true
+  test_priority: "high_first"
+
+agent_communication:
+  - agent: "main"
+    message: "Sistema de gestão de CMV está rodando. Preciso que você teste todas as APIs do backend começando por autenticação, depois ingredientes, compras e produtos. O sistema usa JWT e tem 3 níveis de permissão: proprietario, administrador, observador. Teste criação de usuário, login, CRUD de ingredientes, compras em lote e produtos com cálculo de CMV."
