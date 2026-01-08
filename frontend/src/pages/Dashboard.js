@@ -242,6 +242,7 @@ export default function Dashboard({ setIsAuthenticated }) {
           <Routes>
             <Route path="/" element={<Reports />} />
             <Route path="/ingredientes" element={<Ingredients />} />
+            <Route path="/estoque" element={<Ingredients />} />
             <Route path="/compras" element={<Purchases />} />
             <Route path="/produtos" element={<Products />} />
             <Route path="/moderacao" element={<Moderation />} />
