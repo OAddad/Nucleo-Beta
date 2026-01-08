@@ -14,7 +14,8 @@ export default function Dashboard({ setIsAuthenticated }) {
   const navigate = useNavigate();
   const location = useLocation();
   const [currentUser, setCurrentUser] = useState(null);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true); // Estado para sidebar (desktop e mobile)
+  const [activeTopMenu, setActiveTopMenu] = useState("mesas"); // Estado para mini menu do topo
 
   useEffect(() => {
     const user = localStorage.getItem("user");
