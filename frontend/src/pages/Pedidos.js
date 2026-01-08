@@ -468,7 +468,18 @@ export default function Pedidos() {
         <DialogContent className="sm:max-w-2xl">
           <DialogHeader>
             <DialogTitle className="flex items-center justify-between">
-              <span className="font-mono text-2xl">{selectedPedido?.codigo || "#-----"}</span>
+              <div className="flex items-center gap-3">
+                <span className="font-mono text-2xl">{selectedPedido?.codigo || "#-----"}</span>
+                {selectedPedido?.modulo && modulosConfig[selectedPedido.modulo] && (
+                  <span className={`px-2 py-1 rounded text-xs font-medium flex items-center gap-1 ${modulosConfig[selectedPedido.modulo].color}`}>
+                    {(() => {
+                      const Icon = modulosConfig[selectedPedido.modulo].icon;
+                      return <Icon className="w-3 h-3" />;
+                    })()}
+                    {modulosConfig[selectedPedido.modulo].label}
+                  </span>
+                )}
+              </div>
               {selectedPedido && (
                 <span className={`px-3 py-1 rounded-full text-sm font-medium ${statusConfig[getNormalizedStatus(selectedPedido.status)]?.color}`}>
                   {statusConfig[getNormalizedStatus(selectedPedido.status)]?.label}
