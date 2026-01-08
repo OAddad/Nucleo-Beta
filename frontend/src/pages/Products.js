@@ -203,6 +203,7 @@ export default function Products() {
       const productData = {
         name,
         description: description || null,
+        category: category || null,
         sale_price: salePrice ? parseFloat(salePrice) : null,
         photo_url: uploadedPhotoUrl || null,
         recipe: allRecipe,
