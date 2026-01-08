@@ -631,12 +631,17 @@ export default function Products() {
                     </div>
                   </div>
 
-                  {/* Nome e Categoria */}
-                  <div className="flex-1 space-y-4">
+                  {/* Nome do Produto com Código */}
+                  <div className="flex-1 space-y-3">
                     <div>
-                      <Label htmlFor="name">
-                        Nome do Produto
-                      </Label>
+                      <div className="flex items-center gap-2">
+                        <Label htmlFor="name">Nome do Produto</Label>
+                        {editMode && productCode && (
+                          <span className="text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded">
+                            CÓD: {productCode}
+                          </span>
+                        )}
+                      </div>
                       <Input
                         id="name"
                         data-testid="product-name-input"
@@ -648,37 +653,68 @@ export default function Products() {
                       />
                     </div>
 
+                    {/* Preço de Venda */}
                     <div>
-                      <Label htmlFor="category">
-                        Categoria
-                      </Label>
-                      <Select 
-                        value={category || "sem-categoria"} 
-                        onValueChange={(value) => setCategory(value === "sem-categoria" ? "" : value)}
-                      >
-                        <SelectTrigger id="category" className="h-11 mt-1">
-                          <SelectValue placeholder="Selecione uma categoria" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="sem-categoria">Sem categoria</SelectItem>
-                          {categories.map((cat) => (
-                            <SelectItem key={cat.id} value={cat.name}>
-                              {cat.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        Gerencie categorias na aba "Categorias"
-                      </p>
+                      <Label htmlFor="salePrice">Preço de Venda (R$)</Label>
+                      <Input
+                        id="salePrice"
+                        data-testid="product-sale-price-input"
+                        type="number"
+                        step="0.01"
+                        value={salePrice}
+                        onChange={(e) => setSalePrice(e.target.value)}
+                        placeholder="0.00"
+                        className="mt-1 h-11"
+                      />
                     </div>
                   </div>
                 </div>
 
+                {/* Categoria e Tipo lado a lado */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="category">Categoria</Label>
+                    <Select 
+                      value={category || "sem-categoria"} 
+                      onValueChange={(value) => setCategory(value === "sem-categoria" ? "" : value)}
+                    >
+                      <SelectTrigger id="category" className="h-11 mt-1">
+                        <SelectValue placeholder="Selecione a categoria" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="sem-categoria">Sem categoria</SelectItem>
+                        {categories.map((cat) => (
+                          <SelectItem key={cat.id} value={cat.name}>
+                            {cat.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Gerencie categorias na aba "Categorias"
+                    </p>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="productType">Tipo</Label>
+                    <Select 
+                      value={productType} 
+                      onValueChange={setProductType}
+                    >
+                      <SelectTrigger id="productType" className="h-11 mt-1">
+                        <SelectValue placeholder="Selecione o Tipo" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="produto">Produto</SelectItem>
+                        <SelectItem value="combo">Combo</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                {/* Descrição */}
                 <div>
-                  <Label htmlFor="description">
-                    Descrição (opcional)
-                  </Label>
+                  <Label htmlFor="description">Descrição (opcional)</Label>
                   <Textarea
                     id="description"
                     data-testid="product-description-input"
@@ -690,64 +726,102 @@ export default function Products() {
                   />
                 </div>
 
-                <div>
-                  <Label htmlFor="salePrice">
-                    Preço de Venda (R$) - opcional
-                  </Label>
-                  <Input
-                    id="salePrice"
-                    data-testid="product-sale-price-input"
-                    type="number"
-                    step="0.01"
-                    value={salePrice}
-                    onChange={(e) => setSalePrice(e.target.value)}
-                    placeholder="0.00"
-                    className="mt-1 h-11"
-                  />
-                </div>
-
-                {/* Switch Insumo */}
-                <div className="flex items-center justify-between p-4 bg-muted/50 rounded-lg border">
-                  <div>
-                    <Label htmlFor="isInsumo" className="text-sm font-medium">
-                      Este produto é um Insumo?
-                    </Label>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      Insumos não aparecem no catálogo de vendas
-                    </p>
-                  </div>
-                  <button
-                    type="button"
-                    role="switch"
-                    aria-checked={isInsumo}
-                    onClick={() => setIsInsumo(!isInsumo)}
-                    className={`
-                      relative inline-flex h-6 w-11 items-center rounded-full transition-colors
-                      ${isInsumo ? 'bg-primary' : 'bg-gray-300 dark:bg-gray-600'}
-                    `}
-                  >
-                    <span
+                {/* Switches lado a lado */}
+                <div className="grid grid-cols-2 gap-4">
+                  {/* Switch Insumo */}
+                  <div className="flex items-center justify-between p-4 bg-muted/50 rounded-lg border">
+                    <div>
+                      <Label htmlFor="isInsumo" className="text-sm font-medium">
+                        Este produto é um Insumo?
+                      </Label>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Insumos não aparecem no catálogo de vendas
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      role="switch"
+                      aria-checked={isInsumo}
+                      onClick={() => setIsInsumo(!isInsumo)}
                       className={`
-                        inline-block h-4 w-4 transform rounded-full bg-white transition-transform
-                        ${isInsumo ? 'translate-x-6' : 'translate-x-1'}
+                        relative inline-flex h-6 w-11 items-center rounded-full transition-colors flex-shrink-0
+                        ${isInsumo ? 'bg-primary' : 'bg-gray-300 dark:bg-gray-600'}
                       `}
-                    />
-                  </button>
+                    >
+                      <span
+                        className={`
+                          inline-block h-4 w-4 transform rounded-full bg-white transition-transform
+                          ${isInsumo ? 'translate-x-6' : 'translate-x-1'}
+                        `}
+                      />
+                    </button>
+                  </div>
+
+                  {/* Switch Divisível */}
+                  <div className="flex items-center justify-between p-4 bg-muted/50 rounded-lg border">
+                    <div>
+                      <Label htmlFor="isDivisible" className="text-sm font-medium">
+                        Este produto é Divisível?
+                      </Label>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Produtos divisíveis podem ser vendidos fracionados
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      role="switch"
+                      aria-checked={isDivisible}
+                      onClick={() => setIsDivisible(!isDivisible)}
+                      className={`
+                        relative inline-flex h-6 w-11 items-center rounded-full transition-colors flex-shrink-0
+                        ${isDivisible ? 'bg-primary' : 'bg-gray-300 dark:bg-gray-600'}
+                      `}
+                    >
+                      <span
+                        className={`
+                          inline-block h-4 w-4 transform rounded-full bg-white transition-transform
+                          ${isDivisible ? 'translate-x-6' : 'translate-x-1'}
+                        `}
+                      />
+                    </button>
+                  </div>
                 </div>
 
-                <Tabs defaultValue="ingredients" className="w-full">
-                  <TabsList className="grid w-full grid-cols-2">
-                    <TabsTrigger value="ingredients">Ingredientes</TabsTrigger>
-                    <TabsTrigger value="packaging">Embalagens</TabsTrigger>
-                  </TabsList>
-                  
-                  <TabsContent value="ingredients" className="space-y-3 mt-4">
-                    <Label>Ingredientes da Receita</Label>
-                    {recipeIngredients.map((item, index) => {
-                      const selectedIng = getIngredientDetails(item.ingredient_id);
-                      const displayUnit = getIngredientUnit(selectedIng);
-                      
-                      return (
+                {/* Abas principais: Ficha Técnica e Etapas */}
+                <div className="flex gap-2 border-b pb-2">
+                  <Button
+                    type="button"
+                    variant={activeFormTab === "ficha" ? "default" : "outline"}
+                    onClick={() => setActiveFormTab("ficha")}
+                    className="flex-1"
+                  >
+                    Ficha Técnica
+                  </Button>
+                  <Button
+                    type="button"
+                    variant={activeFormTab === "etapas" ? "default" : "outline"}
+                    onClick={() => setActiveFormTab("etapas")}
+                    className="flex-1"
+                  >
+                    Etapas (para o cliente pedir)
+                  </Button>
+                </div>
+
+                {/* Conteúdo da aba Ficha Técnica */}
+                {activeFormTab === "ficha" && (
+                  <Tabs defaultValue="ingredients" className="w-full">
+                    <TabsList className="grid w-full grid-cols-2">
+                      <TabsTrigger value="ingredients">Ingredientes</TabsTrigger>
+                      <TabsTrigger value="packaging">Embalagens</TabsTrigger>
+                    </TabsList>
+                    
+                    <TabsContent value="ingredients" className="space-y-3 mt-4">
+                      <Label>Ingredientes da Receita</Label>
+                      {recipeIngredients.map((item, index) => {
+                        const selectedIng = getIngredientDetails(item.ingredient_id);
+                        const displayUnit = getIngredientUnit(selectedIng);
+                        
+                        return (
                         <div key={index} className="flex gap-2">
                           <div className="flex-1">
                             <Select
