@@ -128,11 +128,44 @@ export default function Products() {
     setOpen(true);
   };
 
+  const handlePhotoUpload = async (file) => {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const response = await axios.post(
+        `${API}/upload/product-photo`,
+        formData,
+        {
+          ...getAuthHeader(),
+          headers: {
+            ...getAuthHeader().headers,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      return response.data.photo_url;
+    } catch (error) {
+      toast.error("Erro ao fazer upload da foto");
+      return null;
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
     try {
+      // Upload da foto se houver
+      let uploadedPhotoUrl = photoUrl;
+      if (photoFile) {
+        uploadedPhotoUrl = await handlePhotoUpload(photoFile);
+        if (!uploadedPhotoUrl) {
+          setLoading(false);
+          return;
+        }
+      }
+
       // Combinar ingredientes e embalagens com item_type
       const allRecipe = [
         ...recipeIngredients
@@ -155,6 +188,7 @@ export default function Products() {
         name,
         description: description || null,
         sale_price: salePrice ? parseFloat(salePrice) : null,
+        photo_url: uploadedPhotoUrl || null,
         recipe: allRecipe,
       };
 
