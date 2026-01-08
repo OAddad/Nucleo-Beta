@@ -760,14 +760,17 @@ async def create_product(product_data: ProductCreate, current_user: User = Depen
             avg_price = ingredient.get("average_price", 0)
             quantity = recipe_item.quantity
             
-            # Se o ingrediente tem unit_weight (peso por unidade), multiplicar pela quantidade
+            # Se o ingrediente tem unit_weight (peso por unidade) E a quantidade é inteira (unidades)
             # Ex: Hamburguer 130g com unit_weight=0.130, quantidade=1 -> usa 0.130kg
+            # Mas se quantidade já é decimal (0.13kg), não multiplicar por unit_weight
             unit_weight = ingredient.get("unit_weight")
-            if unit_weight and unit_weight > 0:
-                # Preço por kg * peso unitário * quantidade de unidades
+            is_whole_number = quantity == int(quantity)  # Verifica se é número inteiro
+            
+            if unit_weight and unit_weight > 0 and is_whole_number and quantity >= 1:
+                # Quantidade em unidades: Preço por kg * peso unitário * quantidade de unidades
                 cmv += avg_price * unit_weight * quantity
             else:
-                # Cálculo normal: preço médio * quantidade
+                # Quantidade já em kg/fração: preço médio * quantidade
                 cmv += avg_price * quantity
     
     product = Product(**product_data.model_dump(), cmv=cmv)
