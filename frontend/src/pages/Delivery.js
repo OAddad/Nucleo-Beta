@@ -675,18 +675,6 @@ export default function Delivery() {
                       </Button>
                     </div>
                   )}
-
-                  {/* Botão cadastrar - mostrar quando não está pesquisando */}
-                  {!showCadastroSuggestion && (
-                    <Button 
-                      variant="outline" 
-                      className="w-full"
-                      onClick={handleOpenClienteDialog}
-                    >
-                      <Plus className="w-4 h-4 mr-2" />
-                      Cadastrar Cliente
-                    </Button>
-                  )}
                 </div>
               ) : (
                 // Carrinho e Finalização
