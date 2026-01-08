@@ -440,11 +440,10 @@ export default function Products() {
   const addOrderStep = () => {
     setOrderSteps([...orderSteps, {
       name: "",
-      description: "",
-      step_type: "single",
-      options: [],
+      calculation_type: "soma",
       min_selections: 0,
-      max_selections: 1
+      max_selections: 0,
+      items: []
     }]);
   };
 
@@ -458,21 +457,40 @@ export default function Products() {
     setOrderSteps(orderSteps.filter((_, i) => i !== index));
   };
 
-  const addOptionToStep = (stepIndex) => {
+  const addItemToStep = (stepIndex, productId) => {
+    if (!productId) return;
+    const product = products.find(p => p.id === productId);
+    if (!product) return;
+    
     const newSteps = [...orderSteps];
-    newSteps[stepIndex].options = [...(newSteps[stepIndex].options || []), { name: "", price: 0, is_required: false }];
+    const items = newSteps[stepIndex].items || [];
+    
+    // Verificar se o produto já está na lista
+    if (items.some(item => item.product_id === productId)) {
+      toast.error("Este produto já está na etapa");
+      return;
+    }
+    
+    newSteps[stepIndex].items = [...items, {
+      product_id: productId,
+      product_name: product.name,
+      price_override: product.sale_price || 0
+    }];
     setOrderSteps(newSteps);
   };
 
-  const updateStepOption = (stepIndex, optionIndex, field, value) => {
+  const updateStepItem = (stepIndex, itemIndex, field, value) => {
     const newSteps = [...orderSteps];
-    newSteps[stepIndex].options[optionIndex] = { ...newSteps[stepIndex].options[optionIndex], [field]: value };
+    newSteps[stepIndex].items[itemIndex] = { 
+      ...newSteps[stepIndex].items[itemIndex], 
+      [field]: value 
+    };
     setOrderSteps(newSteps);
   };
 
-  const removeStepOption = (stepIndex, optionIndex) => {
+  const removeStepItem = (stepIndex, itemIndex) => {
     const newSteps = [...orderSteps];
-    newSteps[stepIndex].options = newSteps[stepIndex].options.filter((_, i) => i !== optionIndex);
+    newSteps[stepIndex].items = newSteps[stepIndex].items.filter((_, i) => i !== itemIndex);
     setOrderSteps(newSteps);
   };
 
