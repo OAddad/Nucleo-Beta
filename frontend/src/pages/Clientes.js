@@ -203,7 +203,10 @@ export default function Clientes() {
       genero,
       foto: fotoPreview,
       endereco,
+      numero,
       complemento,
+      bairro,
+      cep,
     };
 
     if (editMode && currentCliente) {
