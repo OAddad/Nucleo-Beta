@@ -11,6 +11,8 @@ import Products from "./Products";
 import Reports from "./Reports";
 import Moderation from "./Moderation";
 import BalcaoVendas from "./BalcaoVendas";
+import Mesas from "./Mesas";
+import ChatBot from "./ChatBot";
 
 // Ícone do WhatsApp customizado
 const WhatsAppIcon = ({ className }) => (
