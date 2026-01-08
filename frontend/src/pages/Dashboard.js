@@ -482,6 +482,28 @@ export default function Dashboard({ setIsAuthenticated }) {
                   </div>
                 </div>
               } />
+              {/* Rotas de Configurações */}
+              <Route path="/configuracoes/horarios" element={
+                <div className="p-8">
+                  <h1 className="text-3xl font-bold">Horários</h1>
+                  <p className="text-muted-foreground mt-2">Configuração de horários de funcionamento</p>
+                  <div className="mt-8 p-6 bg-muted/50 rounded-xl border text-center">
+                    <ClipboardList className="w-16 h-16 mx-auto text-muted-foreground/50 mb-4" />
+                    <p className="text-muted-foreground">Em breve configuração de horários de funcionamento</p>
+                  </div>
+                </div>
+              } />
+              <Route path="/configuracoes/preferencias" element={
+                <div className="p-8">
+                  <h1 className="text-3xl font-bold">Preferências</h1>
+                  <p className="text-muted-foreground mt-2">Configurações de personalização</p>
+                  <div className="mt-8 p-6 bg-muted/50 rounded-xl border text-center">
+                    <Settings className="w-16 h-16 mx-auto text-muted-foreground/50 mb-4" />
+                    <p className="text-muted-foreground">Em breve configurações de personalização</p>
+                  </div>
+                </div>
+              } />
+              <Route path="/configuracoes/auditoria" element={<Moderation />} />
             </Routes>
           )}
         </main>
