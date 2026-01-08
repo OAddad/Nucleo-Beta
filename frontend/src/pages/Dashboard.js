@@ -69,6 +69,7 @@ export default function Dashboard({ setIsAuthenticated }) {
   };
 
   const [configExpanded, setConfigExpanded] = useState(false);
+  const [clientesFornecedoresExpanded, setClientesFornecedoresExpanded] = useState(false);
 
   // Estrutura de navegação principal
   const mainTabs = [
@@ -103,7 +104,18 @@ export default function Dashboard({ setIsAuthenticated }) {
       { path: "/vendas/relatorio", label: "Relatório de Vendas", icon: BarChart3 },
       { path: "/vendas/pedidos", label: "Pedidos", icon: ClipboardList },
       { path: "/vendas/entregas", label: "Entregas", icon: Truck },
-      { path: "/vendas/clientes", label: "Clientes", icon: Users },
+    ]
+  };
+
+  // Estrutura hierárquica de Clientes e Fornecedores
+  const clientesFornecedoresModule = {
+    label: "Clientes e Fornecedores",
+    icon: Users,
+    expanded: clientesFornecedoresExpanded,
+    toggle: () => setClientesFornecedoresExpanded(!clientesFornecedoresExpanded),
+    children: [
+      { path: "/clientes-fornecedores/clientes", label: "Clientes", icon: UserRound },
+      { path: "/clientes-fornecedores/fornecedores", label: "Fornecedores", icon: Building2 },
     ]
   };
 
@@ -132,6 +144,10 @@ export default function Dashboard({ setIsAuthenticated }) {
 
   const isSalesActive = () => {
     return location.pathname.startsWith("/vendas");
+  };
+
+  const isClientesFornecedoresActive = () => {
+    return location.pathname.startsWith("/clientes-fornecedores");
   };
 
   const isConfigActive = () => {
