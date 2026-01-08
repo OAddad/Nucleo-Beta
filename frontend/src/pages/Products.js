@@ -103,14 +103,23 @@ export default function Products() {
     setDescription(product.description || "");
     setSalePrice(product.sale_price ? product.sale_price.toString() : "");
     
-    // Separar ingredientes e embalagens (por enquanto, todos são ingredientes)
-    setRecipeIngredients(
-      product.recipe.map((r) => ({
+    // Separar ingredientes e embalagens baseado no item_type
+    const ingredients = product.recipe
+      .filter((r) => r.item_type === "ingredient")
+      .map((r) => ({
         ingredient_id: r.ingredient_id,
         quantity: r.quantity.toString(),
-      }))
-    );
-    setRecipePackaging([{ ingredient_id: "", quantity: "" }]);
+      }));
+    
+    const packaging = product.recipe
+      .filter((r) => r.item_type === "packaging")
+      .map((r) => ({
+        ingredient_id: r.ingredient_id,
+        quantity: r.quantity.toString(),
+      }));
+    
+    setRecipeIngredients(ingredients.length > 0 ? ingredients : [{ ingredient_id: "", quantity: "" }]);
+    setRecipePackaging(packaging.length > 0 ? packaging : [{ ingredient_id: "", quantity: "" }]);
     setOpen(true);
   };
 
