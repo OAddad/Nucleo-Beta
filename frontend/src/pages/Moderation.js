@@ -207,6 +207,36 @@ export default function Moderation() {
     }
   };
 
+
+  const getFilteredAndSortedLogs = () => {
+    let filtered = [...auditLogs];
+    
+    // Filtrar por usuário
+    if (filterUser !== "all") {
+      filtered = filtered.filter(log => log.username === filterUser);
+    }
+    
+    // Filtrar por prioridade
+    if (filterPriority !== "all") {
+      filtered = filtered.filter(log => log.priority === filterPriority);
+    }
+    
+    // Ordenar por data
+    filtered.sort((a, b) => {
+      const dateA = new Date(a.timestamp);
+      const dateB = new Date(b.timestamp);
+      return sortOrder === "desc" ? dateB - dateA : dateA - dateB;
+    });
+    
+    return filtered;
+  };
+
+  const getUniqueUsers = () => {
+    const usernames = [...new Set(auditLogs.map(log => log.username))];
+    return usernames.sort();
+  };
+
+
   const handleCreateUser = async (e) => {
     e.preventDefault();
     setLoading(true);
