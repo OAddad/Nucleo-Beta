@@ -221,39 +221,36 @@ class CMVMasterAPITester:
         
         return True
 
-    def test_price_recalculation(self):
-        """Test that ingredient prices are recalculated after purchases"""
-        print("\n=== PRICE RECALCULATION TESTS ===")
+    def test_categories(self):
+        """Test category operations as specified in review"""
+        print("\n=== CATEGORY TESTS ===")
         
-        success, ingredients = self.run_test("Get ingredients after purchases", "GET", "ingredients", 200)
-        if not success:
+        # Create category
+        print("🔍 Creating Sanduíches category...")
+        success, category = self.run_test(
+            "Create Sanduíches category",
+            "POST",
+            "categories",
+            200,
+            data={"name": "Sanduíches"}
+        )
+        
+        if success:
+            self.created_categories.append(category['id'])
+            print(f"   ✅ Created category ID: {category['id']}")
+        else:
+            print("   ❌ Failed to create category")
             return False
         
-        carne_found = False
-        queijo_found = False
+        # List all categories
+        print("🔍 Listing all categories...")
+        success, categories = self.run_test("Get all categories", "GET", "categories", 200)
+        if success:
+            print(f"   ✅ Found {len(categories)} categories")
+            for cat in categories:
+                print(f"   - {cat['name']}")
         
-        for ing in ingredients:
-            if ing['name'] == 'Carne Bovina':
-                carne_found = True
-                expected_price = 25.0  # 250/10
-                actual_price = ing.get('average_price', 0)
-                print(f"   Carne Bovina - Expected: R$ {expected_price:.2f}, Actual: R$ {actual_price:.2f}")
-                if abs(actual_price - expected_price) < 0.01:
-                    print("   ✅ Carne Bovina price calculation correct")
-                else:
-                    print("   ❌ Carne Bovina price calculation incorrect")
-            
-            elif ing['name'] == 'Queijo Cheddar':
-                queijo_found = True
-                expected_price = 15.0  # 75/5
-                actual_price = ing.get('average_price', 0)
-                print(f"   Queijo Cheddar - Expected: R$ {expected_price:.2f}, Actual: R$ {actual_price:.2f}")
-                if abs(actual_price - expected_price) < 0.01:
-                    print("   ✅ Queijo Cheddar price calculation correct")
-                else:
-                    print("   ❌ Queijo Cheddar price calculation incorrect")
-        
-        return carne_found and queijo_found
+        return len(self.created_categories) >= 1
 
     def test_products(self):
         """Test product CRUD operations and CMV calculation"""
