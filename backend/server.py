@@ -199,6 +199,31 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
     except Exception:
         raise HTTPException(status_code=401, detail="Invalid token")
 
+
+async def log_audit(action: str, resource_type: str, resource_name: str, user: User, priority: str, details: dict = None):
+    """Registra uma ação no log de auditoria"""
+    audit = AuditLog(
+        action=action,
+        resource_type=resource_type,
+        resource_name=resource_name,
+        user_id=user.id,
+        username=user.username,
+        priority=priority,
+        details=details
+    )
+    doc = audit.model_dump()
+    doc["timestamp"] = doc["timestamp"].isoformat()
+    await db.audit_logs.insert_one(doc)
+
+def check_role(user: User, allowed_roles: List[str]):
+    """Verifica se o usuário tem permissão baseada no role"""
+    if user.role not in allowed_roles:
+        raise HTTPException(
+            status_code=403, 
+            detail=f"Permissão negada. Necessário: {', '.join(allowed_roles)}"
+        )
+
+
 # Auth endpoints
 @api_router.post("/auth/register", response_model=Token)
 async def register(user_data: UserCreate):
