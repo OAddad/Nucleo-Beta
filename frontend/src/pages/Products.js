@@ -520,32 +520,24 @@ export default function Products() {
                       <Label htmlFor="category">
                         Categoria
                       </Label>
-                      <div className="flex gap-2 mt-1">
-                        <Select 
-                          value={category || "sem-categoria"} 
-                          onValueChange={(value) => setCategory(value === "sem-categoria" ? "" : value)}
-                        >
-                          <SelectTrigger id="category" className="h-11">
-                            <SelectValue placeholder="Selecione ou digite nova" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="sem-categoria">Sem categoria</SelectItem>
-                            {categories.map((cat) => (
-                              <SelectItem key={cat} value={cat}>
-                                {cat}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <Input
-                          placeholder="Nova categoria"
-                          value={category && !categories.includes(category) ? category : ""}
-                          onChange={(e) => setCategory(e.target.value)}
-                          className="h-11"
-                        />
-                      </div>
+                      <Select 
+                        value={category || "sem-categoria"} 
+                        onValueChange={(value) => setCategory(value === "sem-categoria" ? "" : value)}
+                      >
+                        <SelectTrigger id="category" className="h-11 mt-1">
+                          <SelectValue placeholder="Selecione uma categoria" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="sem-categoria">Sem categoria</SelectItem>
+                          {categories.map((cat) => (
+                            <SelectItem key={cat.id} value={cat.name}>
+                              {cat.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                       <p className="text-xs text-muted-foreground mt-1">
-                        Ex: Sanduíches, Bebidas, Pizzas, Porções
+                        Gerencie categorias na aba "Categorias"
                       </p>
                     </div>
                   </div>
