@@ -184,16 +184,23 @@ export default function Purchases() {
     }
   };
 
-  const handleDeleteBatch = async (batchId) => {
-    if (!window.confirm("Deseja realmente excluir toda esta compra?")) return;
+  const handleDeleteBatch = async () => {
+    if (!batchToDelete) return;
 
     try {
-      await axios.delete(`${API}/purchases/batch/${batchId}`, getAuthHeader());
+      await axios.delete(`${API}/purchases/batch/${batchToDelete.id}`, getAuthHeader());
       toast.success("Compra excluída!");
+      setDeleteDialogOpen(false);
+      setBatchToDelete(null);
       fetchPurchases();
     } catch (error) {
       toast.error("Erro ao excluir compra");
     }
+  };
+
+  const confirmDeleteBatch = (batchId, supplier) => {
+    setBatchToDelete({ id: batchId, supplier });
+    setDeleteDialogOpen(true);
   };
 
   const toggleBatch = (batchId) => {
