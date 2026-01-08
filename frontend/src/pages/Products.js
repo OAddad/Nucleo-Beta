@@ -953,6 +953,141 @@ export default function Products() {
                     </Button>
                   </TabsContent>
                 </Tabs>
+                )}
+
+                {/* Conteúdo da aba Etapas */}
+                {activeFormTab === "etapas" && (
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <Label className="text-base">Etapas do Pedido</Label>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          Configure as etapas que o cliente deve seguir ao pedir este produto (adicionais, observações, combos, etc.)
+                        </p>
+                      </div>
+                      <Button
+                        type="button"
+                        onClick={addOrderStep}
+                        variant="outline"
+                        size="sm"
+                      >
+                        <Plus className="w-4 h-4 mr-2" />
+                        Nova Etapa
+                      </Button>
+                    </div>
+
+                    {orderSteps.length === 0 ? (
+                      <div className="bg-muted/50 rounded-lg p-8 text-center border border-dashed">
+                        <p className="text-muted-foreground">Nenhuma etapa configurada</p>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          Clique em "Nova Etapa" para adicionar etapas de pedido
+                        </p>
+                      </div>
+                    ) : (
+                      <div className="space-y-4">
+                        {orderSteps.map((step, stepIndex) => (
+                          <div key={stepIndex} className="bg-muted/30 rounded-lg p-4 border space-y-3">
+                            <div className="flex items-start gap-3">
+                              <div className="flex-1 space-y-3">
+                                <div className="flex gap-3">
+                                  <div className="flex-1">
+                                    <Label className="text-xs">Nome da Etapa</Label>
+                                    <Input
+                                      value={step.name}
+                                      onChange={(e) => updateOrderStep(stepIndex, "name", e.target.value)}
+                                      placeholder="Ex: Escolha o Acompanhamento"
+                                      className="h-9 mt-1"
+                                    />
+                                  </div>
+                                  <div className="w-40">
+                                    <Label className="text-xs">Tipo</Label>
+                                    <Select
+                                      value={step.step_type}
+                                      onValueChange={(value) => updateOrderStep(stepIndex, "step_type", value)}
+                                    >
+                                      <SelectTrigger className="h-9 mt-1">
+                                        <SelectValue />
+                                      </SelectTrigger>
+                                      <SelectContent>
+                                        <SelectItem value="single">Única escolha</SelectItem>
+                                        <SelectItem value="multiple">Múltipla escolha</SelectItem>
+                                        <SelectItem value="text">Texto livre</SelectItem>
+                                      </SelectContent>
+                                    </Select>
+                                  </div>
+                                </div>
+
+                                <div>
+                                  <Label className="text-xs">Descrição (opcional)</Label>
+                                  <Input
+                                    value={step.description || ""}
+                                    onChange={(e) => updateOrderStep(stepIndex, "description", e.target.value)}
+                                    placeholder="Ex: Escolha até 2 acompanhamentos"
+                                    className="h-9 mt-1"
+                                  />
+                                </div>
+
+                                {step.step_type !== "text" && (
+                                  <div className="space-y-2">
+                                    <div className="flex items-center justify-between">
+                                      <Label className="text-xs">Opções</Label>
+                                      <Button
+                                        type="button"
+                                        onClick={() => addOptionToStep(stepIndex)}
+                                        variant="ghost"
+                                        size="sm"
+                                        className="h-7 text-xs"
+                                      >
+                                        <Plus className="w-3 h-3 mr-1" />
+                                        Adicionar
+                                      </Button>
+                                    </div>
+                                    {(step.options || []).map((option, optionIndex) => (
+                                      <div key={optionIndex} className="flex gap-2 items-center">
+                                        <Input
+                                          value={option.name}
+                                          onChange={(e) => updateStepOption(stepIndex, optionIndex, "name", e.target.value)}
+                                          placeholder="Nome da opção"
+                                          className="h-8 flex-1"
+                                        />
+                                        <Input
+                                          type="number"
+                                          step="0.01"
+                                          value={option.price || ""}
+                                          onChange={(e) => updateStepOption(stepIndex, optionIndex, "price", parseFloat(e.target.value) || 0)}
+                                          placeholder="+ R$"
+                                          className="h-8 w-24"
+                                        />
+                                        <Button
+                                          type="button"
+                                          onClick={() => removeStepOption(stepIndex, optionIndex)}
+                                          variant="ghost"
+                                          size="icon"
+                                          className="h-8 w-8 text-destructive"
+                                        >
+                                          <Trash2 className="w-3 h-3" />
+                                        </Button>
+                                      </div>
+                                    ))}
+                                  </div>
+                                )}
+                              </div>
+                              <Button
+                                type="button"
+                                onClick={() => removeOrderStep(stepIndex)}
+                                variant="ghost"
+                                size="icon"
+                                className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </Button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
 
                 <Button
                   type="submit"
