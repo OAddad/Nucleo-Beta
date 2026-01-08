@@ -224,6 +224,7 @@ export default function Products() {
       resetForm();
       setOpen(false);
       fetchProducts();
+      fetchCategories(); // Atualizar lista de categorias
     } catch (error) {
       toast.error("Erro ao salvar produto");
     } finally {
