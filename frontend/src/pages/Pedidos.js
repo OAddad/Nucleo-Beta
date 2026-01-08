@@ -77,6 +77,14 @@ const formasPagamento = {
   pix: { label: "PIX", icon: QrCode },
 };
 
+// Módulos de origem
+const modulosConfig = {
+  Delivery: { label: "Delivery", icon: Bike, color: "bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400" },
+  Balcao: { label: "Balcão", icon: Store, color: "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400" },
+  Mesas: { label: "Mesas", icon: UtensilsCrossed, color: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400" },
+  ChatBot: { label: "ChatBot", icon: MessageCircle, color: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400" },
+};
+
 export default function Pedidos() {
   const [pedidos, setPedidos] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
