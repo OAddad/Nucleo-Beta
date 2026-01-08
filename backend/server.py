@@ -479,10 +479,10 @@ async def delete_purchase(purchase_id: str, current_user: User = Depends(get_cur
         
         # If ingredient has units_per_package, divide by it
         if ingredient and ingredient.get("units_per_package") and ingredient["units_per_package"] > 0:
-                avg_price = avg_price / ingredient["units_per_package"]
-            
-            if ingredient and ingredient.get("slices_per_package") and ingredient["slices_per_package"] > 0:
-                avg_price = avg_price / ingredient["slices_per_package"]
+            avg_price = avg_price / ingredient["units_per_package"]
+        
+        if ingredient and ingredient.get("slices_per_package") and ingredient["slices_per_package"] > 0:
+            avg_price = avg_price / ingredient["slices_per_package"]
     else:
         avg_price = 0
     
