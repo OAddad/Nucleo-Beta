@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "sonner";
-import { Plus, Trash2, ShoppingCart, Check } from "lucide-react";
+import { Plus, Trash2, ChevronDown, ChevronUp, Check } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
@@ -28,14 +28,18 @@ const getAuthHeader = () => ({
 });
 
 export default function Purchases() {
-  const [purchases, setPurchases] = useState([]);
+  const [purchaseBatches, setPurchaseBatches] = useState([]);
   const [ingredients, setIngredients] = useState([]);
   const [open, setOpen] = useState(false);
+  const [expandedBatches, setExpandedBatches] = useState(new Set());
+  
+  // Form states
+  const [supplier, setSupplier] = useState("");
   const [purchaseDate, setPurchaseDate] = useState(
     new Date().toISOString().split("T")[0]
   );
   
-  // Carrinho de compras
+  // Cart states
   const [cart, setCart] = useState([]);
   const [selectedIngredient, setSelectedIngredient] = useState("");
   const [quantity, setQuantity] = useState("");
@@ -49,8 +53,8 @@ export default function Purchases() {
 
   const fetchPurchases = async () => {
     try {
-      const response = await axios.get(`${API}/purchases`, getAuthHeader());
-      setPurchases(response.data);
+      const response = await axios.get(`${API}/purchases/grouped`, getAuthHeader());
+      setPurchaseBatches(response.data);
     } catch (error) {
       toast.error("Erro ao carregar compras");
     }
@@ -100,45 +104,51 @@ export default function Purchases() {
       return;
     }
 
+    if (!supplier.trim()) {
+      toast.error("Informe o nome do fornecedor");
+      return;
+    }
+
     setLoading(true);
     try {
-      // Enviar todas as compras do carrinho
-      for (const item of cart) {
-        await axios.post(
-          `${API}/purchases`,
-          {
-            ingredient_id: item.ingredient_id,
-            quantity: item.quantity,
-            price: item.price,
-            purchase_date: new Date(purchaseDate).toISOString(),
-          },
-          getAuthHeader()
-        );
-      }
+      const items = cart.map(item => ({
+        ingredient_id: item.ingredient_id,
+        quantity: item.quantity,
+        price: item.price,
+      }));
+
+      await axios.post(
+        `${API}/purchases/batch`,
+        {
+          supplier: supplier,
+          purchase_date: new Date(purchaseDate).toISOString(),
+          items: items,
+        },
+        getAuthHeader()
+      );
       
-      toast.success(`${cart.length} compra(s) lançada(s) com sucesso!`);
+      toast.success("Compra finalizada com sucesso!");
       setCart([]);
+      setSupplier("");
       setPurchaseDate(new Date().toISOString().split("T")[0]);
       setOpen(false);
       fetchPurchases();
     } catch (error) {
-      toast.error("Erro ao finalizar compras");
+      toast.error("Erro ao finalizar compra");
       console.error(error);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleDelete = async (id) => {
-    if (!window.confirm("Deseja realmente excluir esta compra?")) return;
-
-    try {
-      await axios.delete(`${API}/purchases/${id}`, getAuthHeader());
-      toast.success("Compra excluída!");
-      fetchPurchases();
-    } catch (error) {
-      toast.error("Erro ao excluir compra");
+  const toggleBatch = (batchId) => {
+    const newExpanded = new Set(expandedBatches);
+    if (newExpanded.has(batchId)) {
+      newExpanded.delete(batchId);
+    } else {
+      newExpanded.add(batchId);
     }
+    setExpandedBatches(newExpanded);
   };
 
   const formatDate = (dateStr) => {
@@ -147,6 +157,7 @@ export default function Purchases() {
   };
 
   const cartTotal = cart.reduce((sum, item) => sum + item.price, 0);
+  const cartTotalQty = cart.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
     <div className="p-8" data-testid="purchases-page">
@@ -157,7 +168,7 @@ export default function Purchases() {
               Compras
             </h1>
             <p className="text-slate-500 mt-1">
-              Registre as compras de ingredientes para calcular o preço médio
+              Registre compras agrupadas por fornecedor
             </p>
           </div>
 
@@ -177,19 +188,36 @@ export default function Purchases() {
               </DialogHeader>
               
               <div className="space-y-4 mt-4">
-                <div>
-                  <Label htmlFor="date" className="text-slate-700">
-                    Data da Compra
-                  </Label>
-                  <Input
-                    id="date"
-                    data-testid="purchase-date-input"
-                    type="date"
-                    value={purchaseDate}
-                    onChange={(e) => setPurchaseDate(e.target.value)}
-                    required
-                    className="mt-1 h-11 bg-white border-slate-200 focus:ring-2 focus:ring-rose-100 focus:border-rose-500"
-                  />
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="supplier" className="text-slate-700">
+                      Fornecedor
+                    </Label>
+                    <Input
+                      id="supplier"
+                      data-testid="purchase-supplier-input"
+                      value={supplier}
+                      onChange={(e) => setSupplier(e.target.value)}
+                      placeholder="Ex: Supermercado BH"
+                      required
+                      className="mt-1 h-11 bg-white border-slate-200 focus:ring-2 focus:ring-rose-100 focus:border-rose-500"
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="date" className="text-slate-700">
+                      Data da Compra
+                    </Label>
+                    <Input
+                      id="date"
+                      data-testid="purchase-date-input"
+                      type="date"
+                      value={purchaseDate}
+                      onChange={(e) => setPurchaseDate(e.target.value)}
+                      required
+                      className="mt-1 h-11 bg-white border-slate-200 focus:ring-2 focus:ring-rose-100 focus:border-rose-500"
+                    />
+                  </div>
                 </div>
 
                 <div className="border-t pt-4">
@@ -250,18 +278,16 @@ export default function Purchases() {
                   </div>
                 </div>
 
-                {/* Carrinho */}
                 {cart.length > 0 && (
                   <div className="border-t pt-4">
-                    <h3 className="font-semibold text-slate-900 mb-3 flex items-center gap-2">
-                      <ShoppingCart className="w-5 h-5" strokeWidth={1.5} />
+                    <h3 className="font-semibold text-slate-900 mb-3">
                       Carrinho ({cart.length} {cart.length === 1 ? 'item' : 'itens'})
                     </h3>
                     <div className="bg-slate-50 rounded-lg p-3 max-h-64 overflow-y-auto">
                       <table className="w-full text-sm">
                         <thead>
                           <tr className="text-left text-xs text-slate-500 uppercase">
-                            <th className="pb-2">Ingrediente</th>
+                            <th className="pb-2">Item</th>
                             <th className="pb-2 text-right">Qtd</th>
                             <th className="pb-2 text-right">Preço</th>
                             <th className="pb-2 text-right">Unit.</th>
@@ -272,7 +298,7 @@ export default function Purchases() {
                           {cart.map((item) => (
                             <tr key={item.id} className="border-t border-slate-200">
                               <td className="py-2 text-slate-700">
-                                {item.ingredient_name} ({item.ingredient_unit})
+                                {item.ingredient_name}
                               </td>
                               <td className="py-2 text-right font-mono text-slate-900">
                                 {item.quantity.toFixed(2)}
@@ -298,7 +324,9 @@ export default function Purchases() {
                           ))}
                           <tr className="border-t-2 border-slate-300 font-semibold">
                             <td className="py-2 text-slate-900">Total</td>
-                            <td></td>
+                            <td className="py-2 text-right font-mono text-slate-900">
+                              {cartTotalQty.toFixed(2)}
+                            </td>
                             <td className="py-2 text-right font-mono text-slate-900">
                               R$ {cartTotal.toFixed(2)}
                             </td>
@@ -318,6 +346,7 @@ export default function Purchases() {
                     onClick={() => {
                       setOpen(false);
                       setCart([]);
+                      setSupplier("");
                     }}
                     className="flex-1"
                   >
@@ -345,75 +374,84 @@ export default function Purchases() {
           </Dialog>
         </div>
 
+        {/* Grouped Purchases Table */}
         <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-          <table className="w-full" data-testid="purchases-table">
-            <thead className="bg-slate-50 border-b border-slate-200">
-              <tr>
-                <th className="text-left py-3 px-6 text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                  Data
-                </th>
-                <th className="text-left py-3 px-6 text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                  Ingrediente
-                </th>
-                <th className="text-right py-3 px-6 text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                  Quantidade
-                </th>
-                <th className="text-right py-3 px-6 text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                  Preço Total
-                </th>
-                <th className="text-right py-3 px-6 text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                  Preço Unitário
-                </th>
-                <th className="text-right py-3 px-6 text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                  Ações
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {purchases.length === 0 ? (
-                <tr>
-                  <td colSpan="6" className="text-center py-12 text-slate-500">
-                    Nenhuma compra registrada. Clique em "Lançar Compras" para começar.
-                  </td>
-                </tr>
-              ) : (
-                purchases.map((purchase) => (
-                  <tr
-                    key={purchase.id}
-                    data-testid={`purchase-row-${purchase.id}`}
-                    className="border-b border-slate-100 hover:bg-slate-50/50 transition-colors"
-                  >
-                    <td className="py-3 px-6 text-slate-600">
-                      {formatDate(purchase.purchase_date)}
-                    </td>
-                    <td className="py-3 px-6 text-slate-700 font-medium">
-                      {purchase.ingredient_name}
-                    </td>
-                    <td className="py-3 px-6 text-right font-mono text-slate-900">
-                      {purchase.quantity.toFixed(2)}
-                    </td>
-                    <td className="py-3 px-6 text-right font-mono text-slate-900 font-medium">
-                      R$ {purchase.price.toFixed(2)}
-                    </td>
-                    <td className="py-3 px-6 text-right font-mono text-slate-700">
-                      R$ {purchase.unit_price.toFixed(2)}
-                    </td>
-                    <td className="py-3 px-6 text-right">
-                      <Button
-                        data-testid={`delete-purchase-${purchase.id}`}
-                        onClick={() => handleDelete(purchase.id)}
-                        variant="ghost"
-                        size="sm"
-                        className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                      >
-                        <Trash2 className="w-4 h-4" strokeWidth={1.5} />
-                      </Button>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+          {purchaseBatches.length === 0 ? (
+            <div className="text-center py-12 text-slate-500">
+              Nenhuma compra registrada. Clique em "Lançar Compras" para começar.
+            </div>
+          ) : (
+            <div className="divide-y divide-slate-200">
+              {purchaseBatches.map((batch) => {
+                const isExpanded = expandedBatches.has(batch.batch_id);
+                return (
+                  <div key={batch.batch_id} data-testid={`purchase-batch-${batch.batch_id}`}>
+                    {/* Batch Summary Row */}
+                    <div
+                      className="flex items-center px-6 py-4 hover:bg-slate-50 cursor-pointer transition-colors"
+                      onClick={() => toggleBatch(batch.batch_id)}
+                    >
+                      <div className="flex-1 grid grid-cols-12 gap-4 items-center">
+                        <div className="col-span-3 text-slate-600">
+                          {formatDate(batch.purchase_date)}
+                        </div>
+                        <div className="col-span-4 text-slate-900 font-medium">
+                          {batch.supplier || "Sem fornecedor"}
+                        </div>
+                        <div className="col-span-2 text-right font-mono text-slate-900">
+                          {batch.total_quantity.toFixed(2)}
+                        </div>
+                        <div className="col-span-2 text-right font-mono text-slate-900 font-bold">
+                          R$ {batch.total_price.toFixed(2)}
+                        </div>
+                        <div className="col-span-1 text-right">
+                          {isExpanded ? (
+                            <ChevronUp className="w-5 h-5 text-slate-400" strokeWidth={1.5} />
+                          ) : (
+                            <ChevronDown className="w-5 h-5 text-slate-400" strokeWidth={1.5} />
+                          )}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Expanded Items */}
+                    {isExpanded && (
+                      <div className="bg-slate-50 px-6 py-4">
+                        <table className="w-full text-sm">
+                          <thead>
+                            <tr className="text-left text-xs text-slate-500 uppercase border-b border-slate-200">
+                              <th className="pb-2">Item</th>
+                              <th className="pb-2 text-right">Quantidade</th>
+                              <th className="pb-2 text-right">Preço Total</th>
+                              <th className="pb-2 text-right">Preço Unitário</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {batch.items.map((item) => (
+                              <tr key={item.id} className="border-b border-slate-100">
+                                <td className="py-2 text-slate-700">
+                                  {item.ingredient_name}
+                                </td>
+                                <td className="py-2 text-right font-mono text-slate-900">
+                                  {item.quantity.toFixed(2)} {item.ingredient_unit}
+                                </td>
+                                <td className="py-2 text-right font-mono text-slate-900 font-medium">
+                                  R$ {item.price.toFixed(2)}
+                                </td>
+                                <td className="py-2 text-right font-mono text-slate-600">
+                                  R$ {item.unit_price.toFixed(2)}/{item.ingredient_unit}
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
       </div>
     </div>
