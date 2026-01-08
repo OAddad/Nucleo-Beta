@@ -16,6 +16,7 @@ import ChatBot from "./ChatBot";
 import Delivery from "./Delivery";
 import Clientes from "./Clientes";
 import Fornecedores from "./Fornecedores";
+import Pedidos from "./Pedidos";
 
 // Ícone do WhatsApp customizado
 const WhatsAppIcon = ({ className }) => (
