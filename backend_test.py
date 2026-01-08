@@ -672,119 +672,141 @@ class CMVMasterAPITester:
         """Test delivery system endpoints as specified in review request"""
         print("\n=== DELIVERY SYSTEM ENDPOINTS TESTS ===")
         
-        # Test GET /api/products endpoint
-        print("🔍 1. Testing GET /api/products endpoint...")
-        success, products = self.run_test("Get all products for delivery", "GET", "products", 200)
+        # Test GET /api/products endpoint without authentication first
+        print("🔍 1. Testing GET /api/products endpoint (without auth)...")
+        success, products = self.run_test("Get all products for delivery (no auth)", "GET", "products", 401)
         if success:
-            print(f"   ✅ Products endpoint working - Found {len(products)} products")
+            print(f"   ✅ Products endpoint accessible but requires authentication (expected)")
+        else:
+            print("   ❌ Products endpoint failed completely")
+        
+        # Test GET /api/categories endpoint without authentication
+        print("\n🔍 2. Testing GET /api/categories endpoint (without auth)...")
+        success, categories = self.run_test("Get all categories for delivery (no auth)", "GET", "categories", 401)
+        if success:
+            print(f"   ✅ Categories endpoint accessible but requires authentication (expected)")
+        else:
+            print("   ❌ Categories endpoint failed completely")
+        
+        # If we have a token, test with authentication
+        if self.token:
+            print("\n🔍 3. Testing authenticated endpoints...")
             
-            # Show product details for delivery system
-            for i, product in enumerate(products[:5]):  # Show first 5 products
-                print(f"   📦 Product {i+1}: {product['name']}")
-                print(f"      - ID: {product['id']}")
-                print(f"      - Category: {product.get('category', 'N/A')}")
-                print(f"      - Sale Price: R$ {product.get('sale_price', 0):.2f}")
-                print(f"      - CMV: R$ {product.get('cmv', 0):.2f}")
-                print(f"      - Description: {product.get('description', 'N/A')}")
+            # Test GET /api/products endpoint
+            success, products = self.run_test("Get all products for delivery", "GET", "products", 200)
+            if success:
+                print(f"   ✅ Products endpoint working - Found {len(products)} products")
                 
-                # Check if product has order steps (important for delivery system)
-                if product.get('order_steps'):
-                    print(f"      - Order Steps: {len(product['order_steps'])} steps available")
-                    for j, step in enumerate(product['order_steps'][:2]):  # Show first 2 steps
-                        print(f"        Step {j+1}: {step.get('name', 'Unnamed')} ({step.get('calculation_type', 'N/A')})")
+                # Show product details for delivery system
+                for i, product in enumerate(products[:5]):  # Show first 5 products
+                    print(f"   📦 Product {i+1}: {product['name']}")
+                    print(f"      - ID: {product['id']}")
+                    print(f"      - Category: {product.get('category', 'N/A')}")
+                    print(f"      - Sale Price: R$ {product.get('sale_price', 0):.2f}")
+                    print(f"      - CMV: R$ {product.get('cmv', 0):.2f}")
+                    print(f"      - Description: {product.get('description', 'N/A')}")
+                    
+                    # Check if product has order steps (important for delivery system)
+                    if product.get('order_steps'):
+                        print(f"      - Order Steps: {len(product['order_steps'])} steps available")
+                        for j, step in enumerate(product['order_steps'][:2]):  # Show first 2 steps
+                            print(f"        Step {j+1}: {step.get('name', 'Unnamed')} ({step.get('calculation_type', 'N/A')})")
+                    else:
+                        print(f"      - Order Steps: None")
+            else:
+                print("   ❌ Products endpoint failed")
+                return False
+            
+            # Test GET /api/categories endpoint
+            success, categories = self.run_test("Get all categories for delivery", "GET", "categories", 200)
+            if success:
+                print(f"   ✅ Categories endpoint working - Found {len(categories)} categories")
+                
+                # Show category details for delivery system
+                for i, category in enumerate(categories):
+                    print(f"   📂 Category {i+1}: {category['name']}")
+                    print(f"      - ID: {category['id']}")
+                    print(f"      - Created: {category.get('created_at', 'N/A')}")
+            else:
+                print("   ❌ Categories endpoint failed")
+                return False
+            
+            # Test products for sale endpoint (specific for delivery)
+            success, sale_products = self.run_test("Get products for sale", "GET", "products/for-sale", 200)
+            if success:
+                print(f"   ✅ Products for sale endpoint working - Found {len(sale_products)} products for sale")
+                
+                # Verify these are only products for sale (not insumos)
+                insumo_count = sum(1 for p in sale_products if p.get('is_insumo', False))
+                if insumo_count == 0:
+                    print(f"   ✅ All products are correctly filtered for sale (no insumos)")
                 else:
-                    print(f"      - Order Steps: None")
-        else:
-            print("   ❌ Products endpoint failed")
-            return False
-        
-        # Test GET /api/categories endpoint
-        print("\n🔍 2. Testing GET /api/categories endpoint...")
-        success, categories = self.run_test("Get all categories for delivery", "GET", "categories", 200)
-        if success:
-            print(f"   ✅ Categories endpoint working - Found {len(categories)} categories")
-            
-            # Show category details for delivery system
-            for i, category in enumerate(categories):
-                print(f"   📂 Category {i+1}: {category['name']}")
-                print(f"      - ID: {category['id']}")
-                print(f"      - Created: {category.get('created_at', 'N/A')}")
-        else:
-            print("   ❌ Categories endpoint failed")
-            return False
-        
-        # Test products for sale endpoint (specific for delivery)
-        print("\n🔍 3. Testing GET /api/products/for-sale endpoint...")
-        success, sale_products = self.run_test("Get products for sale", "GET", "products/for-sale", 200)
-        if success:
-            print(f"   ✅ Products for sale endpoint working - Found {len(sale_products)} products for sale")
-            
-            # Verify these are only products for sale (not insumos)
-            insumo_count = sum(1 for p in sale_products if p.get('is_insumo', False))
-            if insumo_count == 0:
-                print(f"   ✅ All products are correctly filtered for sale (no insumos)")
+                    print(f"   ⚠️ Found {insumo_count} insumo products in sale list")
             else:
-                print(f"   ⚠️ Found {insumo_count} insumo products in sale list")
-        else:
-            print("   ❌ Products for sale endpoint failed")
-            return False
-        
-        # Verify data structure for delivery system
-        print("\n🔍 4. Verifying data structure for delivery system...")
-        
-        if products:
-            sample_product = products[0]
-            required_fields = ['id', 'name', 'sale_price', 'category']
-            missing_fields = [field for field in required_fields if field not in sample_product]
-            
-            if missing_fields:
-                print(f"   ❌ Missing required fields for delivery: {missing_fields}")
+                print("   ❌ Products for sale endpoint failed")
                 return False
-            else:
-                print(f"   ✅ All required fields present for delivery system")
-        
-        if categories:
-            sample_category = categories[0]
-            required_cat_fields = ['id', 'name']
-            missing_cat_fields = [field for field in required_cat_fields if field not in sample_category]
             
-            if missing_cat_fields:
-                print(f"   ❌ Missing required category fields: {missing_cat_fields}")
-                return False
-            else:
-                print(f"   ✅ All required category fields present")
-        
-        # Test localStorage simulation (since backend doesn't handle orders)
-        print("\n🔍 5. Simulating localStorage order creation flow...")
-        
-        if products and len(products) > 0:
-            # Simulate creating an order with available products
-            sample_order = {
-                "id": "order_123",
-                "customer_name": "Cliente Teste",
-                "items": [
-                    {
-                        "product_id": products[0]['id'],
-                        "product_name": products[0]['name'],
-                        "quantity": 2,
-                        "unit_price": products[0].get('sale_price', 0),
-                        "total": products[0].get('sale_price', 0) * 2
-                    }
-                ],
-                "total": products[0].get('sale_price', 0) * 2,
-                "status": "pending",
-                "created_at": datetime.now().isoformat()
-            }
+            # Verify data structure for delivery system
+            print("\n🔍 4. Verifying data structure for delivery system...")
             
-            print(f"   ✅ Sample order structure created:")
-            print(f"      - Order ID: {sample_order['id']}")
-            print(f"      - Customer: {sample_order['customer_name']}")
-            print(f"      - Items: {len(sample_order['items'])}")
-            print(f"      - Total: R$ {sample_order['total']:.2f}")
-            print(f"      - Status: {sample_order['status']}")
-            print(f"   ℹ️ This order would be saved to localStorage in the frontend")
-        
-        return True
+            if products:
+                sample_product = products[0]
+                required_fields = ['id', 'name', 'sale_price', 'category']
+                missing_fields = [field for field in required_fields if field not in sample_product]
+                
+                if missing_fields:
+                    print(f"   ❌ Missing required fields for delivery: {missing_fields}")
+                    return False
+                else:
+                    print(f"   ✅ All required fields present for delivery system")
+            
+            if categories:
+                sample_category = categories[0]
+                required_cat_fields = ['id', 'name']
+                missing_cat_fields = [field for field in required_cat_fields if field not in sample_category]
+                
+                if missing_cat_fields:
+                    print(f"   ❌ Missing required category fields: {missing_cat_fields}")
+                    return False
+                else:
+                    print(f"   ✅ All required category fields present")
+            
+            # Test localStorage simulation (since backend doesn't handle orders)
+            print("\n🔍 5. Simulating localStorage order creation flow...")
+            
+            if products and len(products) > 0:
+                # Simulate creating an order with available products
+                sample_order = {
+                    "id": "order_123",
+                    "customer_name": "Cliente Teste",
+                    "items": [
+                        {
+                            "product_id": products[0]['id'],
+                            "product_name": products[0]['name'],
+                            "quantity": 2,
+                            "unit_price": products[0].get('sale_price', 0),
+                            "total": products[0].get('sale_price', 0) * 2
+                        }
+                    ],
+                    "total": products[0].get('sale_price', 0) * 2,
+                    "status": "pending",
+                    "created_at": datetime.now().isoformat()
+                }
+                
+                print(f"   ✅ Sample order structure created:")
+                print(f"      - Order ID: {sample_order['id']}")
+                print(f"      - Customer: {sample_order['customer_name']}")
+                print(f"      - Items: {len(sample_order['items'])}")
+                print(f"      - Total: R$ {sample_order['total']:.2f}")
+                print(f"      - Status: {sample_order['status']}")
+                print(f"   ℹ️ This order would be saved to localStorage in the frontend")
+            
+            return True
+        else:
+            print("\n❌ Cannot test authenticated endpoints - no valid authentication")
+            print("ℹ️ Endpoints are accessible but require authentication")
+            print("ℹ️ The Addad user credentials from the review request are not working")
+            return False
         """Test cleanup operations (DELETE) as specified in review"""
         print("\n=== CLEANUP OPERATIONS TESTS ===")
         
