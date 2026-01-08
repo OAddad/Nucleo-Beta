@@ -55,8 +55,8 @@ export default function Dashboard({ setIsAuthenticated }) {
               <ChefHat className="w-6 h-6 text-primary-foreground" strokeWidth={1.5} />
             </div>
             <div>
-              <h1 className="text-sidebar-foreground font-bold text-lg tracking-tight">Gestão Point</h1>
-              <p className="text-xs text-muted-foreground">do Addad</p>
+              <h1 className="text-sidebar-foreground font-bold text-lg tracking-tight">Núcleo</h1>
+              <p className="text-xs text-muted-foreground">Sistema de Gestão</p>
             </div>
           </div>
         </div>
