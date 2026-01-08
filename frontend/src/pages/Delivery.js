@@ -115,11 +115,15 @@ export default function Delivery() {
     }
   };
 
-  // Filtrar clientes pela busca
-  const filteredClientes = clientes.filter(c => 
-    c.nome.toLowerCase().includes(clienteSearch.toLowerCase()) ||
-    c.telefone.includes(clienteSearch)
-  );
+  // Filtrar clientes pela busca (Nome, CPF, Email e Telefone)
+  const filteredClientes = clienteSearch.trim() 
+    ? clientes.filter(c => 
+        c.nome?.toLowerCase().includes(clienteSearch.toLowerCase()) ||
+        (c.telefone && c.telefone.includes(clienteSearch)) ||
+        (c.email && c.email.toLowerCase().includes(clienteSearch.toLowerCase())) ||
+        (c.cpf && c.cpf.includes(clienteSearch))
+      )
+    : [];
 
   // Filtrar pedidos por status
   const getPedidosByStatus = (status) => {
