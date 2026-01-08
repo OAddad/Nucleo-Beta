@@ -445,6 +445,8 @@ async def delete_ingredient(ingredient_id: str, current_user: User = Depends(get
 # Purchase endpoints
 @api_router.post("/purchases/batch", response_model=dict)
 async def create_purchase_batch(batch_data: PurchaseBatchCreate, current_user: User = Depends(get_current_user)):
+    check_role(current_user, ["proprietario", "administrador"])
+    
     batch_id = str(uuid.uuid4())
     purchase_date = datetime.fromisoformat(batch_data.purchase_date) if batch_data.purchase_date else datetime.now(timezone.utc)
     
