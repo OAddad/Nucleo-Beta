@@ -1010,6 +1010,173 @@ export default function Delivery() {
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Dialog Cadastro de Cliente */}
+      <Dialog open={clienteDialogOpen} onOpenChange={setClienteDialogOpen}>
+        <DialogContent className="sm:max-w-3xl">
+          <DialogHeader>
+            <DialogTitle>Novo Cliente</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-6 mt-4">
+            {/* Primeira Linha: Foto, Nome e Gênero */}
+            <div className="flex gap-6">
+              {/* Foto do Cliente */}
+              <div className="flex-shrink-0">
+                <Label className="text-sm text-muted-foreground">Foto do Cliente</Label>
+                <div className="mt-2">
+                  <label className="cursor-pointer">
+                    <div className="w-28 h-28 rounded-xl border-2 border-dashed overflow-hidden bg-muted flex flex-col items-center justify-center hover:border-primary/50 transition-colors">
+                      {novoClienteFoto ? (
+                        <img
+                          src={novoClienteFoto}
+                          alt="Preview"
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <>
+                          <ImageOff className="w-8 h-8 text-muted-foreground mb-1" />
+                          <span className="text-xs text-muted-foreground text-center px-2">Clique para adicionar</span>
+                        </>
+                      )}
+                    </div>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleClienteFotoChange}
+                      className="hidden"
+                    />
+                  </label>
+                  <p className="text-xs text-muted-foreground mt-1 text-center">1080x1080px</p>
+                </div>
+              </div>
+
+              {/* Nome e Email */}
+              <div className="flex-1 space-y-4">
+                <div className="flex gap-4">
+                  <div className="flex-1">
+                    <Label>Nome *</Label>
+                    <Input
+                      value={novoClienteNome}
+                      onChange={(e) => setNovoClienteNome(e.target.value)}
+                      placeholder="Ex: Thais Addad"
+                      className="mt-1"
+                    />
+                  </div>
+                  
+                  {/* Gênero */}
+                  <div className="w-48">
+                    <Label>Gênero</Label>
+                    <div className="mt-1 flex rounded-lg border overflow-hidden h-10">
+                      <button
+                        type="button"
+                        onClick={() => setNovoClienteGenero("masculino")}
+                        className={`flex-1 text-sm font-medium transition-colors ${
+                          novoClienteGenero === "masculino" 
+                            ? "bg-primary text-primary-foreground" 
+                            : "bg-background hover:bg-muted"
+                        }`}
+                      >
+                        Masculino
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setNovoClienteGenero("feminino")}
+                        className={`flex-1 text-sm font-medium transition-colors border-l ${
+                          novoClienteGenero === "feminino" 
+                            ? "bg-primary text-primary-foreground" 
+                            : "bg-background hover:bg-muted"
+                        }`}
+                      >
+                        Feminino
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <Label>Email</Label>
+                  <Input
+                    type="email"
+                    value={novoClienteEmail}
+                    onChange={(e) => setNovoClienteEmail(e.target.value)}
+                    placeholder="Ex: thaisaddad@gmail.com"
+                    className="mt-1"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Segunda Linha: Telefone, CPF e Data de Nascimento */}
+            <div className="grid grid-cols-3 gap-4">
+              <div>
+                <Label>Telefone *</Label>
+                <Input
+                  value={novoClienteTelefone}
+                  onChange={(e) => setNovoClienteTelefone(formatTelefone(e.target.value))}
+                  placeholder="(XX) 9.XXXX-XXXX"
+                  className="mt-1"
+                  maxLength={16}
+                />
+              </div>
+              <div>
+                <Label>CPF</Label>
+                <Input
+                  value={novoClienteCpf}
+                  onChange={(e) => setNovoClienteCpf(formatCPF(e.target.value))}
+                  placeholder="XXX.XXX.XXX-XX"
+                  className="mt-1"
+                  maxLength={14}
+                />
+              </div>
+              <div>
+                <Label>Data de Nascimento</Label>
+                <Input
+                  value={novoClienteDataNascimento}
+                  onChange={(e) => setNovoClienteDataNascimento(formatData(e.target.value))}
+                  placeholder="DD/MM/AAAA"
+                  className="mt-1"
+                  maxLength={10}
+                />
+              </div>
+            </div>
+
+            {/* Terceira Linha: Endereços */}
+            <div className="border-t pt-4">
+              <Label className="text-base font-semibold">Endereços</Label>
+              <div className="grid grid-cols-2 gap-4 mt-3">
+                <div>
+                  <Label className="text-sm">Endereço</Label>
+                  <Input
+                    value={novoClienteEndereco}
+                    onChange={(e) => setNovoClienteEndereco(e.target.value)}
+                    placeholder="Rua, número, bairro"
+                    className="mt-1"
+                  />
+                </div>
+                <div>
+                  <Label className="text-sm">Complemento</Label>
+                  <Input
+                    value={novoClienteComplemento}
+                    onChange={(e) => setNovoClienteComplemento(e.target.value)}
+                    placeholder="Apt, bloco..."
+                    className="mt-1"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Botão Salvar */}
+            <div className="flex justify-end gap-3 pt-2">
+              <Button variant="outline" onClick={() => setClienteDialogOpen(false)}>
+                Cancelar
+              </Button>
+              <Button onClick={handleNovoCliente}>
+                Cadastrar Cliente
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
