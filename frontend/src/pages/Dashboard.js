@@ -337,8 +337,10 @@ export default function Dashboard({ setIsAuthenticated }) {
 
         {/* Conteúdo das Rotas */}
         <main className="flex-1 overflow-auto">
-          {/* Se uma aba superior está ativa, mostrar "Em breve" */}
-          {activeTopMenu ? (
+          {/* Se a aba Balcão está ativa, mostrar a tela de vendas */}
+          {activeTopMenu === "balcao" ? (
+            <BalcaoVendas />
+          ) : activeTopMenu ? (
             <div className="p-8 flex flex-col items-center justify-center min-h-[60vh]">
               <div className="text-center">
                 {topMenuItems.find(item => item.id === activeTopMenu) && (
