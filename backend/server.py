@@ -893,6 +893,9 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+# Servir arquivos estáticos de upload
+app.mount("/uploads", StaticFiles(directory="/app/backend/uploads"), name="uploads")
+
 @app.on_event("shutdown")
 async def shutdown_db_client():
     client.close()
