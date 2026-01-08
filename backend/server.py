@@ -260,6 +260,102 @@ async def login(user_data: UserLogin):
     access_token = create_access_token(data={"sub": user.id})
     return Token(access_token=access_token, token_type="bearer", user=user)
 
+
+# User Management endpoints
+@api_router.get("/users/management", response_model=List[UserWithPassword])
+async def get_users_management(current_user: User = Depends(get_current_user)):
+    check_role(current_user, ["proprietario"])
+    users = await db.users.find({}, {"_id": 0}).to_list(1000)
+    for u in users:
+        if isinstance(u["created_at"], str):
+            u["created_at"] = datetime.fromisoformat(u["created_at"])
+    return users
+
+@api_router.post("/users/create", response_model=User)
+async def create_user_management(user_data: UserManagementCreate, current_user: User = Depends(get_current_user)):
+    check_role(current_user, ["proprietario"])
+    
+    existing = await db.users.find_one({"username": user_data.username}, {"_id": 0})
+    if existing:
+        raise HTTPException(status_code=400, detail="Username already exists")
+    
+    if user_data.role not in ["proprietario", "administrador", "observador"]:
+        raise HTTPException(status_code=400, detail="Role inválido")
+    
+    hashed_password = pwd_context.hash(user_data.password)
+    user = User(username=user_data.username, role=user_data.role)
+    user_dict = user.model_dump()
+    user_dict["password"] = hashed_password
+    user_dict["created_at"] = user_dict["created_at"].isoformat()
+    
+    await db.users.insert_one(user_dict)
+    
+    # Registrar auditoria
+    await log_audit("CREATE", "user", user_data.username, current_user, "media", {"role": user_data.role})
+    
+    return user
+
+@api_router.put("/users/{user_id}/role", response_model=User)
+async def update_user_role(user_id: str, role_data: UserManagementUpdate, current_user: User = Depends(get_current_user)):
+    check_role(current_user, ["proprietario"])
+    
+    if role_data.role not in ["proprietario", "administrador", "observador"]:
+        raise HTTPException(status_code=400, detail="Role inválido")
+    
+    user = await db.users.find_one({"id": user_id}, {"_id": 0})
+    if not user:
+        raise HTTPException(status_code=404, detail="Usuário não encontrado")
+    
+    await db.users.update_one({"id": user_id}, {"$set": {"role": role_data.role}})
+    
+    # Registrar auditoria
+    await log_audit("UPDATE", "user", user["username"], current_user, "media", {"new_role": role_data.role})
+    
+    updated = await db.users.find_one({"id": user_id}, {"_id": 0})
+    if isinstance(updated["created_at"], str):
+        updated["created_at"] = datetime.fromisoformat(updated["created_at"])
+    return User(**updated)
+
+@api_router.put("/users/change-password")
+async def change_password(password_data: ChangePassword, current_user: User = Depends(get_current_user)):
+    user_doc = await db.users.find_one({"id": current_user.id}, {"_id": 0})
+    if not user_doc or not pwd_context.verify(password_data.old_password, user_doc["password"]):
+        raise HTTPException(status_code=401, detail="Senha atual incorreta")
+    
+    new_hashed = pwd_context.hash(password_data.new_password)
+    await db.users.update_one({"id": current_user.id}, {"$set": {"password": new_hashed}})
+    
+    return {"message": "Senha alterada com sucesso"}
+
+@api_router.delete("/users/{user_id}")
+async def delete_user(user_id: str, current_user: User = Depends(get_current_user)):
+    check_role(current_user, ["proprietario"])
+    
+    if user_id == current_user.id:
+        raise HTTPException(status_code=400, detail="Você não pode deletar sua própria conta")
+    
+    user = await db.users.find_one({"id": user_id}, {"_id": 0})
+    if not user:
+        raise HTTPException(status_code=404, detail="Usuário não encontrado")
+    
+    await db.users.delete_one({"id": user_id})
+    
+    # Registrar auditoria
+    await log_audit("DELETE", "user", user["username"], current_user, "alta")
+    
+    return {"message": "Usuário deletado"}
+
+# Audit Log endpoints
+@api_router.get("/audit-logs", response_model=List[AuditLog])
+async def get_audit_logs(current_user: User = Depends(get_current_user)):
+    check_role(current_user, ["proprietario", "administrador"])
+    
+    logs = await db.audit_logs.find({}, {"_id": 0}).sort("timestamp", -1).to_list(1000)
+    for log in logs:
+        if isinstance(log["timestamp"], str):
+            log["timestamp"] = datetime.fromisoformat(log["timestamp"])
+    return logs
+
 # Ingredient endpoints
 @api_router.post("/ingredients", response_model=Ingredient)
 async def create_ingredient(ingredient_data: IngredientCreate, current_user: User = Depends(get_current_user)):
