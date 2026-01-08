@@ -619,8 +619,8 @@ class CMVMasterAPITester:
             # Create updated data with modified order steps
             updated_data = {
                 "name": existing_product['name'] + " - Updated",
-                "description": existing_product.get('description', '') + " (Updated)",
-                "category": existing_product.get('category', 'Updated'),
+                "description": (existing_product.get('description') or '') + " (Updated)",
+                "category": existing_product.get('category') or 'Updated',
                 "sale_price": existing_product.get('sale_price', 20.00) + 1.00,
                 "recipe": existing_product.get('recipe', []),
                 "order_steps": existing_product.get('order_steps', [])
