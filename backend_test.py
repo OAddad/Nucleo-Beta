@@ -403,7 +403,7 @@ class CMVMasterAPITester:
         print("\n=== AUDIT LOGS TESTS ===")
         
         # Get audit logs
-        print("🔍 Testing audit logs...")
+        print("🔍 Attempting to access audit logs...")
         success, logs = self.run_test("Get audit logs", "GET", "audit-logs", 200)
         if success:
             print(f"   ✅ Audit logs retrieved: {len(logs)} entries")
@@ -412,7 +412,8 @@ class CMVMasterAPITester:
             for log in logs[:5]:  # Show first 5 logs
                 print(f"   - {log['action']} {log['resource_type']}: {log['resource_name']} by {log['username']}")
         else:
-            print("   ❌ Failed to get audit logs")
+            print("   ❌ Failed to get audit logs (permission denied)")
+            print("   ℹ️ Audit logs require proprietario or administrador role")
             return False
         
         return True
