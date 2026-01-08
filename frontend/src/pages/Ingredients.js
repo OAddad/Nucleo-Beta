@@ -59,6 +59,9 @@ export default function Ingredients() {
   const [loading, setLoading] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
   
+  // Estado para "É receita"
+  const [isRecipe, setIsRecipe] = useState(false);
+  
   // Category management states
   const [categoryDialogOpen, setCategoryDialogOpen] = useState(false);
   const [editCategoryMode, setEditCategoryMode] = useState(false);
@@ -86,6 +89,7 @@ export default function Ingredients() {
     fetchIngredients();
     fetchCategories();
     loadCurrentUser();
+    ensureRecipeCategory();
   }, []);
 
   const loadCurrentUser = () => {
