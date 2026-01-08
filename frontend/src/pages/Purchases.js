@@ -44,6 +44,8 @@ export default function Purchases() {
   const [expandedBatches, setExpandedBatches] = useState(new Set());
   const [editMode, setEditMode] = useState(false);
   const [currentBatchId, setCurrentBatchId] = useState(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [batchToDelete, setBatchToDelete] = useState(null);
   
   // Form states
   const [supplier, setSupplier] = useState("");
