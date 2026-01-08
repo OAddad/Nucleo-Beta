@@ -633,8 +633,19 @@ export default function Products() {
                     className="flex items-center px-6 py-4 cursor-pointer hover:bg-muted/30 transition-colors"
                     onClick={() => toggleProduct(product.id)}
                   >
+                    {/* Foto do produto */}
+                    {product.photo_url && (
+                      <div className="w-16 h-16 rounded-lg border overflow-hidden bg-muted mr-4 flex-shrink-0">
+                        <img
+                          src={`${BACKEND_URL}${product.photo_url}`}
+                          alt={product.name}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    )}
+                    
                     <div className="flex-1 grid grid-cols-12 gap-4 items-center">
-                      <div className="col-span-5 font-bold text-lg">
+                      <div className={`${product.photo_url ? 'col-span-4' : 'col-span-5'} font-bold text-lg`}>
                         {product.name}
                       </div>
                       <div className="col-span-2 text-center">
@@ -655,7 +666,7 @@ export default function Products() {
                           {product.profit_margin ? `${product.profit_margin.toFixed(1)}%` : "-"}
                         </div>
                       </div>
-                      <div className="col-span-1 flex justify-end">
+                      <div className={`${product.photo_url ? 'col-span-2' : 'col-span-1'} flex justify-end`}>
                         {isExpanded ? (
                           <ChevronUp className="w-5 h-5 text-muted-foreground" strokeWidth={1.5} />
                         ) : (
