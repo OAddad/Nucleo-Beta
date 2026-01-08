@@ -57,17 +57,22 @@ export default function Products() {
   const [productToDelete, setProductToDelete] = useState(null);
   
   const [name, setName] = useState("");
+  const [productCode, setProductCode] = useState("");
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("");
+  const [productType, setProductType] = useState("produto");
   const [salePrice, setSalePrice] = useState("");
   const [photoUrl, setPhotoUrl] = useState("");
   const [photoFile, setPhotoFile] = useState(null);
   const [isInsumo, setIsInsumo] = useState(false);
+  const [isDivisible, setIsDivisible] = useState(false);
   const [recipeIngredients, setRecipeIngredients] = useState([{ ingredient_id: "", quantity: "" }]);
   const [recipePackaging, setRecipePackaging] = useState([{ ingredient_id: "", quantity: "" }]);
+  const [orderSteps, setOrderSteps] = useState([]);
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
+  const [activeFormTab, setActiveFormTab] = useState("ficha"); // "ficha" ou "etapas"
   
   // Category management states
   const [categoryDialogOpen, setCategoryDialogOpen] = useState(false);
