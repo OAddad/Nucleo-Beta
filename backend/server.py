@@ -359,10 +359,16 @@ async def get_audit_logs(current_user: User = Depends(get_current_user)):
 # Ingredient endpoints
 @api_router.post("/ingredients", response_model=Ingredient)
 async def create_ingredient(ingredient_data: IngredientCreate, current_user: User = Depends(get_current_user)):
+    check_role(current_user, ["proprietario", "administrador"])
+    
     ingredient = Ingredient(**ingredient_data.model_dump())
     doc = ingredient.model_dump()
     doc["created_at"] = doc["created_at"].isoformat()
     await db.ingredients.insert_one(doc)
+    
+    # Registrar auditoria
+    await log_audit("CREATE", "ingredient", ingredient_data.name, current_user, "baixa")
+    
     return ingredient
 
 @api_router.get("/ingredients", response_model=List[Ingredient])
