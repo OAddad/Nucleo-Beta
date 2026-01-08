@@ -146,6 +146,7 @@ class RecipeIngredient(BaseModel):
 class ProductCreate(BaseModel):
     name: str
     description: Optional[str] = None
+    category: Optional[str] = None
     sale_price: Optional[float] = None
     photo_url: Optional[str] = None
     recipe: List[RecipeIngredient]
@@ -155,6 +156,7 @@ class Product(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     name: str
     description: Optional[str] = None
+    category: Optional[str] = None
     sale_price: Optional[float] = None
     photo_url: Optional[str] = None
     recipe: List[RecipeIngredient]
