@@ -753,6 +753,8 @@ async def get_products(current_user: User = Depends(get_current_user)):
 
 @api_router.put("/products/{product_id}", response_model=Product)
 async def update_product(product_id: str, product_data: ProductCreate, current_user: User = Depends(get_current_user)):
+    check_role(current_user, ["proprietario", "administrador"])
+    
     existing = await db.products.find_one({"id": product_id}, {"_id": 0})
     if not existing:
         raise HTTPException(status_code=404, detail="Product not found")
@@ -773,6 +775,9 @@ async def update_product(product_id: str, product_data: ProductCreate, current_u
     update_data["profit_margin"] = profit_margin
     
     await db.products.update_one({"id": product_id}, {"$set": update_data})
+    
+    # Registrar auditoria
+    await log_audit("UPDATE", "product", product_data.name, current_user, "media")
     
     updated = await db.products.find_one({"id": product_id}, {"_id": 0})
     if isinstance(updated["created_at"], str):
