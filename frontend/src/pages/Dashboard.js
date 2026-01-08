@@ -1,17 +1,26 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import { toast } from "sonner";
-import { ChefHat, Package, ShoppingCart, FileText, BarChart3, LogOut } from "lucide-react";
+import { ChefHat, Package, ShoppingCart, FileText, BarChart3, LogOut, Shield } from "lucide-react";
 import { Button } from "../components/ui/button";
 import DarkModeToggle from "../components/DarkModeToggle";
 import Ingredients from "./Ingredients";
 import Purchases from "./Purchases";
 import Products from "./Products";
 import Reports from "./Reports";
+import Moderation from "./Moderation";
 
 export default function Dashboard({ setIsAuthenticated }) {
   const navigate = useNavigate();
   const location = useLocation();
+  const [currentUser, setCurrentUser] = useState(null);
+
+  useEffect(() => {
+    const user = localStorage.getItem("user");
+    if (user) {
+      setCurrentUser(JSON.parse(user));
+    }
+  }, []);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -26,6 +35,11 @@ export default function Dashboard({ setIsAuthenticated }) {
     { path: "/produtos", label: "Produtos", icon: FileText },
     { path: "/relatorios", label: "Relatórios", icon: BarChart3 },
   ];
+
+  // Adicionar Moderação apenas para proprietários e administradores
+  if (currentUser?.role === "proprietario" || currentUser?.role === "administrador") {
+    tabs.push({ path: "/moderacao", label: "Moderação", icon: Shield });
+  }
 
   const isActive = (path) => {
     if (path === "/") return location.pathname === "/";
