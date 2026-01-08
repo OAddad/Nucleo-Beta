@@ -67,7 +67,7 @@ class CMVMasterAPITester:
         print("\n=== AUTHENTICATION TESTS ===")
         
         # Try different password combinations for Addad user first
-        passwords_to_try = ["Addad123", "senha123", "123456", "admin", "Addad"]
+        passwords_to_try = ["Admin123", "Addad123", "admin123", "senha123", "123456", "admin", "Addad"]
         
         for password in passwords_to_try:
             print(f"🔍 Testing login with 'Addad' user (password: {password})...")
