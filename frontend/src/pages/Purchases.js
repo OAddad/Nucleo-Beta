@@ -274,10 +274,36 @@ export default function Purchases() {
             </p>
           </div>
 
-          <Dialog open={open} onOpenChange={(isOpen) => {
-            setOpen(isOpen);
-            if (!isOpen) resetForm();
-          }}>
+          <div className="flex gap-2">
+            <Button 
+              variant="outline" 
+              onClick={() => {
+                // Flatten purchases for export
+                const flatPurchases = purchases.map(p => ({
+                  data: p.purchase_date,
+                  fornecedor: p.supplier,
+                  ingrediente: p.ingredient_name,
+                  quantidade: p.quantity,
+                  valor_total: p.price,
+                  valor_unitario: p.unit_price
+                }));
+                exportToExcel(flatPurchases, "compras", {
+                  data: "Data",
+                  fornecedor: "Fornecedor",
+                  ingrediente: "Ingrediente",
+                  quantidade: "Quantidade",
+                  valor_total: "Valor Total",
+                  valor_unitario: "Valor Unitário"
+                });
+              }}
+            >
+              <Download className="w-4 h-4 mr-2" />
+              Exportar Excel
+            </Button>
+            <Dialog open={open} onOpenChange={(isOpen) => {
+              setOpen(isOpen);
+              if (!isOpen) resetForm();
+            }}>
             <DialogTrigger asChild>
               <Button
                 data-testid="add-purchase-button"
