@@ -587,25 +587,18 @@ class CMVMasterAPITester:
         return True
 
 def main():
-    print("🚀 Starting CMV Master API Tests - Complete System Test")
+    print("🚀 Starting CMV Master API Tests - Stock Control Features Test")
     print("=" * 60)
     
     tester = CMVMasterAPITester()
     
-    # Run all tests in the exact order specified in the review
+    # Run tests focused on stock control features as requested
     tests = [
-        ("1. Authentication", tester.test_authentication),
-        ("2. Ingredients CRUD", tester.test_ingredients_crud),
-        ("3. Batch Purchases", tester.test_batch_purchases),
-        ("4. Categories", tester.test_categories),
-        ("5. Products with CMV", tester.test_products_with_cmv),
-        ("6. Dashboard & Reports", tester.test_dashboard_and_reports),
-        ("7. Audit Logs", tester.test_audit_logs),
-        ("8. Cleanup Operations", tester.test_cleanup_operations),
+        ("1. Authentication (Addad user)", tester.test_authentication),
+        ("2. Stock Control Features", tester.test_stock_control_features),
     ]
     
     failed_tests = []
-    permission_issues = []
     
     for test_name, test_func in tests:
         try:
@@ -616,10 +609,6 @@ def main():
             if not test_func():
                 failed_tests.append(test_name)
                 print(f"❌ {test_name} FAILED")
-                
-                # Check if it's a permission issue
-                if "permission" in test_name.lower() or "audit" in test_name.lower():
-                    permission_issues.append(test_name)
             else:
                 print(f"✅ {test_name} PASSED")
         except Exception as e:
@@ -635,34 +624,22 @@ def main():
     
     # Analyze results
     print(f"\n🔍 ANALYSIS:")
-    print(f"✅ WORKING FEATURES:")
-    print(f"   - Authentication (login/register)")
-    print(f"   - Read operations (GET endpoints)")
-    print(f"   - Dashboard and reports")
-    print(f"   - Price history")
-    print(f"   - CMV calculations")
-    print(f"   - Existing data display")
-    
-    if failed_tests:
-        print(f"\n❌ FAILED TEST CATEGORIES:")
+    if not failed_tests:
+        print(f"✅ STOCK CONTROL FEATURES WORKING:")
+        print(f"   - Ingredients have new fields: category, stock_quantity, stock_min, stock_max")
+        print(f"   - Stock adjustment endpoint working (PUT /api/ingredients/{{id}}/stock)")
+        print(f"   - Ingredient update with category working")
+        print(f"   - Authentication with Addad user working")
+    else:
+        print(f"❌ FAILED TESTS:")
         for failed in failed_tests:
             print(f"   - {failed}")
-        
-        if permission_issues:
-            print(f"\n⚠️ PERMISSION ISSUES DETECTED:")
-            print(f"   Current user has 'observador' role but needs 'proprietario' or 'administrador'")
-            print(f"   for CREATE/UPDATE/DELETE operations and audit logs access.")
-            print(f"   This is a role-based access control working as designed.")
-        
-        print(f"\n🔧 RECOMMENDATIONS:")
-        print(f"   1. Test with an admin user (proprietario/administrador role)")
-        print(f"   2. All read operations and calculations are working correctly")
-        print(f"   3. The system properly enforces role-based permissions")
-        
+    
+    if failed_tests:
         return 1
     else:
-        print("\n✅ ALL TESTS PASSED!")
-        print("🎉 CMV Master system is working correctly!")
+        print("\n✅ ALL STOCK CONTROL TESTS PASSED!")
+        print("🎉 New stock control functionality is working correctly!")
         return 0
 
 if __name__ == "__main__":
