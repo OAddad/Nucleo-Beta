@@ -861,6 +861,15 @@ async def get_products(current_user: User = Depends(get_current_user)):
             p["created_at"] = datetime.fromisoformat(p["created_at"])
     return products
 
+@api_router.get("/products/for-sale", response_model=List[Product])
+async def get_products_for_sale(current_user: User = Depends(get_current_user)):
+    """Retorna apenas produtos para venda (não insumos)"""
+    products = await db.products.find({"is_insumo": {"$ne": True}}, {"_id": 0}).to_list(1000)
+    for p in products:
+        if isinstance(p["created_at"], str):
+            p["created_at"] = datetime.fromisoformat(p["created_at"])
+    return products
+
 @api_router.put("/products/{product_id}", response_model=Product)
 async def update_product(product_id: str, product_data: ProductCreate, current_user: User = Depends(get_current_user)):
     check_role(current_user, ["proprietario", "administrador"])
