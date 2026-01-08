@@ -164,18 +164,17 @@ class Category(BaseModel):
 class CategoryCreate(BaseModel):
     name: str
 
-class OrderStepOption(BaseModel):
-    name: str
-    price: Optional[float] = 0.0
-    is_required: bool = False
+class OrderStepItem(BaseModel):
+    product_id: str  # ID do produto
+    product_name: Optional[str] = ""  # Nome do produto (para exibição)
+    price_override: Optional[float] = None  # Preço customizado (se diferente do produto)
 
 class OrderStep(BaseModel):
     name: str
-    description: Optional[str] = None
-    step_type: str = "single"  # "single", "multiple", "text"
-    options: List[OrderStepOption] = []
-    min_selections: int = 0
-    max_selections: int = 1
+    calculation_type: str = "soma"  # "minimo", "medio", "maximo", "soma", "subtracao"
+    min_selections: int = 0  # 0 = sem limitador
+    max_selections: int = 0  # 0 = sem limitador
+    items: List[OrderStepItem] = []
 
 class ProductCreate(BaseModel):
     name: str
