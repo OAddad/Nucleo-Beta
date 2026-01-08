@@ -171,6 +171,7 @@ class ProductCreate(BaseModel):
     sale_price: Optional[float] = None
     photo_url: Optional[str] = None
     recipe: List[RecipeIngredient]
+    is_insumo: Optional[bool] = False
 
 class Product(BaseModel):
     model_config = ConfigDict(extra="ignore")
@@ -183,6 +184,7 @@ class Product(BaseModel):
     recipe: List[RecipeIngredient]
     cmv: float = 0.0
     profit_margin: Optional[float] = None
+    is_insumo: bool = False
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class PriceHistory(BaseModel):
