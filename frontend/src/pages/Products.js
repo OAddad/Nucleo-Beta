@@ -984,7 +984,7 @@ export default function Products() {
           )}
         </div>
 
-        {/* AlertDialog de confirmação de exclusão */}
+        {/* AlertDialog de confirmação de exclusão de produto */}
         <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
           <AlertDialogContent>
             <AlertDialogHeader>
@@ -1005,6 +1005,108 @@ export default function Products() {
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
+          </TabsContent>
+
+          {/* Aba de Categorias */}
+          <TabsContent value="categories" className="mt-6">
+            <div className="flex justify-end mb-4">
+              <Dialog open={categoryDialogOpen} onOpenChange={(isOpen) => {
+                setCategoryDialogOpen(isOpen);
+                if (!isOpen) {
+                  setCategoryName("");
+                  setEditCategoryMode(false);
+                  setCurrentCategoryId(null);
+                }
+              }}>
+                <DialogTrigger asChild>
+                  <Button className="shadow-sm">
+                    <Plus className="w-5 h-5 mr-2" strokeWidth={1.5} />
+                    Nova Categoria
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>
+                      {editCategoryMode ? "Editar Categoria" : "Nova Categoria"}
+                    </DialogTitle>
+                  </DialogHeader>
+                  <form onSubmit={handleCreateCategory} className="space-y-4 mt-4">
+                    <div>
+                      <Label htmlFor="category-name">Nome da Categoria</Label>
+                      <Input
+                        id="category-name"
+                        value={categoryName}
+                        onChange={(e) => setCategoryName(e.target.value)}
+                        placeholder="Ex: Sanduíches, Bebidas..."
+                        required
+                        className="mt-1"
+                      />
+                    </div>
+                    <Button type="submit" disabled={loading} className="w-full">
+                      {loading ? (editCategoryMode ? "Atualizando..." : "Criando...") : (editCategoryMode ? "Atualizar" : "Criar")}
+                    </Button>
+                  </form>
+                </DialogContent>
+              </Dialog>
+            </div>
+
+            <div className="bg-card rounded-xl border shadow-sm overflow-hidden">
+              {categories.length === 0 ? (
+                <div className="text-center py-12 text-muted-foreground">
+                  Nenhuma categoria cadastrada. Clique em "Nova Categoria" para começar.
+                </div>
+              ) : (
+                <div className="divide-y divide-border">
+                  {categories.map((category) => (
+                    <div key={category.id} className="flex items-center justify-between px-6 py-4 hover:bg-muted/30 transition-colors">
+                      <div className="font-medium text-lg">{category.name}</div>
+                      <div className="flex gap-2">
+                        <Button
+                          onClick={() => handleEditCategory(category)}
+                          variant="ghost"
+                          size="sm"
+                          className="hover:bg-muted"
+                        >
+                          <Edit className="w-4 h-4" strokeWidth={1.5} />
+                        </Button>
+                        <Button
+                          onClick={() => confirmDeleteCategory(category)}
+                          variant="ghost"
+                          size="sm"
+                          className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                        >
+                          <Trash2 className="w-4 h-4" strokeWidth={1.5} />
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* AlertDialog de confirmação de exclusão de categoria */}
+            <AlertDialog open={deleteCategoryDialogOpen} onOpenChange={setDeleteCategoryDialogOpen}>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Confirmar Exclusão</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Tem certeza que deseja excluir a categoria <strong>{categoryToDelete?.name}</strong>?
+                    Esta ação não pode ser desfeita.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={handleDeleteCategory}
+                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                  >
+                    Excluir
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );
