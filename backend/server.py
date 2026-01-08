@@ -1396,10 +1396,10 @@ async def startup_event():
     
     # Restaurar dados do Excel se o banco estiver vazio
     logger.info("[STARTUP] Verificando backup em Excel...")
-    # SQLite já está inicializado pelo módulo database
-    logger.info("[STARTUP] Sistema iniciado com sucesso (SQLite)")
+    await restore_from_excel()
+    logger.info("[STARTUP] Sistema iniciado com sucesso")
 
 @app.on_event("shutdown")
 async def shutdown_db_client():
-    # SQLite não precisa fechar conexão explicitamente
+    client.close()
     logger.info("[SHUTDOWN] Sistema encerrado")
