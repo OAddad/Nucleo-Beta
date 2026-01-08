@@ -1008,8 +1008,8 @@ export default function Products() {
           </TabsContent>
 
           {/* Aba de Categorias */}
-          <TabsContent value="categories" className="mt-6">
-            <div className="flex justify-end mb-4">
+          <TabsContent value="categories" className="space-y-4">
+            <div className="flex justify-end">
               <Dialog open={categoryDialogOpen} onOpenChange={(isOpen) => {
                 setCategoryDialogOpen(isOpen);
                 if (!isOpen) {
