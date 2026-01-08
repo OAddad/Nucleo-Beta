@@ -411,7 +411,13 @@ async def check_ingredient_usage(ingredient_id: str, current_user: User = Depend
 
 @api_router.delete("/ingredients/{ingredient_id}")
 async def delete_ingredient(ingredient_id: str, current_user: User = Depends(get_current_user)):
+    check_role(current_user, ["proprietario", "administrador"])
+    
     # Check if ingredient is used in any product
+    ingredient = await db.ingredients.find_one({"id": ingredient_id}, {"_id": 0})
+    if not ingredient:
+        raise HTTPException(status_code=404, detail="Ingredient not found")
+    
     products = await db.products.find({}, {"_id": 0}).to_list(1000)
     used_in = []
     for product in products:
@@ -430,6 +436,10 @@ async def delete_ingredient(ingredient_id: str, current_user: User = Depends(get
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Ingredient not found")
     await db.purchases.delete_many({"ingredient_id": ingredient_id})
+    
+    # Registrar auditoria
+    await log_audit("DELETE", "ingredient", ingredient["name"], current_user, "alta")
+    
     return {"message": "Ingredient deleted"}
 
 # Purchase endpoints
