@@ -432,7 +432,7 @@ export default function BalcaoVendas() {
           ) : (
             <div className="space-y-3">
               {cart.map(item => (
-                <div key={item.id} className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg">
+                <div key={item.cartItemId || item.id} className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg">
                   {/* Mini imagem */}
                   <div className="w-12 h-12 rounded-lg bg-muted overflow-hidden flex-shrink-0">
                     {item.photo_url ? (
@@ -450,6 +450,9 @@ export default function BalcaoVendas() {
                   {/* Info */}
                   <div className="flex-1 min-w-0">
                     <p className="font-medium text-sm truncate">{item.name}</p>
+                    {item.observation && (
+                      <p className="text-xs text-orange-500 truncate">📝 {item.observation}</p>
+                    )}
                     <p className="text-sm text-primary font-bold">
                       R$ {((item.sale_price || 0) * item.quantity).toFixed(2)}
                     </p>
@@ -460,7 +463,7 @@ export default function BalcaoVendas() {
                       variant="outline"
                       size="icon"
                       className="h-8 w-8"
-                      onClick={() => updateQuantity(item.id, -1)}
+                      onClick={() => updateQuantity(item.cartItemId || item.id, -1)}
                     >
                       <Minus className="w-4 h-4" />
                     </Button>
@@ -469,7 +472,7 @@ export default function BalcaoVendas() {
                       variant="outline"
                       size="icon"
                       className="h-8 w-8"
-                      onClick={() => updateQuantity(item.id, 1)}
+                      onClick={() => updateQuantity(item.cartItemId || item.id, 1)}
                     >
                       <Plus className="w-4 h-4" />
                     </Button>
@@ -479,7 +482,7 @@ export default function BalcaoVendas() {
                     variant="ghost"
                     size="icon"
                     className="h-8 w-8 text-destructive hover:text-destructive"
-                    onClick={() => removeFromCart(item.id)}
+                    onClick={() => removeFromCart(item.cartItemId || item.id)}
                   >
                     <X className="w-4 h-4" />
                   </Button>
