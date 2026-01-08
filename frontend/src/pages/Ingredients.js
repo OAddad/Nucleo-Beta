@@ -311,6 +311,11 @@ export default function Ingredients() {
                           ({ingredient.units_per_package} un/emb)
                         </span>
                       )}
+                      {ingredient.slices_per_package && (
+                        <span className="text-xs text-muted-foreground ml-2">
+                          ({ingredient.slices_per_package} fatias/emb)
+                        </span>
+                      )}
                     </td>
                     <td className="py-3 px-6 text-muted-foreground">{ingredient.unit}</td>
                     <td className="py-3 px-6 text-right font-mono font-medium">
