@@ -50,9 +50,9 @@ export default function Login({ setIsAuthenticated }) {
       >
         <div className="absolute inset-0 bg-black/60" />
         <div className="relative z-10 flex flex-col justify-center px-12 text-white">
-          <h1 className="text-5xl font-bold mb-4">Gestão Point do Addad</h1>
+          <h1 className="text-5xl font-bold mb-4">Núcleo</h1>
           <p className="text-xl text-slate-200">
-            Controle total do custo de mercadoria vendida da sua hamburgueria
+            Sistema completo de gestão e controle de custos
           </p>
         </div>
       </div>
