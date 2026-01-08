@@ -157,16 +157,23 @@ export default function Products() {
     }
   };
 
-  const handleDelete = async (id) => {
-    if (!window.confirm("Deseja realmente excluir este produto?")) return;
+  const handleDelete = async () => {
+    if (!productToDelete) return;
 
     try {
-      await axios.delete(`${API}/products/${id}`, getAuthHeader());
+      await axios.delete(`${API}/products/${productToDelete.id}`, getAuthHeader());
       toast.success("Produto excluído!");
+      setDeleteDialogOpen(false);
+      setProductToDelete(null);
       fetchProducts();
     } catch (error) {
       toast.error("Erro ao excluir produto");
     }
+  };
+
+  const confirmDelete = (id, name) => {
+    setProductToDelete({ id, name });
+    setDeleteDialogOpen(true);
   };
 
   const addRecipeItem = (type) => {
