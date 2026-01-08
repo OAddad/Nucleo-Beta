@@ -1108,6 +1108,7 @@ export default function Products() {
             </AlertDialog>
           </TabsContent>
         </Tabs>
+        </div>
       </div>
     </div>
   );
