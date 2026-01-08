@@ -645,6 +645,8 @@ async def get_purchases(current_user: User = Depends(get_current_user)):
 
 @api_router.delete("/purchases/{purchase_id}")
 async def delete_purchase(purchase_id: str, current_user: User = Depends(get_current_user)):
+    check_role(current_user, ["proprietario", "administrador"])
+    
     purchase = await db.purchases.find_one({"id": purchase_id}, {"_id": 0})
     if not purchase:
         raise HTTPException(status_code=404, detail="Purchase not found")
@@ -669,6 +671,9 @@ async def delete_purchase(purchase_id: str, current_user: User = Depends(get_cur
         {"id": purchase["ingredient_id"]},
         {"$set": {"average_price": avg_price}}
     )
+    
+    # Registrar auditoria
+    await log_audit("DELETE", "purchase", purchase["ingredient_name"], current_user, "alta")
     
     return {"message": "Purchase deleted"}
 
