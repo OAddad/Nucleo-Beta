@@ -213,6 +213,49 @@ async def delete_ingredient(ingredient_id: str, current_user: User = Depends(get
     return {"message": "Ingredient deleted"}
 
 # Purchase endpoints
+@api_router.post("/purchases/batch", response_model=dict)
+async def create_purchase_batch(batch_data: PurchaseBatchCreate, current_user: User = Depends(get_current_user)):
+    batch_id = str(uuid.uuid4())
+    purchase_date = datetime.fromisoformat(batch_data.purchase_date) if batch_data.purchase_date else datetime.now(timezone.utc)
+    
+    purchases_created = []
+    for item in batch_data.items:
+        ingredient = await db.ingredients.find_one({"id": item.ingredient_id}, {"_id": 0})
+        if not ingredient:
+            continue
+        
+        unit_price = item.price / item.quantity if item.quantity > 0 else 0
+        
+        purchase = Purchase(
+            batch_id=batch_id,
+            supplier=batch_data.supplier,
+            ingredient_id=item.ingredient_id,
+            ingredient_name=ingredient["name"],
+            ingredient_unit=ingredient["unit"],
+            quantity=item.quantity,
+            price=item.price,
+            unit_price=unit_price,
+            purchase_date=purchase_date
+        )
+        
+        doc = purchase.model_dump()
+        doc["purchase_date"] = doc["purchase_date"].isoformat()
+        await db.purchases.insert_one(doc)
+        purchases_created.append(purchase)
+        
+        # Recalculate average price
+        purchases = await db.purchases.find({"ingredient_id": item.ingredient_id}, {"_id": 0}).to_list(1000)
+        total_quantity = sum(p["quantity"] for p in purchases)
+        total_cost = sum(p["price"] for p in purchases)
+        avg_price = total_cost / total_quantity if total_quantity > 0 else 0
+        
+        await db.ingredients.update_one(
+            {"id": item.ingredient_id},
+            {"$set": {"average_price": avg_price}}
+        )
+    
+    return {"message": "Purchase batch created", "batch_id": batch_id, "items_created": len(purchases_created)}
+
 @api_router.post("/purchases", response_model=Purchase)
 async def create_purchase(purchase_data: PurchaseCreate, current_user: User = Depends(get_current_user)):
     ingredient = await db.ingredients.find_one({"id": purchase_data.ingredient_id}, {"_id": 0})
@@ -220,10 +263,14 @@ async def create_purchase(purchase_data: PurchaseCreate, current_user: User = De
         raise HTTPException(status_code=404, detail="Ingredient not found")
     
     unit_price = purchase_data.price / purchase_data.quantity if purchase_data.quantity > 0 else 0
+    batch_id = str(uuid.uuid4())
     
     purchase = Purchase(
+        batch_id=batch_id,
+        supplier="",
         ingredient_id=purchase_data.ingredient_id,
         ingredient_name=ingredient["name"],
+        ingredient_unit=ingredient["unit"],
         quantity=purchase_data.quantity,
         price=purchase_data.price,
         unit_price=unit_price,
