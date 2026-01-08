@@ -215,10 +215,10 @@ export default function Delivery() {
     setClienteSearch("");
   };
 
-  // Criar novo cliente
+  // Criar novo cliente (dialog completo)
   const handleNovoCliente = () => {
-    if (!novoClienteNome || !novoClienteTelefone || !novoClienteEndereco) {
-      toast.error("Preencha todos os campos obrigatórios");
+    if (!novoClienteNome || !novoClienteTelefone) {
+      toast.error("Preencha nome e telefone do cliente");
       return;
     }
 
@@ -226,19 +226,33 @@ export default function Delivery() {
       id: `cliente-${Date.now()}`,
       nome: novoClienteNome,
       telefone: novoClienteTelefone,
+      email: novoClienteEmail,
+      cpf: novoClienteCpf,
+      data_nascimento: novoClienteDataNascimento,
+      genero: novoClienteGenero,
+      foto: novoClienteFoto,
       endereco: novoClienteEndereco,
       complemento: novoClienteComplemento,
-      created_at: new Date().toISOString()
+      created_at: new Date().toISOString(),
+      pedidos_count: 0,
+      total_gasto: 0
     };
 
     const updatedClientes = [...clientes, novoCliente];
     saveClientes(updatedClientes);
     setSelectedCliente(novoCliente);
+    setClienteDialogOpen(false);
     setShowClienteForm(false);
     setNovoClienteNome("");
     setNovoClienteTelefone("");
+    setNovoClienteEmail("");
+    setNovoClienteCpf("");
+    setNovoClienteDataNascimento("");
+    setNovoClienteGenero("");
+    setNovoClienteFoto("");
     setNovoClienteEndereco("");
     setNovoClienteComplemento("");
+    setClienteSearch("");
     toast.success("Cliente cadastrado!");
   };
 
