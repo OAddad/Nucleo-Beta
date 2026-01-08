@@ -398,7 +398,141 @@ class CMVMasterAPITester:
         
         return True
 
-    def test_cleanup_operations(self):
+    def test_stock_control_features(self):
+        """Test new stock control functionality as specified in review request"""
+        print("\n=== STOCK CONTROL FEATURES TESTS ===")
+        
+        # 1. Verify ingredients have new stock fields
+        print("🔍 1. Verifying ingredients have new stock fields...")
+        success, ingredients = self.run_test("Get all ingredients", "GET", "ingredients", 200)
+        if not success:
+            print("   ❌ Failed to get ingredients")
+            return False
+        
+        if not ingredients:
+            print("   ❌ No ingredients found")
+            return False
+        
+        # Check if ingredients have the new fields
+        ingredient = ingredients[0]
+        required_fields = ['category', 'stock_quantity', 'stock_min', 'stock_max']
+        missing_fields = []
+        
+        for field in required_fields:
+            if field not in ingredient:
+                missing_fields.append(field)
+        
+        if missing_fields:
+            print(f"   ❌ Missing fields in ingredients: {missing_fields}")
+            return False
+        else:
+            print("   ✅ All new stock fields present in ingredients:")
+            print(f"      - category: {ingredient.get('category', 'None')}")
+            print(f"      - stock_quantity: {ingredient.get('stock_quantity', 0)}")
+            print(f"      - stock_min: {ingredient.get('stock_min', 0)}")
+            print(f"      - stock_max: {ingredient.get('stock_max', 0)}")
+        
+        # Get an ingredient ID for stock adjustment test
+        ingredient_id = ingredient['id']
+        ingredient_name = ingredient['name']
+        initial_stock = ingredient.get('stock_quantity', 0)
+        
+        print(f"   Using ingredient: {ingredient_name} (ID: {ingredient_id})")
+        print(f"   Initial stock: {initial_stock}")
+        
+        # 2. Test stock adjustment endpoint
+        print("\n🔍 2. Testing stock adjustment endpoint...")
+        adjustment_data = {
+            "quantity": 5,
+            "operation": "add",
+            "reason": "teste"
+        }
+        
+        success, response = self.run_test(
+            "Adjust stock (add 5 units)",
+            "PUT",
+            f"ingredients/{ingredient_id}/stock",
+            200,
+            data=adjustment_data
+        )
+        
+        if not success:
+            print("   ❌ Failed to adjust stock")
+            return False
+        
+        new_stock = response.get('stock_quantity', 0)
+        expected_stock = initial_stock + 5
+        
+        if new_stock == expected_stock:
+            print(f"   ✅ Stock adjustment successful:")
+            print(f"      - Initial stock: {initial_stock}")
+            print(f"      - Added: 5")
+            print(f"      - New stock: {new_stock}")
+        else:
+            print(f"   ❌ Stock adjustment failed:")
+            print(f"      - Expected: {expected_stock}")
+            print(f"      - Got: {new_stock}")
+            return False
+        
+        # 3. Test ingredient update with category
+        print("\n🔍 3. Testing ingredient update with category...")
+        update_data = {
+            "name": ingredient_name,
+            "unit": ingredient['unit'],
+            "category": "Sanduíches"
+        }
+        
+        success, response = self.run_test(
+            "Update ingredient with category",
+            "PUT",
+            f"ingredients/{ingredient_id}",
+            200,
+            data=update_data
+        )
+        
+        if not success:
+            print("   ❌ Failed to update ingredient with category")
+            return False
+        
+        updated_category = response.get('category')
+        if updated_category == "Sanduíches":
+            print(f"   ✅ Ingredient category updated successfully:")
+            print(f"      - New category: {updated_category}")
+        else:
+            print(f"   ❌ Category update failed:")
+            print(f"      - Expected: Sanduíches")
+            print(f"      - Got: {updated_category}")
+            return False
+        
+        # 4. Verify final state
+        print("\n🔍 4. Verifying final ingredient state...")
+        success, final_ingredient = self.run_test(
+            "Get updated ingredient",
+            "GET",
+            f"ingredients",
+            200
+        )
+        
+        if success:
+            # Find our ingredient in the list
+            updated_ing = None
+            for ing in final_ingredient:
+                if ing['id'] == ingredient_id:
+                    updated_ing = ing
+                    break
+            
+            if updated_ing:
+                print("   ✅ Final ingredient state:")
+                print(f"      - Name: {updated_ing['name']}")
+                print(f"      - Category: {updated_ing.get('category', 'None')}")
+                print(f"      - Stock quantity: {updated_ing.get('stock_quantity', 0)}")
+                print(f"      - Stock min: {updated_ing.get('stock_min', 0)}")
+                print(f"      - Stock max: {updated_ing.get('stock_max', 0)}")
+            else:
+                print("   ❌ Could not find updated ingredient")
+                return False
+        
+        return True
         """Test cleanup operations (DELETE) as specified in review"""
         print("\n=== CLEANUP OPERATIONS TESTS ===")
         
