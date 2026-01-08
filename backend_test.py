@@ -105,40 +105,62 @@ class CMVMasterAPITester:
         
         return True
 
-    def test_ingredients(self):
-        """Test ingredient CRUD operations"""
-        print("\n=== INGREDIENT TESTS ===")
+    def test_ingredients_crud(self):
+        """Test ingredient CRUD operations as specified in review"""
+        print("\n=== INGREDIENT CRUD TESTS ===")
         
-        # Get existing ingredients
-        success, ingredients = self.run_test("Get ingredients", "GET", "ingredients", 200)
+        # Create ingredient: Carne Bovina
+        print("🔍 Creating Carne Bovina ingredient...")
+        success, carne = self.run_test(
+            "Create Carne Bovina ingredient",
+            "POST",
+            "ingredients",
+            200,
+            data={"name": "Carne Bovina", "unit": "kg"}
+        )
         if success:
-            print(f"   Found {len(ingredients)} existing ingredients")
+            self.created_ingredients.append(carne['id'])
+            print(f"   ✅ Created Carne Bovina ID: {carne['id']}")
+        else:
+            print("   ❌ Failed to create Carne Bovina")
+            return False
+        
+        # Create ingredient: Pão de Hambúrguer
+        print("🔍 Creating Pão de Hambúrguer ingredient...")
+        success, pao = self.run_test(
+            "Create Pão de Hambúrguer ingredient",
+            "POST",
+            "ingredients",
+            200,
+            data={"name": "Pão de Hambúrguer", "unit": "un", "units_per_package": 8}
+        )
+        if success:
+            self.created_ingredients.append(pao['id'])
+            print(f"   ✅ Created Pão de Hambúrguer ID: {pao['id']}")
+        else:
+            print("   ❌ Failed to create Pão de Hambúrguer")
+            return False
+        
+        # List all ingredients
+        print("🔍 Listing all ingredients...")
+        success, ingredients = self.run_test("Get all ingredients", "GET", "ingredients", 200)
+        if success:
+            print(f"   ✅ Found {len(ingredients)} ingredients")
             for ing in ingredients:
                 print(f"   - {ing['name']} ({ing['unit']}) - Avg Price: R$ {ing.get('average_price', 0):.2f}")
         
-        # Create new ingredient: Queijo Cheddar
-        success, queijo = self.run_test(
-            "Create Queijo Cheddar ingredient",
-            "POST",
-            "ingredients",
-            200,
-            data={"name": "Queijo Cheddar", "unit": "kg"}
-        )
-        if success:
-            self.created_ingredients.append(queijo['id'])
-            print(f"   Created ingredient ID: {queijo['id']}")
-        
-        # Create new ingredient: Alface
-        success, alface = self.run_test(
-            "Create Alface ingredient",
-            "POST",
-            "ingredients",
-            200,
-            data={"name": "Alface", "unit": "maço"}
-        )
-        if success:
-            self.created_ingredients.append(alface['id'])
-            print(f"   Created ingredient ID: {alface['id']}")
+        # Update an ingredient
+        if self.created_ingredients:
+            print("🔍 Updating ingredient...")
+            success, updated = self.run_test(
+                "Update ingredient",
+                "PUT",
+                f"ingredients/{self.created_ingredients[0]}",
+                200,
+                data={"name": "Carne Bovina Premium", "unit": "kg"}
+            )
+            if success:
+                print(f"   ✅ Updated ingredient: {updated['name']}")
         
         return len(self.created_ingredients) == 2
 
