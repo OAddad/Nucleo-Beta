@@ -53,6 +53,21 @@ export default function Dashboard({ setIsAuthenticated }) {
   // Adicionar Configuração (disponível para todos)
   mainTabs.push({ path: "/configuracao", label: "Configuração", icon: Settings, type: "single" });
 
+
+  // Estrutura hierárquica de Controle de Estoque
+  const stockControlModule = {
+    label: "Controle de Estoque",
+    icon: BarChart3,
+    expanded: stockControlExpanded,
+    toggle: () => setStockControlExpanded(!stockControlExpanded),
+    children: [
+      { path: "/produtos", label: "Produtos", icon: FileText },
+      { path: "/estoque", label: "Estoque", icon: Package },
+      { path: "/compras", label: "Compras", icon: ShoppingCart },
+    ]
+  };
+
+
   const isActive = (path) => {
     if (path === "/") return location.pathname === "/";
     return location.pathname.startsWith(path);
