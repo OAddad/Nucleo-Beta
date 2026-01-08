@@ -227,6 +227,10 @@ export default function BalcaoVendas() {
   const [selectedPayment, setSelectedPayment] = useState(null);
   const [cashReceived, setCashReceived] = useState("");
   const [loading, setLoading] = useState(true);
+  
+  // Estado do popup de produto
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [productPopupOpen, setProductPopupOpen] = useState(false);
 
   useEffect(() => {
     fetchProducts();
@@ -259,16 +263,33 @@ export default function BalcaoVendas() {
     ? products
     : products.filter(p => p.category === selectedCategory);
 
-  const addToCart = (product) => {
-    const existingItem = cart.find(item => item.id === product.id);
+  // Abrir popup do produto
+  const openProductPopup = (product) => {
+    setSelectedProduct(product);
+    setProductPopupOpen(true);
+  };
+
+  // Adicionar ao carrinho (com suporte a quantidade e observação)
+  const addToCart = (productWithDetails) => {
+    const { quantity = 1, observation = null, ...product } = productWithDetails;
+    
+    // Se tiver observação, sempre adiciona como novo item
+    if (observation) {
+      setCart([...cart, { ...product, quantity, observation, cartItemId: Date.now() }]);
+      toast.success(`${product.name} adicionado!`);
+      return;
+    }
+    
+    // Sem observação, verifica se já existe item igual
+    const existingItem = cart.find(item => item.id === product.id && !item.observation);
     if (existingItem) {
       setCart(cart.map(item =>
-        item.id === product.id
-          ? { ...item, quantity: item.quantity + 1 }
+        item.id === product.id && !item.observation
+          ? { ...item, quantity: item.quantity + quantity }
           : item
       ));
     } else {
-      setCart([...cart, { ...product, quantity: 1 }]);
+      setCart([...cart, { ...product, quantity, cartItemId: Date.now() }]);
     }
     toast.success(`${product.name} adicionado!`);
   };
