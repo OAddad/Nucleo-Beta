@@ -151,6 +151,8 @@ export default function Moderation() {
   const [users, setUsers] = useState([]);
   const [open, setOpen] = useState(false);
   const [openPassword, setOpenPassword] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [userToDelete, setUserToDelete] = useState(null);
   
   const [newUsername, setNewUsername] = useState("");
   const [newPassword, setNewPassword] = useState("");
