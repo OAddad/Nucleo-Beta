@@ -441,12 +441,15 @@ export default function Products() {
                         Categoria
                       </Label>
                       <div className="flex gap-2 mt-1">
-                        <Select value={category} onValueChange={setCategory}>
+                        <Select 
+                          value={category || "sem-categoria"} 
+                          onValueChange={(value) => setCategory(value === "sem-categoria" ? "" : value)}
+                        >
                           <SelectTrigger id="category" className="h-11">
                             <SelectValue placeholder="Selecione ou digite nova" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="">Sem categoria</SelectItem>
+                            <SelectItem value="sem-categoria">Sem categoria</SelectItem>
                             {categories.map((cat) => (
                               <SelectItem key={cat} value={cat}>
                                 {cat}
@@ -456,7 +459,7 @@ export default function Products() {
                         </Select>
                         <Input
                           placeholder="Nova categoria"
-                          value={categories.includes(category) ? "" : category}
+                          value={category && !categories.includes(category) ? category : ""}
                           onChange={(e) => setCategory(e.target.value)}
                           className="h-11"
                         />
