@@ -320,6 +320,22 @@ export default function Delivery() {
 
   const cartTotal = cart.reduce((total, item) => total + (item.sale_price || 0) * item.quantity, 0);
 
+  // Gerar código único de 5 dígitos
+  const generateUniqueCode = () => {
+    const existingCodes = new Set(pedidos.map(p => p.codigo));
+    let code;
+    let attempts = 0;
+    const maxAttempts = 100000;
+    
+    do {
+      const num = Math.floor(Math.random() * 100000);
+      code = `#${num.toString().padStart(5, '0')}`;
+      attempts++;
+    } while (existingCodes.has(code) && attempts < maxAttempts);
+    
+    return code;
+  };
+
   // Finalizar pedido
   const handleFinalizarPedido = () => {
     if (!selectedCliente) {
@@ -337,17 +353,18 @@ export default function Delivery() {
 
     const novoPedido = {
       id: `pedido-${Date.now()}`,
+      codigo: generateUniqueCode(),
       cliente: selectedCliente,
       items: cart,
       total: cartTotal,
-      status: "aguardando",
+      status: "producao",
       formaPagamento,
       observacoes,
       created_at: new Date().toISOString()
     };
 
     savePedidos([...pedidos, novoPedido]);
-    toast.success("Pedido criado com sucesso!");
+    toast.success(`Pedido ${novoPedido.codigo} criado com sucesso!`);
     
     // Reset
     setNovoPedidoMode(false);
@@ -363,8 +380,8 @@ export default function Delivery() {
       p.id === pedidoId ? { ...p, status: newStatus } : p
     );
     savePedidos(updatedPedidos);
-    if (newStatus === "entregue") {
-      toast.success("Pedido entregue!");
+    if (newStatus === "concluido") {
+      toast.success("Pedido concluído!");
     } else if (newStatus === "transito") {
       toast.success("Pedido em trânsito!");
     }
