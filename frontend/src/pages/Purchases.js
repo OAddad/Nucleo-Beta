@@ -475,6 +475,60 @@ export default function Purchases() {
           </Dialog>
         </div>
 
+        {/* Filtros e Pesquisa */}
+        {purchaseBatches.length > 0 && (
+          <div className="bg-card rounded-xl border shadow-sm p-4 mb-4">
+            <div className="flex flex-col md:flex-row gap-4">
+              {/* Ordenação */}
+              <div className="flex items-center gap-2">
+                <Label htmlFor="sort-order" className="text-sm font-medium whitespace-nowrap">
+                  Ordenar:
+                </Label>
+                <Select value={sortOrder} onValueChange={setSortOrder}>
+                  <SelectTrigger id="sort-order" className="w-48">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="desc">Mais Recentes</SelectItem>
+                    <SelectItem value="asc">Mais Antigas</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Tipo de Pesquisa */}
+              <div className="flex items-center gap-2">
+                <Label htmlFor="search-type" className="text-sm font-medium whitespace-nowrap">
+                  Buscar por:
+                </Label>
+                <Select value={searchType} onValueChange={setSearchType}>
+                  <SelectTrigger id="search-type" className="w-40">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="supplier">Fornecedor</SelectItem>
+                    <SelectItem value="value">Valor</SelectItem>
+                    <SelectItem value="date">Data</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Campo de Pesquisa */}
+              <div className="flex-1">
+                <Input
+                  placeholder={
+                    searchType === "supplier" ? "Digite o nome do fornecedor..." :
+                    searchType === "value" ? "Digite o valor..." :
+                    "Digite a data (AAAA-MM-DD ou DD/MM/AAAA)..."
+                  }
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="h-10"
+                />
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Grouped Purchases Table */}
         <div className="bg-card rounded-xl border shadow-sm overflow-hidden">
           {purchaseBatches.length === 0 ? (
@@ -483,7 +537,7 @@ export default function Purchases() {
             </div>
           ) : (
             <div className="divide-y divide-border">
-              {purchaseBatches.map((batch) => {
+              {getFilteredAndSortedBatches().map((batch) => {
                 const isExpanded = expandedBatches.has(batch.batch_id);
                 return (
                   <div key={batch.batch_id} data-testid={`purchase-batch-${batch.batch_id}`}>
