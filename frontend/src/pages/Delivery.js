@@ -131,6 +131,65 @@ export default function Delivery() {
       )
     : [];
 
+  // Verificar se deve mostrar sugestão de cadastro
+  const showCadastroSuggestion = clienteSearch.trim().length >= 2 && filteredClientes.length === 0;
+
+  // Funções de formatação
+  const formatTelefone = (value) => {
+    const numbers = value.replace(/\D/g, "");
+    if (numbers.length <= 2) return `(${numbers}`;
+    if (numbers.length <= 3) return `(${numbers.slice(0, 2)}) ${numbers.slice(2)}`;
+    if (numbers.length <= 7) return `(${numbers.slice(0, 2)}) ${numbers.slice(2, 3)}.${numbers.slice(3)}`;
+    if (numbers.length <= 11) return `(${numbers.slice(0, 2)}) ${numbers.slice(2, 3)}.${numbers.slice(3, 7)}-${numbers.slice(7, 11)}`;
+    return `(${numbers.slice(0, 2)}) ${numbers.slice(2, 3)}.${numbers.slice(3, 7)}-${numbers.slice(7, 11)}`;
+  };
+
+  const formatCPF = (value) => {
+    const numbers = value.replace(/\D/g, "");
+    if (numbers.length <= 3) return numbers;
+    if (numbers.length <= 6) return `${numbers.slice(0, 3)}.${numbers.slice(3)}`;
+    if (numbers.length <= 9) return `${numbers.slice(0, 3)}.${numbers.slice(3, 6)}.${numbers.slice(6)}`;
+    return `${numbers.slice(0, 3)}.${numbers.slice(3, 6)}.${numbers.slice(6, 9)}-${numbers.slice(9, 11)}`;
+  };
+
+  const formatData = (value) => {
+    const numbers = value.replace(/\D/g, "");
+    if (numbers.length <= 2) return numbers;
+    if (numbers.length <= 4) return `${numbers.slice(0, 2)}/${numbers.slice(2)}`;
+    return `${numbers.slice(0, 2)}/${numbers.slice(2, 4)}/${numbers.slice(4, 8)}`;
+  };
+
+  // Abrir dialog de cadastro de cliente
+  const handleOpenClienteDialog = () => {
+    // Se estava pesquisando por nome, preencher automaticamente
+    if (clienteSearch.trim() && !clienteSearch.includes("@") && !/^\d/.test(clienteSearch)) {
+      setNovoClienteNome(clienteSearch);
+    } else {
+      setNovoClienteNome("");
+    }
+    setNovoClienteTelefone("");
+    setNovoClienteEmail("");
+    setNovoClienteCpf("");
+    setNovoClienteDataNascimento("");
+    setNovoClienteGenero("");
+    setNovoClienteFoto("");
+    setNovoClienteEndereco("");
+    setNovoClienteComplemento("");
+    setClienteDialogOpen(true);
+  };
+
+  // Handle foto change
+  const handleClienteFotoChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setNovoClienteFoto(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   // Filtrar pedidos por status
   const getPedidosByStatus = (status) => {
     if (status === "inicio") return pedidos;
