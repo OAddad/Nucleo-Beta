@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "sonner";
-import { Plus, Trash2, Edit, Package, AlertTriangle, Settings, ArrowUp, ArrowDown } from "lucide-react";
+import { Plus, Trash2, Edit, Package, AlertTriangle, ArrowUp, ArrowDown } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
@@ -18,7 +18,6 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-  DialogDescription,
 } from "../components/ui/dialog";
 import {
   AlertDialog,
@@ -30,6 +29,12 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "../components/ui/alert-dialog";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "../components/ui/tabs";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -54,10 +59,13 @@ export default function Ingredients() {
   const [loading, setLoading] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
   
-  // Category management
+  // Category management states
   const [categoryDialogOpen, setCategoryDialogOpen] = useState(false);
-  const [newCategoryName, setNewCategoryName] = useState("");
-  const [editingCategory, setEditingCategory] = useState(null);
+  const [editCategoryMode, setEditCategoryMode] = useState(false);
+  const [currentCategoryId, setCurrentCategoryId] = useState(null);
+  const [categoryName, setCategoryName] = useState("");
+  const [deleteCategoryDialogOpen, setDeleteCategoryDialogOpen] = useState(false);
+  const [categoryToDelete, setCategoryToDelete] = useState(null);
   
   // Stock adjustment dialog
   const [stockDialogOpen, setStockDialogOpen] = useState(false);
@@ -153,17 +161,18 @@ export default function Ingredients() {
 
       if (editMode) {
         await axios.put(`${API}/ingredients/${currentIngredientId}`, payload, getAuthHeader());
-        toast.success("Ingrediente atualizado!");
+        toast.success("Item atualizado!");
       } else {
         await axios.post(`${API}/ingredients`, payload, getAuthHeader());
-        toast.success("Ingrediente criado!");
+        toast.success("Item criado!");
       }
       
       resetForm();
       setOpen(false);
       fetchIngredients();
     } catch (error) {
-      toast.error(editMode ? "Erro ao atualizar ingrediente" : "Erro ao criar ingrediente");
+      console.error("Erro:", error.response?.data || error);
+      toast.error(error.response?.data?.detail || (editMode ? "Erro ao atualizar item" : "Erro ao criar item"));
     } finally {
       setLoading(false);
     }
@@ -182,7 +191,7 @@ export default function Ingredients() {
         setDeleteConfirmOpen(true);
       }
     } catch (error) {
-      toast.error("Erro ao verificar uso do ingrediente");
+      toast.error("Erro ao verificar uso do item");
     }
   };
 
@@ -191,7 +200,7 @@ export default function Ingredients() {
     
     try {
       await axios.delete(`${API}/ingredients/${ingredientToDelete.id}`, getAuthHeader());
-      toast.success("Ingrediente excluído!");
+      toast.success("Item excluído!");
       setDeleteConfirmOpen(false);
       setIngredientToDelete(null);
       fetchIngredients();
@@ -199,7 +208,7 @@ export default function Ingredients() {
       if (error.response?.status === 400) {
         toast.error(error.response.data.detail);
       } else {
-        toast.error("Erro ao excluir ingrediente");
+        toast.error("Erro ao excluir item");
       }
     }
   };
@@ -230,43 +239,53 @@ export default function Ingredients() {
       setStockDialogOpen(false);
       fetchIngredients();
     } catch (error) {
-      toast.error("Erro ao ajustar estoque");
+      toast.error(error.response?.data?.detail || "Erro ao ajustar estoque");
     }
   };
 
-  // Category management
-  const handleCreateCategory = async () => {
-    if (!newCategoryName.trim()) return;
-    
-    try {
-      await axios.post(`${API}/categories`, { name: newCategoryName }, getAuthHeader());
-      toast.success("Categoria criada!");
-      setNewCategoryName("");
-      fetchCategories();
-    } catch (error) {
-      toast.error(error.response?.data?.detail || "Erro ao criar categoria");
-    }
+  // Category management functions
+  const resetCategoryForm = () => {
+    setCategoryName("");
+    setEditCategoryMode(false);
+    setCurrentCategoryId(null);
   };
 
-  const handleUpdateCategory = async () => {
-    if (!editingCategory || !newCategoryName.trim()) return;
+  const handleEditCategory = (cat) => {
+    setEditCategoryMode(true);
+    setCurrentCategoryId(cat.id);
+    setCategoryName(cat.name);
+    setCategoryDialogOpen(true);
+  };
+
+  const handleCategorySubmit = async (e) => {
+    e.preventDefault();
+    if (!categoryName.trim()) return;
     
     try {
-      await axios.put(`${API}/categories/${editingCategory.id}`, { name: newCategoryName }, getAuthHeader());
-      toast.success("Categoria atualizada!");
-      setEditingCategory(null);
-      setNewCategoryName("");
+      if (editCategoryMode) {
+        await axios.put(`${API}/categories/${currentCategoryId}`, { name: categoryName }, getAuthHeader());
+        toast.success("Categoria atualizada!");
+      } else {
+        await axios.post(`${API}/categories`, { name: categoryName }, getAuthHeader());
+        toast.success("Categoria criada!");
+      }
+      resetCategoryForm();
+      setCategoryDialogOpen(false);
       fetchCategories();
       fetchIngredients();
     } catch (error) {
-      toast.error(error.response?.data?.detail || "Erro ao atualizar categoria");
+      toast.error(error.response?.data?.detail || "Erro ao salvar categoria");
     }
   };
 
-  const handleDeleteCategory = async (categoryId) => {
+  const confirmDeleteCategory = async () => {
+    if (!categoryToDelete) return;
+    
     try {
-      await axios.delete(`${API}/categories/${categoryId}`, getAuthHeader());
+      await axios.delete(`${API}/categories/${categoryToDelete.id}`, getAuthHeader());
       toast.success("Categoria excluída!");
+      setDeleteCategoryDialogOpen(false);
+      setCategoryToDelete(null);
       fetchCategories();
     } catch (error) {
       toast.error(error.response?.data?.detail || "Erro ao excluir categoria");
@@ -292,106 +311,29 @@ export default function Ingredients() {
   return (
     <div className="p-8" data-testid="ingredients-page">
       <div className="max-w-7xl mx-auto">
-        <div className="flex justify-between items-center mb-8">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">
-              Estoque
-            </h1>
-            <p className="text-muted-foreground mt-1">
-              Gerencie os ingredientes, categorias e controle de estoque
-            </p>
-          </div>
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold tracking-tight">Estoque</h1>
+          <p className="text-muted-foreground mt-1">
+            Gerencie os itens de estoque e suas categorias
+          </p>
+        </div>
 
-          <div className="flex gap-3">
-            {canEdit && (
-              <>
-                {/* Botão Gerenciar Categorias */}
-                <Dialog open={categoryDialogOpen} onOpenChange={setCategoryDialogOpen}>
-                  <DialogTrigger asChild>
-                    <Button variant="outline" className="shadow-sm">
-                      <Settings className="w-5 h-5 mr-2" strokeWidth={1.5} />
-                      Categorias
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="sm:max-w-md">
-                    <DialogHeader>
-                      <DialogTitle>Gerenciar Categorias</DialogTitle>
-                      <DialogDescription>
-                        Categorias usadas tanto em produtos quanto em estoque
-                      </DialogDescription>
-                    </DialogHeader>
-                    <div className="space-y-4 mt-4">
-                      <div className="flex gap-2">
-                        <Input
-                          value={newCategoryName}
-                          onChange={(e) => setNewCategoryName(e.target.value)}
-                          placeholder={editingCategory ? "Novo nome" : "Nova categoria"}
-                          className="h-10"
-                        />
-                        {editingCategory ? (
-                          <div className="flex gap-2">
-                            <Button onClick={handleUpdateCategory} size="sm" className="h-10">
-                              Salvar
-                            </Button>
-                            <Button 
-                              onClick={() => { setEditingCategory(null); setNewCategoryName(""); }} 
-                              variant="ghost" 
-                              size="sm"
-                              className="h-10"
-                            >
-                              Cancelar
-                            </Button>
-                          </div>
-                        ) : (
-                          <Button onClick={handleCreateCategory} size="sm" className="h-10">
-                            <Plus className="w-4 h-4" />
-                          </Button>
-                        )}
-                      </div>
-                      
-                      <div className="border rounded-lg divide-y max-h-64 overflow-y-auto">
-                        {categories.map((cat) => (
-                          <div key={cat.id} className="flex items-center justify-between p-3 hover:bg-muted/50">
-                            <span className="font-medium">{cat.name}</span>
-                            <div className="flex gap-1">
-                              <Button
-                                onClick={() => { setEditingCategory(cat); setNewCategoryName(cat.name); }}
-                                variant="ghost"
-                                size="sm"
-                              >
-                                <Edit className="w-4 h-4" />
-                              </Button>
-                              <Button
-                                onClick={() => handleDeleteCategory(cat.id)}
-                                variant="ghost"
-                                size="sm"
-                                className="text-destructive hover:text-destructive"
-                              >
-                                <Trash2 className="w-4 h-4" />
-                              </Button>
-                            </div>
-                          </div>
-                        ))}
-                        {categories.length === 0 && (
-                          <div className="p-4 text-center text-muted-foreground">
-                            Nenhuma categoria cadastrada
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </DialogContent>
-                </Dialog>
+        <Tabs defaultValue="estoque" className="w-full">
+          <TabsList className="mb-6">
+            <TabsTrigger value="estoque">Estoque</TabsTrigger>
+            <TabsTrigger value="categorias">Categorias</TabsTrigger>
+          </TabsList>
 
-                {/* Botão Novo Ingrediente */}
+          {/* Tab: Estoque */}
+          <TabsContent value="estoque">
+            <div className="flex justify-end mb-4">
+              {canEdit && (
                 <Dialog open={open} onOpenChange={(isOpen) => {
                   setOpen(isOpen);
                   if (!isOpen) resetForm();
                 }}>
                   <DialogTrigger asChild>
-                    <Button
-                      data-testid="add-ingredient-button"
-                      className="shadow-sm transition-all active:scale-95"
-                    >
+                    <Button data-testid="add-ingredient-button" className="shadow-sm">
                       <Plus className="w-5 h-5 mr-2" strokeWidth={1.5} />
                       Novo Item
                     </Button>
@@ -514,157 +456,266 @@ export default function Ingredients() {
                         type="submit"
                         data-testid="create-ingredient-button"
                         disabled={loading || !unit}
-                        className="w-full h-11 font-medium shadow-sm transition-all active:scale-95"
+                        className="w-full h-11 font-medium shadow-sm"
                       >
                         {loading ? (editMode ? "Atualizando..." : "Criando...") : (editMode ? "Atualizar Item" : "Criar Item")}
                       </Button>
                     </form>
                   </DialogContent>
                 </Dialog>
-              </>
-            )}
-          </div>
-        </div>
+              )}
+            </div>
 
-        <div className="bg-card rounded-xl border shadow-sm overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full" data-testid="ingredients-table">
-              <thead className="bg-muted/50 border-b">
-                <tr>
-                  <th className="text-left py-3 px-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                    Ingrediente
-                  </th>
-                  <th className="text-left py-3 px-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                    Categoria
-                  </th>
-                  <th className="text-center py-3 px-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                    Unidade
-                  </th>
-                  <th className="text-right py-3 px-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                    Preço Médio
-                  </th>
-                  <th className="text-center py-3 px-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                    Qtd Estoque
-                  </th>
-                  <th className="text-center py-3 px-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                    Qtd Máx
-                  </th>
-                  <th className="text-center py-3 px-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                    Qtd Mín
-                  </th>
-                  <th className="text-right py-3 px-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                    Ações
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {ingredients.length === 0 ? (
-                  <tr>
-                    <td colSpan="8" className="text-center py-12 text-muted-foreground">
-                      Nenhum item cadastrado. Clique em "Novo Item" para começar.
-                    </td>
-                  </tr>
-                ) : (
-                  ingredients.map((ingredient) => {
-                    const stockStatus = getStockStatus(ingredient);
-                    const StockIcon = stockStatus.icon;
-                    
-                    return (
-                      <tr
-                        key={ingredient.id}
-                        data-testid={`ingredient-row-${ingredient.id}`}
-                        className="border-b hover:bg-muted/30 transition-colors"
-                      >
-                        <td className="py-3 px-4 font-medium">
-                          <div className="flex items-center gap-2">
-                            {ingredient.name}
-                            {ingredient.units_per_package && (
-                              <span className="text-xs text-muted-foreground">
-                                ({ingredient.units_per_package} un/emb)
-                              </span>
-                            )}
-                            {ingredient.unit_weight && (
-                              <span className="text-xs text-muted-foreground">
-                                (1 un = {ingredient.unit_weight}kg)
-                              </span>
-                            )}
-                          </div>
-                        </td>
-                        <td className="py-3 px-4">
-                          {ingredient.category ? (
-                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary">
-                              {ingredient.category}
-                            </span>
-                          ) : (
-                            <span className="text-muted-foreground text-sm">-</span>
-                          )}
-                        </td>
-                        <td className="py-3 px-4 text-center text-muted-foreground">
-                          {ingredient.unit}
-                        </td>
-                        <td className="py-3 px-4 text-right font-mono font-medium">
-                          {ingredient.average_price > 0
-                            ? `R$ ${ingredient.average_price.toFixed(2)}`
-                            : "-"}
-                        </td>
-                        <td className="py-3 px-4 text-center">
-                          <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg ${stockStatus.bg}`}>
-                            <StockIcon className={`w-4 h-4 ${stockStatus.color}`} />
-                            <span className={`font-mono font-medium ${stockStatus.color}`}>
-                              {(ingredient.stock_quantity || 0).toFixed(2)}
-                            </span>
-                          </div>
-                        </td>
-                        <td className="py-3 px-4 text-center font-mono text-muted-foreground">
-                          {ingredient.stock_max > 0 ? ingredient.stock_max.toFixed(2) : "-"}
-                        </td>
-                        <td className="py-3 px-4 text-center font-mono text-muted-foreground">
-                          {ingredient.stock_min > 0 ? ingredient.stock_min.toFixed(2) : "-"}
-                        </td>
-                        <td className="py-3 px-4 text-right">
-                          {canEdit && (
-                            <div className="flex gap-1 justify-end">
-                              <Button
-                                onClick={() => openStockDialog(ingredient)}
-                                variant="ghost"
-                                size="sm"
-                                className="hover:bg-green-100 dark:hover:bg-green-900/30"
-                                title="Ajustar Estoque"
-                              >
-                                <Package className="w-4 h-4 text-green-600" strokeWidth={1.5} />
-                              </Button>
-                              <Button
-                                data-testid={`edit-ingredient-${ingredient.id}`}
-                                onClick={() => handleEdit(ingredient)}
-                                variant="ghost"
-                                size="sm"
-                                className="hover:bg-muted"
-                              >
-                                <Edit className="w-4 h-4" strokeWidth={1.5} />
-                              </Button>
-                              <Button
-                                data-testid={`delete-ingredient-${ingredient.id}`}
-                                onClick={() => checkUsageAndDelete(ingredient.id, ingredient.name)}
-                                variant="ghost"
-                                size="sm"
-                                className="text-destructive hover:text-destructive hover:bg-destructive/10"
-                              >
-                                <Trash2 className="w-4 h-4" strokeWidth={1.5} />
-                              </Button>
-                            </div>
-                          )}
-                          {!canEdit && (
-                            <span className="text-xs text-muted-foreground">Somente leitura</span>
-                          )}
+            <div className="bg-card rounded-xl border shadow-sm overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full" data-testid="ingredients-table">
+                  <thead className="bg-muted/50 border-b">
+                    <tr>
+                      <th className="text-left py-3 px-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                        Ingrediente
+                      </th>
+                      <th className="text-left py-3 px-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                        Categoria
+                      </th>
+                      <th className="text-center py-3 px-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                        Unidade
+                      </th>
+                      <th className="text-right py-3 px-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                        Preço Médio
+                      </th>
+                      <th className="text-center py-3 px-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                        Qtd Estoque
+                      </th>
+                      <th className="text-center py-3 px-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                        Qtd Máx
+                      </th>
+                      <th className="text-center py-3 px-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                        Qtd Mín
+                      </th>
+                      <th className="text-right py-3 px-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                        Ações
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {ingredients.length === 0 ? (
+                      <tr>
+                        <td colSpan="8" className="text-center py-12 text-muted-foreground">
+                          Nenhum item cadastrado. Clique em "Novo Item" para começar.
                         </td>
                       </tr>
-                    );
-                  })
-                )}
-              </tbody>
-            </table>
-          </div>
-        </div>
+                    ) : (
+                      ingredients.map((ingredient) => {
+                        const stockStatus = getStockStatus(ingredient);
+                        const StockIcon = stockStatus.icon;
+                        
+                        return (
+                          <tr
+                            key={ingredient.id}
+                            data-testid={`ingredient-row-${ingredient.id}`}
+                            className="border-b hover:bg-muted/30 transition-colors"
+                          >
+                            <td className="py-3 px-4 font-medium">
+                              <div className="flex items-center gap-2">
+                                {ingredient.name}
+                                {ingredient.units_per_package && (
+                                  <span className="text-xs text-muted-foreground">
+                                    ({ingredient.units_per_package} un/emb)
+                                  </span>
+                                )}
+                                {ingredient.unit_weight && (
+                                  <span className="text-xs text-muted-foreground">
+                                    (1 un = {ingredient.unit_weight}kg)
+                                  </span>
+                                )}
+                              </div>
+                            </td>
+                            <td className="py-3 px-4">
+                              {ingredient.category ? (
+                                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary">
+                                  {ingredient.category}
+                                </span>
+                              ) : (
+                                <span className="text-muted-foreground text-sm">-</span>
+                              )}
+                            </td>
+                            <td className="py-3 px-4 text-center text-muted-foreground">
+                              {ingredient.unit}
+                            </td>
+                            <td className="py-3 px-4 text-right font-mono font-medium">
+                              {ingredient.average_price > 0
+                                ? `R$ ${ingredient.average_price.toFixed(2)}`
+                                : "-"}
+                            </td>
+                            <td className="py-3 px-4 text-center">
+                              <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg ${stockStatus.bg}`}>
+                                <StockIcon className={`w-4 h-4 ${stockStatus.color}`} />
+                                <span className={`font-mono font-medium ${stockStatus.color}`}>
+                                  {(ingredient.stock_quantity || 0).toFixed(2)}
+                                </span>
+                              </div>
+                            </td>
+                            <td className="py-3 px-4 text-center font-mono text-muted-foreground">
+                              {ingredient.stock_max > 0 ? ingredient.stock_max.toFixed(2) : "-"}
+                            </td>
+                            <td className="py-3 px-4 text-center font-mono text-muted-foreground">
+                              {ingredient.stock_min > 0 ? ingredient.stock_min.toFixed(2) : "-"}
+                            </td>
+                            <td className="py-3 px-4 text-right">
+                              {canEdit ? (
+                                <div className="flex gap-1 justify-end">
+                                  <Button
+                                    onClick={() => openStockDialog(ingredient)}
+                                    variant="ghost"
+                                    size="sm"
+                                    className="hover:bg-green-100 dark:hover:bg-green-900/30"
+                                    title="Ajustar Estoque"
+                                  >
+                                    <Package className="w-4 h-4 text-green-600" strokeWidth={1.5} />
+                                  </Button>
+                                  <Button
+                                    data-testid={`edit-ingredient-${ingredient.id}`}
+                                    onClick={() => handleEdit(ingredient)}
+                                    variant="ghost"
+                                    size="sm"
+                                    className="hover:bg-muted"
+                                  >
+                                    <Edit className="w-4 h-4" strokeWidth={1.5} />
+                                  </Button>
+                                  <Button
+                                    data-testid={`delete-ingredient-${ingredient.id}`}
+                                    onClick={() => checkUsageAndDelete(ingredient.id, ingredient.name)}
+                                    variant="ghost"
+                                    size="sm"
+                                    className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                                  >
+                                    <Trash2 className="w-4 h-4" strokeWidth={1.5} />
+                                  </Button>
+                                </div>
+                              ) : (
+                                <span className="text-xs text-muted-foreground">Somente leitura</span>
+                              )}
+                            </td>
+                          </tr>
+                        );
+                      })
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </TabsContent>
+
+          {/* Tab: Categorias */}
+          <TabsContent value="categorias">
+            <div className="flex justify-end mb-4">
+              {canEdit && (
+                <Dialog open={categoryDialogOpen} onOpenChange={(isOpen) => {
+                  setCategoryDialogOpen(isOpen);
+                  if (!isOpen) resetCategoryForm();
+                }}>
+                  <DialogTrigger asChild>
+                    <Button className="shadow-sm">
+                      <Plus className="w-5 h-5 mr-2" strokeWidth={1.5} />
+                      Nova Categoria
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-md">
+                    <DialogHeader>
+                      <DialogTitle>
+                        {editCategoryMode ? "Editar Categoria" : "Nova Categoria"}
+                      </DialogTitle>
+                    </DialogHeader>
+                    <form onSubmit={handleCategorySubmit} className="space-y-4 mt-4">
+                      <div>
+                        <Label htmlFor="categoryName">Nome da Categoria</Label>
+                        <Input
+                          id="categoryName"
+                          value={categoryName}
+                          onChange={(e) => setCategoryName(e.target.value)}
+                          placeholder="Ex: Carnes, Embalagens, etc."
+                          required
+                          className="mt-1 h-11"
+                        />
+                      </div>
+                      <Button type="submit" className="w-full h-11 font-medium shadow-sm">
+                        {editCategoryMode ? "Atualizar Categoria" : "Criar Categoria"}
+                      </Button>
+                    </form>
+                  </DialogContent>
+                </Dialog>
+              )}
+            </div>
+
+            <div className="bg-card rounded-xl border shadow-sm overflow-hidden">
+              <table className="w-full">
+                <thead className="bg-muted/50 border-b">
+                  <tr>
+                    <th className="text-left py-3 px-6 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                      Categoria
+                    </th>
+                    <th className="text-center py-3 px-6 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                      Itens
+                    </th>
+                    <th className="text-right py-3 px-6 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                      Ações
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {categories.length === 0 ? (
+                    <tr>
+                      <td colSpan="3" className="text-center py-12 text-muted-foreground">
+                        Nenhuma categoria cadastrada. Clique em "Nova Categoria" para começar.
+                      </td>
+                    </tr>
+                  ) : (
+                    categories.map((cat) => {
+                      const itemCount = ingredients.filter(i => i.category === cat.name).length;
+                      return (
+                        <tr key={cat.id} className="border-b hover:bg-muted/30 transition-colors">
+                          <td className="py-3 px-6 font-medium">{cat.name}</td>
+                          <td className="py-3 px-6 text-center">
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-muted">
+                              {itemCount} {itemCount === 1 ? "item" : "itens"}
+                            </span>
+                          </td>
+                          <td className="py-3 px-6 text-right">
+                            {canEdit ? (
+                              <div className="flex gap-2 justify-end">
+                                <Button
+                                  onClick={() => handleEditCategory(cat)}
+                                  variant="ghost"
+                                  size="sm"
+                                  className="hover:bg-muted"
+                                >
+                                  <Edit className="w-4 h-4" strokeWidth={1.5} />
+                                </Button>
+                                <Button
+                                  onClick={() => {
+                                    setCategoryToDelete(cat);
+                                    setDeleteCategoryDialogOpen(true);
+                                  }}
+                                  variant="ghost"
+                                  size="sm"
+                                  className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                                >
+                                  <Trash2 className="w-4 h-4" strokeWidth={1.5} />
+                                </Button>
+                              </div>
+                            ) : (
+                              <span className="text-xs text-muted-foreground">Somente leitura</span>
+                            )}
+                          </td>
+                        </tr>
+                      );
+                    })
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </TabsContent>
+        </Tabs>
       </div>
 
       {/* Stock Adjustment Dialog */}
@@ -672,11 +723,11 @@ export default function Ingredients() {
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>Ajustar Estoque</DialogTitle>
-            <DialogDescription>
-              {stockIngredient?.name} - Estoque atual: {(stockIngredient?.stock_quantity || 0).toFixed(2)} {stockIngredient?.unit}
-            </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 mt-4">
+            <p className="text-sm text-muted-foreground">
+              {stockIngredient?.name} - Estoque atual: {(stockIngredient?.stock_quantity || 0).toFixed(2)} {stockIngredient?.unit}
+            </p>
             <div className="grid grid-cols-2 gap-4">
               <Button
                 type="button"
@@ -731,7 +782,7 @@ export default function Ingredients() {
         </DialogContent>
       </Dialog>
 
-      {/* Warning Dialog */}
+      {/* Warning Dialog - Ingredient in use */}
       <AlertDialog open={deleteWarningOpen} onOpenChange={setDeleteWarningOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -770,6 +821,28 @@ export default function Ingredients() {
             <AlertDialogCancel>Cancelar</AlertDialogCancel>
             <AlertDialogAction
               onClick={confirmDelete}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Excluir
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Delete Category Confirmation */}
+      <AlertDialog open={deleteCategoryDialogOpen} onOpenChange={setDeleteCategoryDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirmar Exclusão</AlertDialogTitle>
+            <AlertDialogDescription>
+              Tem certeza que deseja excluir a categoria <strong>{categoryToDelete?.name}</strong>?
+              Esta ação não pode ser desfeita.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={confirmDeleteCategory}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
               Excluir
