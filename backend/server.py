@@ -385,6 +385,9 @@ async def create_ingredient(ingredient_data: IngredientCreate, current_user: Use
     # Registrar auditoria
     await log_audit("CREATE", "ingredient", ingredient_data.name, current_user, "baixa")
     
+    # Sincronizar com Excel
+    await sync_all_to_excel()
+    
     return ingredient
 
 @api_router.get("/ingredients", response_model=List[Ingredient])
@@ -408,6 +411,9 @@ async def update_ingredient(ingredient_id: str, ingredient_data: IngredientCreat
     
     # Registrar auditoria
     await log_audit("UPDATE", "ingredient", ingredient_data.name, current_user, "media")
+    
+    # Sincronizar com Excel
+    await sync_all_to_excel()
     
     updated = await db.ingredients.find_one({"id": ingredient_id}, {"_id": 0})
     if isinstance(updated["created_at"], str):
