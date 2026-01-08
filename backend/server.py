@@ -97,6 +97,7 @@ class IngredientCreate(BaseModel):
     stock_quantity: Optional[float] = 0.0
     stock_min: Optional[float] = 0.0
     stock_max: Optional[float] = 0.0
+    is_recipe: Optional[bool] = False
 
 class Ingredient(BaseModel):
     model_config = ConfigDict(extra="ignore")
@@ -110,6 +111,7 @@ class Ingredient(BaseModel):
     stock_quantity: float = 0.0
     stock_min: float = 0.0
     stock_max: float = 0.0
+    is_recipe: bool = False
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class PurchaseItemCreate(BaseModel):
