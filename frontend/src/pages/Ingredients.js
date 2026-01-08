@@ -163,6 +163,8 @@ export default function Ingredients() {
     }
   };
 
+  const canEdit = currentUser?.role === "proprietario" || currentUser?.role === "administrador";
+
   return (
     <div className="p-8" data-testid="ingredients-page">
       <div className="max-w-7xl mx-auto">
@@ -176,18 +178,19 @@ export default function Ingredients() {
             </p>
           </div>
 
-          <Dialog open={open} onOpenChange={(isOpen) => {
-            setOpen(isOpen);
-            if (!isOpen) resetForm();
-          }}>
-            <DialogTrigger asChild>
-              <Button
-                data-testid="add-ingredient-button"
-                className="shadow-sm transition-all active:scale-95"
-              >
-                <Plus className="w-5 h-5 mr-2" strokeWidth={1.5} />
-                Novo Ingrediente
-              </Button>
+          {canEdit && (
+            <Dialog open={open} onOpenChange={(isOpen) => {
+              setOpen(isOpen);
+              if (!isOpen) resetForm();
+            }}>
+              <DialogTrigger asChild>
+                <Button
+                  data-testid="add-ingredient-button"
+                  className="shadow-sm transition-all active:scale-95"
+                >
+                  <Plus className="w-5 h-5 mr-2" strokeWidth={1.5} />
+                  Novo Ingrediente
+                </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-md">
               <DialogHeader>
