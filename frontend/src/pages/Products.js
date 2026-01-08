@@ -76,6 +76,12 @@ export default function Products() {
   const [categoryName, setCategoryName] = useState("");
   const [deleteCategoryDialogOpen, setDeleteCategoryDialogOpen] = useState(false);
   const [categoryToDelete, setCategoryToDelete] = useState(null);
+  
+  // Duplicate product states
+  const [duplicateDialogOpen, setDuplicateDialogOpen] = useState(false);
+  const [productToDuplicate, setProductToDuplicate] = useState(null);
+  const [duplicateName, setDuplicateName] = useState("");
+  const [duplicatingProduct, setDuplicatingProduct] = useState(false);
 
   useEffect(() => {
     fetchProducts();
