@@ -33,16 +33,16 @@ export default function Dashboard({ setIsAuthenticated }) {
   };
 
   return (
-    <div className="flex min-h-screen bg-slate-50">
-      <aside className="w-64 bg-slate-900 text-slate-300 flex flex-col">
-        <div className="p-6 border-b border-slate-800">
+    <div className="flex min-h-screen bg-background">
+      <aside className="w-64 bg-sidebar text-sidebar-foreground flex flex-col border-r">
+        <div className="p-6 border-b flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="bg-rose-700 p-2 rounded-lg">
-              <ChefHat className="w-6 h-6 text-white" strokeWidth={1.5} />
+            <div className="bg-primary p-2 rounded-lg">
+              <ChefHat className="w-6 h-6 text-primary-foreground" strokeWidth={1.5} />
             </div>
             <div>
-              <h1 className="text-white font-bold text-lg tracking-tight">Gestão Point</h1>
-              <p className="text-xs text-slate-400">do Addad</p>
+              <h1 className="text-sidebar-foreground font-bold text-lg tracking-tight">Gestão Point</h1>
+              <p className="text-xs text-muted-foreground">do Addad</p>
             </div>
           </div>
         </div>
@@ -58,8 +58,8 @@ export default function Dashboard({ setIsAuthenticated }) {
                 onClick={() => navigate(tab.path)}
                 className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 ${
                   active
-                    ? "bg-rose-700 text-white font-medium shadow-lg"
-                    : "text-slate-300 hover:bg-slate-800 hover:text-white"
+                    ? "bg-primary text-primary-foreground font-medium shadow-lg"
+                    : "text-sidebar-foreground hover:bg-muted"
                 }`}
               >
                 <Icon className="w-5 h-5" strokeWidth={1.5} />
@@ -69,12 +69,15 @@ export default function Dashboard({ setIsAuthenticated }) {
           })}
         </nav>
 
-        <div className="p-4 border-t border-slate-800">
+        <div className="p-4 border-t space-y-2">
+          <div className="flex justify-center pb-2">
+            <DarkModeToggle />
+          </div>
           <Button
             data-testid="logout-button"
             onClick={handleLogout}
             variant="ghost"
-            className="w-full justify-start text-slate-300 hover:bg-slate-800 hover:text-white"
+            className="w-full justify-start hover:bg-muted"
           >
             <LogOut className="w-5 h-5 mr-3" strokeWidth={1.5} />
             Sair
