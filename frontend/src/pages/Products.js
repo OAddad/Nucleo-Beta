@@ -519,6 +519,31 @@ export default function Products() {
     return ingredient.unit;
   };
 
+  // Função para calcular custos separados de ingredientes e embalagens
+  const calculateRecipeCosts = (recipe) => {
+    let ingredientsCost = 0;
+    let packagingCost = 0;
+
+    recipe.forEach(item => {
+      const ingredient = getIngredientDetails(item.ingredient_id);
+      let itemCost;
+
+      if (ingredient.unit_weight && ingredient.unit_weight > 0) {
+        itemCost = ingredient.average_price * item.quantity;
+      } else {
+        itemCost = ingredient.average_price * item.quantity;
+      }
+
+      if (item.item_type === "ingredient") {
+        ingredientsCost += itemCost;
+      } else if (item.item_type === "packaging") {
+        packagingCost += itemCost;
+      }
+    });
+
+    return { ingredientsCost, packagingCost };
+  };
+
   const toggleProduct = (productId) => {
     const newExpanded = new Set(expandedProducts);
     if (newExpanded.has(productId)) {
