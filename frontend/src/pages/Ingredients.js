@@ -32,6 +32,7 @@ export default function Ingredients() {
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
   const [unit, setUnit] = useState("");
+  const [unitsPerPackage, setUnitsPerPackage] = useState("");
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
