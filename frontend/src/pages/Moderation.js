@@ -456,7 +456,7 @@ export default function Moderation() {
                         </TableCell>
                       </TableRow>
                     ) : (
-                      auditLogs.map((log) => (
+                      getFilteredAndSortedLogs().map((log) => (
                         <TableRow key={log.id}>
                           <TableCell className="font-mono text-sm">
                             {formatDate(log.timestamp)}
