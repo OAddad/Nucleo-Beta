@@ -338,26 +338,31 @@ export default function Ingredients() {
                         : "-"}
                     </td>
                     <td className="py-3 px-6 text-right">
-                      <div className="flex gap-2 justify-end">
-                        <Button
-                          data-testid={`edit-ingredient-${ingredient.id}`}
-                          onClick={() => handleEdit(ingredient)}
-                          variant="ghost"
-                          size="sm"
-                          className="hover:bg-muted"
-                        >
-                          <Edit className="w-4 h-4" strokeWidth={1.5} />
-                        </Button>
-                        <Button
-                          data-testid={`delete-ingredient-${ingredient.id}`}
-                          onClick={() => checkUsageAndDelete(ingredient.id, ingredient.name)}
-                          variant="ghost"
-                          size="sm"
-                          className="text-destructive hover:text-destructive hover:bg-destructive/10"
-                        >
-                          <Trash2 className="w-4 h-4" strokeWidth={1.5} />
-                        </Button>
-                      </div>
+                      {canEdit && (
+                        <div className="flex gap-2 justify-end">
+                          <Button
+                            data-testid={`edit-ingredient-${ingredient.id}`}
+                            onClick={() => handleEdit(ingredient)}
+                            variant="ghost"
+                            size="sm"
+                            className="hover:bg-muted"
+                          >
+                            <Edit className="w-4 h-4" strokeWidth={1.5} />
+                          </Button>
+                          <Button
+                            data-testid={`delete-ingredient-${ingredient.id}`}
+                            onClick={() => checkUsageAndDelete(ingredient.id, ingredient.name)}
+                            variant="ghost"
+                            size="sm"
+                            className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                          >
+                            <Trash2 className="w-4 h-4" strokeWidth={1.5} />
+                          </Button>
+                        </div>
+                      )}
+                      {!canEdit && (
+                        <span className="text-xs text-muted-foreground">Somente leitura</span>
+                      )}
                     </td>
                   </tr>
                 ))
