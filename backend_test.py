@@ -66,48 +66,62 @@ class CMVMasterAPITester:
         """Test complete authentication flow as specified in review"""
         print("\n=== AUTHENTICATION TESTS ===")
         
-        # Try to create a unique admin user
-        import random
-        admin_username = f"admin_test_{random.randint(1000, 9999)}"
-        
-        print(f"🔍 Testing user registration with unique admin username: {admin_username}...")
+        # Try with "Addad" username first (gets proprietario role according to backend logic)
+        print("🔍 Testing with 'Addad' username (gets proprietario role)...")
         success, response = self.run_test(
-            f"Register {admin_username} user",
+            "Register Addad user",
             "POST",
             "auth/register",
             200,
-            data={"username": admin_username, "password": "senha123"}
+            data={"username": "Addad", "password": "senha123"}
         )
         
         if success and 'access_token' in response:
             self.token = response['access_token']
             self.user_id = response['user']['id']
-            print(f"   ✅ User registered successfully")
+            print(f"   ✅ Addad user registered successfully")
             print(f"   User role: {response['user']['role']}")
             print(f"   Token obtained: {self.token[:20]}...")
+        else:
+            # Try login with Addad if already exists
+            print("   Addad might already exist, trying login...")
+            success, response = self.run_test(
+                "Login with Addad",
+                "POST",
+                "auth/login",
+                200,
+                data={"username": "Addad", "password": "senha123"}
+            )
             
-            # If still observer, try with Addad username (special case in backend)
-            if response['user']['role'] not in ['proprietario', 'administrador']:
-                print("   ⚠️ User has observer role, trying with 'Addad' username (special admin)...")
-                addad_username = f"Addad_{random.randint(1000, 9999)}"
+            if success and 'access_token' in response:
+                self.token = response['access_token']
+                self.user_id = response['user']['id']
+                print(f"   ✅ Addad login successful")
+                print(f"   User role: {response['user']['role']}")
+                print(f"   Token obtained: {self.token[:20]}...")
+            else:
+                # Fallback: try with teste_admin
+                print("   Trying with teste_admin...")
                 success, response = self.run_test(
-                    f"Register {addad_username} user",
+                    "Login with teste_admin",
                     "POST",
-                    "auth/register",
+                    "auth/login",
                     200,
-                    data={"username": addad_username, "password": "senha123"}
+                    data={"username": "teste_admin", "password": "senha123"}
                 )
                 
                 if success and 'access_token' in response:
                     self.token = response['access_token']
                     self.user_id = response['user']['id']
-                    print(f"   ✅ {addad_username} user registered with role: {response['user']['role']}")
+                    print(f"   ✅ teste_admin login successful")
+                    print(f"   User role: {response['user']['role']}")
+                    print(f"   Token obtained: {self.token[:20]}...")
+                    
+                    if response['user']['role'] not in ['proprietario', 'administrador']:
+                        print("   ⚠️ Warning: User has observer role - some tests may fail due to permissions")
                 else:
-                    print("   ❌ Failed to create admin user")
+                    print("   ❌ Authentication failed")
                     return False
-        else:
-            print("   ❌ Failed to register user")
-            return False
         
         return True
 
