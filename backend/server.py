@@ -412,10 +412,10 @@ async def create_purchase(purchase_data: PurchaseCreate, current_user: User = De
     
     # If ingredient has units_per_package, divide by it to get unit price
     if ingredient.get("units_per_package") and ingredient["units_per_package"] > 0:
-            avg_price = avg_price / ingredient["units_per_package"]
-        
-        if ingredient.get("slices_per_package") and ingredient["slices_per_package"] > 0:
-            avg_price = avg_price / ingredient["slices_per_package"]
+        avg_price = avg_price / ingredient["units_per_package"]
+    
+    if ingredient.get("slices_per_package") and ingredient["slices_per_package"] > 0:
+        avg_price = avg_price / ingredient["slices_per_package"]
     
     await db.ingredients.update_one(
         {"id": purchase_data.ingredient_id},
