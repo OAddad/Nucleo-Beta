@@ -232,7 +232,12 @@ async def register(user_data: UserCreate):
         raise HTTPException(status_code=400, detail="Username already exists")
     
     hashed_password = pwd_context.hash(user_data.password)
-    user = User(username=user_data.username)
+    
+    # Primeiro usuário (Addad) é proprietário, demais são observadores
+    user_count = await db.users.count_documents({})
+    role = "proprietario" if user_count == 0 or user_data.username == "Addad" else "observador"
+    
+    user = User(username=user_data.username, role=role)
     user_dict = user.model_dump()
     user_dict["password"] = hashed_password
     user_dict["created_at"] = user_dict["created_at"].isoformat()
