@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { 
-  Search, Plus, Edit, Trash2, User, Phone, MapPin, Calendar, X, MoreVertical, Download
+  Search, Plus, Edit, Trash2, User, Phone, MapPin, Calendar, X, MoreVertical, Download, ImageOff, Mail
 } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
@@ -38,6 +38,8 @@ import {
   TableRow,
 } from "../components/ui/table";
 
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+
 export default function Clientes() {
   const [clientes, setClientes] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -47,12 +49,17 @@ export default function Clientes() {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [clienteToDelete, setClienteToDelete] = useState(null);
   
-  // Form
+  // Form - Novos campos
   const [nome, setNome] = useState("");
   const [telefone, setTelefone] = useState("");
+  const [email, setEmail] = useState("");
+  const [cpf, setCpf] = useState("");
+  const [dataNascimento, setDataNascimento] = useState("");
+  const [genero, setGenero] = useState("");
+  const [foto, setFoto] = useState(null);
+  const [fotoPreview, setFotoPreview] = useState("");
   const [endereco, setEndereco] = useState("");
   const [complemento, setComplemento] = useState("");
-  const [email, setEmail] = useState("");
 
   useEffect(() => {
     fetchClientes();
@@ -70,12 +77,68 @@ export default function Clientes() {
     localStorage.setItem("clientes", JSON.stringify(newClientes));
   };
 
+  // Formatar telefone (XX) 9.XXXX-XXXX
+  const formatTelefone = (value) => {
+    const numbers = value.replace(/\D/g, "");
+    if (numbers.length <= 2) return `(${numbers}`;
+    if (numbers.length <= 3) return `(${numbers.slice(0, 2)}) ${numbers.slice(2)}`;
+    if (numbers.length <= 7) return `(${numbers.slice(0, 2)}) ${numbers.slice(2, 3)}.${numbers.slice(3)}`;
+    if (numbers.length <= 11) return `(${numbers.slice(0, 2)}) ${numbers.slice(2, 3)}.${numbers.slice(3, 7)}-${numbers.slice(7, 11)}`;
+    return `(${numbers.slice(0, 2)}) ${numbers.slice(2, 3)}.${numbers.slice(3, 7)}-${numbers.slice(7, 11)}`;
+  };
+
+  // Formatar CPF XXX.XXX.XXX-XX
+  const formatCPF = (value) => {
+    const numbers = value.replace(/\D/g, "");
+    if (numbers.length <= 3) return numbers;
+    if (numbers.length <= 6) return `${numbers.slice(0, 3)}.${numbers.slice(3)}`;
+    if (numbers.length <= 9) return `${numbers.slice(0, 3)}.${numbers.slice(3, 6)}.${numbers.slice(6)}`;
+    return `${numbers.slice(0, 3)}.${numbers.slice(3, 6)}.${numbers.slice(6, 9)}-${numbers.slice(9, 11)}`;
+  };
+
+  // Formatar Data XX/XX/XXXX
+  const formatData = (value) => {
+    const numbers = value.replace(/\D/g, "");
+    if (numbers.length <= 2) return numbers;
+    if (numbers.length <= 4) return `${numbers.slice(0, 2)}/${numbers.slice(2)}`;
+    return `${numbers.slice(0, 2)}/${numbers.slice(2, 4)}/${numbers.slice(4, 8)}`;
+  };
+
+  const handleTelefoneChange = (e) => {
+    setTelefone(formatTelefone(e.target.value));
+  };
+
+  const handleCPFChange = (e) => {
+    setCpf(formatCPF(e.target.value));
+  };
+
+  const handleDataNascimentoChange = (e) => {
+    setDataNascimento(formatData(e.target.value));
+  };
+
+  const handleFotoChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setFoto(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFotoPreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const resetForm = () => {
     setNome("");
     setTelefone("");
+    setEmail("");
+    setCpf("");
+    setDataNascimento("");
+    setGenero("");
+    setFoto(null);
+    setFotoPreview("");
     setEndereco("");
     setComplemento("");
-    setEmail("");
     setEditMode(false);
     setCurrentCliente(null);
   };
@@ -88,11 +151,15 @@ export default function Clientes() {
   const handleEdit = (cliente) => {
     setEditMode(true);
     setCurrentCliente(cliente);
-    setNome(cliente.nome);
+    setNome(cliente.nome || "");
     setTelefone(cliente.telefone || "");
+    setEmail(cliente.email || "");
+    setCpf(cliente.cpf || "");
+    setDataNascimento(cliente.data_nascimento || "");
+    setGenero(cliente.genero || "");
+    setFotoPreview(cliente.foto || "");
     setEndereco(cliente.endereco || "");
     setComplemento(cliente.complemento || "");
-    setEmail(cliente.email || "");
     setDialogOpen(true);
   };
 
@@ -101,11 +168,27 @@ export default function Clientes() {
       toast.error("Informe o nome do cliente");
       return;
     }
+    if (!telefone.trim()) {
+      toast.error("Informe o telefone do cliente");
+      return;
+    }
+
+    const clienteData = {
+      nome,
+      telefone,
+      email,
+      cpf,
+      data_nascimento: dataNascimento,
+      genero,
+      foto: fotoPreview,
+      endereco,
+      complemento,
+    };
 
     if (editMode && currentCliente) {
       const updatedClientes = clientes.map(c =>
         c.id === currentCliente.id
-          ? { ...c, nome, telefone, endereco, complemento, email }
+          ? { ...c, ...clienteData }
           : c
       );
       saveClientes(updatedClientes);
@@ -113,11 +196,7 @@ export default function Clientes() {
     } else {
       const novoCliente = {
         id: `cliente-${Date.now()}`,
-        nome,
-        telefone,
-        endereco,
-        complemento,
-        email,
+        ...clienteData,
         created_at: new Date().toISOString(),
         pedidos_count: 0,
         total_gasto: 0
@@ -145,9 +224,10 @@ export default function Clientes() {
   };
 
   const filteredClientes = clientes.filter(c =>
-    c.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    c.nome?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     (c.telefone && c.telefone.includes(searchTerm)) ||
-    (c.email && c.email.toLowerCase().includes(searchTerm.toLowerCase()))
+    (c.email && c.email.toLowerCase().includes(searchTerm.toLowerCase())) ||
+    (c.cpf && c.cpf.includes(searchTerm))
   );
 
   const formatDate = (dateStr) => {
@@ -168,7 +248,7 @@ export default function Clientes() {
         <div className="relative flex-1 max-w-md">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input
-            placeholder="Pesquisar por nome, telefone ou email..."
+            placeholder="Pesquisar por nome, telefone, email ou CPF..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-10"
@@ -180,8 +260,10 @@ export default function Clientes() {
             nome: "Nome",
             telefone: "Telefone",
             email: "Email",
+            cpf: "CPF",
+            data_nascimento: "Data Nascimento",
+            genero: "Gênero",
             endereco: "Endereço",
-            complemento: "Complemento",
             created_at: "Data Cadastro"
           })}
         >
@@ -233,9 +315,9 @@ export default function Clientes() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Nome</TableHead>
+                <TableHead>Cliente</TableHead>
                 <TableHead>Telefone</TableHead>
-                <TableHead>Endereço</TableHead>
+                <TableHead>CPF</TableHead>
                 <TableHead>Cadastrado em</TableHead>
                 <TableHead className="w-16">Ações</TableHead>
               </TableRow>
@@ -245,13 +327,20 @@ export default function Clientes() {
                 <TableRow key={cliente.id}>
                   <TableCell>
                     <div className="flex items-center gap-3">
-                      <div className="p-2 rounded-full bg-muted">
-                        <User className="w-4 h-4 text-muted-foreground" />
+                      <div className="w-10 h-10 rounded-full bg-muted overflow-hidden flex items-center justify-center">
+                        {cliente.foto ? (
+                          <img src={cliente.foto} alt={cliente.nome} className="w-full h-full object-cover" />
+                        ) : (
+                          <User className="w-5 h-5 text-muted-foreground" />
+                        )}
                       </div>
                       <div>
                         <p className="font-medium">{cliente.nome}</p>
                         {cliente.email && (
-                          <p className="text-xs text-muted-foreground">{cliente.email}</p>
+                          <p className="text-xs text-muted-foreground flex items-center gap-1">
+                            <Mail className="w-3 h-3" />
+                            {cliente.email}
+                          </p>
                         )}
                       </div>
                     </div>
@@ -265,12 +354,7 @@ export default function Clientes() {
                     ) : "-"}
                   </TableCell>
                   <TableCell>
-                    {cliente.endereco ? (
-                      <span className="flex items-center gap-1 text-sm">
-                        <MapPin className="w-3 h-3 text-muted-foreground" />
-                        <span className="truncate max-w-[200px]">{cliente.endereco}</span>
-                      </span>
-                    ) : "-"}
+                    {cliente.cpf || "-"}
                   </TableCell>
                   <TableCell>
                     <span className="flex items-center gap-1 text-sm text-muted-foreground">
@@ -307,62 +391,169 @@ export default function Clientes() {
         )}
       </div>
 
-      {/* Dialog Criar/Editar */}
+      {/* Dialog Criar/Editar - Layout Horizontal */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-3xl">
           <DialogHeader>
             <DialogTitle>{editMode ? "Editar Cliente" : "Novo Cliente"}</DialogTitle>
           </DialogHeader>
-          <div className="space-y-4 mt-4">
-            <div>
-              <Label>Nome *</Label>
-              <Input
-                value={nome}
-                onChange={(e) => setNome(e.target.value)}
-                placeholder="Nome completo"
-                className="mt-1"
-              />
+          <div className="space-y-6 mt-4">
+            {/* Primeira Linha: Foto, Nome e Gênero */}
+            <div className="flex gap-6">
+              {/* Foto do Cliente */}
+              <div className="flex-shrink-0">
+                <Label className="text-sm text-muted-foreground">Foto do Cliente</Label>
+                <div className="mt-2">
+                  <label className="cursor-pointer">
+                    <div className="w-28 h-28 rounded-xl border-2 border-dashed overflow-hidden bg-muted flex flex-col items-center justify-center hover:border-primary/50 transition-colors">
+                      {fotoPreview ? (
+                        <img
+                          src={fotoPreview}
+                          alt="Preview"
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <>
+                          <ImageOff className="w-8 h-8 text-muted-foreground mb-1" />
+                          <span className="text-xs text-muted-foreground text-center px-2">Clique para adicionar</span>
+                        </>
+                      )}
+                    </div>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleFotoChange}
+                      className="hidden"
+                    />
+                  </label>
+                  <p className="text-xs text-muted-foreground mt-1 text-center">1080x1080px</p>
+                </div>
+              </div>
+
+              {/* Nome e Email */}
+              <div className="flex-1 space-y-4">
+                <div className="flex gap-4">
+                  <div className="flex-1">
+                    <Label>Nome *</Label>
+                    <Input
+                      value={nome}
+                      onChange={(e) => setNome(e.target.value)}
+                      placeholder="Ex: Thais Addad"
+                      className="mt-1"
+                    />
+                  </div>
+                  
+                  {/* Gênero */}
+                  <div className="w-48">
+                    <Label>Gênero</Label>
+                    <div className="mt-1 flex rounded-lg border overflow-hidden h-10">
+                      <button
+                        type="button"
+                        onClick={() => setGenero("masculino")}
+                        className={`flex-1 text-sm font-medium transition-colors ${
+                          genero === "masculino" 
+                            ? "bg-primary text-primary-foreground" 
+                            : "bg-background hover:bg-muted"
+                        }`}
+                      >
+                        Masculino
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setGenero("feminino")}
+                        className={`flex-1 text-sm font-medium transition-colors border-l ${
+                          genero === "feminino" 
+                            ? "bg-primary text-primary-foreground" 
+                            : "bg-background hover:bg-muted"
+                        }`}
+                      >
+                        Feminino
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <Label>Email</Label>
+                  <Input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="Ex: thaisaddad@gmail.com"
+                    className="mt-1"
+                  />
+                </div>
+              </div>
             </div>
-            <div>
-              <Label>Telefone</Label>
-              <Input
-                value={telefone}
-                onChange={(e) => setTelefone(e.target.value)}
-                placeholder="(00) 00000-0000"
-                className="mt-1"
-              />
+
+            {/* Segunda Linha: Telefone, CPF e Data de Nascimento */}
+            <div className="grid grid-cols-3 gap-4">
+              <div>
+                <Label>Telefone *</Label>
+                <Input
+                  value={telefone}
+                  onChange={handleTelefoneChange}
+                  placeholder="(XX) 9.XXXX-XXXX"
+                  className="mt-1"
+                  maxLength={16}
+                />
+              </div>
+              <div>
+                <Label>CPF</Label>
+                <Input
+                  value={cpf}
+                  onChange={handleCPFChange}
+                  placeholder="XXX.XXX.XXX-XX"
+                  className="mt-1"
+                  maxLength={14}
+                />
+              </div>
+              <div>
+                <Label>Data de Nascimento</Label>
+                <Input
+                  value={dataNascimento}
+                  onChange={handleDataNascimentoChange}
+                  placeholder="DD/MM/AAAA"
+                  className="mt-1"
+                  maxLength={10}
+                />
+              </div>
             </div>
-            <div>
-              <Label>Email</Label>
-              <Input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="email@exemplo.com"
-                className="mt-1"
-              />
+
+            {/* Terceira Linha: Endereços */}
+            <div className="border-t pt-4">
+              <Label className="text-base font-semibold">Endereços</Label>
+              <div className="grid grid-cols-2 gap-4 mt-3">
+                <div>
+                  <Label className="text-sm">Endereço</Label>
+                  <Input
+                    value={endereco}
+                    onChange={(e) => setEndereco(e.target.value)}
+                    placeholder="Rua, número, bairro"
+                    className="mt-1"
+                  />
+                </div>
+                <div>
+                  <Label className="text-sm">Complemento</Label>
+                  <Input
+                    value={complemento}
+                    onChange={(e) => setComplemento(e.target.value)}
+                    placeholder="Apt, bloco..."
+                    className="mt-1"
+                  />
+                </div>
+              </div>
             </div>
-            <div>
-              <Label>Endereço</Label>
-              <Input
-                value={endereco}
-                onChange={(e) => setEndereco(e.target.value)}
-                placeholder="Rua, número, bairro"
-                className="mt-1"
-              />
+
+            {/* Botão Salvar */}
+            <div className="flex justify-end gap-3 pt-2">
+              <Button variant="outline" onClick={() => setDialogOpen(false)}>
+                Cancelar
+              </Button>
+              <Button onClick={handleSave}>
+                {editMode ? "Salvar Alterações" : "Cadastrar Cliente"}
+              </Button>
             </div>
-            <div>
-              <Label>Complemento</Label>
-              <Input
-                value={complemento}
-                onChange={(e) => setComplemento(e.target.value)}
-                placeholder="Apt, bloco..."
-                className="mt-1"
-              />
-            </div>
-            <Button onClick={handleSave} className="w-full">
-              {editMode ? "Salvar Alterações" : "Cadastrar Cliente"}
-            </Button>
           </div>
         </DialogContent>
       </Dialog>
