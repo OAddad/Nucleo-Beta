@@ -4,7 +4,6 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
-from motor.motor_asyncio import AsyncIOMotorClient
 import os
 import logging
 from pathlib import Path
@@ -12,25 +11,24 @@ from pydantic import BaseModel, Field, ConfigDict
 from typing import List, Optional
 import uuid
 from datetime import datetime, timezone, timedelta
-from passlib.context import CryptContext
 import jwt
 from PIL import Image
 import shutil
 
 # Sistema de Backup em Excel
 import excel_backup
+# Banco de dados SQLite
+import database as sqlite_db
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
-mongo_url = os.environ['MONGO_URL']
-client = AsyncIOMotorClient(mongo_url)
-db = client[os.environ['DB_NAME']]
+# SQLite é o banco principal agora
+# MongoDB mantido apenas para compatibilidade de migração
+USE_SQLITE = True
 
 app = FastAPI()
 api_router = APIRouter(prefix="/api")
-
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 security = HTTPBearer()
 SECRET_KEY = os.environ.get("JWT_SECRET", "your-secret-key-change-in-production")
 ALGORITHM = "HS256"
