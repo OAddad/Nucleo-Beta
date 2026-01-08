@@ -17,6 +17,9 @@ import jwt
 from PIL import Image
 import shutil
 
+# Sistema de Backup em Excel
+import excel_backup
+
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
