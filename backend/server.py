@@ -497,6 +497,8 @@ async def create_purchase_batch(batch_data: PurchaseBatchCreate, current_user: U
 
 @api_router.put("/purchases/batch/{batch_id}", response_model=dict)
 async def update_purchase_batch(batch_id: str, batch_data: PurchaseBatchCreate, current_user: User = Depends(get_current_user)):
+    check_role(current_user, ["proprietario", "administrador"])
+    
     # Delete old batch
     old_purchases = await db.purchases.find({"batch_id": batch_id}, {"_id": 0}).to_list(1000)
     if not old_purchases:
