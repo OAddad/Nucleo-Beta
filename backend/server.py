@@ -206,8 +206,48 @@ async def get_ingredients(current_user: User = Depends(get_current_user)):
             ing["created_at"] = datetime.fromisoformat(ing["created_at"])
     return ingredients
 
+@api_router.put("/ingredients/{ingredient_id}", response_model=Ingredient)
+async def update_ingredient(ingredient_id: str, ingredient_data: IngredientCreate, current_user: User = Depends(get_current_user)):
+    existing = await db.ingredients.find_one({"id": ingredient_id}, {"_id": 0})
+    if not existing:
+        raise HTTPException(status_code=404, detail="Ingredient not found")
+    
+    update_data = ingredient_data.model_dump()
+    await db.ingredients.update_one({"id": ingredient_id}, {"$set": update_data})
+    
+    updated = await db.ingredients.find_one({"id": ingredient_id}, {"_id": 0})
+    if isinstance(updated["created_at"], str):
+        updated["created_at"] = datetime.fromisoformat(updated["created_at"])
+    return Ingredient(**updated)
+
+@api_router.get("/ingredients/{ingredient_id}/usage")
+async def check_ingredient_usage(ingredient_id: str, current_user: User = Depends(get_current_user)):
+    products = await db.products.find({}, {"_id": 0}).to_list(1000)
+    used_in = []
+    for product in products:
+        for recipe_item in product.get("recipe", []):
+            if recipe_item.get("ingredient_id") == ingredient_id:
+                used_in.append({"id": product["id"], "name": product["name"]})
+                break
+    return {"used_in_products": used_in, "can_delete": len(used_in) == 0}
+
 @api_router.delete("/ingredients/{ingredient_id}")
 async def delete_ingredient(ingredient_id: str, current_user: User = Depends(get_current_user)):
+    # Check if ingredient is used in any product
+    products = await db.products.find({}, {"_id": 0}).to_list(1000)
+    used_in = []
+    for product in products:
+        for recipe_item in product.get("recipe", []):
+            if recipe_item.get("ingredient_id") == ingredient_id:
+                used_in.append(product["name"])
+                break
+    
+    if used_in:
+        raise HTTPException(
+            status_code=400, 
+            detail=f"Cannot delete ingredient. It is used in the following products: {', '.join(used_in)}"
+        )
+    
     result = await db.ingredients.delete_one({"id": ingredient_id})
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Ingredient not found")
