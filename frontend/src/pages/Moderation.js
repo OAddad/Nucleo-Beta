@@ -472,7 +472,7 @@ export default function Moderation() {
                       </Select>
                       {user.id !== currentUser?.id && (
                         <Button
-                          onClick={() => handleDeleteUser(user.id, user.username)}
+                          onClick={() => confirmDeleteUser(user.id, user.username)}
                           variant="outline"
                           size="icon"
                           className="text-destructive hover:text-destructive hover:bg-destructive/10"
