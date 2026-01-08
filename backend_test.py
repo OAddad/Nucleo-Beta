@@ -4,7 +4,7 @@ import json
 from datetime import datetime
 
 class CMVMasterAPITester:
-    def __init__(self, base_url="https://7fda65d9-6a65-4429-93b8-7893234a6f24.preview.emergentagent.com"):
+    def __init__(self, base_url="https://order-system-84.preview.emergentagent.com"):
         self.base_url = base_url
         self.token = None
         self.tests_run = 0
