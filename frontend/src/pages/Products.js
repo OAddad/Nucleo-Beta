@@ -762,18 +762,39 @@ export default function Products() {
                             {product.recipe.filter(item => item.item_type === "packaging").map((item, idx) => {
                               const ingredient = getIngredientDetails(item.ingredient_id);
                               const displayUnit = getIngredientUnit(ingredient);
-                              let itemCost = ingredient.average_price * item.quantity;
+                              
+                              let itemCost;
+                              let displayQuantity = item.quantity;
+                              let showUnitInfo = false;
+                              
+                              if (ingredient.unit_weight && ingredient.unit_weight > 0) {
+                                displayQuantity = item.quantity / ingredient.unit_weight;
+                                itemCost = ingredient.average_price * item.quantity;
+                                showUnitInfo = true;
+                              } else {
+                                itemCost = ingredient.average_price * item.quantity;
+                              }
                               
                               return (
                                 <div
                                   key={idx}
                                   className="flex justify-between items-center text-sm py-2 border-b border-border/50 last:border-0"
                                 >
-                                  <span className="font-medium flex-1">
-                                    {ingredient.name}
-                                  </span>
+                                  <div className="flex-1">
+                                    <div className="font-medium">
+                                      {ingredient.name}
+                                    </div>
+                                    {showUnitInfo && (
+                                      <div className="text-xs text-muted-foreground mt-0.5">
+                                        1 un = {(ingredient.unit_weight * 1000).toFixed(0)}g
+                                      </div>
+                                    )}
+                                  </div>
                                   <span className="font-mono mx-4">
-                                    {item.quantity.toFixed(2)} {displayUnit}
+                                    {displayUnit === "un" 
+                                      ? Math.round(displayQuantity) 
+                                      : displayQuantity.toFixed(2)
+                                    } {displayUnit}
                                   </span>
                                   <span className="font-mono font-medium">
                                     R$ {itemCost.toFixed(2)}
