@@ -827,9 +827,19 @@ async def upload_product_photo(file: UploadFile = File(...), current_user: User 
 
 @api_router.delete("/products/{product_id}")
 async def delete_product(product_id: str, current_user: User = Depends(get_current_user)):
+    check_role(current_user, ["proprietario", "administrador"])
+    
+    product = await db.products.find_one({"id": product_id}, {"_id": 0})
+    if not product:
+        raise HTTPException(status_code=404, detail="Product not found")
+    
     result = await db.products.delete_one({"id": product_id})
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Product not found")
+    
+    # Registrar auditoria
+    await log_audit("DELETE", "product", product["name"], current_user, "alta")
+    
     return {"message": "Product deleted"}
 
 # Reports endpoints
