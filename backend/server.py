@@ -52,6 +52,7 @@ class IngredientCreate(BaseModel):
     name: str
     unit: str
     units_per_package: Optional[int] = None
+    slices_per_package: Optional[int] = None
 
 class Ingredient(BaseModel):
     model_config = ConfigDict(extra="ignore")
@@ -59,6 +60,7 @@ class Ingredient(BaseModel):
     name: str
     unit: str
     units_per_package: Optional[int] = None
+    slices_per_package: Optional[int] = None
     average_price: float = 0.0
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
