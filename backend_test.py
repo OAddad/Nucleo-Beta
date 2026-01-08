@@ -1052,15 +1052,17 @@ class CMVMasterAPITester:
         return True
 
 def main():
-    print("🚀 Starting CMV Master API Tests - Stock Control Features Test")
+    print("🚀 Starting CMV Master API Tests - Order Steps Feature Test")
     print("=" * 60)
     
     tester = CMVMasterAPITester()
     
-    # Run tests focused on stock control features as requested
+    # Run tests focused on order steps feature as requested
     tests = [
-        ("1. Authentication (Addad user)", tester.test_authentication),
-        ("2. Stock Control Features", tester.test_stock_control_features),
+        ("1. Authentication", tester.test_authentication),
+        ("2. Ingredients CRUD", tester.test_ingredients_crud),
+        ("3. Categories", tester.test_categories),
+        ("4. Order Steps Feature", tester.test_order_steps_feature),
     ]
     
     failed_tests = []
@@ -1090,11 +1092,13 @@ def main():
     # Analyze results
     print(f"\n🔍 ANALYSIS:")
     if not failed_tests:
-        print(f"✅ STOCK CONTROL FEATURES WORKING:")
-        print(f"   - Ingredients have new fields: category, stock_quantity, stock_min, stock_max")
-        print(f"   - Stock adjustment endpoint working (PUT /api/ingredients/{{id}}/stock)")
-        print(f"   - Ingredient update with category working")
-        print(f"   - Authentication with Addad user working")
+        print(f"✅ ORDER STEPS FEATURE WORKING:")
+        print(f"   - All calculation types working: soma, subtracao, minimo, maximo, medio")
+        print(f"   - Min/max selection limits working (including 0 = no limit)")
+        print(f"   - Product creation with order steps working")
+        print(f"   - Product update with order steps working")
+        print(f"   - Product integrity verification working")
+        print(f"   - Price override functionality working")
     else:
         print(f"❌ FAILED TESTS:")
         for failed in failed_tests:
@@ -1103,8 +1107,8 @@ def main():
     if failed_tests:
         return 1
     else:
-        print("\n✅ ALL STOCK CONTROL TESTS PASSED!")
-        print("🎉 New stock control functionality is working correctly!")
+        print("\n✅ ALL ORDER STEPS TESTS PASSED!")
+        print("🎉 Order Steps (Etapas de Pedido) functionality is working correctly!")
         return 0
 
 if __name__ == "__main__":
