@@ -104,11 +104,13 @@ class PurchaseBatch(BaseModel):
 class RecipeIngredient(BaseModel):
     ingredient_id: str
     quantity: float
+    item_type: Optional[str] = "ingredient"
 
 class ProductCreate(BaseModel):
     name: str
     description: Optional[str] = None
     sale_price: Optional[float] = None
+    photo_url: Optional[str] = None
     recipe: List[RecipeIngredient]
 
 class Product(BaseModel):
@@ -117,6 +119,7 @@ class Product(BaseModel):
     name: str
     description: Optional[str] = None
     sale_price: Optional[float] = None
+    photo_url: Optional[str] = None
     recipe: List[RecipeIngredient]
     cmv: float = 0.0
     profit_margin: Optional[float] = None
