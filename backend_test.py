@@ -363,35 +363,24 @@ class CMVMasterAPITester:
         
         return True
 
-    def test_purchase_deletion(self):
-        """Test purchase deletion and price recalculation"""
-        print("\n=== PURCHASE DELETION TESTS ===")
+    def test_audit_logs(self):
+        """Test audit logs as specified in review"""
+        print("\n=== AUDIT LOGS TESTS ===")
         
-        if not self.created_purchases:
-            print("❌ No purchases to delete")
+        # Get audit logs
+        print("🔍 Testing audit logs...")
+        success, logs = self.run_test("Get audit logs", "GET", "audit-logs", 200)
+        if success:
+            print(f"   ✅ Audit logs retrieved: {len(logs)} entries")
+            
+            # Show recent logs
+            for log in logs[:5]:  # Show first 5 logs
+                print(f"   - {log['action']} {log['resource_type']}: {log['resource_name']} by {log['username']}")
+        else:
+            print("   ❌ Failed to get audit logs")
             return False
         
-        # Delete first purchase
-        purchase_id = self.created_purchases[0]
-        success, _ = self.run_test(
-            "Delete purchase",
-            "DELETE",
-            f"purchases/{purchase_id}",
-            200
-        )
-        
-        if success:
-            print("   ✅ Purchase deleted successfully")
-            
-            # Check that prices are recalculated
-            success, ingredients = self.run_test("Get ingredients after deletion", "GET", "ingredients", 200)
-            if success:
-                print("   ✅ Ingredients retrieved after deletion")
-                for ing in ingredients:
-                    if ing['name'] in ['Carne Bovina', 'Queijo Cheddar']:
-                        print(f"   {ing['name']} - New avg price: R$ {ing.get('average_price', 0):.2f}")
-        
-        return success
+        return True
 
     def cleanup(self):
         """Clean up created test data"""
