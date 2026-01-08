@@ -105,6 +105,7 @@ export default function Dashboard({ setIsAuthenticated }) {
           <Route path="/compras" element={<Purchases />} />
           <Route path="/produtos" element={<Products />} />
           <Route path="/relatorios" element={<Reports />} />
+          <Route path="/moderacao" element={<Moderation />} />
         </Routes>
       </main>
     </div>
