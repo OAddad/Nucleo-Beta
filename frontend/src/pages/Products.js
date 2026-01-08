@@ -1262,8 +1262,9 @@ export default function Products() {
                       <ProductThumbnail photoUrl={product.photo_url} name={product.name} />
                     </div>
                     
-                    <div className="flex-1 grid grid-cols-12 gap-4 items-center">
-                      <div className="col-span-4">
+                    <div className="flex-1 flex items-center gap-4">
+                      {/* Nome e código do produto */}
+                      <div className="min-w-[180px]">
                         <div className="flex items-center gap-2 flex-wrap">
                           <span className="font-bold text-lg">{product.name}</span>
                           {product.code && (
@@ -1278,25 +1279,51 @@ export default function Products() {
                           )}
                         </div>
                       </div>
-                      <div className="col-span-2 text-center">
-                        <div className="text-xs text-muted-foreground uppercase tracking-wider mb-1">CMV</div>
-                        <div className="text-lg font-bold font-mono text-primary">
-                          R$ {product.cmv.toFixed(2)}
+                      
+                      {/* Card de Preço, Custo e Lucro */}
+                      <div className="flex-1 bg-muted/30 rounded-xl px-4 py-2 flex items-center justify-center gap-6">
+                        <div className="text-center">
+                          <div className="text-xs text-muted-foreground mb-0.5">Preço de Venda</div>
+                          <div className="text-xl font-bold font-mono">
+                            {product.sale_price ? `R$${product.sale_price.toFixed(2)}` : "-"}
+                          </div>
+                        </div>
+                        <div className="text-center border-l border-border pl-6">
+                          <div className="text-xs text-muted-foreground mb-0.5">Custo de Produção</div>
+                          <div className="text-xl font-bold font-mono text-red-500">
+                            R${product.cmv.toFixed(2)}
+                          </div>
+                        </div>
+                        <div className="text-center border-l border-border pl-6">
+                          <div className="text-xs text-muted-foreground mb-0.5">Lucro</div>
+                          <div className="text-xl font-bold font-mono text-green-500">
+                            {product.sale_price ? `R$${(product.sale_price - product.cmv).toFixed(2)}` : "-"}
+                          </div>
                         </div>
                       </div>
-                      <div className="col-span-2 text-center">
-                        <div className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Preço Venda</div>
-                        <div className="text-lg font-bold font-mono">
-                          {product.sale_price ? `R$ ${product.sale_price.toFixed(2)}` : "-"}
+
+                      {/* Card de CMV% */}
+                      <div className="bg-muted/30 rounded-xl px-4 py-2 text-center min-w-[100px]">
+                        <div className="text-xs text-muted-foreground mb-0.5">C.M.V.</div>
+                        <div className="text-xl font-bold font-mono text-orange-500">
+                          {product.sale_price && product.sale_price > 0 
+                            ? `${((product.cmv / product.sale_price) * 100).toFixed(2)}%`
+                            : "-"}
                         </div>
                       </div>
-                      <div className="col-span-2 text-center">
-                        <div className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Margem</div>
-                        <div className="text-lg font-bold font-mono text-green-600">
-                          {product.profit_margin ? `${product.profit_margin.toFixed(1)}%` : "-"}
+
+                      {/* Card de Margem Contribuição% */}
+                      <div className="bg-muted/30 rounded-xl px-4 py-2 text-center min-w-[140px]">
+                        <div className="text-xs text-muted-foreground mb-0.5">Margem Contribuição</div>
+                        <div className="text-xl font-bold font-mono text-orange-500">
+                          {product.sale_price && product.sale_price > 0 
+                            ? `${(((product.sale_price - product.cmv) / product.sale_price) * 100).toFixed(2)}%`
+                            : "-"}
                         </div>
                       </div>
-                      <div className="col-span-2 flex justify-end">
+
+                      {/* Seta expandir */}
+                      <div className="flex-shrink-0">
                         {isExpanded ? (
                           <ChevronUp className="w-5 h-5 text-muted-foreground" strokeWidth={1.5} />
                         ) : (
