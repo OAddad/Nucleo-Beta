@@ -60,6 +60,16 @@ class Ingredient(BaseModel):
     average_price: float = 0.0
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
+class PurchaseItemCreate(BaseModel):
+    ingredient_id: str
+    quantity: float
+    price: float
+
+class PurchaseBatchCreate(BaseModel):
+    supplier: str
+    purchase_date: Optional[str] = None
+    items: List[PurchaseItemCreate]
+
 class PurchaseCreate(BaseModel):
     ingredient_id: str
     quantity: float
@@ -69,12 +79,23 @@ class PurchaseCreate(BaseModel):
 class Purchase(BaseModel):
     model_config = ConfigDict(extra="ignore")
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    batch_id: str
+    supplier: str
     ingredient_id: str
     ingredient_name: str
+    ingredient_unit: str
     quantity: float
     price: float
     unit_price: float
     purchase_date: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class PurchaseBatch(BaseModel):
+    batch_id: str
+    supplier: str
+    purchase_date: datetime
+    total_quantity: float
+    total_price: float
+    items: List[Purchase]
 
 class RecipeIngredient(BaseModel):
     ingredient_id: str
