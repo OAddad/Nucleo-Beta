@@ -194,7 +194,8 @@ export default function Ingredients() {
         unit: unit === "unidade" ? "un" : unit,
         category: category || null,
         stock_min: stockMin ? parseFloat(stockMin) : 0,
-        stock_max: stockMax ? parseFloat(stockMax) : 0
+        stock_max: stockMax ? parseFloat(stockMax) : 0,
+        is_recipe: isRecipe
       };
       
       if (unitsPerPackage && parseInt(unitsPerPackage) > 0) {
@@ -205,12 +206,20 @@ export default function Ingredients() {
         payload.unit_weight = parseFloat(unitWeight);
       }
 
+      let createdIngredientId = currentIngredientId;
+
       if (editMode) {
         await axios.put(`${API}/ingredients/${currentIngredientId}`, payload, getAuthHeader());
         toast.success("Item atualizado!");
       } else {
-        await axios.post(`${API}/ingredients`, payload, getAuthHeader());
+        const response = await axios.post(`${API}/ingredients`, payload, getAuthHeader());
+        createdIngredientId = response.data.id;
         toast.success("Item criado!");
+        
+        // Se "É receita" está marcado, criar produto automaticamente
+        if (isRecipe && createdIngredientId) {
+          await createRecipeProduct(name, createdIngredientId);
+        }
       }
       
       resetForm();
