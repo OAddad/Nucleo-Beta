@@ -50,10 +50,16 @@ export default function Dashboard({ setIsAuthenticated }) {
   };
 
   const handleNavigate = (path) => {
+    setActiveTopMenu(null); // Desativa aba superior ao navegar pelo menu lateral
     navigate(path);
-    if (window.innerWidth < 1024) { // Fecha apenas em mobile
+    if (window.innerWidth < 1024) {
       setSidebarOpen(false);
     }
+  };
+
+  const handleSidebarClick = (path) => {
+    setActiveTopMenu(null); // Desativa aba superior
+    navigate(path);
   };
 
   // Estrutura de navegação principal
