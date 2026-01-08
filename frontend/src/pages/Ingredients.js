@@ -142,20 +142,23 @@ export default function Ingredients() {
         setIngredientToDelete(ingredientName);
         setDeleteWarningOpen(true);
       } else {
-        // Can delete safely
-        if (window.confirm(`Deseja realmente excluir "${ingredientName}"?`)) {
-          await handleDelete(id);
-        }
+        // Can delete safely - show confirmation dialog
+        setIngredientToDelete({ id, name: ingredientName });
+        setDeleteConfirmOpen(true);
       }
     } catch (error) {
       toast.error("Erro ao verificar uso do ingrediente");
     }
   };
 
-  const handleDelete = async (id) => {
+  const confirmDelete = async () => {
+    if (!ingredientToDelete) return;
+    
     try {
-      await axios.delete(`${API}/ingredients/${id}`, getAuthHeader());
+      await axios.delete(`${API}/ingredients/${ingredientToDelete.id}`, getAuthHeader());
       toast.success("Ingrediente excluído!");
+      setDeleteConfirmOpen(false);
+      setIngredientToDelete(null);
       fetchIngredients();
     } catch (error) {
       if (error.response?.status === 400) {
