@@ -174,6 +174,20 @@ export default function Clientes() {
             className="pl-10"
           />
         </div>
+        <Button 
+          variant="outline" 
+          onClick={() => exportToExcel(clientes, "clientes", {
+            nome: "Nome",
+            telefone: "Telefone",
+            email: "Email",
+            endereco: "Endereço",
+            complemento: "Complemento",
+            created_at: "Data Cadastro"
+          })}
+        >
+          <Download className="w-4 h-4 mr-2" />
+          Exportar Excel
+        </Button>
         <Button onClick={handleOpenNew}>
           <Plus className="w-4 h-4 mr-2" />
           Novo Cliente
