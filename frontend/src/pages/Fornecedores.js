@@ -310,6 +310,35 @@ export default function Fornecedores() {
           </Select>
         </div>
 
+        <Button 
+          variant="outline" 
+          onClick={() => {
+            const dataToExport = sortedFornecedores.map(f => {
+              const stats = getEstatisticasFornecedor(f.nome);
+              return {
+                nome: f.nome,
+                telefone: f.telefone || "",
+                email: f.email || "",
+                cnpj: f.cnpj || "",
+                total_gasto: stats.totalGasto,
+                qtd_compras: stats.qtdCompras,
+                ultima_compra: stats.ultimaCompra ? stats.ultimaCompra.toLocaleDateString("pt-BR") : ""
+              };
+            });
+            exportToExcel(dataToExport, "fornecedores", {
+              nome: "Nome",
+              telefone: "Telefone",
+              email: "Email",
+              cnpj: "CNPJ",
+              total_gasto: "Total Gasto",
+              qtd_compras: "Qtd Compras",
+              ultima_compra: "Última Compra"
+            });
+          }}
+        >
+          <Download className="w-4 h-4 mr-2" />
+          Exportar Excel
+        </Button>
         <Button onClick={handleOpenNew}>
           <Plus className="w-4 h-4 mr-2" />
           Novo Fornecedor
