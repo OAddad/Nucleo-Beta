@@ -58,42 +58,31 @@ export default function Dashboard({ setIsAuthenticated }) {
 
   return (
     <div className="flex min-h-screen bg-background">
-      {/* Overlay escuro quando sidebar aberto em mobile */}
-      {sidebarOpen && (
-        <div 
-          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
-          onClick={() => setSidebarOpen(false)}
-        />
-      )}
-
-      {/* Sidebar Unificado (Desktop e Mobile) */}
+      {/* Sidebar - Sempre relativo, empurra o conteúdo */}
       <aside className={`
-        fixed lg:relative top-0 left-0 bottom-0 z-50
-        w-64 bg-sidebar text-sidebar-foreground flex-col border-r
-        transition-transform duration-300 ease-in-out
-        ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+        bg-sidebar text-sidebar-foreground flex-col border-r
+        transition-all duration-300 ease-in-out
+        ${sidebarOpen ? 'w-64' : 'w-0 lg:w-16'}
         ${sidebarOpen ? 'flex' : 'hidden lg:flex'}
       `}>
-        <div className="p-6 border-b flex items-center justify-between">
-          <button 
-            onClick={() => navigate("/")}
-            className="flex items-center gap-3 hover:opacity-80 transition-opacity"
-          >
-            <div className="bg-primary p-2 rounded-lg">
-              <ChefHat className="w-6 h-6 text-primary-foreground" strokeWidth={1.5} />
-            </div>
-            <div className="text-left">
-              <h1 className="text-sidebar-foreground font-bold text-lg tracking-tight">Núcleo</h1>
-              <p className="text-xs text-muted-foreground">o centro da sua gestão</p>
-            </div>
-          </button>
-          <button
-            onClick={() => setSidebarOpen(false)}
-            className="lg:hidden p-2 hover:bg-muted rounded-lg transition-colors"
-          >
-            <X className="w-5 h-5" />
-          </button>
-        </div>
+        {/* Conteúdo do Sidebar */}
+        <div className={`${sidebarOpen ? 'block' : 'hidden lg:block'} w-64 lg:w-full`}>
+          <div className="p-6 border-b flex items-center justify-between">
+            <button 
+              onClick={() => navigate("/")}
+              className={`flex items-center gap-3 hover:opacity-80 transition-opacity ${sidebarOpen ? '' : 'lg:justify-center lg:w-full'}`}
+            >
+              <div className="bg-primary p-2 rounded-lg flex-shrink-0">
+                <ChefHat className="w-6 h-6 text-primary-foreground" strokeWidth={1.5} />
+              </div>
+              {sidebarOpen && (
+                <div className="text-left">
+                  <h1 className="text-sidebar-foreground font-bold text-lg tracking-tight">Núcleo</h1>
+                  <p className="text-xs text-muted-foreground">o centro da sua gestão</p>
+                </div>
+              )}
+            </button>
+          </div>
 
         <nav className="flex-1 p-4 space-y-1">
           {tabs.map((tab) => {
