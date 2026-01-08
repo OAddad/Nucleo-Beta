@@ -30,16 +30,19 @@ export default function Dashboard({ setIsAuthenticated }) {
   };
 
   const tabs = [
-    { path: "/", label: "Ingredientes", icon: Package },
+    { path: "/", label: "Relatórios", icon: BarChart3 },
+    { path: "/ingredientes", label: "Ingredientes", icon: Package },
     { path: "/compras", label: "Compras", icon: ShoppingCart },
     { path: "/produtos", label: "Produtos", icon: FileText },
-    { path: "/relatorios", label: "Relatórios", icon: BarChart3 },
   ];
 
   // Adicionar Moderação apenas para proprietários e administradores
   if (currentUser?.role === "proprietario" || currentUser?.role === "administrador") {
     tabs.push({ path: "/moderacao", label: "Moderação", icon: Shield });
   }
+  
+  // Adicionar Configuração (disponível para todos)
+  tabs.push({ path: "/configuracao", label: "Configuração", icon: Shield });
 
   const isActive = (path) => {
     if (path === "/") return location.pathname === "/";
