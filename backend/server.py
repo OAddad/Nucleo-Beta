@@ -809,7 +809,18 @@ async def update_product(product_id: str, product_data: ProductCreate, current_u
     for recipe_item in product_data.recipe:
         ingredient = await db.ingredients.find_one({"id": recipe_item.ingredient_id}, {"_id": 0})
         if ingredient:
-            cmv += ingredient.get("average_price", 0) * recipe_item.quantity
+            avg_price = ingredient.get("average_price", 0)
+            quantity = recipe_item.quantity
+            
+            # Se o ingrediente tem unit_weight (peso por unidade), multiplicar pela quantidade
+            # Ex: Hamburguer 130g com unit_weight=0.130, quantidade=1 -> usa 0.130kg
+            unit_weight = ingredient.get("unit_weight")
+            if unit_weight and unit_weight > 0:
+                # Preço por kg * peso unitário * quantidade de unidades
+                cmv += avg_price * unit_weight * quantity
+            else:
+                # Cálculo normal: preço médio * quantidade
+                cmv += avg_price * quantity
     
     profit_margin = None
     if product_data.sale_price and product_data.sale_price > 0:
