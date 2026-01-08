@@ -44,6 +44,29 @@ const getAuthHeader = () => ({
   headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
 });
 
+// Componente de imagem do produto com gerenciamento de erro via estado React
+function ProductThumbnail({ photoUrl, name }) {
+  const [imageError, setImageError] = useState(false);
+
+  if (!photoUrl || imageError) {
+    return (
+      <div className="flex flex-col items-center justify-center w-full h-full">
+        <ImageOff className="w-6 h-6 text-muted-foreground mb-1" strokeWidth={1.5} />
+        <span className="text-xs text-muted-foreground">{imageError ? "Erro" : "Sem foto"}</span>
+      </div>
+    );
+  }
+
+  return (
+    <img
+      src={`${BACKEND_URL}/api${photoUrl}`}
+      alt={name}
+      className="w-full h-full object-cover"
+      onError={() => setImageError(true)}
+    />
+  );
+}
+
 export default function Products() {
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
