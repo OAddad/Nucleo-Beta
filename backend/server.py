@@ -294,14 +294,7 @@ async def create_purchase_batch(batch_data: PurchaseBatchCreate, current_user: U
         # If ingredient has units_per_package (for 'un'), divide by it to get unit price
         if ingredient.get("units_per_package") and ingredient["units_per_package"] > 0:
             avg_price = avg_price / ingredient["units_per_package"]
-        
-        if ingredient.get("slices_per_package") and ingredient["slices_per_package"] > 0:
-            avg_price = avg_price / ingredient["slices_per_package"]
-        
         # If ingredient has slices_per_package (for 'kg'), divide by it to get slice price
-        if ingredient.get("slices_per_package") and ingredient["slices_per_package"] > 0:
-            avg_price = avg_price / ingredient["slices_per_package"]
-        
         await db.ingredients.update_one(
             {"id": item.ingredient_id},
             {"$set": {"average_price": avg_price}}
@@ -364,9 +357,6 @@ async def update_purchase_batch(batch_id: str, batch_data: PurchaseBatchCreate, 
             
             if ingredient and ingredient.get("units_per_package") and ingredient["units_per_package"] > 0:
                 avg_price = avg_price / ingredient["units_per_package"]
-            
-            if ingredient and ingredient.get("slices_per_package") and ingredient["slices_per_package"] > 0:
-                avg_price = avg_price / ingredient["slices_per_package"]
         else:
             avg_price = 0
         
@@ -411,10 +401,6 @@ async def create_purchase(purchase_data: PurchaseCreate, current_user: User = De
     # If ingredient has units_per_package, divide by it to get unit price
     if ingredient.get("units_per_package") and ingredient["units_per_package"] > 0:
         avg_price = avg_price / ingredient["units_per_package"]
-    
-    if ingredient.get("slices_per_package") and ingredient["slices_per_package"] > 0:
-        avg_price = avg_price / ingredient["slices_per_package"]
-    
     await db.ingredients.update_one(
         {"id": purchase_data.ingredient_id},
         {"$set": {"average_price": avg_price}}
@@ -478,9 +464,6 @@ async def delete_purchase(purchase_id: str, current_user: User = Depends(get_cur
         # If ingredient has units_per_package, divide by it
         if ingredient and ingredient.get("units_per_package") and ingredient["units_per_package"] > 0:
             avg_price = avg_price / ingredient["units_per_package"]
-        
-        if ingredient and ingredient.get("slices_per_package") and ingredient["slices_per_package"] > 0:
-            avg_price = avg_price / ingredient["slices_per_package"]
     else:
         avg_price = 0
     
@@ -514,9 +497,6 @@ async def delete_purchase_batch(batch_id: str, current_user: User = Depends(get_
             # If ingredient has units_per_package, divide by it
             if ingredient and ingredient.get("units_per_package") and ingredient["units_per_package"] > 0:
                 avg_price = avg_price / ingredient["units_per_package"]
-            
-            if ingredient and ingredient.get("slices_per_package") and ingredient["slices_per_package"] > 0:
-                avg_price = avg_price / ingredient["slices_per_package"]
         else:
             avg_price = 0
         
