@@ -345,12 +345,12 @@ export default function Moderation() {
   const isProprietario = currentUser?.role === "proprietario";
 
   return (
-    <div className="p-8" data-testid="moderation-page">
-      <div className="max-w-7xl mx-auto">
-        <div className="flex justify-between items-center mb-8">
+    <div className="p-4 md:p-6 lg:p-8 h-full overflow-auto" data-testid="moderation-page">
+      <div className="max-w-full">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">Moderação</h1>
-            <p className="text-muted-foreground mt-1">
+            <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Auditoria</h1>
+            <p className="text-muted-foreground mt-1 text-sm">
               Gerencie usuários e visualize logs de auditoria
             </p>
           </div>
@@ -358,7 +358,7 @@ export default function Moderation() {
           <Button
             onClick={() => setOpenPassword(true)}
             variant="outline"
-            className="shadow-sm"
+            className="shadow-sm w-full sm:w-auto"
           >
             <Shield className="w-5 h-5 mr-2" strokeWidth={1.5} />
             Alterar Senha
@@ -366,25 +366,25 @@ export default function Moderation() {
         </div>
 
         <Tabs defaultValue="audit" className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
+          <TabsList className="grid w-full grid-cols-2 mb-4">
             <TabsTrigger value="audit">Auditoria</TabsTrigger>
             <TabsTrigger value="users" disabled={!isProprietario}>
               Usuários {!isProprietario && "(Apenas Proprietário)"}
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="audit" className="mt-6">
+          <TabsContent value="audit" className="mt-4">
             {/* Filtros */}
             {auditLogs.length > 0 && (
-              <div className="bg-card rounded-xl border shadow-sm p-4 mb-4">
-                <div className="flex flex-col sm:flex-row gap-4">
+              <div className="bg-card rounded-xl border shadow-sm p-3 md:p-4 mb-4">
+                <div className="flex flex-col sm:flex-row gap-3 flex-wrap">
                   {/* Ordenação */}
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 min-w-0">
                     <Label htmlFor="sort-order" className="text-sm font-medium whitespace-nowrap">
                       Ordenar:
                     </Label>
                     <Select value={sortOrder} onValueChange={setSortOrder}>
-                      <SelectTrigger id="sort-order" className="w-40">
+                      <SelectTrigger id="sort-order" className="w-32 md:w-40">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -395,12 +395,12 @@ export default function Moderation() {
                   </div>
 
                   {/* Filtro por Usuário */}
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 min-w-0">
                     <Label htmlFor="filter-user" className="text-sm font-medium whitespace-nowrap">
                       Usuário:
                     </Label>
                     <Select value={filterUser} onValueChange={setFilterUser}>
-                      <SelectTrigger id="filter-user" className="w-40">
+                      <SelectTrigger id="filter-user" className="w-32 md:w-40">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -415,12 +415,12 @@ export default function Moderation() {
                   </div>
 
                   {/* Filtro por Prioridade */}
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 min-w-0">
                     <Label htmlFor="filter-priority" className="text-sm font-medium whitespace-nowrap">
                       Prioridade:
                     </Label>
                     <Select value={filterPriority} onValueChange={setFilterPriority}>
-                      <SelectTrigger id="filter-priority" className="w-40">
+                      <SelectTrigger id="filter-priority" className="w-32 md:w-40">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -436,16 +436,16 @@ export default function Moderation() {
             )}
 
             <div className="bg-card rounded-xl border shadow-sm overflow-hidden">
-              <div className="overflow-x-auto">
+              <div className="overflow-x-auto max-w-full">
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Data/Hora</TableHead>
-                      <TableHead>Ação</TableHead>
-                      <TableHead>Tipo</TableHead>
-                      <TableHead>Recurso</TableHead>
-                      <TableHead>Usuário</TableHead>
-                      <TableHead>Prioridade</TableHead>
+                      <TableHead className="whitespace-nowrap min-w-[140px]">Data/Hora</TableHead>
+                      <TableHead className="whitespace-nowrap min-w-[80px]">Ação</TableHead>
+                      <TableHead className="whitespace-nowrap min-w-[100px]">Tipo</TableHead>
+                      <TableHead className="whitespace-nowrap min-w-[120px]">Recurso</TableHead>
+                      <TableHead className="whitespace-nowrap min-w-[100px]">Usuário</TableHead>
+                      <TableHead className="whitespace-nowrap min-w-[80px]">Prioridade</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -458,15 +458,15 @@ export default function Moderation() {
                     ) : (
                       getFilteredAndSortedLogs().map((log) => (
                         <TableRow key={log.id}>
-                          <TableCell className="font-mono text-sm">
+                          <TableCell className="font-mono text-xs md:text-sm whitespace-nowrap">
                             {formatDate(log.timestamp)}
                           </TableCell>
-                          <TableCell>
+                          <TableCell className="text-sm">
                             <span className="font-medium">{getActionLabel(log.action)}</span>
                           </TableCell>
-                          <TableCell>{getResourceTypeLabel(log.resource_type)}</TableCell>
-                          <TableCell className="font-medium">{log.resource_name}</TableCell>
-                          <TableCell>{log.username}</TableCell>
+                          <TableCell className="text-sm">{getResourceTypeLabel(log.resource_type)}</TableCell>
+                          <TableCell className="font-medium text-sm truncate max-w-[150px]">{log.resource_name}</TableCell>
+                          <TableCell className="text-sm">{log.username}</TableCell>
                           <TableCell>{getPriorityBadge(log.priority)}</TableCell>
                         </TableRow>
                       ))
@@ -477,13 +477,13 @@ export default function Moderation() {
             </div>
           </TabsContent>
 
-          <TabsContent value="users" className="mt-6">
-            <div className="bg-card rounded-xl border shadow-sm p-6">
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-xl font-semibold">Gerenciar Usuários</h2>
+          <TabsContent value="users" className="mt-4">
+            <div className="bg-card rounded-xl border shadow-sm p-4 md:p-6">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+                <h2 className="text-lg md:text-xl font-semibold">Gerenciar Usuários</h2>
                 <Dialog open={open} onOpenChange={setOpen}>
                   <DialogTrigger asChild>
-                    <Button className="shadow-sm">
+                    <Button className="shadow-sm w-full sm:w-auto">
                       <Plus className="w-5 h-5 mr-2" strokeWidth={1.5} />
                       Novo Usuário
                     </Button>
