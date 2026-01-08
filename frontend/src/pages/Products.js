@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "sonner";
-import { Plus, Trash2, Edit, DollarSign } from "lucide-react";
+import { Plus, Trash2, Edit, ChevronDown, ChevronUp } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
@@ -20,6 +20,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../components/ui/select";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "../components/ui/tabs";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -34,10 +40,13 @@ export default function Products() {
   const [open, setOpen] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [currentProductId, setCurrentProductId] = useState(null);
+  const [expandedProducts, setExpandedProducts] = useState(new Set());
+  
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [salePrice, setSalePrice] = useState("");
-  const [recipe, setRecipe] = useState([{ ingredient_id: "", quantity: "" }]);
+  const [recipeIngredients, setRecipeIngredients] = useState([{ ingredient_id: "", quantity: "" }]);
+  const [recipePackaging, setRecipePackaging] = useState([{ ingredient_id: "", quantity: "" }]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -67,7 +76,8 @@ export default function Products() {
     setName("");
     setDescription("");
     setSalePrice("");
-    setRecipe([{ ingredient_id: "", quantity: "" }]);
+    setRecipeIngredients([{ ingredient_id: "", quantity: "" }]);
+    setRecipePackaging([{ ingredient_id: "", quantity: "" }]);
     setEditMode(false);
     setCurrentProductId(null);
   };
@@ -78,12 +88,15 @@ export default function Products() {
     setName(product.name);
     setDescription(product.description || "");
     setSalePrice(product.sale_price ? product.sale_price.toString() : "");
-    setRecipe(
+    
+    // Separar ingredientes e embalagens (por enquanto, todos são ingredientes)
+    setRecipeIngredients(
       product.recipe.map((r) => ({
         ingredient_id: r.ingredient_id,
         quantity: r.quantity.toString(),
       }))
     );
+    setRecipePackaging([{ ingredient_id: "", quantity: "" }]);
     setOpen(true);
   };
 
@@ -92,18 +105,20 @@ export default function Products() {
     setLoading(true);
 
     try {
-      const formattedRecipe = recipe
-        .filter((r) => r.ingredient_id && r.quantity)
-        .map((r) => ({
-          ingredient_id: r.ingredient_id,
-          quantity: parseFloat(r.quantity),
-        }));
+      // Combinar ingredientes e embalagens
+      const allRecipe = [
+        ...recipeIngredients.filter((r) => r.ingredient_id && r.quantity),
+        ...recipePackaging.filter((r) => r.ingredient_id && r.quantity),
+      ].map((r) => ({
+        ingredient_id: r.ingredient_id,
+        quantity: parseFloat(r.quantity),
+      }));
 
       const productData = {
         name,
         description: description || null,
         sale_price: salePrice ? parseFloat(salePrice) : null,
-        recipe: formattedRecipe,
+        recipe: allRecipe,
       };
 
       if (editMode) {
@@ -140,23 +155,32 @@ export default function Products() {
     }
   };
 
-  const addRecipeItem = () => {
-    setRecipe([...recipe, { ingredient_id: "", quantity: "" }]);
+  const addRecipeItem = (type) => {
+    if (type === "ingredient") {
+      setRecipeIngredients([...recipeIngredients, { ingredient_id: "", quantity: "" }]);
+    } else {
+      setRecipePackaging([...recipePackaging, { ingredient_id: "", quantity: "" }]);
+    }
   };
 
-  const removeRecipeItem = (index) => {
-    setRecipe(recipe.filter((_, i) => i !== index));
+  const removeRecipeItem = (index, type) => {
+    if (type === "ingredient") {
+      setRecipeIngredients(recipeIngredients.filter((_, i) => i !== index));
+    } else {
+      setRecipePackaging(recipePackaging.filter((_, i) => i !== index));
+    }
   };
 
-  const updateRecipeItem = (index, field, value) => {
-    const updated = [...recipe];
-    updated[index][field] = value;
-    setRecipe(updated);
-  };
-
-  const getIngredientName = (ingredientId) => {
-    const ing = ingredients.find((i) => i.id === ingredientId);
-    return ing ? `${ing.name} (${ing.unit})` : "-";
+  const updateRecipeItem = (index, field, value, type) => {
+    if (type === "ingredient") {
+      const updated = [...recipeIngredients];
+      updated[index][field] = value;
+      setRecipeIngredients(updated);
+    } else {
+      const updated = [...recipePackaging];
+      updated[index][field] = value;
+      setRecipePackaging(updated);
+    }
   };
 
   const getIngredientDetails = (ingredientId) => {
@@ -164,15 +188,34 @@ export default function Products() {
     return ing || { name: "-", unit: "", average_price: 0 };
   };
 
+  const getIngredientUnit = (ingredient) => {
+    if (ingredient.units_per_package && ingredient.units_per_package > 0) {
+      return "un";
+    } else if (ingredient.slices_per_package && ingredient.slices_per_package > 0) {
+      return "fatias";
+    }
+    return ingredient.unit;
+  };
+
+  const toggleProduct = (productId) => {
+    const newExpanded = new Set(expandedProducts);
+    if (newExpanded.has(productId)) {
+      newExpanded.delete(productId);
+    } else {
+      newExpanded.add(productId);
+    }
+    setExpandedProducts(newExpanded);
+  };
+
   return (
     <div className="p-8" data-testid="products-page">
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-slate-900 tracking-tight">
+            <h1 className="text-3xl font-bold tracking-tight">
               Produtos
             </h1>
-            <p className="text-slate-500 mt-1">
+            <p className="text-muted-foreground mt-1">
               Cadastre produtos com suas fichas técnicas e calcule o CMV
             </p>
           </div>
@@ -187,21 +230,21 @@ export default function Products() {
             <DialogTrigger asChild>
               <Button
                 data-testid="add-product-button"
-                className="bg-rose-700 hover:bg-rose-800 shadow-sm transition-all active:scale-95"
+                className="shadow-sm transition-all active:scale-95"
               >
                 <Plus className="w-5 h-5 mr-2" strokeWidth={1.5} />
                 Novo Produto
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
+            <DialogContent className="sm:max-w-3xl max-h-[90vh] overflow-y-auto">
               <DialogHeader>
-                <DialogTitle className="text-slate-900">
+                <DialogTitle>
                   {editMode ? "Editar Produto" : "Novo Produto"}
                 </DialogTitle>
               </DialogHeader>
               <form onSubmit={handleSubmit} className="space-y-4 mt-4">
                 <div>
-                  <Label htmlFor="name" className="text-slate-700">
+                  <Label htmlFor="name">
                     Nome do Produto
                   </Label>
                   <Input
@@ -211,12 +254,12 @@ export default function Products() {
                     onChange={(e) => setName(e.target.value)}
                     placeholder="Ex: X-Burger Clássico"
                     required
-                    className="mt-1 h-11 bg-white border-slate-200 focus:ring-2 focus:ring-rose-100 focus:border-rose-500"
+                    className="mt-1 h-11"
                   />
                 </div>
 
                 <div>
-                  <Label htmlFor="description" className="text-slate-700">
+                  <Label htmlFor="description">
                     Descrição (opcional)
                   </Label>
                   <Textarea
@@ -225,13 +268,13 @@ export default function Products() {
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     placeholder="Breve descrição do produto"
-                    className="mt-1 bg-white border-slate-200 focus:ring-2 focus:ring-rose-100 focus:border-rose-500"
+                    className="mt-1"
                     rows={2}
                   />
                 </div>
 
                 <div>
-                  <Label htmlFor="salePrice" className="text-slate-700">
+                  <Label htmlFor="salePrice">
                     Preço de Venda (R$) - opcional
                   </Label>
                   <Input
@@ -242,84 +285,160 @@ export default function Products() {
                     value={salePrice}
                     onChange={(e) => setSalePrice(e.target.value)}
                     placeholder="0.00"
-                    className="mt-1 h-11 bg-white border-slate-200 focus:ring-2 focus:ring-rose-100 focus:border-rose-500"
+                    className="mt-1 h-11"
                   />
                 </div>
 
-                <div>
-                  <Label className="text-slate-700 mb-2 block">
-                    Ficha Técnica (Receita)
-                  </Label>
-                  <div className="space-y-3">
-                    {recipe.map((item, index) => (
-                      <div key={index} className="flex gap-2">
-                        <div className="flex-1">
-                          <Select
-                            value={item.ingredient_id}
-                            onValueChange={(value) =>
-                              updateRecipeItem(index, "ingredient_id", value)
-                            }
-                          >
-                            <SelectTrigger
-                              data-testid={`recipe-ingredient-${index}`}
-                              className="h-11 bg-white border-slate-200 focus:ring-2 focus:ring-rose-100 focus:border-rose-500"
+                <Tabs defaultValue="ingredients" className="w-full">
+                  <TabsList className="grid w-full grid-cols-2">
+                    <TabsTrigger value="ingredients">Ingredientes</TabsTrigger>
+                    <TabsTrigger value="packaging">Embalagens</TabsTrigger>
+                  </TabsList>
+                  
+                  <TabsContent value="ingredients" className="space-y-3 mt-4">
+                    <Label>Ingredientes da Receita</Label>
+                    {recipeIngredients.map((item, index) => {
+                      const selectedIng = getIngredientDetails(item.ingredient_id);
+                      const displayUnit = getIngredientUnit(selectedIng);
+                      
+                      return (
+                        <div key={index} className="flex gap-2">
+                          <div className="flex-1">
+                            <Select
+                              value={item.ingredient_id}
+                              onValueChange={(value) =>
+                                updateRecipeItem(index, "ingredient_id", value, "ingredient")
+                              }
                             >
-                              <SelectValue placeholder="Ingrediente" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {ingredients.map((ing) => (
-                                <SelectItem key={ing.id} value={ing.id}>
-                                  {ing.name} ({ing.unit})
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
+                              <SelectTrigger
+                                data-testid={`recipe-ingredient-${index}`}
+                                className="h-11"
+                              >
+                                <SelectValue placeholder="Ingrediente" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {ingredients.map((ing) => (
+                                  <SelectItem key={ing.id} value={ing.id}>
+                                    {ing.name} ({getIngredientUnit(ing)})
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div className="w-40">
+                            <Input
+                              data-testid={`recipe-quantity-${index}`}
+                              type="number"
+                              step="0.01"
+                              value={item.quantity}
+                              onChange={(e) =>
+                                updateRecipeItem(index, "quantity", e.target.value, "ingredient")
+                              }
+                              placeholder={`Qtd (${displayUnit})`}
+                              className="h-11"
+                            />
+                          </div>
+                          {recipeIngredients.length > 1 && (
+                            <Button
+                              type="button"
+                              data-testid={`remove-recipe-${index}`}
+                              onClick={() => removeRecipeItem(index, "ingredient")}
+                              variant="outline"
+                              size="icon"
+                              className="h-11 w-11 text-destructive hover:text-destructive hover:bg-destructive/10"
+                            >
+                              <Trash2 className="w-4 h-4" strokeWidth={1.5} />
+                            </Button>
+                          )}
                         </div>
-                        <div className="w-32">
-                          <Input
-                            data-testid={`recipe-quantity-${index}`}
-                            type="number"
-                            step="0.01"
-                            value={item.quantity}
-                            onChange={(e) =>
-                              updateRecipeItem(index, "quantity", e.target.value)
-                            }
-                            placeholder="Qtd"
-                            className="h-11 bg-white border-slate-200 focus:ring-2 focus:ring-rose-100 focus:border-rose-500"
-                          />
+                      );
+                    })}
+                    <Button
+                      type="button"
+                      data-testid="add-ingredient-item-button"
+                      onClick={() => addRecipeItem("ingredient")}
+                      variant="outline"
+                      className="w-full"
+                    >
+                      <Plus className="w-4 h-4 mr-2" strokeWidth={1.5} />
+                      Adicionar Ingrediente
+                    </Button>
+                  </TabsContent>
+
+                  <TabsContent value="packaging" className="space-y-3 mt-4">
+                    <Label>Embalagens</Label>
+                    {recipePackaging.map((item, index) => {
+                      const selectedIng = getIngredientDetails(item.ingredient_id);
+                      const displayUnit = getIngredientUnit(selectedIng);
+                      
+                      return (
+                        <div key={index} className="flex gap-2">
+                          <div className="flex-1">
+                            <Select
+                              value={item.ingredient_id}
+                              onValueChange={(value) =>
+                                updateRecipeItem(index, "ingredient_id", value, "packaging")
+                              }
+                            >
+                              <SelectTrigger
+                                data-testid={`recipe-packaging-${index}`}
+                                className="h-11"
+                              >
+                                <SelectValue placeholder="Embalagem" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {ingredients.map((ing) => (
+                                  <SelectItem key={ing.id} value={ing.id}>
+                                    {ing.name} ({getIngredientUnit(ing)})
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div className="w-40">
+                            <Input
+                              data-testid={`recipe-packaging-quantity-${index}`}
+                              type="number"
+                              step="0.01"
+                              value={item.quantity}
+                              onChange={(e) =>
+                                updateRecipeItem(index, "quantity", e.target.value, "packaging")
+                              }
+                              placeholder={`Qtd (${displayUnit})`}
+                              className="h-11"
+                            />
+                          </div>
+                          {recipePackaging.length > 1 && (
+                            <Button
+                              type="button"
+                              onClick={() => removeRecipeItem(index, "packaging")}
+                              variant="outline"
+                              size="icon"
+                              className="h-11 w-11 text-destructive hover:text-destructive hover:bg-destructive/10"
+                            >
+                              <Trash2 className="w-4 h-4" strokeWidth={1.5} />
+                            </Button>
+                          )}
                         </div>
-                        {recipe.length > 1 && (
-                          <Button
-                            type="button"
-                            data-testid={`remove-recipe-${index}`}
-                            onClick={() => removeRecipeItem(index)}
-                            variant="outline"
-                            size="icon"
-                            className="h-11 w-11 text-red-600 hover:text-red-700 hover:bg-red-50"
-                          >
-                            <Trash2 className="w-4 h-4" strokeWidth={1.5} />
-                          </Button>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                  <Button
-                    type="button"
-                    data-testid="add-recipe-item-button"
-                    onClick={addRecipeItem}
-                    variant="outline"
-                    className="mt-3 w-full border-slate-200 hover:bg-slate-50"
-                  >
-                    <Plus className="w-4 h-4 mr-2" strokeWidth={1.5} />
-                    Adicionar Ingrediente
-                  </Button>
-                </div>
+                      );
+                    })}
+                    <Button
+                      type="button"
+                      onClick={() => addRecipeItem("packaging")}
+                      variant="outline"
+                      className="w-full"
+                    >
+                      <Plus className="w-4 h-4 mr-2" strokeWidth={1.5} />
+                      Adicionar Embalagem
+                    </Button>
+                  </TabsContent>
+                </Tabs>
 
                 <Button
                   type="submit"
                   data-testid="save-product-button"
                   disabled={loading}
-                  className="w-full bg-rose-700 hover:bg-rose-800 h-11 font-medium shadow-sm transition-all active:scale-95"
+                  className="w-full h-11 font-medium shadow-sm transition-all active:scale-95"
                 >
                   {loading ? "Salvando..." : editMode ? "Atualizar" : "Criar Produto"}
                 </Button>
@@ -328,133 +447,140 @@ export default function Products() {
           </Dialog>
         </div>
 
-        <div className="grid gap-6">
+        <div className="space-y-3">
           {products.length === 0 ? (
-            <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-12 text-center">
-              <p className="text-slate-500">
+            <div className="bg-card rounded-xl border shadow-sm p-12 text-center">
+              <p className="text-muted-foreground">
                 Nenhum produto cadastrado. Clique em "Novo Produto" para começar.
               </p>
             </div>
           ) : (
-            products.map((product) => (
-              <div
-                key={product.id}
-                data-testid={`product-card-${product.id}`}
-                className="bg-white rounded-xl border border-slate-200 shadow-sm p-6 hover:shadow-md transition-shadow duration-200"
-              >
-                <div className="flex justify-between items-start mb-4">
-                  <div className="flex-1">
-                    <h3 className="text-xl font-bold text-slate-900">
-                      {product.name}
-                    </h3>
-                    {product.description && (
-                      <p className="text-slate-500 text-sm mt-1">
-                        {product.description}
-                      </p>
-                    )}
+            products.map((product) => {
+              const isExpanded = expandedProducts.has(product.id);
+              
+              return (
+                <div
+                  key={product.id}
+                  data-testid={`product-card-${product.id}`}
+                  className="bg-card rounded-xl border shadow-sm overflow-hidden hover:shadow-md transition-shadow"
+                >
+                  {/* Linha Principal - Sempre Visível */}
+                  <div 
+                    className="flex items-center px-6 py-4 cursor-pointer hover:bg-muted/30 transition-colors"
+                    onClick={() => toggleProduct(product.id)}
+                  >
+                    <div className="flex-1 grid grid-cols-12 gap-4 items-center">
+                      <div className="col-span-5 font-bold text-lg">
+                        {product.name}
+                      </div>
+                      <div className="col-span-2 text-center">
+                        <div className="text-xs text-muted-foreground uppercase tracking-wider mb-1">CMV</div>
+                        <div className="text-lg font-bold font-mono text-primary">
+                          R$ {product.cmv.toFixed(2)}
+                        </div>
+                      </div>
+                      <div className="col-span-2 text-center">
+                        <div className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Preço Venda</div>
+                        <div className="text-lg font-bold font-mono">
+                          {product.sale_price ? `R$ ${product.sale_price.toFixed(2)}` : "-"}
+                        </div>
+                      </div>
+                      <div className="col-span-2 text-center">
+                        <div className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Margem</div>
+                        <div className="text-lg font-bold font-mono text-green-600">
+                          {product.profit_margin ? `${product.profit_margin.toFixed(1)}%` : "-"}
+                        </div>
+                      </div>
+                      <div className="col-span-1 flex justify-end">
+                        {isExpanded ? (
+                          <ChevronUp className="w-5 h-5 text-muted-foreground" strokeWidth={1.5} />
+                        ) : (
+                          <ChevronDown className="w-5 h-5 text-muted-foreground" strokeWidth={1.5} />
+                        )}
+                      </div>
+                    </div>
                   </div>
-                  <div className="flex gap-2">
-                    <Button
-                      data-testid={`edit-product-${product.id}`}
-                      onClick={() => handleEdit(product)}
-                      variant="outline"
-                      size="sm"
-                      className="border-slate-200 hover:bg-slate-50"
-                    >
-                      <Edit className="w-4 h-4" strokeWidth={1.5} />
-                    </Button>
-                    <Button
-                      data-testid={`delete-product-${product.id}`}
-                      onClick={() => handleDelete(product.id)}
-                      variant="outline"
-                      size="sm"
-                      className="text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200"
-                    >
-                      <Trash2 className="w-4 h-4" strokeWidth={1.5} />
-                    </Button>
-                  </div>
-                </div>
 
-                <div className="border-t border-slate-200 pt-4 mb-4">
-                  <h4 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">
-                    Ficha Técnica
-                  </h4>
-                  <div className="space-y-2">
-                    {product.recipe.map((item, idx) => {
-                      const ingredient = getIngredientDetails(item.ingredient_id);
-                      const itemCost = ingredient.average_price * item.quantity;
-                      
-                      // Determinar unidade de exibição baseado no fracionamento
-                      let displayUnit = ingredient.unit;
-                      let displayQuantity = item.quantity;
-                      
-                      if (ingredient.units_per_package && ingredient.units_per_package > 0) {
-                        // Para unidades fracionadas (sachês, etc)
-                        displayUnit = "un";
-                        // Quantidade já é em unidades
-                      } else if (ingredient.slices_per_package && ingredient.slices_per_package > 0) {
-                        // Para kg fracionado em fatias
-                        displayUnit = "fatias";
-                        // Quantidade já é em fatias
-                      }
-                      
-                      return (
-                        <div
-                          key={idx}
-                          className="flex justify-between items-center text-sm py-2 border-b border-slate-100 last:border-0"
+                  {/* Detalhes Expandidos */}
+                  {isExpanded && (
+                    <div className="border-t bg-muted/50 px-6 py-4">
+                      {product.description && (
+                        <p className="text-muted-foreground text-sm mb-4">{product.description}</p>
+                      )}
+
+                      <div className="grid grid-cols-2 gap-6">
+                        {/* Ingredientes */}
+                        <div>
+                          <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
+                            Ingredientes
+                          </h4>
+                          <div className="space-y-2">
+                            {product.recipe.map((item, idx) => {
+                              const ingredient = getIngredientDetails(item.ingredient_id);
+                              const displayUnit = getIngredientUnit(ingredient);
+                              const itemCost = ingredient.average_price * item.quantity;
+                              
+                              return (
+                                <div
+                                  key={idx}
+                                  className="flex justify-between items-center text-sm py-2 border-b border-border/50 last:border-0"
+                                >
+                                  <span className="font-medium flex-1">
+                                    {ingredient.name}
+                                  </span>
+                                  <span className="font-mono mx-4">
+                                    {displayUnit === "fatias" || displayUnit === "un" 
+                                      ? Math.round(item.quantity) 
+                                      : item.quantity.toFixed(2)
+                                    } {displayUnit}
+                                  </span>
+                                  <span className="font-mono font-medium">
+                                    R$ {itemCost.toFixed(2)}
+                                  </span>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+
+                        {/* Embalagens (por enquanto vazio, mas estrutura pronta) */}
+                        <div>
+                          <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
+                            Embalagens
+                          </h4>
+                          <p className="text-sm text-muted-foreground">
+                            Adicione embalagens ao cadastrar o produto
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="flex gap-2 mt-6 pt-4 border-t">
+                        <Button
+                          data-testid={`edit-product-${product.id}`}
+                          onClick={() => handleEdit(product)}
+                          variant="outline"
+                          size="sm"
+                          className="flex-1"
                         >
-                          <span className="text-slate-700 font-medium flex-1">
-                            {ingredient.name} ({displayUnit})
-                          </span>
-                          <span className="font-mono text-slate-900 mx-4">
-                            {displayUnit === "fatias" || displayUnit === "un" 
-                              ? Math.round(displayQuantity) 
-                              : displayQuantity.toFixed(2)
-                            } {displayUnit}
-                          </span>
-                          <span className="font-mono text-slate-900 font-medium">
-                            R$ {itemCost.toFixed(2)}
-                          </span>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                <div className="flex gap-4 pt-4 border-t border-slate-200">
-                  <div className="flex-1 bg-rose-50 rounded-lg p-4">
-                    <div className="text-xs font-semibold text-rose-700 uppercase tracking-wider mb-1">
-                      CMV
-                    </div>
-                    <div className="text-2xl font-bold text-rose-900 font-mono">
-                      R$ {product.cmv.toFixed(2)}
-                    </div>
-                  </div>
-
-                  {product.sale_price && (
-                    <>
-                      <div className="flex-1 bg-slate-50 rounded-lg p-4">
-                        <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">
-                          Preço de Venda
-                        </div>
-                        <div className="text-2xl font-bold text-slate-900 font-mono">
-                          R$ {product.sale_price.toFixed(2)}
-                        </div>
+                          <Edit className="w-4 h-4 mr-2" strokeWidth={1.5} />
+                          Editar
+                        </Button>
+                        <Button
+                          data-testid={`delete-product-${product.id}`}
+                          onClick={() => handleDelete(product.id)}
+                          variant="outline"
+                          size="sm"
+                          className="flex-1 text-destructive hover:text-destructive hover:bg-destructive/10"
+                        >
+                          <Trash2 className="w-4 h-4 mr-2" strokeWidth={1.5} />
+                          Excluir
+                        </Button>
                       </div>
-
-                      <div className="flex-1 bg-green-50 rounded-lg p-4">
-                        <div className="text-xs font-semibold text-green-700 uppercase tracking-wider mb-1">
-                          Margem
-                        </div>
-                        <div className="text-2xl font-bold text-green-900 font-mono">
-                          {product.profit_margin?.toFixed(1) || "0.0"}%
-                        </div>
-                      </div>
-                    </>
+                    </div>
                   )}
                 </div>
-              </div>
-            ))
+              );
+            })
           )}
         </div>
       </div>
