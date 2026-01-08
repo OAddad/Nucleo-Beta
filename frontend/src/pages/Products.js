@@ -119,14 +119,23 @@ export default function Products() {
     setLoading(true);
 
     try {
-      // Combinar ingredientes e embalagens
+      // Combinar ingredientes e embalagens com item_type
       const allRecipe = [
-        ...recipeIngredients.filter((r) => r.ingredient_id && r.quantity),
-        ...recipePackaging.filter((r) => r.ingredient_id && r.quantity),
-      ].map((r) => ({
-        ingredient_id: r.ingredient_id,
-        quantity: parseFloat(r.quantity),
-      }));
+        ...recipeIngredients
+          .filter((r) => r.ingredient_id && r.quantity)
+          .map((r) => ({
+            ingredient_id: r.ingredient_id,
+            quantity: parseFloat(r.quantity),
+            item_type: "ingredient",
+          })),
+        ...recipePackaging
+          .filter((r) => r.ingredient_id && r.quantity)
+          .map((r) => ({
+            ingredient_id: r.ingredient_id,
+            quantity: parseFloat(r.quantity),
+            item_type: "packaging",
+          })),
+      ];
 
       const productData = {
         name,
