@@ -314,6 +314,8 @@ export default function Pedidos() {
             const status = statusConfig[getNormalizedStatus(pedido.status)] || statusConfig.producao;
             const StatusIcon = status.icon;
             const pagamento = formasPagamento[pedido.formaPagamento];
+            const modulo = modulosConfig[pedido.modulo];
+            const ModuloIcon = modulo?.icon || Package;
             
             return (
               <div 
@@ -323,7 +325,15 @@ export default function Pedidos() {
               >
                 {/* Header com código e status */}
                 <div className="p-4 border-b flex items-center justify-between">
-                  <span className="font-mono font-bold text-lg">{pedido.codigo || "#-----"}</span>
+                  <div className="flex items-center gap-2">
+                    <span className="font-mono font-bold text-lg">{pedido.codigo || "#-----"}</span>
+                    {modulo && (
+                      <span className={`px-2 py-0.5 rounded text-xs font-medium flex items-center gap-1 ${modulo.color}`}>
+                        <ModuloIcon className="w-3 h-3" />
+                        {modulo.label}
+                      </span>
+                    )}
+                  </div>
                   <span className={`px-2 py-1 rounded-full text-xs font-medium flex items-center gap-1 ${status.color}`}>
                     <StatusIcon className="w-3 h-3" />
                     {status.label}
