@@ -36,11 +36,13 @@ const getAuthHeader = () => ({
 
 export default function Products() {
   const [products, setProducts] = useState([]);
+  const [filteredProducts, setFilteredProducts] = useState([]);
   const [ingredients, setIngredients] = useState([]);
   const [open, setOpen] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [currentProductId, setCurrentProductId] = useState(null);
   const [expandedProducts, setExpandedProducts] = useState(new Set());
+  const [sortBy, setSortBy] = useState("alfabetica");
   
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
