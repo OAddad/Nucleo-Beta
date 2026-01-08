@@ -307,10 +307,13 @@ export default function Products() {
         name,
         description: description || null,
         category: category || null,
+        product_type: productType || "produto",
         sale_price: salePrice ? parseFloat(salePrice) : null,
         photo_url: uploadedPhotoUrl || null,
         recipe: allRecipe,
         is_insumo: isInsumo,
+        is_divisible: isDivisible,
+        order_steps: orderSteps,
       };
 
       if (editMode) {
@@ -328,7 +331,7 @@ export default function Products() {
       resetForm();
       setOpen(false);
       fetchProducts();
-      fetchCategories(); // Atualizar lista de categorias
+      fetchCategories();
     } catch (error) {
       toast.error("Erro ao salvar produto");
     } finally {
