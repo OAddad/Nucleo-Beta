@@ -182,13 +182,14 @@ class ProductCreate(BaseModel):
     name: str
     description: Optional[str] = None
     category: Optional[str] = None
-    product_type: Optional[str] = "produto"  # "produto" ou "combo"
+    product_type: Optional[str] = "produto"  # "produto", "combo" ou "receita"
     sale_price: Optional[float] = None
     photo_url: Optional[str] = None
     recipe: List[RecipeIngredient]
     is_insumo: Optional[bool] = False
     is_divisible: Optional[bool] = False
     order_steps: Optional[List[OrderStep]] = []
+    linked_ingredient_id: Optional[str] = None  # ID do ingrediente linkado (para receitas)
 
 class Product(BaseModel):
     model_config = ConfigDict(extra="ignore")
@@ -197,7 +198,7 @@ class Product(BaseModel):
     name: str
     description: Optional[str] = None
     category: Optional[str] = None
-    product_type: str = "produto"  # "produto" ou "combo"
+    product_type: str = "produto"  # "produto", "combo" ou "receita"
     sale_price: Optional[float] = None
     photo_url: Optional[str] = None
     recipe: List[RecipeIngredient]
@@ -206,6 +207,7 @@ class Product(BaseModel):
     is_insumo: bool = False
     is_divisible: bool = False
     order_steps: List[OrderStep] = []
+    linked_ingredient_id: Optional[str] = None  # ID do ingrediente linkado (para receitas)
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class PriceHistory(BaseModel):
