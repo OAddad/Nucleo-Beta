@@ -53,6 +53,8 @@ export default function Products() {
   const [currentProductId, setCurrentProductId] = useState(null);
   const [expandedProducts, setExpandedProducts] = useState(new Set());
   const [sortBy, setSortBy] = useState("alfabetica");
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [productToDelete, setProductToDelete] = useState(null);
   
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
