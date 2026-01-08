@@ -488,6 +488,9 @@ async def create_purchase_batch(batch_data: PurchaseBatchCreate, current_user: U
             {"$set": {"average_price": avg_price}}
         )
     
+    # Registrar auditoria
+    await log_audit("CREATE", "purchase", f"Lote de {batch_data.supplier}", current_user, "baixa", {"items": len(purchases_created)})
+    
     return {"message": "Purchase batch created", "batch_id": batch_id, "items_created": len(purchases_created)}
 
 @api_router.put("/purchases/batch/{batch_id}", response_model=dict)
