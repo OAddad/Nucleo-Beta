@@ -883,6 +883,9 @@ async def delete_product(product_id: str, current_user: User = Depends(get_curre
     # Registrar auditoria
     await log_audit("DELETE", "product", product["name"], current_user, "alta")
     
+    # Sincronizar com Excel
+    await sync_all_to_excel()
+    
     return {"message": "Product deleted"}
 
 
