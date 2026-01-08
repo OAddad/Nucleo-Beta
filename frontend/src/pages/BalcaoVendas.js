@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "sonner";
-import { ShoppingCart, Plus, Minus, Trash2, CreditCard, Banknote, QrCode, X, ImageOff } from "lucide-react";
+import { ShoppingCart, Plus, Minus, Trash2, CreditCard, Banknote, QrCode, X, ImageOff, ShoppingBasket } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
+import { Textarea } from "../components/ui/textarea";
 import {
   Dialog,
   DialogContent,
@@ -20,12 +21,12 @@ const getAuthHeader = () => ({
 });
 
 // Componente de card do produto com gerenciamento de erro de imagem via estado React
-function ProductCard({ product, onAddToCart }) {
+function ProductCard({ product, onClick }) {
   const [imageError, setImageError] = useState(false);
 
   return (
     <button
-      onClick={() => onAddToCart(product)}
+      onClick={() => onClick(product)}
       className="bg-card rounded-xl border shadow-sm overflow-hidden hover:shadow-lg hover:border-primary/50 transition-all text-left group"
     >
       {/* Imagem do produto */}
@@ -54,6 +55,166 @@ function ProductCard({ product, onAddToCart }) {
         </p>
       </div>
     </button>
+  );
+}
+
+// Popup de Produto (estilo similar ao da imagem)
+function ProductPopup({ product, open, onClose, onAddToCart }) {
+  const [imageError, setImageError] = useState(false);
+  const [quantity, setQuantity] = useState(1);
+  const [observation, setObservation] = useState("");
+  const [customPrice, setCustomPrice] = useState(product?.sale_price || 0);
+  const [isEditingPrice, setIsEditingPrice] = useState(false);
+
+  // Reset quando abrir com novo produto
+  useEffect(() => {
+    if (open && product) {
+      setQuantity(1);
+      setObservation("");
+      setCustomPrice(product.sale_price || 0);
+      setIsEditingPrice(false);
+      setImageError(false);
+    }
+  }, [open, product]);
+
+  if (!product) return null;
+
+  const totalPrice = customPrice * quantity;
+
+  const handleAdd = () => {
+    onAddToCart({
+      ...product,
+      sale_price: customPrice,
+      quantity,
+      observation: observation.trim() || null
+    });
+    onClose();
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={onClose}>
+      <DialogContent className="sm:max-w-lg p-0 gap-0 overflow-hidden">
+        {/* Header com X */}
+        <div className="absolute top-4 right-4 z-10">
+          <button
+            onClick={onClose}
+            className="rounded-full p-2 bg-background/80 hover:bg-background border shadow-sm transition-colors"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        {/* Conteúdo */}
+        <div className="p-6">
+          {/* Foto e Info lado a lado */}
+          <div className="flex gap-6 mb-6">
+            {/* Foto Grande */}
+            <div className="w-44 h-44 rounded-xl bg-muted overflow-hidden flex-shrink-0 border shadow-sm">
+              {product.photo_url && !imageError ? (
+                <img
+                  src={`${BACKEND_URL}/api${product.photo_url}`}
+                  alt={product.name}
+                  className="w-full h-full object-cover"
+                  onError={() => setImageError(true)}
+                />
+              ) : (
+                <div className="w-full h-full flex flex-col items-center justify-center text-muted-foreground">
+                  <ImageOff className="w-12 h-12" />
+                  <span className="text-xs mt-2">Sem foto</span>
+                </div>
+              )}
+            </div>
+
+            {/* Info do Produto */}
+            <div className="flex-1">
+              <h2 className="text-2xl font-bold mb-1">{product.name}</h2>
+              {product.description && (
+                <p className="text-muted-foreground text-sm mb-4">{product.description}</p>
+              )}
+              
+              {/* Preço editável */}
+              <div className="flex items-center gap-2">
+                {isEditingPrice ? (
+                  <div className="flex items-center gap-2">
+                    <span className="text-primary text-xl">R$</span>
+                    <Input
+                      type="number"
+                      step="0.01"
+                      value={customPrice}
+                      onChange={(e) => setCustomPrice(parseFloat(e.target.value) || 0)}
+                      onBlur={() => setIsEditingPrice(false)}
+                      onKeyDown={(e) => e.key === 'Enter' && setIsEditingPrice(false)}
+                      autoFocus
+                      className="w-28 h-10 text-xl font-bold text-primary"
+                    />
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => setIsEditingPrice(true)}
+                    className="flex items-center gap-1 text-2xl font-bold text-primary hover:opacity-80 transition-opacity"
+                  >
+                    R$ {customPrice.toFixed(2)}
+                    <span className="text-xs text-muted-foreground ml-1">✏️</span>
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Campo de Observação */}
+          <div className="mb-6">
+            <Label className="text-base font-medium mb-2 block">Alguma observação?</Label>
+            <Textarea
+              value={observation}
+              onChange={(e) => setObservation(e.target.value)}
+              placeholder="Ex: tirar cebola, maionese à parte, etc..."
+              className="resize-none"
+              maxLength={255}
+              rows={3}
+            />
+            <p className="text-xs text-muted-foreground text-right mt-1">
+              {observation.length} / 255
+            </p>
+          </div>
+        </div>
+
+        {/* Footer Fixo - Quantidade e Botão Adicionar */}
+        <div className="border-t bg-muted/30 p-4">
+          <div className="flex items-center justify-between gap-4">
+            {/* Controle de Quantidade */}
+            <div className="flex items-center gap-1 bg-background rounded-full border p-1">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-12 w-12 rounded-full hover:bg-muted"
+                onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                disabled={quantity <= 1}
+              >
+                <Minus className="w-5 h-5" />
+              </Button>
+              <span className="w-10 text-center text-xl font-bold">{quantity}</span>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-12 w-12 rounded-full hover:bg-muted"
+                onClick={() => setQuantity(quantity + 1)}
+              >
+                <Plus className="w-5 h-5" />
+              </Button>
+            </div>
+
+            {/* Botão Adicionar Grande */}
+            <Button
+              onClick={handleAdd}
+              className="flex-1 h-14 text-lg font-bold rounded-full bg-orange-500 hover:bg-orange-600 text-white shadow-lg"
+            >
+              <ShoppingBasket className="w-6 h-6 mr-2" />
+              Adicionar  R$ {totalPrice.toFixed(2)}
+            </Button>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 }
 
