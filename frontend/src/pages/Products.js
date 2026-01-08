@@ -1367,6 +1367,24 @@ export default function Products() {
                         </div>
                       </div>
 
+                      {/* Resumo de custos */}
+                      {(() => {
+                        const { ingredientsCost, packagingCost } = calculateRecipeCosts(product.recipe);
+                        return (
+                          <div className="mt-4 pt-4 border-t flex items-center justify-center gap-6">
+                            <div className="flex items-center gap-2">
+                              <span className="text-sm text-muted-foreground">INGREDIENTES</span>
+                              <span className="font-mono font-bold text-primary">R$ {ingredientsCost.toFixed(2)}</span>
+                            </div>
+                            <span className="text-muted-foreground">|</span>
+                            <div className="flex items-center gap-2">
+                              <span className="text-sm text-muted-foreground">EMBALAGENS</span>
+                              <span className="font-mono font-bold text-primary">R$ {packagingCost.toFixed(2)}</span>
+                            </div>
+                          </div>
+                        );
+                      })()}
+
                       <div className="flex gap-2 mt-6 pt-4 border-t">
                         <Button
                           data-testid={`edit-product-${product.id}`}
