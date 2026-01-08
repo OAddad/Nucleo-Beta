@@ -57,6 +57,7 @@ export default function Dashboard({ setIsAuthenticated }) {
 
   return (
     <div className="flex min-h-screen bg-background">
+      {/* Menu Desktop */}
       <aside className="hidden md:flex w-64 bg-sidebar text-sidebar-foreground flex-col border-r">
         <div className="p-6 border-b">
           <button 
