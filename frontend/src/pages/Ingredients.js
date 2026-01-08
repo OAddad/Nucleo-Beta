@@ -49,9 +49,12 @@ export default function Ingredients() {
   const [loading, setLoading] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
   
-  // Delete warning dialog
+  // Delete warning dialog (when ingredient is in use)
   const [deleteWarningOpen, setDeleteWarningOpen] = useState(false);
   const [productsUsingIngredient, setProductsUsingIngredient] = useState([]);
+  
+  // Delete confirmation dialog (normal delete)
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [ingredientToDelete, setIngredientToDelete] = useState(null);
 
   useEffect(() => {
