@@ -507,6 +507,36 @@ export default function Ingredients() {
                         </div>
                       </div>
                       
+                      {/* Switch "É receita" */}
+                      {!editMode && (
+                        <div className="flex items-center justify-between p-4 bg-muted/30 rounded-lg border">
+                          <div>
+                            <Label htmlFor="isRecipe" className="text-sm font-medium">É receita?</Label>
+                            <p className="text-xs text-muted-foreground mt-0.5">
+                              Cria automaticamente um produto na aba Produtos
+                            </p>
+                          </div>
+                          <button
+                            type="button"
+                            id="isRecipe"
+                            role="switch"
+                            aria-checked={isRecipe}
+                            onClick={() => setIsRecipe(!isRecipe)}
+                            className={`
+                              relative inline-flex h-6 w-11 items-center rounded-full transition-colors
+                              ${isRecipe ? 'bg-primary' : 'bg-muted-foreground/30'}
+                            `}
+                          >
+                            <span
+                              className={`
+                                inline-block h-4 w-4 transform rounded-full bg-white transition-transform shadow
+                                ${isRecipe ? 'translate-x-6' : 'translate-x-1'}
+                              `}
+                            />
+                          </button>
+                        </div>
+                      )}
+                      
                       <Button
                         type="submit"
                         data-testid="create-ingredient-button"
