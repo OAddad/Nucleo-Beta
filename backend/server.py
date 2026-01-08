@@ -302,6 +302,71 @@ async def create_purchase_batch(batch_data: PurchaseBatchCreate, current_user: U
     
     return {"message": "Purchase batch created", "batch_id": batch_id, "items_created": len(purchases_created)}
 
+@api_router.put("/purchases/batch/{batch_id}", response_model=dict)
+async def update_purchase_batch(batch_id: str, batch_data: PurchaseBatchCreate, current_user: User = Depends(get_current_user)):
+    # Delete old batch
+    old_purchases = await db.purchases.find({"batch_id": batch_id}, {"_id": 0}).to_list(1000)
+    if not old_purchases:
+        raise HTTPException(status_code=404, detail="Purchase batch not found")
+    
+    await db.purchases.delete_many({"batch_id": batch_id})
+    
+    # Create new purchases with same batch_id
+    purchase_date = datetime.fromisoformat(batch_data.purchase_date) if batch_data.purchase_date else datetime.now(timezone.utc)
+    
+    purchases_created = []
+    affected_ingredients = set()
+    
+    for item in batch_data.items:
+        ingredient = await db.ingredients.find_one({"id": item.ingredient_id}, {"_id": 0})
+        if not ingredient:
+            continue
+        
+        affected_ingredients.add(item.ingredient_id)
+        unit_price = item.price / item.quantity if item.quantity > 0 else 0
+        
+        purchase = Purchase(
+            batch_id=batch_id,
+            supplier=batch_data.supplier,
+            ingredient_id=item.ingredient_id,
+            ingredient_name=ingredient["name"],
+            ingredient_unit=ingredient["unit"],
+            quantity=item.quantity,
+            price=item.price,
+            unit_price=unit_price,
+            purchase_date=purchase_date
+        )
+        
+        doc = purchase.model_dump()
+        doc["purchase_date"] = doc["purchase_date"].isoformat()
+        await db.purchases.insert_one(doc)
+        purchases_created.append(purchase)
+    
+    # Recalculate average price for all affected ingredients (old and new)
+    for old_p in old_purchases:
+        affected_ingredients.add(old_p["ingredient_id"])
+    
+    for ingredient_id in affected_ingredients:
+        ingredient = await db.ingredients.find_one({"id": ingredient_id}, {"_id": 0})
+        purchases = await db.purchases.find({"ingredient_id": ingredient_id}, {"_id": 0}).to_list(1000)
+        
+        if purchases:
+            total_quantity = sum(p["quantity"] for p in purchases)
+            total_cost = sum(p["price"] for p in purchases)
+            avg_price = total_cost / total_quantity if total_quantity > 0 else 0
+            
+            if ingredient and ingredient.get("units_per_package") and ingredient["units_per_package"] > 0:
+                avg_price = avg_price / ingredient["units_per_package"]
+        else:
+            avg_price = 0
+        
+        await db.ingredients.update_one(
+            {"id": ingredient_id},
+            {"$set": {"average_price": avg_price}}
+        )
+    
+    return {"message": "Purchase batch updated", "batch_id": batch_id, "items_updated": len(purchases_created)}
+
 @api_router.post("/purchases", response_model=Purchase)
 async def create_purchase(purchase_data: PurchaseCreate, current_user: User = Depends(get_current_user)):
     ingredient = await db.ingredients.find_one({"id": purchase_data.ingredient_id}, {"_id": 0})
