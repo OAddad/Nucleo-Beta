@@ -312,6 +312,11 @@ export default function Ingredients() {
                           ({ingredient.units_per_package} un/emb)
                         </span>
                       )}
+                      {ingredient.unit_weight && (
+                        <span className="text-xs text-muted-foreground ml-2">
+                          (1 un = {ingredient.unit_weight}kg)
+                        </span>
+                      )}
                     </td>
                     <td className="py-3 px-6 text-muted-foreground">{ingredient.unit}</td>
                     <td className="py-3 px-6 text-right font-mono font-medium">
