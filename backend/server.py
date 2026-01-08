@@ -164,27 +164,47 @@ class Category(BaseModel):
 class CategoryCreate(BaseModel):
     name: str
 
+class OrderStepOption(BaseModel):
+    name: str
+    price: Optional[float] = 0.0
+    is_required: bool = False
+
+class OrderStep(BaseModel):
+    name: str
+    description: Optional[str] = None
+    step_type: str = "single"  # "single", "multiple", "text"
+    options: List[OrderStepOption] = []
+    min_selections: int = 0
+    max_selections: int = 1
+
 class ProductCreate(BaseModel):
     name: str
     description: Optional[str] = None
     category: Optional[str] = None
+    product_type: Optional[str] = "produto"  # "produto" ou "combo"
     sale_price: Optional[float] = None
     photo_url: Optional[str] = None
     recipe: List[RecipeIngredient]
     is_insumo: Optional[bool] = False
+    is_divisible: Optional[bool] = False
+    order_steps: Optional[List[OrderStep]] = []
 
 class Product(BaseModel):
     model_config = ConfigDict(extra="ignore")
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    code: str = ""  # Código de 5 dígitos
     name: str
     description: Optional[str] = None
     category: Optional[str] = None
+    product_type: str = "produto"  # "produto" ou "combo"
     sale_price: Optional[float] = None
     photo_url: Optional[str] = None
     recipe: List[RecipeIngredient]
     cmv: float = 0.0
     profit_margin: Optional[float] = None
     is_insumo: bool = False
+    is_divisible: bool = False
+    order_steps: List[OrderStep] = []
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class PriceHistory(BaseModel):
