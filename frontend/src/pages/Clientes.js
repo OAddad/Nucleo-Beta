@@ -58,8 +58,12 @@ export default function Clientes() {
   const [genero, setGenero] = useState("");
   const [foto, setFoto] = useState(null);
   const [fotoPreview, setFotoPreview] = useState("");
+  // Endereço detalhado
   const [endereco, setEndereco] = useState("");
+  const [numero, setNumero] = useState("");
   const [complemento, setComplemento] = useState("");
+  const [bairro, setBairro] = useState("");
+  const [cep, setCep] = useState("");
 
   useEffect(() => {
     fetchClientes();
