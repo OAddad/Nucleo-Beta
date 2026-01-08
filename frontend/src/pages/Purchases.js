@@ -625,6 +625,11 @@ export default function Purchases() {
                   </div>
                 );
               })}
+              {getFilteredAndSortedBatches().length === 0 && (
+                <div className="text-center py-12 text-muted-foreground">
+                  Nenhuma compra encontrada com os filtros aplicados.
+                </div>
+              )}
             </div>
           )}
         </div>
