@@ -19,8 +19,19 @@ def ensure_backup_dir():
     BACKUP_DIR.mkdir(parents=True, exist_ok=True)
 
 def save_ingredients(ingredients: list):
-    """Salva ingredientes no Excel"""
+    """Salva ingredientes no Excel - NÃO sobrescreve se lista vazia e já existe backup"""
     ensure_backup_dir()
+    
+    # Se a lista está vazia e já existe backup, não sobrescrever
+    if not ingredients and BACKUP_FILE.exists():
+        try:
+            existing_df = pd.read_excel(BACKUP_FILE, sheet_name='Ingredientes')
+            if len(existing_df) > 0:
+                print(f"[BACKUP] Ingredientes: lista vazia, mantendo backup existente com {len(existing_df)} itens")
+                return
+        except:
+            pass
+    
     df = pd.DataFrame(ingredients)
     
     # Carregar arquivo existente ou criar novo
