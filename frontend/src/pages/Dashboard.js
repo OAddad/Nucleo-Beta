@@ -65,6 +65,8 @@ export default function Dashboard({ setIsAuthenticated }) {
     navigate(path);
   };
 
+  const [configExpanded, setConfigExpanded] = useState(false);
+
   // Estrutura de navegação principal
   const mainTabs = [
     { path: "/", label: "Visão Geral", icon: Home, type: "single" },
@@ -74,10 +76,6 @@ export default function Dashboard({ setIsAuthenticated }) {
   if (currentUser?.role === "proprietario" || currentUser?.role === "administrador") {
     mainTabs.push({ path: "/moderacao", label: "Moderação", icon: Shield, type: "single" });
   }
-  
-  // Adicionar Configuração (disponível para todos)
-  mainTabs.push({ path: "/configuracao", label: "Configuração", icon: Settings, type: "single" });
-
 
   // Estrutura hierárquica de Controle de Estoque
   const stockControlModule = {
@@ -106,6 +104,19 @@ export default function Dashboard({ setIsAuthenticated }) {
     ]
   };
 
+  // Estrutura hierárquica de Configurações
+  const configModule = {
+    label: "Configurações",
+    icon: Settings,
+    expanded: configExpanded,
+    toggle: () => setConfigExpanded(!configExpanded),
+    children: [
+      { path: "/configuracoes/horarios", label: "Horários", icon: ClipboardList },
+      { path: "/configuracoes/preferencias", label: "Preferências", icon: Settings },
+      { path: "/configuracoes/auditoria", label: "Auditoria", icon: Shield },
+    ]
+  };
+
 
   const isActive = (path) => {
     if (path === "/") return location.pathname === "/";
@@ -118,6 +129,10 @@ export default function Dashboard({ setIsAuthenticated }) {
 
   const isSalesActive = () => {
     return location.pathname.startsWith("/vendas");
+  };
+
+  const isConfigActive = () => {
+    return location.pathname.startsWith("/configuracoes");
   };
 
   return (
