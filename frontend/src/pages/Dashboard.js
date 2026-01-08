@@ -285,64 +285,94 @@ export default function Dashboard({ setIsAuthenticated }) {
       {/* Conteúdo Principal */}
       <div className="flex-1 flex flex-col min-w-0">
         {/* Header com Botão Hamburguer e Mini Menu */}
-        <header className="bg-card border-b p-4 flex items-center gap-4">
-          {/* Botão Hamburguer */}
-          <Button
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-            size="icon"
-            variant="ghost"
-            className="flex-shrink-0"
-          >
-            <Menu className="w-5 h-5" />
-          </Button>
-
-          {/* Mini Menu */}
-          <div className="flex gap-2 overflow-x-auto">
-            {['Mesas', 'Balcão', 'Delivery', 'ChatBot'].map((item) => (
-              <button
-                key={item}
-                onClick={() => setActiveTopMenu(item.toLowerCase())}
-                className={`
-                  px-4 py-2 rounded-lg font-medium text-sm whitespace-nowrap
-                  transition-all duration-200
-                  ${activeTopMenu === item.toLowerCase()
-                    ? 'bg-primary text-primary-foreground shadow-md'
-                    : 'bg-muted hover:bg-muted/80'
-                  }
-                `}
-              >
-                {item}
-              </button>
-            ))}
+        <header className="bg-card border-b flex items-stretch">
+          {/* Área do botão hamburguer - mesmo tamanho da logo */}
+          <div className={`flex items-center justify-center border-r transition-all duration-300 ${sidebarOpen ? 'w-64' : 'w-16'}`}>
+            <Button
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+              size="icon"
+              variant="ghost"
+              className="flex-shrink-0"
+            >
+              <Menu className="w-5 h-5" />
+            </Button>
           </div>
 
-          <div className="ml-auto">
+          {/* Mini Menu com ícones */}
+          <div className="flex-1 flex items-center px-4 py-2 gap-2">
+            {topMenuItems.map((item) => {
+              const IconComponent = item.icon;
+              const isActive = activeTopMenu === item.id;
+              return (
+                <button
+                  key={item.id}
+                  onClick={() => setActiveTopMenu(isActive ? null : item.id)}
+                  className={`
+                    flex flex-col items-center gap-1 px-4 py-2 rounded-lg font-medium text-xs whitespace-nowrap
+                    transition-all duration-200 min-w-[70px]
+                    ${isActive
+                      ? 'bg-primary text-primary-foreground shadow-md'
+                      : 'bg-muted hover:bg-muted/80'
+                    }
+                  `}
+                >
+                  <IconComponent className="w-5 h-5" />
+                  <span>{item.label}</span>
+                </button>
+              );
+            })}
+          </div>
+
+          <div className="flex items-center pr-4">
             <DarkModeToggle />
           </div>
         </header>
 
         {/* Conteúdo das Rotas */}
         <main className="flex-1 overflow-auto">
-          <Routes>
-            <Route path="/" element={<Reports />} />
-            <Route path="/ingredientes" element={<Ingredients />} />
-            <Route path="/estoque" element={<Ingredients />} />
-            <Route path="/compras" element={<Purchases />} />
-            <Route path="/produtos" element={<Products />} />
-            <Route path="/moderacao" element={<Moderation />} />
-            <Route path="/configuracao" element={<div className="p-8"><h1 className="text-3xl font-bold">Configuração</h1><p className="text-muted-foreground mt-2">Em breve...</p></div>} />
-            {/* Rotas de Vendas */}
-            <Route path="/vendas/relatorio" element={
-              <div className="p-8">
-                <h1 className="text-3xl font-bold">Relatório de Vendas</h1>
-                <p className="text-muted-foreground mt-2">Em breve...</p>
-                <div className="mt-8 p-6 bg-muted/50 rounded-xl border text-center">
-                  <BarChart3 className="w-16 h-16 mx-auto text-muted-foreground/50 mb-4" />
+          {/* Se uma aba superior está ativa, mostrar "Em breve" */}
+          {activeTopMenu ? (
+            <div className="p-8 flex flex-col items-center justify-center min-h-[60vh]">
+              <div className="text-center">
+                {topMenuItems.find(item => item.id === activeTopMenu) && (
+                  <>
+                    {(() => {
+                      const item = topMenuItems.find(i => i.id === activeTopMenu);
+                      const IconComponent = item.icon;
+                      return <IconComponent className="w-20 h-20 mx-auto text-muted-foreground/30 mb-6" />;
+                    })()}
+                    <h1 className="text-3xl font-bold mb-2">
+                      {topMenuItems.find(item => item.id === activeTopMenu)?.label}
+                    </h1>
+                  </>
+                )}
+                <p className="text-muted-foreground text-lg mb-6">Em breve...</p>
+                <div className="p-6 bg-muted/50 rounded-xl border max-w-md">
                   <p className="text-muted-foreground">Esta funcionalidade está em desenvolvimento.</p>
                 </div>
               </div>
-            } />
-            <Route path="/vendas/pedidos" element={
+            </div>
+          ) : (
+            <Routes>
+              <Route path="/" element={<Reports />} />
+              <Route path="/ingredientes" element={<Ingredients />} />
+              <Route path="/estoque" element={<Ingredients />} />
+              <Route path="/compras" element={<Purchases />} />
+              <Route path="/produtos" element={<Products />} />
+              <Route path="/moderacao" element={<Moderation />} />
+              <Route path="/configuracao" element={<div className="p-8"><h1 className="text-3xl font-bold">Configuração</h1><p className="text-muted-foreground mt-2">Em breve...</p></div>} />
+              {/* Rotas de Vendas */}
+              <Route path="/vendas/relatorio" element={
+                <div className="p-8">
+                  <h1 className="text-3xl font-bold">Relatório de Vendas</h1>
+                  <p className="text-muted-foreground mt-2">Em breve...</p>
+                  <div className="mt-8 p-6 bg-muted/50 rounded-xl border text-center">
+                    <BarChart3 className="w-16 h-16 mx-auto text-muted-foreground/50 mb-4" />
+                    <p className="text-muted-foreground">Esta funcionalidade está em desenvolvimento.</p>
+                  </div>
+                </div>
+              } />
+              <Route path="/vendas/pedidos" element={
               <div className="p-8">
                 <h1 className="text-3xl font-bold">Pedidos</h1>
                 <p className="text-muted-foreground mt-2">Em breve...</p>
