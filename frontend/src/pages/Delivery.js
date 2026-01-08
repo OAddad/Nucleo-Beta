@@ -575,7 +575,7 @@ export default function Delivery() {
               <div className="p-4 border-b bg-muted/30 flex items-center justify-between">
                 <h3 className="font-semibold">
                   {activeTab === "inicio" && "Todos os Pedidos"}
-                  {activeTab === "aguardando" && "Aguardando"}
+                  {activeTab === "aguardando" && "Em Produção"}
                   {activeTab === "transito" && "Em Trânsito"}
                 </h3>
                 <Button variant="ghost" size="icon" onClick={fetchPedidos}>
@@ -610,14 +610,15 @@ export default function Delivery() {
                       >
                         <div className="flex items-start justify-between">
                           <div>
-                            <p className="font-semibold">{pedido.cliente.nome}</p>
-                            <p className="text-xs text-muted-foreground">{pedido.cliente.endereco}</p>
+                            <span className="font-mono text-xs text-muted-foreground">{pedido.codigo}</span>
+                            <p className="font-semibold">{pedido.cliente?.nome}</p>
+                            <p className="text-xs text-muted-foreground">{pedido.cliente?.endereco}</p>
                           </div>
                           <span className={`
                             px-2 py-1 rounded-full text-xs font-medium
-                            ${pedido.status === 'aguardando' ? 'bg-orange-100 text-orange-700' : ''}
+                            ${(pedido.status === 'aguardando' || pedido.status === 'producao') ? 'bg-yellow-100 text-yellow-700' : ''}
                             ${pedido.status === 'transito' ? 'bg-blue-100 text-blue-700' : ''}
-                            ${pedido.status === 'entregue' ? 'bg-green-100 text-green-700' : ''}
+                            ${pedido.status === 'concluido' ? 'bg-green-100 text-green-700' : ''}
                           `}>
                             {pedido.status === 'aguardando' && 'Aguardando'}
                             {pedido.status === 'transito' && 'Em trânsito'}
