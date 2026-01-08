@@ -293,6 +293,10 @@ async def create_purchase(purchase_data: PurchaseCreate, current_user: User = De
     total_cost = sum(p["price"] for p in purchases)
     avg_price = total_cost / total_quantity if total_quantity > 0 else 0
     
+    # If ingredient has units_per_package, divide by it to get unit price
+    if ingredient.get("units_per_package") and ingredient["units_per_package"] > 0:
+        avg_price = avg_price / ingredient["units_per_package"]
+    
     await db.ingredients.update_one(
         {"id": purchase_data.ingredient_id},
         {"$set": {"average_price": avg_price}}
