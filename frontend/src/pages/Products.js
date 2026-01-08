@@ -66,11 +66,20 @@ export default function Products() {
   const [recipePackaging, setRecipePackaging] = useState([{ ingredient_id: "", quantity: "" }]);
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState([]);
+  
+  // Category management states
+  const [categoryDialogOpen, setCategoryDialogOpen] = useState(false);
+  const [editCategoryMode, setEditCategoryMode] = useState(false);
+  const [currentCategoryId, setCurrentCategoryId] = useState(null);
+  const [categoryName, setCategoryName] = useState("");
+  const [deleteCategoryDialogOpen, setDeleteCategoryDialogOpen] = useState(false);
+  const [categoryToDelete, setCategoryToDelete] = useState(null);
 
   useEffect(() => {
     fetchProducts();
     fetchIngredients();
     fetchCategories();
+    initializeCategories();
   }, []);
 
   const fetchProducts = async () => {
