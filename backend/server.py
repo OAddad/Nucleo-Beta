@@ -830,9 +830,30 @@ async def delete_purchase_batch(batch_id: str, current_user: User = Depends(get_
     return {"message": "Purchase batch deleted", "purchases_deleted": len(purchases)}
 
 # Product endpoints
+async def get_next_product_code():
+    """Gera o próximo código de produto de 5 dígitos"""
+    # Busca o maior código existente
+    pipeline = [
+        {"$match": {"code": {"$exists": True, "$ne": ""}}},
+        {"$project": {"code_int": {"$toInt": "$code"}}},
+        {"$sort": {"code_int": -1}},
+        {"$limit": 1}
+    ]
+    result = await db.products.aggregate(pipeline).to_list(1)
+    
+    if result and len(result) > 0:
+        next_code = result[0]["code_int"] + 1
+    else:
+        next_code = 10001  # Começa em 10001
+    
+    return str(next_code).zfill(5)
+
 @api_router.post("/products", response_model=Product)
 async def create_product(product_data: ProductCreate, current_user: User = Depends(get_current_user)):
     check_role(current_user, ["proprietario", "administrador"])
+    
+    # Gerar código automático
+    product_code = await get_next_product_code()
     
     # Calculate CMV
     cmv = 0.0
@@ -855,7 +876,7 @@ async def create_product(product_data: ProductCreate, current_user: User = Depen
                 # Quantidade já em kg/fração: preço médio * quantidade
                 cmv += avg_price * quantity
     
-    product = Product(**product_data.model_dump(), cmv=cmv)
+    product = Product(**product_data.model_dump(), cmv=cmv, code=product_code)
     
     # Calculate profit margin if sale price exists
     if product.sale_price and product.sale_price > 0:
@@ -863,6 +884,11 @@ async def create_product(product_data: ProductCreate, current_user: User = Depen
     
     doc = product.model_dump()
     doc["created_at"] = doc["created_at"].isoformat()
+    
+    # Converter order_steps para dicts
+    if "order_steps" in doc:
+        doc["order_steps"] = [step if isinstance(step, dict) else step.model_dump() for step in doc["order_steps"]]
+    
     await db.products.insert_one(doc)
     
     # Registrar auditoria
