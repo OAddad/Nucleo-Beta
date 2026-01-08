@@ -294,9 +294,9 @@ export default function BalcaoVendas() {
     toast.success(`${product.name} adicionado!`);
   };
 
-  const updateQuantity = (productId, delta) => {
+  const updateQuantity = (cartItemId, delta) => {
     setCart(cart.map(item => {
-      if (item.id === productId) {
+      if ((item.cartItemId || item.id) === cartItemId) {
         const newQuantity = item.quantity + delta;
         return newQuantity > 0 ? { ...item, quantity: newQuantity } : item;
       }
@@ -304,8 +304,8 @@ export default function BalcaoVendas() {
     }).filter(item => item.quantity > 0));
   };
 
-  const removeFromCart = (productId) => {
-    setCart(cart.filter(item => item.id !== productId));
+  const removeFromCart = (cartItemId) => {
+    setCart(cart.filter(item => (item.cartItemId || item.id) !== cartItemId));
   };
 
   const clearCart = () => {
