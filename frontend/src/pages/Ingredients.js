@@ -99,6 +99,46 @@ export default function Ingredients() {
     }
   };
 
+  // Garantir que a categoria "Receita" existe
+  const ensureRecipeCategory = async () => {
+    try {
+      const response = await axios.get(`${API}/categories`, getAuthHeader());
+      const existingCategories = response.data;
+      const recipeCategory = existingCategories.find(c => c.name === "Receita");
+      if (!recipeCategory) {
+        await axios.post(`${API}/categories`, { name: "Receita" }, getAuthHeader());
+      }
+    } catch (error) {
+      console.error("Erro ao verificar categoria Receita:", error);
+    }
+  };
+
+  // Criar produto receita automaticamente
+  const createRecipeProduct = async (ingredientName, ingredientId) => {
+    try {
+      const productName = `RECEITA - ${ingredientName}`;
+      const productPayload = {
+        name: productName,
+        category: "Receita",
+        product_type: "receita",
+        is_insumo: false,
+        is_divisible: false,
+        recipe: [{
+          ingredient_id: ingredientId,
+          ingredient_name: ingredientName,
+          quantity: 1
+        }],
+        linked_ingredient_id: ingredientId
+      };
+      
+      await axios.post(`${API}/products`, productPayload, getAuthHeader());
+      toast.success(`Produto "${productName}" criado automaticamente!`);
+    } catch (error) {
+      console.error("Erro ao criar produto receita:", error);
+      toast.error("Erro ao criar produto receita");
+    }
+  };
+
   const fetchIngredients = async () => {
     try {
       const response = await axios.get(`${API}/ingredients`, getAuthHeader());
@@ -125,6 +165,7 @@ export default function Ingredients() {
     setUnitWeight("");
     setStockMin("");
     setStockMax("");
+    setIsRecipe(false);
     setEditMode(false);
     setCurrentIngredientId(null);
   };
@@ -139,6 +180,7 @@ export default function Ingredients() {
     setUnitWeight(ingredient.unit_weight ? ingredient.unit_weight.toString() : "");
     setStockMin(ingredient.stock_min ? ingredient.stock_min.toString() : "");
     setStockMax(ingredient.stock_max ? ingredient.stock_max.toString() : "");
+    setIsRecipe(ingredient.is_recipe || false);
     setOpen(true);
   };
 
