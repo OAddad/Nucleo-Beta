@@ -674,7 +674,7 @@ export default function Products() {
                           {product.profit_margin ? `${product.profit_margin.toFixed(1)}%` : "-"}
                         </div>
                       </div>
-                      <div className={`${product.photo_url ? 'col-span-2' : 'col-span-1'} flex justify-end`}>
+                      <div className="col-span-2 flex justify-end">
                         {isExpanded ? (
                           <ChevronUp className="w-5 h-5 text-muted-foreground" strokeWidth={1.5} />
                         ) : (
