@@ -231,17 +231,24 @@ export default function Moderation() {
     }
   };
 
-  const handleDeleteUser = async (userId, username) => {
-    if (!window.confirm(`Deseja realmente excluir o usuário ${username}?`)) return;
+  const handleDeleteUser = async () => {
+    if (!userToDelete) return;
 
     try {
-      await axios.delete(`${API}/users/${userId}`, getAuthHeader());
+      await axios.delete(`${API}/users/${userToDelete.id}`, getAuthHeader());
       toast.success("Usuário excluído!");
+      setDeleteDialogOpen(false);
+      setUserToDelete(null);
       fetchUsers();
       fetchAuditLogs();
     } catch (error) {
       toast.error(error.response?.data?.detail || "Erro ao excluir usuário");
     }
+  };
+
+  const confirmDeleteUser = (userId, username) => {
+    setUserToDelete({ id: userId, username });
+    setDeleteDialogOpen(true);
   };
 
   const handleChangePassword = async (e) => {
