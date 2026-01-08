@@ -588,6 +588,35 @@ export default function Products() {
                   />
                 </div>
 
+                {/* Switch Insumo */}
+                <div className="flex items-center justify-between p-4 bg-muted/50 rounded-lg border">
+                  <div>
+                    <Label htmlFor="isInsumo" className="text-sm font-medium">
+                      Este produto é um Insumo?
+                    </Label>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Insumos não aparecem no catálogo de vendas
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    role="switch"
+                    aria-checked={isInsumo}
+                    onClick={() => setIsInsumo(!isInsumo)}
+                    className={`
+                      relative inline-flex h-6 w-11 items-center rounded-full transition-colors
+                      ${isInsumo ? 'bg-primary' : 'bg-gray-300 dark:bg-gray-600'}
+                    `}
+                  >
+                    <span
+                      className={`
+                        inline-block h-4 w-4 transform rounded-full bg-white transition-transform
+                        ${isInsumo ? 'translate-x-6' : 'translate-x-1'}
+                      `}
+                    />
+                  </button>
+                </div>
+
                 <Tabs defaultValue="ingredients" className="w-full">
                   <TabsList className="grid w-full grid-cols-2">
                     <TabsTrigger value="ingredients">Ingredientes</TabsTrigger>
