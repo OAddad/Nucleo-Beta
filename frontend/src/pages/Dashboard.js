@@ -102,9 +102,9 @@ export default function Dashboard({ setIsAuthenticated }) {
     ]
   };
 
-  // Estrutura hierárquica de Clientes e Fornecedores
+  // Estrutura hierárquica de Pessoas e Fornecedores
   const clientesFornecedoresModule = {
-    label: "Clientes e Fornecedores",
+    label: "Pessoas e Fornecedores",
     icon: Users,
     expanded: clientesFornecedoresExpanded,
     toggle: () => setClientesFornecedoresExpanded(!clientesFornecedoresExpanded),
