@@ -233,13 +233,21 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
         user_id: str = payload.get("sub")
         if user_id is None:
             raise HTTPException(status_code=401, detail="Invalid token")
-        user = await db.users.find_one({"id": user_id}, {"_id": 0})
+        
+        # Usar SQLite
+        user = sqlite_db.get_user_by_id(user_id)
         if user is None:
             raise HTTPException(status_code=401, detail="User not found")
+        
+        # Converter created_at para datetime se for string
+        if isinstance(user.get('created_at'), str):
+            user['created_at'] = datetime.fromisoformat(user['created_at'].replace('Z', '+00:00'))
+        
         return User(**user)
     except jwt.ExpiredSignatureError:
         raise HTTPException(status_code=401, detail="Token expired")
-    except Exception:
+    except Exception as e:
+        logger.error(f"Auth error: {e}")
         raise HTTPException(status_code=401, detail="Invalid token")
 
 
