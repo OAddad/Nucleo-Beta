@@ -502,6 +502,7 @@ export default function Purchases() {
               </div>
             </DialogContent>
           </Dialog>
+          </div>
         </div>
 
         {/* Filtros e Pesquisa */}
