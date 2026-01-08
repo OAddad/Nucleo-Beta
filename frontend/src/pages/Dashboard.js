@@ -284,6 +284,56 @@ export default function Dashboard({ setIsAuthenticated }) {
               </div>
             )}
           </div>
+
+          {/* Configurações (Hierárquico) */}
+          <div>
+            {/* Header do módulo */}
+            <button
+              onClick={() => setConfigExpanded(!configExpanded)}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 ${
+                isConfigActive() && !activeTopMenu
+                  ? "bg-primary/10 text-primary font-medium"
+                  : "text-sidebar-foreground hover:bg-muted"
+              } ${!sidebarOpen ? 'lg:justify-center lg:px-2' : ''}`}
+              title={!sidebarOpen ? configModule.label : ''}
+            >
+              <Settings className="w-5 h-5 flex-shrink-0" strokeWidth={1.5} />
+              {sidebarOpen && (
+                <>
+                  <span className="text-sm flex-1 text-left">{configModule.label}</span>
+                  {configExpanded ? (
+                    <ChevronDown className="w-4 h-4" strokeWidth={1.5} />
+                  ) : (
+                    <ChevronRight className="w-4 h-4" strokeWidth={1.5} />
+                  )}
+                </>
+              )}
+            </button>
+
+            {/* Sub-itens de Configurações */}
+            {sidebarOpen && configExpanded && (
+              <div className="ml-4 mt-1 space-y-1 border-l-2 border-border pl-4">
+                {configModule.children.map((child) => {
+                  const ChildIcon = child.icon;
+                  const active = isActive(child.path) && !activeTopMenu;
+                  return (
+                    <button
+                      key={child.path}
+                      onClick={() => handleSidebarClick(child.path)}
+                      className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 text-sm ${
+                        active
+                          ? "bg-primary text-primary-foreground font-medium"
+                          : "text-sidebar-foreground hover:bg-muted"
+                      }`}
+                    >
+                      <ChildIcon className="w-4 h-4 flex-shrink-0" strokeWidth={1.5} />
+                      <span>{child.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
         </nav>
 
         <div className="p-4 border-t space-y-2">
