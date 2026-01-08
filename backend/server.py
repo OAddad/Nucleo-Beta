@@ -866,19 +866,105 @@ async def delete_product(product_id: str, current_user: User = Depends(get_curre
 
 
 # Category endpoints
-@api_router.get("/categories")
+@api_router.get("/categories", response_model=List[Category])
 async def get_categories(current_user: User = Depends(get_current_user)):
-    """Retorna categorias únicas dos produtos"""
-    products = await db.products.find({}, {"category": 1, "_id": 0}).to_list(1000)
-    categories = list(set([p.get("category") for p in products if p.get("category")]))
-    categories.sort()
-    return {"categories": categories}
+    """Retorna todas as categorias cadastradas"""
+    categories = await db.categories.find({}, {"_id": 0}).sort("name", 1).to_list(1000)
+    for cat in categories:
+        if isinstance(cat.get("created_at"), str):
+            cat["created_at"] = datetime.fromisoformat(cat["created_at"])
+    return categories
 
-@api_router.post("/categories")
-async def create_category(category_data: dict, current_user: User = Depends(get_current_user)):
-    """Cria uma nova categoria (não precisa fazer nada, categorias são criadas ao adicionar produtos)"""
+@api_router.post("/categories", response_model=Category)
+async def create_category(category_data: CategoryCreate, current_user: User = Depends(get_current_user)):
+    """Cria uma nova categoria"""
     check_role(current_user, ["proprietario", "administrador"])
-    return {"message": "Category created", "category": category_data.get("name")}
+    
+    # Verificar se já existe
+    existing = await db.categories.find_one({"name": category_data.name}, {"_id": 0})
+    if existing:
+        raise HTTPException(status_code=400, detail="Categoria já existe")
+    
+    category = Category(name=category_data.name)
+    doc = category.model_dump()
+    doc["created_at"] = doc["created_at"].isoformat()
+    await db.categories.insert_one(doc)
+    
+    # Registrar auditoria
+    await log_audit("CREATE", "category", category_data.name, current_user, "baixa")
+    
+    return category
+
+@api_router.put("/categories/{category_id}", response_model=Category)
+async def update_category(category_id: str, category_data: CategoryCreate, current_user: User = Depends(get_current_user)):
+    """Atualiza uma categoria"""
+    check_role(current_user, ["proprietario", "administrador"])
+    
+    existing = await db.categories.find_one({"id": category_id}, {"_id": 0})
+    if not existing:
+        raise HTTPException(status_code=404, detail="Categoria não encontrada")
+    
+    # Verificar se novo nome já existe
+    name_exists = await db.categories.find_one({"name": category_data.name, "id": {"$ne": category_id}}, {"_id": 0})
+    if name_exists:
+        raise HTTPException(status_code=400, detail="Nome de categoria já existe")
+    
+    old_name = existing["name"]
+    await db.categories.update_one({"id": category_id}, {"$set": {"name": category_data.name}})
+    
+    # Atualizar todos os produtos que usam essa categoria
+    await db.products.update_many({"category": old_name}, {"$set": {"category": category_data.name}})
+    
+    # Registrar auditoria
+    await log_audit("UPDATE", "category", f"{old_name} → {category_data.name}", current_user, "media")
+    
+    updated = await db.categories.find_one({"id": category_id}, {"_id": 0})
+    if isinstance(updated["created_at"], str):
+        updated["created_at"] = datetime.fromisoformat(updated["created_at"])
+    return Category(**updated)
+
+@api_router.delete("/categories/{category_id}")
+async def delete_category(category_id: str, current_user: User = Depends(get_current_user)):
+    """Deleta uma categoria"""
+    check_role(current_user, ["proprietario", "administrador"])
+    
+    category = await db.categories.find_one({"id": category_id}, {"_id": 0})
+    if not category:
+        raise HTTPException(status_code=404, detail="Categoria não encontrada")
+    
+    # Verificar se algum produto usa essa categoria
+    products_using = await db.products.count_documents({"category": category["name"]})
+    if products_using > 0:
+        raise HTTPException(
+            status_code=400, 
+            detail=f"Não é possível excluir. {products_using} produto(s) usa(m) esta categoria."
+        )
+    
+    await db.categories.delete_one({"id": category_id})
+    
+    # Registrar auditoria
+    await log_audit("DELETE", "category", category["name"], current_user, "alta")
+    
+    return {"message": "Categoria deletada"}
+
+@api_router.post("/categories/initialize")
+async def initialize_categories(current_user: User = Depends(get_current_user)):
+    """Inicializa categorias padrão se não existirem"""
+    check_role(current_user, ["proprietario", "administrador"])
+    
+    default_categories = ["Sanduíches", "Bebidas", "Pizzas", "Porções", "Sobremesas", "Acompanhamentos"]
+    created = []
+    
+    for cat_name in default_categories:
+        existing = await db.categories.find_one({"name": cat_name}, {"_id": 0})
+        if not existing:
+            category = Category(name=cat_name)
+            doc = category.model_dump()
+            doc["created_at"] = doc["created_at"].isoformat()
+            await db.categories.insert_one(doc)
+            created.append(cat_name)
+    
+    return {"message": f"Categorias inicializadas", "created": created}
 
 # Reports endpoints
 @api_router.get("/reports/price-history/{ingredient_id}", response_model=IngredientWithHistory)
