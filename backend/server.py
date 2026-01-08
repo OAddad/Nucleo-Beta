@@ -260,6 +260,9 @@ async def register(user_data: UserCreate):
     
     await db.users.insert_one(user_dict)
     
+    # Sincronizar com Excel
+    await sync_all_to_excel()
+    
     access_token = create_access_token(data={"sub": user.id})
     return Token(access_token=access_token, token_type="bearer", user=user)
 
