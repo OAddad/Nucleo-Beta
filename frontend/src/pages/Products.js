@@ -414,23 +414,32 @@ export default function Products() {
               Cadastre produtos com suas fichas técnicas e calcule o CMV
             </p>
           </div>
+        </div>
 
-          <Dialog
-            open={open}
-            onOpenChange={(isOpen) => {
-              setOpen(isOpen);
-              if (!isOpen) resetForm();
-            }}
-          >
-            <DialogTrigger asChild>
-              <Button
-                data-testid="add-product-button"
-                className="shadow-sm transition-all active:scale-95"
+        <Tabs defaultValue="products" className="w-full">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="products">Produtos</TabsTrigger>
+            <TabsTrigger value="categories">Categorias</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="products" className="mt-6">
+            <div className="flex justify-end mb-4">
+              <Dialog
+                open={open}
+                onOpenChange={(isOpen) => {
+                  setOpen(isOpen);
+                  if (!isOpen) resetForm();
+                }}
               >
-                <Plus className="w-5 h-5 mr-2" strokeWidth={1.5} />
-                Novo Produto
-              </Button>
-            </DialogTrigger>
+                <DialogTrigger asChild>
+                  <Button
+                    data-testid="add-product-button"
+                    className="shadow-sm transition-all active:scale-95"
+                  >
+                    <Plus className="w-5 h-5 mr-2" strokeWidth={1.5} />
+                    Novo Produto
+                  </Button>
+                </DialogTrigger>
             <DialogContent className="sm:max-w-3xl max-h-[90vh] overflow-y-auto">
               <DialogHeader>
                 <DialogTitle>
