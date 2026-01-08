@@ -380,15 +380,26 @@ export default function Products() {
                     Ficha Técnica
                   </h4>
                   <div className="space-y-2">
-                    {product.recipe.map((item, idx) => (
-                      <div
-                        key={idx}
-                        className="flex justify-between text-sm text-slate-600"
-                      >
-                        <span>{getIngredientName(item.ingredient_id)}</span>
-                        <span className="font-mono">{item.quantity.toFixed(2)}</span>
-                      </div>
-                    ))}
+                    {product.recipe.map((item, idx) => {
+                      const ingredient = getIngredientDetails(item.ingredient_id);
+                      const itemCost = ingredient.average_price * item.quantity;
+                      return (
+                        <div
+                          key={idx}
+                          className="flex justify-between items-center text-sm py-2 border-b border-slate-100 last:border-0"
+                        >
+                          <span className="text-slate-700 font-medium flex-1">
+                            {ingredient.name} ({ingredient.unit})
+                          </span>
+                          <span className="font-mono text-slate-900 mx-4">
+                            {item.quantity.toFixed(2)} {ingredient.unit}
+                          </span>
+                          <span className="font-mono text-slate-900 font-medium">
+                            R$ {itemCost.toFixed(2)}
+                          </span>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
 
