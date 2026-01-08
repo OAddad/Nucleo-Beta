@@ -431,6 +431,54 @@ async def update_ingredient(ingredient_id: str, ingredient_data: IngredientCreat
         updated["created_at"] = datetime.fromisoformat(updated["created_at"])
     return Ingredient(**updated)
 
+class StockAdjustment(BaseModel):
+    quantity: float
+    operation: str  # "add" ou "remove"
+    reason: Optional[str] = None
+
+@api_router.put("/ingredients/{ingredient_id}/stock", response_model=Ingredient)
+async def adjust_stock(ingredient_id: str, adjustment: StockAdjustment, current_user: User = Depends(get_current_user)):
+    """Ajusta a quantidade em estoque de um ingrediente"""
+    check_role(current_user, ["proprietario", "administrador"])
+    
+    ingredient = await db.ingredients.find_one({"id": ingredient_id}, {"_id": 0})
+    if not ingredient:
+        raise HTTPException(status_code=404, detail="Ingrediente não encontrado")
+    
+    current_stock = ingredient.get("stock_quantity", 0) or 0
+    
+    if adjustment.operation == "add":
+        new_stock = current_stock + adjustment.quantity
+    elif adjustment.operation == "remove":
+        new_stock = current_stock - adjustment.quantity
+        if new_stock < 0:
+            new_stock = 0
+    else:
+        raise HTTPException(status_code=400, detail="Operação inválida. Use 'add' ou 'remove'")
+    
+    await db.ingredients.update_one(
+        {"id": ingredient_id},
+        {"$set": {"stock_quantity": new_stock}}
+    )
+    
+    # Registrar auditoria
+    await log_audit(
+        "UPDATE", 
+        "stock", 
+        ingredient["name"], 
+        current_user, 
+        "media", 
+        {"operation": adjustment.operation, "quantity": adjustment.quantity, "reason": adjustment.reason}
+    )
+    
+    # Sincronizar com Excel
+    await sync_all_to_excel()
+    
+    updated = await db.ingredients.find_one({"id": ingredient_id}, {"_id": 0})
+    if isinstance(updated["created_at"], str):
+        updated["created_at"] = datetime.fromisoformat(updated["created_at"])
+    return Ingredient(**updated)
+
 @api_router.get("/ingredients/{ingredient_id}/usage")
 async def check_ingredient_usage(ingredient_id: str, current_user: User = Depends(get_current_user)):
     products = await db.products.find({}, {"_id": 0}).to_list(1000)
