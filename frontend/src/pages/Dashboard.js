@@ -40,8 +40,8 @@ export default function Dashboard({ setIsAuthenticated }) {
               <ChefHat className="w-6 h-6 text-white" strokeWidth={1.5} />
             </div>
             <div>
-              <h1 className="text-white font-bold text-lg tracking-tight">CMV Master</h1>
-              <p className="text-xs text-slate-400">Controle de Custos</p>
+              <h1 className="text-white font-bold text-lg tracking-tight">Gestão Point</h1>
+              <p className="text-xs text-slate-400">do Addad</p>
             </div>
           </div>
         </div>

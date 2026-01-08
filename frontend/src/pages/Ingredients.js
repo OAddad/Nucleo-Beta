@@ -6,6 +6,13 @@ import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../components/ui/select";
+import {
   Dialog,
   DialogContent,
   DialogHeader,
@@ -67,6 +74,7 @@ export default function Ingredients() {
       fetchIngredients();
     } catch (error) {
       toast.error("Erro ao excluir ingrediente");
+      console.error(error);
     }
   };
 
@@ -116,20 +124,23 @@ export default function Ingredients() {
                   <Label htmlFor="unit" className="text-slate-700">
                     Unidade de Medida
                   </Label>
-                  <Input
-                    id="unit"
-                    data-testid="ingredient-unit-input"
-                    value={unit}
-                    onChange={(e) => setUnit(e.target.value)}
-                    placeholder="Ex: kg, unidade, litro"
-                    required
-                    className="mt-1 h-11 bg-white border-slate-200 focus:ring-2 focus:ring-rose-100 focus:border-rose-500"
-                  />
+                  <Select value={unit} onValueChange={setUnit} required>
+                    <SelectTrigger
+                      data-testid="ingredient-unit-select"
+                      className="mt-1 h-11 bg-white border-slate-200 focus:ring-2 focus:ring-rose-100 focus:border-rose-500"
+                    >
+                      <SelectValue placeholder="Selecione a unidade" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="kg">Quilograma (kg)</SelectItem>
+                      <SelectItem value="unidade">Unidade</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
                 <Button
                   type="submit"
                   data-testid="create-ingredient-button"
-                  disabled={loading}
+                  disabled={loading || !unit}
                   className="w-full bg-rose-700 hover:bg-rose-800 h-11 font-medium shadow-sm transition-all active:scale-95"
                 >
                   {loading ? "Criando..." : "Criar Ingrediente"}
