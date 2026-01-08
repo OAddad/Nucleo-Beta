@@ -35,23 +35,23 @@ export default function Dashboard({ setIsAuthenticated }) {
 
   const handleNavigate = (path) => {
     navigate(path);
-    setSidebarOpen(false); // Fecha o menu ao navegar em mobile
+    if (window.innerWidth < 1024) { // Fecha apenas em mobile
+      setSidebarOpen(false);
+    }
   };
 
-  const tabs = [
-    { path: "/", label: "Relatórios", icon: BarChart3 },
-    { path: "/ingredientes", label: "Ingredientes", icon: Package },
-    { path: "/compras", label: "Compras", icon: ShoppingCart },
-    { path: "/produtos", label: "Produtos", icon: FileText },
+  // Estrutura de navegação principal
+  const mainTabs = [
+    { path: "/", label: "Visão Geral", icon: Home, type: "single" },
   ];
 
   // Adicionar Moderação apenas para proprietários e administradores
   if (currentUser?.role === "proprietario" || currentUser?.role === "administrador") {
-    tabs.push({ path: "/moderacao", label: "Moderação", icon: Shield });
+    mainTabs.push({ path: "/moderacao", label: "Moderação", icon: Shield, type: "single" });
   }
   
   // Adicionar Configuração (disponível para todos)
-  tabs.push({ path: "/configuracao", label: "Configuração", icon: Settings });
+  mainTabs.push({ path: "/configuracao", label: "Configuração", icon: Settings, type: "single" });
 
   const isActive = (path) => {
     if (path === "/") return location.pathname === "/";
