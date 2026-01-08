@@ -298,25 +298,7 @@ async def register(user_data: UserCreate):
 @api_router.post("/auth/login", response_model=Token)
 async def login(user_data: UserLogin):
     user_doc = await db.users.find_one({"username": user_data.username}, {"_id": 0})
-    logger.info(f"[LOGIN] Tentativa de login para: {user_data.username}")
-    logger.info(f"[LOGIN] User encontrado: {user_doc is not None}")
-    if user_doc:
-        logger.info(f"[LOGIN] Campos do user: {list(user_doc.keys())}")
-        has_password = "password" in user_doc
-        logger.info(f"[LOGIN] Tem campo password: {has_password}")
-        if has_password:
-            try:
-                verify_result = pwd_context.verify(user_data.password, user_doc["password"])
-                logger.info(f"[LOGIN] Resultado da verificação: {verify_result}")
-            except Exception as e:
-                logger.error(f"[LOGIN] Erro na verificação: {e}")
-                verify_result = False
-        else:
-            verify_result = False
-    else:
-        verify_result = False
-    
-    if not user_doc or not verify_result:
+    if not user_doc or not pwd_context.verify(user_data.password, user_doc["password"]):
         raise HTTPException(status_code=401, detail="Invalid credentials")
     
     if isinstance(user_doc["created_at"], str):
