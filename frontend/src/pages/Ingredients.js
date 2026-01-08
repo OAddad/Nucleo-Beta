@@ -70,6 +70,7 @@ export default function Ingredients() {
     setName("");
     setUnit("");
     setUnitsPerPackage("");
+    setUnitWeight("");
     setEditMode(false);
     setCurrentIngredientId(null);
   };
@@ -80,6 +81,7 @@ export default function Ingredients() {
     setName(ingredient.name);
     setUnit(ingredient.unit);
     setUnitsPerPackage(ingredient.units_per_package ? ingredient.units_per_package.toString() : "");
+    setUnitWeight(ingredient.unit_weight ? ingredient.unit_weight.toString() : "");
     setOpen(true);
   };
 
