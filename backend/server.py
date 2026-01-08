@@ -917,6 +917,9 @@ async def create_category(category_data: CategoryCreate, current_user: User = De
     # Registrar auditoria
     await log_audit("CREATE", "category", category_data.name, current_user, "baixa")
     
+    # Sincronizar com Excel
+    await sync_all_to_excel()
+    
     return category
 
 @api_router.put("/categories/{category_id}", response_model=Category)
@@ -941,6 +944,9 @@ async def update_category(category_id: str, category_data: CategoryCreate, curre
     
     # Registrar auditoria
     await log_audit("UPDATE", "category", f"{old_name} → {category_data.name}", current_user, "media")
+    
+    # Sincronizar com Excel
+    await sync_all_to_excel()
     
     updated = await db.categories.find_one({"id": category_id}, {"_id": 0})
     if isinstance(updated["created_at"], str):
@@ -968,6 +974,9 @@ async def delete_category(category_id: str, current_user: User = Depends(get_cur
     
     # Registrar auditoria
     await log_audit("DELETE", "category", category["name"], current_user, "alta")
+    
+    # Sincronizar com Excel
+    await sync_all_to_excel()
     
     return {"message": "Categoria deletada"}
 
