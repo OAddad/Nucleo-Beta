@@ -390,11 +390,16 @@ async def delete_purchase(purchase_id: str, current_user: User = Depends(get_cur
     await db.purchases.delete_one({"id": purchase_id})
     
     # Recalculate average price
+    ingredient = await db.ingredients.find_one({"id": purchase["ingredient_id"]}, {"_id": 0})
     purchases = await db.purchases.find({"ingredient_id": purchase["ingredient_id"]}, {"_id": 0}).to_list(1000)
     if purchases:
         total_quantity = sum(p["quantity"] for p in purchases)
         total_cost = sum(p["price"] for p in purchases)
         avg_price = total_cost / total_quantity if total_quantity > 0 else 0
+        
+        # If ingredient has units_per_package, divide by it
+        if ingredient and ingredient.get("units_per_package") and ingredient["units_per_package"] > 0:
+            avg_price = avg_price / ingredient["units_per_package"]
     else:
         avg_price = 0
     
@@ -404,6 +409,39 @@ async def delete_purchase(purchase_id: str, current_user: User = Depends(get_cur
     )
     
     return {"message": "Purchase deleted"}
+
+@api_router.delete("/purchases/batch/{batch_id}")
+async def delete_purchase_batch(batch_id: str, current_user: User = Depends(get_current_user)):
+    purchases = await db.purchases.find({"batch_id": batch_id}, {"_id": 0}).to_list(1000)
+    if not purchases:
+        raise HTTPException(status_code=404, detail="Purchase batch not found")
+    
+    # Delete all purchases in batch
+    await db.purchases.delete_many({"batch_id": batch_id})
+    
+    # Recalculate average price for all affected ingredients
+    affected_ingredients = set(p["ingredient_id"] for p in purchases)
+    for ingredient_id in affected_ingredients:
+        ingredient = await db.ingredients.find_one({"id": ingredient_id}, {"_id": 0})
+        remaining_purchases = await db.purchases.find({"ingredient_id": ingredient_id}, {"_id": 0}).to_list(1000)
+        
+        if remaining_purchases:
+            total_quantity = sum(p["quantity"] for p in remaining_purchases)
+            total_cost = sum(p["price"] for p in remaining_purchases)
+            avg_price = total_cost / total_quantity if total_quantity > 0 else 0
+            
+            # If ingredient has units_per_package, divide by it
+            if ingredient and ingredient.get("units_per_package") and ingredient["units_per_package"] > 0:
+                avg_price = avg_price / ingredient["units_per_package"]
+        else:
+            avg_price = 0
+        
+        await db.ingredients.update_one(
+            {"id": ingredient_id},
+            {"$set": {"average_price": avg_price}}
+        )
+    
+    return {"message": "Purchase batch deleted", "purchases_deleted": len(purchases)}
 
 # Product endpoints
 @api_router.post("/products", response_model=Product)
