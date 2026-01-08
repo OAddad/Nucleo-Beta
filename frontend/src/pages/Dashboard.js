@@ -52,16 +52,19 @@ export default function Dashboard({ setIsAuthenticated }) {
   return (
     <div className="flex min-h-screen bg-background">
       <aside className="w-64 bg-sidebar text-sidebar-foreground flex flex-col border-r">
-        <div className="p-6 border-b flex items-center justify-between">
-          <div className="flex items-center gap-3">
+        <div className="p-6 border-b">
+          <button 
+            onClick={() => navigate("/")}
+            className="flex items-center gap-3 w-full hover:opacity-80 transition-opacity"
+          >
             <div className="bg-primary p-2 rounded-lg">
               <ChefHat className="w-6 h-6 text-primary-foreground" strokeWidth={1.5} />
             </div>
-            <div>
+            <div className="text-left">
               <h1 className="text-sidebar-foreground font-bold text-lg tracking-tight">Núcleo</h1>
-              <p className="text-xs text-muted-foreground">Sistema de Gestão</p>
+              <p className="text-xs text-muted-foreground">o centro da sua gestão</p>
             </div>
-          </div>
+          </button>
         </div>
 
         <nav className="flex-1 p-4 space-y-1">
