@@ -560,6 +560,9 @@ async def update_purchase_batch(batch_id: str, batch_data: PurchaseBatchCreate, 
             {"$set": {"average_price": avg_price}}
         )
     
+    # Registrar auditoria
+    await log_audit("UPDATE", "purchase", f"Lote de {batch_data.supplier}", current_user, "media", {"items": len(purchases_created)})
+    
     return {"message": "Purchase batch updated", "batch_id": batch_id, "items_updated": len(purchases_created)}
 
 @api_router.post("/purchases", response_model=Purchase)
