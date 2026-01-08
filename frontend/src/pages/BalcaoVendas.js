@@ -175,40 +175,7 @@ export default function BalcaoVendas() {
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
               {filteredProducts.map(product => (
-                <button
-                  key={product.id}
-                  onClick={() => addToCart(product)}
-                  className="bg-card rounded-xl border shadow-sm overflow-hidden hover:shadow-lg hover:border-primary/50 transition-all text-left group"
-                >
-                  {/* Imagem do produto */}
-                  <div className="aspect-square bg-muted flex items-center justify-center overflow-hidden">
-                    {product.photo_url ? (
-                      <img
-                        src={`${BACKEND_URL}/api${product.photo_url}`}
-                        alt={product.name}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform"
-                        onError={(e) => {
-                          e.target.style.display = 'none';
-                          e.target.parentElement.innerHTML = '<div class="flex flex-col items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="text-muted-foreground"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg></div>';
-                        }}
-                      />
-                    ) : (
-                      <div className="flex flex-col items-center justify-center text-muted-foreground">
-                        <ImageOff className="w-8 h-8" />
-                      </div>
-                    )}
-                  </div>
-                  {/* Info do produto */}
-                  <div className="p-3">
-                    <h3 className="font-medium text-sm line-clamp-2 mb-1">{product.name}</h3>
-                    {product.category && (
-                      <p className="text-xs text-muted-foreground mb-2">{product.category}</p>
-                    )}
-                    <p className="text-lg font-bold text-primary">
-                      {product.sale_price ? `R$ ${product.sale_price.toFixed(2)}` : "Sem preço"}
-                    </p>
-                  </div>
-                </button>
+                <ProductCard key={product.id} product={product} onAddToCart={addToCart} />
               ))}
             </div>
           )}
