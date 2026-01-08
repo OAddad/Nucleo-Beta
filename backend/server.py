@@ -79,11 +79,11 @@ class PurchaseCreate(BaseModel):
 class Purchase(BaseModel):
     model_config = ConfigDict(extra="ignore")
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
-    batch_id: str
-    supplier: str
+    batch_id: Optional[str] = None
+    supplier: Optional[str] = ""
     ingredient_id: str
     ingredient_name: str
-    ingredient_unit: str
+    ingredient_unit: Optional[str] = ""
     quantity: float
     price: float
     unit_price: float
