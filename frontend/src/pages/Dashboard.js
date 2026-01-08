@@ -42,7 +42,7 @@ export default function Dashboard({ setIsAuthenticated }) {
   }
   
   // Adicionar Configuração (disponível para todos)
-  tabs.push({ path: "/configuracao", label: "Configuração", icon: Shield });
+  tabs.push({ path: "/configuracao", label: "Configuração", icon: Settings });
 
   const isActive = (path) => {
     if (path === "/") return location.pathname === "/";
