@@ -1310,22 +1310,6 @@ async def restore_from_excel():
         logger.error(f"[BACKUP] Erro ao restaurar do Excel: {e}")
 
 
-# Endpoint para verificar status do backup
-@api_router.get("/backup/status")
-async def get_backup_status(current_user: User = Depends(get_current_user)):
-    """Retorna informações sobre o backup em Excel"""
-    return excel_backup.get_backup_info()
-
-
-# Endpoint para forçar backup manual
-@api_router.post("/backup/sync")
-async def force_backup_sync(current_user: User = Depends(get_current_user)):
-    """Força sincronização manual com o Excel"""
-    check_role(current_user, ["proprietario"])
-    await sync_all_to_excel()
-    return {"message": "Backup sincronizado com sucesso", "info": excel_backup.get_backup_info()}
-
-
 # Criar diretórios de upload no startup
 @app.on_event("startup")
 async def startup_event():
