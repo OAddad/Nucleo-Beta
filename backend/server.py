@@ -1065,6 +1065,83 @@ async def get_dashboard_stats(current_user: User = Depends(get_current_user)):
         avg_cmv=avg_cmv
     )
 
+
+# ============================================
+# FUNÇÕES DE SINCRONIZAÇÃO COM EXCEL
+# ============================================
+
+async def sync_all_to_excel():
+    """Sincroniza todos os dados do MongoDB para o Excel"""
+    try:
+        # Ingredientes
+        ingredients = await db.ingredients.find({}, {"_id": 0}).to_list(1000)
+        if ingredients:
+            for ing in ingredients:
+                if isinstance(ing.get("created_at"), datetime):
+                    ing["created_at"] = ing["created_at"].isoformat()
+            excel_backup.save_ingredients(ingredients)
+        
+        # Produtos
+        products = await db.products.find({}, {"_id": 0}).to_list(1000)
+        if products:
+            for p in products:
+                if isinstance(p.get("created_at"), datetime):
+                    p["created_at"] = p["created_at"].isoformat()
+            excel_backup.save_products(products)
+        
+        # Compras
+        purchases = await db.purchases.find({}, {"_id": 0}).to_list(1000)
+        if purchases:
+            for pur in purchases:
+                if isinstance(pur.get("purchase_date"), datetime):
+                    pur["purchase_date"] = pur["purchase_date"].isoformat()
+            excel_backup.save_purchases(purchases)
+        
+        # Categorias
+        categories = await db.categories.find({}, {"_id": 0}).to_list(1000)
+        if categories:
+            for cat in categories:
+                if isinstance(cat.get("created_at"), datetime):
+                    cat["created_at"] = cat["created_at"].isoformat()
+            excel_backup.save_categories(categories)
+        
+        # Usuários (com senha hash para restauração)
+        users = await db.users.find({}, {"_id": 0}).to_list(1000)
+        if users:
+            for u in users:
+                if isinstance(u.get("created_at"), datetime):
+                    u["created_at"] = u["created_at"].isoformat()
+            excel_backup.save_users(users)
+        
+        # Histórico de Auditoria (Moderação)
+        audit_logs = await db.audit_logs.find({}, {"_id": 0}).to_list(10000)
+        if audit_logs:
+            for log in audit_logs:
+                if isinstance(log.get("timestamp"), datetime):
+                    log["timestamp"] = log["timestamp"].isoformat()
+            excel_backup.save_audit_logs(audit_logs)
+        
+        print("[BACKUP] Sincronização completa com Excel realizada")
+    except Exception as e:
+        print(f"[BACKUP] Erro ao sincronizar com Excel: {e}")
+
+
+# Endpoint para verificar status do backup
+@api_router.get("/backup/status")
+async def get_backup_status(current_user: User = Depends(get_current_user)):
+    """Retorna informações sobre o backup em Excel"""
+    return excel_backup.get_backup_info()
+
+
+# Endpoint para forçar backup manual
+@api_router.post("/backup/sync")
+async def force_backup_sync(current_user: User = Depends(get_current_user)):
+    """Força sincronização manual com o Excel"""
+    check_role(current_user, ["proprietario"])
+    await sync_all_to_excel()
+    return {"message": "Backup sincronizado com sucesso", "info": excel_backup.get_backup_info()}
+
+
 app.include_router(api_router)
 
 app.add_middleware(
