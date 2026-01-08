@@ -708,12 +708,14 @@ export default function Products() {
                               // Calcular custo baseado no tipo de ingrediente
                               let itemCost;
                               let displayQuantity = item.quantity;
+                              let showUnitInfo = false;
                               
                               if (ingredient.unit_weight && ingredient.unit_weight > 0) {
                                 // Para ingredientes com peso por unidade (hambúrguer)
                                 // item.quantity está em kg, converter para unidades
                                 displayQuantity = item.quantity / ingredient.unit_weight;
                                 itemCost = ingredient.average_price * item.quantity;
+                                showUnitInfo = true;
                               } else {
                                 itemCost = ingredient.average_price * item.quantity;
                               }
@@ -723,9 +725,16 @@ export default function Products() {
                                   key={idx}
                                   className="flex justify-between items-center text-sm py-2 border-b border-border/50 last:border-0"
                                 >
-                                  <span className="font-medium flex-1">
-                                    {ingredient.name}
-                                  </span>
+                                  <div className="flex-1">
+                                    <div className="font-medium">
+                                      {ingredient.name}
+                                    </div>
+                                    {showUnitInfo && (
+                                      <div className="text-xs text-muted-foreground mt-0.5">
+                                        1 un = {(ingredient.unit_weight * 1000).toFixed(0)}g
+                                      </div>
+                                    )}
+                                  </div>
                                   <span className="font-mono mx-4">
                                     {displayUnit === "un" 
                                       ? Math.round(displayQuantity) 
