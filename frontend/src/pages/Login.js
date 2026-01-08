@@ -10,7 +10,6 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
 export default function Login({ setIsAuthenticated }) {
-  const [isLogin, setIsLogin] = useState(true);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -20,8 +19,7 @@ export default function Login({ setIsAuthenticated }) {
     setLoading(true);
 
     try {
-      const endpoint = isLogin ? "/auth/login" : "/auth/register";
-      const response = await axios.post(`${API}${endpoint}`, {
+      const response = await axios.post(`${API}/auth/login`, {
         username,
         password,
       });
@@ -29,7 +27,7 @@ export default function Login({ setIsAuthenticated }) {
       localStorage.setItem("token", response.data.access_token);
       localStorage.setItem("user", JSON.stringify(response.data.user));
       setIsAuthenticated(true);
-      toast.success(isLogin ? "Login realizado!" : "Conta criada!");
+      toast.success("Login realizado!");
     } catch (error) {
       toast.error(
         error.response?.data?.detail || "Erro ao autenticar"
@@ -40,14 +38,69 @@ export default function Login({ setIsAuthenticated }) {
   };
 
   return (
-    <div className="min-h-screen flex">
-      <div
-        className="hidden lg:flex lg:w-1/2 relative bg-cover bg-center"
-        style={{
-          backgroundImage:
-            "url('https://images.unsplash.com/photo-1634737119182-4d09e1305ba7?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2NDN8MHwxfHNlYXJjaHwxfHxnb3VybWV0JTIwYnVyZ2VyJTIwZGFyayUyMGJhY2tncm91bmR8ZW58MHx8fHwxNzY3ODI5NTgwfDA&ixlib=rb-4.1.0&q=85')",
-        }}
-      >
+    <div className="min-h-screen flex items-center justify-center bg-background p-4">
+      <div className="w-full max-w-md">
+        {/* Logo e Título no Topo */}
+        <div className="text-center mb-8">
+          <div className="flex justify-center mb-4">
+            <div className="bg-primary p-4 rounded-2xl shadow-lg">
+              <ChefHat className="w-12 h-12 text-primary-foreground" strokeWidth={1.5} />
+            </div>
+          </div>
+          <h1 className="text-4xl font-bold mb-2">Núcleo</h1>
+          <p className="text-muted-foreground text-lg">
+            o centro da sua gestão
+          </p>
+        </div>
+
+        {/* Card de Login */}
+        <div className="bg-card border rounded-2xl shadow-xl p-8">
+          <h2 className="text-2xl font-bold mb-6 text-center">Entrar no Sistema</h2>
+          
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <Label htmlFor="username">Usuário</Label>
+              <Input
+                id="username"
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                placeholder="Digite seu usuário"
+                required
+                className="mt-1 h-11"
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="password">Senha</Label>
+              <Input
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Digite sua senha"
+                required
+                className="mt-1 h-11"
+              />
+            </div>
+
+            <Button
+              type="submit"
+              disabled={loading}
+              className="w-full h-11 text-base"
+            >
+              {loading ? "Entrando..." : "Entrar"}
+            </Button>
+          </form>
+        </div>
+
+        <p className="text-center text-sm text-muted-foreground mt-6">
+          © 2025 Núcleo - Todos os direitos reservados
+        </p>
+      </div>
+    </div>
+  );
+}
         <div className="absolute inset-0 bg-black/60" />
         <div className="relative z-10 flex flex-col justify-center px-12 text-white">
           <h1 className="text-5xl font-bold mb-4">Núcleo</h1>
