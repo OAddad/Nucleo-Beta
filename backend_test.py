@@ -382,21 +382,59 @@ class CMVMasterAPITester:
         
         return True
 
-    def cleanup(self):
-        """Clean up created test data"""
-        print("\n=== CLEANUP ===")
+    def test_cleanup_operations(self):
+        """Test cleanup operations (DELETE) as specified in review"""
+        print("\n=== CLEANUP OPERATIONS TESTS ===")
         
-        # Delete created products
+        # Delete products
+        print("🔍 Testing product deletion...")
         for product_id in self.created_products:
-            self.run_test(f"Delete product {product_id}", "DELETE", f"products/{product_id}", 200)
+            success, _ = self.run_test(
+                f"Delete product {product_id}",
+                "DELETE",
+                f"products/{product_id}",
+                200
+            )
+            if success:
+                print(f"   ✅ Product {product_id} deleted")
         
-        # Delete remaining purchases
-        for purchase_id in self.created_purchases[1:]:  # Skip first one as it was already deleted
-            self.run_test(f"Delete purchase {purchase_id}", "DELETE", f"purchases/{purchase_id}", 200)
+        # Delete batch purchases
+        print("🔍 Testing batch purchase deletion...")
+        for batch_id in self.batch_ids:
+            success, response = self.run_test(
+                f"Delete batch {batch_id}",
+                "DELETE",
+                f"purchases/batch/{batch_id}",
+                200
+            )
+            if success:
+                print(f"   ✅ Batch {batch_id} deleted - {response.get('purchases_deleted', 0)} purchases removed")
         
-        # Delete created ingredients
+        # Delete ingredients
+        print("🔍 Testing ingredient deletion...")
         for ingredient_id in self.created_ingredients:
-            self.run_test(f"Delete ingredient {ingredient_id}", "DELETE", f"ingredients/{ingredient_id}", 200)
+            success, _ = self.run_test(
+                f"Delete ingredient {ingredient_id}",
+                "DELETE",
+                f"ingredients/{ingredient_id}",
+                200
+            )
+            if success:
+                print(f"   ✅ Ingredient {ingredient_id} deleted")
+        
+        # Delete categories
+        print("🔍 Testing category deletion...")
+        for category_id in self.created_categories:
+            success, _ = self.run_test(
+                f"Delete category {category_id}",
+                "DELETE",
+                f"categories/{category_id}",
+                200
+            )
+            if success:
+                print(f"   ✅ Category {category_id} deleted")
+        
+        return True
 
 def main():
     print("🚀 Starting CMV Master API Tests")
