@@ -514,16 +514,24 @@ export default function Purchases() {
 
               {/* Campo de Pesquisa */}
               <div className="flex-1">
-                <Input
-                  placeholder={
-                    searchType === "supplier" ? "Digite o nome do fornecedor..." :
-                    searchType === "value" ? "Digite o valor..." :
-                    "Digite a data (AAAA-MM-DD ou DD/MM/AAAA)..."
-                  }
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="h-10"
-                />
+                {searchType === "date" ? (
+                  <Input
+                    type="date"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="h-10"
+                  />
+                ) : (
+                  <Input
+                    placeholder={
+                      searchType === "supplier" ? "Digite o nome do fornecedor..." :
+                      "Digite o valor..."
+                    }
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="h-10"
+                  />
+                )}
               </div>
             </div>
           </div>
