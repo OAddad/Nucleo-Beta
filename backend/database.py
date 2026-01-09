@@ -148,6 +148,13 @@ def init_database():
             )
         ''')
         
+        # Migração: Adicionar coluna 'code' em ingredients se não existir
+        try:
+            cursor.execute("SELECT code FROM ingredients LIMIT 1")
+        except sqlite3.OperationalError:
+            cursor.execute("ALTER TABLE ingredients ADD COLUMN code TEXT")
+            print("[DATABASE] Coluna 'code' adicionada à tabela ingredients")
+        
         conn.commit()
         
         _initialized = True
