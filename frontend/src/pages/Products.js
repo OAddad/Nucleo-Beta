@@ -1454,25 +1454,52 @@ export default function Products() {
         {products.length > 0 && (
           <div className="mb-4 space-y-3">
             <div className="flex flex-wrap items-center gap-3">
-              {/* Ordenar por (simplificado) */}
+              {/* Ordenar por - Todos os botões com toggle */}
               <div className="flex items-center gap-2">
                 <Label className="text-sm font-medium whitespace-nowrap">Ordenar:</Label>
-                <Select value={sortBy} onValueChange={setSortBy}>
-                  <SelectTrigger className="w-40">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="alfabetica-az">Nome (A → Z)</SelectItem>
-                    <SelectItem value="alfabetica-za">Nome (Z → A)</SelectItem>
-                  </SelectContent>
-                </Select>
+                
+                {/* Botões de ordenação com toggle */}
+                <div className="flex items-center gap-1.5">
+                  <Button
+                    variant={sortBy.startsWith("alfabetica") ? "default" : "outline"}
+                    size="sm"
+                    className="h-9 px-3"
+                    onClick={() => {
+                      if (sortBy === "alfabetica-az") {
+                        setSortBy("alfabetica-za");
+                      } else {
+                        setSortBy("alfabetica-az");
+                      }
+                    }}
+                  >
+                    Nome {sortBy.startsWith("alfabetica") && (sortBy === "alfabetica-az" ? "A→Z" : "Z→A")}
+                  </Button>
+                  <Button
+                    variant={sortBy.startsWith("cmv") ? "default" : "outline"}
+                    size="sm"
+                    className="h-9 px-3"
+                    onClick={() => handleSortToggle("cmv")}
+                  >
+                    CMV {sortBy.startsWith("cmv") && (sortDirection.cmv === "desc" ? "↓" : "↑")}
+                  </Button>
+                  <Button
+                    variant={sortBy.startsWith("margem") ? "default" : "outline"}
+                    size="sm"
+                    className="h-9 px-3"
+                    onClick={() => handleSortToggle("margem")}
+                  >
+                    Margem {sortBy.startsWith("margem") && (sortDirection.margem === "desc" ? "↓" : "↑")}
+                  </Button>
+                  <Button
+                    variant={sortBy.startsWith("preco") ? "default" : "outline"}
+                    size="sm"
+                    className="h-9 px-3"
+                    onClick={() => handleSortToggle("preco")}
+                  >
+                    Preço {sortBy.startsWith("preco") && (sortDirection.preco === "desc" ? "↓" : "↑")}
+                  </Button>
+                </div>
               </div>
-              
-              {/* Botões de ordenação com toggle */}
-              <div className="flex items-center gap-1.5">
-                <Button
-                  variant={sortBy.startsWith("cmv") ? "default" : "outline"}
-                  size="sm"
                   className="h-9 px-3"
                   onClick={() => handleSortToggle("cmv")}
                 >
