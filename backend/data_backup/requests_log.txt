@@ -440,3 +440,6 @@
 2026-01-09T14:30:43.687757+00:00 | DB_CALL get_all_categories | P3 | 0.11ms | success
 2026-01-09T14:30:43.852679+00:00 | DB_CALL get_user_by_id | P3 | 0.22ms | success
 2026-01-09T14:30:43.852946+00:00 | DB_CALL get_all_categories | P3 | 0.12ms | success
+2026-01-09T14:31:34.236202+00:00 | DB_CALL get_user_by_username | P3 | 0.4ms | success
+2026-01-09T14:31:34.256651+00:00 | DB_CALL get_user_by_id | P3 | 0.23ms | success
+2026-01-09T14:31:34.256960+00:00 | DB_CALL get_all_ingredients | P3 | 0.18ms | success
