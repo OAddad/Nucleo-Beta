@@ -2678,3 +2678,7 @@
 2026-01-09T16:09:59.841824+00:00 | DB_CALL get_all_ingredients | P3 | 0.23ms | success
 2026-01-09T16:10:00.004368+00:00 | DB_CALL get_user_by_id | P3 | 0.57ms | success
 2026-01-09T16:10:00.004683+00:00 | DB_CALL get_all_categories | P3 | 0.18ms | success
+2026-01-09T16:16:29.225754+00:00 | DB_CALL get_user_by_id | P3 | 1.21ms | success
+2026-01-09T16:16:29.228765+00:00 | DB_CALL get_user_by_id | P3 | 3.35ms | success
+2026-01-09T16:16:29.229243+00:00 | DB_CALL get_all_ingredients | P3 | 0.58ms | success
+2026-01-09T16:16:29.236600+00:00 | DB_CALL get_all_purchases | P3 | 7.67ms | success
