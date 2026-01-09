@@ -861,20 +861,29 @@ class CMVMasterAPITester:
         return True
 
 def main():
-    print("🚀 Starting CMV Master API Tests - Delivery System Endpoints Test")
+    print("🚀 Starting CMV Master API Tests - SQLite Migration Testing")
     print("=" * 60)
-    print("🎯 Testing delivery system endpoints as requested:")
-    print("   - GET /api/products")
-    print("   - GET /api/categories") 
-    print("   - localStorage order creation flow simulation")
+    print("🎯 Testing SQLite migration as requested:")
+    print("   - Authentication with Addad user (Addad@123)")
+    print("   - GET /api/ingredients (expected: 11 ingredients)")
+    print("   - GET /api/products (expected: 2 products)")
+    print("   - GET /api/purchases (expected: 11 purchases)")
+    print("   - GET /api/reports/dashboard")
+    print("   - GET /api/backup/status (expected: SQLite)")
+    print("   - GET /api/categories")
     print("=" * 60)
     
     tester = CMVMasterAPITester()
     
-    # Run tests focused on delivery system endpoints as requested
+    # Run tests focused on SQLite migration as requested
     tests = [
         ("1. Authentication", tester.test_authentication),
-        ("2. Delivery System Endpoints", tester.test_delivery_system_endpoints),
+        ("2. Ingredients", tester.test_ingredients_crud),
+        ("3. Products", tester.test_products_with_cmv),
+        ("4. Purchases", tester.test_batch_purchases),
+        ("5. Dashboard", tester.test_dashboard_and_reports),
+        ("6. Backup Status", tester.test_backup_status),
+        ("7. Categories", tester.test_categories),
     ]
     
     failed_tests = []
