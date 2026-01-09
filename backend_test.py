@@ -66,8 +66,27 @@ class CMVMasterAPITester:
         """Test authentication with Addad user as specified in review request"""
         print("\n=== AUTHENTICATION TESTS ===")
         
-        # Try different password combinations for Addad user first
-        passwords_to_try = ["Admin123", "Addad123", "admin123", "senha123", "123456", "admin", "Addad"]
+        # Test with the exact credentials from review request
+        print("🔍 Testing login with Addad user (password: Addad@123)...")
+        success, response = self.run_test(
+            "Login with Addad (password: Addad@123)",
+            "POST",
+            "auth/login",
+            200,
+            data={"username": "Addad", "password": "Addad@123"}
+        )
+        
+        if success and 'access_token' in response:
+            self.token = response['access_token']
+            self.user_id = response['user']['id']
+            print(f"   ✅ Addad login successful with password: Addad@123")
+            print(f"   User role: {response['user']['role']}")
+            print(f"   Token obtained: {self.token[:20]}...")
+            return True
+        
+        # If exact credentials fail, try variations
+        print("   Addad@123 failed, trying password variations...")
+        passwords_to_try = ["Addad123", "addad@123", "Admin123", "admin123", "senha123", "123456", "admin", "Addad"]
         
         for password in passwords_to_try:
             print(f"🔍 Testing login with 'Addad' user (password: {password})...")
