@@ -92,6 +92,7 @@ export default function Purchases() {
   useEffect(() => {
     fetchPurchases();
     fetchIngredients();
+    loadFornecedoresCadastrados();
   }, []);
 
   // Detectar mudanças não salvas
@@ -99,6 +100,47 @@ export default function Purchases() {
     const hasChanges = cart.length > 0 || supplier.trim() !== "";
     setHasUnsavedChanges(hasChanges);
   }, [cart, supplier]);
+
+  // Carregar fornecedores do localStorage
+  const loadFornecedoresCadastrados = () => {
+    const saved = localStorage.getItem("fornecedores");
+    if (saved) {
+      setFornecedoresCadastrados(JSON.parse(saved));
+    }
+  };
+
+  // Obter todos os fornecedores (cadastrados + das compras)
+  const getAllSuppliers = useMemo(() => {
+    const suppliersSet = new Set();
+    
+    // Adicionar fornecedores cadastrados
+    fornecedoresCadastrados.forEach(f => {
+      suppliersSet.add(f.nome);
+    });
+    
+    // Adicionar fornecedores das compras
+    purchaseBatches.forEach(batch => {
+      if (batch.supplier) {
+        suppliersSet.add(batch.supplier);
+      }
+    });
+    
+    return Array.from(suppliersSet).sort();
+  }, [fornecedoresCadastrados, purchaseBatches]);
+
+  // Filtrar sugestões de fornecedor baseado no que o usuário digitou
+  useEffect(() => {
+    if (supplier.trim()) {
+      const filtered = getAllSuppliers.filter(s => 
+        s.toLowerCase().includes(supplier.toLowerCase())
+      );
+      setSupplierSuggestions(filtered);
+      setShowSupplierSuggestions(filtered.length > 0 && !filtered.some(s => s.toLowerCase() === supplier.toLowerCase()));
+    } else {
+      setSupplierSuggestions([]);
+      setShowSupplierSuggestions(false);
+    }
+  }, [supplier, getAllSuppliers]);
 
   const fetchPurchases = async () => {
     try {
