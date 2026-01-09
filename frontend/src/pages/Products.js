@@ -796,7 +796,10 @@ export default function Products() {
                         <Button 
                           variant="outline" 
                           className="w-full rounded-xl"
-                          onClick={() => setPerformanceFilter("sem-foto")}
+                          onClick={() => {
+                            setPerformanceFilter("todos");
+                            setFilterPhoto("sem-foto");
+                          }}
                         >
                           Adicione fotos agora
                         </Button>
