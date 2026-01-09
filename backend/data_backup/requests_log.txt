@@ -870,3 +870,7 @@
 2026-01-09T15:01:28.658982+00:00 | DB_CALL get_user_by_username | P3 | 0.36ms | success
 2026-01-09T15:01:28.672041+00:00 | DB_CALL get_user_by_username | P3 | 0.27ms | success
 2026-01-09T15:01:28.672270+00:00 | DB_CALL get_user_by_username | P3 | 0.11ms | success
+2026-01-09T15:04:35.643334+00:00 | DB_CALL init_database | P3 | 2.86ms | success
+2026-01-09T15:04:35.643691+00:00 | DB_CALL count_ingredients | P3 | 0.22ms | success
+2026-01-09T15:04:35.643918+00:00 | DB_CALL count_products | P3 | 0.14ms | success
+2026-01-09T15:04:35.644134+00:00 | DB_CALL count_users | P3 | 0.13ms | success
