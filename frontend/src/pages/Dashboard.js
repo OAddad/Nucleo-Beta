@@ -565,6 +565,7 @@ export default function Dashboard({ setIsAuthenticated }) {
                 </div>
               } />
               <Route path="/configuracoes/auditoria" element={<Moderation />} />
+              <Route path="/configuracoes/bugs" element={<BugsPage />} />
             </Routes>
           )}
         </main>
