@@ -156,6 +156,18 @@ export default function Products() {
   
   // Filtro de performance (sem-foto, sem-descricao, todos)
   const [performanceFilter, setPerformanceFilter] = useState("todos");
+  
+  // Novos filtros manuais
+  const [filterPhoto, setFilterPhoto] = useState("todos"); // todos, com-foto, sem-foto
+  const [filterDescription, setFilterDescription] = useState("todos"); // todos, com-descricao, sem-descricao
+  const [filterCategory, setFilterCategory] = useState("todos"); // todos ou nome da categoria
+  
+  // Direção da ordenação (asc/desc) para campos com toggle
+  const [sortDirection, setSortDirection] = useState({
+    cmv: "desc",
+    margem: "desc",
+    preco: "desc"
+  });
 
   // Calcular estatísticas de performance do cardápio
   const cardapioStats = useMemo(() => {
