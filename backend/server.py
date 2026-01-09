@@ -772,14 +772,14 @@ async def get_purchases_grouped(current_user: User = Depends(get_current_user)):
     # Group by batch_id
     batches_dict = {}
     for p in purchases:
-        # Normalizar data para ter timezone
-        if isinstance(p["purchase_date"], str):
-            try:
-                p["purchase_date"] = datetime.fromisoformat(p["purchase_date"].replace('Z', '+00:00'))
-            except:
-                p["purchase_date"] = datetime.now(timezone.utc)
-        elif p["purchase_date"] and p["purchase_date"].tzinfo is None:
-            p["purchase_date"] = p["purchase_date"].replace(tzinfo=timezone.utc)
+        # Normalizar data para string ISO para evitar problemas de timezone
+        purchase_date = p.get("purchase_date")
+        if isinstance(purchase_date, str):
+            p["purchase_date"] = purchase_date
+        elif purchase_date:
+            p["purchase_date"] = purchase_date.isoformat()
+        else:
+            p["purchase_date"] = datetime.now(timezone.utc).isoformat()
         
         batch_id = p.get("batch_id", p["id"])
         if batch_id not in batches_dict:
@@ -789,15 +789,17 @@ async def get_purchases_grouped(current_user: User = Depends(get_current_user)):
                 "purchase_date": p["purchase_date"],
                 "total_quantity": 0,
                 "total_price": 0,
-                "items": []
+                "items": [],
+                "purchases": []  # Adicionar campo purchases para compatibilidade
             }
         
         batches_dict[batch_id]["total_quantity"] += p["quantity"]
         batches_dict[batch_id]["total_price"] += p["price"]
-        batches_dict[batch_id]["items"].append(Purchase(**p))
+        batches_dict[batch_id]["items"].append(p)
+        batches_dict[batch_id]["purchases"].append(p)
     
-    batches = [PurchaseBatch(**batch) for batch in batches_dict.values()]
-    batches.sort(key=lambda x: x.purchase_date if x.purchase_date else datetime.min.replace(tzinfo=timezone.utc), reverse=True)
+    # Ordenar por data (string comparison works for ISO dates)
+    batches = sorted(batches_dict.values(), key=lambda x: x["purchase_date"], reverse=True)
     return batches
 
 @api_router.get("/purchases", response_model=List[Purchase])
