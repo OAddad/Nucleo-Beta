@@ -1,0 +1,40 @@
+# =====================================================
+# SUPERVISOR CONFIG - Núcleo (Otimizado)
+# =====================================================
+# 
+# Configuração para ambiente Emergent/Kubernetes
+# - Sem MongoDB (usando SQLite)
+# - Sem --reload (boot mais rápido)
+# - Apenas serviços essenciais
+#
+
+[program:backend]
+command=uvicorn server:app --host 0.0.0.0 --port 8001 --workers 1
+directory=/app/backend
+autostart=true
+autorestart=true
+stderr_logfile=/var/log/supervisor/backend.err.log
+stdout_logfile=/var/log/supervisor/backend.out.log
+stopsignal=TERM
+stopwaitsecs=10
+stopasgroup=true
+killasgroup=true
+
+[program:frontend]
+command=yarn start
+environment=HOST="0.0.0.0",PORT="3000"
+directory=/app/frontend
+autostart=true
+autorestart=true
+stderr_logfile=/var/log/supervisor/frontend.err.log
+stdout_logfile=/var/log/supervisor/frontend.out.log
+stopsignal=TERM
+stopwaitsecs=30
+stopasgroup=true
+killasgroup=true
+
+# MongoDB DESABILITADO - Sistema usa SQLite
+# [program:mongodb]
+# command=/usr/bin/mongod --bind_ip_all
+# autostart=false
+# autorestart=false
