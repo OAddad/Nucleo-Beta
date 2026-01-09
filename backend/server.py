@@ -1,4 +1,4 @@
-from fastapi import FastAPI, APIRouter, HTTPException, Depends, status, UploadFile, File
+from fastapi import FastAPI, APIRouter, HTTPException, Depends, status, UploadFile, File, Request
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
@@ -7,6 +7,8 @@ from starlette.middleware.cors import CORSMiddleware
 from starlette.concurrency import run_in_threadpool
 import os
 import logging
+import time
+import traceback
 from pathlib import Path
 from pydantic import BaseModel, Field, ConfigDict
 from typing import List, Optional
@@ -18,6 +20,9 @@ import shutil
 
 # Banco de dados SQLite - ÚNICA fonte de dados
 import database as sqlite_db
+
+# Sistema de bugs e fila de requisições
+import bug_tracker
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -34,7 +39,35 @@ ALGORITHM = "HS256"
 # Helper para chamar funções SQLite síncronas em contexto async
 async def db_call(fn, *args, **kwargs):
     """Executa função SQLite síncrona em thread pool"""
-    return await run_in_threadpool(fn, *args, **kwargs)
+    start_time = time.time()
+    try:
+        result = await run_in_threadpool(fn, *args, **kwargs)
+        duration = (time.time() - start_time) * 1000
+        bug_tracker.log_request(
+            endpoint=fn.__name__,
+            method="DB_CALL",
+            priority=3,
+            duration_ms=duration,
+            status="success"
+        )
+        return result
+    except Exception as e:
+        duration = (time.time() - start_time) * 1000
+        bug_tracker.log_request(
+            endpoint=fn.__name__,
+            method="DB_CALL",
+            priority=3,
+            duration_ms=duration,
+            status="error",
+            error_message=str(e)
+        )
+        bug_tracker.log_bug(
+            error_type=type(e).__name__,
+            message=str(e),
+            endpoint=fn.__name__,
+            stack_trace=traceback.format_exc()
+        )
+        raise
 
 # Models
 class UserCreate(BaseModel):
