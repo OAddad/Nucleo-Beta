@@ -6,7 +6,22 @@ Sistema completo de gestão de **CMV (Custo de Mercadoria Vendida)** para restau
 
 ## 🚀 Início Rápido
 
-### 🪟 Windows (2 cliques)
+### 🪟 Windows - Executável (1 clique)
+
+**Pré-requisitos:** [Python](https://python.org) e [Node.js](https://nodejs.org) instalados
+
+**Opção A - Usar executável pronto:**
+1. Duplo clique em `NucleoLauncher.exe` → Sistema inicia automaticamente!
+
+**Opção B - Gerar o executável:**
+1. Execute `build_exe.bat` para compilar
+2. Duplo clique em `NucleoLauncher.exe`
+
+> 📖 Veja mais detalhes em [LAUNCHER_README.md](LAUNCHER_README.md)
+
+---
+
+### 🪟 Windows - Script Batch (2 cliques)
 
 **Pré-requisito:** [Git for Windows](https://git-scm.com/download/win) instalado
 
@@ -14,7 +29,6 @@ Sistema completo de gestão de **CMV (Custo de Mercadoria Vendida)** para restau
 2. **Duplo clique em `launch.bat`** → Sistema inicia automaticamente!
 
 > 💡 **Dica:** Crie um atalho do `launch.bat` na área de trabalho para acesso rápido.
-> Você pode personalizar o ícone do atalho (clique direito → Propriedades → Alterar Ícone)
 
 ---
 
