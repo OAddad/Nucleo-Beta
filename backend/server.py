@@ -136,6 +136,7 @@ class IngredientCreate(BaseModel):
 class Ingredient(BaseModel):
     model_config = ConfigDict(extra="ignore")
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    code: Optional[str] = ""  # Código de 5 dígitos (série 20000)
     name: str
     unit: str
     category: Optional[str] = None
