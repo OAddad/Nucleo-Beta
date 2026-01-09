@@ -141,7 +141,7 @@ def init_database():
         ''')
         
         conn.commit()
-        conn.close()
+        
         print(f"[DATABASE] SQLite inicializado em: {DB_PATH}")
 
 # ==================== USERS ====================
@@ -153,7 +153,7 @@ def get_user_by_username(username: str) -> Optional[Dict]:
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM users WHERE username = ?", (username,))
         row = cursor.fetchone()
-        conn.close()
+        
         if row:
             return dict(row)
         return None
@@ -165,7 +165,7 @@ def get_user_by_id(user_id: str) -> Optional[Dict]:
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM users WHERE id = ?", (user_id,))
         row = cursor.fetchone()
-        conn.close()
+        
         if row:
             return dict(row)
         return None
@@ -177,7 +177,7 @@ def get_all_users() -> List[Dict]:
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM users ORDER BY created_at")
         rows = cursor.fetchall()
-        conn.close()
+        
         return [dict(row) for row in rows]
 
 def count_users() -> int:
@@ -187,7 +187,7 @@ def count_users() -> int:
         cursor = conn.cursor()
         cursor.execute("SELECT COUNT(*) FROM users")
         count = cursor.fetchone()[0]
-        conn.close()
+        
         return count
 
 def create_user(user_data: Dict) -> Dict:
@@ -210,7 +210,7 @@ def create_user(user_data: Dict) -> Dict:
             created_at
         ))
         conn.commit()
-        conn.close()
+        
         
         return get_user_by_id(user_id)
 
@@ -235,7 +235,7 @@ def update_user(user_id: str, user_data: Dict) -> Optional[Dict]:
             cursor.execute(f"UPDATE users SET {', '.join(updates)} WHERE id = ?", values)
             conn.commit()
         
-        conn.close()
+        
         return get_user_by_id(user_id)
 
 def delete_user(user_id: str) -> bool:
@@ -246,7 +246,7 @@ def delete_user(user_id: str) -> bool:
         cursor.execute("DELETE FROM users WHERE id = ?", (user_id,))
         deleted = cursor.rowcount > 0
         conn.commit()
-        conn.close()
+        
         return deleted
 
 def verify_password(username: str, password: str) -> bool:
@@ -265,7 +265,7 @@ def get_all_ingredients() -> List[Dict]:
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM ingredients ORDER BY name")
         rows = cursor.fetchall()
-        conn.close()
+        
         return [dict(row) for row in rows]
 
 def get_ingredient_by_id(ingredient_id: str) -> Optional[Dict]:
@@ -275,7 +275,7 @@ def get_ingredient_by_id(ingredient_id: str) -> Optional[Dict]:
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM ingredients WHERE id = ?", (ingredient_id,))
         row = cursor.fetchone()
-        conn.close()
+        
         if row:
             return dict(row)
         return None
@@ -307,7 +307,7 @@ def create_ingredient(data: Dict) -> Dict:
             created_at
         ))
         conn.commit()
-        conn.close()
+        
         
         return get_ingredient_by_id(ing_id)
 
@@ -342,7 +342,7 @@ def update_ingredient(ingredient_id: str, data: Dict) -> Optional[Dict]:
             ingredient_id
         ))
         conn.commit()
-        conn.close()
+        
         
         return get_ingredient_by_id(ingredient_id)
 
@@ -354,7 +354,7 @@ def delete_ingredient(ingredient_id: str) -> bool:
         cursor.execute("DELETE FROM ingredients WHERE id = ?", (ingredient_id,))
         deleted = cursor.rowcount > 0
         conn.commit()
-        conn.close()
+        
         return deleted
 
 def count_ingredients() -> int:
@@ -364,7 +364,7 @@ def count_ingredients() -> int:
         cursor = conn.cursor()
         cursor.execute("SELECT COUNT(*) FROM ingredients")
         count = cursor.fetchone()[0]
-        conn.close()
+        
         return count
 
 # ==================== PRODUCTS ====================
@@ -376,7 +376,7 @@ def get_all_products() -> List[Dict]:
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM products ORDER BY name")
         rows = cursor.fetchall()
-        conn.close()
+        
         
         products = []
         for row in rows:
@@ -407,7 +407,7 @@ def get_product_by_id(product_id: str) -> Optional[Dict]:
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM products WHERE id = ?", (product_id,))
         row = cursor.fetchone()
-        conn.close()
+        
         
         if row:
             p = dict(row)
@@ -435,7 +435,7 @@ def get_next_product_code() -> str:
         cursor = conn.cursor()
         cursor.execute("SELECT MAX(CAST(code AS INTEGER)) FROM products WHERE code IS NOT NULL")
         max_code = cursor.fetchone()[0]
-        conn.close()
+        
         
         if max_code:
             return str(int(max_code) + 1).zfill(5)
@@ -474,7 +474,7 @@ def create_product(data: Dict) -> Dict:
             created_at
         ))
         conn.commit()
-        conn.close()
+        
         
         return get_product_by_id(prod_id)
 
@@ -520,7 +520,7 @@ def update_product(product_id: str, data: Dict) -> Optional[Dict]:
             product_id
         ))
         conn.commit()
-        conn.close()
+        
         
         return get_product_by_id(product_id)
 
@@ -532,7 +532,7 @@ def delete_product(product_id: str) -> bool:
         cursor.execute("DELETE FROM products WHERE id = ?", (product_id,))
         deleted = cursor.rowcount > 0
         conn.commit()
-        conn.close()
+        
         return deleted
 
 def count_products() -> int:
@@ -542,7 +542,7 @@ def count_products() -> int:
         cursor = conn.cursor()
         cursor.execute("SELECT COUNT(*) FROM products")
         count = cursor.fetchone()[0]
-        conn.close()
+        
         return count
 
 # ==================== PURCHASES ====================
@@ -554,7 +554,7 @@ def get_all_purchases() -> List[Dict]:
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM purchases ORDER BY purchase_date DESC")
         rows = cursor.fetchall()
-        conn.close()
+        
         return [dict(row) for row in rows]
 
 def create_purchase(data: Dict) -> Dict:
@@ -582,7 +582,7 @@ def create_purchase(data: Dict) -> Dict:
             data.get('purchase_date', datetime.now(timezone.utc).isoformat())
         ))
         conn.commit()
-        conn.close()
+        
         
         return data
 
@@ -594,7 +594,7 @@ def delete_purchases_by_batch(batch_id: str) -> bool:
         cursor.execute("DELETE FROM purchases WHERE batch_id = ?", (batch_id,))
         deleted = cursor.rowcount > 0
         conn.commit()
-        conn.close()
+        
         return deleted
 
 def count_purchases() -> int:
@@ -604,7 +604,7 @@ def count_purchases() -> int:
         cursor = conn.cursor()
         cursor.execute("SELECT COUNT(*) FROM purchases")
         count = cursor.fetchone()[0]
-        conn.close()
+        
         return count
 
 def get_purchases_by_ingredient(ingredient_id: str) -> List[Dict]:
@@ -614,7 +614,7 @@ def get_purchases_by_ingredient(ingredient_id: str) -> List[Dict]:
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM purchases WHERE ingredient_id = ? ORDER BY purchase_date", (ingredient_id,))
         rows = cursor.fetchall()
-        conn.close()
+        
         return [dict(row) for row in rows]
 
 # ==================== CATEGORIES ====================
@@ -626,7 +626,7 @@ def get_all_categories() -> List[Dict]:
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM categories ORDER BY name")
         rows = cursor.fetchall()
-        conn.close()
+        
         return [dict(row) for row in rows]
 
 def get_category_by_id(category_id: str) -> Optional[Dict]:
@@ -636,7 +636,7 @@ def get_category_by_id(category_id: str) -> Optional[Dict]:
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM categories WHERE id = ?", (category_id,))
         row = cursor.fetchone()
-        conn.close()
+        
         if row:
             return dict(row)
         return None
@@ -648,7 +648,7 @@ def get_category_by_name(name: str) -> Optional[Dict]:
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM categories WHERE name = ?", (name,))
         row = cursor.fetchone()
-        conn.close()
+        
         if row:
             return dict(row)
         return None
@@ -667,7 +667,7 @@ def create_category(data: Dict) -> Dict:
             VALUES (?, ?, ?)
         ''', (cat_id, data['name'], created_at))
         conn.commit()
-        conn.close()
+        
         
         return get_category_by_id(cat_id)
 
@@ -678,7 +678,7 @@ def update_category(category_id: str, data: Dict) -> Optional[Dict]:
         cursor = conn.cursor()
         cursor.execute("UPDATE categories SET name = ? WHERE id = ?", (data['name'], category_id))
         conn.commit()
-        conn.close()
+        
         return get_category_by_id(category_id)
 
 def delete_category(category_id: str) -> bool:
@@ -689,7 +689,7 @@ def delete_category(category_id: str) -> bool:
         cursor.execute("DELETE FROM categories WHERE id = ?", (category_id,))
         deleted = cursor.rowcount > 0
         conn.commit()
-        conn.close()
+        
         return deleted
 
 # ==================== AUDIT LOGS ====================
@@ -701,7 +701,7 @@ def get_all_audit_logs() -> List[Dict]:
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM audit_logs ORDER BY timestamp DESC")
         rows = cursor.fetchall()
-        conn.close()
+        
         return [dict(row) for row in rows]
 
 def create_audit_log(data: Dict) -> Dict:
@@ -728,7 +728,7 @@ def create_audit_log(data: Dict) -> Dict:
             data.get('details')
         ))
         conn.commit()
-        conn.close()
+        
         
         return data
 
