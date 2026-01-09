@@ -359,9 +359,19 @@ def get_all_products() -> List[Dict]:
         products = []
         for row in rows:
             p = dict(row)
-            # Converter JSON strings para listas
-            p['recipe'] = json.loads(p['recipe']) if p['recipe'] else []
-            p['order_steps'] = json.loads(p['order_steps']) if p['order_steps'] else []
+            # Converter JSON strings para listas com tratamento de erro
+            try:
+                p['recipe'] = json.loads(p['recipe']) if p['recipe'] else []
+            except (json.JSONDecodeError, TypeError):
+                print(f"[DATABASE] Erro ao parsear recipe para produto {p.get('name', 'Unknown')}: {p.get('recipe', 'None')}")
+                p['recipe'] = []
+            
+            try:
+                p['order_steps'] = json.loads(p['order_steps']) if p['order_steps'] else []
+            except (json.JSONDecodeError, TypeError):
+                print(f"[DATABASE] Erro ao parsear order_steps para produto {p.get('name', 'Unknown')}: {p.get('order_steps', 'None')}")
+                p['order_steps'] = []
+            
             p['is_insumo'] = bool(p['is_insumo'])
             p['is_divisible'] = bool(p['is_divisible'])
             products.append(p)
