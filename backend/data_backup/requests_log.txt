@@ -8,3 +8,7 @@
 2026-01-09T14:19:36.524874+00:00 | DB_CALL create_audit_log | P3 | 2.3ms | success
 2026-01-09T14:19:36.684037+00:00 | DB_CALL get_user_by_id | P3 | 0.27ms | success
 2026-01-09T14:19:36.684455+00:00 | DB_CALL get_all_products | P3 | 0.28ms | success
+2026-01-09T14:19:47.899255+00:00 | DB_CALL init_database | P3 | 2.71ms | success
+2026-01-09T14:19:47.899534+00:00 | DB_CALL count_ingredients | P3 | 0.17ms | success
+2026-01-09T14:19:47.899705+00:00 | DB_CALL count_products | P3 | 0.12ms | success
+2026-01-09T14:19:47.899851+00:00 | DB_CALL count_users | P3 | 0.1ms | success
