@@ -271,6 +271,36 @@ backend:
         agent: "testing"
         comment: "✅ WORKING: Order Steps feature tested successfully. Found 1 product with order steps containing 2 steps and 2 items. Data structure integrity verified: all required fields present (name, calculation_type, min_selections, max_selections, items). Product references valid. Calculation types 'maximo' and 'minimo' working correctly. Selection limits working (0 = no limit). Price override functionality working. Product creation/update requires admin privileges (working as designed). Backend models OrderStep and OrderStepItem properly implemented and functional."
 
+  - task: "Automatic Ingredient Codes (Series 20000)"
+    implemented: true
+    working: true
+    file: "backend/database.py, backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Sistema de códigos automáticos para ingredientes implementado. Códigos gerados automaticamente na série 20000 (20001, 20002, etc.) ao criar novos ingredientes."
+      - working: true
+        agent: "testing"
+        comment: "✅ WORKING: Automatic ingredient codes tested successfully. POST /api/ingredients generates automatic codes in 20000 series (tested: 20026). GET /api/ingredients returns 'code' field for all 25 ingredients. Code generation function get_next_ingredient_code() working correctly. All existing ingredients have codes in 20000 series. System properly increments codes sequentially."
+
+  - task: "Average Price Last 5 Purchases"
+    implemented: true
+    working: true
+    file: "backend/database.py, backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Sistema de cálculo de preço médio baseado nas últimas 5 compras implementado. Função get_average_price_last_5_purchases() calcula média das últimas 5 compras por ingrediente."
+      - working: true
+        agent: "testing"
+        comment: "✅ WORKING: Average price calculation tested successfully. POST /api/purchases/batch creates purchases and updates average prices correctly. get_average_price_last_5_purchases() function working properly. Calculation considers units_per_package when applicable (divides average by package units). Tested with Coca Cola ingredient: 5 purchases with correct average calculation. Price updates automatically after new purchases."
+
 frontend:
   - task: "Login Page"
     implemented: true
