@@ -1213,3 +1213,11 @@
 2026-01-09T15:17:01.192288+00:00 | DB_CALL count_purchases | P3 | 0.07ms | success
 2026-01-09T15:17:01.192465+00:00 | DB_CALL count_users | P3 | 0.12ms | success
 2026-01-09T15:17:01.192738+00:00 | DB_CALL count_categories | P3 | 0.18ms | success
+2026-01-09T15:17:48.263677+00:00 | DB_CALL get_user_by_id | P3 | 1.18ms | success
+2026-01-09T15:17:48.265675+00:00 | DB_CALL count_ingredients | P3 | 1.67ms | success
+2026-01-09T15:17:48.265807+00:00 | DB_CALL get_user_by_id | P3 | 0.96ms | success
+2026-01-09T15:17:48.266396+00:00 | DB_CALL get_user_by_id | P3 | 1.38ms | success
+2026-01-09T15:17:48.269640+00:00 | DB_CALL count_products | P3 | 3.82ms | success
+2026-01-09T15:17:48.269823+00:00 | DB_CALL count_purchases | P3 | 0.1ms | success
+2026-01-09T15:17:48.269941+00:00 | DB_CALL count_users | P3 | 0.08ms | success
+2026-01-09T15:17:48.270117+00:00 | DB_CALL count_categories | P3 | 0.11ms | success
