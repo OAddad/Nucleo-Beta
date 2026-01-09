@@ -1465,27 +1465,119 @@ export default function Products() {
           </Dialog>
         </div>
 
-        {/* Filtros de Ordenação */}
+        {/* Filtros de Ordenação e Filtros Manuais */}
         {products.length > 0 && (
-          <div className="mb-4 flex items-center gap-3">
-            <Label htmlFor="sort-products" className="text-sm font-medium">
-              Ordenar por:
-            </Label>
-            <Select value={sortBy} onValueChange={setSortBy}>
-              <SelectTrigger id="sort-products" className="w-64">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="alfabetica-az">Nome (A → Z)</SelectItem>
-                <SelectItem value="alfabetica-za">Nome (Z → A)</SelectItem>
-                <SelectItem value="cmv-maior">Maior CMV</SelectItem>
-                <SelectItem value="cmv-menor">Menor CMV</SelectItem>
-                <SelectItem value="margem-maior">Maior Margem</SelectItem>
-                <SelectItem value="margem-menor">Menor Margem</SelectItem>
-                <SelectItem value="preco-maior">Maior Preço de Venda</SelectItem>
-                <SelectItem value="preco-menor">Menor Preço de Venda</SelectItem>
-              </SelectContent>
-            </Select>
+          <div className="mb-4 space-y-3">
+            <div className="flex flex-wrap items-center gap-3">
+              {/* Ordenar por (simplificado) */}
+              <div className="flex items-center gap-2">
+                <Label className="text-sm font-medium whitespace-nowrap">Ordenar:</Label>
+                <Select value={sortBy} onValueChange={setSortBy}>
+                  <SelectTrigger className="w-40">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="alfabetica-az">Nome (A → Z)</SelectItem>
+                    <SelectItem value="alfabetica-za">Nome (Z → A)</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              {/* Botões de ordenação com toggle */}
+              <div className="flex items-center gap-1.5">
+                <Button
+                  variant={sortBy.startsWith("cmv") ? "default" : "outline"}
+                  size="sm"
+                  className="h-9 px-3"
+                  onClick={() => handleSortToggle("cmv")}
+                >
+                  CMV {sortBy.startsWith("cmv") && (sortDirection.cmv === "desc" ? "↓" : "↑")}
+                </Button>
+                <Button
+                  variant={sortBy.startsWith("margem") ? "default" : "outline"}
+                  size="sm"
+                  className="h-9 px-3"
+                  onClick={() => handleSortToggle("margem")}
+                >
+                  Margem {sortBy.startsWith("margem") && (sortDirection.margem === "desc" ? "↓" : "↑")}
+                </Button>
+                <Button
+                  variant={sortBy.startsWith("preco") ? "default" : "outline"}
+                  size="sm"
+                  className="h-9 px-3"
+                  onClick={() => handleSortToggle("preco")}
+                >
+                  Preço {sortBy.startsWith("preco") && (sortDirection.preco === "desc" ? "↓" : "↑")}
+                </Button>
+              </div>
+              
+              {/* Separador visual */}
+              <div className="h-8 w-px bg-border" />
+              
+              {/* Filtros */}
+              <div className="flex items-center gap-2">
+                <Label className="text-sm font-medium whitespace-nowrap">Filtrar:</Label>
+                
+                {/* Filtro de Fotos */}
+                <Select value={filterPhoto} onValueChange={setFilterPhoto}>
+                  <SelectTrigger className="w-32">
+                    <SelectValue placeholder="Fotos" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="todos">Todas Fotos</SelectItem>
+                    <SelectItem value="com-foto">Com Foto</SelectItem>
+                    <SelectItem value="sem-foto">Sem Foto</SelectItem>
+                  </SelectContent>
+                </Select>
+                
+                {/* Filtro de Descrição */}
+                <Select value={filterDescription} onValueChange={setFilterDescription}>
+                  <SelectTrigger className="w-36">
+                    <SelectValue placeholder="Descrição" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="todos">Todas Descrições</SelectItem>
+                    <SelectItem value="com-descricao">Com Descrição</SelectItem>
+                    <SelectItem value="sem-descricao">Sem Descrição</SelectItem>
+                  </SelectContent>
+                </Select>
+                
+                {/* Filtro de Categoria */}
+                <Select value={filterCategory} onValueChange={setFilterCategory}>
+                  <SelectTrigger className="w-40">
+                    <SelectValue placeholder="Categoria" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="todos">Todas Categorias</SelectItem>
+                    {categories.map((cat) => (
+                      <SelectItem key={cat.id} value={cat.name}>{cat.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              {/* Botão limpar filtros */}
+              {(filterPhoto !== "todos" || filterDescription !== "todos" || filterCategory !== "todos" || performanceFilter !== "todos") && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-9 text-muted-foreground hover:text-foreground"
+                  onClick={clearAllFilters}
+                >
+                  Limpar filtros
+                </Button>
+              )}
+            </div>
+            
+            {/* Badge mostrando filtros ativos */}
+            {(filterPhoto !== "todos" || filterDescription !== "todos" || filterCategory !== "todos" || performanceFilter !== "todos") && (
+              <div className="flex items-center gap-2 text-sm">
+                <span className="text-muted-foreground">Mostrando:</span>
+                <span className="font-medium text-primary">
+                  {sortedProducts.length} de {products.length} produto{products.length !== 1 ? "s" : ""}
+                </span>
+              </div>
+            )}
           </div>
         )}
 
