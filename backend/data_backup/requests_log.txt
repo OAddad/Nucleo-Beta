@@ -158,3 +158,11 @@
 2026-01-09T14:24:34.270659+00:00 | DB_CALL get_ingredient_by_id | P3 | 0.17ms | success
 2026-01-09T14:24:34.289349+00:00 | DB_CALL get_user_by_id | P3 | 0.21ms | success
 2026-01-09T14:24:34.289641+00:00 | DB_CALL get_all_ingredients | P3 | 0.17ms | success
+2026-01-09T14:24:42.044581+00:00 | DB_CALL get_user_by_id | P3 | 1.18ms | success
+2026-01-09T14:24:42.047079+00:00 | DB_CALL get_user_by_id | P3 | 3.57ms | success
+2026-01-09T14:24:42.047259+00:00 | DB_CALL get_user_by_id | P3 | 3.02ms | success
+2026-01-09T14:24:42.047655+00:00 | DB_CALL count_ingredients | P3 | 0.41ms | success
+2026-01-09T14:24:42.047835+00:00 | DB_CALL count_products | P3 | 0.12ms | success
+2026-01-09T14:24:42.047947+00:00 | DB_CALL count_purchases | P3 | 0.07ms | success
+2026-01-09T14:24:42.048052+00:00 | DB_CALL count_users | P3 | 0.07ms | success
+2026-01-09T14:24:42.048148+00:00 | DB_CALL count_categories | P3 | 0.06ms | success
