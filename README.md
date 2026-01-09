@@ -2,25 +2,43 @@
 
 Sistema completo de gestão de **CMV (Custo de Mercadoria Vendida)** para restaurantes.
 
+---
+
 ## 🚀 Início Rápido
 
-### Passo 1: Clone o repositório
+### 🪟 Windows (2 cliques)
+
+**Pré-requisito:** [Git for Windows](https://git-scm.com/download/win) instalado
+
+1. **Clone o repositório** (apenas uma vez)
+2. **Duplo clique em `launch.bat`** → Sistema inicia automaticamente!
+
+> 💡 **Dica:** Crie um atalho do `launch.bat` na área de trabalho para acesso rápido.
+> Você pode personalizar o ícone do atalho (clique direito → Propriedades → Alterar Ícone)
+
+---
+
+### 🐧 Linux / macOS / Git Bash
+
+#### Passo 1: Clone o repositório
 ```bash
 git clone <url-do-repositorio>
 cd nucleo
 ```
 
-### Passo 2: Execute o setup (apenas uma vez)
+#### Passo 2: Execute o setup (apenas uma vez)
 ```bash
 ./setup.sh
 ```
 > Instala dependências e configura o ambiente (~2-3 minutos)
 
-### Passo 3: Inicie o sistema
+#### Passo 3: Inicie o sistema
 ```bash
 ./launch.sh
 ```
 > Tempo de inicialização: **< 60 segundos**
+
+---
 
 ### Acesse o sistema
 - **Frontend:** http://localhost:3000
