@@ -528,3 +528,12 @@
 2026-01-09T14:32:53.024644+00:00 | DB_CALL get_all_ingredients | P3 | 0.16ms | success
 2026-01-09T14:32:53.179776+00:00 | DB_CALL get_user_by_id | P3 | 0.24ms | success
 2026-01-09T14:32:53.180034+00:00 | DB_CALL get_all_categories | P3 | 0.13ms | success
+2026-01-09T14:33:15.188304+00:00 | DB_CALL get_user_by_id | P3 | 0.29ms | success
+2026-01-09T14:33:15.188633+00:00 | DB_CALL get_all_products | P3 | 0.17ms | success
+2026-01-09T14:33:16.597248+00:00 | DB_CALL get_user_by_id | P3 | 0.3ms | success
+2026-01-09T14:33:16.597575+00:00 | DB_CALL get_ingredient_by_id | P3 | 0.14ms | success
+2026-01-09T14:33:16.597790+00:00 | DB_CALL get_all_products | P3 | 0.15ms | success
+2026-01-09T14:33:16.600860+00:00 | DB_CALL delete_ingredient | P3 | 3.01ms | success
+2026-01-09T14:33:16.603347+00:00 | DB_CALL create_audit_log | P3 | 2.37ms | success
+2026-01-09T14:33:16.760819+00:00 | DB_CALL get_user_by_id | P3 | 0.26ms | success
+2026-01-09T14:33:16.761152+00:00 | DB_CALL get_all_ingredients | P3 | 0.17ms | success
