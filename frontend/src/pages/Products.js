@@ -715,6 +715,105 @@ export default function Products() {
             </TabsList>
 
             <TabsContent value="products" className="space-y-4">
+            
+            {/* Indicadores de Performance do Cardápio */}
+            {products.length > 0 && (
+              <div className="bg-card rounded-2xl border shadow-sm p-6 mb-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  {/* Indicador Principal - Cardápio Otimizado */}
+                  <div className="flex flex-col items-center justify-center p-4 bg-muted/30 rounded-2xl border">
+                    <div className="relative">
+                      <CircularProgress percent={cardapioStats.overallPercent} size={140} strokeWidth={10} />
+                      <div className="absolute inset-0 flex flex-col items-center justify-center">
+                        <span className="text-4xl font-bold">{cardapioStats.overallPercent}%</span>
+                      </div>
+                    </div>
+                    <p className="text-sm text-muted-foreground mt-3 text-center font-medium">do cardápio</p>
+                    <p className="text-sm text-muted-foreground text-center">otimizado</p>
+                  </div>
+                  
+                  {/* Indicador de Fotos */}
+                  <div className="flex flex-col p-4 bg-muted/30 rounded-2xl border">
+                    <p className="text-sm text-muted-foreground mb-2">Você tem:</p>
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="p-2 bg-background rounded-lg border">
+                        <Camera className="w-5 h-5 text-muted-foreground" />
+                      </div>
+                      <div>
+                        <span className="text-3xl font-bold">{cardapioStats.photoPercent}%</span>
+                        <p className="text-sm text-muted-foreground">do cardápio com fotos</p>
+                      </div>
+                    </div>
+                    <div className="mt-auto">
+                      {cardapioStats.photoPercent < 100 ? (
+                        <Button 
+                          variant="outline" 
+                          className="w-full rounded-xl"
+                          onClick={() => setPerformanceFilter("sem-foto")}
+                        >
+                          Adicione fotos agora
+                        </Button>
+                      ) : (
+                        <div className="text-center text-sm text-green-600 font-medium py-2">
+                          ✓ Todos os produtos têm foto!
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  
+                  {/* Indicador de Descrições */}
+                  <div className="flex flex-col p-4 bg-muted/30 rounded-2xl border">
+                    <p className="text-sm text-muted-foreground mb-2">Você tem:</p>
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="p-2 bg-background rounded-lg border">
+                        <FileText className="w-5 h-5 text-muted-foreground" />
+                      </div>
+                      <div>
+                        <span className="text-3xl font-bold">{cardapioStats.descriptionPercent}%</span>
+                        <p className="text-sm text-muted-foreground">do cardápio com descrição</p>
+                      </div>
+                    </div>
+                    <div className="mt-auto">
+                      {cardapioStats.descriptionPercent < 100 ? (
+                        <Button 
+                          variant="outline" 
+                          className="w-full rounded-xl"
+                          onClick={() => setPerformanceFilter("sem-descricao")}
+                        >
+                          Adicione descrições agora
+                        </Button>
+                      ) : (
+                        <div className="text-center text-sm text-green-600 font-medium py-2">
+                          ✓ Todos os produtos têm descrição!
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Badge de filtro ativo */}
+                {performanceFilter !== "todos" && (
+                  <div className="mt-4 flex items-center justify-center gap-2">
+                    <div className="bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium flex items-center gap-2">
+                      <span>
+                        {performanceFilter === "sem-foto" 
+                          ? `Mostrando ${sortedProducts.length} produto${sortedProducts.length !== 1 ? 's' : ''} sem foto`
+                          : `Mostrando ${sortedProducts.length} produto${sortedProducts.length !== 1 ? 's' : ''} sem descrição`
+                        }
+                      </span>
+                      <button 
+                        onClick={() => setPerformanceFilter("todos")}
+                        className="hover:bg-primary/20 rounded-full p-1 transition-colors"
+                      >
+                        <span className="sr-only">Remover filtro</span>
+                        ✕
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+            
             <div className="flex justify-end gap-2">
               <Button 
                 variant="outline" 
