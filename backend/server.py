@@ -4,7 +4,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
-from motor.motor_asyncio import AsyncIOMotorClient
+from starlette.concurrency import run_in_threadpool
 import os
 import logging
 from pathlib import Path
@@ -16,24 +16,25 @@ import jwt
 from PIL import Image
 import shutil
 
-# Sistema de Backup em Excel
-import excel_backup
-# Banco de dados SQLite para autenticação
+# Banco de dados SQLite - ÚNICA fonte de dados
 import database as sqlite_db
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
-# MongoDB para dados principais (ingredientes, produtos, compras)
-mongo_url = os.environ['MONGO_URL']
-client = AsyncIOMotorClient(mongo_url)
-db = client[os.environ['DB_NAME']]
+# Inicializar o banco SQLite
+sqlite_db.init_database()
 
 app = FastAPI()
 api_router = APIRouter(prefix="/api")
 security = HTTPBearer()
 SECRET_KEY = os.environ.get("JWT_SECRET", "your-secret-key-change-in-production")
 ALGORITHM = "HS256"
+
+# Helper para chamar funções SQLite síncronas em contexto async
+async def db_call(fn, *args, **kwargs):
+    """Executa função SQLite síncrona em thread pool"""
+    return await run_in_threadpool(fn, *args, **kwargs)
 
 # Models
 class UserCreate(BaseModel):
@@ -241,7 +242,7 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
             raise HTTPException(status_code=401, detail="Invalid token")
         
         # Usar SQLite
-        user = sqlite_db.get_user_by_id(user_id)
+        user = await db_call(sqlite_db.get_user_by_id, user_id)
         if user is None:
             raise HTTPException(status_code=401, detail="User not found")
         
@@ -258,19 +259,19 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
 
 
 async def log_audit(action: str, resource_type: str, resource_name: str, user: User, priority: str, details: dict = None):
-    """Registra uma ação no log de auditoria"""
-    audit = AuditLog(
-        action=action,
-        resource_type=resource_type,
-        resource_name=resource_name,
-        user_id=user.id,
-        username=user.username,
-        priority=priority,
-        details=details
-    )
-    doc = audit.model_dump()
-    doc["timestamp"] = doc["timestamp"].isoformat()
-    await db.audit_logs.insert_one(doc)
+    """Registra uma ação no log de auditoria usando SQLite"""
+    audit_data = {
+        "id": str(uuid.uuid4()),
+        "action": action,
+        "resource_type": resource_type,
+        "resource_name": resource_name,
+        "user_id": user.id,
+        "username": user.username,
+        "priority": priority,
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "details": str(details) if details else None
+    }
+    await db_call(sqlite_db.create_audit_log, audit_data)
 
 def check_role(user: User, allowed_roles: List[str]):
     """Verifica se o usuário tem permissão baseada no role"""
@@ -284,20 +285,20 @@ def check_role(user: User, allowed_roles: List[str]):
 # Auth endpoints
 @api_router.post("/auth/register", response_model=Token)
 async def register(user_data: UserCreate):
-    # Usar SQLite - verificar se usuário existe
-    existing = sqlite_db.get_user_by_username(user_data.username)
+    # Verificar se usuário existe
+    existing = await db_call(sqlite_db.get_user_by_username, user_data.username)
     if existing:
         raise HTTPException(status_code=400, detail="Username already exists")
     
     # Primeiro usuário é proprietário, demais são observadores
-    user_count = sqlite_db.count_users()
+    user_count = await db_call(sqlite_db.count_users)
     role = "proprietario" if user_count == 0 or user_data.username == "Addad" else "observador"
     
     user_id = str(uuid.uuid4())
     created_at = datetime.now(timezone.utc)
     
     # Senha em TEXTO SIMPLES (sem criptografia)
-    sqlite_db.create_user({
+    await db_call(sqlite_db.create_user, {
         'id': user_id,
         'username': user_data.username,
         'password': user_data.password,  # Texto simples!
@@ -305,19 +306,15 @@ async def register(user_data: UserCreate):
         'created_at': created_at.isoformat()
     })
     
-    # Sincronizar com Excel
-    await sync_all_to_excel()
-    
     user = User(id=user_id, username=user_data.username, role=role, created_at=created_at)
     access_token = create_access_token(data={"sub": user.id})
     return Token(access_token=access_token, token_type="bearer", user=user)
 
 @api_router.post("/auth/login", response_model=Token)
 async def login(user_data: UserLogin):
-    # Usar SQLite - verificar senha em texto simples
-    user_doc = sqlite_db.get_user_by_username(user_data.username)
-    
     # Verificar senha em texto simples
+    user_doc = await db_call(sqlite_db.get_user_by_username, user_data.username)
+    
     if not user_doc or user_doc.get("password") != user_data.password:
         raise HTTPException(status_code=401, detail="Invalid credentials")
     
@@ -333,7 +330,7 @@ async def login(user_data: UserLogin):
 @api_router.get("/users/management", response_model=List[UserWithPassword])
 async def get_users_management(current_user: User = Depends(get_current_user)):
     check_role(current_user, ["proprietario"])
-    users = sqlite_db.get_all_users()
+    users = await db_call(sqlite_db.get_all_users)
     for u in users:
         if isinstance(u.get("created_at"), str):
             u["created_at"] = datetime.fromisoformat(u["created_at"].replace('Z', '+00:00'))
@@ -343,7 +340,7 @@ async def get_users_management(current_user: User = Depends(get_current_user)):
 async def create_user_management(user_data: UserManagementCreate, current_user: User = Depends(get_current_user)):
     check_role(current_user, ["proprietario"])
     
-    existing = sqlite_db.get_user_by_username(user_data.username)
+    existing = await db_call(sqlite_db.get_user_by_username, user_data.username)
     if existing:
         raise HTTPException(status_code=400, detail="Username already exists")
     
@@ -354,7 +351,7 @@ async def create_user_management(user_data: UserManagementCreate, current_user: 
     created_at = datetime.now(timezone.utc)
     
     # Senha em TEXTO SIMPLES
-    sqlite_db.create_user({
+    await db_call(sqlite_db.create_user, {
         'id': user_id,
         'username': user_data.username,
         'password': user_data.password,  # Texto simples!
@@ -374,29 +371,29 @@ async def update_user_role(user_id: str, role_data: UserManagementUpdate, curren
     if role_data.role not in ["proprietario", "administrador", "observador"]:
         raise HTTPException(status_code=400, detail="Role inválido")
     
-    user = sqlite_db.get_user_by_id(user_id)
+    user = await db_call(sqlite_db.get_user_by_id, user_id)
     if not user:
         raise HTTPException(status_code=404, detail="Usuário não encontrado")
     
-    sqlite_db.update_user(user_id, {"role": role_data.role})
+    await db_call(sqlite_db.update_user, user_id, {"role": role_data.role})
     
     # Registrar auditoria
     await log_audit("UPDATE", "user", user["username"], current_user, "media", {"new_role": role_data.role})
     
-    updated = sqlite_db.get_user_by_id(user_id)
+    updated = await db_call(sqlite_db.get_user_by_id, user_id)
     if isinstance(updated.get("created_at"), str):
         updated["created_at"] = datetime.fromisoformat(updated["created_at"].replace('Z', '+00:00'))
     return User(**updated)
 
 @api_router.put("/users/change-password")
 async def change_password(password_data: ChangePassword, current_user: User = Depends(get_current_user)):
-    user_doc = sqlite_db.get_user_by_id(current_user.id)
+    user_doc = await db_call(sqlite_db.get_user_by_id, current_user.id)
     # Verificar senha em texto simples
     if not user_doc or user_doc.get("password") != password_data.old_password:
         raise HTTPException(status_code=401, detail="Senha atual incorreta")
     
     # Atualizar senha em texto simples
-    sqlite_db.update_user(current_user.id, {"password": password_data.new_password})
+    await db_call(sqlite_db.update_user, current_user.id, {"password": password_data.new_password})
     
     return {"message": "Senha alterada com sucesso"}
 
@@ -407,11 +404,11 @@ async def delete_user(user_id: str, current_user: User = Depends(get_current_use
     if user_id == current_user.id:
         raise HTTPException(status_code=400, detail="Você não pode deletar sua própria conta")
     
-    user = sqlite_db.get_user_by_id(user_id)
+    user = await db_call(sqlite_db.get_user_by_id, user_id)
     if not user:
         raise HTTPException(status_code=404, detail="Usuário não encontrado")
     
-    sqlite_db.delete_user(user_id)
+    await db_call(sqlite_db.delete_user, user_id)
     
     # Registrar auditoria
     await log_audit("DELETE", "user", user["username"], current_user, "alta")
@@ -423,7 +420,7 @@ async def delete_user(user_id: str, current_user: User = Depends(get_current_use
 async def get_audit_logs(current_user: User = Depends(get_current_user)):
     check_role(current_user, ["proprietario", "administrador"])
     
-    logs = await db.audit_logs.find({}, {"_id": 0}).sort("timestamp", -1).to_list(1000)
+    logs = await db_call(sqlite_db.get_all_audit_logs)
     for log in logs:
         if isinstance(log.get("timestamp"), str):
             log["timestamp"] = datetime.fromisoformat(log["timestamp"].replace('Z', '+00:00'))
@@ -434,47 +431,50 @@ async def get_audit_logs(current_user: User = Depends(get_current_user)):
 async def create_ingredient(ingredient_data: IngredientCreate, current_user: User = Depends(get_current_user)):
     check_role(current_user, ["proprietario", "administrador"])
     
-    ingredient = Ingredient(**ingredient_data.model_dump())
-    doc = ingredient.model_dump()
-    doc["created_at"] = doc["created_at"].isoformat()
-    await db.ingredients.insert_one(doc)
+    ing_id = str(uuid.uuid4())
+    created_at = datetime.now(timezone.utc)
+    
+    data = ingredient_data.model_dump()
+    data['id'] = ing_id
+    data['average_price'] = 0.0
+    data['created_at'] = created_at.isoformat()
+    
+    await db_call(sqlite_db.create_ingredient, data)
     
     # Registrar auditoria
     await log_audit("CREATE", "ingredient", ingredient_data.name, current_user, "baixa")
     
-    # Sincronizar com Excel
-    await sync_all_to_excel()
+    ingredient = await db_call(sqlite_db.get_ingredient_by_id, ing_id)
+    if isinstance(ingredient.get("created_at"), str):
+        ingredient["created_at"] = datetime.fromisoformat(ingredient["created_at"].replace('Z', '+00:00'))
     
-    return ingredient
+    return Ingredient(**ingredient)
 
 @api_router.get("/ingredients", response_model=List[Ingredient])
 async def get_ingredients(current_user: User = Depends(get_current_user)):
-    ingredients = await db.ingredients.find({}, {"_id": 0}).to_list(1000)
+    ingredients = await db_call(sqlite_db.get_all_ingredients)
     for ing in ingredients:
-        if isinstance(ing["created_at"], str):
-            ing["created_at"] = datetime.fromisoformat(ing["created_at"])
+        if isinstance(ing.get("created_at"), str):
+            ing["created_at"] = datetime.fromisoformat(ing["created_at"].replace('Z', '+00:00'))
     return ingredients
 
 @api_router.put("/ingredients/{ingredient_id}", response_model=Ingredient)
 async def update_ingredient(ingredient_id: str, ingredient_data: IngredientCreate, current_user: User = Depends(get_current_user)):
     check_role(current_user, ["proprietario", "administrador"])
     
-    existing = await db.ingredients.find_one({"id": ingredient_id}, {"_id": 0})
+    existing = await db_call(sqlite_db.get_ingredient_by_id, ingredient_id)
     if not existing:
         raise HTTPException(status_code=404, detail="Ingredient not found")
     
     update_data = ingredient_data.model_dump()
-    await db.ingredients.update_one({"id": ingredient_id}, {"$set": update_data})
+    await db_call(sqlite_db.update_ingredient, ingredient_id, update_data)
     
     # Registrar auditoria
     await log_audit("UPDATE", "ingredient", ingredient_data.name, current_user, "media")
     
-    # Sincronizar com Excel
-    await sync_all_to_excel()
-    
-    updated = await db.ingredients.find_one({"id": ingredient_id}, {"_id": 0})
-    if isinstance(updated["created_at"], str):
-        updated["created_at"] = datetime.fromisoformat(updated["created_at"])
+    updated = await db_call(sqlite_db.get_ingredient_by_id, ingredient_id)
+    if isinstance(updated.get("created_at"), str):
+        updated["created_at"] = datetime.fromisoformat(updated["created_at"].replace('Z', '+00:00'))
     return Ingredient(**updated)
 
 class StockAdjustment(BaseModel):
@@ -487,7 +487,7 @@ async def adjust_stock(ingredient_id: str, adjustment: StockAdjustment, current_
     """Ajusta a quantidade em estoque de um ingrediente"""
     check_role(current_user, ["proprietario", "administrador"])
     
-    ingredient = await db.ingredients.find_one({"id": ingredient_id}, {"_id": 0})
+    ingredient = await db_call(sqlite_db.get_ingredient_by_id, ingredient_id)
     if not ingredient:
         raise HTTPException(status_code=404, detail="Ingrediente não encontrado")
     
@@ -502,10 +502,7 @@ async def adjust_stock(ingredient_id: str, adjustment: StockAdjustment, current_
     else:
         raise HTTPException(status_code=400, detail="Operação inválida. Use 'add' ou 'remove'")
     
-    await db.ingredients.update_one(
-        {"id": ingredient_id},
-        {"$set": {"stock_quantity": new_stock}}
-    )
+    await db_call(sqlite_db.update_ingredient, ingredient_id, {"stock_quantity": new_stock})
     
     # Registrar auditoria
     await log_audit(
@@ -517,17 +514,14 @@ async def adjust_stock(ingredient_id: str, adjustment: StockAdjustment, current_
         {"operation": adjustment.operation, "quantity": adjustment.quantity, "reason": adjustment.reason}
     )
     
-    # Sincronizar com Excel
-    await sync_all_to_excel()
-    
-    updated = await db.ingredients.find_one({"id": ingredient_id}, {"_id": 0})
-    if isinstance(updated["created_at"], str):
-        updated["created_at"] = datetime.fromisoformat(updated["created_at"])
+    updated = await db_call(sqlite_db.get_ingredient_by_id, ingredient_id)
+    if isinstance(updated.get("created_at"), str):
+        updated["created_at"] = datetime.fromisoformat(updated["created_at"].replace('Z', '+00:00'))
     return Ingredient(**updated)
 
 @api_router.get("/ingredients/{ingredient_id}/usage")
 async def check_ingredient_usage(ingredient_id: str, current_user: User = Depends(get_current_user)):
-    products = await db.products.find({}, {"_id": 0}).to_list(1000)
+    products = await db_call(sqlite_db.get_all_products)
     used_in = []
     for product in products:
         for recipe_item in product.get("recipe", []):
@@ -540,12 +534,13 @@ async def check_ingredient_usage(ingredient_id: str, current_user: User = Depend
 async def delete_ingredient(ingredient_id: str, current_user: User = Depends(get_current_user)):
     check_role(current_user, ["proprietario", "administrador"])
     
-    # Check if ingredient is used in any product
-    ingredient = await db.ingredients.find_one({"id": ingredient_id}, {"_id": 0})
+    # Check if ingredient exists
+    ingredient = await db_call(sqlite_db.get_ingredient_by_id, ingredient_id)
     if not ingredient:
         raise HTTPException(status_code=404, detail="Ingredient not found")
     
-    products = await db.products.find({}, {"_id": 0}).to_list(1000)
+    # Check if ingredient is used in any product
+    products = await db_call(sqlite_db.get_all_products)
     used_in = []
     for product in products:
         for recipe_item in product.get("recipe", []):
@@ -559,16 +554,12 @@ async def delete_ingredient(ingredient_id: str, current_user: User = Depends(get
             detail=f"Cannot delete ingredient. It is used in the following products: {', '.join(used_in)}"
         )
     
-    result = await db.ingredients.delete_one({"id": ingredient_id})
-    if result.deleted_count == 0:
+    deleted = await db_call(sqlite_db.delete_ingredient, ingredient_id)
+    if not deleted:
         raise HTTPException(status_code=404, detail="Ingredient not found")
-    await db.purchases.delete_many({"ingredient_id": ingredient_id})
     
     # Registrar auditoria
     await log_audit("DELETE", "ingredient", ingredient["name"], current_user, "alta")
-    
-    # Sincronizar com Excel
-    await sync_all_to_excel()
     
     return {"message": "Ingredient deleted"}
 
@@ -582,31 +573,30 @@ async def create_purchase_batch(batch_data: PurchaseBatchCreate, current_user: U
     
     purchases_created = []
     for item in batch_data.items:
-        ingredient = await db.ingredients.find_one({"id": item.ingredient_id}, {"_id": 0})
+        ingredient = await db_call(sqlite_db.get_ingredient_by_id, item.ingredient_id)
         if not ingredient:
             continue
         
         unit_price = item.price / item.quantity if item.quantity > 0 else 0
         
-        purchase = Purchase(
-            batch_id=batch_id,
-            supplier=batch_data.supplier,
-            ingredient_id=item.ingredient_id,
-            ingredient_name=ingredient["name"],
-            ingredient_unit=ingredient["unit"],
-            quantity=item.quantity,
-            price=item.price,
-            unit_price=unit_price,
-            purchase_date=purchase_date
-        )
+        purchase_data = {
+            "id": str(uuid.uuid4()),
+            "batch_id": batch_id,
+            "supplier": batch_data.supplier,
+            "ingredient_id": item.ingredient_id,
+            "ingredient_name": ingredient["name"],
+            "ingredient_unit": ingredient["unit"],
+            "quantity": item.quantity,
+            "price": item.price,
+            "unit_price": unit_price,
+            "purchase_date": purchase_date.isoformat()
+        }
         
-        doc = purchase.model_dump()
-        doc["purchase_date"] = doc["purchase_date"].isoformat()
-        await db.purchases.insert_one(doc)
-        purchases_created.append(purchase)
+        await db_call(sqlite_db.create_purchase, purchase_data)
+        purchases_created.append(purchase_data)
         
         # Recalculate average price
-        purchases = await db.purchases.find({"ingredient_id": item.ingredient_id}, {"_id": 0}).to_list(1000)
+        purchases = await db_call(sqlite_db.get_purchases_by_ingredient, item.ingredient_id)
         total_quantity = sum(p["quantity"] for p in purchases)
         total_cost = sum(p["price"] for p in purchases)
         avg_price = total_cost / total_quantity if total_quantity > 0 else 0
@@ -619,16 +609,13 @@ async def create_purchase_batch(batch_data: PurchaseBatchCreate, current_user: U
         current_stock = ingredient.get("stock_quantity", 0) or 0
         new_stock = current_stock + item.quantity
         
-        await db.ingredients.update_one(
-            {"id": item.ingredient_id},
-            {"$set": {"average_price": avg_price, "stock_quantity": new_stock}}
-        )
+        await db_call(sqlite_db.update_ingredient, item.ingredient_id, {
+            "average_price": avg_price, 
+            "stock_quantity": new_stock
+        })
     
     # Registrar auditoria
     await log_audit("CREATE", "purchase", f"Lote de {batch_data.supplier}", current_user, "baixa", {"items": len(purchases_created)})
-    
-    # Sincronizar com Excel
-    await sync_all_to_excel()
     
     return {"message": "Purchase batch created", "batch_id": batch_id, "items_created": len(purchases_created)}
 
@@ -636,12 +623,15 @@ async def create_purchase_batch(batch_data: PurchaseBatchCreate, current_user: U
 async def update_purchase_batch(batch_id: str, batch_data: PurchaseBatchCreate, current_user: User = Depends(get_current_user)):
     check_role(current_user, ["proprietario", "administrador"])
     
-    # Delete old batch
-    old_purchases = await db.purchases.find({"batch_id": batch_id}, {"_id": 0}).to_list(1000)
+    # Get old purchases
+    all_purchases = await db_call(sqlite_db.get_all_purchases)
+    old_purchases = [p for p in all_purchases if p.get("batch_id") == batch_id]
+    
     if not old_purchases:
         raise HTTPException(status_code=404, detail="Purchase batch not found")
     
-    await db.purchases.delete_many({"batch_id": batch_id})
+    # Delete old batch
+    await db_call(sqlite_db.delete_purchases_by_batch, batch_id)
     
     # Create new purchases with same batch_id
     purchase_date = datetime.fromisoformat(batch_data.purchase_date) if batch_data.purchase_date else datetime.now(timezone.utc)
@@ -650,37 +640,36 @@ async def update_purchase_batch(batch_id: str, batch_data: PurchaseBatchCreate, 
     affected_ingredients = set()
     
     for item in batch_data.items:
-        ingredient = await db.ingredients.find_one({"id": item.ingredient_id}, {"_id": 0})
+        ingredient = await db_call(sqlite_db.get_ingredient_by_id, item.ingredient_id)
         if not ingredient:
             continue
         
         affected_ingredients.add(item.ingredient_id)
         unit_price = item.price / item.quantity if item.quantity > 0 else 0
         
-        purchase = Purchase(
-            batch_id=batch_id,
-            supplier=batch_data.supplier,
-            ingredient_id=item.ingredient_id,
-            ingredient_name=ingredient["name"],
-            ingredient_unit=ingredient["unit"],
-            quantity=item.quantity,
-            price=item.price,
-            unit_price=unit_price,
-            purchase_date=purchase_date
-        )
+        purchase_data = {
+            "id": str(uuid.uuid4()),
+            "batch_id": batch_id,
+            "supplier": batch_data.supplier,
+            "ingredient_id": item.ingredient_id,
+            "ingredient_name": ingredient["name"],
+            "ingredient_unit": ingredient["unit"],
+            "quantity": item.quantity,
+            "price": item.price,
+            "unit_price": unit_price,
+            "purchase_date": purchase_date.isoformat()
+        }
         
-        doc = purchase.model_dump()
-        doc["purchase_date"] = doc["purchase_date"].isoformat()
-        await db.purchases.insert_one(doc)
-        purchases_created.append(purchase)
+        await db_call(sqlite_db.create_purchase, purchase_data)
+        purchases_created.append(purchase_data)
     
     # Recalculate average price for all affected ingredients (old and new)
     for old_p in old_purchases:
         affected_ingredients.add(old_p["ingredient_id"])
     
     for ingredient_id in affected_ingredients:
-        ingredient = await db.ingredients.find_one({"id": ingredient_id}, {"_id": 0})
-        purchases = await db.purchases.find({"ingredient_id": ingredient_id}, {"_id": 0}).to_list(1000)
+        ingredient = await db_call(sqlite_db.get_ingredient_by_id, ingredient_id)
+        purchases = await db_call(sqlite_db.get_purchases_by_ingredient, ingredient_id)
         
         if purchases:
             total_quantity = sum(p["quantity"] for p in purchases)
@@ -692,10 +681,7 @@ async def update_purchase_batch(batch_id: str, batch_data: PurchaseBatchCreate, 
         else:
             avg_price = 0
         
-        await db.ingredients.update_one(
-            {"id": ingredient_id},
-            {"$set": {"average_price": avg_price}}
-        )
+        await db_call(sqlite_db.update_ingredient, ingredient_id, {"average_price": avg_price})
     
     # Registrar auditoria
     await log_audit("UPDATE", "purchase", f"Lote de {batch_data.supplier}", current_user, "media", {"items": len(purchases_created)})
@@ -704,31 +690,31 @@ async def update_purchase_batch(batch_id: str, batch_data: PurchaseBatchCreate, 
 
 @api_router.post("/purchases", response_model=Purchase)
 async def create_purchase(purchase_data: PurchaseCreate, current_user: User = Depends(get_current_user)):
-    ingredient = await db.ingredients.find_one({"id": purchase_data.ingredient_id}, {"_id": 0})
+    ingredient = await db_call(sqlite_db.get_ingredient_by_id, purchase_data.ingredient_id)
     if not ingredient:
         raise HTTPException(status_code=404, detail="Ingredient not found")
     
     unit_price = purchase_data.price / purchase_data.quantity if purchase_data.quantity > 0 else 0
     batch_id = str(uuid.uuid4())
+    purchase_date = datetime.fromisoformat(purchase_data.purchase_date) if purchase_data.purchase_date else datetime.now(timezone.utc)
     
-    purchase = Purchase(
-        batch_id=batch_id,
-        supplier="",
-        ingredient_id=purchase_data.ingredient_id,
-        ingredient_name=ingredient["name"],
-        ingredient_unit=ingredient["unit"],
-        quantity=purchase_data.quantity,
-        price=purchase_data.price,
-        unit_price=unit_price,
-        purchase_date=datetime.fromisoformat(purchase_data.purchase_date) if purchase_data.purchase_date else datetime.now(timezone.utc)
-    )
+    purchase = {
+        "id": str(uuid.uuid4()),
+        "batch_id": batch_id,
+        "supplier": "",
+        "ingredient_id": purchase_data.ingredient_id,
+        "ingredient_name": ingredient["name"],
+        "ingredient_unit": ingredient["unit"],
+        "quantity": purchase_data.quantity,
+        "price": purchase_data.price,
+        "unit_price": unit_price,
+        "purchase_date": purchase_date.isoformat()
+    }
     
-    doc = purchase.model_dump()
-    doc["purchase_date"] = doc["purchase_date"].isoformat()
-    await db.purchases.insert_one(doc)
+    await db_call(sqlite_db.create_purchase, purchase)
     
     # Recalculate average price
-    purchases = await db.purchases.find({"ingredient_id": purchase_data.ingredient_id}, {"_id": 0}).to_list(1000)
+    purchases = await db_call(sqlite_db.get_purchases_by_ingredient, purchase_data.ingredient_id)
     total_quantity = sum(p["quantity"] for p in purchases)
     total_cost = sum(p["price"] for p in purchases)
     avg_price = total_cost / total_quantity if total_quantity > 0 else 0
@@ -736,22 +722,21 @@ async def create_purchase(purchase_data: PurchaseCreate, current_user: User = De
     # If ingredient has units_per_package, divide by it to get unit price
     if ingredient.get("units_per_package") and ingredient["units_per_package"] > 0:
         avg_price = avg_price / ingredient["units_per_package"]
-    await db.ingredients.update_one(
-        {"id": purchase_data.ingredient_id},
-        {"$set": {"average_price": avg_price}}
-    )
     
-    return purchase
+    await db_call(sqlite_db.update_ingredient, purchase_data.ingredient_id, {"average_price": avg_price})
+    
+    purchase["purchase_date"] = purchase_date
+    return Purchase(**purchase)
 
 @api_router.get("/purchases/grouped", response_model=List[PurchaseBatch])
 async def get_purchases_grouped(current_user: User = Depends(get_current_user)):
-    purchases = await db.purchases.find({}, {"_id": 0}).sort("purchase_date", -1).to_list(1000)
+    purchases = await db_call(sqlite_db.get_all_purchases)
     
     # Group by batch_id
     batches_dict = {}
     for p in purchases:
         if isinstance(p["purchase_date"], str):
-            p["purchase_date"] = datetime.fromisoformat(p["purchase_date"])
+            p["purchase_date"] = datetime.fromisoformat(p["purchase_date"].replace('Z', '+00:00'))
         
         batch_id = p.get("batch_id", p["id"])
         if batch_id not in batches_dict:
@@ -774,25 +759,27 @@ async def get_purchases_grouped(current_user: User = Depends(get_current_user)):
 
 @api_router.get("/purchases", response_model=List[Purchase])
 async def get_purchases(current_user: User = Depends(get_current_user)):
-    purchases = await db.purchases.find({}, {"_id": 0}).sort("purchase_date", -1).to_list(1000)
+    purchases = await db_call(sqlite_db.get_all_purchases)
     for p in purchases:
         if isinstance(p["purchase_date"], str):
-            p["purchase_date"] = datetime.fromisoformat(p["purchase_date"])
+            p["purchase_date"] = datetime.fromisoformat(p["purchase_date"].replace('Z', '+00:00'))
     return purchases
 
 @api_router.delete("/purchases/{purchase_id}")
 async def delete_purchase(purchase_id: str, current_user: User = Depends(get_current_user)):
     check_role(current_user, ["proprietario", "administrador"])
     
-    purchase = await db.purchases.find_one({"id": purchase_id}, {"_id": 0})
+    all_purchases = await db_call(sqlite_db.get_all_purchases)
+    purchase = next((p for p in all_purchases if p["id"] == purchase_id), None)
     if not purchase:
         raise HTTPException(status_code=404, detail="Purchase not found")
     
-    await db.purchases.delete_one({"id": purchase_id})
+    # Delete purchase by deleting its batch (single item batch)
+    await db_call(sqlite_db.delete_purchases_by_batch, purchase.get("batch_id", purchase_id))
     
     # Recalculate average price
-    ingredient = await db.ingredients.find_one({"id": purchase["ingredient_id"]}, {"_id": 0})
-    purchases = await db.purchases.find({"ingredient_id": purchase["ingredient_id"]}, {"_id": 0}).to_list(1000)
+    ingredient = await db_call(sqlite_db.get_ingredient_by_id, purchase["ingredient_id"])
+    purchases = await db_call(sqlite_db.get_purchases_by_ingredient, purchase["ingredient_id"])
     if purchases:
         total_quantity = sum(p["quantity"] for p in purchases)
         total_cost = sum(p["price"] for p in purchases)
@@ -804,10 +791,7 @@ async def delete_purchase(purchase_id: str, current_user: User = Depends(get_cur
     else:
         avg_price = 0
     
-    await db.ingredients.update_one(
-        {"id": purchase["ingredient_id"]},
-        {"$set": {"average_price": avg_price}}
-    )
+    await db_call(sqlite_db.update_ingredient, purchase["ingredient_id"], {"average_price": avg_price})
     
     # Registrar auditoria
     await log_audit("DELETE", "purchase", purchase["ingredient_name"], current_user, "alta")
@@ -818,18 +802,20 @@ async def delete_purchase(purchase_id: str, current_user: User = Depends(get_cur
 async def delete_purchase_batch(batch_id: str, current_user: User = Depends(get_current_user)):
     check_role(current_user, ["proprietario", "administrador"])
     
-    purchases = await db.purchases.find({"batch_id": batch_id}, {"_id": 0}).to_list(1000)
+    all_purchases = await db_call(sqlite_db.get_all_purchases)
+    purchases = [p for p in all_purchases if p.get("batch_id") == batch_id]
+    
     if not purchases:
         raise HTTPException(status_code=404, detail="Purchase batch not found")
     
     # Delete all purchases in batch
-    await db.purchases.delete_many({"batch_id": batch_id})
+    await db_call(sqlite_db.delete_purchases_by_batch, batch_id)
     
     # Recalculate average price for all affected ingredients
     affected_ingredients = set(p["ingredient_id"] for p in purchases)
     for ingredient_id in affected_ingredients:
-        ingredient = await db.ingredients.find_one({"id": ingredient_id}, {"_id": 0})
-        remaining_purchases = await db.purchases.find({"ingredient_id": ingredient_id}, {"_id": 0}).to_list(1000)
+        ingredient = await db_call(sqlite_db.get_ingredient_by_id, ingredient_id)
+        remaining_purchases = await db_call(sqlite_db.get_purchases_by_ingredient, ingredient_id)
         
         if remaining_purchases:
             total_quantity = sum(p["quantity"] for p in remaining_purchases)
@@ -842,10 +828,7 @@ async def delete_purchase_batch(batch_id: str, current_user: User = Depends(get_
         else:
             avg_price = 0
         
-        await db.ingredients.update_one(
-            {"id": ingredient_id},
-            {"$set": {"average_price": avg_price}}
-        )
+        await db_call(sqlite_db.update_ingredient, ingredient_id, {"average_price": avg_price})
     
     # Registrar auditoria
     supplier = purchases[0].get("supplier", "Unknown") if purchases else "Unknown"
@@ -855,22 +838,8 @@ async def delete_purchase_batch(batch_id: str, current_user: User = Depends(get_
 
 # Product endpoints
 async def get_next_product_code():
-    """Gera o próximo código de produto de 5 dígitos"""
-    # Busca o maior código existente
-    pipeline = [
-        {"$match": {"code": {"$exists": True, "$ne": ""}}},
-        {"$project": {"code_int": {"$toInt": "$code"}}},
-        {"$sort": {"code_int": -1}},
-        {"$limit": 1}
-    ]
-    result = await db.products.aggregate(pipeline).to_list(1)
-    
-    if result and len(result) > 0:
-        next_code = result[0]["code_int"] + 1
-    else:
-        next_code = 10001  # Começa em 10001
-    
-    return str(next_code).zfill(5)
+    """Gera o próximo código de produto de 5 dígitos usando SQLite"""
+    return await db_call(sqlite_db.get_next_product_code)
 
 @api_router.post("/products", response_model=Product)
 async def create_product(product_data: ProductCreate, current_user: User = Depends(get_current_user)):
@@ -882,112 +851,154 @@ async def create_product(product_data: ProductCreate, current_user: User = Depen
     # Calculate CMV
     cmv = 0.0
     for recipe_item in product_data.recipe:
-        ingredient = await db.ingredients.find_one({"id": recipe_item.ingredient_id}, {"_id": 0})
+        ingredient = await db_call(sqlite_db.get_ingredient_by_id, recipe_item.ingredient_id)
         if ingredient:
             avg_price = ingredient.get("average_price", 0)
             quantity = recipe_item.quantity
             
-            # Se o ingrediente tem unit_weight (peso por unidade) E a quantidade é inteira (unidades)
-            # Ex: Hamburguer 130g com unit_weight=0.130, quantidade=1 -> usa 0.130kg
-            # Mas se quantidade já é decimal (0.13kg), não multiplicar por unit_weight
             unit_weight = ingredient.get("unit_weight")
-            is_whole_number = quantity == int(quantity)  # Verifica se é número inteiro
+            is_whole_number = quantity == int(quantity)
             
             if unit_weight and unit_weight > 0 and is_whole_number and quantity >= 1:
-                # Quantidade em unidades: Preço por kg * peso unitário * quantidade de unidades
                 cmv += avg_price * unit_weight * quantity
             else:
-                # Quantidade já em kg/fração: preço médio * quantidade
                 cmv += avg_price * quantity
     
-    product = Product(**product_data.model_dump(), cmv=cmv, code=product_code)
-    
     # Calculate profit margin if sale price exists
-    if product.sale_price and product.sale_price > 0:
-        product.profit_margin = ((product.sale_price - cmv) / product.sale_price) * 100
+    profit_margin = None
+    if product_data.sale_price and product_data.sale_price > 0:
+        profit_margin = ((product_data.sale_price - cmv) / product_data.sale_price) * 100
     
-    doc = product.model_dump()
-    doc["created_at"] = doc["created_at"].isoformat()
+    prod_id = str(uuid.uuid4())
+    created_at = datetime.now(timezone.utc)
     
     # Converter order_steps para dicts
-    if "order_steps" in doc:
-        doc["order_steps"] = [step if isinstance(step, dict) else step.model_dump() for step in doc["order_steps"]]
+    order_steps_list = []
+    for step in (product_data.order_steps or []):
+        if isinstance(step, dict):
+            order_steps_list.append(step)
+        else:
+            order_steps_list.append(step.model_dump())
     
-    await db.products.insert_one(doc)
+    # Converter recipe para dicts
+    recipe_list = []
+    for r in product_data.recipe:
+        if isinstance(r, dict):
+            recipe_list.append(r)
+        else:
+            recipe_list.append(r.model_dump())
+    
+    product_dict = {
+        "id": prod_id,
+        "code": product_code,
+        "name": product_data.name,
+        "description": product_data.description,
+        "category": product_data.category,
+        "product_type": product_data.product_type or "produto",
+        "sale_price": product_data.sale_price,
+        "photo_url": product_data.photo_url,
+        "recipe": recipe_list,
+        "cmv": cmv,
+        "profit_margin": profit_margin,
+        "is_insumo": product_data.is_insumo,
+        "is_divisible": product_data.is_divisible,
+        "order_steps": order_steps_list,
+        "created_at": created_at.isoformat()
+    }
+    
+    await db_call(sqlite_db.create_product, product_dict)
     
     # Registrar auditoria
     await log_audit("CREATE", "product", product_data.name, current_user, "baixa")
     
-    # Sincronizar com Excel
-    await sync_all_to_excel()
-    
-    return product
+    product_dict["created_at"] = created_at
+    return Product(**product_dict)
 
 @api_router.get("/products", response_model=List[Product])
 async def get_products(current_user: User = Depends(get_current_user)):
-    products = await db.products.find({}, {"_id": 0}).to_list(1000)
+    products = await db_call(sqlite_db.get_all_products)
     for p in products:
-        if isinstance(p["created_at"], str):
-            p["created_at"] = datetime.fromisoformat(p["created_at"])
+        if isinstance(p.get("created_at"), str):
+            p["created_at"] = datetime.fromisoformat(p["created_at"].replace('Z', '+00:00'))
     return products
 
 @api_router.get("/products/for-sale", response_model=List[Product])
 async def get_products_for_sale(current_user: User = Depends(get_current_user)):
     """Retorna apenas produtos para venda (não insumos)"""
-    products = await db.products.find({"is_insumo": {"$ne": True}}, {"_id": 0}).to_list(1000)
+    products = await db_call(sqlite_db.get_all_products)
+    products = [p for p in products if not p.get("is_insumo")]
     for p in products:
-        if isinstance(p["created_at"], str):
-            p["created_at"] = datetime.fromisoformat(p["created_at"])
+        if isinstance(p.get("created_at"), str):
+            p["created_at"] = datetime.fromisoformat(p["created_at"].replace('Z', '+00:00'))
     return products
 
 @api_router.put("/products/{product_id}", response_model=Product)
 async def update_product(product_id: str, product_data: ProductCreate, current_user: User = Depends(get_current_user)):
     check_role(current_user, ["proprietario", "administrador"])
     
-    existing = await db.products.find_one({"id": product_id}, {"_id": 0})
+    existing = await db_call(sqlite_db.get_product_by_id, product_id)
     if not existing:
         raise HTTPException(status_code=404, detail="Product not found")
     
     # Recalculate CMV
     cmv = 0.0
     for recipe_item in product_data.recipe:
-        ingredient = await db.ingredients.find_one({"id": recipe_item.ingredient_id}, {"_id": 0})
+        ingredient = await db_call(sqlite_db.get_ingredient_by_id, recipe_item.ingredient_id)
         if ingredient:
             avg_price = ingredient.get("average_price", 0)
             quantity = recipe_item.quantity
             
-            # Se o ingrediente tem unit_weight (peso por unidade) E a quantidade é inteira (unidades)
-            # Ex: Hamburguer 130g com unit_weight=0.130, quantidade=1 -> usa 0.130kg
-            # Mas se quantidade já é decimal (0.13kg), não multiplicar por unit_weight
             unit_weight = ingredient.get("unit_weight")
-            is_whole_number = quantity == int(quantity)  # Verifica se é número inteiro
+            is_whole_number = quantity == int(quantity)
             
             if unit_weight and unit_weight > 0 and is_whole_number and quantity >= 1:
-                # Quantidade em unidades: Preço por kg * peso unitário * quantidade de unidades
                 cmv += avg_price * unit_weight * quantity
             else:
-                # Quantidade já em kg/fração: preço médio * quantidade
                 cmv += avg_price * quantity
     
     profit_margin = None
     if product_data.sale_price and product_data.sale_price > 0:
         profit_margin = ((product_data.sale_price - cmv) / product_data.sale_price) * 100
     
-    update_data = product_data.model_dump()
-    update_data["cmv"] = cmv
-    update_data["profit_margin"] = profit_margin
+    # Converter order_steps para dicts
+    order_steps_list = []
+    for step in (product_data.order_steps or []):
+        if isinstance(step, dict):
+            order_steps_list.append(step)
+        else:
+            order_steps_list.append(step.model_dump())
     
-    await db.products.update_one({"id": product_id}, {"$set": update_data})
+    # Converter recipe para dicts
+    recipe_list = []
+    for r in product_data.recipe:
+        if isinstance(r, dict):
+            recipe_list.append(r)
+        else:
+            recipe_list.append(r.model_dump())
+    
+    update_data = {
+        "name": product_data.name,
+        "description": product_data.description,
+        "category": product_data.category,
+        "product_type": product_data.product_type or "produto",
+        "sale_price": product_data.sale_price,
+        "photo_url": product_data.photo_url,
+        "recipe": recipe_list,
+        "cmv": cmv,
+        "profit_margin": profit_margin,
+        "is_insumo": product_data.is_insumo,
+        "is_divisible": product_data.is_divisible,
+        "order_steps": order_steps_list
+    }
+    
+    await db_call(sqlite_db.update_product, product_id, update_data)
     
     # Registrar auditoria
     await log_audit("UPDATE", "product", product_data.name, current_user, "media")
     
-    # Sincronizar com Excel
-    await sync_all_to_excel()
-    
-    updated = await db.products.find_one({"id": product_id}, {"_id": 0})
-    if isinstance(updated["created_at"], str):
-        updated["created_at"] = datetime.fromisoformat(updated["created_at"])
+    updated = await db_call(sqlite_db.get_product_by_id, product_id)
+    if isinstance(updated.get("created_at"), str):
+        updated["created_at"] = datetime.fromisoformat(updated["created_at"].replace('Z', '+00:00'))
     return Product(**updated)
 
 @api_router.post("/upload/product-photo")
@@ -1044,19 +1055,16 @@ async def serve_product_image(filename: str):
 async def delete_product(product_id: str, current_user: User = Depends(get_current_user)):
     check_role(current_user, ["proprietario", "administrador"])
     
-    product = await db.products.find_one({"id": product_id}, {"_id": 0})
+    product = await db_call(sqlite_db.get_product_by_id, product_id)
     if not product:
         raise HTTPException(status_code=404, detail="Product not found")
     
-    result = await db.products.delete_one({"id": product_id})
-    if result.deleted_count == 0:
+    deleted = await db_call(sqlite_db.delete_product, product_id)
+    if not deleted:
         raise HTTPException(status_code=404, detail="Product not found")
     
     # Registrar auditoria
     await log_audit("DELETE", "product", product["name"], current_user, "alta")
-    
-    # Sincronizar com Excel
-    await sync_all_to_excel()
     
     return {"message": "Product deleted"}
 
@@ -1065,10 +1073,10 @@ async def delete_product(product_id: str, current_user: User = Depends(get_curre
 @api_router.get("/categories", response_model=List[Category])
 async def get_categories(current_user: User = Depends(get_current_user)):
     """Retorna todas as categorias cadastradas"""
-    categories = await db.categories.find({}, {"_id": 0}).sort("name", 1).to_list(1000)
+    categories = await db_call(sqlite_db.get_all_categories)
     for cat in categories:
         if isinstance(cat.get("created_at"), str):
-            cat["created_at"] = datetime.fromisoformat(cat["created_at"])
+            cat["created_at"] = datetime.fromisoformat(cat["created_at"].replace('Z', '+00:00'))
     return categories
 
 @api_router.post("/categories", response_model=Category)
@@ -1077,52 +1085,53 @@ async def create_category(category_data: CategoryCreate, current_user: User = De
     check_role(current_user, ["proprietario", "administrador"])
     
     # Verificar se já existe
-    existing = await db.categories.find_one({"name": category_data.name}, {"_id": 0})
+    existing = await db_call(sqlite_db.get_category_by_name, category_data.name)
     if existing:
         raise HTTPException(status_code=400, detail="Categoria já existe")
     
-    category = Category(name=category_data.name)
-    doc = category.model_dump()
-    doc["created_at"] = doc["created_at"].isoformat()
-    await db.categories.insert_one(doc)
+    cat_id = str(uuid.uuid4())
+    created_at = datetime.now(timezone.utc)
+    
+    await db_call(sqlite_db.create_category, {
+        "id": cat_id,
+        "name": category_data.name,
+        "created_at": created_at.isoformat()
+    })
     
     # Registrar auditoria
     await log_audit("CREATE", "category", category_data.name, current_user, "baixa")
     
-    # Sincronizar com Excel
-    await sync_all_to_excel()
-    
-    return category
+    return Category(id=cat_id, name=category_data.name, created_at=created_at)
 
 @api_router.put("/categories/{category_id}", response_model=Category)
 async def update_category(category_id: str, category_data: CategoryCreate, current_user: User = Depends(get_current_user)):
     """Atualiza uma categoria"""
     check_role(current_user, ["proprietario", "administrador"])
     
-    existing = await db.categories.find_one({"id": category_id}, {"_id": 0})
+    existing = await db_call(sqlite_db.get_category_by_id, category_id)
     if not existing:
         raise HTTPException(status_code=404, detail="Categoria não encontrada")
     
     # Verificar se novo nome já existe
-    name_exists = await db.categories.find_one({"name": category_data.name, "id": {"$ne": category_id}}, {"_id": 0})
-    if name_exists:
+    name_exists = await db_call(sqlite_db.get_category_by_name, category_data.name)
+    if name_exists and name_exists["id"] != category_id:
         raise HTTPException(status_code=400, detail="Nome de categoria já existe")
     
     old_name = existing["name"]
-    await db.categories.update_one({"id": category_id}, {"$set": {"name": category_data.name}})
+    await db_call(sqlite_db.update_category, category_id, {"name": category_data.name})
     
     # Atualizar todos os produtos que usam essa categoria
-    await db.products.update_many({"category": old_name}, {"$set": {"category": category_data.name}})
+    products = await db_call(sqlite_db.get_all_products)
+    for p in products:
+        if p.get("category") == old_name:
+            await db_call(sqlite_db.update_product, p["id"], {"category": category_data.name})
     
     # Registrar auditoria
     await log_audit("UPDATE", "category", f"{old_name} → {category_data.name}", current_user, "media")
     
-    # Sincronizar com Excel
-    await sync_all_to_excel()
-    
-    updated = await db.categories.find_one({"id": category_id}, {"_id": 0})
-    if isinstance(updated["created_at"], str):
-        updated["created_at"] = datetime.fromisoformat(updated["created_at"])
+    updated = await db_call(sqlite_db.get_category_by_id, category_id)
+    if isinstance(updated.get("created_at"), str):
+        updated["created_at"] = datetime.fromisoformat(updated["created_at"].replace('Z', '+00:00'))
     return Category(**updated)
 
 @api_router.delete("/categories/{category_id}")
@@ -1130,25 +1139,24 @@ async def delete_category(category_id: str, current_user: User = Depends(get_cur
     """Deleta uma categoria"""
     check_role(current_user, ["proprietario", "administrador"])
     
-    category = await db.categories.find_one({"id": category_id}, {"_id": 0})
+    category = await db_call(sqlite_db.get_category_by_id, category_id)
     if not category:
         raise HTTPException(status_code=404, detail="Categoria não encontrada")
     
     # Verificar se algum produto usa essa categoria
-    products_using = await db.products.count_documents({"category": category["name"]})
-    if products_using > 0:
+    products = await db_call(sqlite_db.get_all_products)
+    products_using = [p for p in products if p.get("category") == category["name"]]
+    
+    if products_using:
         raise HTTPException(
             status_code=400, 
-            detail=f"Não é possível excluir. {products_using} produto(s) usa(m) esta categoria."
+            detail=f"Não é possível excluir. {len(products_using)} produto(s) usa(m) esta categoria."
         )
     
-    await db.categories.delete_one({"id": category_id})
+    await db_call(sqlite_db.delete_category, category_id)
     
     # Registrar auditoria
     await log_audit("DELETE", "category", category["name"], current_user, "alta")
-    
-    # Sincronizar com Excel
-    await sync_all_to_excel()
     
     return {"message": "Categoria deletada"}
 
@@ -1161,12 +1169,15 @@ async def initialize_categories(current_user: User = Depends(get_current_user)):
     created = []
     
     for cat_name in default_categories:
-        existing = await db.categories.find_one({"name": cat_name}, {"_id": 0})
+        existing = await db_call(sqlite_db.get_category_by_name, cat_name)
         if not existing:
-            category = Category(name=cat_name)
-            doc = category.model_dump()
-            doc["created_at"] = doc["created_at"].isoformat()
-            await db.categories.insert_one(doc)
+            cat_id = str(uuid.uuid4())
+            created_at = datetime.now(timezone.utc)
+            await db_call(sqlite_db.create_category, {
+                "id": cat_id,
+                "name": cat_name,
+                "created_at": created_at.isoformat()
+            })
             created.append(cat_name)
     
     return {"message": f"Categorias inicializadas", "created": created}
@@ -1174,14 +1185,14 @@ async def initialize_categories(current_user: User = Depends(get_current_user)):
 # Reports endpoints
 @api_router.get("/reports/price-history/{ingredient_id}", response_model=IngredientWithHistory)
 async def get_price_history(ingredient_id: str, current_user: User = Depends(get_current_user)):
-    ingredient = await db.ingredients.find_one({"id": ingredient_id}, {"_id": 0})
+    ingredient = await db_call(sqlite_db.get_ingredient_by_id, ingredient_id)
     if not ingredient:
         raise HTTPException(status_code=404, detail="Ingredient not found")
     
-    if isinstance(ingredient["created_at"], str):
-        ingredient["created_at"] = datetime.fromisoformat(ingredient["created_at"])
+    if isinstance(ingredient.get("created_at"), str):
+        ingredient["created_at"] = datetime.fromisoformat(ingredient["created_at"].replace('Z', '+00:00'))
     
-    purchases = await db.purchases.find({"ingredient_id": ingredient_id}, {"_id": 0}).sort("purchase_date", 1).to_list(1000)
+    purchases = await db_call(sqlite_db.get_purchases_by_ingredient, ingredient_id)
     
     history = []
     for p in purchases:
@@ -1192,11 +1203,11 @@ async def get_price_history(ingredient_id: str, current_user: User = Depends(get
 
 @api_router.get("/reports/dashboard", response_model=DashboardStats)
 async def get_dashboard_stats(current_user: User = Depends(get_current_user)):
-    total_ingredients = await db.ingredients.count_documents({})
-    total_products = await db.products.count_documents({})
-    total_purchases = await db.purchases.count_documents({})
+    total_ingredients = await db_call(sqlite_db.count_ingredients)
+    total_products = await db_call(sqlite_db.count_products)
+    total_purchases = await db_call(sqlite_db.count_purchases)
     
-    products = await db.products.find({}, {"_id": 0}).to_list(1000)
+    products = await db_call(sqlite_db.get_all_products)
     avg_cmv = sum(p.get("cmv", 0) for p in products) / len(products) if products else 0
     
     return DashboardStats(
@@ -1207,80 +1218,31 @@ async def get_dashboard_stats(current_user: User = Depends(get_current_user)):
     )
 
 
-# ============================================
-# FUNÇÕES DE SINCRONIZAÇÃO COM EXCEL
-# ============================================
-
-async def sync_all_to_excel():
-    """Sincroniza todos os dados do MongoDB para o Excel"""
-    try:
-        # Ingredientes
-        ingredients = await db.ingredients.find({}, {"_id": 0}).to_list(1000)
-        if ingredients:
-            for ing in ingredients:
-                if isinstance(ing.get("created_at"), datetime):
-                    ing["created_at"] = ing["created_at"].isoformat()
-            excel_backup.save_ingredients(ingredients)
-        
-        # Produtos
-        products = await db.products.find({}, {"_id": 0}).to_list(1000)
-        if products:
-            for p in products:
-                if isinstance(p.get("created_at"), datetime):
-                    p["created_at"] = p["created_at"].isoformat()
-            excel_backup.save_products(products)
-        
-        # Compras
-        purchases = await db.purchases.find({}, {"_id": 0}).to_list(1000)
-        if purchases:
-            for pur in purchases:
-                if isinstance(pur.get("purchase_date"), datetime):
-                    pur["purchase_date"] = pur["purchase_date"].isoformat()
-            excel_backup.save_purchases(purchases)
-        
-        # Categorias
-        categories = await db.categories.find({}, {"_id": 0}).to_list(1000)
-        if categories:
-            for cat in categories:
-                if isinstance(cat.get("created_at"), datetime):
-                    cat["created_at"] = cat["created_at"].isoformat()
-            excel_backup.save_categories(categories)
-        
-        # Usuários (com senha hash para restauração)
-        users = await db.users.find({}, {"_id": 0}).to_list(1000)
-        if users:
-            for u in users:
-                if isinstance(u.get("created_at"), datetime):
-                    u["created_at"] = u["created_at"].isoformat()
-            excel_backup.save_users(users)
-        
-        # Histórico de Auditoria (Moderação)
-        audit_logs = await db.audit_logs.find({}, {"_id": 0}).to_list(10000)
-        if audit_logs:
-            for log in audit_logs:
-                if isinstance(log.get("timestamp"), datetime):
-                    log["timestamp"] = log["timestamp"].isoformat()
-            excel_backup.save_audit_logs(audit_logs)
-        
-        print("[BACKUP] Sincronização completa com Excel realizada")
-    except Exception as e:
-        print(f"[BACKUP] Erro ao sincronizar com Excel: {e}")
-
-
-# Endpoint para verificar status do backup
+# Endpoint para verificar status do banco
 @api_router.get("/backup/status")
 async def get_backup_status(current_user: User = Depends(get_current_user)):
-    """Retorna informações sobre o backup em Excel"""
-    return excel_backup.get_backup_info()
+    """Retorna informações sobre o banco SQLite"""
+    from pathlib import Path
+    db_path = Path("/app/backend/data_backup/nucleo.db")
+    
+    return {
+        "type": "SQLite",
+        "path": str(db_path),
+        "exists": db_path.exists(),
+        "size_mb": round(db_path.stat().st_size / 1024 / 1024, 2) if db_path.exists() else 0,
+        "ingredients": await db_call(sqlite_db.count_ingredients),
+        "products": await db_call(sqlite_db.count_products),
+        "purchases": await db_call(sqlite_db.count_purchases),
+        "users": await db_call(sqlite_db.count_users)
+    }
 
 
-# Endpoint para forçar backup manual
+# Endpoint para forçar backup manual (agora retorna apenas status)
 @api_router.post("/backup/sync")
 async def force_backup_sync(current_user: User = Depends(get_current_user)):
-    """Força sincronização manual com o Excel"""
+    """SQLite é persistente automaticamente"""
     check_role(current_user, ["proprietario"])
-    await sync_all_to_excel()
-    return {"message": "Backup sincronizado com sucesso", "info": excel_backup.get_backup_info()}
+    return {"message": "SQLite é persistente por padrão - não necessita sincronização manual"}
 
 
 app.include_router(api_router)
@@ -1300,109 +1262,24 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
-async def restore_from_excel():
-    """Restaura dados do Excel para o MongoDB se o banco estiver vazio"""
-    try:
-        if not excel_backup.backup_exists():
-            logger.info("[BACKUP] Nenhum arquivo de backup encontrado")
-            return
-        
-        # Verificar se precisa restaurar ingredientes
-        ing_count = await db.ingredients.count_documents({})
-        if ing_count == 0:
-            ingredients = excel_backup.load_ingredients()
-            if ingredients:
-                for ing in ingredients:
-                    # Limpar campos NaN/None problemáticos
-                    ing = {k: v for k, v in ing.items() if v is not None and v != '' and str(v) != 'nan'}
-                    if 'id' in ing:
-                        existing = await db.ingredients.find_one({"id": ing["id"]})
-                        if not existing:
-                            await db.ingredients.insert_one(ing)
-                logger.info(f"[BACKUP] Restaurados {len(ingredients)} ingredientes do Excel")
-        
-        # Verificar se precisa restaurar produtos
-        prod_count = await db.products.count_documents({})
-        if prod_count == 0:
-            products = excel_backup.load_products()
-            if products:
-                for p in products:
-                    p = {k: v for k, v in p.items() if v is not None and v != '' and str(v) != 'nan'}
-                    if 'id' in p:
-                        existing = await db.products.find_one({"id": p["id"]})
-                        if not existing:
-                            await db.products.insert_one(p)
-                logger.info(f"[BACKUP] Restaurados {len(products)} produtos do Excel")
-        
-        # Verificar se precisa restaurar compras
-        pur_count = await db.purchases.count_documents({})
-        if pur_count == 0:
-            purchases = excel_backup.load_purchases()
-            if purchases:
-                for pur in purchases:
-                    pur = {k: v for k, v in pur.items() if v is not None and v != '' and str(v) != 'nan'}
-                    if 'id' in pur:
-                        existing = await db.purchases.find_one({"id": pur["id"]})
-                        if not existing:
-                            await db.purchases.insert_one(pur)
-                logger.info(f"[BACKUP] Restauradas {len(purchases)} compras do Excel")
-        
-        # Verificar se precisa restaurar categorias
-        cat_count = await db.categories.count_documents({})
-        if cat_count == 0:
-            categories = excel_backup.load_categories()
-            if categories:
-                for cat in categories:
-                    cat = {k: v for k, v in cat.items() if v is not None and v != '' and str(v) != 'nan'}
-                    if 'id' in cat:
-                        existing = await db.categories.find_one({"id": cat["id"]})
-                        if not existing:
-                            await db.categories.insert_one(cat)
-                logger.info(f"[BACKUP] Restauradas {len(categories)} categorias do Excel")
-        
-        # Verificar se precisa restaurar usuários
-        user_count = await db.users.count_documents({})
-        if user_count == 0:
-            users = excel_backup.load_users()
-            if users:
-                for u in users:
-                    u = {k: v for k, v in u.items() if v is not None and v != '' and str(v) != 'nan'}
-                    if 'id' in u:
-                        existing = await db.users.find_one({"id": u["id"]})
-                        if not existing:
-                            await db.users.insert_one(u)
-                logger.info(f"[BACKUP] Restaurados {len(users)} usuários do Excel")
-        
-        # Verificar se precisa restaurar histórico de auditoria
-        audit_count = await db.audit_logs.count_documents({})
-        if audit_count == 0:
-            audit_logs = excel_backup.load_audit_logs()
-            if audit_logs:
-                for log in audit_logs:
-                    log = {k: v for k, v in log.items() if v is not None and v != '' and str(v) != 'nan'}
-                    if 'id' in log:
-                        existing = await db.audit_logs.find_one({"id": log["id"]})
-                        if not existing:
-                            await db.audit_logs.insert_one(log)
-                logger.info(f"[BACKUP] Restaurados {len(audit_logs)} logs de auditoria do Excel")
-        
-        logger.info("[BACKUP] Restauração do Excel concluída")
-    except Exception as e:
-        logger.error(f"[BACKUP] Erro ao restaurar do Excel: {e}")
-
-
 # Criar diretórios de upload no startup
 @app.on_event("startup")
 async def startup_event():
     upload_dir = Path("/app/backend/uploads/products")
     upload_dir.mkdir(parents=True, exist_ok=True)
     
-    # Restaurar dados do Excel se o banco estiver vazio
-    logger.info("[STARTUP] Verificando backup em Excel...")
-    await restore_from_excel()
-    logger.info("[STARTUP] Sistema iniciado com sucesso")
+    # Inicializar banco SQLite
+    await db_call(sqlite_db.init_database)
+    
+    # Log status
+    ing_count = await db_call(sqlite_db.count_ingredients)
+    prod_count = await db_call(sqlite_db.count_products)
+    user_count = await db_call(sqlite_db.count_users)
+    
+    logger.info(f"[STARTUP] SQLite inicializado em: /app/backend/data_backup/nucleo.db")
+    logger.info(f"[STARTUP] Ingredientes: {ing_count}, Produtos: {prod_count}, Usuários: {user_count}")
+    logger.info("[STARTUP] Sistema iniciado com sucesso - 100% SQLite")
 
 @app.on_event("shutdown")
 async def shutdown_db_client():
-    client.close()
     logger.info("[SHUTDOWN] Sistema encerrado")
