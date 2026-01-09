@@ -268,6 +268,18 @@ def verify_password(username: str, password: str) -> bool:
 
 # ==================== INGREDIENTS ====================
 
+def get_next_ingredient_code() -> str:
+    """Gera próximo código de ingrediente (série 20000)"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT MAX(CAST(code AS INTEGER)) FROM ingredients WHERE code IS NOT NULL AND code != ''")
+        max_code = cursor.fetchone()[0]
+        
+        if max_code and int(max_code) >= 20000:
+            return str(int(max_code) + 1).zfill(5)
+        return "20001"  # Ingredientes começam em 20001
+
 def get_all_ingredients() -> List[Dict]:
     """Retorna todos os ingredientes"""
     with db_lock:
@@ -297,14 +309,16 @@ def create_ingredient(data: Dict) -> Dict:
         cursor = conn.cursor()
         
         ing_id = data.get('id', str(uuid.uuid4()))
+        code = data.get('code', get_next_ingredient_code())
         created_at = data.get('created_at', datetime.now(timezone.utc).isoformat())
         
         cursor.execute('''
-            INSERT INTO ingredients (id, name, unit, unit_weight, units_per_package, 
+            INSERT INTO ingredients (id, code, name, unit, unit_weight, units_per_package, 
                                     average_price, category, stock_quantity, stock_min, stock_max, created_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ''', (
             ing_id,
+            code,
             data['name'],
             data.get('unit', 'kg'),
             data.get('unit_weight', 0),
