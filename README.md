@@ -151,6 +151,13 @@ O arquivo `supervisor.conf.example` contém a configuração otimizada sem Mongo
 
 ## 📝 Notas de Versão
 
+### v2.2 - Executável Windows
+- 🖥️ **NucleoLauncher.exe** - Executável standalone para Windows
+- 🔨 **build_exe.bat** - Script para compilar o executável
+- 📖 **LAUNCHER_README.md** - Documentação do launcher
+- ⚡ Inicialização com 1 clique
+- 🌐 Abre navegador automaticamente
+
 ### v2.1 - Launcher Windows
 - 🪟 **launch.bat** - Iniciar com 2 cliques no Windows
 - 🪟 **Nucleo.vbs** - Launcher silencioso alternativo
