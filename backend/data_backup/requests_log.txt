@@ -2298,3 +2298,5 @@
 2026-01-09T15:58:01.494649+00:00 | DB_CALL get_user_by_username | P3 | 0.28ms | success
 2026-01-09T15:58:01.516814+00:00 | DB_CALL get_user_by_id | P3 | 0.25ms | success
 2026-01-09T15:58:01.517258+00:00 | DB_CALL get_all_purchases | P3 | 0.29ms | success
+2026-01-09T15:58:14.388093+00:00 | DB_CALL get_user_by_id | P3 | 0.29ms | success
+2026-01-09T15:58:14.388525+00:00 | DB_CALL get_all_purchases | P3 | 0.22ms | success
