@@ -366,3 +366,62 @@ def get_backup_info() -> dict:
         return info
     except Exception as e:
         return {"exists": True, "path": str(BACKUP_FILE), "error": str(e)}
+
+
+def sync_sqlite_to_excel():
+    """Sincroniza todos os dados do SQLite para o Excel backup"""
+    import sqlite3
+    
+    DB_PATH = Path(__file__).parent / "data_backup" / "nucleo.db"
+    
+    if not DB_PATH.exists():
+        print("[SYNC] Banco SQLite não encontrado")
+        return False
+    
+    try:
+        conn = sqlite3.connect(str(DB_PATH))
+        conn.row_factory = sqlite3.Row
+        cursor = conn.cursor()
+        
+        def rows_to_list(cursor):
+            return [dict(row) for row in cursor.fetchall()]
+        
+        # Buscar todos os dados
+        cursor.execute("SELECT * FROM ingredients")
+        ingredients = rows_to_list(cursor)
+        
+        cursor.execute("SELECT * FROM products")
+        products = rows_to_list(cursor)
+        
+        cursor.execute("SELECT * FROM purchases")
+        purchases = rows_to_list(cursor)
+        
+        cursor.execute("SELECT * FROM categories")
+        categories = rows_to_list(cursor)
+        
+        cursor.execute("SELECT * FROM users")
+        users = rows_to_list(cursor)
+        
+        cursor.execute("SELECT * FROM audit_logs")
+        audit_logs = rows_to_list(cursor)
+        
+        conn.close()
+        
+        # Criar DataFrames e salvar
+        ensure_backup_dir()
+        
+        with pd.ExcelWriter(BACKUP_FILE, engine='openpyxl') as writer:
+            pd.DataFrame(ingredients).to_excel(writer, sheet_name='Ingredientes', index=False)
+            pd.DataFrame(products).to_excel(writer, sheet_name='Produtos', index=False)
+            pd.DataFrame(purchases).to_excel(writer, sheet_name='Compras', index=False)
+            pd.DataFrame(categories).to_excel(writer, sheet_name='Categorias', index=False)
+            pd.DataFrame(users).to_excel(writer, sheet_name='Usuarios', index=False)
+            pd.DataFrame(audit_logs).to_excel(writer, sheet_name='AuditLogs', index=False)
+        
+        print(f"[SYNC] Excel atualizado: {len(ingredients)} ing, {len(products)} prod, {len(purchases)} compras")
+        return True
+        
+    except Exception as e:
+        print(f"[SYNC] Erro ao sincronizar: {e}")
+        return False
+
