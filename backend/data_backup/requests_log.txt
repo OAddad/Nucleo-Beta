@@ -2239,3 +2239,6 @@
 2026-01-09T15:55:41.818249+00:00 | DB_CALL get_user_by_id | P3 | 0.26ms | success
 2026-01-09T15:55:41.818510+00:00 | DB_CALL get_ingredient_by_id | P3 | 0.1ms | success
 2026-01-09T15:55:41.818693+00:00 | DB_CALL get_purchases_by_ingredient | P3 | 0.13ms | success
+2026-01-09T15:55:48.982361+00:00 | DB_CALL get_user_by_id | P3 | 0.24ms | success
+2026-01-09T15:55:48.982635+00:00 | DB_CALL get_ingredient_by_id | P3 | 0.11ms | success
+2026-01-09T15:55:48.982787+00:00 | DB_CALL get_purchases_by_ingredient | P3 | 0.09ms | success
