@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import axios from "axios";
 import { toast } from "sonner";
-import { Plus, Trash2, ChevronDown, ChevronUp, Check, Edit, Download, Search } from "lucide-react";
+import { Plus, Trash2, ChevronDown, ChevronUp, Check, Edit, Download, Search, Truck } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
@@ -54,6 +54,7 @@ const getAuthHeader = () => ({
 export default function Purchases() {
   const [purchaseBatches, setPurchaseBatches] = useState([]);
   const [ingredients, setIngredients] = useState([]);
+  const [fornecedoresCadastrados, setFornecedoresCadastrados] = useState([]);
   const [open, setOpen] = useState(false);
   const [expandedBatches, setExpandedBatches] = useState(new Set());
   const [editMode, setEditMode] = useState(false);
@@ -72,6 +73,8 @@ export default function Purchases() {
   
   // Form states
   const [supplier, setSupplier] = useState("");
+  const [supplierSuggestions, setSupplierSuggestions] = useState([]);
+  const [showSupplierSuggestions, setShowSupplierSuggestions] = useState(false);
   const [purchaseDate, setPurchaseDate] = useState(
     new Date().toISOString().split("T")[0]
   );
