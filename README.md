@@ -74,8 +74,10 @@ cd nucleo
 │   └── data_backup/   # Banco SQLite + Excel
 ├── frontend/          # React
 │   └── src/pages/     # Páginas do sistema
+├── launch.bat         # 🪟 Launcher Windows (2 cliques)
+├── Nucleo.vbs         # 🪟 Launcher silencioso Windows
 ├── setup.sh           # Setup inicial (executar 1x)
-├── launch.sh          # Inicialização rápida
+├── launch.sh          # Inicialização rápida (Linux/Mac)
 └── README.md
 ```
 
