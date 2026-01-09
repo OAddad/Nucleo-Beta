@@ -826,7 +826,37 @@ class CMVMasterAPITester:
             print("ℹ️ Endpoints are accessible but require authentication")
             print("ℹ️ The Addad user credentials from the review request are not working")
             return False
-        """Test cleanup operations (DELETE) as specified in review"""
+    
+    def test_backup_status(self):
+        """Test backup status to verify SQLite usage as specified in review"""
+        print("\n=== BACKUP STATUS TESTS ===")
+        
+        # Test backup status
+        print("🔍 Testing backup status...")
+        success, status = self.run_test("Get backup status", "GET", "backup/status", 200)
+        if success:
+            print(f"   ✅ Backup status retrieved:")
+            print(f"   - Type: {status.get('type', 'Unknown')}")
+            print(f"   - Path: {status.get('path', 'Unknown')}")
+            print(f"   - Exists: {status.get('exists', False)}")
+            print(f"   - Size: {status.get('size_mb', 0)} MB")
+            print(f"   - Ingredients: {status.get('ingredients', 0)}")
+            print(f"   - Products: {status.get('products', 0)}")
+            print(f"   - Purchases: {status.get('purchases', 0)}")
+            print(f"   - Users: {status.get('users', 0)}")
+            
+            # Verify it's SQLite
+            if status.get('type') == 'SQLite':
+                print("   ✅ System confirmed to be using SQLite")
+                return True
+            else:
+                print(f"   ❌ Expected SQLite, got: {status.get('type')}")
+                return False
+        else:
+            print("   ❌ Failed to get backup status")
+            return False
+
+    def cleanup_test_data(self):
         print("\n=== CLEANUP OPERATIONS TESTS ===")
         
         # Delete products
