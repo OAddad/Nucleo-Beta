@@ -45,8 +45,15 @@ def get_db():
         conn.rollback()
         raise e
 
+# Flag para evitar inicialização múltipla
+_initialized = False
+
 def init_database():
-    """Inicializa o banco de dados criando as tabelas"""
+    """Inicializa o banco de dados criando as tabelas (apenas uma vez)"""
+    global _initialized
+    if _initialized:
+        return
+    
     with db_lock:
         conn = get_connection()
         cursor = conn.cursor()
