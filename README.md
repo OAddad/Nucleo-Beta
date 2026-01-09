@@ -82,16 +82,20 @@ cd nucleo
 
 ```
 /app
-├── backend/           # FastAPI (Python)
-│   ├── server.py      # API principal
-│   ├── database.py    # SQLite operations
-│   └── data_backup/   # Banco SQLite + Excel
-├── frontend/          # React
-│   └── src/pages/     # Páginas do sistema
-├── launch.bat         # 🪟 Launcher Windows (2 cliques)
-├── Nucleo.vbs         # 🪟 Launcher silencioso Windows
-├── setup.sh           # Setup inicial (executar 1x)
-├── launch.sh          # Inicialização rápida (Linux/Mac)
+├── backend/              # FastAPI (Python)
+│   ├── server.py         # API principal
+│   ├── database.py       # SQLite operations
+│   └── data_backup/      # Banco SQLite + Excel
+├── frontend/             # React
+│   └── src/pages/        # Páginas do sistema
+├── NucleoLauncher.exe    # 🖥️ Executável Windows (após build)
+├── launcher.py           # Script Python do launcher
+├── build_exe.bat         # Script para compilar .exe
+├── launch.bat            # 🪟 Launcher Windows (2 cliques)
+├── Nucleo.vbs            # 🪟 Launcher silencioso Windows
+├── setup.sh              # Setup inicial (executar 1x)
+├── launch.sh             # Inicialização rápida (Linux/Mac)
+├── LAUNCHER_README.md    # Guia do executável
 └── README.md
 ```
 
