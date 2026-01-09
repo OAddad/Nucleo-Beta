@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import axios from "axios";
 import { toast } from "sonner";
-import { Plus, Trash2, ChevronDown, ChevronUp, Check, Edit, Download } from "lucide-react";
+import { Plus, Trash2, ChevronDown, ChevronUp, Check, Edit, Download, Search } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
@@ -30,6 +30,19 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "../components/ui/alert-dialog";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "../components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "../components/ui/popover";
 
 // URL relativa - funciona em qualquer domínio
 const API = '/api';
@@ -48,6 +61,10 @@ export default function Purchases() {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [batchToDelete, setBatchToDelete] = useState(null);
   
+  // Confirmação ao fechar popup
+  const [confirmCloseOpen, setConfirmCloseOpen] = useState(false);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  
   // Filtros e pesquisa
   const [sortOrder, setSortOrder] = useState("desc"); // desc = mais recente primeiro
   const [searchTerm, setSearchTerm] = useState("");
@@ -62,14 +79,23 @@ export default function Purchases() {
   // Cart states
   const [cart, setCart] = useState([]);
   const [selectedIngredient, setSelectedIngredient] = useState("");
+  const [ingredientSearch, setIngredientSearch] = useState("");
+  const [ingredientPopoverOpen, setIngredientPopoverOpen] = useState(false);
   const [quantity, setQuantity] = useState("");
-  const [price, setPrice] = useState("");
+  const [unitPrice, setUnitPrice] = useState("");
+  const [totalPrice, setTotalPrice] = useState("");
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     fetchPurchases();
     fetchIngredients();
   }, []);
+
+  // Detectar mudanças não salvas
+  useEffect(() => {
+    const hasChanges = cart.length > 0 || supplier.trim() !== "";
+    setHasUnsavedChanges(hasChanges);
+  }, [cart, supplier]);
 
   const fetchPurchases = async () => {
     try {
@@ -89,6 +115,15 @@ export default function Purchases() {
     }
   };
 
+  // Filtrar ingredientes pela busca
+  const filteredIngredients = useMemo(() => {
+    if (!ingredientSearch) return ingredients;
+    const search = ingredientSearch.toLowerCase();
+    return ingredients.filter(ing => 
+      ing.name.toLowerCase().includes(search) ||
+      (ing.code && ing.code.includes(search))
+    );
+  }, [ingredients, ingredientSearch]);
 
   const getFilteredAndSortedBatches = () => {
     let filtered = [...purchaseBatches];
@@ -103,7 +138,6 @@ export default function Purchases() {
             const totalValue = batch.purchases.reduce((sum, p) => sum + p.price, 0);
             return totalValue.toString().includes(searchTerm);
           case "date":
-            // Comparar datas (formato YYYY-MM-DD)
             const batchDate = batch.purchase_date.split("T")[0];
             return batchDate === searchTerm;
           default:
@@ -122,28 +156,66 @@ export default function Purchases() {
     return filtered;
   };
 
+  // Calcular preço total quando preço unitário muda
+  const handleUnitPriceChange = (value) => {
+    setUnitPrice(value);
+    if (value && quantity) {
+      const total = parseFloat(value) * parseFloat(quantity);
+      setTotalPrice(total.toFixed(2));
+    } else {
+      setTotalPrice("");
+    }
+  };
+
+  // Calcular preço unitário quando preço total muda
+  const handleTotalPriceChange = (value) => {
+    setTotalPrice(value);
+    if (value && quantity && parseFloat(quantity) > 0) {
+      const unit = parseFloat(value) / parseFloat(quantity);
+      setUnitPrice(unit.toFixed(2));
+    } else {
+      setUnitPrice("");
+    }
+  };
+
+  // Recalcular quando quantidade muda
+  const handleQuantityChange = (value) => {
+    setQuantity(value);
+    if (value && unitPrice) {
+      const total = parseFloat(unitPrice) * parseFloat(value);
+      setTotalPrice(total.toFixed(2));
+    } else if (value && totalPrice && parseFloat(value) > 0) {
+      const unit = parseFloat(totalPrice) / parseFloat(value);
+      setUnitPrice(unit.toFixed(2));
+    }
+  };
 
   const addToCart = () => {
-    if (!selectedIngredient || !quantity || !price) {
+    if (!selectedIngredient || !quantity || (!unitPrice && !totalPrice)) {
       toast.error("Preencha todos os campos");
       return;
     }
 
     const ingredient = ingredients.find(i => i.id === selectedIngredient);
+    const finalTotalPrice = totalPrice ? parseFloat(totalPrice) : (parseFloat(unitPrice) * parseFloat(quantity));
+    const finalUnitPrice = unitPrice ? parseFloat(unitPrice) : (parseFloat(totalPrice) / parseFloat(quantity));
+    
     const newItem = {
       id: Date.now().toString(),
       ingredient_id: selectedIngredient,
       ingredient_name: ingredient.name,
       ingredient_unit: ingredient.unit,
       quantity: parseFloat(quantity),
-      price: parseFloat(price),
-      unit_price: parseFloat(price) / parseFloat(quantity),
+      price: finalTotalPrice,
+      unit_price: finalUnitPrice,
     };
 
     setCart([...cart, newItem]);
     setSelectedIngredient("");
+    setIngredientSearch("");
     setQuantity("");
-    setPrice("");
+    setUnitPrice("");
+    setTotalPrice("");
     toast.success("Item adicionado ao carrinho!");
   };
 
@@ -156,8 +228,31 @@ export default function Purchases() {
     setCart([]);
     setSupplier("");
     setPurchaseDate(new Date().toISOString().split("T")[0]);
+    setSelectedIngredient("");
+    setIngredientSearch("");
+    setQuantity("");
+    setUnitPrice("");
+    setTotalPrice("");
     setEditMode(false);
     setCurrentBatchId(null);
+    setHasUnsavedChanges(false);
+  };
+
+  // Handler para tentar fechar o dialog
+  const handleCloseAttempt = () => {
+    if (hasUnsavedChanges) {
+      setConfirmCloseOpen(true);
+    } else {
+      setOpen(false);
+      resetForm();
+    }
+  };
+
+  // Confirmar fechamento
+  const confirmClose = () => {
+    setConfirmCloseOpen(false);
+    setOpen(false);
+    resetForm();
   };
 
   const handleEdit = (batch) => {
@@ -261,6 +356,9 @@ export default function Purchases() {
   const cartTotal = cart.reduce((sum, item) => sum + item.price, 0);
   const cartTotalQty = cart.reduce((sum, item) => sum + item.quantity, 0);
 
+  // Obter o ingrediente selecionado para mostrar no input
+  const selectedIngredientData = ingredients.find(i => i.id === selectedIngredient);
+
   return (
     <div className="p-8" data-testid="purchases-page">
       <div className="max-w-7xl mx-auto">
@@ -278,7 +376,6 @@ export default function Purchases() {
             <Button 
               variant="outline" 
               onClick={() => {
-                // Flatten purchases for export - extract items from each batch
                 const flatPurchases = [];
                 purchaseBatches.forEach(batch => {
                   if (batch.purchases && batch.purchases.length > 0) {
@@ -307,208 +404,273 @@ export default function Purchases() {
               <Download className="w-4 h-4 mr-2" />
               Exportar Excel
             </Button>
+            
             <Dialog open={open} onOpenChange={(isOpen) => {
-              setOpen(isOpen);
-              if (!isOpen) resetForm();
+              if (!isOpen) {
+                handleCloseAttempt();
+              } else {
+                setOpen(true);
+              }
             }}>
-            <DialogTrigger asChild>
-              <Button
-                data-testid="add-purchase-button"
-                className="shadow-sm transition-all active:scale-95"
+              <DialogTrigger asChild>
+                <Button
+                  data-testid="add-purchase-button"
+                  className="shadow-sm transition-all active:scale-95"
+                >
+                  <Plus className="w-5 h-5 mr-2" strokeWidth={1.5} />
+                  Lançar Compras
+                </Button>
+              </DialogTrigger>
+              <DialogContent 
+                className="sm:max-w-2xl"
+                onPointerDownOutside={(e) => {
+                  e.preventDefault();
+                  handleCloseAttempt();
+                }}
+                onEscapeKeyDown={(e) => {
+                  e.preventDefault();
+                  handleCloseAttempt();
+                }}
               >
-                <Plus className="w-5 h-5 mr-2" strokeWidth={1.5} />
-                Lançar Compras
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-2xl">
-              <DialogHeader>
-                <DialogTitle>{editMode ? "Editar Compra" : "Lançar Compras"}</DialogTitle>
-              </DialogHeader>
-              
-              <div className="space-y-4 mt-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="supplier">
-                      Fornecedor
-                    </Label>
-                    <Input
-                      id="supplier"
-                      data-testid="purchase-supplier-input"
-                      value={supplier}
-                      onChange={(e) => setSupplier(e.target.value)}
-                      placeholder="Ex: Supermercado BH"
-                      required
-                      className="mt-1 h-11"
-                    />
-                  </div>
-
-                  <div>
-                    <Label htmlFor="date">
-                      Data da Compra
-                    </Label>
-                    <Input
-                      id="date"
-                      data-testid="purchase-date-input"
-                      type="date"
-                      value={purchaseDate}
-                      onChange={(e) => setPurchaseDate(e.target.value)}
-                      required
-                      className="mt-1 h-11"
-                    />
-                  </div>
-                </div>
-
-                <div className="border-t pt-4">
-                  <h3 className="font-semibold mb-3">Adicionar itens</h3>
-                  <div className="grid grid-cols-12 gap-2">
-                    <div className="col-span-5">
-                      <Select value={selectedIngredient} onValueChange={setSelectedIngredient}>
-                        <SelectTrigger
-                          data-testid="purchase-ingredient-select"
-                          className="h-11"
-                        >
-                          <SelectValue placeholder="Ingrediente" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {ingredients.map((ing) => (
-                            <SelectItem key={ing.id} value={ing.id}>
-                              {ing.name} ({ing.unit})
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    
-                    <div className="col-span-3">
+                <DialogHeader>
+                  <DialogTitle>{editMode ? "Editar Compra" : "Lançar Compras"}</DialogTitle>
+                </DialogHeader>
+                
+                <div className="space-y-4 mt-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="supplier">
+                        Fornecedor
+                      </Label>
                       <Input
-                        data-testid="purchase-quantity-input"
-                        type="number"
-                        step="0.01"
-                        value={quantity}
-                        onChange={(e) => setQuantity(e.target.value)}
-                        placeholder="Quantidade"
-                        className="h-11"
+                        id="supplier"
+                        data-testid="purchase-supplier-input"
+                        value={supplier}
+                        onChange={(e) => setSupplier(e.target.value)}
+                        placeholder="Ex: Supermercado BH"
+                        required
+                        className="mt-1 h-11"
                       />
                     </div>
-                    
-                    <div className="col-span-3">
+
+                    <div>
+                      <Label htmlFor="date">
+                        Data da Compra
+                      </Label>
                       <Input
-                        data-testid="purchase-price-input"
-                        type="number"
-                        step="0.01"
-                        value={price}
-                        onChange={(e) => setPrice(e.target.value)}
-                        placeholder="Preço (R$)"
-                        className="h-11"
+                        id="date"
+                        data-testid="purchase-date-input"
+                        type="date"
+                        value={purchaseDate}
+                        onChange={(e) => setPurchaseDate(e.target.value)}
+                        required
+                        className="mt-1 h-11"
                       />
                     </div>
-                    
-                    <div className="col-span-1">
-                      <Button
-                        type="button"
-                        data-testid="add-to-cart-button"
-                        onClick={addToCart}
-                        className="h-11 w-full bg-green-600 hover:bg-green-700"
-                      >
-                        <Plus className="w-5 h-5" strokeWidth={1.5} />
-                      </Button>
-                    </div>
                   </div>
-                </div>
 
-                {cart.length > 0 && (
                   <div className="border-t pt-4">
-                    <h3 className="font-semibold mb-3">
-                      Carrinho ({cart.length} {cart.length === 1 ? 'item' : 'itens'})
-                    </h3>
-                    <div className="bg-muted rounded-lg p-3 max-h-64 overflow-y-auto">
-                      <table className="w-full text-sm">
-                        <thead>
-                          <tr className="text-left text-xs text-muted-foreground uppercase">
-                            <th className="pb-2">Item</th>
-                            <th className="pb-2 text-right">Qtd</th>
-                            <th className="pb-2 text-right">Preço</th>
-                            <th className="pb-2 text-right">Unit.</th>
-                            <th className="pb-2"></th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {cart.map((item) => (
-                            <tr key={item.id} className="border-t border-border">
-                              <td className="py-2">
-                                {item.ingredient_name}
-                              </td>
-                              <td className="py-2 text-right font-mono">
-                                {item.quantity.toFixed(2)}
-                              </td>
-                              <td className="py-2 text-right font-mono">
-                                R$ {item.price.toFixed(2)}
-                              </td>
-                              <td className="py-2 text-right font-mono text-muted-foreground text-xs">
-                                R$ {item.unit_price.toFixed(2)}
-                              </td>
-                              <td className="py-2 text-right">
-                                <Button
-                                  data-testid={`remove-cart-item-${item.id}`}
-                                  onClick={() => removeFromCart(item.id)}
-                                  variant="ghost"
-                                  size="sm"
-                                  className="h-7 w-7 p-0 text-destructive hover:text-destructive hover:bg-destructive/10"
-                                >
-                                  <Trash2 className="w-3.5 h-3.5" strokeWidth={1.5} />
-                                </Button>
-                              </td>
-                            </tr>
-                          ))}
-                          <tr className="border-t-2 border-border font-semibold">
-                            <td className="py-2">Total</td>
-                            <td className="py-2 text-right font-mono">
-                              {cartTotalQty.toFixed(2)}
-                            </td>
-                            <td className="py-2 text-right font-mono">
-                              R$ {cartTotal.toFixed(2)}
-                            </td>
-                            <td></td>
-                            <td></td>
-                          </tr>
-                        </tbody>
-                      </table>
+                    <h3 className="font-semibold mb-3">Adicionar itens</h3>
+                    
+                    {/* Seletor de Ingrediente com busca */}
+                    <div className="mb-3">
+                      <Label>Ingrediente</Label>
+                      <Popover open={ingredientPopoverOpen} onOpenChange={setIngredientPopoverOpen}>
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant="outline"
+                            role="combobox"
+                            aria-expanded={ingredientPopoverOpen}
+                            className="w-full justify-between h-11 mt-1 font-normal"
+                          >
+                            {selectedIngredientData 
+                              ? `${selectedIngredientData.name} (${selectedIngredientData.unit})`
+                              : "Selecione ou busque um ingrediente..."
+                            }
+                            <Search className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-[400px] p-0" align="start">
+                          <Command>
+                            <CommandInput 
+                              placeholder="Buscar por nome ou código..." 
+                              value={ingredientSearch}
+                              onValueChange={setIngredientSearch}
+                            />
+                            <CommandList>
+                              <CommandEmpty>Nenhum ingrediente encontrado.</CommandEmpty>
+                              <CommandGroup>
+                                {filteredIngredients.map((ing) => (
+                                  <CommandItem
+                                    key={ing.id}
+                                    value={ing.name}
+                                    onSelect={() => {
+                                      setSelectedIngredient(ing.id);
+                                      setIngredientPopoverOpen(false);
+                                    }}
+                                  >
+                                    <div className="flex justify-between w-full">
+                                      <span>{ing.name}</span>
+                                      <span className="text-muted-foreground text-sm">
+                                        {ing.code && `#${ing.code} • `}{ing.unit}
+                                      </span>
+                                    </div>
+                                  </CommandItem>
+                                ))}
+                              </CommandGroup>
+                            </CommandList>
+                          </Command>
+                        </PopoverContent>
+                      </Popover>
                     </div>
+                    
+                    {/* Quantidade e Preços */}
+                    <div className="grid grid-cols-12 gap-2">
+                      <div className="col-span-3">
+                        <Label className="text-xs">Quantidade</Label>
+                        <Input
+                          data-testid="purchase-quantity-input"
+                          type="number"
+                          step="0.01"
+                          value={quantity}
+                          onChange={(e) => handleQuantityChange(e.target.value)}
+                          placeholder="Qtd"
+                          className="h-11 mt-1"
+                        />
+                      </div>
+                      
+                      <div className="col-span-3">
+                        <Label className="text-xs">Preço Unitário</Label>
+                        <Input
+                          type="number"
+                          step="0.01"
+                          value={unitPrice}
+                          onChange={(e) => handleUnitPriceChange(e.target.value)}
+                          placeholder="R$ unit."
+                          className="h-11 mt-1"
+                        />
+                      </div>
+                      
+                      <div className="col-span-4">
+                        <Label className="text-xs">Preço Total</Label>
+                        <Input
+                          data-testid="purchase-price-input"
+                          type="number"
+                          step="0.01"
+                          value={totalPrice}
+                          onChange={(e) => handleTotalPriceChange(e.target.value)}
+                          placeholder="R$ total"
+                          className="h-11 mt-1"
+                        />
+                      </div>
+                      
+                      <div className="col-span-2 flex items-end">
+                        <Button
+                          type="button"
+                          data-testid="add-to-cart-button"
+                          onClick={addToCart}
+                          className="h-11 w-full bg-green-600 hover:bg-green-700"
+                        >
+                          <Plus className="w-5 h-5" strokeWidth={1.5} />
+                        </Button>
+                      </div>
+                    </div>
+                    
+                    <p className="text-xs text-muted-foreground mt-2">
+                      💡 Preencha o preço unitário OU o preço total - o outro será calculado automaticamente.
+                    </p>
                   </div>
-                )}
 
-                <div className="flex gap-2 pt-4">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => {
-                      setOpen(false);
-                      resetForm();
-                    }}
-                    className="flex-1"
-                  >
-                    Cancelar
-                  </Button>
-                  <Button
-                    type="button"
-                    data-testid="finalize-purchase-button"
-                    onClick={finalizePurchase}
-                    disabled={loading || cart.length === 0}
-                    className="flex-1 shadow-sm transition-all active:scale-95"
-                  >
-                    {loading ? (
-                      editMode ? "Atualizando..." : "Finalizando..."
-                    ) : (
-                      <>
-                        <Check className="w-5 h-5 mr-2" strokeWidth={1.5} />
-                        {editMode ? "Atualizar Compra" : "Finalizar Compra"}
-                      </>
-                    )}
-                  </Button>
+                  {cart.length > 0 && (
+                    <div className="border-t pt-4">
+                      <h3 className="font-semibold mb-3">
+                        Carrinho ({cart.length} {cart.length === 1 ? 'item' : 'itens'})
+                      </h3>
+                      <div className="bg-muted rounded-lg p-3 max-h-64 overflow-y-auto">
+                        <table className="w-full text-sm">
+                          <thead>
+                            <tr className="text-left text-xs text-muted-foreground uppercase">
+                              <th className="pb-2">Item</th>
+                              <th className="pb-2 text-right">Qtd</th>
+                              <th className="pb-2 text-right">Unit.</th>
+                              <th className="pb-2 text-right">Total</th>
+                              <th className="pb-2"></th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {cart.map((item) => (
+                              <tr key={item.id} className="border-t border-border">
+                                <td className="py-2">
+                                  {item.ingredient_name}
+                                </td>
+                                <td className="py-2 text-right font-mono">
+                                  {item.quantity.toFixed(2)}
+                                </td>
+                                <td className="py-2 text-right font-mono text-muted-foreground text-xs">
+                                  R$ {item.unit_price.toFixed(2)}
+                                </td>
+                                <td className="py-2 text-right font-mono font-medium">
+                                  R$ {item.price.toFixed(2)}
+                                </td>
+                                <td className="py-2 text-right">
+                                  <Button
+                                    data-testid={`remove-cart-item-${item.id}`}
+                                    onClick={() => removeFromCart(item.id)}
+                                    variant="ghost"
+                                    size="sm"
+                                    className="h-7 w-7 p-0 text-destructive hover:text-destructive hover:bg-destructive/10"
+                                  >
+                                    <Trash2 className="w-3.5 h-3.5" strokeWidth={1.5} />
+                                  </Button>
+                                </td>
+                              </tr>
+                            ))}
+                            <tr className="border-t-2 border-border font-semibold">
+                              <td className="py-2">Total</td>
+                              <td className="py-2 text-right font-mono">
+                                {cartTotalQty.toFixed(2)}
+                              </td>
+                              <td className="py-2"></td>
+                              <td className="py-2 text-right font-mono">
+                                R$ {cartTotal.toFixed(2)}
+                              </td>
+                              <td></td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="flex gap-2 pt-4">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={handleCloseAttempt}
+                      className="flex-1"
+                    >
+                      Cancelar
+                    </Button>
+                    <Button
+                      type="button"
+                      data-testid="finalize-purchase-button"
+                      onClick={finalizePurchase}
+                      disabled={loading || cart.length === 0}
+                      className="flex-1 shadow-sm transition-all active:scale-95"
+                    >
+                      {loading ? (
+                        editMode ? "Atualizando..." : "Finalizando..."
+                      ) : (
+                        <>
+                          <Check className="w-5 h-5 mr-2" strokeWidth={1.5} />
+                          {editMode ? "Atualizar Compra" : "Finalizar Compra"}
+                        </>
+                      )}
+                    </Button>
+                  </div>
                 </div>
-              </div>
-            </DialogContent>
-          </Dialog>
+              </DialogContent>
+            </Dialog>
           </div>
         </div>
 
@@ -642,8 +804,8 @@ export default function Purchases() {
                             <tr className="text-left text-xs text-muted-foreground uppercase border-b border-border">
                               <th className="pb-2">Item</th>
                               <th className="pb-2 text-right">Quantidade</th>
-                              <th className="pb-2 text-right">Preço Total</th>
                               <th className="pb-2 text-right">Preço Unitário</th>
+                              <th className="pb-2 text-right">Preço Total</th>
                             </tr>
                           </thead>
                           <tbody>
@@ -655,11 +817,11 @@ export default function Purchases() {
                                 <td className="py-2 text-right font-mono">
                                   {item.quantity.toFixed(2)} {item.ingredient_unit}
                                 </td>
-                                <td className="py-2 text-right font-mono font-medium">
-                                  R$ {item.price.toFixed(2)}
-                                </td>
                                 <td className="py-2 text-right font-mono text-muted-foreground">
                                   R$ {item.unit_price.toFixed(2)}/{item.ingredient_unit}
+                                </td>
+                                <td className="py-2 text-right font-mono font-medium">
+                                  R$ {item.price.toFixed(2)}
                                 </td>
                               </tr>
                             ))}
@@ -696,6 +858,28 @@ export default function Purchases() {
                 className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               >
                 Excluir
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+
+        {/* AlertDialog de confirmação ao fechar */}
+        <AlertDialog open={confirmCloseOpen} onOpenChange={setConfirmCloseOpen}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Descartar alterações?</AlertDialogTitle>
+              <AlertDialogDescription>
+                Você tem alterações não salvas. Tem certeza que deseja sair? 
+                Todos os itens adicionados ao carrinho serão perdidos.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Continuar Editando</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={confirmClose}
+                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              >
+                Descartar e Sair
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
