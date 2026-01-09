@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import axios from "axios";
 import { toast } from "sonner";
-import { Plus, Trash2, Edit, Package, AlertTriangle, ArrowUp, ArrowDown, Download } from "lucide-react";
+import { Plus, Trash2, Edit, Package, AlertTriangle, ArrowUp, ArrowDown, Download, Copy, Search, X } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
@@ -63,6 +63,11 @@ export default function Ingredients() {
   // Estado para "É receita"
   const [isRecipe, setIsRecipe] = useState(false);
   
+  // Filtros
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterCategory, setFilterCategory] = useState("all");
+  const [filterStock, setFilterStock] = useState("all"); // all, low, normal, high
+  
   // Category management states
   const [categoryDialogOpen, setCategoryDialogOpen] = useState(false);
   const [editCategoryMode, setEditCategoryMode] = useState(false);
@@ -85,6 +90,11 @@ export default function Ingredients() {
   // Delete confirmation dialog (normal delete)
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [ingredientToDelete, setIngredientToDelete] = useState(null);
+  
+  // Duplicate dialog
+  const [duplicateDialogOpen, setDuplicateDialogOpen] = useState(false);
+  const [ingredientToDuplicate, setIngredientToDuplicate] = useState(null);
+  const [duplicateName, setDuplicateName] = useState("");
 
   useEffect(() => {
     fetchIngredients();
@@ -158,6 +168,39 @@ export default function Ingredients() {
     }
   };
 
+  // Filtrar ingredientes
+  const filteredIngredients = useMemo(() => {
+    return ingredients.filter(ingredient => {
+      // Filtro por texto (nome ou código)
+      const matchesSearch = searchTerm === "" || 
+        ingredient.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (ingredient.code && ingredient.code.includes(searchTerm));
+      
+      // Filtro por categoria
+      const matchesCategory = filterCategory === "all" || 
+        ingredient.category === filterCategory ||
+        (filterCategory === "none" && !ingredient.category);
+      
+      // Filtro por status de estoque
+      let matchesStock = true;
+      if (filterStock !== "all") {
+        const qty = ingredient.stock_quantity || 0;
+        const min = ingredient.stock_min || 0;
+        const max = ingredient.stock_max || 0;
+        
+        if (filterStock === "low") {
+          matchesStock = min > 0 && qty <= min;
+        } else if (filterStock === "high") {
+          matchesStock = max > 0 && qty >= max;
+        } else if (filterStock === "normal") {
+          matchesStock = (min === 0 || qty > min) && (max === 0 || qty < max);
+        }
+      }
+      
+      return matchesSearch && matchesCategory && matchesStock;
+    });
+  }, [ingredients, searchTerm, filterCategory, filterStock]);
+
   const resetForm = () => {
     setName("");
     setUnit("");
@@ -229,6 +272,55 @@ export default function Ingredients() {
     } catch (error) {
       console.error("Erro:", error.response?.data || error);
       toast.error(error.response?.data?.detail || (editMode ? "Erro ao atualizar item" : "Erro ao criar item"));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Duplicar item
+  const openDuplicateDialog = (ingredient) => {
+    setIngredientToDuplicate(ingredient);
+    setDuplicateName(`${ingredient.name} (Cópia)`);
+    setDuplicateDialogOpen(true);
+  };
+
+  const handleDuplicateIngredient = async () => {
+    if (!ingredientToDuplicate || !duplicateName.trim()) {
+      toast.error("Nome do item é obrigatório");
+      return;
+    }
+
+    // Verificar se já existe um item com o mesmo nome
+    const exists = ingredients.some(
+      i => i.name.toLowerCase() === duplicateName.trim().toLowerCase()
+    );
+
+    if (exists) {
+      toast.error("Já existe um item com este nome");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const payload = {
+        name: duplicateName.trim(),
+        unit: ingredientToDuplicate.unit,
+        category: ingredientToDuplicate.category || null,
+        units_per_package: ingredientToDuplicate.units_per_package || 0,
+        unit_weight: ingredientToDuplicate.unit_weight || 0,
+        stock_min: ingredientToDuplicate.stock_min || 0,
+        stock_max: ingredientToDuplicate.stock_max || 0,
+        // Não copiar estoque atual nem preço médio
+      };
+
+      await axios.post(`${API}/ingredients`, payload, getAuthHeader());
+      toast.success(`Item "${duplicateName}" criado com sucesso!`);
+      setDuplicateDialogOpen(false);
+      setIngredientToDuplicate(null);
+      setDuplicateName("");
+      fetchIngredients();
+    } catch (error) {
+      toast.error(error.response?.data?.detail || "Erro ao duplicar item");
     } finally {
       setLoading(false);
     }
@@ -356,13 +448,25 @@ export default function Ingredients() {
     const max = ingredient.stock_max || 0;
     
     if (min > 0 && qty <= min) {
-      return { color: "text-red-500", bg: "bg-red-50 dark:bg-red-900/20", icon: AlertTriangle };
+      return { color: "text-red-500", bg: "bg-red-50 dark:bg-red-900/20", icon: AlertTriangle, label: "Baixo" };
     }
     if (max > 0 && qty >= max) {
-      return { color: "text-blue-500", bg: "bg-blue-50 dark:bg-blue-900/20", icon: Package };
+      return { color: "text-blue-500", bg: "bg-blue-50 dark:bg-blue-900/20", icon: Package, label: "Alto" };
     }
-    return { color: "text-green-500", bg: "bg-green-50 dark:bg-green-900/20", icon: Package };
+    return { color: "text-green-500", bg: "bg-green-50 dark:bg-green-900/20", icon: Package, label: "Normal" };
   };
+
+  // Contadores para os filtros
+  const stockCounts = useMemo(() => {
+    const counts = { low: 0, normal: 0, high: 0 };
+    ingredients.forEach(ing => {
+      const status = getStockStatus(ing);
+      if (status.label === "Baixo") counts.low++;
+      else if (status.label === "Alto") counts.high++;
+      else counts.normal++;
+    });
+    return counts;
+  }, [ingredients]);
 
   return (
     <div className="p-8" data-testid="ingredients-page">
@@ -382,14 +486,92 @@ export default function Ingredients() {
 
           {/* Tab: Estoque */}
           <TabsContent value="estoque">
+            {/* Barra de Filtros */}
+            <div className="bg-card rounded-xl border shadow-sm p-4 mb-4">
+              <div className="flex flex-col lg:flex-row gap-4">
+                {/* Busca */}
+                <div className="flex-1 relative">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Buscar por nome ou código..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-9 h-10"
+                  />
+                  {searchTerm && (
+                    <button
+                      onClick={() => setSearchTerm("")}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  )}
+                </div>
+                
+                {/* Filtro por Categoria */}
+                <div className="w-full lg:w-48">
+                  <Select value={filterCategory} onValueChange={setFilterCategory}>
+                    <SelectTrigger className="h-10">
+                      <SelectValue placeholder="Categoria" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Todas Categorias</SelectItem>
+                      <SelectItem value="none">Sem Categoria</SelectItem>
+                      {categories.map((cat) => (
+                        <SelectItem key={cat.id} value={cat.name}>
+                          {cat.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                {/* Filtro por Status de Estoque */}
+                <div className="w-full lg:w-52">
+                  <Select value={filterStock} onValueChange={setFilterStock}>
+                    <SelectTrigger className="h-10">
+                      <SelectValue placeholder="Status Estoque" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Todos os Status</SelectItem>
+                      <SelectItem value="low">
+                        <span className="flex items-center gap-2">
+                          <span className="w-2 h-2 rounded-full bg-red-500"></span>
+                          Estoque Baixo ({stockCounts.low})
+                        </span>
+                      </SelectItem>
+                      <SelectItem value="normal">
+                        <span className="flex items-center gap-2">
+                          <span className="w-2 h-2 rounded-full bg-green-500"></span>
+                          Estoque Normal ({stockCounts.normal})
+                        </span>
+                      </SelectItem>
+                      <SelectItem value="high">
+                        <span className="flex items-center gap-2">
+                          <span className="w-2 h-2 rounded-full bg-blue-500"></span>
+                          Estoque Alto ({stockCounts.high})
+                        </span>
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              
+              {/* Indicador de resultados */}
+              <div className="mt-3 text-sm text-muted-foreground">
+                Mostrando {filteredIngredients.length} de {ingredients.length} itens
+              </div>
+            </div>
+
             <div className="flex justify-end gap-2 mb-4">
               <Button 
                 variant="outline" 
                 onClick={() => exportToExcel(ingredients, "estoque", {
+                  code: "Código",
                   name: "Nome",
                   category: "Categoria", 
                   unit: "Unidade",
-                  average_price: "Preço Médio",
+                  average_price: "Preço Médio (últimas 5 compras)",
                   stock_quantity: "Qtd Estoque",
                   stock_min: "Estoque Mín",
                   stock_max: "Estoque Máx"
@@ -427,6 +609,9 @@ export default function Ingredients() {
                           required
                           className="mt-1 h-11"
                         />
+                        <p className="text-xs text-muted-foreground mt-1">
+                          O código será gerado automaticamente
+                        </p>
                       </div>
                       
                       <div className="grid grid-cols-2 gap-4">
@@ -573,6 +758,9 @@ export default function Ingredients() {
                   <thead className="bg-muted/50 border-b">
                     <tr>
                       <th className="text-left py-3 px-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                        Código
+                      </th>
+                      <th className="text-left py-3 px-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                         Ingrediente
                       </th>
                       <th className="text-left py-3 px-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
@@ -582,7 +770,7 @@ export default function Ingredients() {
                         Unidade
                       </th>
                       <th className="text-right py-3 px-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                        Preço Médio
+                        <span title="Média das últimas 5 compras">Preço Médio*</span>
                       </th>
                       <th className="text-center py-3 px-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                         Qtd Estoque
@@ -599,14 +787,16 @@ export default function Ingredients() {
                     </tr>
                   </thead>
                   <tbody>
-                    {ingredients.length === 0 ? (
+                    {filteredIngredients.length === 0 ? (
                       <tr>
-                        <td colSpan="8" className="text-center py-12 text-muted-foreground">
-                          Nenhum item cadastrado. Clique em "Novo Item" para começar.
+                        <td colSpan="9" className="text-center py-12 text-muted-foreground">
+                          {ingredients.length === 0 
+                            ? 'Nenhum item cadastrado. Clique em "Novo Item" para começar.'
+                            : 'Nenhum item encontrado com os filtros aplicados.'}
                         </td>
                       </tr>
                     ) : (
-                      ingredients.map((ingredient) => {
+                      filteredIngredients.map((ingredient) => {
                         const stockStatus = getStockStatus(ingredient);
                         const StockIcon = stockStatus.icon;
                         
@@ -616,6 +806,9 @@ export default function Ingredients() {
                             data-testid={`ingredient-row-${ingredient.id}`}
                             className="border-b hover:bg-muted/30 transition-colors"
                           >
+                            <td className="py-3 px-4 font-mono text-sm text-muted-foreground">
+                              {ingredient.code || "-"}
+                            </td>
                             <td className="py-3 px-4 font-medium">
                               <div className="flex items-center gap-2">
                                 {ingredient.name}
@@ -675,11 +868,21 @@ export default function Ingredients() {
                                     <Package className="w-4 h-4 text-green-600" strokeWidth={1.5} />
                                   </Button>
                                   <Button
+                                    onClick={() => openDuplicateDialog(ingredient)}
+                                    variant="ghost"
+                                    size="sm"
+                                    className="hover:bg-blue-100 dark:hover:bg-blue-900/30"
+                                    title="Duplicar Item"
+                                  >
+                                    <Copy className="w-4 h-4 text-blue-600" strokeWidth={1.5} />
+                                  </Button>
+                                  <Button
                                     data-testid={`edit-ingredient-${ingredient.id}`}
                                     onClick={() => handleEdit(ingredient)}
                                     variant="ghost"
                                     size="sm"
                                     className="hover:bg-muted"
+                                    title="Editar"
                                   >
                                     <Edit className="w-4 h-4" strokeWidth={1.5} />
                                   </Button>
@@ -689,6 +892,7 @@ export default function Ingredients() {
                                     variant="ghost"
                                     size="sm"
                                     className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                                    title="Excluir"
                                   >
                                     <Trash2 className="w-4 h-4" strokeWidth={1.5} />
                                   </Button>
@@ -703,6 +907,11 @@ export default function Ingredients() {
                     )}
                   </tbody>
                 </table>
+              </div>
+              
+              {/* Nota sobre o preço médio */}
+              <div className="px-4 py-3 border-t bg-muted/30 text-xs text-muted-foreground">
+                * O Preço Médio é calculado com base na <strong>média das últimas 5 compras</strong> registradas para cada item.
               </div>
             </div>
           </TabsContent>
@@ -879,6 +1088,50 @@ export default function Ingredients() {
             >
               Confirmar Ajuste
             </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Duplicate Dialog */}
+      <Dialog open={duplicateDialogOpen} onOpenChange={setDuplicateDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Duplicar Item</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 mt-4">
+            <p className="text-sm text-muted-foreground">
+              Criando cópia de: <strong>{ingredientToDuplicate?.name}</strong>
+            </p>
+            <div>
+              <Label htmlFor="duplicateName">Nome do novo item</Label>
+              <Input
+                id="duplicateName"
+                value={duplicateName}
+                onChange={(e) => setDuplicateName(e.target.value)}
+                placeholder="Digite o nome do novo item"
+                className="mt-1 h-11"
+              />
+            </div>
+            <p className="text-xs text-muted-foreground">
+              A cópia terá as mesmas configurações (unidade, categoria, limites de estoque), 
+              mas começará com estoque zerado e preço médio zerado.
+            </p>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                onClick={() => setDuplicateDialogOpen(false)}
+                className="flex-1"
+              >
+                Cancelar
+              </Button>
+              <Button
+                onClick={handleDuplicateIngredient}
+                disabled={loading || !duplicateName.trim()}
+                className="flex-1"
+              >
+                {loading ? "Duplicando..." : "Duplicar"}
+              </Button>
+            </div>
           </div>
         </DialogContent>
       </Dialog>
