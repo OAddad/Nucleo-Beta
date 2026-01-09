@@ -1500,28 +1500,6 @@ export default function Products() {
                   </Button>
                 </div>
               </div>
-                  className="h-9 px-3"
-                  onClick={() => handleSortToggle("cmv")}
-                >
-                  CMV {sortBy.startsWith("cmv") && (sortDirection.cmv === "desc" ? "↓" : "↑")}
-                </Button>
-                <Button
-                  variant={sortBy.startsWith("margem") ? "default" : "outline"}
-                  size="sm"
-                  className="h-9 px-3"
-                  onClick={() => handleSortToggle("margem")}
-                >
-                  Margem {sortBy.startsWith("margem") && (sortDirection.margem === "desc" ? "↓" : "↑")}
-                </Button>
-                <Button
-                  variant={sortBy.startsWith("preco") ? "default" : "outline"}
-                  size="sm"
-                  className="h-9 px-3"
-                  onClick={() => handleSortToggle("preco")}
-                >
-                  Preço {sortBy.startsWith("preco") && (sortDirection.preco === "desc" ? "↓" : "↑")}
-                </Button>
-              </div>
               
               {/* Separador visual */}
               <div className="h-8 w-px bg-border" />
