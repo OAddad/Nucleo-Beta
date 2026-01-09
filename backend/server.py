@@ -772,8 +772,14 @@ async def get_purchases_grouped(current_user: User = Depends(get_current_user)):
     # Group by batch_id
     batches_dict = {}
     for p in purchases:
+        # Normalizar data para ter timezone
         if isinstance(p["purchase_date"], str):
-            p["purchase_date"] = datetime.fromisoformat(p["purchase_date"].replace('Z', '+00:00'))
+            try:
+                p["purchase_date"] = datetime.fromisoformat(p["purchase_date"].replace('Z', '+00:00'))
+            except:
+                p["purchase_date"] = datetime.now(timezone.utc)
+        elif p["purchase_date"] and p["purchase_date"].tzinfo is None:
+            p["purchase_date"] = p["purchase_date"].replace(tzinfo=timezone.utc)
         
         batch_id = p.get("batch_id", p["id"])
         if batch_id not in batches_dict:
@@ -791,7 +797,7 @@ async def get_purchases_grouped(current_user: User = Depends(get_current_user)):
         batches_dict[batch_id]["items"].append(Purchase(**p))
     
     batches = [PurchaseBatch(**batch) for batch in batches_dict.values()]
-    batches.sort(key=lambda x: x.purchase_date, reverse=True)
+    batches.sort(key=lambda x: x.purchase_date if x.purchase_date else datetime.min.replace(tzinfo=timezone.utc), reverse=True)
     return batches
 
 @api_router.get("/purchases", response_model=List[Purchase])
