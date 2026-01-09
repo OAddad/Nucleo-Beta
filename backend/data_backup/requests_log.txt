@@ -2129,3 +2129,9 @@
 2026-01-09T15:54:37.557481+00:00 | DB_CALL get_user_by_id | P3 | 0.41ms | success
 2026-01-09T15:54:37.557758+00:00 | DB_CALL get_all_purchases | P3 | 0.32ms | success
 2026-01-09T15:54:37.559201+00:00 | DB_CALL get_all_ingredients | P3 | 1.65ms | success
+2026-01-09T15:54:38.773472+00:00 | DB_CALL get_user_by_id | P3 | 0.29ms | success
+2026-01-09T15:54:38.773671+00:00 | DB_CALL get_user_by_id | P3 | 0.7ms | success
+2026-01-09T15:54:38.774017+00:00 | DB_CALL get_all_ingredients | P3 | 0.39ms | success
+2026-01-09T15:54:38.774962+00:00 | DB_CALL get_all_categories | P3 | 1.22ms | success
+2026-01-09T15:54:38.935157+00:00 | DB_CALL get_user_by_id | P3 | 0.3ms | success
+2026-01-09T15:54:38.935466+00:00 | DB_CALL get_all_categories | P3 | 0.15ms | success

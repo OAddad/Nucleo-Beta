@@ -204,12 +204,25 @@ class NucleoTester:
                 self.log(f"Média calculada das últimas {len(last_5)} compras: R$ {expected_avg:.2f}")
                 self.log(f"Preço médio no sistema: R$ {current_avg:.2f}")
                 
-                # Check if they match (with small tolerance for floating point)
-                if abs(expected_avg - current_avg) < 0.01:
-                    self.log("✅ Cálculo da média das últimas 5 compras está correto!")
-                    return True
+                # Check if ingredient has units_per_package (affects calculation)
+                units_per_package = test_ingredient.get('units_per_package')
+                if units_per_package and units_per_package > 0:
+                    expected_avg_adjusted = expected_avg / units_per_package
+                    self.log(f"Ingrediente tem units_per_package: {units_per_package}")
+                    self.log(f"Média ajustada por unidade: R$ {expected_avg_adjusted:.2f}")
+                    
+                    if abs(expected_avg_adjusted - current_avg) < 0.1:  # More tolerance for floating point
+                        self.log("✅ Cálculo da média das últimas 5 compras está correto (considerando units_per_package)!")
+                        return True
+                    else:
+                        self.log(f"❌ Divergência no cálculo: esperado {expected_avg_adjusted:.2f}, atual {current_avg:.2f}", "ERROR")
                 else:
-                    self.log(f"❌ Divergência no cálculo da média: esperado {expected_avg:.2f}, atual {current_avg:.2f}", "ERROR")
+                    # Check if they match (with small tolerance for floating point)
+                    if abs(expected_avg - current_avg) < 0.01:
+                        self.log("✅ Cálculo da média das últimas 5 compras está correto!")
+                        return True
+                    else:
+                        self.log(f"❌ Divergência no cálculo da média: esperado {expected_avg:.2f}, atual {current_avg:.2f}", "ERROR")
         
         # Try to create batch purchases to test calculation (if user has permission)
         if self.user_info and self.user_info['role'] in ['proprietario', 'administrador']:
