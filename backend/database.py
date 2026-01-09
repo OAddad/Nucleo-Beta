@@ -9,22 +9,41 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import List, Optional, Dict, Any
 import threading
+from contextlib import contextmanager
 
 # Caminho do banco de dados
 DB_PATH = Path(__file__).parent / "data_backup" / "nucleo.db"
 
 # Lock para thread safety
-db_lock = threading.RLock()  # RLock permite re-entrada na mesma thread
+db_lock = threading.RLock()
+
+# Conexão global para evitar múltiplas aberturas/fechamentos
+_connection = None
+_connection_lock = threading.Lock()
 
 def get_connection():
-    """Retorna uma conexão com o banco SQLite com timeout"""
-    DB_PATH.parent.mkdir(parents=True, exist_ok=True)
-    conn = sqlite3.connect(str(DB_PATH), check_same_thread=False, timeout=30.0)
-    conn.row_factory = sqlite3.Row
-    # Habilitar WAL mode para melhor concorrência
-    conn.execute("PRAGMA journal_mode=WAL")
-    conn.execute("PRAGMA busy_timeout=30000")
-    return conn
+    """Retorna uma conexão com o banco SQLite"""
+    global _connection
+    with _connection_lock:
+        if _connection is None:
+            DB_PATH.parent.mkdir(parents=True, exist_ok=True)
+            _connection = sqlite3.connect(str(DB_PATH), check_same_thread=False, timeout=30.0)
+            _connection.row_factory = sqlite3.Row
+            # Habilitar WAL mode para melhor concorrência
+            _connection.execute("PRAGMA journal_mode=WAL")
+            _connection.execute("PRAGMA busy_timeout=30000")
+        return _connection
+
+@contextmanager
+def get_db():
+    """Context manager para operações com banco"""
+    conn = get_connection()
+    try:
+        yield conn
+        conn.commit()
+    except Exception as e:
+        conn.rollback()
+        raise e
 
 def init_database():
     """Inicializa o banco de dados criando as tabelas"""
