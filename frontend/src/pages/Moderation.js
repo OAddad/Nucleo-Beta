@@ -45,8 +45,8 @@ import {
   TableRow,
 } from "../components/ui/table";
 
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
-const API = `${BACKEND_URL}/api`;
+// URL relativa - funciona em qualquer domínio
+const API = '/api';
 
 const getAuthHeader = () => ({
   headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },

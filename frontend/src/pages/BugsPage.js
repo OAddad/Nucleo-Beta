@@ -38,7 +38,7 @@ import {
   AlertDialogTitle,
 } from "../components/ui/alert-dialog";
 
-const API_URL = process.env.REACT_APP_BACKEND_URL;
+const API = '/api';
 
 export default function BugsPage() {
   const [bugs, setBugs] = useState([]);

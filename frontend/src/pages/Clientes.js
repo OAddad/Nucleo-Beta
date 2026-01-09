@@ -38,7 +38,7 @@ import {
   TableRow,
 } from "../components/ui/table";
 
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+// URL relativa - funciona em qualquer domínio
 
 export default function Clientes() {
   const [clientes, setClientes] = useState([]);
