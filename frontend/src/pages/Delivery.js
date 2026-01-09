@@ -545,7 +545,7 @@ export default function Delivery() {
                         <div className="aspect-square bg-muted rounded-lg mb-2 overflow-hidden">
                           {product.photo_url ? (
                             <img
-                              src={`${BACKEND_URL}/api${product.photo_url}`}
+                              src={`/api${product.photo_url}`}
                               alt={product.name}
                               className="w-full h-full object-cover"
                             />
@@ -970,7 +970,7 @@ export default function Delivery() {
                   <div className="w-28 h-28 rounded-xl bg-muted overflow-hidden flex-shrink-0 border">
                     {selectedProduct.photo_url ? (
                       <img
-                        src={`${BACKEND_URL}/api${selectedProduct.photo_url}`}
+                        src={`/api${selectedProduct.photo_url}`}
                         alt={selectedProduct.name}
                         className="w-full h-full object-cover"
                       />

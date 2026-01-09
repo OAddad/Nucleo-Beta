@@ -33,7 +33,7 @@ function ProductCard({ product, onClick }) {
       <div className="aspect-square bg-muted flex items-center justify-center overflow-hidden">
         {product.photo_url && !imageError ? (
           <img
-            src={`${BACKEND_URL}/api${product.photo_url}`}
+            src={`/api${product.photo_url}`}
             alt={product.name}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform"
             onError={() => setImageError(true)}
@@ -112,7 +112,7 @@ function ProductPopup({ product, open, onClose, onAddToCart }) {
             <div className="w-44 h-44 rounded-xl bg-muted overflow-hidden flex-shrink-0 border shadow-sm">
               {product.photo_url && !imageError ? (
                 <img
-                  src={`${BACKEND_URL}/api${product.photo_url}`}
+                  src={`/api${product.photo_url}`}
                   alt={product.name}
                   className="w-full h-full object-cover"
                   onError={() => setImageError(true)}
@@ -437,7 +437,7 @@ export default function BalcaoVendas() {
                   <div className="w-12 h-12 rounded-lg bg-muted overflow-hidden flex-shrink-0">
                     {item.photo_url ? (
                       <img
-                        src={`${BACKEND_URL}/api${item.photo_url}`}
+                        src={`/api${item.photo_url}`}
                         alt={item.name}
                         className="w-full h-full object-cover"
                       />

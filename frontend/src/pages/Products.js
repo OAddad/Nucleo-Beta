@@ -60,7 +60,7 @@ function ProductThumbnail({ photoUrl, name }) {
 
   return (
     <img
-      src={`${BACKEND_URL}/api${photoUrl}`}
+      src={`/api${photoUrl}`}
       alt={name}
       className="w-full h-full object-cover"
       onError={() => setImageError(true)}
@@ -894,7 +894,7 @@ export default function Products() {
                         {(photoUrl || photoFile) ? (
                           <>
                             <img
-                              src={photoFile ? URL.createObjectURL(photoFile) : `${BACKEND_URL}/api${photoUrl}`}
+                              src={photoFile ? URL.createObjectURL(photoFile) : `/api${photoUrl}`}
                               alt="Preview"
                               className="w-full h-full object-cover"
                             />
