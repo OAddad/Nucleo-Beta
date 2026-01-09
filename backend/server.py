@@ -813,19 +813,13 @@ async def delete_purchase(purchase_id: str, current_user: User = Depends(get_cur
     # Delete purchase by deleting its batch (single item batch)
     await db_call(sqlite_db.delete_purchases_by_batch, purchase.get("batch_id", purchase_id))
     
-    # Recalculate average price
+    # Recalculate average price - USANDO MÉDIA DAS ÚLTIMAS 5 COMPRAS
     ingredient = await db_call(sqlite_db.get_ingredient_by_id, purchase["ingredient_id"])
-    purchases = await db_call(sqlite_db.get_purchases_by_ingredient, purchase["ingredient_id"])
-    if purchases:
-        total_quantity = sum(p["quantity"] for p in purchases)
-        total_cost = sum(p["price"] for p in purchases)
-        avg_price = total_cost / total_quantity if total_quantity > 0 else 0
-        
-        # If ingredient has units_per_package, divide by it
-        if ingredient and ingredient.get("units_per_package") and ingredient["units_per_package"] > 0:
-            avg_price = avg_price / ingredient["units_per_package"]
-    else:
-        avg_price = 0
+    avg_price = await db_call(sqlite_db.get_average_price_last_5_purchases, purchase["ingredient_id"])
+    
+    # If ingredient has units_per_package, divide by it
+    if ingredient and ingredient.get("units_per_package") and ingredient["units_per_package"] > 0:
+        avg_price = avg_price / ingredient["units_per_package"]
     
     await db_call(sqlite_db.update_ingredient, purchase["ingredient_id"], {"average_price": avg_price})
     
