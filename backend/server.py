@@ -1278,6 +1278,72 @@ async def force_backup_sync(current_user: User = Depends(get_current_user)):
     return {"message": "SQLite é persistente por padrão - não necessita sincronização manual"}
 
 
+# ==================== ENDPOINTS DE BUGS E SISTEMA ====================
+
+@api_router.get("/system/bugs")
+async def get_bugs(limit: int = 100, current_user: User = Depends(get_current_user)):
+    """Retorna lista de bugs registrados"""
+    check_role(current_user, ["proprietario", "administrador"])
+    bugs = bug_tracker.get_all_bugs(limit=limit)
+    return {"bugs": bugs, "total": len(bugs)}
+
+@api_router.get("/system/requests-log")
+async def get_requests_log(limit: int = 200, current_user: User = Depends(get_current_user)):
+    """Retorna logs de requisições"""
+    check_role(current_user, ["proprietario", "administrador"])
+    logs = bug_tracker.get_request_logs(limit=limit)
+    return {"logs": logs, "total": len(logs)}
+
+@api_router.get("/system/info")
+async def get_system_info(current_user: User = Depends(get_current_user)):
+    """Retorna informações do sistema"""
+    check_role(current_user, ["proprietario", "administrador"])
+    info = bug_tracker.get_system_info()
+    
+    # Adicionar info do banco
+    info['database'] = {
+        'ingredients': await db_call(sqlite_db.count_ingredients),
+        'products': await db_call(sqlite_db.count_products),
+        'purchases': await db_call(sqlite_db.count_purchases),
+        'users': await db_call(sqlite_db.count_users),
+        'categories': await db_call(sqlite_db.count_categories) if hasattr(sqlite_db, 'count_categories') else 0
+    }
+    
+    return info
+
+@api_router.delete("/system/bugs")
+async def clear_all_bugs(current_user: User = Depends(get_current_user)):
+    """Limpa todos os bugs"""
+    check_role(current_user, ["proprietario"])
+    bug_tracker.clear_bugs()
+    return {"message": "Todos os bugs foram limpos"}
+
+@api_router.post("/system/bugs/{bug_id}/status")
+async def update_bug_status(bug_id: str, status: str, current_user: User = Depends(get_current_user)):
+    """Atualiza status de um bug"""
+    check_role(current_user, ["proprietario", "administrador"])
+    if status not in ['new', 'investigating', 'fixed', 'ignored']:
+        raise HTTPException(status_code=400, detail="Status inválido")
+    bug_tracker.update_bug_status(bug_id, status)
+    return {"message": f"Bug {bug_id} atualizado para {status}"}
+
+@api_router.post("/system/report-bug")
+async def report_bug_manually(
+    error_type: str,
+    message: str,
+    endpoint: str = "manual_report",
+    current_user: User = Depends(get_current_user)
+):
+    """Permite reportar um bug manualmente"""
+    bug = bug_tracker.log_bug(
+        error_type=error_type,
+        message=message,
+        endpoint=endpoint,
+        user_id=current_user.id
+    )
+    return {"message": "Bug reportado com sucesso", "bug_id": bug.id}
+
+
 app.include_router(api_router)
 
 app.add_middleware(

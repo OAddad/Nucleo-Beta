@@ -2,3 +2,9 @@
 2026-01-09T14:19:17.536491+00:00 | DB_CALL count_ingredients | P3 | 0.18ms | success
 2026-01-09T14:19:17.536659+00:00 | DB_CALL count_products | P3 | 0.11ms | success
 2026-01-09T14:19:17.536800+00:00 | DB_CALL count_users | P3 | 0.09ms | success
+2026-01-09T14:19:36.517984+00:00 | DB_CALL get_user_by_id | P3 | 0.34ms | success
+2026-01-09T14:19:36.518342+00:00 | DB_CALL get_product_by_id | P3 | 0.18ms | success
+2026-01-09T14:19:36.522466+00:00 | DB_CALL delete_product | P3 | 4.05ms | success
+2026-01-09T14:19:36.524874+00:00 | DB_CALL create_audit_log | P3 | 2.3ms | success
+2026-01-09T14:19:36.684037+00:00 | DB_CALL get_user_by_id | P3 | 0.27ms | success
+2026-01-09T14:19:36.684455+00:00 | DB_CALL get_all_products | P3 | 0.28ms | success
