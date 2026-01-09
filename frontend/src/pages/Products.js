@@ -825,7 +825,10 @@ export default function Products() {
                         <Button 
                           variant="outline" 
                           className="w-full rounded-xl"
-                          onClick={() => setPerformanceFilter("sem-descricao")}
+                          onClick={() => {
+                            setPerformanceFilter("todos");
+                            setFilterDescription("sem-descricao");
+                          }}
                         >
                           Adicione descrições agora
                         </Button>
@@ -837,27 +840,6 @@ export default function Products() {
                     </div>
                   </div>
                 </div>
-                
-                {/* Badge de filtro ativo */}
-                {performanceFilter !== "todos" && (
-                  <div className="mt-4 flex items-center justify-center gap-2">
-                    <div className="bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium flex items-center gap-2">
-                      <span>
-                        {performanceFilter === "sem-foto" 
-                          ? `Mostrando ${sortedProducts.length} produto${sortedProducts.length !== 1 ? 's' : ''} sem foto`
-                          : `Mostrando ${sortedProducts.length} produto${sortedProducts.length !== 1 ? 's' : ''} sem descrição`
-                        }
-                      </span>
-                      <button 
-                        onClick={() => setPerformanceFilter("todos")}
-                        className="hover:bg-primary/20 rounded-full p-1 transition-colors"
-                      >
-                        <span className="sr-only">Remover filtro</span>
-                        ✕
-                      </button>
-                    </div>
-                  </div>
-                )}
               </div>
             )}
             
