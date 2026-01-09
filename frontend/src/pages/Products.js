@@ -68,6 +68,48 @@ function ProductThumbnail({ photoUrl, name }) {
   );
 }
 
+// Componente do indicador circular de progresso (fora do Products para evitar re-renderização)
+function CircularProgress({ percent, size = 140, strokeWidth = 8 }) {
+  const radius = (size - strokeWidth) / 2;
+  const circumference = radius * 2 * Math.PI;
+  const offset = circumference - (percent / 100) * circumference;
+  
+  // Cor baseada na porcentagem
+  const getColor = (pct) => {
+    if (pct >= 80) return "#22c55e"; // verde
+    if (pct >= 50) return "#eab308"; // amarelo
+    return "#ef4444"; // vermelho
+  };
+  
+  return (
+    <svg width={size} height={size} className="transform -rotate-90">
+      {/* Círculo de fundo */}
+      <circle
+        cx={size / 2}
+        cy={size / 2}
+        r={radius}
+        fill="none"
+        stroke="currentColor"
+        strokeWidth={strokeWidth}
+        className="text-muted/20"
+      />
+      {/* Círculo de progresso */}
+      <circle
+        cx={size / 2}
+        cy={size / 2}
+        r={radius}
+        fill="none"
+        stroke={getColor(percent)}
+        strokeWidth={strokeWidth}
+        strokeDasharray={circumference}
+        strokeDashoffset={offset}
+        strokeLinecap="round"
+        className="transition-all duration-500 ease-out"
+      />
+    </svg>
+  );
+}
+
 export default function Products() {
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
