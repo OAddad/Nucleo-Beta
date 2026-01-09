@@ -111,6 +111,55 @@ export default function Products() {
   const [productToDuplicate, setProductToDuplicate] = useState(null);
   const [duplicateName, setDuplicateName] = useState("");
   const [duplicatingProduct, setDuplicatingProduct] = useState(false);
+  
+  // Filtro de performance (sem-foto, sem-descricao, todos)
+  const [performanceFilter, setPerformanceFilter] = useState("todos");
+
+  // Calcular estatísticas de performance do cardápio
+  const cardapioStats = useMemo(() => {
+    const total = products.length;
+    if (total === 0) {
+      return {
+        total: 0,
+        withPhoto: 0,
+        withDescription: 0,
+        photoPercent: 0,
+        descriptionPercent: 0,
+        overallPercent: 0
+      };
+    }
+    
+    const withPhoto = products.filter(p => p.photo_url && p.photo_url.trim() !== "").length;
+    const withDescription = products.filter(p => p.description && p.description.trim() !== "").length;
+    
+    const photoPercent = Math.round((withPhoto / total) * 100);
+    const descriptionPercent = Math.round((withDescription / total) * 100);
+    
+    // Média ponderada: foto (50%) + descrição (50%)
+    const overallPercent = Math.round((photoPercent + descriptionPercent) / 2);
+    
+    return {
+      total,
+      withPhoto,
+      withDescription,
+      photoPercent,
+      descriptionPercent,
+      overallPercent
+    };
+  }, [products]);
+
+  // Filtrar produtos baseado no filtro de performance
+  const getFilteredProducts = () => {
+    let filtered = [...products];
+    
+    if (performanceFilter === "sem-foto") {
+      filtered = filtered.filter(p => !p.photo_url || p.photo_url.trim() === "");
+    } else if (performanceFilter === "sem-descricao") {
+      filtered = filtered.filter(p => !p.description || p.description.trim() === "");
+    }
+    
+    return filtered;
+  };
 
   useEffect(() => {
     fetchProducts();
