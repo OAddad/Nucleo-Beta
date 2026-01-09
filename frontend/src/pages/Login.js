@@ -6,8 +6,8 @@ import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import { ChefHat } from "lucide-react";
 
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
-const API = `${BACKEND_URL}/api`;
+// URL relativa - funciona em qualquer domínio
+const API = '/api';
 
 export default function Login({ setIsAuthenticated }) {
   const [username, setUsername] = useState("");
