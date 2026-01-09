@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import axios from "axios";
 import { toast } from "sonner";
-import { Plus, Trash2, Edit, ChevronDown, ChevronUp, ImageOff, Copy, Download } from "lucide-react";
+import { Plus, Trash2, Edit, ChevronDown, ChevronUp, ImageOff, Copy, Download, Camera, FileText } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
