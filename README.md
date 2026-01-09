@@ -1,20 +1,119 @@
-Perfeito! Os dados estão totalmente sincronizados:
+# 🍽️ Núcleo - Sistema de Gestão de CMV
 
-✅ Resumo dos Dados Salvos
-Tabela	SQLite	Excel
-Ingredientes	13	13 ✓
-Produtos	4	4 ✓
-Compras	15	15 ✓
-Categorias	11	11 ✓
-Usuários	4	4 ✓
-Audit Logs	42	42 ✓
-Arquivos de Backup:
-SQLite: /app/backend/data_backup/nucleo.db (68 KB)
-Excel: /app/backend/data_backup/nucleo_backup.xlsx (16 KB)
-Ambos os arquivos estão sincronizados e contêm os mesmos dados. O sistema agora:
+Sistema completo de gestão de **CMV (Custo de Mercadoria Vendida)** para restaurantes.
 
-Usa SQLite como banco principal (persistente)
-Mantém Excel como backup secundário
-Tem função sync_sqlite_to_excel() para sincronizar quando necessário
-Os dados estão seguros e não serão perdidos ao reiniciar o sistema!
+## 🚀 Início Rápido
 
+### Passo 1: Clone o repositório
+```bash
+git clone <url-do-repositorio>
+cd nucleo
+```
+
+### Passo 2: Execute o setup (apenas uma vez)
+```bash
+./setup.sh
+```
+> Instala dependências e configura o ambiente (~2-3 minutos)
+
+### Passo 3: Inicie o sistema
+```bash
+./launch.sh
+```
+> Tempo de inicialização: **< 60 segundos**
+
+### Acesse o sistema
+- **Frontend:** http://localhost:3000
+- **Backend:** http://localhost:8001
+
+### Credenciais padrão
+- **Usuário:** `Addad`
+- **Senha:** `Addad123`
+
+---
+
+## 📋 Funcionalidades
+
+- ✅ **Autenticação** com JWT (3 níveis: proprietário, administrador, observador)
+- ✅ **Ingredientes** - CRUD com controle de estoque
+- ✅ **Produtos** - Receitas com cálculo automático de CMV
+- ✅ **Compras** - Lançamento individual ou em lote
+- ✅ **Categorias** - Organização de produtos
+- ✅ **Etapas de Pedido** - Configuração de combos/steps
+- ✅ **Relatórios** - Dashboard e histórico de preços
+- ✅ **Auditoria** - Log de todas as ações
+- ✅ **Backup** - SQLite + Excel automático
+
+---
+
+## 🏗️ Arquitetura
+
+```
+/app
+├── backend/           # FastAPI (Python)
+│   ├── server.py      # API principal
+│   ├── database.py    # SQLite operations
+│   └── data_backup/   # Banco SQLite + Excel
+├── frontend/          # React
+│   └── src/pages/     # Páginas do sistema
+├── setup.sh           # Setup inicial (executar 1x)
+├── launch.sh          # Inicialização rápida
+└── README.md
+```
+
+### Tecnologias
+- **Backend:** FastAPI + SQLite + JWT
+- **Frontend:** React + TailwindCSS + shadcn/ui
+- **Banco:** SQLite (arquivo local, sem MongoDB)
+
+---
+
+## 🔧 Comandos Úteis
+
+```bash
+# Iniciar sistema
+./launch.sh
+
+# Parar sistema
+pkill -f uvicorn && pkill -f 'yarn start'
+
+# Ver logs
+tail -f /tmp/nucleo-backend.log
+tail -f /tmp/nucleo-frontend.log
+
+# Reiniciar apenas backend
+pkill -f uvicorn
+cd backend && uvicorn server:app --host 0.0.0.0 --port 8001 &
+```
+
+---
+
+## 📊 Dados Persistentes
+
+Os dados são armazenados em:
+- **SQLite:** `/app/backend/data_backup/nucleo.db`
+- **Backup Excel:** `/app/backend/data_backup/nucleo_backup.xlsx`
+
+---
+
+## 🌐 Deploy no Emergent
+
+O sistema usa **URLs relativas** (`/api/...`) para chamadas ao backend, evitando problemas com troca de domínio no preview.
+
+### Supervisor (ambiente Emergent)
+O arquivo `supervisor.conf.example` contém a configuração otimizada sem MongoDB.
+
+---
+
+## 📝 Notas de Versão
+
+### v2.0 - Launch Otimizado
+- ⚡ Setup separado da execução
+- ⚡ Boot < 60 segundos
+- ⚡ URLs relativas (sem dependência de domínio)
+- ⚡ SQLite exclusivo (sem MongoDB)
+- ⚡ Sem --reload no uvicorn
+
+---
+
+**© 2025 Núcleo - Sistema de Gestão**
