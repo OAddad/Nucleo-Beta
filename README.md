@@ -90,6 +90,16 @@ cd nucleo
 
 ## 🔧 Comandos Úteis
 
+### Windows
+```batch
+:: Iniciar sistema (duplo clique ou via terminal)
+launch.bat
+
+:: Parar sistema
+Ctrl+C no terminal ou fechar a janela
+```
+
+### Linux / macOS
 ```bash
 # Iniciar sistema
 ./launch.sh
