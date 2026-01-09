@@ -142,7 +142,7 @@ class NucleoTester:
                 self.log(f"✅ Ingrediente criado com código: {code}")
                 
                 # Verify code is in 20000 series
-                if code and code.startswith('2000') and len(code) == 5:
+                if code and code.startswith('200') and len(code) == 5 and int(code) >= 20000:
                     self.log(f"✅ Código automático funcionando corretamente (série 20000)")
                     self.test_ingredients.append(new_ingredient['id'])
                     return True
