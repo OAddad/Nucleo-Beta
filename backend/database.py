@@ -641,6 +641,28 @@ def get_purchases_by_ingredient(ingredient_id: str) -> List[Dict]:
         
         return [dict(row) for row in rows]
 
+def get_average_price_last_5_purchases(ingredient_id: str) -> float:
+    """Calcula preço médio das últimas 5 compras de um ingrediente"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("""
+            SELECT unit_price FROM purchases 
+            WHERE ingredient_id = ? 
+            ORDER BY purchase_date DESC 
+            LIMIT 5
+        """, (ingredient_id,))
+        rows = cursor.fetchall()
+        
+        if not rows:
+            return 0.0
+        
+        prices = [row[0] for row in rows if row[0] is not None]
+        if not prices:
+            return 0.0
+        
+        return sum(prices) / len(prices)
+
 # ==================== CATEGORIES ====================
 
 def get_all_categories() -> List[Dict]:
