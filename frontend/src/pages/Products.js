@@ -202,17 +202,52 @@ export default function Products() {
     };
   }, [products]);
 
-  // Filtrar produtos baseado no filtro de performance
+  // Filtrar produtos baseado em todos os filtros (performance + manuais)
   const getFilteredProducts = () => {
     let filtered = [...products];
     
+    // Filtro de performance (dos indicadores)
     if (performanceFilter === "sem-foto") {
       filtered = filtered.filter(p => !p.photo_url || p.photo_url.trim() === "");
     } else if (performanceFilter === "sem-descricao") {
       filtered = filtered.filter(p => !p.description || p.description.trim() === "");
     }
     
+    // Filtro manual de fotos
+    if (filterPhoto === "com-foto") {
+      filtered = filtered.filter(p => p.photo_url && p.photo_url.trim() !== "");
+    } else if (filterPhoto === "sem-foto") {
+      filtered = filtered.filter(p => !p.photo_url || p.photo_url.trim() === "");
+    }
+    
+    // Filtro manual de descrição
+    if (filterDescription === "com-descricao") {
+      filtered = filtered.filter(p => p.description && p.description.trim() !== "");
+    } else if (filterDescription === "sem-descricao") {
+      filtered = filtered.filter(p => !p.description || p.description.trim() === "");
+    }
+    
+    // Filtro de categoria
+    if (filterCategory !== "todos") {
+      filtered = filtered.filter(p => p.category === filterCategory);
+    }
+    
     return filtered;
+  };
+  
+  // Handler para toggle de ordenação
+  const handleSortToggle = (field) => {
+    const newDirection = sortDirection[field] === "desc" ? "asc" : "desc";
+    setSortDirection(prev => ({ ...prev, [field]: newDirection }));
+    setSortBy(`${field}-${newDirection === "desc" ? "maior" : "menor"}`);
+  };
+  
+  // Limpar todos os filtros
+  const clearAllFilters = () => {
+    setPerformanceFilter("todos");
+    setFilterPhoto("todos");
+    setFilterDescription("todos");
+    setFilterCategory("todos");
   };
 
   useEffect(() => {
