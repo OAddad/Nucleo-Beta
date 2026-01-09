@@ -483,19 +483,57 @@ export default function Purchases() {
                 
                 <div className="space-y-4 mt-4">
                   <div className="grid grid-cols-2 gap-4">
-                    <div>
+                    <div className="relative">
                       <Label htmlFor="supplier">
                         Fornecedor
                       </Label>
-                      <Input
-                        id="supplier"
-                        data-testid="purchase-supplier-input"
-                        value={supplier}
-                        onChange={(e) => setSupplier(e.target.value)}
-                        placeholder="Ex: Supermercado BH"
-                        required
-                        className="mt-1 h-11"
-                      />
+                      <div className="relative">
+                        <Truck className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                        <Input
+                          id="supplier"
+                          data-testid="purchase-supplier-input"
+                          value={supplier}
+                          onChange={(e) => setSupplier(e.target.value)}
+                          onFocus={() => {
+                            if (supplierSuggestions.length > 0) {
+                              setShowSupplierSuggestions(true);
+                            }
+                          }}
+                          onBlur={() => {
+                            // Delay para permitir clique na sugestão
+                            setTimeout(() => setShowSupplierSuggestions(false), 200);
+                          }}
+                          placeholder="Digite ou selecione um fornecedor"
+                          required
+                          className="mt-1 h-11 pl-9"
+                          autoComplete="off"
+                        />
+                      </div>
+                      
+                      {/* Dropdown de sugestões de fornecedor */}
+                      {showSupplierSuggestions && supplierSuggestions.length > 0 && (
+                        <div className="absolute z-50 w-full mt-1 bg-popover border rounded-md shadow-lg max-h-48 overflow-y-auto">
+                          {supplierSuggestions.map((s, index) => (
+                            <div
+                              key={index}
+                              className="px-3 py-2 hover:bg-muted cursor-pointer flex items-center gap-2"
+                              onMouseDown={() => {
+                                setSupplier(s);
+                                setShowSupplierSuggestions(false);
+                              }}
+                            >
+                              <Truck className="w-4 h-4 text-muted-foreground" />
+                              <span>{s}</span>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                      
+                      {supplier.trim() && !showSupplierSuggestions && supplierSuggestions.length === 0 && (
+                        <p className="text-xs text-muted-foreground mt-1">
+                          Novo fornecedor será registrado
+                        </p>
+                      )}
                     </div>
 
                     <div>
