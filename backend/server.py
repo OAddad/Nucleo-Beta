@@ -757,11 +757,8 @@ async def create_purchase(purchase_data: PurchaseCreate, current_user: User = De
     
     await db_call(sqlite_db.create_purchase, purchase)
     
-    # Recalculate average price
-    purchases = await db_call(sqlite_db.get_purchases_by_ingredient, purchase_data.ingredient_id)
-    total_quantity = sum(p["quantity"] for p in purchases)
-    total_cost = sum(p["price"] for p in purchases)
-    avg_price = total_cost / total_quantity if total_quantity > 0 else 0
+    # Recalculate average price - USANDO MÉDIA DAS ÚLTIMAS 5 COMPRAS
+    avg_price = await db_call(sqlite_db.get_average_price_last_5_purchases, purchase_data.ingredient_id)
     
     # If ingredient has units_per_package, divide by it to get unit price
     if ingredient.get("units_per_package") and ingredient["units_per_package"] > 0:
