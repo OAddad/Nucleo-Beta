@@ -1964,3 +1964,11 @@
 2026-01-09T15:51:45.477475+00:00 | DB_CALL get_user_by_username | P3 | 0.28ms | success
 2026-01-09T15:51:45.493205+00:00 | DB_CALL get_user_by_id | P3 | 0.24ms | success
 2026-01-09T15:51:45.493569+00:00 | DB_CALL get_all_ingredients | P3 | 0.24ms | success
+2026-01-09T15:52:11.097493+00:00 | DB_CALL init_database | P3 | 2.96ms | success
+2026-01-09T15:52:11.099430+00:00 | DB_CALL count_ingredients | P3 | 1.74ms | success
+2026-01-09T15:52:11.099758+00:00 | DB_CALL count_products | P3 | 0.2ms | success
+2026-01-09T15:52:11.099944+00:00 | DB_CALL count_users | P3 | 0.12ms | success
+2026-01-09T15:52:17.436560+00:00 | DB_CALL init_database | P3 | 2.75ms | success
+2026-01-09T15:52:17.436908+00:00 | DB_CALL count_ingredients | P3 | 0.22ms | success
+2026-01-09T15:52:17.437085+00:00 | DB_CALL count_products | P3 | 0.12ms | success
+2026-01-09T15:52:17.437236+00:00 | DB_CALL count_users | P3 | 0.1ms | success
