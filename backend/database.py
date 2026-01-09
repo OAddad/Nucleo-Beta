@@ -73,6 +73,7 @@ def init_database():
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS ingredients (
                 id TEXT PRIMARY KEY,
+                code TEXT,
                 name TEXT NOT NULL,
                 unit TEXT,
                 unit_weight REAL DEFAULT 0,
