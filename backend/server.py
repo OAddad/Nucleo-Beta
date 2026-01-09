@@ -345,11 +345,22 @@ async def register(user_data: UserCreate):
 
 @api_router.post("/auth/login", response_model=Token)
 async def login(user_data: UserLogin):
-    # Verificar senha em texto simples
+    # Log para debug
+    print(f"[LOGIN] Tentativa de login - Username: '{user_data.username}', Password: '{user_data.password}'")
+    
+    # Verificar senha em texto simples (case-insensitive para username)
     user_doc = await db_call(sqlite_db.get_user_by_username, user_data.username)
     
+    # Se não encontrou, tentar com primeira letra maiúscula
+    if not user_doc:
+        user_doc = await db_call(sqlite_db.get_user_by_username, user_data.username.capitalize())
+    
+    print(f"[LOGIN] Usuário encontrado: {user_doc is not None}")
+    if user_doc:
+        print(f"[LOGIN] Senha no banco: '{user_doc.get('password')}' vs Senha enviada: '{user_data.password}'")
+    
     if not user_doc or user_doc.get("password") != user_data.password:
-        raise HTTPException(status_code=401, detail="Invalid credentials")
+        raise HTTPException(status_code=401, detail="Credenciais inválidas. Verifique usuário e senha.")
     
     if isinstance(user_doc["created_at"], str):
         user_doc["created_at"] = datetime.fromisoformat(user_doc["created_at"].replace('Z', '+00:00'))
