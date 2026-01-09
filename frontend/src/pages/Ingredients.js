@@ -619,12 +619,12 @@ export default function Ingredients() {
                             <td className="py-3 px-4 font-medium">
                               <div className="flex items-center gap-2">
                                 {ingredient.name}
-                                {ingredient.units_per_package && ingredient.units_per_package > 0 && (
+                                {Number(ingredient.units_per_package) > 0 && (
                                   <span className="text-xs text-muted-foreground">
                                     ({ingredient.units_per_package} un/emb)
                                   </span>
                                 )}
-                                {ingredient.unit_weight && ingredient.unit_weight > 0 && (
+                                {Number(ingredient.unit_weight) > 0 && (
                                   <span className="text-xs text-muted-foreground">
                                     (1 un = {ingredient.unit_weight}kg)
                                   </span>
