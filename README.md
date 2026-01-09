@@ -4,57 +4,56 @@ Sistema completo de gestão de **CMV (Custo de Mercadoria Vendida)** para restau
 
 ---
 
-## 🚀 Início Rápido
+## 🚀 Início Rápido - Windows
 
-### 🪟 Windows - Executável (1 clique)
+### Pré-requisitos
 
-**Pré-requisitos:** [Python](https://python.org) e [Node.js](https://nodejs.org) instalados
+Instale antes de usar:
 
-**Opção A - Usar executável pronto:**
-1. Duplo clique em `NucleoLauncher.exe` → Sistema inicia automaticamente!
+| Software | Download | Observação |
+|----------|----------|------------|
+| **Python 3.11** | [python.org/downloads](https://python.org/downloads) | Marque "Add to PATH" na instalação |
+| **Node.js** | [nodejs.org](https://nodejs.org) | Versão LTS recomendada |
 
-**Opção B - Gerar o executável:**
-1. Execute `build_exe.bat` para compilar
-2. Duplo clique em `NucleoLauncher.exe`
+### Como usar
 
-> 📖 Veja mais detalhes em [LAUNCHER_README.md](LAUNCHER_README.md)
+1. **Duplo clique em `Nucleo.bat`**
+2. Aguarde ~30 segundos na primeira vez (instala dependências)
+3. O navegador abre automaticamente
+4. Faça login: `Addad` / `Addad123`
 
----
-
-### 🪟 Windows - Script Batch (2 cliques)
-
-**Pré-requisito:** [Git for Windows](https://git-scm.com/download/win) instalado
-
-1. **Clone o repositório** (apenas uma vez)
-2. **Duplo clique em `launch.bat`** → Sistema inicia automaticamente!
-
-> 💡 **Dica:** Crie um atalho do `launch.bat` na área de trabalho para acesso rápido.
+**Pronto!** ✅
 
 ---
 
-### 🐧 Linux / macOS / Git Bash
+### O que o launcher faz automaticamente:
 
-#### Passo 1: Clone o repositório
-```bash
-git clone <url-do-repositorio>
-cd nucleo
-```
-
-#### Passo 2: Execute o setup (apenas uma vez)
-```bash
-./setup.sh
-```
-> Instala dependências e configura o ambiente (~2-3 minutos)
-
-#### Passo 3: Inicie o sistema
-```bash
-./launch.sh
-```
-> Tempo de inicialização: **< 60 segundos**
+✅ Detecta Python e Node.js instalados  
+✅ Cria ambiente virtual Python (venv)  
+✅ Instala dependências do backend  
+✅ Instala dependências do frontend  
+✅ Inicia os servidores  
+✅ Abre o navegador  
+✅ Mantém tudo rodando  
 
 ---
 
-### Acesse o sistema
+## 📋 Funcionalidades
+
+- ✅ **Autenticação** com JWT (3 níveis: proprietário, administrador, observador)
+- ✅ **Ingredientes/Estoque** - CRUD com controle de estoque e códigos automáticos
+- ✅ **Produtos** - Receitas com cálculo automático de CMV
+- ✅ **Compras** - Lançamento individual ou em lote
+- ✅ **Fornecedores** - Cadastro com CPF/CNPJ formatado
+- ✅ **Categorias** - Organização de produtos
+- ✅ **Relatórios** - Dashboard e histórico
+- ✅ **Auditoria** - Log de todas as ações
+
+---
+
+## 🔧 Informações Técnicas
+
+### Portas utilizadas
 - **Frontend:** http://localhost:3000
 - **Backend:** http://localhost:8001
 
@@ -62,118 +61,61 @@ cd nucleo
 - **Usuário:** `Addad`
 - **Senha:** `Addad123`
 
----
-
-## 📋 Funcionalidades
-
-- ✅ **Autenticação** com JWT (3 níveis: proprietário, administrador, observador)
-- ✅ **Ingredientes** - CRUD com controle de estoque
-- ✅ **Produtos** - Receitas com cálculo automático de CMV
-- ✅ **Compras** - Lançamento individual ou em lote
-- ✅ **Categorias** - Organização de produtos
-- ✅ **Etapas de Pedido** - Configuração de combos/steps
-- ✅ **Relatórios** - Dashboard e histórico de preços
-- ✅ **Auditoria** - Log de todas as ações
-- ✅ **Backup** - SQLite + Excel automático
+### Dados persistentes
+- **Banco:** `backend/data_backup/nucleo.db` (SQLite)
+- **Backup:** `backend/data_backup/nucleo_backup.xlsx`
 
 ---
 
-## 🏗️ Arquitetura
+## 🏗️ Estrutura do Projeto
 
 ```
-/app
-├── backend/              # FastAPI (Python)
-│   ├── server.py         # API principal
-│   ├── database.py       # SQLite operations
-│   └── data_backup/      # Banco SQLite + Excel
-├── frontend/             # React
-│   └── src/pages/        # Páginas do sistema
-├── NucleoLauncher.exe    # 🖥️ Executável Windows (após build)
-├── launcher.py           # Script Python do launcher
-├── build_exe.bat         # Script para compilar .exe
-├── launch.bat            # 🪟 Launcher Windows (2 cliques)
-├── Nucleo.vbs            # 🪟 Launcher silencioso Windows
-├── setup.sh              # Setup inicial (executar 1x)
-├── launch.sh             # Inicialização rápida (Linux/Mac)
-├── LAUNCHER_README.md    # Guia do executável
+/nucleo
+├── Nucleo.bat            # ← CLIQUE AQUI PARA INICIAR
+├── backend/              # Servidor FastAPI (Python)
+│   ├── server.py
+│   ├── database.py
+│   ├── requirements.txt
+│   └── data_backup/      # Banco de dados
+├── frontend/             # Interface React
+│   ├── src/
+│   └── package.json
 └── README.md
 ```
 
-### Tecnologias
-- **Backend:** FastAPI + SQLite + JWT
-- **Frontend:** React + TailwindCSS + shadcn/ui
-- **Banco:** SQLite (arquivo local, sem MongoDB)
-
 ---
 
-## 🔧 Comandos Úteis
+## ❓ Problemas Comuns
 
-### Windows
-```batch
-:: Iniciar sistema (duplo clique ou via terminal)
-launch.bat
+### "Python não encontrado"
+1. Baixe Python 3.11 em [python.org](https://python.org/downloads)
+2. Na instalação, **marque "Add Python to PATH"**
+3. Reinicie o computador
+4. Execute `Nucleo.bat` novamente
 
-:: Parar sistema
-Ctrl+C no terminal ou fechar a janela
-```
+### "Node.js não encontrado"
+1. Baixe Node.js em [nodejs.org](https://nodejs.org)
+2. Instale a versão LTS
+3. Reinicie o computador
+4. Execute `Nucleo.bat` novamente
 
-### Linux / macOS
-```bash
-# Iniciar sistema
-./launch.sh
+### Navegador não abre
+Acesse manualmente: http://localhost:3000
 
-# Parar sistema
-pkill -f uvicorn && pkill -f 'yarn start'
-
-# Ver logs
-tail -f /tmp/nucleo-backend.log
-tail -f /tmp/nucleo-frontend.log
-
-# Reiniciar apenas backend
-pkill -f uvicorn
-cd backend && uvicorn server:app --host 0.0.0.0 --port 8001 &
-```
-
----
-
-## 📊 Dados Persistentes
-
-Os dados são armazenados em:
-- **SQLite:** `/app/backend/data_backup/nucleo.db`
-- **Backup Excel:** `/app/backend/data_backup/nucleo_backup.xlsx`
-
----
-
-## 🌐 Deploy no Emergent
-
-O sistema usa **URLs relativas** (`/api/...`) para chamadas ao backend, evitando problemas com troca de domínio no preview.
-
-### Supervisor (ambiente Emergent)
-O arquivo `supervisor.conf.example` contém a configuração otimizada sem MongoDB.
+### Como encerrar o sistema
+1. Pressione qualquer tecla na janela do Núcleo
+2. Ou feche a janela diretamente
 
 ---
 
 ## 📝 Notas de Versão
 
-### v2.2 - Executável Windows
-- 🖥️ **NucleoLauncher.exe** - Executável standalone para Windows
-- 🔨 **build_exe.bat** - Script para compilar o executável
-- 📖 **LAUNCHER_README.md** - Documentação do launcher
-- ⚡ Inicialização com 1 clique
+### v3.0 - Windows Native
+- 🖥️ Launcher 100% Windows (sem Bash/Git Bash)
+- ⚡ Setup automático na primeira execução
+- 🔄 Boot < 60 segundos (após primeiro uso)
 - 🌐 Abre navegador automaticamente
-
-### v2.1 - Launcher Windows
-- 🪟 **launch.bat** - Iniciar com 2 cliques no Windows
-- 🪟 **Nucleo.vbs** - Launcher silencioso alternativo
-- 📖 README atualizado com instruções Windows
-
-### v2.0 - Launch Otimizado
-- ⚡ Setup separado da execução
-- ⚡ Boot < 60 segundos
-- ⚡ URLs relativas (sem dependência de domínio)
-- ⚡ SQLite exclusivo (sem MongoDB)
-- ⚡ Sem --reload no uvicorn
 
 ---
 
-**© 2025 Núcleo - Sistema de Gestão**
+**© 2025 Núcleo - Sistema de Gestão de CMV**
