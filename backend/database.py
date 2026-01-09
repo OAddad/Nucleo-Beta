@@ -692,6 +692,14 @@ def delete_category(category_id: str) -> bool:
         
         return deleted
 
+def count_categories() -> int:
+    """Conta total de categorias"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT COUNT(*) FROM categories")
+        return cursor.fetchone()[0]
+
 # ==================== AUDIT LOGS ====================
 
 def get_all_audit_logs() -> List[Dict]:
