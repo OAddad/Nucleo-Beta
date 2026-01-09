@@ -137,6 +137,11 @@ O arquivo `supervisor.conf.example` contém a configuração otimizada sem Mongo
 
 ## 📝 Notas de Versão
 
+### v2.1 - Launcher Windows
+- 🪟 **launch.bat** - Iniciar com 2 cliques no Windows
+- 🪟 **Nucleo.vbs** - Launcher silencioso alternativo
+- 📖 README atualizado com instruções Windows
+
 ### v2.0 - Launch Otimizado
 - ⚡ Setup separado da execução
 - ⚡ Boot < 60 segundos
