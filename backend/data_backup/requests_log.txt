@@ -977,3 +977,11 @@
 2026-01-09T15:13:57.990552+00:00 | DB_CALL get_all_categories | P3 | 0.18ms | success
 2026-01-09T15:13:58.181716+00:00 | DB_CALL get_user_by_id | P3 | 0.34ms | success
 2026-01-09T15:13:58.182731+00:00 | DB_CALL get_all_categories | P3 | 0.88ms | success
+2026-01-09T15:14:00.630376+00:00 | DB_CALL get_user_by_id | P3 | 0.32ms | success
+2026-01-09T15:14:00.635859+00:00 | DB_CALL get_user_by_id | P3 | 0.19ms | success
+2026-01-09T15:14:00.641900+00:00 | DB_CALL get_user_by_id | P3 | 0.23ms | success
+2026-01-09T15:14:00.642262+00:00 | DB_CALL count_ingredients | P3 | 0.14ms | success
+2026-01-09T15:14:00.642502+00:00 | DB_CALL count_products | P3 | 0.15ms | success
+2026-01-09T15:14:00.642628+00:00 | DB_CALL count_purchases | P3 | 0.08ms | success
+2026-01-09T15:14:00.642735+00:00 | DB_CALL count_users | P3 | 0.07ms | success
+2026-01-09T15:14:00.642882+00:00 | DB_CALL count_categories | P3 | 0.11ms | success
