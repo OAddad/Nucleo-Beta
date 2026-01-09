@@ -14,13 +14,16 @@ import threading
 DB_PATH = Path(__file__).parent / "data_backup" / "nucleo.db"
 
 # Lock para thread safety
-db_lock = threading.Lock()
+db_lock = threading.RLock()  # RLock permite re-entrada na mesma thread
 
 def get_connection():
-    """Retorna uma conexão com o banco SQLite"""
+    """Retorna uma conexão com o banco SQLite com timeout"""
     DB_PATH.parent.mkdir(parents=True, exist_ok=True)
-    conn = sqlite3.connect(str(DB_PATH), check_same_thread=False)
+    conn = sqlite3.connect(str(DB_PATH), check_same_thread=False, timeout=30.0)
     conn.row_factory = sqlite3.Row
+    # Habilitar WAL mode para melhor concorrência
+    conn.execute("PRAGMA journal_mode=WAL")
+    conn.execute("PRAGMA busy_timeout=30000")
     return conn
 
 def init_database():
