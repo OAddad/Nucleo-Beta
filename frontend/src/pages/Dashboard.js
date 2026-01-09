@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import { toast } from "sonner";
-import { ChefHat, Package, ShoppingCart, FileText, BarChart3, LogOut, Shield, Settings, Menu, X, ChevronDown, ChevronRight, Home, DollarSign, ClipboardList, Truck, Users, UtensilsCrossed, UserRound, Bike, MessageCircle, Building2 } from "lucide-react";
+import { ChefHat, Package, ShoppingCart, FileText, BarChart3, LogOut, Shield, Settings, Menu, X, ChevronDown, ChevronRight, Home, DollarSign, ClipboardList, Truck, Users, UtensilsCrossed, UserRound, Bike, MessageCircle, Building2, AlertTriangle } from "lucide-react";
 import { Button } from "../components/ui/button";
 import DarkModeToggle from "../components/DarkModeToggle";
 import Overview from "./Overview";
@@ -10,6 +10,7 @@ import Purchases from "./Purchases";
 import Products from "./Products";
 import Reports from "./Reports";
 import Moderation from "./Moderation";
+import BugsPage from "./BugsPage";
 import BalcaoVendas from "./BalcaoVendas";
 import Mesas from "./Mesas";
 import ChatBot from "./ChatBot";
