@@ -149,6 +149,7 @@ def init_database():
         
         conn.commit()
         
+        _initialized = True
         # Log apenas na primeira inicialização (quando tabelas são criadas)
         # print(f"[DATABASE] SQLite inicializado em: {DB_PATH}")
 
