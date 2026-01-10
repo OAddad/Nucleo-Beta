@@ -150,11 +150,20 @@ export default function Dashboard({ setIsAuthenticated }) {
 
   const isActive = (path) => {
     if (path === "/") return location.pathname === "/";
+    // Para /estoque, verificar se é exatamente /estoque (não /estoque/relatorio)
+    if (path === "/estoque") {
+      return location.pathname === "/estoque";
+    }
     return location.pathname.startsWith(path);
   };
 
   const isStockControlActive = () => {
-    return ["/produtos", "/estoque", "/compras", "/estoque/relatorio"].some(path => location.pathname.startsWith(path));
+    return ["/produtos", "/estoque", "/compras", "/estoque/relatorio"].some(path => {
+      if (path === "/estoque") {
+        return location.pathname === "/estoque";
+      }
+      return location.pathname.startsWith(path);
+    });
   };
 
   const isSalesActive = () => {
