@@ -3230,3 +3230,7 @@
 2026-01-10T13:44:24.625692+00:00 | DB_CALL count_ingredients | P3 | 0.25ms | success
 2026-01-10T13:44:24.625917+00:00 | DB_CALL count_products | P3 | 0.15ms | success
 2026-01-10T13:44:24.626072+00:00 | DB_CALL count_users | P3 | 0.1ms | success
+2026-01-10T13:44:37.301578+00:00 | DB_CALL init_database | P3 | 2.76ms | success
+2026-01-10T13:44:37.302489+00:00 | DB_CALL count_ingredients | P3 | 0.23ms | success
+2026-01-10T13:44:37.302687+00:00 | DB_CALL count_products | P3 | 0.12ms | success
+2026-01-10T13:44:37.302843+00:00 | DB_CALL count_users | P3 | 0.1ms | success
