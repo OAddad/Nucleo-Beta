@@ -3069,3 +3069,5 @@
 2026-01-10T13:28:07.854793+00:00 | DB_CALL get_user_by_id | P3 | 0.11ms | success
 2026-01-10T13:28:07.854988+00:00 | DB_CALL get_ingredient_by_id | P3 | 0.09ms | success
 2026-01-10T13:28:07.855155+00:00 | DB_CALL get_purchases_by_ingredient | P3 | 0.12ms | success
+2026-01-10T13:28:12.525723+00:00 | DB_CALL get_user_by_username | P3 | 0.22ms | success
+2026-01-10T13:28:12.525988+00:00 | DB_CALL get_user_by_username | P3 | 0.1ms | success
