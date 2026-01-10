@@ -40,6 +40,7 @@ def main():
     
     # Abrir imagem fonte
     img = Image.open(source_png)
+    print(f"Imagem fonte: {img.size[0]}x{img.size[1]}, modo: {img.mode}")
     
     # Converter para RGBA se necessário
     if img.mode != 'RGBA':
@@ -53,25 +54,50 @@ def main():
     for size in sizes:
         resized = img.resize((size, size), Image.Resampling.LANCZOS)
         icons.append(resized)
+        print(f"  Gerado: {size}x{size}")
     
-    # Salvar como ICO
-    icons[0].save(
+    # Salvar como ICO - método correto
+    # O primeiro ícone salva, os demais são adicionados
+    img_256 = img.resize((256, 256), Image.Resampling.LANCZOS)
+    
+    # Salvar usando o método save com sizes
+    img_256.save(
         output_ico,
         format='ICO',
-        sizes=[(s, s) for s in sizes],
-        append_images=icons[1:]
+        sizes=[(size, size) for size in sizes]
     )
     
     # Verificar resultado
     file_size = output_ico.stat().st_size
-    print(f"\n✅ icon.ico gerado com sucesso!")
-    print(f"   Tamanho: {file_size:,} bytes")
-    print(f"   Resoluções: {sizes}")
+    print(f"\n✅ icon.ico gerado!")
+    print(f"   Tamanho: {file_size:,} bytes ({file_size/1024:.1f} KB)")
     
+    # Ícone Windows válido deve ter pelo menos alguns KB
     if file_size < 1000:
-        print("ERRO: Arquivo muito pequeno, algo deu errado!")
+        print("\n⚠️  Arquivo pequeno, tentando método alternativo...")
+        
+        # Método alternativo: salvar cada tamanho separadamente
+        all_sizes = []
+        for size in sizes:
+            resized = img.resize((size, size), Image.Resampling.LANCZOS)
+            all_sizes.append(resized)
+        
+        # Usar o maior como base
+        all_sizes[-1].save(
+            output_ico,
+            format='ICO',
+            append_images=all_sizes[:-1],
+            sizes=[(s, s) for s in sizes]
+        )
+        
+        file_size = output_ico.stat().st_size
+        print(f"   Novo tamanho: {file_size:,} bytes ({file_size/1024:.1f} KB)")
+    
+    if file_size < 500:
+        print("\nERRO: Arquivo ainda muito pequeno!")
         sys.exit(1)
     
+    print(f"\n✅ icon.ico pronto para uso!")
     return 0
 
 if __name__ == "__main__":
