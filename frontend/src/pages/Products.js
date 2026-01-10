@@ -186,16 +186,30 @@ function IngredientCombobox({
   );
 }
 
-// Popup para cadastro rápido de ingrediente
+// Popup para cadastro rápido de ingrediente - IDÊNTICO ao do Estoque
 function QuickIngredientDialog({ open, onOpenChange, initialName, onSuccess, categories }) {
   const [name, setName] = useState(initialName || "");
   const [unit, setUnit] = useState("");
   const [category, setCategory] = useState("");
+  const [unitsPerPackage, setUnitsPerPackage] = useState("");
+  const [unitWeight, setUnitWeight] = useState("");
+  const [stockMin, setStockMin] = useState("");
+  const [stockMax, setStockMax] = useState("");
   const [loading, setLoading] = useState(false);
   
   useEffect(() => {
     setName(initialName || "");
   }, [initialName]);
+  
+  const resetForm = () => {
+    setName("");
+    setUnit("");
+    setCategory("");
+    setUnitsPerPackage("");
+    setUnitWeight("");
+    setStockMin("");
+    setStockMax("");
+  };
   
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -210,17 +224,23 @@ function QuickIngredientDialog({ open, onOpenChange, initialName, onSuccess, cat
         name,
         unit: unit === "unidade" ? "un" : unit,
         category: category || null,
-        stock_min: 0,
-        stock_max: 0
+        stock_min: stockMin ? parseFloat(stockMin) : 0,
+        stock_max: stockMax ? parseFloat(stockMax) : 0
       };
+      
+      if (unitsPerPackage && parseInt(unitsPerPackage) > 0) {
+        payload.units_per_package = parseInt(unitsPerPackage);
+      }
+      
+      if (unitWeight && parseFloat(unitWeight) > 0) {
+        payload.unit_weight = parseFloat(unitWeight);
+      }
       
       const response = await axios.post(`${API}/ingredients`, payload, getAuthHeader());
       toast.success(`Item "${name}" criado com sucesso!`);
       onSuccess(response.data);
       onOpenChange(false);
-      setName("");
-      setUnit("");
-      setCategory("");
+      resetForm();
     } catch (error) {
       toast.error(error.response?.data?.detail || "Erro ao criar item");
     } finally {
@@ -229,10 +249,13 @@ function QuickIngredientDialog({ open, onOpenChange, initialName, onSuccess, cat
   };
   
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={(isOpen) => {
+      onOpenChange(isOpen);
+      if (!isOpen) resetForm();
+    }}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Cadastrar Novo Item</DialogTitle>
+          <DialogTitle>Novo Item de Estoque</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4 mt-4">
           <div>
@@ -245,6 +268,9 @@ function QuickIngredientDialog({ open, onOpenChange, initialName, onSuccess, cat
               required
               className="mt-1 h-11"
             />
+            <p className="text-xs text-muted-foreground mt-1">
+              O código será gerado automaticamente
+            </p>
           </div>
           
           <div className="grid grid-cols-2 gap-4">
@@ -279,23 +305,75 @@ function QuickIngredientDialog({ open, onOpenChange, initialName, onSuccess, cat
             </div>
           </div>
           
-          <div className="flex gap-2">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => onOpenChange(false)}
-              className="flex-1"
-            >
-              Cancelar
-            </Button>
-            <Button
-              type="submit"
-              disabled={loading || !unit}
-              className="flex-1"
-            >
-              {loading ? "Criando..." : "Criar Item"}
-            </Button>
+          {unit === "un" && (
+            <div>
+              <Label htmlFor="quick-unitsPerPackage">Unidades por Embalagem (opcional)</Label>
+              <Input
+                id="quick-unitsPerPackage"
+                type="number"
+                value={unitsPerPackage}
+                onChange={(e) => setUnitsPerPackage(e.target.value)}
+                placeholder="Ex: 182"
+                className="mt-1 h-11"
+              />
+              <p className="text-xs text-muted-foreground mt-1">
+                Use quando comprar caixas/pacotes.
+              </p>
+            </div>
+          )}
+          
+          {unit === "kg" && (
+            <div>
+              <Label htmlFor="quick-unitWeight">Peso por Unidade em kg (opcional)</Label>
+              <Input
+                id="quick-unitWeight"
+                type="number"
+                step="0.001"
+                value={unitWeight}
+                onChange={(e) => setUnitWeight(e.target.value)}
+                placeholder="Ex: 0.130"
+                className="mt-1 h-11"
+              />
+              <p className="text-xs text-muted-foreground mt-1">
+                Ex: 1 hambúrguer = 0.130kg
+              </p>
+            </div>
+          )}
+          
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="quick-stockMin">Qtd Mínima</Label>
+              <Input
+                id="quick-stockMin"
+                type="number"
+                step="0.01"
+                value={stockMin}
+                onChange={(e) => setStockMin(e.target.value)}
+                placeholder="0"
+                className="mt-1 h-11"
+              />
+            </div>
+            <div>
+              <Label htmlFor="quick-stockMax">Qtd Máxima</Label>
+              <Input
+                id="quick-stockMax"
+                type="number"
+                step="0.01"
+                value={stockMax}
+                onChange={(e) => setStockMax(e.target.value)}
+                placeholder="0"
+                className="mt-1 h-11"
+              />
+            </div>
           </div>
+          
+          <Button
+            type="submit"
+            disabled={loading || !unit}
+            className="w-full h-11 font-medium shadow-sm"
+          >
+            {loading ? "Criando..." : "Criar Item"}
+          </Button>
         </form>
       </DialogContent>
     </Dialog>
