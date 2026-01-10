@@ -6,6 +6,7 @@ import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import { exportToExcel } from "../lib/utils";
+import TablePagination from "../components/TablePagination";
 import {
   Select,
   SelectContent,
