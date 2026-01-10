@@ -915,6 +915,228 @@ def create_audit_log(data: Dict) -> Dict:
         return data
 
 
+# ==================== EXPENSE CLASSIFICATIONS ====================
+def get_all_expense_classifications() -> List[Dict]:
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM expense_classifications ORDER BY name")
+        return [dict(row) for row in cursor.fetchall()]
+
+
+def get_expense_classification_by_id(classification_id: str) -> Optional[Dict]:
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM expense_classifications WHERE id = ?", (classification_id,))
+        row = cursor.fetchone()
+        return dict(row) if row else None
+
+
+def get_expense_classification_by_name(name: str) -> Optional[Dict]:
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM expense_classifications WHERE name = ?", (name,))
+        row = cursor.fetchone()
+        return dict(row) if row else None
+
+
+def create_expense_classification(data: Dict) -> Dict:
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        class_id = data.get('id', str(uuid.uuid4()))
+        created_at = data.get('created_at', datetime.now(timezone.utc).isoformat())
+        cursor.execute('INSERT INTO expense_classifications (id, name, created_at) VALUES (?, ?, ?)',
+                      (class_id, data['name'], created_at))
+        conn.commit()
+        return get_expense_classification_by_id(class_id)
+
+
+def update_expense_classification(classification_id: str, data: Dict) -> Optional[Dict]:
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("UPDATE expense_classifications SET name = ? WHERE id = ?", (data['name'], classification_id))
+        conn.commit()
+        return get_expense_classification_by_id(classification_id)
+
+
+def delete_expense_classification(classification_id: str) -> bool:
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM expense_classifications WHERE id = ?", (classification_id,))
+        deleted = cursor.rowcount > 0
+        conn.commit()
+        return deleted
+
+
+def count_expense_classifications() -> int:
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT COUNT(*) FROM expense_classifications")
+        return cursor.fetchone()[0]
+
+
+# ==================== EXPENSES ====================
+def get_all_expenses() -> List[Dict]:
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM expenses ORDER BY due_date DESC")
+        return [dict(row) for row in cursor.fetchall()]
+
+
+def get_expense_by_id(expense_id: str) -> Optional[Dict]:
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM expenses WHERE id = ?", (expense_id,))
+        row = cursor.fetchone()
+        return dict(row) if row else None
+
+
+def create_expense(data: Dict) -> Dict:
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        
+        expense_id = data.get('id', str(uuid.uuid4()))
+        created_at = data.get('created_at', datetime.now(timezone.utc).isoformat())
+        
+        cursor.execute('''
+            INSERT INTO expenses (id, name, classification_id, classification_name, supplier, value, 
+                                 due_date, is_paid, paid_date, is_recurring, recurring_period,
+                                 installments_total, installment_number, parent_expense_id, 
+                                 attachment_url, notes, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ''', (expense_id, data['name'], data.get('classification_id'), data.get('classification_name'),
+              data.get('supplier'), data['value'], data['due_date'],
+              1 if data.get('is_paid') else 0, data.get('paid_date'),
+              1 if data.get('is_recurring') else 0, data.get('recurring_period'),
+              data.get('installments_total', 0), data.get('installment_number', 0),
+              data.get('parent_expense_id'), data.get('attachment_url'),
+              data.get('notes'), created_at))
+        conn.commit()
+        
+        return get_expense_by_id(expense_id)
+
+
+def update_expense(expense_id: str, data: Dict) -> Optional[Dict]:
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        
+        current = get_expense_by_id(expense_id)
+        if not current:
+            return None
+        
+        cursor.execute('''
+            UPDATE expenses SET 
+                name = ?, classification_id = ?, classification_name = ?, supplier = ?, 
+                value = ?, due_date = ?, is_paid = ?, paid_date = ?, is_recurring = ?,
+                recurring_period = ?, installments_total = ?, installment_number = ?,
+                attachment_url = ?, notes = ?
+            WHERE id = ?
+        ''', (data.get('name', current['name']), 
+              data.get('classification_id', current.get('classification_id')),
+              data.get('classification_name', current.get('classification_name')),
+              data.get('supplier', current.get('supplier')),
+              data.get('value', current['value']),
+              data.get('due_date', current['due_date']),
+              1 if data.get('is_paid', current.get('is_paid')) else 0,
+              data.get('paid_date', current.get('paid_date')),
+              1 if data.get('is_recurring', current.get('is_recurring')) else 0,
+              data.get('recurring_period', current.get('recurring_period')),
+              data.get('installments_total', current.get('installments_total', 0)),
+              data.get('installment_number', current.get('installment_number', 0)),
+              data.get('attachment_url', current.get('attachment_url')),
+              data.get('notes', current.get('notes')),
+              expense_id))
+        conn.commit()
+        
+        return get_expense_by_id(expense_id)
+
+
+def delete_expense(expense_id: str) -> bool:
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM expenses WHERE id = ?", (expense_id,))
+        deleted = cursor.rowcount > 0
+        conn.commit()
+        return deleted
+
+
+def count_expenses() -> int:
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT COUNT(*) FROM expenses")
+        return cursor.fetchone()[0]
+
+
+def get_expenses_by_classification(classification_id: str) -> List[Dict]:
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM expenses WHERE classification_id = ? ORDER BY due_date DESC", 
+                      (classification_id,))
+        return [dict(row) for row in cursor.fetchall()]
+
+
+def get_pending_expenses() -> List[Dict]:
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM expenses WHERE is_paid = 0 ORDER BY due_date ASC")
+        return [dict(row) for row in cursor.fetchall()]
+
+
+def get_expenses_by_month(year: int, month: int) -> List[Dict]:
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        month_str = f"{year}-{str(month).zfill(2)}"
+        cursor.execute("""
+            SELECT * FROM expenses 
+            WHERE due_date LIKE ? 
+            ORDER BY due_date ASC
+        """, (f"{month_str}%",))
+        return [dict(row) for row in cursor.fetchall()]
+
+
+def get_expenses_stats() -> Dict:
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        
+        # Total de despesas
+        cursor.execute("SELECT COUNT(*) FROM expenses")
+        total = cursor.fetchone()[0]
+        
+        # Total pendente
+        cursor.execute("SELECT COUNT(*), COALESCE(SUM(value), 0) FROM expenses WHERE is_paid = 0")
+        row = cursor.fetchone()
+        pending_count, pending_value = row[0], row[1]
+        
+        # Total pago
+        cursor.execute("SELECT COUNT(*), COALESCE(SUM(value), 0) FROM expenses WHERE is_paid = 1")
+        row = cursor.fetchone()
+        paid_count, paid_value = row[0], row[1]
+        
+        return {
+            "total": total,
+            "pending_count": pending_count,
+            "pending_value": pending_value,
+            "paid_count": paid_count,
+            "paid_value": paid_value
+        }
+
+
 # ==================== UTILITY ====================
 def get_database_info() -> Dict:
     """Retorna informações do banco de dados"""
