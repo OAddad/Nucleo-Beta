@@ -315,6 +315,9 @@ backend:
       - working: true
         agent: "testing"
         comment: "✅ WORKING: Núcleo Desktop endpoints tested successfully. GET /api/health returns status 'healthy' with database info (SQLite, 90KB, 6 tables). GET /api/system/settings returns skip_login: false (boolean) and theme: 'light' (string). POST /api/auth/login works with admin/admin credentials after user registration. GET /api/auth/check-must-change-password returns must_change_password: false (boolean). GET /api/system/info works with proprietario authentication, returns system details including database stats (25 ingredients, 5 products, 36 purchases, 5 users, 11 categories). All endpoints functional and returning expected data types."
+      - working: true
+        agent: "testing"
+        comment: "✅ CRITICAL ENDPOINTS REVIEW REQUEST COMPLETED: Tested exactly as specified in review request. 1) GET /api/health returns status 'healthy' with database info (SQLite, 94KB, 6 tables: users, ingredients, products, purchases, categories, audit_logs). 2) GET /api/system/settings returns skip_login: false (boolean) and theme: 'light' (string) as required. 3) POST /api/auth/login with test_hash/senha123 works perfectly (hashed password authentication). 4) POST /api/auth/login with Addad/Addad123 works perfectly (plain text password compatibility). 5) GET /api/reports/dashboard returns statistics: 25 ingredients, 5 products, 24 purchases, avg CMV R$ 6.08 (data not empty). ALL 5 CRITICAL ENDPOINTS WORKING 100%. Authentication compatibility verified: both hashed and plain text passwords work. Backend URL http://localhost:8001 fully operational."
 
 frontend:
   - task: "Login Page"
