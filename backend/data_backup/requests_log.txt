@@ -3008,3 +3008,8 @@
 2026-01-10T13:26:07.572149+00:00 | DB_CALL get_user_by_id | P3 | 0.27ms | success
 2026-01-10T13:26:07.572551+00:00 | DB_CALL get_ingredient_by_id | P3 | 0.21ms | success
 2026-01-10T13:26:07.572936+00:00 | DB_CALL get_purchases_by_ingredient | P3 | 0.28ms | success
+2026-01-10T13:26:15.580941+00:00 | DB_CALL init_database | P3 | 2.76ms | success
+2026-01-10T13:26:15.581414+00:00 | DB_CALL count_ingredients | P3 | 0.24ms | success
+2026-01-10T13:26:15.581588+00:00 | DB_CALL count_products | P3 | 0.12ms | success
+2026-01-10T13:26:15.581730+00:00 | DB_CALL count_users | P3 | 0.09ms | success
+2026-01-10T13:26:23.663311+00:00 | DB_CALL get_database_info | P3 | 0.37ms | success
