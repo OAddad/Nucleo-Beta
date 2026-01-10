@@ -441,6 +441,7 @@ export default function Clientes() {
       setDialogOpen(false);
       resetForm();
       fetchClientes();
+      fetchTotalPontuacao();
     } catch (error) {
       console.error("Erro ao salvar cliente:", error);
       toast.error("Erro ao salvar cliente");
@@ -458,6 +459,7 @@ export default function Clientes() {
         await axios.delete(`${API}/clientes/${clienteToDelete.id}`, getAuthHeader());
         toast.success("Cliente excluído!");
         fetchClientes();
+        fetchTotalPontuacao();
       } catch (error) {
         console.error("Erro ao excluir cliente:", error);
         toast.error("Erro ao excluir cliente");

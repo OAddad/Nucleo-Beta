@@ -8244,3 +8244,10 @@
 2026-01-10T21:21:13.569004+00:00 | DB_CALL get_all_clientes | P3 | 0.31ms | success
 2026-01-10T21:21:13.569564+00:00 | DB_CALL get_total_pontuacao | P3 | 0.75ms | success
 2026-01-10T21:21:13.569811+00:00 | DB_CALL count_clientes | P3 | 0.14ms | success
+2026-01-10T21:21:22.940091+00:00 | DB_CALL get_user_by_id | P3 | 0.26ms | success
+2026-01-10T21:21:22.940504+00:00 | DB_CALL get_all_purchases | P3 | 0.26ms | success
+2026-01-10T21:21:23.903881+00:00 | DB_CALL get_user_by_id | P3 | 0.34ms | success
+2026-01-10T21:21:23.904195+00:00 | DB_CALL get_all_clientes | P3 | 0.16ms | success
+2026-01-10T21:21:23.905310+00:00 | DB_CALL get_user_by_id | P3 | 0.14ms | success
+2026-01-10T21:21:23.905478+00:00 | DB_CALL get_total_pontuacao | P3 | 0.09ms | success
+2026-01-10T21:21:23.905667+00:00 | DB_CALL count_clientes | P3 | 0.12ms | success
