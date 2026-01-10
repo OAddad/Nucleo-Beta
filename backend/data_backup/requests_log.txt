@@ -6753,3 +6753,15 @@
 2026-01-10T20:03:11.633204+00:00 | DB_CALL get_all_expenses | P3 | 0.25ms | success
 2026-01-10T20:03:11.656113+00:00 | DB_CALL get_user_by_id | P3 | 0.16ms | success
 2026-01-10T20:03:11.656381+00:00 | DB_CALL get_all_expenses | P3 | 0.18ms | success
+2026-01-10T20:03:22.202654+00:00 | DB_CALL get_user_by_username | P3 | 0.25ms | success
+2026-01-10T20:03:22.226001+00:00 | DB_CALL get_user_by_id | P3 | 0.17ms | success
+2026-01-10T20:03:22.226330+00:00 | DB_CALL get_all_expenses | P3 | 0.21ms | success
+2026-01-10T20:03:22.249746+00:00 | DB_CALL get_user_by_id | P3 | 0.17ms | success
+2026-01-10T20:03:22.249982+00:00 | DB_CALL get_expense_by_id | P3 | 0.1ms | success
+2026-01-10T20:03:22.250221+00:00 | DB_CALL get_all_expenses | P3 | 0.19ms | success
+2026-01-10T20:03:22.255517+00:00 | DB_CALL delete_expense | P3 | 5.23ms | success
+2026-01-10T20:03:22.260393+00:00 | DB_CALL delete_expense | P3 | 4.81ms | success
+2026-01-10T20:03:22.265210+00:00 | DB_CALL delete_expense | P3 | 4.75ms | success
+2026-01-10T20:03:22.270364+00:00 | DB_CALL create_audit_log | P3 | 5.08ms | success
+2026-01-10T20:03:22.282474+00:00 | DB_CALL get_user_by_id | P3 | 0.19ms | success
+2026-01-10T20:03:22.282728+00:00 | DB_CALL get_all_expenses | P3 | 0.17ms | success
