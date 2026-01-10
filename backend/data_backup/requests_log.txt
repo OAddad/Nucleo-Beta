@@ -3717,3 +3717,9 @@
 2026-01-10T16:07:59.809245+00:00 | DB_CALL get_all_categories | P3 | 0.13ms | success
 2026-01-10T16:07:59.970867+00:00 | DB_CALL get_user_by_id | P3 | 0.28ms | success
 2026-01-10T16:07:59.971205+00:00 | DB_CALL get_all_categories | P3 | 0.16ms | success
+2026-01-10T16:08:23.922496+00:00 | DB_CALL get_user_by_id | P3 | 0.48ms | success
+2026-01-10T16:08:23.922950+00:00 | DB_CALL get_all_purchases | P3 | 0.31ms | success
+2026-01-10T16:08:27.037090+00:00 | DB_CALL get_user_by_id | P3 | 0.28ms | success
+2026-01-10T16:08:27.039503+00:00 | DB_CALL get_all_audit_logs | P3 | 2.26ms | success
+2026-01-10T16:08:27.072800+00:00 | DB_CALL get_user_by_id | P3 | 0.24ms | success
+2026-01-10T16:08:27.073144+00:00 | DB_CALL get_all_users | P3 | 0.21ms | success
