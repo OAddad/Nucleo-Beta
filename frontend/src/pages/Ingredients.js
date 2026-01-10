@@ -242,17 +242,63 @@ export default function Ingredients() {
       return matchesSearch && matchesCategory && matchesStock;
     });
   }, [ingredients, searchTerm, filterCategory, filterStock, activeTab]);
+  
+  // Ingredientes ordenados
+  const sortedIngredients = useMemo(() => {
+    if (!sortField) return filteredIngredients;
+    
+    return [...filteredIngredients].sort((a, b) => {
+      const aVal = a[sortField] || 0;
+      const bVal = b[sortField] || 0;
+      
+      if (sortDirection === "asc") {
+        return aVal - bVal;
+      } else {
+        return bVal - aVal;
+      }
+    });
+  }, [filteredIngredients, sortField, sortDirection]);
 
   // Ingredientes paginados
   const paginatedIngredients = useMemo(() => {
     const startIndex = (currentPage - 1) * itemsPerPage;
-    return filteredIngredients.slice(startIndex, startIndex + itemsPerPage);
-  }, [filteredIngredients, currentPage, itemsPerPage]);
+    return sortedIngredients.slice(startIndex, startIndex + itemsPerPage);
+  }, [sortedIngredients, currentPage, itemsPerPage]);
+  
+  // Função para alternar ordenação
+  const handleSort = (field) => {
+    if (sortField === field) {
+      setSortDirection(sortDirection === "asc" ? "desc" : "asc");
+    } else {
+      setSortField(field);
+      setSortDirection("asc");
+    }
+  };
 
   // Reset página quando filtros mudam
   useEffect(() => {
     setCurrentPage(1);
   }, [searchTerm, filterCategory, filterStock, activeTab]);
+  
+  // Calcular valor necessário para completar estoque mínimo
+  const stockDeficitValue = useMemo(() => {
+    let totalDeficit = 0;
+    let itemsWithDeficit = 0;
+    
+    ingredients.filter(i => i.is_active !== false).forEach(ing => {
+      const qty = ing.stock_quantity || 0;
+      const min = ing.stock_min || 0;
+      const price = ing.average_price || 0;
+      
+      if (min > 0 && qty < min) {
+        const deficit = min - qty;
+        totalDeficit += deficit * price;
+        itemsWithDeficit++;
+      }
+    });
+    
+    return { value: totalDeficit, items: itemsWithDeficit };
+  }, [ingredients]);
 
   const resetForm = () => {
     setName("");
