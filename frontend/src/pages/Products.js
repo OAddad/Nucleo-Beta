@@ -45,6 +45,263 @@ const getAuthHeader = () => ({
   headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
 });
 
+// Componente Combobox com busca e opção de cadastrar novo ingrediente
+function IngredientCombobox({ 
+  ingredients, 
+  value, 
+  onChange, 
+  placeholder = "Buscar ingrediente...",
+  onCreateNew,
+  getIngredientUnit
+}) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const inputRef = useRef(null);
+  const dropdownRef = useRef(null);
+  
+  // Encontrar ingrediente selecionado
+  const selectedIngredient = ingredients.find(i => i.id === value);
+  
+  // Filtrar ingredientes baseado na busca
+  const filteredIngredients = useMemo(() => {
+    if (!searchTerm) return ingredients;
+    const term = searchTerm.toLowerCase();
+    return ingredients.filter(ing => 
+      ing.name.toLowerCase().includes(term) ||
+      (ing.code && ing.code.includes(term))
+    );
+  }, [ingredients, searchTerm]);
+  
+  // Verificar se a busca não encontrou resultados
+  const noResults = searchTerm && filteredIngredients.length === 0;
+  
+  // Fechar dropdown quando clicar fora
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target) &&
+          inputRef.current && !inputRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+  
+  const handleSelect = (ingredientId) => {
+    onChange(ingredientId);
+    setSearchTerm("");
+    setIsOpen(false);
+  };
+  
+  const handleCreateNew = () => {
+    onCreateNew(searchTerm);
+    setSearchTerm("");
+    setIsOpen(false);
+  };
+  
+  return (
+    <div className="relative">
+      <div className="relative">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+        <Input
+          ref={inputRef}
+          value={isOpen ? searchTerm : (selectedIngredient ? `${selectedIngredient.name} (${getIngredientUnit(selectedIngredient)})` : "")}
+          onChange={(e) => {
+            setSearchTerm(e.target.value);
+            if (!isOpen) setIsOpen(true);
+          }}
+          onFocus={() => {
+            setIsOpen(true);
+            setSearchTerm("");
+          }}
+          placeholder={placeholder}
+          className="h-11 pl-9 pr-8"
+        />
+        {(value || searchTerm) && (
+          <button
+            type="button"
+            onClick={() => {
+              onChange("");
+              setSearchTerm("");
+              inputRef.current?.focus();
+            }}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        )}
+      </div>
+      
+      {isOpen && (
+        <div 
+          ref={dropdownRef}
+          className="absolute z-50 w-full mt-1 bg-popover border rounded-lg shadow-lg max-h-60 overflow-auto"
+        >
+          {filteredIngredients.length > 0 && (
+            <div className="py-1">
+              {filteredIngredients.slice(0, 20).map((ing) => (
+                <button
+                  key={ing.id}
+                  type="button"
+                  onClick={() => handleSelect(ing.id)}
+                  className={`w-full px-3 py-2 text-left text-sm hover:bg-muted transition-colors flex items-center justify-between ${
+                    ing.id === value ? 'bg-muted' : ''
+                  }`}
+                >
+                  <span>{ing.name}</span>
+                  <span className="text-muted-foreground text-xs">
+                    {getIngredientUnit(ing)}
+                  </span>
+                </button>
+              ))}
+            </div>
+          )}
+          
+          {noResults && (
+            <div className="p-3">
+              <p className="text-sm text-muted-foreground mb-2">
+                Nenhum item encontrado para "{searchTerm}"
+              </p>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="w-full"
+                onClick={handleCreateNew}
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                Cadastrar "{searchTerm}"
+              </Button>
+            </div>
+          )}
+          
+          {!searchTerm && ingredients.length === 0 && (
+            <div className="p-3 text-center text-sm text-muted-foreground">
+              Nenhum ingrediente cadastrado
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// Popup para cadastro rápido de ingrediente
+function QuickIngredientDialog({ open, onOpenChange, initialName, onSuccess, categories }) {
+  const [name, setName] = useState(initialName || "");
+  const [unit, setUnit] = useState("");
+  const [category, setCategory] = useState("");
+  const [loading, setLoading] = useState(false);
+  
+  useEffect(() => {
+    setName(initialName || "");
+  }, [initialName]);
+  
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!name || !unit) {
+      toast.error("Nome e unidade são obrigatórios");
+      return;
+    }
+    
+    setLoading(true);
+    try {
+      const payload = {
+        name,
+        unit: unit === "unidade" ? "un" : unit,
+        category: category || null,
+        stock_min: 0,
+        stock_max: 0
+      };
+      
+      const response = await axios.post(`${API}/ingredients`, payload, getAuthHeader());
+      toast.success(`Item "${name}" criado com sucesso!`);
+      onSuccess(response.data);
+      onOpenChange(false);
+      setName("");
+      setUnit("");
+      setCategory("");
+    } catch (error) {
+      toast.error(error.response?.data?.detail || "Erro ao criar item");
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle>Cadastrar Novo Item</DialogTitle>
+        </DialogHeader>
+        <form onSubmit={handleSubmit} className="space-y-4 mt-4">
+          <div>
+            <Label htmlFor="quick-name">Nome do Item</Label>
+            <Input
+              id="quick-name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Ex: Carne Bovina"
+              required
+              className="mt-1 h-11"
+            />
+          </div>
+          
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="quick-unit">Unidade</Label>
+              <Select value={unit} onValueChange={setUnit} required>
+                <SelectTrigger className="mt-1 h-11">
+                  <SelectValue placeholder="Selecione" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="kg">Quilograma (kg)</SelectItem>
+                  <SelectItem value="un">Unidade (un)</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            
+            <div>
+              <Label htmlFor="quick-category">Categoria</Label>
+              <Select value={category || "none"} onValueChange={(val) => setCategory(val === "none" ? "" : val)}>
+                <SelectTrigger className="mt-1 h-11">
+                  <SelectValue placeholder="Selecione" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">Sem categoria</SelectItem>
+                  {categories.map((cat) => (
+                    <SelectItem key={cat.id} value={cat.name}>
+                      {cat.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          
+          <div className="flex gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => onOpenChange(false)}
+              className="flex-1"
+            >
+              Cancelar
+            </Button>
+            <Button
+              type="submit"
+              disabled={loading || !unit}
+              className="flex-1"
+            >
+              {loading ? "Criando..." : "Criar Item"}
+            </Button>
+          </div>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
 // Componente de imagem do produto com gerenciamento de erro via estado React
 function ProductThumbnail({ photoUrl, name }) {
   const [imageError, setImageError] = useState(false);
