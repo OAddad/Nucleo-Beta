@@ -459,6 +459,14 @@ def init_database():
         except:
             pass  # Coluna já existe
         
+        # Migração: Adicionar coluna pontuacao na tabela clientes
+        try:
+            cursor.execute("ALTER TABLE clientes ADD COLUMN pontuacao INTEGER DEFAULT 0")
+            conn.commit()
+            print("[DATABASE] Coluna pontuacao adicionada em clientes")
+        except:
+            pass  # Coluna já existe
+        
         _initialized = True
         print(f"[DATABASE] Inicializado em: {DB_PATH}")
 
