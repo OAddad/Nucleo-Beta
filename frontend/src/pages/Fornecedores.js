@@ -624,6 +624,20 @@ export default function Fornecedores() {
               })}
             </TableBody>
           </Table>
+          
+          {/* Paginação */}
+          {sortedFornecedores.length > 0 && (
+            <TablePagination
+              currentPage={currentPage}
+              totalItems={sortedFornecedores.length}
+              itemsPerPage={itemsPerPage}
+              onPageChange={setCurrentPage}
+              onItemsPerPageChange={(value) => {
+                setItemsPerPage(value);
+                setCurrentPage(1);
+              }}
+            />
+          )}
         )}
       </div>
 
