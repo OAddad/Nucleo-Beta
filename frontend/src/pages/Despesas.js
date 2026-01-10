@@ -96,6 +96,10 @@ export default function Despesas() {
   const [expenseIsPaid, setExpenseIsPaid] = useState(false);
   const [expenseNotes, setExpenseNotes] = useState("");
   
+  // State para criar classificação inline
+  const [newClassificationName, setNewClassificationName] = useState("");
+  const [showNewClassificationInput, setShowNewClassificationInput] = useState(false);
+  
   // Form states avançados
   const [advancedOpen, setAdvancedOpen] = useState(false);
   const [expenseIsRecurring, setExpenseIsRecurring] = useState(false);
