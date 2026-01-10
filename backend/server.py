@@ -245,6 +245,9 @@ class Product(BaseModel):
     is_divisible: bool = False
     order_steps: List[OrderStep] = []
     linked_ingredient_id: Optional[str] = None  # ID do ingrediente linkado (para receitas)
+    recipe_yield: Optional[float] = None  # Rendimento da receita (quantidade produzida)
+    recipe_yield_unit: Optional[str] = None  # Unidade do rendimento (kg ou un)
+    unit_cost: Optional[float] = None  # Custo por unidade/kg (CMV / rendimento)
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class PriceHistory(BaseModel):
