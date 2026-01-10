@@ -1310,6 +1310,7 @@ export default function Products() {
                       <SelectContent>
                         <SelectItem value="produto">Produto</SelectItem>
                         <SelectItem value="combo">Combo</SelectItem>
+                        <SelectItem value="receita">Receita</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
