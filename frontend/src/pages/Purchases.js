@@ -206,6 +206,46 @@ export default function Purchases() {
     return filtered;
   };
 
+  const filteredBatches = useMemo(() => getFilteredAndSortedBatches(), [purchaseBatches, searchTerm, searchType, sortOrder]);
+  
+  // Lotes paginados
+  const paginatedBatches = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    return filteredBatches.slice(startIndex, startIndex + itemsPerPage);
+  }, [filteredBatches, currentPage, itemsPerPage]);
+
+  // Reset página quando filtros mudam
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, searchType, sortOrder]);
+
+  // Buscar o último preço pago por um ingrediente
+  const getLastPriceForIngredient = (ingredientId) => {
+    if (!ingredientId) return null;
+    
+    let lastPurchase = null;
+    let lastDate = null;
+    
+    purchaseBatches.forEach(batch => {
+      batch.purchases.forEach(purchase => {
+        if (purchase.ingredient_id === ingredientId) {
+          const purchaseDate = new Date(batch.purchase_date);
+          if (!lastDate || purchaseDate > lastDate) {
+            lastDate = purchaseDate;
+            lastPurchase = {
+              price: purchase.price,
+              quantity: purchase.quantity,
+              unitPrice: purchase.price / purchase.quantity,
+              date: batch.purchase_date
+            };
+          }
+        }
+      });
+    });
+    
+    return lastPurchase;
+  };
+
   // Calcular preço total quando preço unitário muda
   const handleUnitPriceChange = (value) => {
     setUnitPrice(value);
