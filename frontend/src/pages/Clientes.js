@@ -354,6 +354,7 @@ export default function Clientes() {
             </Button>
           </div>
         ) : (
+          <>
           <Table>
             <TableHeader>
               <TableRow>
