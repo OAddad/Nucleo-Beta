@@ -1427,26 +1427,16 @@ export default function Products() {
                         return (
                         <div key={index} className="flex gap-2">
                           <div className="flex-1">
-                            <Select
+                            <IngredientCombobox
+                              ingredients={ingredients}
                               value={item.ingredient_id}
-                              onValueChange={(value) =>
+                              onChange={(value) =>
                                 updateRecipeItem(index, "ingredient_id", value, "ingredient")
                               }
-                            >
-                              <SelectTrigger
-                                data-testid={`recipe-ingredient-${index}`}
-                                className="h-11"
-                              >
-                                <SelectValue placeholder="Ingrediente" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {ingredients.map((ing) => (
-                                  <SelectItem key={ing.id} value={ing.id}>
-                                    {ing.name} ({getIngredientUnit(ing)})
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
+                              placeholder="Buscar ingrediente..."
+                              onCreateNew={handleQuickIngredientCreate}
+                              getIngredientUnit={getIngredientUnit}
+                            />
                           </div>
                           <div className="w-40">
                             <Input
