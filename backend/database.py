@@ -285,6 +285,39 @@ def init_database():
             )
         ''')
         
+        # Tabela de classificações de despesas
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS expense_classifications (
+                id TEXT PRIMARY KEY,
+                name TEXT UNIQUE NOT NULL,
+                created_at TEXT
+            )
+        ''')
+        
+        # Tabela de despesas
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS expenses (
+                id TEXT PRIMARY KEY,
+                name TEXT NOT NULL,
+                classification_id TEXT,
+                classification_name TEXT,
+                supplier TEXT,
+                value REAL NOT NULL,
+                due_date TEXT NOT NULL,
+                is_paid INTEGER DEFAULT 0,
+                paid_date TEXT,
+                is_recurring INTEGER DEFAULT 0,
+                recurring_period TEXT,
+                installments_total INTEGER DEFAULT 0,
+                installment_number INTEGER DEFAULT 0,
+                parent_expense_id TEXT,
+                attachment_url TEXT,
+                notes TEXT,
+                created_at TEXT,
+                FOREIGN KEY (classification_id) REFERENCES expense_classifications(id)
+            )
+        ''')
+        
         # Migrações
         try:
             cursor.execute("SELECT code FROM ingredients LIMIT 1")
