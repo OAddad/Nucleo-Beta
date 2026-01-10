@@ -1343,8 +1343,6 @@ async def report_bug_manually(
     return {"message": "Bug reportado com sucesso", "bug_id": bug.id}
 
 
-app.include_router(api_router)
-
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
