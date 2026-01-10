@@ -346,7 +346,7 @@ export default function Despesas() {
       setExpenseDialogOpen(false);
       resetExpenseForm();
       fetchExpenses();
-      fetchStats();
+      
     } catch (error) {
       toast.error(error.response?.data?.detail || "Erro ao salvar despesa");
     }
@@ -361,7 +361,7 @@ export default function Despesas() {
       );
       toast.success(expense.is_paid ? "Despesa marcada como pendente" : "Despesa marcada como paga");
       fetchExpenses();
-      fetchStats();
+      
     } catch (error) {
       toast.error("Erro ao atualizar status");
     }
@@ -387,7 +387,7 @@ export default function Despesas() {
       setDeleteRecurringDialogOpen(false);
       setExpenseToDelete(null);
       fetchExpenses();
-      fetchStats();
+      
     } catch (error) {
       console.error("Erro ao excluir despesa:", error.response?.data || error);
       toast.error(error.response?.data?.detail || "Erro ao excluir despesa");
