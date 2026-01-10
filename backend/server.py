@@ -432,11 +432,11 @@ async def update_user_role(user_id: str, role_data: UserManagementUpdate, curren
 @api_router.put("/users/change-password")
 async def change_password(password_data: ChangePassword, current_user: User = Depends(get_current_user)):
     user_doc = await db_call(sqlite_db.get_user_by_id, current_user.id)
-    # Verificar senha em texto simples
-    if not user_doc or user_doc.get("password") != password_data.old_password:
+    # Verificar senha usando hash
+    if not user_doc or not sqlite_db.verify_password(user_doc.get("password", ""), password_data.old_password):
         raise HTTPException(status_code=401, detail="Senha atual incorreta")
     
-    # Atualizar senha em texto simples
+    # Atualizar senha (será hasheada automaticamente)
     await db_call(sqlite_db.update_user, current_user.id, {"password": password_data.new_password})
     
     return {"message": "Senha alterada com sucesso"}
