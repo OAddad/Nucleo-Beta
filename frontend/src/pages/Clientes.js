@@ -435,6 +435,7 @@ export default function Clientes() {
       complemento,
       bairro,
       cep,
+      pontuacao: parseInt(pontuacao) || 0,
     };
 
     try {
