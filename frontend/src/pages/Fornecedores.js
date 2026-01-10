@@ -236,6 +236,43 @@ export default function Fornecedores() {
     return { totalGasto, qtdCompras, ultimaCompra };
   };
 
+  // Filtrar fornecedores
+  const filteredFornecedores = useMemo(() => {
+    let result = getAllFornecedores();
+    
+    // Filtro por texto
+    if (searchTerm) {
+      const term = searchTerm.toLowerCase();
+      result = result.filter(f => 
+        f.nome.toLowerCase().includes(term) ||
+        (f.documento && f.documento.includes(term)) ||
+        (f.telefone && f.telefone.includes(term))
+      );
+    }
+    
+    // Quando o filtro de período está ativo (não é "sempre"), 
+    // ocultar fornecedores sem compras no período
+    if (periodoFiltro !== "sempre") {
+      result = result.filter(f => {
+        const stats = getEstatisticasFornecedor(f.nome);
+        return stats.qtdCompras > 0;
+      });
+    }
+    
+    return result;
+  }, [fornecedores, fornecedoresDasCompras, compras, searchTerm, periodoFiltro]);
+
+  // Fornecedores paginados
+  const paginatedFornecedores = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    return filteredFornecedores.slice(startIndex, startIndex + itemsPerPage);
+  }, [filteredFornecedores, currentPage, itemsPerPage]);
+
+  // Reset página quando filtros mudam
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, periodoFiltro]);
+
   const resetForm = () => {
     setNome("");
     setTelefone("");
