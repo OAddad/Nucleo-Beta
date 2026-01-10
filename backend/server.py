@@ -663,6 +663,7 @@ async def get_ingredients(current_user: User = Depends(get_current_user)):
     for ing in ingredients:
         if isinstance(ing.get("created_at"), str):
             ing["created_at"] = datetime.fromisoformat(ing["created_at"].replace('Z', '+00:00'))
+        ing["is_active"] = bool(ing.get("is_active", 1))
     return ingredients
 
 @api_router.put("/ingredients/{ingredient_id}", response_model=Ingredient)
