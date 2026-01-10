@@ -171,6 +171,17 @@ export default function Pedidos() {
     })
     .sort((a, b) => new Date(b.created_at) - new Date(a.created_at)); // Mais recente primeiro
 
+  // Pedidos paginados
+  const paginatedPedidos = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    return filteredPedidos.slice(startIndex, startIndex + itemsPerPage);
+  }, [filteredPedidos, currentPage, itemsPerPage]);
+
+  // Reset página quando filtros mudam
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, filterStatus]);
+
   // Abrir detalhes do pedido
   const handleOpenDetails = (pedido) => {
     setSelectedPedido(pedido);
