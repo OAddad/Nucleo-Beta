@@ -143,7 +143,6 @@ export default function Dashboard({ setIsAuthenticated }) {
     children: [
       { path: "/financeiro/extrato", label: "Extrato Financeiro", icon: Receipt },
       { path: "/financeiro/despesas", label: "Despesas", icon: CreditCard },
-      { path: "/compras", label: "Compras", icon: ShoppingCart },
     ]
   };
 
