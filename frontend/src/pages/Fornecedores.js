@@ -142,6 +142,10 @@ export default function Fornecedores() {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [fornecedorToDelete, setFornecedorToDelete] = useState(null);
   
+  // Estados de paginação
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+  
   // Form
   const [nome, setNome] = useState("");
   const [telefone, setTelefone] = useState("");
