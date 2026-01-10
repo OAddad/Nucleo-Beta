@@ -4751,3 +4751,4 @@
 2026-01-10T17:25:41.034979+00:00 | DB_CALL get_user_by_id | P3 | 0.25ms | success
 2026-01-10T17:25:41.035263+00:00 | DB_CALL get_ingredient_by_id | P3 | 0.12ms | success
 2026-01-10T17:25:41.035417+00:00 | DB_CALL get_purchases_by_ingredient | P3 | 0.09ms | success
+2026-01-10T17:28:50.151664+00:00 | DB_CALL get_user_by_username | P3 | 1.38ms | success
