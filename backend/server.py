@@ -1087,6 +1087,45 @@ async def delete_purchase_batch(batch_id: str, current_user: User = Depends(get_
     
     return {"message": "Purchase batch deleted", "purchases_deleted": len(purchases)}
 
+
+class PurchasePaymentUpdate(BaseModel):
+    is_paid: bool
+    due_date: Optional[str] = None
+
+
+@api_router.patch("/purchases/batch/{batch_id}/payment")
+async def update_purchase_payment_status(batch_id: str, payment_data: PurchasePaymentUpdate, current_user: User = Depends(get_current_user)):
+    """Atualiza o status de pagamento de um lote de compras e sua despesa vinculada"""
+    check_role(current_user, ["proprietario", "administrador"])
+    
+    # Buscar compras do lote
+    purchases = await db_call(sqlite_db.get_purchases_by_batch, batch_id)
+    if not purchases:
+        raise HTTPException(status_code=404, detail="Lote de compras não encontrado")
+    
+    # Atualizar status de pagamento das compras
+    await db_call(sqlite_db.update_purchase_payment, batch_id, payment_data.is_paid, payment_data.due_date, purchases[0].get("expense_id"))
+    
+    # Se tem despesa vinculada, atualizar também
+    expense_id = purchases[0].get("expense_id")
+    if expense_id:
+        expense = await db_call(sqlite_db.get_expense_by_id, expense_id)
+        if expense:
+            paid_date = datetime.now(timezone.utc).strftime("%Y-%m-%d") if payment_data.is_paid else None
+            await db_call(sqlite_db.update_expense, expense_id, {
+                "is_paid": payment_data.is_paid,
+                "paid_date": paid_date,
+                "due_date": payment_data.due_date if payment_data.due_date else expense.get("due_date")
+            })
+    
+    # Registrar auditoria
+    supplier = purchases[0].get("supplier", "Unknown")
+    status = "pago" if payment_data.is_paid else "pendente"
+    await log_audit("UPDATE", "purchase", f"Lote de {supplier} - Status: {status}", current_user, "media")
+    
+    return {"message": "Status de pagamento atualizado", "is_paid": payment_data.is_paid}
+
+
 # Product endpoints
 async def get_next_product_code():
     """Gera o próximo código de produto de 5 dígitos usando SQLite"""
