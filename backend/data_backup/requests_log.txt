@@ -5302,3 +5302,12 @@
 2026-01-10T19:15:21.521101+00:00 | DB_CALL get_expense_by_id | P3 | 0.1ms | success
 2026-01-10T19:15:21.534156+00:00 | DB_CALL get_user_by_id | P3 | 0.17ms | success
 2026-01-10T19:15:21.534395+00:00 | DB_CALL get_all_expenses | P3 | 0.15ms | success
+2026-01-10T19:15:30.367510+00:00 | DB_CALL get_user_by_username | P3 | 0.22ms | success
+2026-01-10T19:15:30.386648+00:00 | DB_CALL get_user_by_id | P3 | 0.19ms | success
+2026-01-10T19:15:30.386913+00:00 | DB_CALL get_expenses_stats | P3 | 0.16ms | success
+2026-01-10T19:15:30.409575+00:00 | DB_CALL get_user_by_id | P3 | 0.2ms | success
+2026-01-10T19:15:30.409801+00:00 | DB_CALL get_expense_by_id | P3 | 0.11ms | success
+2026-01-10T19:15:30.415867+00:00 | DB_CALL update_expense | P3 | 5.99ms | success
+2026-01-10T19:15:30.421829+00:00 | DB_CALL create_audit_log | P3 | 5.87ms | success
+2026-01-10T19:15:30.433449+00:00 | DB_CALL get_user_by_id | P3 | 0.17ms | success
+2026-01-10T19:15:30.433638+00:00 | DB_CALL get_expenses_stats | P3 | 0.1ms | success
