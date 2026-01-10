@@ -286,22 +286,18 @@ function createWindow(port) {
   
   // Carregar URL do frontend
   const isDev = !app.isPackaged;
-  let frontendUrl;
   
   if (isDev) {
-    // Desenvolvimento: usar dev server ou build local
-    frontendUrl = `http://127.0.0.1:${port}`;
+    // Desenvolvimento: o backend serve o frontend também
+    const frontendUrl = `http://127.0.0.1:${port}`;
     log('info', `Modo dev - carregando frontend de: ${frontendUrl}`);
-    
-    // Em dev, carregar o frontend do build estático servido pelo backend
     mainWindow.loadURL(frontendUrl);
   } else {
-    // Produção: carregar build do React
-    const indexPath = path.join(process.resourcesPath, 'frontend', 'index.html');
-    log('info', `Modo produção - carregando: ${indexPath}`);
-    
-    // Injetar a porta do backend no HTML
-    mainWindow.loadFile(indexPath);
+    // Produção: carregar build do React via backend
+    // O backend em produção serve os arquivos estáticos do React
+    const backendUrl = `http://127.0.0.1:${port}`;
+    log('info', `Modo produção - carregando de: ${backendUrl}`);
+    mainWindow.loadURL(backendUrl);
   }
   
   mainWindow.once('ready-to-show', () => {
