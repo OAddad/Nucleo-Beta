@@ -351,7 +351,7 @@ export default function Dashboard({ setIsAuthenticated }) {
           {/* Clientes e Fornecedores (Hierárquico) */}
           <div>
             <button
-              onClick={() => setClientesFornecedoresExpanded(!clientesFornecedoresExpanded)}
+              onClick={() => handleModuleClick(() => setClientesFornecedoresExpanded(!clientesFornecedoresExpanded))}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 ${
                 isClientesFornecedoresActive() && !activeTopMenu
                   ? "bg-primary/10 text-primary font-medium"
