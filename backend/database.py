@@ -114,7 +114,7 @@ def bootstrap_database():
         print(f"[DATABASE] Copiando seed: {seed_path} -> {target_path}")
         try:
             shutil.copy2(seed_path, target_path)
-            print(f"[DATABASE] Seed copiado com sucesso!")
+            print("[DATABASE] Seed copiado com sucesso!")
             print(f"[DATABASE] Novo tamanho: {target_path.stat().st_size} bytes")
             return target_path
         except Exception as e:
