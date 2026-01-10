@@ -273,6 +273,48 @@ class ExpenseStats(BaseModel):
     paid_value: float
 
 
+# ========== CLIENTE MODELS ==========
+class ClienteCreate(BaseModel):
+    nome: str
+    telefone: Optional[str] = None
+    email: Optional[str] = None
+    cpf: Optional[str] = None
+    data_nascimento: Optional[str] = None
+    genero: Optional[str] = None
+    foto: Optional[str] = None
+    endereco: Optional[str] = None
+    numero: Optional[str] = None
+    complemento: Optional[str] = None
+    bairro: Optional[str] = None
+    cep: Optional[str] = None
+    pedidos_count: Optional[int] = 0
+    total_gasto: Optional[float] = 0
+    last_order_date: Optional[str] = None
+    orders_last_30_days: Optional[int] = 0
+
+
+class Cliente(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    nome: str
+    telefone: Optional[str] = None
+    email: Optional[str] = None
+    cpf: Optional[str] = None
+    data_nascimento: Optional[str] = None
+    genero: Optional[str] = None
+    foto: Optional[str] = None
+    endereco: Optional[str] = None
+    numero: Optional[str] = None
+    complemento: Optional[str] = None
+    bairro: Optional[str] = None
+    cep: Optional[str] = None
+    pedidos_count: int = 0
+    total_gasto: float = 0
+    last_order_date: Optional[str] = None
+    orders_last_30_days: int = 0
+    created_at: Optional[datetime] = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+
 class OrderStepItem(BaseModel):
     product_id: str  # ID do produto
     product_name: Optional[str] = ""  # Nome do produto (para exibição)
