@@ -8,25 +8,13 @@ import json
 import uuid
 import os
 import hashlib
+import shutil
+import sys
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import List, Optional, Dict, Any
 import threading
 from contextlib import contextmanager
-
-# Detectar ambiente
-def get_db_path():
-    """Retorna o caminho do banco de dados baseado no ambiente"""
-    # Verificar se está rodando no Electron (variável de ambiente definida pelo main.js)
-    electron_db_path = os.environ.get('NUCLEO_DB_PATH')
-    if electron_db_path:
-        return Path(electron_db_path)
-    
-    # Fallback para ambiente de desenvolvimento
-    return Path(__file__).parent / "data_backup" / "nucleo.db"
-
-# Caminho do banco de dados (será atualizado na inicialização)
-DB_PATH = get_db_path()
 
 # Lock para thread safety
 db_lock = threading.RLock()
@@ -35,20 +23,104 @@ db_lock = threading.RLock()
 _connection = None
 _connection_lock = threading.Lock()
 
+# Flag para evitar inicialização múltipla
+_initialized = False
+
+# Caminho do banco de dados (será definido na inicialização)
+DB_PATH = None
+
+
+def get_seed_db_path():
+    """Retorna o caminho do banco seed (empacotado no app)"""
+    # Em produção (PyInstaller), o seed está em _MEIPASS ou no diretório do executável
+    if getattr(sys, 'frozen', False):
+        # Executável empacotado
+        base_path = Path(sys._MEIPASS) if hasattr(sys, '_MEIPASS') else Path(sys.executable).parent
+        possible_paths = [
+            base_path / "data_backup" / "nucleo.db",
+            base_path / "nucleo.db",
+            Path(sys.executable).parent / "data_backup" / "nucleo.db",
+        ]
+        for p in possible_paths:
+            if p.exists():
+                return p
+    
+    # Em desenvolvimento
+    dev_path = Path(__file__).parent / "data_backup" / "nucleo.db"
+    if dev_path.exists():
+        return dev_path
+    
+    return None
+
+
+def get_db_path():
+    """Retorna o caminho do banco de dados baseado no ambiente"""
+    global DB_PATH
+    
+    # Verificar se está rodando no Electron (variável de ambiente definida pelo main.js)
+    electron_db_path = os.environ.get('NUCLEO_DB_PATH')
+    if electron_db_path:
+        return Path(electron_db_path)
+    
+    # Fallback para ambiente de desenvolvimento
+    return Path(__file__).parent / "data_backup" / "nucleo.db"
+
+
+def bootstrap_database():
+    """
+    Bootstrap do banco de dados:
+    - Se NUCLEO_DB_PATH aponta para arquivo que NÃO existe, copia o seed
+    - Nunca sobrescreve se já existir
+    """
+    target_path = get_db_path()
+    
+    # Se o banco já existe, não fazer nada
+    if target_path.exists():
+        print(f"[DATABASE] Banco existente encontrado: {target_path}")
+        return target_path
+    
+    # Criar diretório pai se não existir
+    target_path.parent.mkdir(parents=True, exist_ok=True)
+    
+    # Tentar copiar o seed
+    seed_path = get_seed_db_path()
+    if seed_path and seed_path.exists():
+        print(f"[DATABASE] Copiando seed de {seed_path} para {target_path}")
+        try:
+            shutil.copy2(seed_path, target_path)
+            
+            # Copiar também os arquivos WAL e SHM se existirem
+            for ext in ['-wal', '-shm']:
+                src = seed_path.parent / (seed_path.name + ext)
+                if src.exists():
+                    dst = target_path.parent / (target_path.name + ext)
+                    shutil.copy2(src, dst)
+            
+            print(f"[DATABASE] Seed copiado com sucesso!")
+            return target_path
+        except Exception as e:
+            print(f"[DATABASE] Erro ao copiar seed: {e}")
+    
+    # Se não há seed, será criado banco novo
+    print(f"[DATABASE] Criando novo banco em: {target_path}")
+    return target_path
+
+
 def get_connection():
     """Retorna uma conexão com o banco SQLite"""
     global _connection, DB_PATH
     with _connection_lock:
         if _connection is None:
-            # Atualizar DB_PATH caso tenha mudado
-            DB_PATH = get_db_path()
-            DB_PATH.parent.mkdir(parents=True, exist_ok=True)
+            # Bootstrap - copiar seed se necessário
+            DB_PATH = bootstrap_database()
+            
             _connection = sqlite3.connect(str(DB_PATH), check_same_thread=False, timeout=30.0)
             _connection.row_factory = sqlite3.Row
             # Habilitar WAL mode para melhor concorrência
             _connection.execute("PRAGMA journal_mode=WAL")
             _connection.execute("PRAGMA busy_timeout=30000")
         return _connection
+
 
 @contextmanager
 def get_db():
@@ -61,28 +133,43 @@ def get_db():
         conn.rollback()
         raise e
 
-# Flag para evitar inicialização múltipla
-_initialized = False
+
+# ==================== PASSWORD HASHING ====================
 
 def hash_password(password: str) -> str:
-    """Hash simples para senha (em produção usar bcrypt)"""
-    # Para compatibilidade, mantendo texto simples por enquanto
-    # Em futuras versões pode-se usar: hashlib.sha256(password.encode()).hexdigest()
-    return password
+    """Hash de senha usando SHA256 com salt fixo (para simplicidade)"""
+    # Salt fixo para o Núcleo (em produção usar salt aleatório por usuário)
+    salt = "nucleo_salt_2025"
+    salted = f"{salt}{password}{salt}"
+    return hashlib.sha256(salted.encode('utf-8')).hexdigest()
 
-def verify_password_hash(password: str, hashed: str) -> bool:
+
+def verify_password(stored_hash: str, password: str) -> bool:
     """Verifica se a senha corresponde ao hash"""
-    # Para compatibilidade com sistema atual (texto simples)
-    return password == hashed
+    # Compatibilidade: se o hash armazenado não parece ser SHA256 (64 chars hex),
+    # assumir que é texto puro e migrar
+    if len(stored_hash) != 64 or not all(c in '0123456789abcdef' for c in stored_hash.lower()):
+        # Senha em texto puro (legado) - verificar diretamente
+        return password == stored_hash
+    
+    # Verificar hash SHA256
+    return hash_password(password) == stored_hash
+
+
+def migrate_password_to_hash(user_id: str, plain_password: str):
+    """Migra senha de texto puro para hash"""
+    hashed = hash_password(plain_password)
+    update_user(user_id, {"password": hashed})
+    return hashed
+
+
+# ==================== DATABASE INITIALIZATION ====================
 
 def init_database():
     """Inicializa o banco de dados criando as tabelas e usuário admin padrão"""
     global _initialized, DB_PATH
     if _initialized:
         return
-    
-    # Atualizar caminho
-    DB_PATH = get_db_path()
     
     with db_lock:
         conn = get_connection()
@@ -97,7 +184,7 @@ def init_database():
             )
         ''')
         
-        # Tabela de Usuários (senha em texto simples para compatibilidade)
+        # Tabela de Usuários
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS users (
                 id TEXT PRIMARY KEY,
@@ -188,14 +275,13 @@ def init_database():
             )
         ''')
         
-        # Migração: Adicionar coluna 'code' em ingredients se não existir
+        # Migrações
         try:
             cursor.execute("SELECT code FROM ingredients LIMIT 1")
         except sqlite3.OperationalError:
             cursor.execute("ALTER TABLE ingredients ADD COLUMN code TEXT")
             print("[DATABASE] Coluna 'code' adicionada à tabela ingredients")
         
-        # Migração: Adicionar coluna 'must_change_password' em users se não existir
         try:
             cursor.execute("SELECT must_change_password FROM users LIMIT 1")
         except sqlite3.OperationalError:
@@ -211,14 +297,15 @@ def init_database():
         if user_count == 0:
             admin_id = str(uuid.uuid4())
             created_at = datetime.now(timezone.utc).isoformat()
+            admin_password_hash = hash_password("admin")
             
             cursor.execute('''
                 INSERT INTO users (id, username, password, role, must_change_password, created_at)
                 VALUES (?, ?, ?, ?, ?, ?)
-            ''', (admin_id, 'admin', 'admin', 'proprietario', 1, created_at))
+            ''', (admin_id, 'admin', admin_password_hash, 'proprietario', 1, created_at))
             
             conn.commit()
-            print(f"[DATABASE] Usuário admin criado automaticamente (login: admin / senha: admin)")
+            print(f"[DATABASE] Usuário admin criado (login: admin / senha: admin)")
             print(f"[DATABASE] IMPORTANTE: Troque a senha no primeiro acesso!")
         
         # Inicializar configurações padrão
@@ -233,6 +320,7 @@ def init_database():
         _initialized = True
         print(f"[DATABASE] SQLite inicializado em: {DB_PATH}")
 
+
 # ==================== SYSTEM SETTINGS ====================
 
 def get_setting(key: str) -> Optional[str]:
@@ -243,6 +331,7 @@ def get_setting(key: str) -> Optional[str]:
         cursor.execute("SELECT value FROM system_settings WHERE key = ?", (key,))
         row = cursor.fetchone()
         return row[0] if row else None
+
 
 def set_setting(key: str, value: str) -> bool:
     """Define uma configuração do sistema"""
@@ -256,6 +345,7 @@ def set_setting(key: str, value: str) -> bool:
         conn.commit()
         return True
 
+
 def get_all_settings() -> Dict[str, str]:
     """Retorna todas as configurações"""
     with db_lock:
@@ -264,6 +354,7 @@ def get_all_settings() -> Dict[str, str]:
         cursor.execute("SELECT key, value FROM system_settings")
         rows = cursor.fetchall()
         return {row[0]: row[1] for row in rows}
+
 
 # ==================== USERS ====================
 
@@ -279,6 +370,7 @@ def get_user_by_username(username: str) -> Optional[Dict]:
             return dict(row)
         return None
 
+
 def get_user_by_id(user_id: str) -> Optional[Dict]:
     """Busca usuário pelo ID"""
     with db_lock:
@@ -291,6 +383,7 @@ def get_user_by_id(user_id: str) -> Optional[Dict]:
             return dict(row)
         return None
 
+
 def get_all_users() -> List[Dict]:
     """Retorna todos os usuários"""
     with db_lock:
@@ -300,6 +393,7 @@ def get_all_users() -> List[Dict]:
         rows = cursor.fetchall()
         
         return [dict(row) for row in rows]
+
 
 def count_users() -> int:
     """Conta total de usuários"""
@@ -311,6 +405,7 @@ def count_users() -> int:
         
         return count
 
+
 def create_user(user_data: Dict) -> Dict:
     """Cria novo usuário"""
     with db_lock:
@@ -321,13 +416,18 @@ def create_user(user_data: Dict) -> Dict:
         created_at = user_data.get('created_at', datetime.now(timezone.utc).isoformat())
         must_change = user_data.get('must_change_password', 0)
         
+        # Hash da senha se não estiver já em hash
+        password = user_data['password']
+        if len(password) != 64 or not all(c in '0123456789abcdef' for c in password.lower()):
+            password = hash_password(password)
+        
         cursor.execute('''
             INSERT INTO users (id, username, password, role, must_change_password, created_at)
             VALUES (?, ?, ?, ?, ?, ?)
         ''', (
             user_id,
             user_data['username'],
-            user_data['password'],  # Texto simples para compatibilidade
+            password,
             user_data.get('role', 'observador'),
             must_change,
             created_at
@@ -335,6 +435,7 @@ def create_user(user_data: Dict) -> Dict:
         conn.commit()
         
         return get_user_by_id(user_id)
+
 
 def update_user(user_id: str, user_data: Dict) -> Optional[Dict]:
     """Atualiza usuário"""
@@ -347,7 +448,11 @@ def update_user(user_id: str, user_data: Dict) -> Optional[Dict]:
         
         if 'password' in user_data:
             updates.append("password = ?")
-            values.append(user_data['password'])
+            # Hash da senha se não estiver já em hash
+            password = user_data['password']
+            if len(password) != 64 or not all(c in '0123456789abcdef' for c in password.lower()):
+                password = hash_password(password)
+            values.append(password)
         if 'role' in user_data:
             updates.append("role = ?")
             values.append(user_data['role'])
@@ -362,6 +467,7 @@ def update_user(user_id: str, user_data: Dict) -> Optional[Dict]:
         
         return get_user_by_id(user_id)
 
+
 def delete_user(user_id: str) -> bool:
     """Deleta usuário"""
     with db_lock:
@@ -373,12 +479,6 @@ def delete_user(user_id: str) -> bool:
         
         return deleted
 
-def verify_password(username: str, password: str) -> bool:
-    """Verifica senha do usuário (texto simples para compatibilidade)"""
-    user = get_user_by_username(username)
-    if user and user.get('password') == password:
-        return True
-    return False
 
 # ==================== INGREDIENTS ====================
 
@@ -392,7 +492,8 @@ def get_next_ingredient_code() -> str:
         
         if max_code and int(max_code) >= 20000:
             return str(int(max_code) + 1).zfill(5)
-        return "20001"  # Ingredientes começam em 20001
+        return "20001"
+
 
 def get_all_ingredients() -> List[Dict]:
     """Retorna todos os ingredientes"""
@@ -403,6 +504,7 @@ def get_all_ingredients() -> List[Dict]:
         rows = cursor.fetchall()
         
         return [dict(row) for row in rows]
+
 
 def get_ingredient_by_id(ingredient_id: str) -> Optional[Dict]:
     """Busca ingrediente pelo ID"""
@@ -415,6 +517,7 @@ def get_ingredient_by_id(ingredient_id: str) -> Optional[Dict]:
         if row:
             return dict(row)
         return None
+
 
 def create_ingredient(data: Dict) -> Dict:
     """Cria novo ingrediente"""
@@ -447,6 +550,7 @@ def create_ingredient(data: Dict) -> Dict:
         conn.commit()
         
         return get_ingredient_by_id(ing_id)
+
 
 def update_ingredient(ingredient_id: str, data: Dict) -> Optional[Dict]:
     """Atualiza ingrediente"""
@@ -482,6 +586,7 @@ def update_ingredient(ingredient_id: str, data: Dict) -> Optional[Dict]:
         
         return get_ingredient_by_id(ingredient_id)
 
+
 def delete_ingredient(ingredient_id: str) -> bool:
     """Deleta ingrediente"""
     with db_lock:
@@ -493,6 +598,7 @@ def delete_ingredient(ingredient_id: str) -> bool:
         
         return deleted
 
+
 def count_ingredients() -> int:
     """Conta total de ingredientes"""
     with db_lock:
@@ -502,6 +608,7 @@ def count_ingredients() -> int:
         count = cursor.fetchone()[0]
         
         return count
+
 
 # ==================== PRODUCTS ====================
 
@@ -516,17 +623,14 @@ def get_all_products() -> List[Dict]:
         products = []
         for row in rows:
             p = dict(row)
-            # Converter JSON strings para listas com tratamento de erro
             try:
                 p['recipe'] = json.loads(p['recipe']) if p['recipe'] else []
             except (json.JSONDecodeError, TypeError):
-                print(f"[DATABASE] Erro ao parsear recipe para produto {p.get('name', 'Unknown')}: {p.get('recipe', 'None')}")
                 p['recipe'] = []
             
             try:
                 p['order_steps'] = json.loads(p['order_steps']) if p['order_steps'] else []
             except (json.JSONDecodeError, TypeError):
-                print(f"[DATABASE] Erro ao parsear order_steps para produto {p.get('name', 'Unknown')}: {p.get('order_steps', 'None')}")
                 p['order_steps'] = []
             
             p['is_insumo'] = bool(p['is_insumo'])
@@ -534,6 +638,7 @@ def get_all_products() -> List[Dict]:
             products.append(p)
         
         return products
+
 
 def get_product_by_id(product_id: str) -> Optional[Dict]:
     """Busca produto pelo ID"""
@@ -548,19 +653,18 @@ def get_product_by_id(product_id: str) -> Optional[Dict]:
             try:
                 p['recipe'] = json.loads(p['recipe']) if p['recipe'] else []
             except (json.JSONDecodeError, TypeError):
-                print(f"[DATABASE] Erro ao parsear recipe para produto {p.get('name', 'Unknown')}: {p.get('recipe', 'None')}")
                 p['recipe'] = []
             
             try:
                 p['order_steps'] = json.loads(p['order_steps']) if p['order_steps'] else []
             except (json.JSONDecodeError, TypeError):
-                print(f"[DATABASE] Erro ao parsear order_steps para produto {p.get('name', 'Unknown')}: {p.get('order_steps', 'None')}")
                 p['order_steps'] = []
             
             p['is_insumo'] = bool(p['is_insumo'])
             p['is_divisible'] = bool(p['is_divisible'])
             return p
         return None
+
 
 def get_next_product_code() -> str:
     """Gera próximo código de produto"""
@@ -573,6 +677,7 @@ def get_next_product_code() -> str:
         if max_code:
             return str(int(max_code) + 1).zfill(5)
         return "10001"
+
 
 def create_product(data: Dict) -> Dict:
     """Cria novo produto"""
@@ -610,13 +715,13 @@ def create_product(data: Dict) -> Dict:
         
         return get_product_by_id(prod_id)
 
+
 def update_product(product_id: str, data: Dict) -> Optional[Dict]:
     """Atualiza produto"""
     with db_lock:
         conn = get_connection()
         cursor = conn.cursor()
         
-        # Buscar produto atual
         current = get_product_by_id(product_id)
         if not current:
             return None
@@ -655,6 +760,7 @@ def update_product(product_id: str, data: Dict) -> Optional[Dict]:
         
         return get_product_by_id(product_id)
 
+
 def delete_product(product_id: str) -> bool:
     """Deleta produto"""
     with db_lock:
@@ -666,6 +772,7 @@ def delete_product(product_id: str) -> bool:
         
         return deleted
 
+
 def count_products() -> int:
     """Conta total de produtos"""
     with db_lock:
@@ -675,6 +782,7 @@ def count_products() -> int:
         count = cursor.fetchone()[0]
         
         return count
+
 
 # ==================== PURCHASES ====================
 
@@ -687,6 +795,7 @@ def get_all_purchases() -> List[Dict]:
         rows = cursor.fetchall()
         
         return [dict(row) for row in rows]
+
 
 def create_purchase(data: Dict) -> Dict:
     """Cria nova compra"""
@@ -716,6 +825,7 @@ def create_purchase(data: Dict) -> Dict:
         
         return data
 
+
 def delete_purchases_by_batch(batch_id: str) -> bool:
     """Deleta compras por batch_id"""
     with db_lock:
@@ -727,6 +837,7 @@ def delete_purchases_by_batch(batch_id: str) -> bool:
         
         return deleted
 
+
 def count_purchases() -> int:
     """Conta total de compras"""
     with db_lock:
@@ -737,6 +848,7 @@ def count_purchases() -> int:
         
         return count
 
+
 def get_purchases_by_ingredient(ingredient_id: str) -> List[Dict]:
     """Retorna compras de um ingrediente"""
     with db_lock:
@@ -746,6 +858,7 @@ def get_purchases_by_ingredient(ingredient_id: str) -> List[Dict]:
         rows = cursor.fetchall()
         
         return [dict(row) for row in rows]
+
 
 def get_average_price_last_5_purchases(ingredient_id: str) -> float:
     """Calcula preço médio das últimas 5 compras de um ingrediente"""
@@ -769,6 +882,7 @@ def get_average_price_last_5_purchases(ingredient_id: str) -> float:
         
         return sum(prices) / len(prices)
 
+
 # ==================== CATEGORIES ====================
 
 def get_all_categories() -> List[Dict]:
@@ -780,6 +894,7 @@ def get_all_categories() -> List[Dict]:
         rows = cursor.fetchall()
         
         return [dict(row) for row in rows]
+
 
 def get_category_by_id(category_id: str) -> Optional[Dict]:
     """Busca categoria pelo ID"""
@@ -793,6 +908,7 @@ def get_category_by_id(category_id: str) -> Optional[Dict]:
             return dict(row)
         return None
 
+
 def get_category_by_name(name: str) -> Optional[Dict]:
     """Busca categoria pelo nome"""
     with db_lock:
@@ -804,6 +920,7 @@ def get_category_by_name(name: str) -> Optional[Dict]:
         if row:
             return dict(row)
         return None
+
 
 def create_category(data: Dict) -> Dict:
     """Cria nova categoria"""
@@ -822,6 +939,7 @@ def create_category(data: Dict) -> Dict:
         
         return get_category_by_id(cat_id)
 
+
 def update_category(category_id: str, data: Dict) -> Optional[Dict]:
     """Atualiza categoria"""
     with db_lock:
@@ -831,6 +949,7 @@ def update_category(category_id: str, data: Dict) -> Optional[Dict]:
         conn.commit()
         
         return get_category_by_id(category_id)
+
 
 def delete_category(category_id: str) -> bool:
     """Deleta categoria"""
@@ -843,6 +962,7 @@ def delete_category(category_id: str) -> bool:
         
         return deleted
 
+
 def count_categories() -> int:
     """Conta total de categorias"""
     with db_lock:
@@ -850,6 +970,7 @@ def count_categories() -> int:
         cursor = conn.cursor()
         cursor.execute("SELECT COUNT(*) FROM categories")
         return cursor.fetchone()[0]
+
 
 # ==================== AUDIT LOGS ====================
 
@@ -862,6 +983,7 @@ def get_all_audit_logs() -> List[Dict]:
         rows = cursor.fetchall()
         
         return [dict(row) for row in rows]
+
 
 def create_audit_log(data: Dict) -> Dict:
     """Cria novo log de auditoria"""
@@ -890,17 +1012,21 @@ def create_audit_log(data: Dict) -> Dict:
         
         return data
 
+
 # ==================== UTILITY ====================
 
 def get_database_info() -> Dict:
     """Retorna informações do banco de dados"""
+    global DB_PATH
     with db_lock:
         conn = get_connection()
         cursor = conn.cursor()
         
+        db_path = DB_PATH or get_db_path()
+        
         info = {
-            "path": str(DB_PATH),
-            "size_bytes": DB_PATH.stat().st_size if DB_PATH.exists() else 0,
+            "path": str(db_path),
+            "size_bytes": db_path.stat().st_size if db_path.exists() else 0,
             "tables": {}
         }
         
@@ -910,6 +1036,7 @@ def get_database_info() -> Dict:
             info["tables"][table] = cursor.fetchone()[0]
         
         return info
+
 
 # Inicializar banco ao importar o módulo
 init_database()
