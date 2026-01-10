@@ -910,12 +910,12 @@ export default function Despesas() {
               {/* Classificação */}
               <div>
                 <Label>Classificação</Label>
-                <Select value={expenseClassificationId} onValueChange={setExpenseClassificationId}>
+                <Select value={expenseClassificationId || "none"} onValueChange={(val) => setExpenseClassificationId(val === "none" ? "" : val)}>
                   <SelectTrigger className="mt-1">
                     <SelectValue placeholder="Selecione uma classificação" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Sem classificação</SelectItem>
+                    <SelectItem value="none">Sem classificação</SelectItem>
                     {classifications.map(c => (
                       <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
                     ))}
