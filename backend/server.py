@@ -777,12 +777,15 @@ async def create_purchase_batch(batch_data: PurchaseBatchCreate, current_user: U
     purchase_date = datetime.fromisoformat(batch_data.purchase_date) if batch_data.purchase_date else datetime.now(timezone.utc)
     
     purchases_created = []
+    total_batch_price = 0
+    
     for item in batch_data.items:
         ingredient = await db_call(sqlite_db.get_ingredient_by_id, item.ingredient_id)
         if not ingredient:
             continue
         
         unit_price = item.price / item.quantity if item.quantity > 0 else 0
+        total_batch_price += item.price
         
         purchase_data = {
             "id": str(uuid.uuid4()),
@@ -794,7 +797,9 @@ async def create_purchase_batch(batch_data: PurchaseBatchCreate, current_user: U
             "quantity": item.quantity,
             "price": item.price,
             "unit_price": unit_price,
-            "purchase_date": purchase_date.isoformat()
+            "purchase_date": purchase_date.isoformat(),
+            "is_paid": batch_data.is_paid if batch_data.is_paid is not None else True,
+            "due_date": batch_data.due_date
         }
         
         await db_call(sqlite_db.create_purchase, purchase_data)
@@ -822,10 +827,52 @@ async def create_purchase_batch(batch_data: PurchaseBatchCreate, current_user: U
         # Atualizar custo das receitas que usam este ingrediente
         await update_recipe_costs_for_ingredient(item.ingredient_id)
     
+    # Criar despesa vinculada à compra
+    expense_id = None
+    if total_batch_price > 0:
+        expense_id = str(uuid.uuid4())
+        
+        # Buscar ou criar classificação "Compras"
+        compras_class = await db_call(sqlite_db.get_expense_classification_by_name, "Compras")
+        if not compras_class:
+            compras_class_id = str(uuid.uuid4())
+            await db_call(sqlite_db.create_expense_classification, {
+                "id": compras_class_id,
+                "name": "Compras",
+                "created_at": datetime.now(timezone.utc).isoformat()
+            })
+            compras_class = {"id": compras_class_id, "name": "Compras"}
+        
+        # Criar lista de itens comprados
+        items_summary = ", ".join([p["ingredient_name"] for p in purchases_created[:3]])
+        if len(purchases_created) > 3:
+            items_summary += f" e mais {len(purchases_created) - 3} itens"
+        
+        expense_data = {
+            "id": expense_id,
+            "name": f"Compra - {batch_data.supplier}",
+            "classification_id": compras_class["id"],
+            "classification_name": "Compras",
+            "supplier": batch_data.supplier,
+            "value": total_batch_price,
+            "due_date": batch_data.due_date if batch_data.due_date else purchase_date.strftime("%Y-%m-%d"),
+            "is_paid": batch_data.is_paid if batch_data.is_paid is not None else True,
+            "paid_date": purchase_date.strftime("%Y-%m-%d") if (batch_data.is_paid is None or batch_data.is_paid) else None,
+            "notes": f"Itens: {items_summary}",
+            "created_at": datetime.now(timezone.utc).isoformat()
+        }
+        
+        await db_call(sqlite_db.create_expense, expense_data)
+        
+        # Atualizar as compras com o expense_id
+        await db_call(sqlite_db.update_purchase_payment, batch_id, 
+                     batch_data.is_paid if batch_data.is_paid is not None else True, 
+                     batch_data.due_date, expense_id)
+    
     # Registrar auditoria
     await log_audit("CREATE", "purchase", f"Lote de {batch_data.supplier}", current_user, "baixa", {"items": len(purchases_created)})
     
-    return {"message": "Purchase batch created", "batch_id": batch_id, "items_created": len(purchases_created)}
+    return {"message": "Purchase batch created", "batch_id": batch_id, "items_created": len(purchases_created), "expense_id": expense_id}
 
 @api_router.put("/purchases/batch/{batch_id}", response_model=dict)
 async def update_purchase_batch(batch_id: str, batch_data: PurchaseBatchCreate, current_user: User = Depends(get_current_user)):
