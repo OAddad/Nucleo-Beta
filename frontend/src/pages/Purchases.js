@@ -650,6 +650,23 @@ export default function Purchases() {
                           </Command>
                         </PopoverContent>
                       </Popover>
+                      
+                      {/* Info do último preço pago */}
+                      {selectedIngredient && (() => {
+                        const lastPrice = getLastPriceForIngredient(selectedIngredient);
+                        if (lastPrice) {
+                          return (
+                            <div className="mt-2 p-2 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                              <p className="text-xs text-blue-700 dark:text-blue-300">
+                                📊 <strong>Última compra:</strong> R$ {lastPrice.unitPrice.toFixed(2)}/un 
+                                ({lastPrice.quantity} un por R$ {lastPrice.price.toFixed(2)}) 
+                                em {new Date(lastPrice.date).toLocaleDateString('pt-BR')}
+                              </p>
+                            </div>
+                          );
+                        }
+                        return null;
+                      })()}
                     </div>
                     
                     {/* Quantidade e Preços */}
