@@ -595,6 +595,14 @@ export default function Products() {
     setFilterCategory("todos");
   };
 
+  // Auto-marcar insumo e divisível quando o tipo é "receita"
+  useEffect(() => {
+    if (productType === "receita") {
+      setIsInsumo(true);
+      setIsDivisible(true);
+    }
+  }, [productType]);
+
   useEffect(() => {
     fetchProducts();
     fetchIngredients();
