@@ -224,6 +224,7 @@ def init_database():
                 stock_quantity REAL DEFAULT 0,
                 stock_min REAL DEFAULT 0,
                 stock_max REAL DEFAULT 0,
+                is_active INTEGER DEFAULT 1,
                 created_at TEXT
             )
         ''')
