@@ -371,15 +371,19 @@ export default function Despesas() {
       return;
     }
     
-    console.log("Deletando despesa:", expenseToDelete.id, "deleteChildren:", deleteChildren);
-    
     try {
       const response = await axios.delete(
         `${API}/expenses/${expenseToDelete.id}?delete_children=${deleteChildren}`,
         getAuthHeader()
       );
-      console.log("Resposta do delete:", response.data);
-      toast.success(deleteChildren ? "Despesa e recorrências excluídas!" : "Despesa excluída!");
+      
+      const deletedCount = response.data?.deleted_count || 1;
+      if (deleteChildren && deletedCount > 1) {
+        toast.success(`${deletedCount} despesas excluídas!`);
+      } else {
+        toast.success("Despesa excluída!");
+      }
+      
       setDeleteExpenseDialogOpen(false);
       setDeleteRecurringDialogOpen(false);
       setExpenseToDelete(null);
@@ -391,35 +395,48 @@ export default function Despesas() {
     }
   };
   
-  // Verifica se a despesa tem filhos (recorrências ou parcelas)
-  const hasChildExpenses = (expense) => {
+  // Verifica se a despesa é recorrente ou parcelada (tem sequência)
+  const isRecurringOrInstallment = (expense) => {
     if (!expense) return false;
-    
-    // Se é a despesa pai (sem parent_expense_id) e tem recorrência ou parcelas
-    if (!expense.parent_expense_id && (expense.is_recurring || expense.installments_total > 1)) {
-      // Verificar se realmente existem filhos
-      const children = expenses.filter(e => e.parent_expense_id === expense.id);
-      return children.length > 0;
-    }
-    return false;
+    return expense.is_recurring || expense.installments_total > 1 || expense.parent_expense_id;
   };
   
-  // Conta quantas despesas filhas existem
-  const countChildExpenses = (expense) => {
+  // Conta quantas despesas futuras existem na mesma série
+  const countFutureExpenses = (expense) => {
     if (!expense) return 0;
-    return expenses.filter(e => e.parent_expense_id === expense.id).length;
+    
+    const expenseNameBase = expense.name.split(" (")[0]; // Remove " (1/3)" se tiver
+    const expenseDueDate = expense.due_date;
+    const expenseClassification = expense.classification_id;
+    
+    return expenses.filter(e => {
+      if (e.id === expense.id) return false;
+      
+      const eNameBase = e.name.split(" (")[0];
+      const isRelated = (e.is_recurring || e.installments_total > 1 || e.parent_expense_id);
+      
+      return (
+        eNameBase === expenseNameBase &&
+        e.classification_id === expenseClassification &&
+        e.due_date >= expenseDueDate &&
+        isRelated
+      );
+    }).length;
   };
   
   // Handler para abrir o dialog correto de exclusão
   const handleOpenDeleteDialog = (expense) => {
     setExpenseToDelete(expense);
     
-    // Se a despesa tem filhos (é a despesa pai com recorrências ou parcelas)
-    const hasChildren = hasChildExpenses(expense);
-    console.log("Deletando despesa:", expense.name, "hasChildren:", hasChildren, "is_recurring:", expense.is_recurring, "installments:", expense.installments_total);
-    
-    if (hasChildren) {
-      setDeleteRecurringDialogOpen(true);
+    // Se a despesa é recorrente ou parcelada, mostra popup com opções
+    if (isRecurringOrInstallment(expense)) {
+      const futureCount = countFutureExpenses(expense);
+      if (futureCount > 0) {
+        setDeleteRecurringDialogOpen(true);
+      } else {
+        // É a última da série, deletar normalmente
+        setDeleteExpenseDialogOpen(true);
+      }
     } else {
       setDeleteExpenseDialogOpen(true);
     }
