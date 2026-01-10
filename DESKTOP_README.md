@@ -6,7 +6,7 @@ Sistema de Gestão de CMV (Custo de Mercadoria Vendida) para Restaurantes.
 
 ### Windows
 
-1. Baixe o instalador `Nucleo-Setup-x.x.x.exe` na página de [Releases](../../releases)
+1. Baixe o instalador `Nucleo-Setup.exe` na página de [Releases](../../releases)
 2. Execute o instalador
 3. Siga as instruções na tela
 4. O Núcleo será instalado com atalho no Desktop e Menu Iniciar
@@ -96,7 +96,7 @@ Isso gera o build em `frontend/build/`
 npm run dist:win
 ```
 
-O instalador será gerado em `dist/Nucleo-Setup-x.x.x.exe`
+O instalador será gerado em `dist/Nucleo-Setup.exe`
 
 ---
 
@@ -119,6 +119,13 @@ O instalador será gerado em `dist/Nucleo-Setup-x.x.x.exe`
 
 > ⚠️ **IMPORTANTE:** Os dados são mantidos entre atualizações e reinstalações!
 
+### Bootstrap do Banco
+
+No primeiro boot, se o banco não existir no userData:
+1. O sistema copia o seed database empacotado (`data_backup/nucleo.db`)
+2. Cria automaticamente um usuário admin (`admin/admin`) se não existir
+3. Os dados existentes são preservados
+
 ---
 
 ## ⚙️ Configurações
@@ -136,6 +143,15 @@ Você pode ativar o "Modo sem Login" nas configurações do sistema para pular a
 Por padrão, o backend usa a porta `17845`. Se estiver ocupada:
 - O sistema tenta liberar automaticamente
 - Se não conseguir, usa uma porta alternativa
+
+---
+
+## 🔐 Segurança
+
+- Senhas armazenadas com hash SHA256
+- Compatibilidade com senhas em texto puro (migração automática)
+- JWT para autenticação de sessão
+- Dados locais (não enviados para nuvem)
 
 ---
 
@@ -160,7 +176,7 @@ Quando você criar uma tag `vX.Y.Z`, o GitHub Actions automaticamente:
 1. Compila o backend com PyInstaller
 2. Gera o build do React
 3. Empacota tudo com electron-builder
-4. Anexa o instalador `Nucleo-Setup-X.Y.Z.exe` ao Release
+4. Anexa o instalador `Nucleo-Setup.exe` ao Release
 
 ### Criar Release
 
@@ -168,14 +184,6 @@ Quando você criar uma tag `vX.Y.Z`, o GitHub Actions automaticamente:
 git tag v1.0.0
 git push origin v1.0.0
 ```
-
----
-
-## 🛡️ Segurança
-
-- Senhas armazenadas em texto simples (versão atual)
-- JWT para autenticação de sessão
-- Dados locais (não enviados para nuvem)
 
 ---
 
