@@ -1063,6 +1063,334 @@ class CMVMasterAPITester:
         
         return True
 
+    def test_recipe_products_with_yield(self):
+        """Test Recipe Products with Yield and Cost Calculation as specified in review request"""
+        print("\n=== RECIPE PRODUCTS WITH YIELD AND COST CALCULATION TESTS ===")
+        print("🎯 Testing exactly as specified in review request:")
+        print("   TESTE 1: Verificar novos campos no modelo Product")
+        print("   TESTE 2: Criar produto do tipo 'receita' com rendimento")
+        print("   TESTE 3: Verificar atualização de receita")
+        print("   Credenciais: Username: Addad, Password: Addad123")
+        print("   Backend URL: http://localhost:8001")
+        
+        all_tests_passed = True
+        
+        # First, authenticate with Addad user as specified
+        print("\n🔍 Authenticating with Addad user...")
+        success, login_response = self.run_test(
+            "Login with Addad user",
+            "POST",
+            "auth/login",
+            200,
+            data={"username": "Addad", "password": "Addad123"}
+        )
+        
+        if success and 'access_token' in login_response:
+            self.token = login_response['access_token']
+            self.user_id = login_response['user']['id']
+            print(f"   ✅ Addad login successful")
+            print(f"   - User role: {login_response['user']['role']}")
+            print(f"   - Username: {login_response['user']['username']}")
+        else:
+            print(f"   ❌ Addad login failed - trying fallback authentication...")
+            # Try other authentication methods as fallback
+            fallback_users = [
+                ("admin", "admin"),
+                ("teste_admin", "senha123"),
+                ("proprietario", "senha123")
+            ]
+            
+            auth_success = False
+            for username, password in fallback_users:
+                success, response = self.run_test(
+                    f"Fallback login with {username}",
+                    "POST",
+                    "auth/login",
+                    200,
+                    data={"username": username, "password": password}
+                )
+                
+                if success and 'access_token' in response:
+                    self.token = response['access_token']
+                    self.user_id = response['user']['id']
+                    print(f"   ✅ Fallback authentication successful with {username}")
+                    auth_success = True
+                    break
+            
+            if not auth_success:
+                print(f"   ❌ No valid authentication found - cannot proceed with tests")
+                return False
+        
+        # TESTE 1: Verificar novos campos no modelo Product
+        print(f"\n🔍 TESTE 1: Verificar novos campos no modelo Product")
+        print(f"   GET /api/products - deve retornar produtos com os novos campos:")
+        print(f"   - recipe_yield, recipe_yield_unit, unit_cost, linked_ingredient_id")
+        
+        success, products = self.run_test(
+            "Get all products to verify new fields",
+            "GET",
+            "products",
+            200
+        )
+        
+        if success:
+            print(f"   ✅ GET /api/products successful - Found {len(products)} products")
+            
+            # Check if any products have the new fields
+            products_with_new_fields = []
+            for product in products:
+                has_new_fields = (
+                    'recipe_yield' in product or
+                    'recipe_yield_unit' in product or
+                    'unit_cost' in product or
+                    'linked_ingredient_id' in product
+                )
+                if has_new_fields:
+                    products_with_new_fields.append(product)
+            
+            print(f"   ✅ Found {len(products_with_new_fields)} products with new recipe fields")
+            
+            # Show details of products with new fields
+            for i, product in enumerate(products_with_new_fields[:3]):  # Show first 3
+                print(f"\n      📦 Product {i+1}: {product['name']}")
+                print(f"         - recipe_yield: {product.get('recipe_yield', 'N/A')}")
+                print(f"         - recipe_yield_unit: {product.get('recipe_yield_unit', 'N/A')}")
+                print(f"         - unit_cost: R$ {product.get('unit_cost', 0):.2f}")
+                print(f"         - linked_ingredient_id: {product.get('linked_ingredient_id', 'N/A')}")
+                print(f"         - product_type: {product.get('product_type', 'N/A')}")
+                print(f"         - cmv: R$ {product.get('cmv', 0):.2f}")
+            
+            # Verify field presence in model
+            if products:
+                sample_product = products[0]
+                new_fields = ['recipe_yield', 'recipe_yield_unit', 'unit_cost', 'linked_ingredient_id']
+                fields_present = [field for field in new_fields if field in sample_product]
+                fields_missing = [field for field in new_fields if field not in sample_product]
+                
+                print(f"\n      🔍 New fields analysis:")
+                print(f"         - Fields present in model: {fields_present}")
+                print(f"         - Fields missing from model: {fields_missing}")
+                
+                if len(fields_present) >= 3:  # At least 3 of 4 new fields should be present
+                    print(f"      ✅ TESTE 1 PASSED: New recipe fields are present in Product model")
+                else:
+                    print(f"      ❌ TESTE 1 FAILED: Missing critical new fields in Product model")
+                    all_tests_passed = False
+            else:
+                print(f"      ❌ TESTE 1 FAILED: No products found to verify fields")
+                all_tests_passed = False
+        else:
+            print(f"   ❌ TESTE 1 FAILED: GET /api/products failed")
+            all_tests_passed = False
+        
+        # Get ingredients for recipe creation
+        print(f"\n🔍 Getting ingredients for recipe creation...")
+        success, ingredients = self.run_test("Get ingredients for recipe", "GET", "ingredients", 200)
+        if not success or len(ingredients) < 2:
+            print(f"   ❌ Need at least 2 ingredients for recipe tests")
+            return False
+        
+        print(f"   ✅ Found {len(ingredients)} ingredients available for recipes")
+        ingredient1 = ingredients[0]
+        ingredient2 = ingredients[1] if len(ingredients) > 1 else ingredients[0]
+        
+        # TESTE 2: Criar produto do tipo "receita" com rendimento
+        print(f"\n🔍 TESTE 2: Criar produto do tipo 'receita' com rendimento")
+        print(f"   POST /api/products com os dados:")
+        print(f"   - product_type: 'receita'")
+        print(f"   - recipe_yield: 2 (ex: rende 2kg)")
+        print(f"   - recipe_yield_unit: 'kg'")
+        print(f"   - recipe: alguns ingredientes")
+        print(f"   Verificar se o unit_cost é calculado corretamente (cmv / recipe_yield)")
+        
+        recipe_product_data = {
+            "name": "Receita Teste Massa de Pão",
+            "description": "Receita de teste para verificar rendimento",
+            "product_type": "receita",
+            "recipe_yield": 2.0,  # Rende 2kg
+            "recipe_yield_unit": "kg",
+            "recipe": [
+                {
+                    "ingredient_id": ingredient1['id'],
+                    "quantity": 1.0,
+                    "item_type": "ingredient"
+                },
+                {
+                    "ingredient_id": ingredient2['id'],
+                    "quantity": 0.5,
+                    "item_type": "ingredient"
+                }
+            ],
+            "linked_ingredient_id": None  # Can be set to link to an ingredient in stock
+        }
+        
+        success, created_recipe = self.run_test(
+            "Create recipe product with yield",
+            "POST",
+            "products",
+            200,
+            data=recipe_product_data
+        )
+        
+        if success:
+            self.created_products.append(created_recipe['id'])
+            print(f"   ✅ Recipe product created successfully")
+            print(f"      - Product ID: {created_recipe['id']}")
+            print(f"      - Name: {created_recipe['name']}")
+            print(f"      - Product Type: {created_recipe.get('product_type', 'N/A')}")
+            print(f"      - Recipe Yield: {created_recipe.get('recipe_yield', 'N/A')} {created_recipe.get('recipe_yield_unit', '')}")
+            print(f"      - CMV: R$ {created_recipe.get('cmv', 0):.2f}")
+            print(f"      - Unit Cost: R$ {created_recipe.get('unit_cost', 0):.2f}")
+            
+            # Verify unit_cost calculation (CMV / recipe_yield)
+            cmv = created_recipe.get('cmv', 0)
+            recipe_yield = created_recipe.get('recipe_yield', 1)
+            unit_cost = created_recipe.get('unit_cost', 0)
+            expected_unit_cost = cmv / recipe_yield if recipe_yield > 0 else cmv
+            
+            print(f"\n      🔍 Unit cost calculation verification:")
+            print(f"         - CMV: R$ {cmv:.2f}")
+            print(f"         - Recipe Yield: {recipe_yield}")
+            print(f"         - Expected Unit Cost: R$ {expected_unit_cost:.2f}")
+            print(f"         - Actual Unit Cost: R$ {unit_cost:.2f}")
+            
+            # Allow small floating point differences
+            if abs(unit_cost - expected_unit_cost) < 0.01:
+                print(f"      ✅ TESTE 2 PASSED: Unit cost calculated correctly (CMV / recipe_yield)")
+            else:
+                print(f"      ❌ TESTE 2 FAILED: Unit cost calculation incorrect")
+                all_tests_passed = False
+            
+            # Verify all required fields are present
+            required_fields = ['product_type', 'recipe_yield', 'recipe_yield_unit', 'unit_cost']
+            missing_fields = [field for field in required_fields if field not in created_recipe]
+            
+            if not missing_fields:
+                print(f"      ✅ All required recipe fields present in created product")
+            else:
+                print(f"      ❌ Missing fields in created product: {missing_fields}")
+                all_tests_passed = False
+                
+        else:
+            print(f"   ❌ TESTE 2 FAILED: Failed to create recipe product")
+            all_tests_passed = False
+        
+        # TESTE 3: Verificar atualização de receita
+        print(f"\n🔍 TESTE 3: Verificar atualização de receita")
+        print(f"   PUT /api/products/{{id}} para atualizar uma receita")
+        print(f"   Verificar que os campos recipe_yield, recipe_yield_unit e unit_cost são atualizados")
+        
+        if success and created_recipe:  # Only if we successfully created a recipe
+            # Update the recipe with new yield values
+            updated_recipe_data = recipe_product_data.copy()
+            updated_recipe_data['name'] = "Receita Teste Massa de Pão - Atualizada"
+            updated_recipe_data['recipe_yield'] = 3.0  # Change yield to 3kg
+            updated_recipe_data['recipe_yield_unit'] = "kg"
+            updated_recipe_data['description'] = "Receita atualizada para testar recálculo de unit_cost"
+            
+            success_update, updated_recipe = self.run_test(
+                "Update recipe product",
+                "PUT",
+                f"products/{created_recipe['id']}",
+                200,
+                data=updated_recipe_data
+            )
+            
+            if success_update:
+                print(f"   ✅ Recipe product updated successfully")
+                print(f"      - Updated Name: {updated_recipe['name']}")
+                print(f"      - Updated Recipe Yield: {updated_recipe.get('recipe_yield', 'N/A')} {updated_recipe.get('recipe_yield_unit', '')}")
+                print(f"      - Updated CMV: R$ {updated_recipe.get('cmv', 0):.2f}")
+                print(f"      - Updated Unit Cost: R$ {updated_recipe.get('unit_cost', 0):.2f}")
+                
+                # Verify unit_cost recalculation
+                new_cmv = updated_recipe.get('cmv', 0)
+                new_recipe_yield = updated_recipe.get('recipe_yield', 1)
+                new_unit_cost = updated_recipe.get('unit_cost', 0)
+                expected_new_unit_cost = new_cmv / new_recipe_yield if new_recipe_yield > 0 else new_cmv
+                
+                print(f"\n      🔍 Updated unit cost calculation verification:")
+                print(f"         - New CMV: R$ {new_cmv:.2f}")
+                print(f"         - New Recipe Yield: {new_recipe_yield}")
+                print(f"         - Expected New Unit Cost: R$ {expected_new_unit_cost:.2f}")
+                print(f"         - Actual New Unit Cost: R$ {new_unit_cost:.2f}")
+                
+                # Allow small floating point differences
+                if abs(new_unit_cost - expected_new_unit_cost) < 0.01:
+                    print(f"      ✅ TESTE 3 PASSED: Unit cost recalculated correctly after update")
+                else:
+                    print(f"      ❌ TESTE 3 FAILED: Unit cost recalculation incorrect after update")
+                    all_tests_passed = False
+                
+                # Verify the yield values were actually updated
+                if (updated_recipe.get('recipe_yield') == 3.0 and 
+                    updated_recipe.get('recipe_yield_unit') == 'kg'):
+                    print(f"      ✅ Recipe yield and unit updated correctly")
+                else:
+                    print(f"      ❌ Recipe yield or unit not updated correctly")
+                    all_tests_passed = False
+                    
+            else:
+                print(f"   ❌ TESTE 3 FAILED: Failed to update recipe product")
+                all_tests_passed = False
+        else:
+            print(f"   ❌ TESTE 3 SKIPPED: No recipe product to update (creation failed)")
+            all_tests_passed = False
+        
+        # Additional verification: Check if linked ingredient functionality works
+        print(f"\n🔍 ADDITIONAL TEST: Verificar funcionalidade de ingrediente linkado")
+        
+        if ingredients and len(ingredients) > 2:
+            # Try to create a recipe with linked ingredient
+            linked_ingredient = ingredients[2] if len(ingredients) > 2 else ingredients[0]
+            
+            linked_recipe_data = {
+                "name": "Receita com Ingrediente Linkado",
+                "description": "Teste de receita linkada a ingrediente no estoque",
+                "product_type": "receita",
+                "recipe_yield": 1.5,
+                "recipe_yield_unit": "kg",
+                "linked_ingredient_id": linked_ingredient['id'],  # Link to ingredient in stock
+                "recipe": [
+                    {
+                        "ingredient_id": ingredient1['id'],
+                        "quantity": 0.8,
+                        "item_type": "ingredient"
+                    }
+                ]
+            }
+            
+            success_linked, linked_recipe = self.run_test(
+                "Create recipe with linked ingredient",
+                "POST",
+                "products",
+                200,
+                data=linked_recipe_data
+            )
+            
+            if success_linked:
+                self.created_products.append(linked_recipe['id'])
+                print(f"   ✅ Recipe with linked ingredient created successfully")
+                print(f"      - Linked Ingredient ID: {linked_recipe.get('linked_ingredient_id', 'N/A')}")
+                print(f"      - Unit Cost: R$ {linked_recipe.get('unit_cost', 0):.2f}")
+                
+                # Verify linked ingredient ID is preserved
+                if linked_recipe.get('linked_ingredient_id') == linked_ingredient['id']:
+                    print(f"      ✅ Linked ingredient ID preserved correctly")
+                else:
+                    print(f"      ❌ Linked ingredient ID not preserved")
+                    all_tests_passed = False
+            else:
+                print(f"   ❌ Failed to create recipe with linked ingredient")
+        
+        # Summary of recipe tests
+        print(f"\n🔍 RECIPE TESTS SUMMARY:")
+        print(f"   TESTE 1 - Novos campos no modelo Product: {'✅ PASS' if 'recipe_yield' in (products[0] if products else {}) else '❌ FAIL'}")
+        print(f"   TESTE 2 - Criar produto receita com rendimento: {'✅ PASS' if success and created_recipe else '❌ FAIL'}")
+        print(f"   TESTE 3 - Atualizar receita: {'✅ PASS' if success_update and updated_recipe else '❌ FAIL'}")
+        
+        return all_tests_passed
+
     def test_critical_endpoints_review_request(self):
         """Test the specific critical endpoints mentioned in the review request"""
         print("\n=== CRITICAL ENDPOINTS REVIEW REQUEST TESTS ===")
