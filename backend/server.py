@@ -1034,10 +1034,19 @@ async def create_product(product_data: ProductCreate, current_user: User = Depen
         "is_insumo": product_data.is_insumo,
         "is_divisible": product_data.is_divisible,
         "order_steps": order_steps_list,
+        "linked_ingredient_id": product_data.linked_ingredient_id,
+        "recipe_yield": product_data.recipe_yield,
+        "recipe_yield_unit": product_data.recipe_yield_unit,
+        "unit_cost": cmv / product_data.recipe_yield if product_data.recipe_yield and product_data.recipe_yield > 0 else cmv,
         "created_at": created_at.isoformat()
     }
     
     await db_call(sqlite_db.create_product, product_dict)
+    
+    # Se é uma receita com ingrediente linkado, atualizar o preço médio do ingrediente
+    if product_data.product_type == "receita" and product_data.linked_ingredient_id:
+        unit_cost = product_dict["unit_cost"]
+        await update_linked_ingredient_price(product_data.linked_ingredient_id, unit_cost)
     
     # Registrar auditoria
     await log_audit("CREATE", "product", product_data.name, current_user, "baixa")
