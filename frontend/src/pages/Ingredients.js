@@ -812,7 +812,7 @@ export default function Ingredients() {
                         </td>
                       </tr>
                     ) : (
-                      filteredIngredients.map((ingredient) => {
+                      paginatedIngredients.map((ingredient) => {
                         const stockStatus = getStockStatus(ingredient);
                         const StockIcon = stockStatus.icon;
                         
