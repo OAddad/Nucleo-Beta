@@ -1360,7 +1360,7 @@ def update_cliente(cliente_id: str, data: Dict) -> Optional[Dict]:
         
         fields = ['nome', 'telefone', 'email', 'cpf', 'data_nascimento', 'genero', 'foto',
                   'endereco', 'numero', 'complemento', 'bairro', 'cep',
-                  'pedidos_count', 'total_gasto', 'last_order_date', 'orders_last_30_days']
+                  'pedidos_count', 'total_gasto', 'last_order_date', 'orders_last_30_days', 'pontuacao']
         
         for field in fields:
             if field in data:
