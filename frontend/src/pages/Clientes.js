@@ -406,11 +406,6 @@ export default function Clientes() {
     setPontuacao(cliente.pontuacao || 0);
     setDialogOpen(true);
   };
-    setComplemento(cliente.complemento || "");
-    setBairro(cliente.bairro || "");
-    setCep(cliente.cep || "");
-    setDialogOpen(true);
-  };
 
   const handleSave = async () => {
     if (!nome.trim()) {
