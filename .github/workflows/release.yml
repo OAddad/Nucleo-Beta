@@ -19,7 +19,7 @@ jobs:
         run: |
           VERSION=${GITHUB_REF_NAME#v}
           echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
-          echo "Versão extraída da tag: $VERSION"
+          echo "Version extracted from tag: $VERSION"
       
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -34,27 +34,27 @@ jobs:
       - name: Install Pillow for icon generation
         run: pip install Pillow
       
-      - name: Generate/Validate icon.ico
+      - name: Generate and Validate icon.ico
         shell: bash
         run: |
-          echo "=== Gerando icon.ico ==="
+          echo "=== Generating icon.ico ==="
           python tools/make_icon.py
           
-          # Validar resultado
+          # Validate result
           if [ ! -f "build-resources/icon.ico" ]; then
-            echo "ERRO: icon.ico não foi gerado!"
+            echo "ERROR: icon.ico was not generated!"
             exit 1
           fi
           
           SIZE=$(stat -c%s "build-resources/icon.ico" 2>/dev/null || stat -f%z "build-resources/icon.ico")
-          echo "Tamanho do icon.ico: $SIZE bytes"
+          echo "icon.ico size: $SIZE bytes"
           
           if [ "$SIZE" -lt 1000 ]; then
-            echo "ERRO: icon.ico muito pequeno ($SIZE bytes). Arquivo inválido!"
+            echo "ERROR: icon.ico too small ($SIZE bytes). Invalid file!"
             exit 1
           fi
           
-          echo "✅ icon.ico válido!"
+          echo "[OK] icon.ico is valid!"
       
       - name: Install Python dependencies
         run: |
@@ -76,7 +76,7 @@ jobs:
             exit 1
           }
           $size = (Get-Item "desktop-build/backend/nucleo-backend.exe").Length / 1MB
-          Write-Host "✅ nucleo-backend.exe gerado: $([math]::Round($size, 2)) MB"
+          Write-Host "[OK] nucleo-backend.exe generated: $([math]::Round($size, 2)) MB"
       
       - name: Install Node dependencies
         run: |
@@ -88,7 +88,7 @@ jobs:
         shell: bash
         run: |
           npm pkg set version="${{ steps.version.outputs.VERSION }}"
-          echo "Versão definida no package.json: ${{ steps.version.outputs.VERSION }}"
+          echo "Version set in package.json: ${{ steps.version.outputs.VERSION }}"
       
       - name: Build Frontend
         env:
@@ -104,7 +104,7 @@ jobs:
             Write-Error "Frontend build failed - index.html not found"
             exit 1
           }
-          Write-Host "✅ Frontend build OK"
+          Write-Host "[OK] Frontend build complete"
       
       - name: Build Electron App (NSIS Installer)
         run: npm run dist:win
@@ -120,34 +120,28 @@ jobs:
             exit 1
           }
           $size = (Get-Item "dist/Nucleo-Setup.exe").Length / 1MB
-          Write-Host "✅ Nucleo-Setup.exe gerado: $([math]::Round($size, 2)) MB"
+          Write-Host "[OK] Nucleo-Setup.exe generated: $([math]::Round($size, 2)) MB"
       
       - name: Upload Release Asset
         uses: softprops/action-gh-release@v1
         with:
           files: dist/Nucleo-Setup.exe
-          name: Núcleo v${{ steps.version.outputs.VERSION }}
+          name: Nucleo v${{ steps.version.outputs.VERSION }}
           body: |
-            ## Núcleo v${{ steps.version.outputs.VERSION }}
+            ## Nucleo v${{ steps.version.outputs.VERSION }}
             
-            ### Instalação
-            1. Baixe `Nucleo-Setup.exe`
-            2. Execute o instalador
-            3. O Núcleo aparecerá no Menu Iniciar
+            ### Installation
+            1. Download `Nucleo-Setup.exe`
+            2. Run the installer
+            3. Nucleo will appear in the Start Menu
             
-            ### Primeiro acesso
+            ### First access
             - Login: `admin`
-            - Senha: `admin`
-            - Troque a senha no primeiro acesso!
+            - Password: `admin`
+            - Change the password on first login!
             
-            ### Dados
-            - Banco: `%APPDATA%\\nucleo\\nucleo.db`
-            - Logs: `%APPDATA%\\nucleo\\logs\\nucleo.log`
+            ### Data locations
+            - Database: `%APPDATA%\nucleo\nucleo.db`
+            - Logs: `%APPDATA%\nucleo\logs\nucleo.log`
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  # Job Linux desabilitado - foco é Windows
-  # build-linux:
-  #   runs-on: ubuntu-latest
-  #   continue-on-error: true
-  #   ...
