@@ -517,6 +517,7 @@ export default function Fornecedores() {
             </Button>
           </div>
         ) : (
+          <>
           <Table>
             <TableHeader>
               <TableRow>
