@@ -1538,11 +1538,11 @@ async def force_change_password(password_data: ChangePassword, current_user: Use
     """Força troca de senha (para primeiro login do admin)"""
     user_doc = await db_call(sqlite_db.get_user_by_id, current_user.id)
     
-    # Verificar senha atual
-    if not user_doc or user_doc.get("password") != password_data.old_password:
+    # Verificar senha atual usando hash
+    if not user_doc or not sqlite_db.verify_password(user_doc.get("password", ""), password_data.old_password):
         raise HTTPException(status_code=401, detail="Senha atual incorreta")
     
-    # Atualizar senha e remover flag de must_change_password
+    # Atualizar senha (será hasheada automaticamente) e remover flag de must_change_password
     await db_call(sqlite_db.update_user, current_user.id, {
         "password": password_data.new_password,
         "must_change_password": 0
