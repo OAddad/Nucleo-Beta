@@ -815,6 +815,9 @@ async def update_purchase_batch(batch_id: str, batch_data: PurchaseBatchCreate, 
             avg_price = avg_price / ingredient["units_per_package"]
         
         await db_call(sqlite_db.update_ingredient, ingredient_id, {"average_price": avg_price})
+        
+        # Atualizar custo das receitas que usam este ingrediente
+        await update_recipe_costs_for_ingredient(ingredient_id)
     
     # Registrar auditoria
     await log_audit("UPDATE", "purchase", f"Lote de {batch_data.supplier}", current_user, "media", {"items": len(purchases_created)})
