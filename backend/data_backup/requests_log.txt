@@ -8073,3 +8073,9 @@
 2026-01-10T21:03:18.534902+00:00 | DB_CALL get_user_by_id | P3 | 0.71ms | success
 2026-01-10T21:03:18.535162+00:00 | DB_CALL get_all_categories | P3 | 0.29ms | success
 2026-01-10T21:03:18.535696+00:00 | DB_CALL get_all_products | P3 | 0.71ms | success
+2026-01-10T21:05:02.963906+00:00 | DB_CALL get_user_by_id | P3 | 0.32ms | success
+2026-01-10T21:05:02.964319+00:00 | DB_CALL get_all_purchases | P3 | 0.26ms | success
+2026-01-10T21:05:05.351361+00:00 | DB_CALL get_user_by_id | P3 | 0.24ms | success
+2026-01-10T21:05:05.351760+00:00 | DB_CALL get_all_purchases | P3 | 0.26ms | success
+2026-01-10T21:05:08.047738+00:00 | DB_CALL get_user_by_id | P3 | 0.26ms | success
+2026-01-10T21:05:08.048158+00:00 | DB_CALL get_all_purchases | P3 | 0.27ms | success

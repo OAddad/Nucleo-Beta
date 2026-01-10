@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { toast } from "sonner";
 import { 
-  Search, Plus, Edit, Trash2, User, Phone, MapPin, Calendar, X, MoreVertical, Download, ImageOff, Mail
+  Search, Plus, Edit, Trash2, User, Phone, MapPin, Calendar, X, MoreVertical, Download, ImageOff, Mail, Clock, Star, AlertTriangle, UserX, UserCheck, Sparkles, Filter
 } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
@@ -31,6 +31,13 @@ import {
   DropdownMenuTrigger,
 } from "../components/ui/dropdown-menu";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../components/ui/select";
+import {
   Table,
   TableBody,
   TableCell,
@@ -41,9 +48,112 @@ import {
 
 // URL relativa - funciona em qualquer domínio
 
+// Função para calcular tempo desde cadastro
+const getTimeSinceRegistration = (dateStr) => {
+  if (!dateStr) return "Sem data";
+  
+  const now = new Date();
+  const date = new Date(dateStr);
+  const diffMs = now - date;
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+  const diffWeeks = Math.floor(diffDays / 7);
+  const diffMonths = Math.floor(diffDays / 30);
+  const diffYears = Math.floor(diffDays / 365);
+  
+  if (diffDays === 0) return "Hoje";
+  if (diffDays === 1) return "Ontem";
+  if (diffDays < 7) return `${diffDays} dias`;
+  if (diffWeeks === 1) return "1 semana";
+  if (diffWeeks < 4) return `${diffWeeks} semanas`;
+  if (diffMonths === 1) return "1 mês";
+  if (diffMonths < 12) return `${diffMonths} meses`;
+  if (diffYears === 1) return "1 ano";
+  return `${diffYears} anos`;
+};
+
+// Função para calcular a TAG do cliente
+const getClientTag = (cliente) => {
+  const now = new Date();
+  const thirtyDaysAgo = new Date(now - 30 * 24 * 60 * 60 * 1000);
+  const sixtyDaysAgo = new Date(now - 60 * 24 * 60 * 60 * 1000);
+  
+  const pedidosCount = cliente.pedidos_count || 0;
+  const lastOrderDate = cliente.last_order_date ? new Date(cliente.last_order_date) : null;
+  const ordersLast30Days = cliente.orders_last_30_days || 0;
+  
+  // Cliente VIP - mais de 4 pedidos nos últimos 30 dias
+  if (ordersLast30Days > 4) {
+    return {
+      tag: "Cliente VIP",
+      color: "bg-gradient-to-r from-amber-500 to-yellow-500 text-white",
+      icon: Sparkles,
+      priority: 1
+    };
+  }
+  
+  // Cliente Recorrente - mais de 3 pedidos nos últimos 30 dias
+  if (ordersLast30Days >= 3) {
+    return {
+      tag: "Recorrente",
+      color: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400",
+      icon: Star,
+      priority: 2
+    };
+  }
+  
+  // Novo Cliente - nunca pediu
+  if (pedidosCount === 0) {
+    return {
+      tag: "Novo",
+      color: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400",
+      icon: UserCheck,
+      priority: 5
+    };
+  }
+  
+  // Primeiro Pedido - apenas 1 pedido
+  if (pedidosCount === 1) {
+    return {
+      tag: "1º Pedido",
+      color: "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400",
+      icon: User,
+      priority: 4
+    };
+  }
+  
+  // Cliente Perdido - sem pedidos nos últimos 60 dias
+  if (lastOrderDate && lastOrderDate < sixtyDaysAgo) {
+    return {
+      tag: "Perdido",
+      color: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400",
+      icon: UserX,
+      priority: 6
+    };
+  }
+  
+  // Cliente em Risco - sem pedidos nos últimos 30 dias
+  if (lastOrderDate && lastOrderDate < thirtyDaysAgo) {
+    return {
+      tag: "Em Risco",
+      color: "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400",
+      icon: AlertTriangle,
+      priority: 3
+    };
+  }
+  
+  // Cliente normal (tem pedidos mas não se encaixa nas outras categorias)
+  return {
+    tag: "Ativo",
+    color: "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300",
+    icon: User,
+    priority: 7
+  };
+};
+
 export default function Clientes() {
   const [clientes, setClientes] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [tagFilter, setTagFilter] = useState("all");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [currentCliente, setCurrentCliente] = useState(null);
@@ -228,7 +338,9 @@ export default function Clientes() {
         ...clienteData,
         created_at: new Date().toISOString(),
         pedidos_count: 0,
-        total_gasto: 0
+        total_gasto: 0,
+        last_order_date: null,
+        orders_last_30_days: 0
       };
       saveClientes([...clientes, novoCliente]);
       toast.success("Cliente cadastrado!");
@@ -252,14 +364,59 @@ export default function Clientes() {
     setClienteToDelete(null);
   };
 
+  // Contar clientes por tag
+  const tagCounts = useMemo(() => {
+    const counts = {
+      all: clientes.length,
+      vip: 0,
+      recorrente: 0,
+      novo: 0,
+      primeiro_pedido: 0,
+      em_risco: 0,
+      perdido: 0,
+      ativo: 0
+    };
+    
+    clientes.forEach(c => {
+      const tag = getClientTag(c);
+      if (tag.tag === "Cliente VIP") counts.vip++;
+      else if (tag.tag === "Recorrente") counts.recorrente++;
+      else if (tag.tag === "Novo") counts.novo++;
+      else if (tag.tag === "1º Pedido") counts.primeiro_pedido++;
+      else if (tag.tag === "Em Risco") counts.em_risco++;
+      else if (tag.tag === "Perdido") counts.perdido++;
+      else counts.ativo++;
+    });
+    
+    return counts;
+  }, [clientes]);
+
   const filteredClientes = useMemo(() => {
-    return clientes.filter(c =>
-      c.nome?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (c.telefone && c.telefone.includes(searchTerm)) ||
-      (c.email && c.email.toLowerCase().includes(searchTerm.toLowerCase())) ||
-      (c.cpf && c.cpf.includes(searchTerm))
-    );
-  }, [clientes, searchTerm]);
+    return clientes.filter(c => {
+      // Filtro por texto
+      const matchesSearch = 
+        c.nome?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (c.telefone && c.telefone.includes(searchTerm)) ||
+        (c.email && c.email.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        (c.cpf && c.cpf.includes(searchTerm));
+      
+      // Filtro por tag
+      if (tagFilter === "all") return matchesSearch;
+      
+      const tag = getClientTag(c);
+      const tagMap = {
+        vip: "Cliente VIP",
+        recorrente: "Recorrente",
+        novo: "Novo",
+        primeiro_pedido: "1º Pedido",
+        em_risco: "Em Risco",
+        perdido: "Perdido",
+        ativo: "Ativo"
+      };
+      
+      return matchesSearch && tag.tag === tagMap[tagFilter];
+    });
+  }, [clientes, searchTerm, tagFilter]);
 
   // Clientes paginados
   const paginatedClientes = useMemo(() => {
@@ -270,7 +427,7 @@ export default function Clientes() {
   // Reset página quando filtros mudam
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchTerm]);
+  }, [searchTerm, tagFilter]);
 
   const formatDate = (dateStr) => {
     if (!dateStr) return "-";
@@ -286,8 +443,8 @@ export default function Clientes() {
       </div>
 
       {/* Barra de Pesquisa e Ações */}
-      <div className="flex items-center gap-4 mb-6">
-        <div className="relative flex-1 max-w-md">
+      <div className="flex items-center gap-4 mb-6 flex-wrap">
+        <div className="relative flex-1 min-w-[250px] max-w-md">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input
             placeholder="Pesquisar por nome, telefone, email ou CPF..."
@@ -296,6 +453,54 @@ export default function Clientes() {
             className="pl-10"
           />
         </div>
+        
+        {/* Filtro por Tag */}
+        <Select value={tagFilter} onValueChange={setTagFilter}>
+          <SelectTrigger className="w-[200px]">
+            <Filter className="w-4 h-4 mr-2" />
+            <SelectValue placeholder="Filtrar por status" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Todos ({tagCounts.all})</SelectItem>
+            <SelectItem value="vip">
+              <span className="flex items-center gap-2">
+                <Sparkles className="w-3 h-3 text-amber-500" />
+                Cliente VIP ({tagCounts.vip})
+              </span>
+            </SelectItem>
+            <SelectItem value="recorrente">
+              <span className="flex items-center gap-2">
+                <Star className="w-3 h-3 text-green-600" />
+                Recorrente ({tagCounts.recorrente})
+              </span>
+            </SelectItem>
+            <SelectItem value="novo">
+              <span className="flex items-center gap-2">
+                <UserCheck className="w-3 h-3 text-blue-600" />
+                Novo ({tagCounts.novo})
+              </span>
+            </SelectItem>
+            <SelectItem value="primeiro_pedido">
+              <span className="flex items-center gap-2">
+                <User className="w-3 h-3 text-purple-600" />
+                1º Pedido ({tagCounts.primeiro_pedido})
+              </span>
+            </SelectItem>
+            <SelectItem value="em_risco">
+              <span className="flex items-center gap-2">
+                <AlertTriangle className="w-3 h-3 text-amber-600" />
+                Em Risco ({tagCounts.em_risco})
+              </span>
+            </SelectItem>
+            <SelectItem value="perdido">
+              <span className="flex items-center gap-2">
+                <UserX className="w-3 h-3 text-red-600" />
+                Perdido ({tagCounts.perdido})
+              </span>
+            </SelectItem>
+          </SelectContent>
+        </Select>
+        
         <Button 
           variant="outline" 
           onClick={() => exportToExcel(clientes, "clientes", {
@@ -310,7 +515,7 @@ export default function Clientes() {
           })}
         >
           <Download className="w-4 h-4 mr-2" />
-          Exportar Excel
+          Exportar
         </Button>
         <Button onClick={handleOpenNew}>
           <Plus className="w-4 h-4 mr-2" />
@@ -318,27 +523,77 @@ export default function Clientes() {
         </Button>
       </div>
 
-      {/* Estatísticas */}
-      <div className="grid grid-cols-3 gap-4 mb-6">
-        <div className="bg-card rounded-xl border p-4">
-          <p className="text-sm text-muted-foreground">Total de Clientes</p>
-          <p className="text-2xl font-bold">{clientes.length}</p>
+      {/* Estatísticas por Tag */}
+      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3 mb-6">
+        <div 
+          className={`bg-card rounded-xl border p-3 cursor-pointer transition-all ${tagFilter === 'vip' ? 'ring-2 ring-amber-500' : 'hover:border-amber-300'}`}
+          onClick={() => setTagFilter(tagFilter === 'vip' ? 'all' : 'vip')}
+        >
+          <div className="flex items-center gap-2">
+            <Sparkles className="w-4 h-4 text-amber-500" />
+            <span className="text-xs text-muted-foreground">VIP</span>
+          </div>
+          <p className="text-xl font-bold mt-1">{tagCounts.vip}</p>
         </div>
-        <div className="bg-card rounded-xl border p-4">
-          <p className="text-sm text-muted-foreground">Cadastrados este mês</p>
-          <p className="text-2xl font-bold">
-            {clientes.filter(c => {
-              const date = new Date(c.created_at);
-              const now = new Date();
-              return date.getMonth() === now.getMonth() && date.getFullYear() === now.getFullYear();
-            }).length}
-          </p>
+        <div 
+          className={`bg-card rounded-xl border p-3 cursor-pointer transition-all ${tagFilter === 'recorrente' ? 'ring-2 ring-green-500' : 'hover:border-green-300'}`}
+          onClick={() => setTagFilter(tagFilter === 'recorrente' ? 'all' : 'recorrente')}
+        >
+          <div className="flex items-center gap-2">
+            <Star className="w-4 h-4 text-green-600" />
+            <span className="text-xs text-muted-foreground">Recorrente</span>
+          </div>
+          <p className="text-xl font-bold mt-1">{tagCounts.recorrente}</p>
         </div>
-        <div className="bg-card rounded-xl border p-4">
-          <p className="text-sm text-muted-foreground">Com Pedidos</p>
-          <p className="text-2xl font-bold">
-            {clientes.filter(c => c.pedidos_count > 0).length}
-          </p>
+        <div 
+          className={`bg-card rounded-xl border p-3 cursor-pointer transition-all ${tagFilter === 'novo' ? 'ring-2 ring-blue-500' : 'hover:border-blue-300'}`}
+          onClick={() => setTagFilter(tagFilter === 'novo' ? 'all' : 'novo')}
+        >
+          <div className="flex items-center gap-2">
+            <UserCheck className="w-4 h-4 text-blue-600" />
+            <span className="text-xs text-muted-foreground">Novo</span>
+          </div>
+          <p className="text-xl font-bold mt-1">{tagCounts.novo}</p>
+        </div>
+        <div 
+          className={`bg-card rounded-xl border p-3 cursor-pointer transition-all ${tagFilter === 'primeiro_pedido' ? 'ring-2 ring-purple-500' : 'hover:border-purple-300'}`}
+          onClick={() => setTagFilter(tagFilter === 'primeiro_pedido' ? 'all' : 'primeiro_pedido')}
+        >
+          <div className="flex items-center gap-2">
+            <User className="w-4 h-4 text-purple-600" />
+            <span className="text-xs text-muted-foreground">1º Pedido</span>
+          </div>
+          <p className="text-xl font-bold mt-1">{tagCounts.primeiro_pedido}</p>
+        </div>
+        <div 
+          className={`bg-card rounded-xl border p-3 cursor-pointer transition-all ${tagFilter === 'em_risco' ? 'ring-2 ring-amber-500' : 'hover:border-amber-300'}`}
+          onClick={() => setTagFilter(tagFilter === 'em_risco' ? 'all' : 'em_risco')}
+        >
+          <div className="flex items-center gap-2">
+            <AlertTriangle className="w-4 h-4 text-amber-600" />
+            <span className="text-xs text-muted-foreground">Em Risco</span>
+          </div>
+          <p className="text-xl font-bold mt-1">{tagCounts.em_risco}</p>
+        </div>
+        <div 
+          className={`bg-card rounded-xl border p-3 cursor-pointer transition-all ${tagFilter === 'perdido' ? 'ring-2 ring-red-500' : 'hover:border-red-300'}`}
+          onClick={() => setTagFilter(tagFilter === 'perdido' ? 'all' : 'perdido')}
+        >
+          <div className="flex items-center gap-2">
+            <UserX className="w-4 h-4 text-red-600" />
+            <span className="text-xs text-muted-foreground">Perdido</span>
+          </div>
+          <p className="text-xl font-bold mt-1">{tagCounts.perdido}</p>
+        </div>
+        <div 
+          className={`bg-card rounded-xl border p-3 cursor-pointer transition-all ${tagFilter === 'all' ? 'ring-2 ring-primary' : 'hover:border-primary/30'}`}
+          onClick={() => setTagFilter('all')}
+        >
+          <div className="flex items-center gap-2">
+            <User className="w-4 h-4 text-muted-foreground" />
+            <span className="text-xs text-muted-foreground">Total</span>
+          </div>
+          <p className="text-xl font-bold mt-1">{tagCounts.all}</p>
         </div>
       </div>
 
@@ -359,76 +614,93 @@ export default function Clientes() {
             <TableHeader>
               <TableRow>
                 <TableHead>Cliente</TableHead>
+                <TableHead>Status</TableHead>
                 <TableHead>Telefone</TableHead>
-                <TableHead>CPF</TableHead>
-                <TableHead>Cadastrado em</TableHead>
+                <TableHead>Pedidos</TableHead>
+                <TableHead>Cadastro</TableHead>
                 <TableHead className="w-16">Ações</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {paginatedClientes.map(cliente => (
-                <TableRow key={cliente.id}>
-                  <TableCell>
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-muted overflow-hidden flex items-center justify-center">
-                        {cliente.foto ? (
-                          <img src={cliente.foto} alt={cliente.nome} className="w-full h-full object-cover" />
-                        ) : (
-                          <User className="w-5 h-5 text-muted-foreground" />
-                        )}
+              {paginatedClientes.map(cliente => {
+                const tag = getClientTag(cliente);
+                const TagIcon = tag.icon;
+                const timeSince = getTimeSinceRegistration(cliente.created_at);
+                
+                return (
+                  <TableRow key={cliente.id}>
+                    <TableCell>
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full bg-muted overflow-hidden flex items-center justify-center">
+                          {cliente.foto ? (
+                            <img src={cliente.foto} alt={cliente.nome} className="w-full h-full object-cover" />
+                          ) : (
+                            <User className="w-5 h-5 text-muted-foreground" />
+                          )}
+                        </div>
+                        <div>
+                          <p className="font-medium">{cliente.nome}</p>
+                          {cliente.email && (
+                            <p className="text-xs text-muted-foreground flex items-center gap-1">
+                              <Mail className="w-3 h-3" />
+                              {cliente.email}
+                            </p>
+                          )}
+                        </div>
                       </div>
-                      <div>
-                        <p className="font-medium">{cliente.nome}</p>
-                        {cliente.email && (
-                          <p className="text-xs text-muted-foreground flex items-center gap-1">
-                            <Mail className="w-3 h-3" />
-                            {cliente.email}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    {cliente.telefone ? (
-                      <span className="flex items-center gap-1">
-                        <Phone className="w-3 h-3 text-muted-foreground" />
-                        {cliente.telefone}
+                    </TableCell>
+                    <TableCell>
+                      <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${tag.color}`}>
+                        <TagIcon className="w-3 h-3" />
+                        {tag.tag}
                       </span>
-                    ) : "-"}
-                  </TableCell>
-                  <TableCell>
-                    {cliente.cpf || "-"}
-                  </TableCell>
-                  <TableCell>
-                    <span className="flex items-center gap-1 text-sm text-muted-foreground">
-                      <Calendar className="w-3 h-3" />
-                      {formatDate(cliente.created_at)}
-                    </span>
-                  </TableCell>
-                  <TableCell>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon" className="h-8 w-8">
-                          <MoreVertical className="w-4 h-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => handleEdit(cliente)}>
-                          <Edit className="w-4 h-4 mr-2" />
-                          Editar
-                        </DropdownMenuItem>
-                        <DropdownMenuItem 
-                          onClick={() => handleDelete(cliente)}
-                          className="text-destructive focus:text-destructive"
-                        >
-                          <Trash2 className="w-4 h-4 mr-2" />
-                          Excluir
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </TableCell>
-                </TableRow>
-              ))}
+                    </TableCell>
+                    <TableCell>
+                      {cliente.telefone ? (
+                        <span className="flex items-center gap-1">
+                          <Phone className="w-3 h-3 text-muted-foreground" />
+                          {cliente.telefone}
+                        </span>
+                      ) : "-"}
+                    </TableCell>
+                    <TableCell>
+                      <span className="font-mono text-sm">
+                        {cliente.pedidos_count || 0}
+                      </span>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex flex-col">
+                        <span className="text-xs text-muted-foreground flex items-center gap-1">
+                          <Clock className="w-3 h-3" />
+                          {timeSince}
+                        </span>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="icon" className="h-8 w-8">
+                            <MoreVertical className="w-4 h-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem onClick={() => handleEdit(cliente)}>
+                            <Edit className="w-4 h-4 mr-2" />
+                            Editar
+                          </DropdownMenuItem>
+                          <DropdownMenuItem 
+                            onClick={() => handleDelete(cliente)}
+                            className="text-destructive focus:text-destructive"
+                          >
+                            <Trash2 className="w-4 h-4 mr-2" />
+                            Excluir
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
             </TableBody>
           </Table>
           
