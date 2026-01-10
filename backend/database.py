@@ -1321,8 +1321,8 @@ def create_cliente(data: Dict) -> Dict:
         cursor.execute('''
             INSERT INTO clientes (id, nome, telefone, email, cpf, data_nascimento, genero, foto,
                                   endereco, numero, complemento, bairro, cep,
-                                  pedidos_count, total_gasto, last_order_date, orders_last_30_days, created_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                                  pedidos_count, total_gasto, last_order_date, orders_last_30_days, pontuacao, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ''', (
             cliente_id,
             data.get('nome'),
@@ -1341,6 +1341,7 @@ def create_cliente(data: Dict) -> Dict:
             data.get('total_gasto', 0),
             data.get('last_order_date'),
             data.get('orders_last_30_days', 0),
+            data.get('pontuacao', 0),
             created_at
         ))
         conn.commit()
