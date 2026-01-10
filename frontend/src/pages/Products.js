@@ -1545,7 +1545,7 @@ export default function Products() {
                                 updateRecipeItem(index, "ingredient_id", value, "ingredient")
                               }
                               placeholder="Buscar ingrediente..."
-                              onCreateNew={handleQuickIngredientCreate}
+                              onCreateNew={(name) => handleQuickIngredientCreate(name, "ingredient", index)}
                               getIngredientUnit={getIngredientUnit}
                             />
                           </div>
