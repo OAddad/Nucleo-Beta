@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { toast } from "sonner";
 import { 
   Search, Plus, Edit, Trash2, User, Phone, MapPin, Calendar, X, MoreVertical, Download, ImageOff, Mail
@@ -7,6 +7,7 @@ import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import { exportToExcel } from "../lib/utils";
+import TablePagination from "../components/TablePagination";
 import {
   Dialog,
   DialogContent,
@@ -48,6 +49,10 @@ export default function Clientes() {
   const [currentCliente, setCurrentCliente] = useState(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [clienteToDelete, setClienteToDelete] = useState(null);
+  
+  // Estados de paginação
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
   
   // Form - Novos campos
   const [nome, setNome] = useState("");
