@@ -7081,3 +7081,11 @@
 2026-01-10T20:08:36.132056+00:00 | DB_CALL get_expenses_stats | P3 | 0.47ms | success
 2026-01-10T20:08:36.132695+00:00 | DB_CALL get_all_expenses | P3 | 1.03ms | success
 2026-01-10T20:08:36.133661+00:00 | DB_CALL get_all_expense_classifications | P3 | 1.87ms | success
+2026-01-10T20:09:20.429047+00:00 | DB_CALL get_user_by_id | P3 | 1.0ms | success
+2026-01-10T20:09:20.429245+00:00 | DB_CALL get_user_by_id | P3 | 0.57ms | success
+2026-01-10T20:09:20.429501+00:00 | DB_CALL get_all_expense_classifications | P3 | 0.3ms | success
+2026-01-10T20:09:20.429951+00:00 | DB_CALL get_all_expenses | P3 | 0.64ms | success
+2026-01-10T20:09:21.119902+00:00 | DB_CALL get_user_by_id | P3 | 0.5ms | success
+2026-01-10T20:09:21.120048+00:00 | DB_CALL get_user_by_id | P3 | 0.85ms | success
+2026-01-10T20:09:21.120373+00:00 | DB_CALL get_all_expense_classifications | P3 | 0.35ms | success
+2026-01-10T20:09:21.120874+00:00 | DB_CALL get_all_expenses | P3 | 0.75ms | success

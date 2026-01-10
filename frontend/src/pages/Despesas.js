@@ -84,8 +84,7 @@ export default function Despesas() {
   const [supplierSuggestions, setSupplierSuggestions] = useState([]);
   const [showSupplierSuggestions, setShowSupplierSuggestions] = useState(false);
   
-  // State para estatísticas
-  const [stats, setStats] = useState({ total: 0, pending_count: 0, pending_value: 0, paid_count: 0, paid_value: 0 });
+  // State para estatísticas (não mais usado, agora calculamos do mês selecionado)
   
   // Form states para despesa
   const [expenseName, setExpenseName] = useState("");
