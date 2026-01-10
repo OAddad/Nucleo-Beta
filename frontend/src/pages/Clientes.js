@@ -186,6 +186,7 @@ export default function Clientes() {
   const [complemento, setComplemento] = useState("");
   const [bairro, setBairro] = useState("");
   const [cep, setCep] = useState("");
+  const [pontuacao, setPontuacao] = useState(0);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
