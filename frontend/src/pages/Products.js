@@ -1503,24 +1503,26 @@ export default function Products() {
                   </div>
                 </div>
 
-                {/* Abas principais: Ficha Técnica e Etapas */}
+                {/* Abas principais: Ficha Técnica e Etapas - Etapas oculta para RECEITA */}
                 <div className="flex gap-2 border-b pb-2">
                   <Button
                     type="button"
                     variant={activeFormTab === "ficha" ? "default" : "outline"}
                     onClick={() => setActiveFormTab("ficha")}
-                    className="flex-1"
+                    className={productType === "receita" ? "w-full" : "flex-1"}
                   >
                     Ficha Técnica
                   </Button>
-                  <Button
-                    type="button"
-                    variant={activeFormTab === "etapas" ? "default" : "outline"}
-                    onClick={() => setActiveFormTab("etapas")}
-                    className="flex-1"
-                  >
-                    Etapas (para o cliente pedir)
-                  </Button>
+                  {productType !== "receita" && (
+                    <Button
+                      type="button"
+                      variant={activeFormTab === "etapas" ? "default" : "outline"}
+                      onClick={() => setActiveFormTab("etapas")}
+                      className="flex-1"
+                    >
+                      Etapas (para o cliente pedir)
+                    </Button>
+                  )}
                 </div>
 
                 {/* Conteúdo da aba Ficha Técnica */}
