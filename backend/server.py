@@ -1359,22 +1359,79 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+# Servir arquivos estáticos do React (para modo desktop/produção)
+def setup_static_files():
+    """Configura servir arquivos estáticos do React build"""
+    # Verificar diferentes locais possíveis do build do React
+    possible_paths = [
+        Path(__file__).parent.parent / "frontend" / "build",  # Dev local
+        Path(__file__).parent / "static",  # Dentro do backend
+        Path(os.environ.get("NUCLEO_DATA_PATH", "")) / ".." / "frontend" if os.environ.get("NUCLEO_DATA_PATH") else None,
+    ]
+    
+    # Adicionar caminho do resources do Electron em produção
+    if os.environ.get("NUCLEO_DATA_PATH"):
+        # Em produção Electron, o frontend está em resources/frontend
+        import sys
+        if getattr(sys, 'frozen', False):
+            # Executável empacotado
+            base_path = Path(sys.executable).parent
+            possible_paths.insert(0, base_path / "frontend")
+            possible_paths.insert(0, base_path.parent / "frontend")
+    
+    for static_path in possible_paths:
+        if static_path and static_path.exists() and (static_path / "index.html").exists():
+            logger.info(f"[STATIC] Servindo React build de: {static_path}")
+            
+            # Montar arquivos estáticos
+            app.mount("/static", StaticFiles(directory=str(static_path / "static")), name="static")
+            
+            # Rota catch-all para SPA (deve vir depois das rotas da API)
+            @app.get("/{full_path:path}")
+            async def serve_spa(full_path: str):
+                # Se for rota da API, ignorar
+                if full_path.startswith("api/"):
+                    raise HTTPException(status_code=404)
+                
+                # Verificar se é um arquivo estático
+                file_path = static_path / full_path
+                if file_path.exists() and file_path.is_file():
+                    return FileResponse(str(file_path))
+                
+                # Retornar index.html para rotas do React
+                return FileResponse(str(static_path / "index.html"))
+            
+            return True
+    
+    logger.info("[STATIC] Nenhum build do React encontrado - modo API apenas")
+    return False
+
 
 # Criar diretórios de upload no startup
 @app.on_event("startup")
 async def startup_event():
-    upload_dir = Path("/app/backend/uploads/products")
+    # Determinar diretório base para uploads
+    data_path = os.environ.get("NUCLEO_DATA_PATH")
+    if data_path:
+        upload_dir = Path(data_path) / "uploads" / "products"
+    else:
+        upload_dir = Path("/app/backend/uploads/products")
+    
     upload_dir.mkdir(parents=True, exist_ok=True)
     
     # Inicializar banco SQLite
     await db_call(sqlite_db.init_database)
+    
+    # Configurar arquivos estáticos
+    setup_static_files()
     
     # Log status
     ing_count = await db_call(sqlite_db.count_ingredients)
     prod_count = await db_call(sqlite_db.count_products)
     user_count = await db_call(sqlite_db.count_users)
     
-    logger.info(f"[STARTUP] SQLite inicializado em: /app/backend/data_backup/nucleo.db")
+    db_path = os.environ.get("NUCLEO_DB_PATH", "/app/backend/data_backup/nucleo.db")
+    logger.info(f"[STARTUP] SQLite inicializado em: {db_path}")
     logger.info(f"[STARTUP] Ingredientes: {ing_count}, Produtos: {prod_count}, Usuários: {user_count}")
     logger.info("[STARTUP] Sistema iniciado com sucesso - 100% SQLite")
 
