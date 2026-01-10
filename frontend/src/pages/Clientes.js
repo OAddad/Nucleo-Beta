@@ -185,99 +185,89 @@ export default function Clientes() {
   const [complemento, setComplemento] = useState("");
   const [bairro, setBairro] = useState("");
   const [cep, setCep] = useState("");
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     fetchClientes();
   }, []);
 
-  const fetchClientes = () => {
-    const savedClientes = localStorage.getItem("clientes");
-    if (savedClientes) {
-      setClientes(JSON.parse(savedClientes));
+  const fetchClientes = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get(`${API}/clientes`, getAuthHeader());
+      setClientes(response.data);
+    } catch (error) {
+      console.error("Erro ao carregar clientes:", error);
+      toast.error("Erro ao carregar clientes");
+    } finally {
+      setLoading(false);
     }
   };
 
-  const saveClientes = (newClientes) => {
-    setClientes(newClientes);
-    localStorage.setItem("clientes", JSON.stringify(newClientes));
-  };
-
   // Função para carregar dados de teste
-  const loadTestData = () => {
+  const loadTestData = async () => {
     const testClientes = [
       {
-        id: "cliente-test-1",
         nome: "Maria Silva",
         telefone: "(11) 9.8765-4321",
         email: "maria.silva@email.com",
         cpf: "123.456.789-00",
         genero: "feminino",
-        created_at: new Date().toISOString(),
         pedidos_count: 0,
         total_gasto: 0,
         last_order_date: null,
         orders_last_30_days: 0
       },
       {
-        id: "cliente-test-2",
         nome: "João Santos",
         telefone: "(11) 9.1234-5678",
         email: "joao.santos@email.com",
         cpf: "987.654.321-00",
         genero: "masculino",
-        created_at: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
         pedidos_count: 1,
         total_gasto: 45.90,
         last_order_date: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
         orders_last_30_days: 1
       },
       {
-        id: "cliente-test-3",
         nome: "Ana Costa",
         telefone: "(21) 9.5555-4444",
         email: "ana.costa@email.com",
         cpf: "111.222.333-44",
         genero: "feminino",
-        created_at: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
         pedidos_count: 4,
         total_gasto: 320.50,
         last_order_date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
         orders_last_30_days: 4
       },
       {
-        id: "cliente-test-4",
         nome: "Pedro Oliveira",
         telefone: "(31) 9.7777-8888",
         email: "pedro.oliveira@email.com",
         cpf: "555.666.777-88",
         genero: "masculino",
-        created_at: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000).toISOString(),
         pedidos_count: 8,
         total_gasto: 890.00,
         last_order_date: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
         orders_last_30_days: 5
       },
       {
-        id: "cliente-test-5",
         nome: "Carla Mendes",
         telefone: "(41) 9.3333-2222",
         email: "carla.mendes@email.com",
         cpf: "999.888.777-66",
         genero: "feminino",
-        created_at: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString(),
         pedidos_count: 3,
         total_gasto: 150.00,
         last_order_date: new Date(Date.now() - 45 * 24 * 60 * 60 * 1000).toISOString(),
         orders_last_30_days: 0
       },
       {
-        id: "cliente-test-6",
         nome: "Roberto Lima",
         telefone: "(51) 9.1111-0000",
         email: "roberto.lima@email.com",
         cpf: "444.333.222-11",
         genero: "masculino",
-        created_at: new Date(Date.now() - 365 * 24 * 60 * 60 * 1000).toISOString(),
         pedidos_count: 12,
         total_gasto: 1500.00,
         last_order_date: new Date(Date.now() - 70 * 24 * 60 * 60 * 1000).toISOString(),
@@ -285,8 +275,19 @@ export default function Clientes() {
       }
     ];
     
-    saveClientes(testClientes);
-    toast.success("6 clientes de teste carregados!");
+    try {
+      setLoading(true);
+      for (const cliente of testClientes) {
+        await axios.post(`${API}/clientes`, cliente, getAuthHeader());
+      }
+      toast.success("6 clientes de teste carregados!");
+      fetchClientes();
+    } catch (error) {
+      console.error("Erro ao carregar dados de teste:", error);
+      toast.error("Erro ao carregar dados de teste");
+    } finally {
+      setLoading(false);
+    }
   };
 
   // Formatar telefone (XX) 9.XXXX-XXXX
