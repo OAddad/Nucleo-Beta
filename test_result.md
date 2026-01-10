@@ -337,6 +337,18 @@ backend:
         agent: "testing"
         comment: "✅ QUICK VALIDATION COMPLETED (Jan 10, 2026): Performed rapid validation test as requested in review. RESULTS: 1) GET /api/health ✅ Returns status 'healthy' with database path (/app/backend/data_backup/nucleo.db, 94KB, 6 tables). 2) GET / ✅ Returns React HTML (not JSON) - proper frontend serving confirmed. 3) POST /api/auth/login with admin/admin ✅ Works perfectly (test_hash/senha123 and Addad/Addad123 both work). 4) GET /api/reports/dashboard ✅ Returns data (25 ingredients, 5 products, 24 purchases, avg CMV R$ 6.08). Backend responds correctly, frontend HTML served on root route, login functional, dashboard operational. ALL VALIDATION TESTS PASSED 100%. Sistema Núcleo Desktop totalmente operacional."
 
+  - task: "Expense Classifications and Expenses CRUD"
+    implemented: true
+    working: true
+    file: "backend/server.py, backend/database.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Sistema de despesas implementado. Tabelas expense_classifications e expenses criadas. Endpoints: GET/POST/PUT/DELETE /api/expense-classifications, GET/POST/PUT/DELETE /api/expenses, PATCH /api/expenses/{id}/toggle-paid, GET /api/expenses/stats. Funcionalidades: cadastro de classificações, despesas com recorrência automática (gera 12 meses) e parcelamento automático. Testado manualmente com sucesso."
+
 frontend:
   - task: "Login Page"
     implemented: true
