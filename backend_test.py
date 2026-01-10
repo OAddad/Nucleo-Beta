@@ -62,6 +62,160 @@ class CMVMasterAPITester:
             print(f"❌ Failed - Error: {str(e)}")
             return False, {}
 
+    def test_nucleo_desktop_endpoints(self):
+        """Test specific Núcleo Desktop endpoints as requested in review"""
+        print("\n=== NÚCLEO DESKTOP ENDPOINTS TESTS ===")
+        
+        # 1. Test GET /api/health endpoint
+        print("🔍 1. Testing GET /api/health endpoint...")
+        success, health_response = self.run_test(
+            "Health check endpoint",
+            "GET", 
+            "health",
+            200
+        )
+        
+        if success:
+            print(f"   ✅ Health endpoint working")
+            print(f"   - Status: {health_response.get('status', 'N/A')}")
+            print(f"   - Timestamp: {health_response.get('timestamp', 'N/A')}")
+            
+            # Check database info
+            db_info = health_response.get('database', {})
+            if db_info:
+                print(f"   - Database path: {db_info.get('path', 'N/A')}")
+                print(f"   - Database size: {db_info.get('size_bytes', 0)} bytes")
+                print(f"   - Database tables: {db_info.get('tables', 'N/A')}")
+            
+            if health_response.get('status') == 'healthy':
+                print(f"   ✅ System is healthy")
+            else:
+                print(f"   ❌ System status is not healthy: {health_response.get('status')}")
+                return False
+        else:
+            print(f"   ❌ Health endpoint failed")
+            return False
+        
+        # 2. Test GET /api/system/settings endpoint
+        print("\n🔍 2. Testing GET /api/system/settings endpoint...")
+        success, settings_response = self.run_test(
+            "System settings endpoint",
+            "GET",
+            "system/settings", 
+            200
+        )
+        
+        if success:
+            print(f"   ✅ System settings endpoint working")
+            skip_login = settings_response.get('skip_login')
+            theme = settings_response.get('theme')
+            
+            print(f"   - skip_login: {skip_login} (type: {type(skip_login).__name__})")
+            print(f"   - theme: {theme} (type: {type(theme).__name__})")
+            
+            # Verify data types
+            if isinstance(skip_login, bool):
+                print(f"   ✅ skip_login is boolean as expected")
+            else:
+                print(f"   ❌ skip_login should be boolean, got {type(skip_login).__name__}")
+                
+            if isinstance(theme, str):
+                print(f"   ✅ theme is string as expected")
+            else:
+                print(f"   ❌ theme should be string, got {type(theme).__name__}")
+        else:
+            print(f"   ❌ System settings endpoint failed")
+            return False
+        
+        # 3. Test POST /api/auth/login with admin/admin credentials
+        print("\n🔍 3. Testing POST /api/auth/login with admin/admin credentials...")
+        success, login_response = self.run_test(
+            "Login with admin/admin",
+            "POST",
+            "auth/login",
+            200,
+            data={"username": "admin", "password": "admin"}
+        )
+        
+        if success and 'access_token' in login_response:
+            self.token = login_response['access_token']
+            self.user_id = login_response['user']['id']
+            print(f"   ✅ Admin login successful")
+            print(f"   - User role: {login_response['user']['role']}")
+            print(f"   - Username: {login_response['user']['username']}")
+            print(f"   - Token obtained: {self.token[:20]}...")
+            
+            admin_login_success = True
+        else:
+            print(f"   ❌ Admin login failed")
+            admin_login_success = False
+        
+        # 4. Test GET /api/auth/check-must-change-password (requires authentication)
+        if admin_login_success:
+            print("\n🔍 4. Testing GET /api/auth/check-must-change-password...")
+            success, password_check = self.run_test(
+                "Check must change password",
+                "GET",
+                "auth/check-must-change-password",
+                200
+            )
+            
+            if success:
+                must_change = password_check.get('must_change_password')
+                print(f"   ✅ Password check endpoint working")
+                print(f"   - must_change_password: {must_change} (type: {type(must_change).__name__})")
+                
+                if must_change is True:
+                    print(f"   ✅ First login detected - must change password")
+                elif must_change is False:
+                    print(f"   ℹ️ Password already changed or not first login")
+                else:
+                    print(f"   ❌ Unexpected must_change_password value: {must_change}")
+            else:
+                print(f"   ❌ Password check endpoint failed")
+                return False
+        else:
+            print(f"\n🔍 4. Skipping password check test - admin login failed")
+        
+        # 5. Test GET /api/system/info (requires authentication)
+        if admin_login_success:
+            print("\n🔍 5. Testing GET /api/system/info (authenticated)...")
+            success, system_info = self.run_test(
+                "System info endpoint",
+                "GET",
+                "system/info",
+                200
+            )
+            
+            if success:
+                print(f"   ✅ System info endpoint working")
+                print(f"   - Version: {system_info.get('version', 'N/A')}")
+                
+                # Check database info
+                db_info = system_info.get('database', {})
+                if db_info:
+                    print(f"   - Database path: {db_info.get('path', 'N/A')}")
+                    print(f"   - Database size: {db_info.get('size_bytes', 0)} bytes")
+                
+                # Check environment info
+                env_info = system_info.get('environment', {})
+                if env_info:
+                    print(f"   - Data path: {env_info.get('data_path', 'N/A')}")
+                    print(f"   - DB path: {env_info.get('db_path', 'N/A')}")
+                    print(f"   - Port: {env_info.get('port', 'N/A')}")
+                
+                # Check settings
+                settings = system_info.get('settings', {})
+                if settings:
+                    print(f"   - Settings: {len(settings)} configuration items")
+            else:
+                print(f"   ❌ System info endpoint failed")
+                return False
+        else:
+            print(f"\n🔍 5. Skipping system info test - admin login failed")
+        
+        return True
+
     def test_authentication(self):
         """Test authentication with Addad user as specified in review request"""
         print("\n=== AUTHENTICATION TESTS ===")
