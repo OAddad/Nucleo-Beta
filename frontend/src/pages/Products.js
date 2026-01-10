@@ -771,6 +771,9 @@ export default function Products() {
         is_insumo: isInsumo,
         is_divisible: isDivisible,
         order_steps: orderSteps,
+        recipe_yield: recipeYield ? parseFloat(recipeYield) : null,
+        recipe_yield_unit: recipeYieldUnit || null,
+        linked_ingredient_id: linkedIngredientId || null,
       };
 
       if (editMode) {
