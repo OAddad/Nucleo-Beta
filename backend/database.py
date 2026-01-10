@@ -1445,7 +1445,7 @@ def get_database_info() -> Dict:
         }
         
         for table in ["users", "ingredients", "products", "purchases", "categories", "audit_logs", 
-                      "expense_classifications", "expenses"]:
+                      "expense_classifications", "expenses", "clientes"]:
             try:
                 cursor.execute(f"SELECT COUNT(*) FROM {table}")
                 info["tables"][table] = cursor.fetchone()[0]
