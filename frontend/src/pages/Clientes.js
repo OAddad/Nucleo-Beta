@@ -288,7 +288,8 @@ export default function Clientes() {
         pedidos_count: 12,
         total_gasto: 1500.00,
         last_order_date: new Date(Date.now() - 70 * 24 * 60 * 60 * 1000).toISOString(),
-        orders_last_30_days: 0
+        orders_last_30_days: 0,
+        pontuacao: 1500
       }
     ];
     
@@ -299,6 +300,7 @@ export default function Clientes() {
       }
       toast.success("6 clientes de teste carregados!");
       fetchClientes();
+      fetchTotalPontuacao();
     } catch (error) {
       console.error("Erro ao carregar dados de teste:", error);
       toast.error("Erro ao carregar dados de teste");
