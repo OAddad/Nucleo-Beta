@@ -120,6 +120,18 @@ backend:
         agent: "testing"
         comment: "✅ WORKING: Authentication tested successfully. User registration and login working correctly. JWT token generation and validation working. Role assignment working (first user gets proprietario, others get observador). Tested with teste_admin user."
 
+  - task: "Recipe Products with Yield and Cost Calculation"
+    implemented: true
+    working: "NA"
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Implementado: 1) Novos campos em Product: recipe_yield, recipe_yield_unit, unit_cost, linked_ingredient_id 2) Função update_recipe_costs_for_ingredient que recalcula custo das receitas quando preço de ingrediente muda 3) Função update_linked_ingredient_price que atualiza preço médio do ingrediente linkado com histórico dos últimos 5 custos"
+
   - task: "User Management - CRUD Users"
     implemented: true
     working: true
