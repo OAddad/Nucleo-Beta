@@ -3554,3 +3554,9 @@
 2026-01-10T16:01:37.087314+00:00 | DB_CALL get_category_by_name | P3 | 0.07ms | success
 2026-01-10T16:01:37.284725+00:00 | DB_CALL get_user_by_id | P3 | 1.13ms | success
 2026-01-10T16:01:37.286016+00:00 | DB_CALL get_all_categories | P3 | 1.13ms | success
+2026-01-10T16:01:37.444882+00:00 | DB_CALL get_user_by_id | P3 | 0.29ms | success
+2026-01-10T16:01:37.445352+00:00 | DB_CALL get_all_ingredients | P3 | 0.3ms | success
+2026-01-10T16:01:37.453591+00:00 | DB_CALL get_user_by_id | P3 | 0.26ms | success
+2026-01-10T16:01:37.453879+00:00 | DB_CALL get_all_categories | P3 | 0.16ms | success
+2026-01-10T16:01:37.618260+00:00 | DB_CALL get_user_by_id | P3 | 0.28ms | success
+2026-01-10T16:01:37.618524+00:00 | DB_CALL get_all_categories | P3 | 0.13ms | success

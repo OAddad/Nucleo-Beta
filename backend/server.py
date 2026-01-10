@@ -225,6 +225,8 @@ class ProductCreate(BaseModel):
     is_divisible: Optional[bool] = False
     order_steps: Optional[List[OrderStep]] = []
     linked_ingredient_id: Optional[str] = None  # ID do ingrediente linkado (para receitas)
+    recipe_yield: Optional[float] = None  # Rendimento da receita (quantidade produzida)
+    recipe_yield_unit: Optional[str] = None  # Unidade do rendimento (kg ou un)
 
 class Product(BaseModel):
     model_config = ConfigDict(extra="ignore")
