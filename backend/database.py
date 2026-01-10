@@ -419,6 +419,22 @@ def init_database():
         except:
             pass  # Coluna já existe
         
+        # Migração: Adicionar coluna is_active na tabela ingredients
+        try:
+            cursor.execute("ALTER TABLE ingredients ADD COLUMN is_active INTEGER DEFAULT 1")
+            conn.commit()
+            print("[DATABASE] Coluna is_active adicionada em ingredients")
+        except:
+            pass  # Coluna já existe
+        
+        # Migração: Adicionar coluna is_active na tabela products
+        try:
+            cursor.execute("ALTER TABLE products ADD COLUMN is_active INTEGER DEFAULT 1")
+            conn.commit()
+            print("[DATABASE] Coluna is_active adicionada em products")
+        except:
+            pass  # Coluna já existe
+        
         _initialized = True
         print(f"[DATABASE] Inicializado em: {DB_PATH}")
 

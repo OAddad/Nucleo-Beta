@@ -7241,3 +7241,9 @@
 2026-01-10T20:15:35.421181+00:00 | DB_CALL count_ingredients | P3 | 0.2ms | success
 2026-01-10T20:15:35.421351+00:00 | DB_CALL count_products | P3 | 0.11ms | success
 2026-01-10T20:15:35.421483+00:00 | DB_CALL count_users | P3 | 0.08ms | success
+2026-01-10T20:15:43.663756+00:00 | DB_CALL get_user_by_id | P3 | 1.07ms | success
+2026-01-10T20:15:43.663972+00:00 | DB_CALL get_user_by_id | P3 | 0.69ms | success
+2026-01-10T20:15:43.664508+00:00 | DB_CALL get_all_ingredients | P3 | 0.6ms | success
+2026-01-10T20:15:43.665328+00:00 | DB_CALL get_all_categories | P3 | 1.28ms | success
+2026-01-10T20:15:43.830783+00:00 | DB_CALL get_user_by_id | P3 | 0.23ms | success
+2026-01-10T20:15:43.831019+00:00 | DB_CALL get_all_categories | P3 | 0.12ms | success
