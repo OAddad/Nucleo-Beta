@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { toast } from "sonner";
+import axios from "axios";
 import { 
   Search, Plus, Edit, Trash2, User, Phone, MapPin, Calendar, X, MoreVertical, Download, ImageOff, Mail, Clock, Star, AlertTriangle, UserX, UserCheck, Sparkles, Filter
 } from "lucide-react";
@@ -46,7 +47,12 @@ import {
   TableRow,
 } from "../components/ui/table";
 
-// URL relativa - funciona em qualquer domínio
+// URL da API
+const API = '/api';
+
+const getAuthHeader = () => ({
+  headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+});
 
 // Função para calcular tempo desde cadastro
 const getTimeSinceRegistration = (dateStr) => {
