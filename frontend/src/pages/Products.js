@@ -2401,6 +2401,15 @@ export default function Products() {
         </Tabs>
         </div>
       </div>
+
+      {/* Popup de Cadastro Rápido de Ingrediente */}
+      <QuickIngredientDialog
+        open={quickIngredientOpen}
+        onOpenChange={setQuickIngredientOpen}
+        initialName={quickIngredientName}
+        onSuccess={handleQuickIngredientSuccess}
+        categories={ingredientCategories}
+      />
     </div>
   );
 }
