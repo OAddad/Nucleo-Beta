@@ -1212,7 +1212,7 @@ async def initialize_categories(current_user: User = Depends(get_current_user)):
             })
             created.append(cat_name)
     
-    return {"message": f"Categorias inicializadas", "created": created}
+    return {"message": "Categorias inicializadas", "created": created}
 
 # Reports endpoints
 @api_router.get("/reports/price-history/{ingredient_id}", response_model=IngredientWithHistory)
