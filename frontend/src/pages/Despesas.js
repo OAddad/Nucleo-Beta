@@ -971,6 +971,55 @@ export default function Despesas() {
                     ))}
                   </SelectContent>
                 </Select>
+                
+                {/* Botão para criar nova classificação */}
+                {!showNewClassificationInput ? (
+                  <Button
+                    type="button"
+                    variant="link"
+                    size="sm"
+                    className="p-0 h-auto text-xs"
+                    onClick={() => setShowNewClassificationInput(true)}
+                  >
+                    <Plus className="w-3 h-3 mr-1" />
+                    Criar nova classificação
+                  </Button>
+                ) : (
+                  <div className="flex gap-2 mt-2">
+                    <Input
+                      value={newClassificationName}
+                      onChange={(e) => setNewClassificationName(e.target.value)}
+                      placeholder="Nome da nova classificação"
+                      className="h-8 text-sm"
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          e.preventDefault();
+                          handleCreateClassificationInline();
+                        }
+                      }}
+                    />
+                    <Button
+                      type="button"
+                      size="sm"
+                      className="h-8 px-2"
+                      onClick={handleCreateClassificationInline}
+                    >
+                      <Check className="w-4 h-4" />
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="h-8 px-2"
+                      onClick={() => {
+                        setShowNewClassificationInput(false);
+                        setNewClassificationName("");
+                      }}
+                    >
+                      <X className="w-4 h-4" />
+                    </Button>
+                  </div>
+                )}
               </div>
               
               {/* Fornecedor com autocomplete */}
