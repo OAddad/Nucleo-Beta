@@ -17,8 +17,6 @@ a = Analysis(
     datas=[
         # Incluir seed database para bootstrap
         ('data_backup/nucleo.db', 'data_backup'),
-        # Incluir arquivos de configuração
-        ('.env', '.'),
     ],
     hiddenimports=[
         'uvicorn',
@@ -85,7 +83,7 @@ exe = EXE(
     upx=True,
     upx_exclude=[],
     runtime_tmpdir=None,
-    console=True,  # Console para ver logs
+    console=False,  # SEM console - backend roda em background
     disable_windowed_traceback=False,
     argv_emulation=False,
     target_arch=None,
