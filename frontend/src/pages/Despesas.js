@@ -104,6 +104,7 @@ export default function Despesas() {
   const [advancedOpen, setAdvancedOpen] = useState(false);
   const [expenseIsRecurring, setExpenseIsRecurring] = useState(false);
   const [expenseRecurringPeriod, setExpenseRecurringPeriod] = useState("monthly");
+  const [expenseRecurringCount, setExpenseRecurringCount] = useState("12"); // Quantas vezes vai repetir
   const [expenseInstallments, setExpenseInstallments] = useState("");
   
   // Filtros e ordenação
