@@ -925,6 +925,20 @@ export default function Ingredients() {
                 </table>
               </div>
               
+              {/* Paginação */}
+              {filteredIngredients.length > 0 && (
+                <TablePagination
+                  currentPage={currentPage}
+                  totalItems={filteredIngredients.length}
+                  itemsPerPage={itemsPerPage}
+                  onPageChange={setCurrentPage}
+                  onItemsPerPageChange={(value) => {
+                    setItemsPerPage(value);
+                    setCurrentPage(1);
+                  }}
+                />
+              )}
+              
               {/* Nota sobre o preço médio */}
               <div className="px-4 py-3 border-t bg-muted/30 text-xs text-muted-foreground">
                 * O Preço Médio é calculado com base na <strong>média das últimas 5 compras</strong> registradas para cada item.
