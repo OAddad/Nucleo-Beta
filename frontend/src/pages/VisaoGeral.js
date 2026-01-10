@@ -3,7 +3,7 @@ import { Home, BarChart3, Package, DollarSign, Users, TrendingUp } from "lucide-
 export default function VisaoGeral() {
   return (
     <div className="p-8" data-testid="visao-geral-page">
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-7xl">
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold tracking-tight">
