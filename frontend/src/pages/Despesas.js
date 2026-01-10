@@ -336,21 +336,44 @@ export default function Despesas() {
     }
   };
   
-  const handleDeleteExpense = async () => {
+  const handleDeleteExpense = async (deleteChildren = false) => {
     if (!expenseToDelete) return;
     
     try {
       await axios.delete(
-        `${API}/expenses/${expenseToDelete.id}?delete_children=true`,
+        `${API}/expenses/${expenseToDelete.id}?delete_children=${deleteChildren}`,
         getAuthHeader()
       );
-      toast.success("Despesa excluída!");
+      toast.success(deleteChildren ? "Despesa e recorrências excluídas!" : "Despesa excluída!");
       setDeleteExpenseDialogOpen(false);
+      setDeleteRecurringDialogOpen(false);
       setExpenseToDelete(null);
       fetchExpenses();
       fetchStats();
     } catch (error) {
       toast.error(error.response?.data?.detail || "Erro ao excluir despesa");
+    }
+  };
+  
+  // Verifica se a despesa tem filhos (recorrências ou parcelas)
+  const hasChildExpenses = (expense) => {
+    if (!expense) return false;
+    // Se é a despesa pai (sem parent_expense_id) e tem recorrência ou parcelas
+    if (!expense.parent_expense_id && (expense.is_recurring || expense.installments_total > 1)) {
+      return expenses.some(e => e.parent_expense_id === expense.id);
+    }
+    return false;
+  };
+  
+  // Handler para abrir o dialog correto de exclusão
+  const handleOpenDeleteDialog = (expense) => {
+    setExpenseToDelete(expense);
+    
+    // Se a despesa tem filhos (é a despesa pai com recorrências ou parcelas)
+    if (hasChildExpenses(expense)) {
+      setDeleteRecurringDialogOpen(true);
+    } else {
+      setDeleteExpenseDialogOpen(true);
     }
   };
   
