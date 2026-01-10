@@ -521,6 +521,7 @@ export default function Products() {
     fetchProducts();
     fetchIngredients();
     fetchCategories();
+    fetchIngredientCategories();
     initializeCategories();
     loadCurrentUser();
   }, []);
@@ -539,6 +540,27 @@ export default function Products() {
     } catch (error) {
       toast.error("Erro ao carregar produtos");
     }
+  };
+
+  // Buscar categorias de ingredientes para o popup de cadastro rápido
+  const fetchIngredientCategories = async () => {
+    try {
+      const response = await axios.get(`${API}/categories`, getAuthHeader());
+      setIngredientCategories(response.data || []);
+    } catch (error) {
+      console.error("Erro ao carregar categorias de ingredientes");
+    }
+  };
+
+  // Handler para cadastro rápido de ingrediente
+  const handleQuickIngredientCreate = (initialName) => {
+    setQuickIngredientName(initialName);
+    setQuickIngredientOpen(true);
+  };
+
+  // Callback após criar ingrediente rápido
+  const handleQuickIngredientSuccess = (newIngredient) => {
+    setIngredients(prev => [...prev, newIngredient]);
   };
 
 
