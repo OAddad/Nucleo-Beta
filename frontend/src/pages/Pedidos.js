@@ -495,7 +495,22 @@ export default function Pedidos() {
               })}
             </TableBody>
           </Table>
+          
+          {/* Paginação para Lista */}
+          {filteredPedidos.length > 0 && (
+            <TablePagination
+              currentPage={currentPage}
+              totalItems={filteredPedidos.length}
+              itemsPerPage={itemsPerPage}
+              onPageChange={setCurrentPage}
+              onItemsPerPageChange={(value) => {
+                setItemsPerPage(value);
+                setCurrentPage(1);
+              }}
+            />
+          )}
         </div>
+        </>
       )}
 
       {/* Dialog Detalhes do Pedido */}
