@@ -365,7 +365,7 @@ export default function Clientes() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredClientes.map(cliente => (
+              {paginatedClientes.map(cliente => (
                 <TableRow key={cliente.id}>
                   <TableCell>
                     <div className="flex items-center gap-3">
