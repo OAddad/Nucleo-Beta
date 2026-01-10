@@ -202,6 +202,67 @@ class Category(BaseModel):
 class CategoryCreate(BaseModel):
     name: str
 
+
+# ========== EXPENSE CLASSIFICATION MODELS ==========
+class ExpenseClassificationCreate(BaseModel):
+    name: str
+
+
+class ExpenseClassification(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    name: str
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+
+# ========== EXPENSE MODELS ==========
+class ExpenseCreate(BaseModel):
+    name: str
+    classification_id: Optional[str] = None
+    classification_name: Optional[str] = None
+    supplier: Optional[str] = None
+    value: float
+    due_date: str  # Data de vencimento (YYYY-MM-DD)
+    is_paid: Optional[bool] = False
+    paid_date: Optional[str] = None
+    is_recurring: Optional[bool] = False
+    recurring_period: Optional[str] = None  # monthly, weekly, yearly
+    installments_total: Optional[int] = 0  # Total de parcelas
+    installment_number: Optional[int] = 0  # Número da parcela atual
+    parent_expense_id: Optional[str] = None  # ID da despesa pai (para parcelas)
+    attachment_url: Optional[str] = None
+    notes: Optional[str] = None
+
+
+class Expense(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    name: str
+    classification_id: Optional[str] = None
+    classification_name: Optional[str] = None
+    supplier: Optional[str] = None
+    value: float
+    due_date: str
+    is_paid: bool = False
+    paid_date: Optional[str] = None
+    is_recurring: bool = False
+    recurring_period: Optional[str] = None
+    installments_total: int = 0
+    installment_number: int = 0
+    parent_expense_id: Optional[str] = None
+    attachment_url: Optional[str] = None
+    notes: Optional[str] = None
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+
+class ExpenseStats(BaseModel):
+    total: int
+    pending_count: int
+    pending_value: float
+    paid_count: int
+    paid_value: float
+
+
 class OrderStepItem(BaseModel):
     product_id: str  # ID do produto
     product_name: Optional[str] = ""  # Nome do produto (para exibição)
