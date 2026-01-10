@@ -1239,59 +1239,75 @@ export default function Despesas() {
         
         {/* Dialog Confirmar Exclusão Despesa (simples) */}
         <AlertDialog open={deleteExpenseDialogOpen} onOpenChange={setDeleteExpenseDialogOpen}>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Excluir Despesa?</AlertDialogTitle>
-              <AlertDialogDescription>
-                Tem certeza que deseja excluir a despesa "{expenseToDelete?.name}"? 
-                Esta ação não pode ser desfeita.
+          <AlertDialogContent className="sm:max-w-md">
+            <AlertDialogHeader className="text-center sm:text-center">
+              <div className="mx-auto w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center mb-4">
+                <Trash2 className="w-6 h-6 text-red-600" />
+              </div>
+              <AlertDialogTitle className="text-xl">Excluir Despesa</AlertDialogTitle>
+              <AlertDialogDescription className="text-center">
+                Tem certeza que deseja excluir a despesa{" "}
+                <span className="font-semibold text-foreground">"{expenseToDelete?.name}"</span>?
+                <br />
+                <span className="text-xs mt-2 block">Esta ação não pode ser desfeita.</span>
               </AlertDialogDescription>
             </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Cancelar</AlertDialogCancel>
-              <AlertDialogAction onClick={() => handleDeleteExpense(false)} className="bg-destructive text-destructive-foreground">
+            <AlertDialogFooter className="sm:justify-center gap-2 mt-4">
+              <AlertDialogCancel className="sm:w-32">Cancelar</AlertDialogCancel>
+              <AlertDialogAction 
+                onClick={() => handleDeleteExpense(false)} 
+                className="bg-red-600 hover:bg-red-700 sm:w-32"
+              >
                 Excluir
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
         
-        {/* Dialog Confirmar Exclusão Despesa Recorrente/Parcelada - 3 opções */}
+        {/* Dialog Confirmar Exclusão Despesa Recorrente/Parcelada */}
         <AlertDialog open={deleteRecurringDialogOpen} onOpenChange={setDeleteRecurringDialogOpen}>
-          <AlertDialogContent className="sm:max-w-md">
-            <AlertDialogHeader>
-              <AlertDialogTitle>Excluir Despesa Recorrente</AlertDialogTitle>
-              <AlertDialogDescription>
-                A despesa "<strong>{expenseToDelete?.name}</strong>" é uma despesa recorrente.
-                O que deseja fazer?
+          <AlertDialogContent className="sm:max-w-lg">
+            <AlertDialogHeader className="text-center sm:text-center">
+              <div className="mx-auto w-12 h-12 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center mb-4">
+                <RefreshCw className="w-6 h-6 text-amber-600" />
+              </div>
+              <AlertDialogTitle className="text-xl">Excluir Despesa Recorrente</AlertDialogTitle>
+              <AlertDialogDescription className="text-center">
+                A despesa <span className="font-semibold text-foreground">"{expenseToDelete?.name}"</span> faz parte de uma série recorrente.
               </AlertDialogDescription>
             </AlertDialogHeader>
-            <div className="flex flex-col gap-3 mt-4">
-              <Button
-                variant="outline"
-                className="w-full justify-center"
+            
+            <div className="grid gap-3 py-4">
+              <button
                 onClick={() => handleDeleteExpense(false)}
+                className="flex items-center gap-4 p-4 rounded-lg border-2 border-border hover:border-primary hover:bg-primary/5 transition-all text-left group"
               >
-                Deletar somente esta despesa
-              </Button>
-              <Button
-                variant="destructive"
-                className="w-full justify-center"
+                <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center group-hover:bg-primary/10">
+                  <Trash2 className="w-5 h-5 text-muted-foreground group-hover:text-primary" />
+                </div>
+                <div className="flex-1">
+                  <p className="font-medium">Excluir somente esta</p>
+                  <p className="text-sm text-muted-foreground">Mantém as outras despesas da série</p>
+                </div>
+              </button>
+              
+              <button
                 onClick={() => handleDeleteExpense(true)}
+                className="flex items-center gap-4 p-4 rounded-lg border-2 border-red-200 dark:border-red-900 bg-red-50 dark:bg-red-950/30 hover:border-red-400 hover:bg-red-100 dark:hover:bg-red-950/50 transition-all text-left group"
               >
-                Deletar todas as despesas recorrentes
-              </Button>
-              <Button
-                variant="ghost"
-                className="w-full justify-center"
-                onClick={() => {
-                  setDeleteRecurringDialogOpen(false);
-                  setExpenseToDelete(null);
-                }}
-              >
-                Cancelar
-              </Button>
+                <div className="w-10 h-10 rounded-full bg-red-100 dark:bg-red-900/50 flex items-center justify-center">
+                  <AlertCircle className="w-5 h-5 text-red-600" />
+                </div>
+                <div className="flex-1">
+                  <p className="font-medium text-red-700 dark:text-red-400">Excluir todas as recorrentes</p>
+                  <p className="text-sm text-red-600/70 dark:text-red-400/70">Esta e todas as despesas futuras serão excluídas</p>
+                </div>
+              </button>
             </div>
+            
+            <AlertDialogFooter className="sm:justify-center">
+              <AlertDialogCancel className="w-full sm:w-auto">Cancelar</AlertDialogCancel>
+            </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
       </div>
