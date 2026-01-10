@@ -788,6 +788,12 @@ export default function Clientes() {
                       </span>
                     </TableCell>
                     <TableCell>
+                      <span className="font-mono text-sm flex items-center gap-1">
+                        <Award className="w-3 h-3 text-purple-500" />
+                        {(cliente.pontuacao || 0).toLocaleString('pt-BR')}
+                      </span>
+                    </TableCell>
+                    <TableCell>
                       <div className="flex flex-col">
                         <span className="text-xs text-muted-foreground flex items-center gap-1">
                           <Clock className="w-3 h-3" />
