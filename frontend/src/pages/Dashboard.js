@@ -88,6 +88,7 @@ export default function Dashboard({ setIsAuthenticated }) {
     expanded: stockControlExpanded,
     toggle: () => setStockControlExpanded(!stockControlExpanded),
     children: [
+      { path: "/estoque/relatorio", label: "Relatório de Estoque", icon: PieChart },
       { path: "/produtos", label: "Produtos", icon: FileText },
       { path: "/estoque", label: "Estoque", icon: Package },
       { path: "/compras", label: "Compras", icon: ShoppingCart },
