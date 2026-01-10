@@ -322,6 +322,29 @@ def init_database():
             )
         ''')
         
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS clientes (
+                id TEXT PRIMARY KEY,
+                nome TEXT NOT NULL,
+                telefone TEXT,
+                email TEXT,
+                cpf TEXT,
+                data_nascimento TEXT,
+                genero TEXT,
+                foto TEXT,
+                endereco TEXT,
+                numero TEXT,
+                complemento TEXT,
+                bairro TEXT,
+                cep TEXT,
+                pedidos_count INTEGER DEFAULT 0,
+                total_gasto REAL DEFAULT 0,
+                last_order_date TEXT,
+                orders_last_30_days INTEGER DEFAULT 0,
+                created_at TEXT
+            )
+        ''')
+        
         # Migrações
         try:
             cursor.execute("SELECT code FROM ingredients LIMIT 1")
