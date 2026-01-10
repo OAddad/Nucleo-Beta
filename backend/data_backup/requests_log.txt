@@ -4994,3 +4994,7 @@
 2026-01-10T17:53:23.514309+00:00 | DB_CALL get_all_categories | P3 | 0.14ms | success
 2026-01-10T17:53:23.673833+00:00 | DB_CALL get_user_by_id | P3 | 0.24ms | success
 2026-01-10T17:53:23.674141+00:00 | DB_CALL get_all_categories | P3 | 0.18ms | success
+2026-01-10T17:53:34.866719+00:00 | DB_CALL get_user_by_id | P3 | 1.13ms | success
+2026-01-10T17:53:34.866923+00:00 | DB_CALL get_user_by_id | P3 | 0.66ms | success
+2026-01-10T17:53:34.867316+00:00 | DB_CALL get_all_ingredients | P3 | 0.32ms | success
+2026-01-10T17:53:34.868113+00:00 | DB_CALL get_all_purchases | P3 | 1.24ms | success
