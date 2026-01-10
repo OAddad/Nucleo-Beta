@@ -8136,3 +8136,8 @@
 2026-01-10T21:14:37.486426+00:00 | DB_CALL get_user_by_id | P3 | 0.26ms | success
 2026-01-10T21:14:37.492512+00:00 | DB_CALL create_cliente | P3 | 5.85ms | success
 2026-01-10T21:14:37.495192+00:00 | DB_CALL create_audit_log | P3 | 2.52ms | success
+2026-01-10T21:14:57.343090+00:00 | DB_CALL get_user_by_username | P3 | 0.23ms | success
+2026-01-10T21:14:57.366758+00:00 | DB_CALL get_user_by_id | P3 | 0.26ms | success
+2026-01-10T21:14:57.367068+00:00 | DB_CALL get_cliente_by_id | P3 | 0.14ms | success
+2026-01-10T21:14:57.369929+00:00 | DB_CALL delete_cliente | P3 | 2.77ms | success
+2026-01-10T21:14:57.372370+00:00 | DB_CALL create_audit_log | P3 | 2.3ms | success
