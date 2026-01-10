@@ -1155,6 +1155,17 @@ export default function Products() {
   };
 
   const sortedProducts = getSortedProducts();
+  
+  // Produtos paginados
+  const paginatedProducts = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    return sortedProducts.slice(startIndex, startIndex + itemsPerPage);
+  }, [sortedProducts, currentPage, itemsPerPage]);
+
+  // Reset página quando filtros mudam
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [sortBy, filterPhoto, filterDescription, filterCategory, performanceFilter]);
 
   return (
     <div className="p-8" data-testid="products-page">
