@@ -785,7 +785,25 @@ def get_all_purchases() -> List[Dict]:
         conn = get_connection()
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM purchases ORDER BY purchase_date DESC")
-        return [dict(row) for row in cursor.fetchall()]
+        rows = []
+        for row in cursor.fetchall():
+            r = dict(row)
+            r['is_paid'] = bool(r.get('is_paid', 1))
+            rows.append(r)
+        return rows
+
+
+def get_purchase_by_id(purchase_id: str) -> Optional[Dict]:
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM purchases WHERE id = ?", (purchase_id,))
+        row = cursor.fetchone()
+        if row:
+            r = dict(row)
+            r['is_paid'] = bool(r.get('is_paid', 1))
+            return r
+        return None
 
 
 def create_purchase(data: Dict) -> Dict:
@@ -797,15 +815,45 @@ def create_purchase(data: Dict) -> Dict:
         
         cursor.execute('''
             INSERT INTO purchases (id, batch_id, supplier, ingredient_id, ingredient_name,
-                                  ingredient_unit, quantity, price, unit_price, purchase_date)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                                  ingredient_unit, quantity, price, unit_price, purchase_date,
+                                  is_paid, due_date, expense_id)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ''', (purchase_id, data.get('batch_id'), data.get('supplier'), data.get('ingredient_id'),
               data.get('ingredient_name'), data.get('ingredient_unit'), data.get('quantity'),
               data.get('price'), data.get('unit_price'),
-              data.get('purchase_date', datetime.now(timezone.utc).isoformat())))
+              data.get('purchase_date', datetime.now(timezone.utc).isoformat()),
+              1 if data.get('is_paid', True) else 0,
+              data.get('due_date'),
+              data.get('expense_id')))
         conn.commit()
         
         return data
+
+
+def update_purchase_payment(batch_id: str, is_paid: bool, due_date: str = None, expense_id: str = None) -> bool:
+    """Atualiza status de pagamento de todas as compras de um lote"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute('''
+            UPDATE purchases SET is_paid = ?, due_date = ?, expense_id = ?
+            WHERE batch_id = ?
+        ''', (1 if is_paid else 0, due_date, expense_id, batch_id))
+        conn.commit()
+        return cursor.rowcount > 0
+
+
+def get_purchases_by_batch(batch_id: str) -> List[Dict]:
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM purchases WHERE batch_id = ?", (batch_id,))
+        rows = []
+        for row in cursor.fetchall():
+            r = dict(row)
+            r['is_paid'] = bool(r.get('is_paid', 1))
+            rows.append(r)
+        return rows
 
 
 def delete_purchases_by_batch(batch_id: str) -> bool:
