@@ -206,6 +206,15 @@ export default function Clientes() {
     }
   };
 
+  const fetchTotalPontuacao = async () => {
+    try {
+      const response = await axios.get(`${API}/clientes/stats/pontuacao`, getAuthHeader());
+      setTotalPontuacao(response.data.total_pontuacao || 0);
+    } catch (error) {
+      console.error("Erro ao carregar pontuação:", error);
+    }
+  };
+
   // Função para carregar dados de teste
   const loadTestData = async () => {
     const testClientes = [
