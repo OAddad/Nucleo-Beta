@@ -1642,34 +1642,35 @@ def main():
     print(f"Success rate: {(tester.tests_passed/tester.tests_run)*100:.1f}%" if tester.tests_run > 0 else "No tests run")
     
     # Analyze results
-    print(f"\n🔍 NÚCLEO DESKTOP ANALYSIS:")
+    print(f"\n🔍 RECIPE FUNCTIONALITY ANALYSIS:")
     if not failed_tests:
-        print(f"✅ NÚCLEO DESKTOP ENDPOINTS WORKING:")
-        print(f"   - Health endpoint returns healthy status")
-        print(f"   - System settings endpoint returns proper data types")
-        print(f"   - Admin login with admin/admin works")
-        print(f"   - Password change check works")
-        print(f"   - System info endpoint works with authentication")
-        print(f"   - All backend APIs are functional")
+        print(f"✅ RECIPE PRODUCTS WITH YIELD WORKING:")
+        print(f"   - New recipe fields (recipe_yield, recipe_yield_unit, unit_cost, linked_ingredient_id) present in Product model")
+        print(f"   - Recipe product creation with yield calculation working")
+        print(f"   - Unit cost calculation (CMV / recipe_yield) working correctly")
+        print(f"   - Recipe product update with yield recalculation working")
+        print(f"   - Linked ingredient functionality working")
+        print(f"   - All recipe backend APIs are functional")
     else:
         print(f"❌ FAILED TESTS:")
         for failed in failed_tests:
             print(f"   - {failed}")
     
-    # Additional notes about Núcleo Desktop
+    # Additional notes about Recipe functionality
     print(f"\n📝 IMPORTANT NOTES:")
-    print(f"   ℹ️ Núcleo Desktop system endpoints tested")
+    print(f"   ℹ️ Recipe functionality with yield and cost calculation tested")
     print(f"   ℹ️ Backend running on http://localhost:8001")
-    print(f"   ℹ️ Default admin credentials: admin/admin")
-    print(f"   ℹ️ System uses SQLite database")
-    print(f"   ℹ️ Authentication required for most endpoints")
+    print(f"   ℹ️ Authentication with Addad/Addad123 credentials")
+    print(f"   ℹ️ New fields: recipe_yield, recipe_yield_unit, unit_cost, linked_ingredient_id")
+    print(f"   ℹ️ Unit cost automatically calculated as CMV / recipe_yield")
+    print(f"   ℹ️ Recipe products can be linked to ingredients in stock")
     
     if failed_tests:
         return 1
     else:
-        print("\n✅ ALL NÚCLEO DESKTOP TESTS PASSED!")
-        print("🎉 Núcleo Desktop endpoints are working correctly!")
-        print("💾 System is fully operational!")
+        print("\n✅ ALL RECIPE TESTS PASSED!")
+        print("🎉 Recipe products with yield and cost calculation working correctly!")
+        print("💾 New recipe functionality is fully operational!")
         return 0
 
 if __name__ == "__main__":
