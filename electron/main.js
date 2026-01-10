@@ -317,19 +317,17 @@ function createWindow(port) {
 
 // Mostrar erro
 function showError(title, message) {
-  dialog.showMessageBoxSync({
+  const result = dialog.showMessageBoxSync({
     type: 'error',
     title: title,
     message: message,
     buttons: ['OK', 'Abrir Logs'],
     defaultId: 0
-  }).then((result) => {
-    if (result.response === 1) {
-      shell.openPath(logsPath);
-    }
-  }).catch(() => {
-    // Dialog sync
   });
+  
+  if (result === 1) {
+    shell.openPath(logsPath);
+  }
 }
 
 // IPC Handlers
