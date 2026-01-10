@@ -90,6 +90,10 @@ export default function Purchases() {
   const [totalPrice, setTotalPrice] = useState("");
   const [loading, setLoading] = useState(false);
 
+  // Estados de paginação
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+
   useEffect(() => {
     fetchPurchases();
     fetchIngredients();
