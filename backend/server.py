@@ -147,6 +147,7 @@ class Ingredient(BaseModel):
     stock_min: float = 0.0
     stock_max: float = 0.0
     is_recipe: bool = False
+    is_active: bool = True  # Se o ingrediente está ativo
     recipe_cost_history: Optional[List[dict]] = []  # Histórico dos últimos 5 custos de receita
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
