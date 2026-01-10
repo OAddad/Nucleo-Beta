@@ -221,12 +221,13 @@ export default function Purchases() {
 
   // Buscar o último preço pago por um ingrediente
   const getLastPriceForIngredient = (ingredientId) => {
-    if (!ingredientId) return null;
+    if (!ingredientId || !purchaseBatches || !Array.isArray(purchaseBatches)) return null;
     
     let lastPurchase = null;
     let lastDate = null;
     
     purchaseBatches.forEach(batch => {
+      if (!batch || !batch.purchases) return;
       batch.purchases.forEach(purchase => {
         if (purchase.ingredient_id === ingredientId) {
           const purchaseDate = new Date(batch.purchase_date);
