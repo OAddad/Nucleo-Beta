@@ -1356,52 +1356,110 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# Servir arquivos estáticos do React (para modo desktop/produção)
+
+def get_frontend_path():
+    """
+    Localiza o frontend build de forma robusta.
+    
+    PRIORIDADE:
+    1. NUCLEO_FRONTEND_PATH (definido pelo Electron)
+    2. sys._MEIPASS (PyInstaller bundle)
+    3. Diretório ao lado do executável
+    4. ../frontend/build (desenvolvimento)
+    """
+    import sys
+    
+    # 1. Variável de ambiente do Electron
+    env_path = os.environ.get("NUCLEO_FRONTEND_PATH")
+    if env_path:
+        p = Path(env_path)
+        if p.exists() and (p / "index.html").exists():
+            logger.info(f"[FRONTEND] Usando NUCLEO_FRONTEND_PATH: {p}")
+            return p
+    
+    # 2. PyInstaller frozen
+    if getattr(sys, 'frozen', False):
+        # Caminho do resources (Electron production)
+        exe_dir = Path(sys.executable).parent
+        
+        # Tentar ../frontend (resources path)
+        p = exe_dir.parent / "frontend"
+        if p.exists() and (p / "index.html").exists():
+            logger.info(f"[FRONTEND] Usando resources/frontend: {p}")
+            return p
+        
+        # Tentar ao lado do exe
+        p = exe_dir / "frontend"
+        if p.exists() and (p / "index.html").exists():
+            logger.info(f"[FRONTEND] Usando exe_dir/frontend: {p}")
+            return p
+    
+    # 3. Desenvolvimento
+    p = Path(__file__).parent.parent / "frontend" / "build"
+    if p.exists() and (p / "index.html").exists():
+        logger.info(f"[FRONTEND] Usando dev frontend/build: {p}")
+        return p
+    
+    logger.warning("[FRONTEND] Nenhum frontend encontrado!")
+    return None
+
+
+# Frontend path global
+FRONTEND_PATH = None
+
+
 def setup_static_files():
     """Configura servir arquivos estáticos do React build"""
-    # Verificar diferentes locais possíveis do build do React
-    possible_paths = [
-        Path(__file__).parent.parent / "frontend" / "build",  # Dev local
-        Path(__file__).parent / "static",  # Dentro do backend
-        Path(os.environ.get("NUCLEO_DATA_PATH", "")) / ".." / "frontend" if os.environ.get("NUCLEO_DATA_PATH") else None,
-    ]
+    global FRONTEND_PATH
     
-    # Adicionar caminho do resources do Electron em produção
-    if os.environ.get("NUCLEO_DATA_PATH"):
-        # Em produção Electron, o frontend está em resources/frontend
-        import sys
-        if getattr(sys, 'frozen', False):
-            # Executável empacotado
-            base_path = Path(sys.executable).parent
-            possible_paths.insert(0, base_path / "frontend")
-            possible_paths.insert(0, base_path.parent / "frontend")
+    FRONTEND_PATH = get_frontend_path()
     
-    for static_path in possible_paths:
-        if static_path and static_path.exists() and (static_path / "index.html").exists():
-            logger.info(f"[STATIC] Servindo React build de: {static_path}")
-            
-            # Montar arquivos estáticos
-            app.mount("/static", StaticFiles(directory=str(static_path / "static")), name="static")
-            
-            # Rota catch-all para SPA (deve vir depois das rotas da API)
-            @app.get("/{full_path:path}")
-            async def serve_spa(full_path: str):
-                # Se for rota da API, ignorar
-                if full_path.startswith("api/"):
-                    raise HTTPException(status_code=404)
-                
-                # Verificar se é um arquivo estático
-                file_path = static_path / full_path
-                if file_path.exists() and file_path.is_file():
-                    return FileResponse(str(file_path))
-                
-                # Retornar index.html para rotas do React
-                return FileResponse(str(static_path / "index.html"))
-            
-            return True
+    if not FRONTEND_PATH:
+        logger.warning("[STATIC] Frontend não encontrado - apenas API disponível")
+        return False
     
-    logger.info("[STATIC] Nenhum build do React encontrado - modo API apenas")
-    return False
+    logger.info(f"[STATIC] Servindo React de: {FRONTEND_PATH}")
+    
+    # Montar /static
+    static_dir = FRONTEND_PATH / "static"
+    if static_dir.exists():
+        app.mount("/static", StaticFiles(directory=str(static_dir)), name="static")
+        logger.info(f"[STATIC] /static montado de: {static_dir}")
+    
+    return True
+
+
+# Rota raiz - serve index.html
+@app.get("/")
+async def serve_root():
+    """Serve o index.html do React"""
+    if FRONTEND_PATH and (FRONTEND_PATH / "index.html").exists():
+        return FileResponse(str(FRONTEND_PATH / "index.html"))
+    return {"error": "Frontend não encontrado", "api": "/api/health"}
+
+
+# Catch-all para rotas do React (SPA)
+@app.get("/{full_path:path}")
+async def serve_spa(full_path: str):
+    """Serve arquivos estáticos ou index.html para rotas do React"""
+    # Ignorar rotas da API
+    if full_path.startswith("api"):
+        raise HTTPException(status_code=404, detail="Not found")
+    
+    if not FRONTEND_PATH:
+        raise HTTPException(status_code=404, detail="Frontend não disponível")
+    
+    # Verificar se é arquivo estático
+    file_path = FRONTEND_PATH / full_path
+    if file_path.exists() and file_path.is_file():
+        return FileResponse(str(file_path))
+    
+    # Retornar index.html para rotas do React (SPA)
+    index_path = FRONTEND_PATH / "index.html"
+    if index_path.exists():
+        return FileResponse(str(index_path))
+    
+    raise HTTPException(status_code=404, detail="Página não encontrada")
 
 
 # Criar diretórios de upload no startup
