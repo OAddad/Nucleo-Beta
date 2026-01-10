@@ -5160,3 +5160,7 @@
 2026-01-10T19:08:50.035983+00:00 | DB_CALL count_ingredients | P3 | 0.22ms | success
 2026-01-10T19:08:50.036197+00:00 | DB_CALL count_products | P3 | 0.15ms | success
 2026-01-10T19:08:50.036343+00:00 | DB_CALL count_users | P3 | 0.09ms | success
+2026-01-10T19:09:12.593699+00:00 | DB_CALL init_database | P3 | 2.53ms | success
+2026-01-10T19:09:12.594158+00:00 | DB_CALL count_ingredients | P3 | 0.23ms | success
+2026-01-10T19:09:12.594335+00:00 | DB_CALL count_products | P3 | 0.12ms | success
+2026-01-10T19:09:12.594476+00:00 | DB_CALL count_users | P3 | 0.09ms | success

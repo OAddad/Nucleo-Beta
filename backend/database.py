@@ -1154,9 +1154,13 @@ def get_database_info() -> Dict:
             "tables": {}
         }
         
-        for table in ["users", "ingredients", "products", "purchases", "categories", "audit_logs"]:
-            cursor.execute(f"SELECT COUNT(*) FROM {table}")
-            info["tables"][table] = cursor.fetchone()[0]
+        for table in ["users", "ingredients", "products", "purchases", "categories", "audit_logs", 
+                      "expense_classifications", "expenses"]:
+            try:
+                cursor.execute(f"SELECT COUNT(*) FROM {table}")
+                info["tables"][table] = cursor.fetchone()[0]
+            except:
+                info["tables"][table] = 0
         
         return info
 
