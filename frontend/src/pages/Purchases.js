@@ -988,8 +988,16 @@ export default function Purchases() {
                         <div className="col-span-3 text-muted-foreground">
                           {formatDate(batch.purchase_date)}
                         </div>
-                        <div className="col-span-3 font-medium">
+                        <div className="col-span-3 font-medium flex items-center gap-2">
                           {batch.supplier || "Sem fornecedor"}
+                          {/* Indicador de status de pagamento */}
+                          {batch.is_paid === false && (
+                            <span className="px-2 py-0.5 text-xs bg-amber-100 text-amber-700 rounded-full flex items-center gap-1">
+                              <AlertCircle className="w-3 h-3" />
+                              A pagar
+                              {batch.due_date && ` - ${new Date(batch.due_date + "T00:00:00").toLocaleDateString("pt-BR")}`}
+                            </span>
+                          )}
                         </div>
                         <div className="col-span-2 text-right font-mono">
                           {batch.total_quantity.toFixed(2)}
@@ -1006,6 +1014,23 @@ export default function Purchases() {
                         </div>
                       </div>
                       <div className="flex gap-2 ml-4">
+                        {/* Botão de toggle pagamento */}
+                        <Button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleTogglePaymentStatus(batch);
+                          }}
+                          variant="ghost"
+                          size="sm"
+                          className={batch.is_paid === false ? "text-amber-600 hover:text-amber-700 hover:bg-amber-50" : "text-green-600 hover:text-green-700 hover:bg-green-50"}
+                          title={batch.is_paid === false ? "Marcar como paga" : "Marcar como pendente"}
+                        >
+                          {batch.is_paid === false ? (
+                            <AlertCircle className="w-4 h-4" strokeWidth={1.5} />
+                          ) : (
+                            <CheckCircle2 className="w-4 h-4" strokeWidth={1.5} />
+                          )}
+                        </Button>
                         <Button
                           data-testid={`edit-batch-${batch.batch_id}`}
                           onClick={() => handleEdit(batch)}
