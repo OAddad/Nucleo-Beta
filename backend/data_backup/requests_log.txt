@@ -4681,3 +4681,5 @@
 2026-01-10T17:20:11.997811+00:00 | DB_CALL get_all_products | P3 | 1.12ms | success
 2026-01-10T17:20:11.998453+00:00 | DB_CALL get_user_by_id | P3 | 1.12ms | success
 2026-01-10T17:20:11.998678+00:00 | DB_CALL get_all_categories | P3 | 0.14ms | success
+2026-01-10T17:23:28.222555+00:00 | DB_CALL get_user_by_id | P3 | 0.36ms | success
+2026-01-10T17:23:28.223001+00:00 | DB_CALL get_all_purchases | P3 | 0.3ms | success
