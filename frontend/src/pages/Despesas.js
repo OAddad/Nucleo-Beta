@@ -380,6 +380,7 @@ export default function Despesas() {
       fetchExpenses();
       fetchStats();
     } catch (error) {
+      console.error("Erro ao excluir despesa:", error);
       toast.error(error.response?.data?.detail || "Erro ao excluir despesa");
     }
   };
@@ -387,11 +388,20 @@ export default function Despesas() {
   // Verifica se a despesa tem filhos (recorrências ou parcelas)
   const hasChildExpenses = (expense) => {
     if (!expense) return false;
+    
     // Se é a despesa pai (sem parent_expense_id) e tem recorrência ou parcelas
     if (!expense.parent_expense_id && (expense.is_recurring || expense.installments_total > 1)) {
-      return expenses.some(e => e.parent_expense_id === expense.id);
+      // Verificar se realmente existem filhos
+      const children = expenses.filter(e => e.parent_expense_id === expense.id);
+      return children.length > 0;
     }
     return false;
+  };
+  
+  // Conta quantas despesas filhas existem
+  const countChildExpenses = (expense) => {
+    if (!expense) return 0;
+    return expenses.filter(e => e.parent_expense_id === expense.id).length;
   };
   
   // Handler para abrir o dialog correto de exclusão
@@ -399,7 +409,10 @@ export default function Despesas() {
     setExpenseToDelete(expense);
     
     // Se a despesa tem filhos (é a despesa pai com recorrências ou parcelas)
-    if (hasChildExpenses(expense)) {
+    const hasChildren = hasChildExpenses(expense);
+    console.log("Deletando despesa:", expense.name, "hasChildren:", hasChildren, "is_recurring:", expense.is_recurring, "installments:", expense.installments_total);
+    
+    if (hasChildren) {
       setDeleteRecurringDialogOpen(true);
     } else {
       setDeleteExpenseDialogOpen(true);
