@@ -259,7 +259,10 @@ def init_database():
                 quantity REAL,
                 price REAL,
                 unit_price REAL,
-                purchase_date TEXT
+                purchase_date TEXT,
+                is_paid INTEGER DEFAULT 1,
+                due_date TEXT,
+                expense_id TEXT
             )
         ''')
         
