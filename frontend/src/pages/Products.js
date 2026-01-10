@@ -597,10 +597,13 @@ export default function Products() {
   };
 
   // Auto-marcar insumo e divisível quando o tipo é "receita"
+  // Também garantir que a aba ativa seja "ficha" (receitas não têm etapas)
   useEffect(() => {
     if (productType === "receita") {
       setIsInsumo(true);
       setIsDivisible(true);
+      setActiveFormTab("ficha"); // Receitas não têm aba de etapas
+      setSalePrice(""); // Limpar preço de venda
     }
   }, [productType]);
 
