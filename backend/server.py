@@ -1837,24 +1837,51 @@ async def toggle_expense_paid(expense_id: str, current_user: User = Depends(get_
 
 @api_router.delete("/expenses/{expense_id}")
 async def delete_expense(expense_id: str, delete_children: bool = False, current_user: User = Depends(get_current_user)):
-    """Deleta uma despesa"""
+    """Deleta uma despesa. Se delete_children=true e é recorrente/parcelada, deleta esta e todas as futuras."""
     check_role(current_user, ["proprietario", "administrador"])
     
     expense = await db_call(sqlite_db.get_expense_by_id, expense_id)
     if not expense:
         raise HTTPException(status_code=404, detail="Despesa não encontrada")
     
-    # Se pediu para deletar filhos (parcelas/recorrentes)
-    if delete_children:
+    deleted_count = 1
+    
+    # Se pediu para deletar sequência (recorrentes ou parcelas futuras)
+    if delete_children and (expense.get("is_recurring") or expense.get("installments_total", 0) > 1):
         all_expenses = await db_call(sqlite_db.get_all_expenses)
-        children = [e for e in all_expenses if e.get("parent_expense_id") == expense_id]
-        for child in children:
-            await db_call(sqlite_db.delete_expense, child["id"])
+        
+        # Encontrar despesas relacionadas (mesmo nome base, mesma classificação, data >= data atual)
+        expense_due_date = expense.get("due_date", "")
+        expense_name_base = expense.get("name", "").split(" (")[0]  # Remove " (1/3)" do nome se tiver
+        expense_classification = expense.get("classification_id")
+        
+        # Filtrar despesas futuras da mesma série
+        related_expenses = []
+        for e in all_expenses:
+            if e["id"] == expense_id:
+                continue
+            
+            e_name_base = e.get("name", "").split(" (")[0]
+            e_classification = e.get("classification_id")
+            e_due_date = e.get("due_date", "")
+            
+            # Mesmo nome base, mesma classificação, data >= data da despesa atual
+            if (e_name_base == expense_name_base and 
+                e_classification == expense_classification and
+                e_due_date >= expense_due_date and
+                (e.get("is_recurring") or e.get("installments_total", 0) > 1 or e.get("parent_expense_id"))):
+                related_expenses.append(e)
+        
+        # Deletar todas as relacionadas
+        for related in related_expenses:
+            await db_call(sqlite_db.delete_expense, related["id"])
+            deleted_count += 1
     
+    # Deletar a despesa principal
     await db_call(sqlite_db.delete_expense, expense_id)
-    await log_audit("DELETE", "expense", expense["name"], current_user, "alta")
+    await log_audit("DELETE", "expense", f"{expense['name']} ({deleted_count} despesas)", current_user, "alta")
     
-    return {"message": "Despesa deletada"}
+    return {"message": "Despesa(s) deletada(s)", "deleted_count": deleted_count}
 
 
 # Reports endpoints
