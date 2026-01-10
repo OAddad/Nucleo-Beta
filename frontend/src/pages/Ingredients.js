@@ -206,6 +206,17 @@ export default function Ingredients() {
     });
   }, [ingredients, searchTerm, filterCategory, filterStock]);
 
+  // Ingredientes paginados
+  const paginatedIngredients = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    return filteredIngredients.slice(startIndex, startIndex + itemsPerPage);
+  }, [filteredIngredients, currentPage, itemsPerPage]);
+
+  // Reset página quando filtros mudam
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, filterCategory, filterStock]);
+
   const resetForm = () => {
     setName("");
     setUnit("");
