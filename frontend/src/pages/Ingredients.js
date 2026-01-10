@@ -1052,7 +1052,14 @@ export default function Ingredients() {
                             </td>
                             <td className="py-3 px-4 font-medium">
                               <div className="flex items-center gap-2">
-                                {ingredient.name}
+                                <span className={ingredient.is_active === false ? 'line-through text-muted-foreground' : ''}>
+                                  {ingredient.name}
+                                </span>
+                                {ingredient.is_active === false && (
+                                  <span className="text-xs px-1.5 py-0.5 rounded bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 font-normal">
+                                    Desativado
+                                  </span>
+                                )}
                                 {Number(ingredient.units_per_package) > 0 && (
                                   <span className="text-xs text-muted-foreground">
                                     ({ingredient.units_per_package} un/emb)
