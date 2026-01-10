@@ -403,6 +403,7 @@ export default function Pedidos() {
         </div>
       ) : (
         /* Visualização em Lista */
+        <>
         <div className="bg-card rounded-xl border shadow-sm overflow-hidden">
           <Table>
             <TableHeader>
@@ -418,7 +419,7 @@ export default function Pedidos() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredPedidos.map(pedido => {
+              {paginatedPedidos.map(pedido => {
                 const status = statusConfig[getNormalizedStatus(pedido.status)] || statusConfig.producao;
                 const StatusIcon = status.icon;
                 const pagamento = formasPagamento[pedido.formaPagamento];
