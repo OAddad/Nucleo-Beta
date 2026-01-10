@@ -332,6 +332,8 @@ export default function Purchases() {
     setEditMode(false);
     setCurrentBatchId(null);
     setHasUnsavedChanges(false);
+    setIsPaid(true);
+    setDueDate("");
   };
 
   // Handler para tentar fechar o dialog
@@ -356,6 +358,8 @@ export default function Purchases() {
     setCurrentBatchId(batch.batch_id);
     setSupplier(batch.supplier || "");
     setPurchaseDate(new Date(batch.purchase_date).toISOString().split("T")[0]);
+    setIsPaid(batch.is_paid !== false);
+    setDueDate(batch.due_date || "");
     
     // Load items into cart
     const cartItems = batch.items.map((item, index) => ({
@@ -382,6 +386,11 @@ export default function Purchases() {
       return;
     }
 
+    if (!isPaid && !dueDate) {
+      toast.error("Informe a data de vencimento para compras não pagas");
+      return;
+    }
+
     setLoading(true);
     try {
       const items = cart.map(item => ({
@@ -394,6 +403,8 @@ export default function Purchases() {
         supplier: supplier,
         purchase_date: new Date(purchaseDate).toISOString(),
         items: items,
+        is_paid: isPaid,
+        due_date: !isPaid ? dueDate : null,
       };
 
       if (editMode) {
