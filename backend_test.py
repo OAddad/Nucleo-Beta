@@ -1585,22 +1585,36 @@ class CMVMasterAPITester:
         return all_tests_passed
 
 def main():
-    print("🚀 Starting Núcleo Desktop Critical Endpoints Test")
-    print("=" * 60)
+    print("🚀 Starting Recipe Products with Yield and Cost Calculation Test")
+    print("=" * 80)
     print("🎯 Testing EXACTLY as specified in review request:")
-    print("   1. GET /api/health - deve retornar status 'healthy'")
-    print("   2. GET /api/system/settings - deve retornar skip_login e theme")
-    print("   3. POST /api/auth/login com {'username': 'test_hash', 'password': 'senha123'} - senha HASHEADA")
-    print("   4. POST /api/auth/login com {'username': 'Addad', 'password': 'Addad123'} - senha texto puro")
-    print("   5. GET /api/reports/dashboard - deve retornar estatísticas")
-    print("   Backend URL: http://localhost:8001")
-    print("=" * 60)
+    print("   TESTE 1: Verificar novos campos no modelo Product")
+    print("   - GET /api/products - deve retornar produtos com os novos campos:")
+    print("   - recipe_yield, recipe_yield_unit, unit_cost, linked_ingredient_id")
+    print("")
+    print("   TESTE 2: Criar produto do tipo 'receita' com rendimento")
+    print("   - POST /api/products com os dados:")
+    print("   - product_type: 'receita'")
+    print("   - recipe_yield: 2 (ex: rende 2kg)")
+    print("   - recipe_yield_unit: 'kg'")
+    print("   - recipe: alguns ingredientes")
+    print("   - Verificar se o unit_cost é calculado corretamente (cmv / recipe_yield)")
+    print("")
+    print("   TESTE 3: Verificar atualização de receita")
+    print("   - PUT /api/products/{id} para atualizar uma receita")
+    print("   - Verificar que os campos recipe_yield, recipe_yield_unit e unit_cost são atualizados")
+    print("")
+    print("   Credenciais de Login:")
+    print("   - Username: Addad")
+    print("   - Password: Addad123")
+    print("   - URL Backend: http://localhost:8001")
+    print("=" * 80)
     
     tester = CMVMasterAPITester()
     
-    # Run the critical endpoints test as specified in review request
+    # Run the recipe tests as specified in review request
     tests = [
-        ("Critical Endpoints (Review Request)", tester.test_critical_endpoints_review_request),
+        ("Recipe Products with Yield and Cost Calculation", tester.test_recipe_products_with_yield),
     ]
     
     failed_tests = []
