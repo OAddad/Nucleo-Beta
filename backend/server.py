@@ -1429,39 +1429,6 @@ def setup_static_files():
     return True
 
 
-# Rota raiz - serve index.html
-@app.get("/")
-async def serve_root():
-    """Serve o index.html do React"""
-    if FRONTEND_PATH and (FRONTEND_PATH / "index.html").exists():
-        return FileResponse(str(FRONTEND_PATH / "index.html"))
-    return {"error": "Frontend não encontrado", "api": "/api/health"}
-
-
-# Catch-all para rotas do React (SPA)
-@app.get("/{full_path:path}")
-async def serve_spa(full_path: str):
-    """Serve arquivos estáticos ou index.html para rotas do React"""
-    # Ignorar rotas da API
-    if full_path.startswith("api"):
-        raise HTTPException(status_code=404, detail="Not found")
-    
-    if not FRONTEND_PATH:
-        raise HTTPException(status_code=404, detail="Frontend não disponível")
-    
-    # Verificar se é arquivo estático
-    file_path = FRONTEND_PATH / full_path
-    if file_path.exists() and file_path.is_file():
-        return FileResponse(str(file_path))
-    
-    # Retornar index.html para rotas do React (SPA)
-    index_path = FRONTEND_PATH / "index.html"
-    if index_path.exists():
-        return FileResponse(str(index_path))
-    
-    raise HTTPException(status_code=404, detail="Página não encontrada")
-
-
 # Criar diretórios de upload no startup
 @app.on_event("startup")
 async def startup_event():
