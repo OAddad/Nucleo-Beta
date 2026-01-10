@@ -530,7 +530,13 @@ export default function Dashboard({ setIsAuthenticated }) {
               return (
                 <button
                   key={item.id}
-                  onClick={() => setActiveTopMenu(isActive ? null : item.id)}
+                  onClick={() => {
+                    if (!isActive) {
+                      // Ao ativar uma aba superior, retrair o menu lateral
+                      setSidebarOpen(false);
+                    }
+                    setActiveTopMenu(isActive ? null : item.id);
+                  }}
                   className={`
                     flex flex-col items-center gap-1 px-4 py-2 rounded-lg font-medium text-xs whitespace-nowrap
                     transition-all duration-200 min-w-[70px]
