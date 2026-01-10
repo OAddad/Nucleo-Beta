@@ -484,6 +484,7 @@ export default function Products() {
   const [quickIngredientOpen, setQuickIngredientOpen] = useState(false);
   const [quickIngredientName, setQuickIngredientName] = useState("");
   const [ingredientCategories, setIngredientCategories] = useState([]);
+  const [quickIngredientTarget, setQuickIngredientTarget] = useState(null); // {type: "ingredient"|"packaging", index: number}
   
   // Category management states
   const [categoryDialogOpen, setCategoryDialogOpen] = useState(false);
