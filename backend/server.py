@@ -1972,6 +1972,94 @@ async def delete_expense(expense_id: str, delete_children: bool = False, current
     return {"message": "Despesa(s) deletada(s)", "deleted_count": deleted_count}
 
 
+# ==================== CLIENTE ENDPOINTS ====================
+@api_router.get("/clientes", response_model=List[Cliente])
+async def get_clientes(current_user: User = Depends(get_current_user)):
+    """Lista todos os clientes"""
+    clientes = await db_call(sqlite_db.get_all_clientes)
+    result = []
+    for c in clientes:
+        if isinstance(c.get("created_at"), str):
+            c["created_at"] = datetime.fromisoformat(c["created_at"].replace('Z', '+00:00'))
+        result.append(Cliente(**c))
+    return result
+
+
+@api_router.get("/clientes/{cliente_id}", response_model=Cliente)
+async def get_cliente(cliente_id: str, current_user: User = Depends(get_current_user)):
+    """Busca um cliente pelo ID"""
+    cliente = await db_call(sqlite_db.get_cliente_by_id, cliente_id)
+    if not cliente:
+        raise HTTPException(status_code=404, detail="Cliente não encontrado")
+    
+    if isinstance(cliente.get("created_at"), str):
+        cliente["created_at"] = datetime.fromisoformat(cliente["created_at"].replace('Z', '+00:00'))
+    return Cliente(**cliente)
+
+
+@api_router.post("/clientes", response_model=Cliente)
+async def create_cliente(cliente_data: ClienteCreate, current_user: User = Depends(get_current_user)):
+    """Cria um novo cliente"""
+    cliente_dict = cliente_data.model_dump()
+    created = await db_call(sqlite_db.create_cliente, cliente_dict)
+    
+    if isinstance(created.get("created_at"), str):
+        created["created_at"] = datetime.fromisoformat(created["created_at"].replace('Z', '+00:00'))
+    
+    await log_audit("CREATE", "cliente", cliente_data.nome, current_user, "baixa")
+    return Cliente(**created)
+
+
+@api_router.put("/clientes/{cliente_id}", response_model=Cliente)
+async def update_cliente(cliente_id: str, cliente_data: ClienteCreate, current_user: User = Depends(get_current_user)):
+    """Atualiza um cliente existente"""
+    existing = await db_call(sqlite_db.get_cliente_by_id, cliente_id)
+    if not existing:
+        raise HTTPException(status_code=404, detail="Cliente não encontrado")
+    
+    update_data = cliente_data.model_dump()
+    updated = await db_call(sqlite_db.update_cliente, cliente_id, update_data)
+    
+    if isinstance(updated.get("created_at"), str):
+        updated["created_at"] = datetime.fromisoformat(updated["created_at"].replace('Z', '+00:00'))
+    
+    await log_audit("UPDATE", "cliente", cliente_data.nome, current_user, "baixa")
+    return Cliente(**updated)
+
+
+@api_router.delete("/clientes/{cliente_id}")
+async def delete_cliente(cliente_id: str, current_user: User = Depends(get_current_user)):
+    """Deleta um cliente"""
+    cliente = await db_call(sqlite_db.get_cliente_by_id, cliente_id)
+    if not cliente:
+        raise HTTPException(status_code=404, detail="Cliente não encontrado")
+    
+    await db_call(sqlite_db.delete_cliente, cliente_id)
+    await log_audit("DELETE", "cliente", cliente["nome"], current_user, "media")
+    return {"message": "Cliente deletado com sucesso"}
+
+
+@api_router.get("/clientes/search/{term}")
+async def search_clientes(term: str, current_user: User = Depends(get_current_user)):
+    """Busca clientes por nome, telefone, email ou CPF"""
+    clientes = await db_call(sqlite_db.search_clientes, term)
+    result = []
+    for c in clientes:
+        if isinstance(c.get("created_at"), str):
+            c["created_at"] = datetime.fromisoformat(c["created_at"].replace('Z', '+00:00'))
+        result.append(Cliente(**c))
+    return result
+
+
+@api_router.patch("/clientes/{cliente_id}/pedido")
+async def register_cliente_pedido(cliente_id: str, order_value: float = 0, current_user: User = Depends(get_current_user)):
+    """Registra um novo pedido para o cliente (atualiza estatísticas)"""
+    updated = await db_call(sqlite_db.update_cliente_pedido_stats, cliente_id, order_value)
+    if not updated:
+        raise HTTPException(status_code=404, detail="Cliente não encontrado")
+    return {"message": "Estatísticas atualizadas", "pedidos_count": updated.get("pedidos_count")}
+
+
 # Reports endpoints
 @api_router.get("/reports/price-history/{ingredient_id}", response_model=IngredientWithHistory)
 async def get_price_history(ingredient_id: str, current_user: User = Depends(get_current_user)):
