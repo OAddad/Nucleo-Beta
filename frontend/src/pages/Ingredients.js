@@ -1123,21 +1123,28 @@ export default function Ingredients() {
                                   >
                                     <Edit className="w-4 h-4" strokeWidth={1.5} />
                                   </Button>
-                                  <Button
-                                    onClick={() => handleToggleActive(ingredient)}
-                                    variant="ghost"
-                                    size="sm"
-                                    className={ingredient.is_active !== false 
-                                      ? "text-amber-600 hover:text-amber-700 hover:bg-amber-50" 
-                                      : "text-green-600 hover:text-green-700 hover:bg-green-50"}
-                                    title={ingredient.is_active !== false ? "Desativar" : "Reativar"}
+                                  <div 
+                                    className="flex items-center px-2"
+                                    title={ingredient.is_active !== false ? "Desativar item" : "Ativar item"}
                                   >
-                                    {ingredient.is_active !== false ? (
-                                      <Power className="w-4 h-4" strokeWidth={1.5} />
-                                    ) : (
-                                      <RotateCcw className="w-4 h-4" strokeWidth={1.5} />
-                                    )}
-                                  </Button>
+                                    <button
+                                      type="button"
+                                      role="switch"
+                                      aria-checked={ingredient.is_active !== false}
+                                      onClick={() => handleToggleActive(ingredient)}
+                                      className={`
+                                        relative inline-flex h-5 w-9 items-center rounded-full transition-colors
+                                        ${ingredient.is_active !== false ? 'bg-green-500' : 'bg-muted-foreground/30'}
+                                      `}
+                                    >
+                                      <span
+                                        className={`
+                                          inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform shadow
+                                          ${ingredient.is_active !== false ? 'translate-x-5' : 'translate-x-1'}
+                                        `}
+                                      />
+                                    </button>
+                                  </div>
                                   <Button
                                     data-testid={`delete-ingredient-${ingredient.id}`}
                                     onClick={() => checkUsageAndDelete(ingredient.id, ingredient.name)}
