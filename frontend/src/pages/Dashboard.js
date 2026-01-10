@@ -302,7 +302,7 @@ export default function Dashboard({ setIsAuthenticated }) {
           <div>
             {/* Header do módulo */}
             <button
-              onClick={() => setSalesExpanded(!salesExpanded)}
+              onClick={() => handleModuleClick(() => setSalesExpanded(!salesExpanded))}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 ${
                 isSalesActive() && !activeTopMenu
                   ? "bg-primary/10 text-primary font-medium"
