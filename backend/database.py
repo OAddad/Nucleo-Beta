@@ -645,7 +645,8 @@ def update_product(product_id: str, data: Dict) -> Optional[Dict]:
             UPDATE products SET 
                 name = ?, description = ?, category = ?, product_type = ?,
                 sale_price = ?, photo_url = ?, recipe = ?, cmv = ?, profit_margin = ?,
-                is_insumo = ?, is_divisible = ?, order_steps = ?
+                is_insumo = ?, is_divisible = ?, order_steps = ?,
+                linked_ingredient_id = ?, recipe_yield = ?, recipe_yield_unit = ?, unit_cost = ?
             WHERE id = ?
         ''', (data.get('name', current['name']), data.get('description', current.get('description')),
               data.get('category', current.get('category')), data.get('product_type', current.get('product_type', 'produto')),
@@ -654,7 +655,12 @@ def update_product(product_id: str, data: Dict) -> Optional[Dict]:
               data.get('profit_margin', current.get('profit_margin')),
               1 if data.get('is_insumo', current.get('is_insumo')) else 0,
               1 if data.get('is_divisible', current.get('is_divisible')) else 0,
-              json.dumps(data.get('order_steps', current.get('order_steps', []))), product_id))
+              json.dumps(data.get('order_steps', current.get('order_steps', []))),
+              data.get('linked_ingredient_id', current.get('linked_ingredient_id')),
+              data.get('recipe_yield', current.get('recipe_yield')),
+              data.get('recipe_yield_unit', current.get('recipe_yield_unit')),
+              data.get('unit_cost', current.get('unit_cost')),
+              product_id))
         conn.commit()
         
         return get_product_by_id(product_id)
