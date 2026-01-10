@@ -1125,25 +1125,64 @@ export default function Despesas() {
           </AlertDialogContent>
         </AlertDialog>
         
-        {/* Dialog Confirmar Exclusão Despesa */}
+        {/* Dialog Confirmar Exclusão Despesa (simples) */}
         <AlertDialog open={deleteExpenseDialogOpen} onOpenChange={setDeleteExpenseDialogOpen}>
           <AlertDialogContent>
             <AlertDialogHeader>
               <AlertDialogTitle>Excluir Despesa?</AlertDialogTitle>
               <AlertDialogDescription>
                 Tem certeza que deseja excluir a despesa "{expenseToDelete?.name}"? 
-                {(expenseToDelete?.is_recurring || expenseToDelete?.installments_total > 1) && (
-                  <span className="block mt-2 text-amber-600">
-                    ⚠️ Esta despesa possui parcelas/recorrências que também serão excluídas.
-                  </span>
-                )}
+                Esta ação não pode ser desfeita.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel>Cancelar</AlertDialogCancel>
-              <AlertDialogAction onClick={handleDeleteExpense} className="bg-destructive text-destructive-foreground">
+              <AlertDialogAction onClick={() => handleDeleteExpense(false)} className="bg-destructive text-destructive-foreground">
                 Excluir
               </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+        
+        {/* Dialog Confirmar Exclusão Despesa Recorrente/Parcelada */}
+        <AlertDialog open={deleteRecurringDialogOpen} onOpenChange={setDeleteRecurringDialogOpen}>
+          <AlertDialogContent className="sm:max-w-md">
+            <AlertDialogHeader>
+              <AlertDialogTitle>Excluir Despesa Recorrente</AlertDialogTitle>
+              <AlertDialogDescription className="space-y-2">
+                <span className="block">
+                  A despesa "{expenseToDelete?.name}" possui{" "}
+                  {expenseToDelete?.is_recurring ? "recorrências futuras" : "parcelas"} vinculadas.
+                </span>
+                <span className="block font-medium text-foreground">
+                  Como deseja proceder?
+                </span>
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <div className="flex flex-col gap-2 mt-4">
+              <Button
+                variant="outline"
+                className="justify-start h-auto py-3 px-4"
+                onClick={() => handleDeleteExpense(false)}
+              >
+                <div className="text-left">
+                  <p className="font-medium">Excluir apenas esta despesa</p>
+                  <p className="text-xs text-muted-foreground">As {expenseToDelete?.is_recurring ? "recorrências futuras" : "outras parcelas"} serão mantidas</p>
+                </div>
+              </Button>
+              <Button
+                variant="destructive"
+                className="justify-start h-auto py-3 px-4"
+                onClick={() => handleDeleteExpense(true)}
+              >
+                <div className="text-left">
+                  <p className="font-medium">Excluir todas as {expenseToDelete?.is_recurring ? "recorrências" : "parcelas"}</p>
+                  <p className="text-xs opacity-90">Todas as despesas vinculadas serão excluídas permanentemente</p>
+                </div>
+              </Button>
+            </div>
+            <AlertDialogFooter className="mt-4">
+              <AlertDialogCancel>Cancelar</AlertDialogCancel>
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
