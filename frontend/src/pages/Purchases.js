@@ -227,8 +227,10 @@ export default function Purchases() {
     let lastDate = null;
     
     purchaseBatches.forEach(batch => {
-      if (!batch || !batch.purchases) return;
-      batch.purchases.forEach(purchase => {
+      if (!batch) return;
+      // A estrutura usa "items" ou "purchases" dependendo do endpoint
+      const purchases = batch.items || batch.purchases || [];
+      purchases.forEach(purchase => {
         if (purchase.ingredient_id === ingredientId) {
           const purchaseDate = new Date(batch.purchase_date);
           if (!lastDate || purchaseDate > lastDate) {
@@ -236,7 +238,7 @@ export default function Purchases() {
             lastPurchase = {
               price: purchase.price,
               quantity: purchase.quantity,
-              unitPrice: purchase.price / purchase.quantity,
+              unitPrice: purchase.unit_price || (purchase.price / purchase.quantity),
               date: batch.purchase_date
             };
           }
