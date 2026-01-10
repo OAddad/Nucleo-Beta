@@ -70,6 +70,10 @@ export default function Ingredients() {
   const [filterCategory, setFilterCategory] = useState("all");
   const [filterStock, setFilterStock] = useState("all"); // all, low, normal, high
   
+  // Ordenação
+  const [sortField, setSortField] = useState(null); // average_price, stock_quantity, stock_min, stock_max
+  const [sortDirection, setSortDirection] = useState("asc"); // asc, desc
+  
   // Category management states
   const [categoryDialogOpen, setCategoryDialogOpen] = useState(false);
   const [editCategoryMode, setEditCategoryMode] = useState(false);
