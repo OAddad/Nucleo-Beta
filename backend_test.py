@@ -2181,24 +2181,17 @@ class CMVMasterAPITester:
         return all_tests_passed
 
 def main():
-    print("🚀 Starting Recipe Products with Yield and Cost Calculation Test")
+    print("🚀 Starting Expense Module Testing")
     print("=" * 80)
     print("🎯 Testing EXACTLY as specified in review request:")
-    print("   TESTE 1: Verificar novos campos no modelo Product")
-    print("   - GET /api/products - deve retornar produtos com os novos campos:")
-    print("   - recipe_yield, recipe_yield_unit, unit_cost, linked_ingredient_id")
-    print("")
-    print("   TESTE 2: Criar produto do tipo 'receita' com rendimento")
-    print("   - POST /api/products com os dados:")
-    print("   - product_type: 'receita'")
-    print("   - recipe_yield: 2 (ex: rende 2kg)")
-    print("   - recipe_yield_unit: 'kg'")
-    print("   - recipe: alguns ingredientes")
-    print("   - Verificar se o unit_cost é calculado corretamente (cmv / recipe_yield)")
-    print("")
-    print("   TESTE 3: Verificar atualização de receita")
-    print("   - PUT /api/products/{id} para atualizar uma receita")
-    print("   - Verificar que os campos recipe_yield, recipe_yield_unit e unit_cost são atualizados")
+    print("   1. Verificar se as tabelas expense_classifications e expenses existem no SQLite")
+    print("   2. Testar CRUD completo de classificações")
+    print("   3. Testar criação de despesa simples")
+    print("   4. Testar criação de despesa parcelada (verificar se parcelas são geradas automaticamente)")
+    print("   5. Testar criação de despesa recorrente (verificar se próximos meses são gerados)")
+    print("   6. Testar toggle de status pago/pendente")
+    print("   7. Testar estatísticas (/api/expenses/stats)")
+    print("   8. Testar exclusão de despesa com filhos (parcelas)")
     print("")
     print("   Credenciais de Login:")
     print("   - Username: Addad")
@@ -2208,9 +2201,9 @@ def main():
     
     tester = CMVMasterAPITester()
     
-    # Run the recipe tests as specified in review request
+    # Run the expense tests as specified in review request
     tests = [
-        ("Recipe Products with Yield and Cost Calculation", tester.test_recipe_products_with_yield),
+        ("Expense Module", tester.test_expense_module),
     ]
     
     failed_tests = []
@@ -2238,35 +2231,40 @@ def main():
     print(f"Success rate: {(tester.tests_passed/tester.tests_run)*100:.1f}%" if tester.tests_run > 0 else "No tests run")
     
     # Analyze results
-    print(f"\n🔍 RECIPE FUNCTIONALITY ANALYSIS:")
+    print(f"\n🔍 EXPENSE MODULE ANALYSIS:")
     if not failed_tests:
-        print(f"✅ RECIPE PRODUCTS WITH YIELD WORKING:")
-        print(f"   - New recipe fields (recipe_yield, recipe_yield_unit, unit_cost, linked_ingredient_id) present in Product model")
-        print(f"   - Recipe product creation with yield calculation working")
-        print(f"   - Unit cost calculation (CMV / recipe_yield) working correctly")
-        print(f"   - Recipe product update with yield recalculation working")
-        print(f"   - Linked ingredient functionality working")
-        print(f"   - All recipe backend APIs are functional")
+        print(f"✅ EXPENSE MODULE WORKING:")
+        print(f"   - Database tables (expense_classifications, expenses) exist")
+        print(f"   - Expense classifications CRUD working")
+        print(f"   - Simple expense creation working")
+        print(f"   - Installment expenses with automatic parcela generation working")
+        print(f"   - Recurring expenses with automatic monthly generation working")
+        print(f"   - Status toggle (paid/pending) working")
+        print(f"   - Statistics endpoint working")
+        print(f"   - Parent-child deletion working")
+        print(f"   - All expense backend APIs are functional")
     else:
         print(f"❌ FAILED TESTS:")
         for failed in failed_tests:
             print(f"   - {failed}")
     
-    # Additional notes about Recipe functionality
+    # Additional notes about Expense functionality
     print(f"\n📝 IMPORTANT NOTES:")
-    print(f"   ℹ️ Recipe functionality with yield and cost calculation tested")
+    print(f"   ℹ️ Expense module functionality tested comprehensively")
     print(f"   ℹ️ Backend running on http://localhost:8001")
     print(f"   ℹ️ Authentication with Addad/Addad123 credentials")
-    print(f"   ℹ️ New fields: recipe_yield, recipe_yield_unit, unit_cost, linked_ingredient_id")
-    print(f"   ℹ️ Unit cost automatically calculated as CMV / recipe_yield")
-    print(f"   ℹ️ Recipe products can be linked to ingredients in stock")
+    print(f"   ℹ️ Expense classifications: CRUD operations")
+    print(f"   ℹ️ Expenses: Simple, installment, and recurring types")
+    print(f"   ℹ️ Automatic generation: Parcelas and recurring months")
+    print(f"   ℹ️ Status management: Toggle paid/pending")
+    print(f"   ℹ️ Statistics: Total, pending, and paid counts/values")
     
     if failed_tests:
         return 1
     else:
-        print("\n✅ ALL RECIPE TESTS PASSED!")
-        print("🎉 Recipe products with yield and cost calculation working correctly!")
-        print("💾 New recipe functionality is fully operational!")
+        print("\n✅ ALL EXPENSE TESTS PASSED!")
+        print("🎉 Expense module working correctly!")
+        print("💾 New expense functionality is fully operational!")
         return 0
 
 if __name__ == "__main__":
