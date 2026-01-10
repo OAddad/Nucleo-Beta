@@ -112,6 +112,7 @@ export default function Ingredients() {
     fetchCategories();
     loadCurrentUser();
     ensureRecipeCategory();
+    fetchStockValue();
   }, []);
 
   const loadCurrentUser = () => {
