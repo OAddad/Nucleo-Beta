@@ -1318,13 +1318,13 @@ async def clear_all_bugs(current_user: User = Depends(get_current_user)):
     return {"message": "Todos os bugs foram limpos"}
 
 @api_router.post("/system/bugs/{bug_id}/status")
-async def update_bug_status(bug_id: str, status: str, current_user: User = Depends(get_current_user)):
+async def update_bug_status(bug_id: str, new_status: str, current_user: User = Depends(get_current_user)):
     """Atualiza status de um bug"""
     check_role(current_user, ["proprietario", "administrador"])
-    if status not in ['new', 'investigating', 'fixed', 'ignored']:
+    if new_status not in ['new', 'investigating', 'fixed', 'ignored']:
         raise HTTPException(status_code=400, detail="Status inválido")
-    bug_tracker.update_bug_status(bug_id, status)
-    return {"message": f"Bug {bug_id} atualizado para {status}"}
+    bug_tracker.update_bug_status(bug_id, new_status)
+    return {"message": f"Bug {bug_id} atualizado para {new_status}"}
 
 @api_router.post("/system/report-bug")
 async def report_bug_manually(
