@@ -6177,3 +6177,11 @@
 2026-01-10T19:39:29.190496+00:00 | DB_CALL count_ingredients | P3 | 0.19ms | success
 2026-01-10T19:39:29.190669+00:00 | DB_CALL count_products | P3 | 0.12ms | success
 2026-01-10T19:39:29.190813+00:00 | DB_CALL count_users | P3 | 0.09ms | success
+2026-01-10T19:39:47.546440+00:00 | DB_CALL init_database | P3 | 3.0ms | success
+2026-01-10T19:39:47.546856+00:00 | DB_CALL count_ingredients | P3 | 0.2ms | success
+2026-01-10T19:39:47.547033+00:00 | DB_CALL count_products | P3 | 0.11ms | success
+2026-01-10T19:39:47.547191+00:00 | DB_CALL count_users | P3 | 0.11ms | success
+2026-01-10T19:39:55.640657+00:00 | DB_CALL init_database | P3 | 2.83ms | success
+2026-01-10T19:39:55.641051+00:00 | DB_CALL count_ingredients | P3 | 0.18ms | success
+2026-01-10T19:39:55.641241+00:00 | DB_CALL count_products | P3 | 0.12ms | success
+2026-01-10T19:39:55.641381+00:00 | DB_CALL count_users | P3 | 0.09ms | success
