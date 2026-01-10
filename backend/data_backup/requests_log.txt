@@ -8332,3 +8332,13 @@
 2026-01-10T21:25:04.117847+00:00 | DB_CALL count_clientes | P3 | 0.08ms | success
 2026-01-10T21:25:04.119541+00:00 | DB_CALL get_user_by_id | P3 | 0.18ms | success
 2026-01-10T21:25:04.119795+00:00 | DB_CALL get_all_clientes | P3 | 0.14ms | success
+2026-01-10T21:25:18.679762+00:00 | DB_CALL get_user_by_id | P3 | 0.26ms | success
+2026-01-10T21:25:18.680080+00:00 | DB_CALL get_all_clientes | P3 | 0.17ms | success
+2026-01-10T21:25:18.682841+00:00 | DB_CALL get_user_by_id | P3 | 0.15ms | success
+2026-01-10T21:25:18.683051+00:00 | DB_CALL get_total_pontuacao | P3 | 0.09ms | success
+2026-01-10T21:25:18.683169+00:00 | DB_CALL count_clientes | P3 | 0.07ms | success
+2026-01-10T21:25:19.115216+00:00 | DB_CALL get_user_by_id | P3 | 0.29ms | success
+2026-01-10T21:25:19.115521+00:00 | DB_CALL get_all_clientes | P3 | 0.16ms | success
+2026-01-10T21:25:19.119017+00:00 | DB_CALL get_user_by_id | P3 | 0.19ms | success
+2026-01-10T21:25:19.119300+00:00 | DB_CALL get_total_pontuacao | P3 | 0.17ms | success
+2026-01-10T21:25:19.119435+00:00 | DB_CALL count_clientes | P3 | 0.09ms | success
