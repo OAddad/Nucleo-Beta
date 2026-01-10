@@ -321,6 +321,92 @@ def check_role(user: User, allowed_roles: List[str]):
         )
 
 
+async def update_recipe_costs_for_ingredient(ingredient_id: str):
+    """
+    Atualiza o custo de todas as receitas que usam um determinado ingrediente.
+    Quando o preço de um ingrediente muda, todas as receitas que o usam
+    devem ter seu custo recalculado e enviado para o ingrediente linkado no estoque.
+    """
+    products = await db_call(sqlite_db.get_all_products)
+    
+    for product in products:
+        # Verificar se é uma receita e usa o ingrediente
+        if product.get("product_type") != "receita":
+            continue
+            
+        recipe = product.get("recipe", [])
+        uses_ingredient = any(r.get("ingredient_id") == ingredient_id for r in recipe)
+        
+        if not uses_ingredient:
+            continue
+        
+        # Recalcular CMV da receita
+        cmv = 0.0
+        for recipe_item in recipe:
+            ingredient = await db_call(sqlite_db.get_ingredient_by_id, recipe_item.get("ingredient_id"))
+            if ingredient:
+                avg_price = ingredient.get("average_price", 0)
+                quantity = recipe_item.get("quantity", 0)
+                
+                unit_weight = ingredient.get("unit_weight")
+                is_whole_number = quantity == int(quantity)
+                
+                if unit_weight and unit_weight > 0 and is_whole_number and quantity >= 1:
+                    cmv += avg_price * unit_weight * quantity
+                else:
+                    cmv += avg_price * quantity
+        
+        # Calcular custo por unidade baseado no rendimento
+        recipe_yield = product.get("recipe_yield", 0) or 0
+        unit_cost = cmv / recipe_yield if recipe_yield > 0 else cmv
+        
+        # Atualizar o produto
+        await db_call(sqlite_db.update_product, product["id"], {
+            "cmv": cmv,
+            "unit_cost": unit_cost
+        })
+        
+        # Se tiver ingrediente linkado, atualizar o preço médio no estoque
+        linked_ingredient_id = product.get("linked_ingredient_id")
+        if linked_ingredient_id:
+            # Registrar o custo como uma "compra virtual" para o ingrediente
+            await update_linked_ingredient_price(linked_ingredient_id, unit_cost)
+
+
+async def update_linked_ingredient_price(ingredient_id: str, new_cost: float):
+    """
+    Atualiza o preço médio de um ingrediente linkado a uma receita.
+    Armazena os últimos 5 custos e faz a média.
+    """
+    ingredient = await db_call(sqlite_db.get_ingredient_by_id, ingredient_id)
+    if not ingredient:
+        return
+    
+    # Buscar histórico de custos da receita (armazenado no campo recipe_cost_history)
+    cost_history = ingredient.get("recipe_cost_history", []) or []
+    
+    # Adicionar novo custo
+    cost_history.append({
+        "cost": new_cost,
+        "date": datetime.now(timezone.utc).isoformat()
+    })
+    
+    # Manter apenas os últimos 5
+    cost_history = cost_history[-5:]
+    
+    # Calcular média
+    if cost_history:
+        avg_cost = sum(h["cost"] for h in cost_history) / len(cost_history)
+    else:
+        avg_cost = new_cost
+    
+    # Atualizar ingrediente
+    await db_call(sqlite_db.update_ingredient, ingredient_id, {
+        "average_price": avg_cost,
+        "recipe_cost_history": cost_history
+    })
+
+
 # Auth endpoints
 @api_router.post("/auth/register", response_model=Token)
 async def register(user_data: UserCreate):
