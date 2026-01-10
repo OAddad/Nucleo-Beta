@@ -366,13 +366,19 @@ export default function Despesas() {
   };
   
   const handleDeleteExpense = async (deleteChildren = false) => {
-    if (!expenseToDelete) return;
+    if (!expenseToDelete) {
+      console.error("expenseToDelete é null");
+      return;
+    }
+    
+    console.log("Deletando despesa:", expenseToDelete.id, "deleteChildren:", deleteChildren);
     
     try {
-      await axios.delete(
+      const response = await axios.delete(
         `${API}/expenses/${expenseToDelete.id}?delete_children=${deleteChildren}`,
         getAuthHeader()
       );
+      console.log("Resposta do delete:", response.data);
       toast.success(deleteChildren ? "Despesa e recorrências excluídas!" : "Despesa excluída!");
       setDeleteExpenseDialogOpen(false);
       setDeleteRecurringDialogOpen(false);
@@ -380,7 +386,7 @@ export default function Despesas() {
       fetchExpenses();
       fetchStats();
     } catch (error) {
-      console.error("Erro ao excluir despesa:", error);
+      console.error("Erro ao excluir despesa:", error.response?.data || error);
       toast.error(error.response?.data?.detail || "Erro ao excluir despesa");
     }
   };
