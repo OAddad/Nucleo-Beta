@@ -1692,10 +1692,11 @@ async def create_expense(expense_data: ExpenseCreate, current_user: User = Depen
     created_expenses = [expense_id]
     
     if expense_data.is_recurring and expense_data.recurring_period:
-        # Gerar despesas recorrentes para os próximos 12 meses
+        # Gerar despesas recorrentes
         from dateutil.relativedelta import relativedelta
         
         base_date = datetime.strptime(expense_data.due_date, "%Y-%m-%d")
+        recurring_count = expense_data.recurring_count or 12  # Padrão 12 se não informado
         
         for i in range(1, recurring_count):
             if expense_data.recurring_period == "monthly":
