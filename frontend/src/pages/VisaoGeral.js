@@ -3,34 +3,38 @@ import { Home, BarChart3, Package, DollarSign, Users, TrendingUp } from "lucide-
 export default function VisaoGeral() {
   return (
     <div className="p-8" data-testid="visao-geral-page">
-      <div className="max-w-5xl mx-auto">
+      <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="mb-8 text-center">
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-primary/10 rounded-full mb-4">
-            <Home className="w-10 h-10 text-primary" strokeWidth={1.5} />
-          </div>
+        <div className="mb-8">
           <h1 className="text-3xl font-bold tracking-tight">
             Visão Geral
           </h1>
-          <p className="text-muted-foreground mt-2">
+          <p className="text-muted-foreground mt-1">
             Bem-vindo ao Núcleo - o centro da sua gestão
           </p>
         </div>
 
         {/* Card Principal */}
         <div className="bg-gradient-to-br from-primary/5 to-primary/10 rounded-2xl border border-primary/20 p-8 mb-8">
-          <div className="text-center">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-amber-500/20 text-amber-700 dark:text-amber-400 rounded-full text-sm font-medium mb-4">
-              <TrendingUp className="w-4 h-4" />
-              Em Desenvolvimento
+          <div className="flex items-start gap-6">
+            <div className="flex-shrink-0">
+              <div className="w-16 h-16 bg-primary/10 rounded-xl flex items-center justify-center">
+                <Home className="w-8 h-8 text-primary" strokeWidth={1.5} />
+              </div>
             </div>
-            <h2 className="text-2xl font-bold mb-3">
-              Em breve um resumo de todo o operacional
-            </h2>
-            <p className="text-muted-foreground max-w-xl mx-auto">
-              Aqui você terá uma visão consolidada de todos os módulos do sistema: 
-              vendas, estoque, financeiro, clientes e muito mais.
-            </p>
+            <div className="flex-1">
+              <div className="inline-flex items-center gap-2 px-3 py-1 bg-amber-500/20 text-amber-700 dark:text-amber-400 rounded-full text-xs font-medium mb-3">
+                <TrendingUp className="w-3 h-3" />
+                Em Desenvolvimento
+              </div>
+              <h2 className="text-2xl font-bold mb-2">
+                Em breve um resumo de todo o operacional
+              </h2>
+              <p className="text-muted-foreground">
+                Aqui você terá uma visão consolidada de todos os módulos do sistema: 
+                vendas, estoque, financeiro, clientes e muito mais.
+              </p>
+            </div>
           </div>
         </div>
 
