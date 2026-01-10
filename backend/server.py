@@ -1393,6 +1393,373 @@ async def initialize_categories(current_user: User = Depends(get_current_user)):
     
     return {"message": "Categorias inicializadas", "created": created}
 
+
+# ==================== EXPENSE CLASSIFICATION ENDPOINTS ====================
+
+@api_router.get("/expense-classifications", response_model=List[ExpenseClassification])
+async def get_expense_classifications(current_user: User = Depends(get_current_user)):
+    """Lista todas as classificações de despesas"""
+    classifications = await db_call(sqlite_db.get_all_expense_classifications)
+    for c in classifications:
+        if isinstance(c.get("created_at"), str):
+            c["created_at"] = datetime.fromisoformat(c["created_at"].replace('Z', '+00:00'))
+    return classifications
+
+
+@api_router.post("/expense-classifications", response_model=ExpenseClassification)
+async def create_expense_classification(data: ExpenseClassificationCreate, current_user: User = Depends(get_current_user)):
+    """Cria uma nova classificação de despesas"""
+    check_role(current_user, ["proprietario", "administrador"])
+    
+    existing = await db_call(sqlite_db.get_expense_classification_by_name, data.name)
+    if existing:
+        raise HTTPException(status_code=400, detail="Classificação já existe")
+    
+    class_id = str(uuid.uuid4())
+    created_at = datetime.now(timezone.utc)
+    
+    await db_call(sqlite_db.create_expense_classification, {
+        "id": class_id,
+        "name": data.name,
+        "created_at": created_at.isoformat()
+    })
+    
+    await log_audit("CREATE", "expense_classification", data.name, current_user, "baixa")
+    
+    return ExpenseClassification(id=class_id, name=data.name, created_at=created_at)
+
+
+@api_router.put("/expense-classifications/{classification_id}", response_model=ExpenseClassification)
+async def update_expense_classification(classification_id: str, data: ExpenseClassificationCreate, current_user: User = Depends(get_current_user)):
+    """Atualiza uma classificação de despesas"""
+    check_role(current_user, ["proprietario", "administrador"])
+    
+    existing = await db_call(sqlite_db.get_expense_classification_by_id, classification_id)
+    if not existing:
+        raise HTTPException(status_code=404, detail="Classificação não encontrada")
+    
+    name_exists = await db_call(sqlite_db.get_expense_classification_by_name, data.name)
+    if name_exists and name_exists["id"] != classification_id:
+        raise HTTPException(status_code=400, detail="Nome de classificação já existe")
+    
+    old_name = existing["name"]
+    await db_call(sqlite_db.update_expense_classification, classification_id, {"name": data.name})
+    
+    # Atualizar todas as despesas que usam essa classificação
+    expenses = await db_call(sqlite_db.get_all_expenses)
+    for e in expenses:
+        if e.get("classification_id") == classification_id:
+            await db_call(sqlite_db.update_expense, e["id"], {"classification_name": data.name})
+    
+    await log_audit("UPDATE", "expense_classification", f"{old_name} → {data.name}", current_user, "media")
+    
+    updated = await db_call(sqlite_db.get_expense_classification_by_id, classification_id)
+    if isinstance(updated.get("created_at"), str):
+        updated["created_at"] = datetime.fromisoformat(updated["created_at"].replace('Z', '+00:00'))
+    return ExpenseClassification(**updated)
+
+
+@api_router.delete("/expense-classifications/{classification_id}")
+async def delete_expense_classification(classification_id: str, current_user: User = Depends(get_current_user)):
+    """Deleta uma classificação de despesas"""
+    check_role(current_user, ["proprietario", "administrador"])
+    
+    classification = await db_call(sqlite_db.get_expense_classification_by_id, classification_id)
+    if not classification:
+        raise HTTPException(status_code=404, detail="Classificação não encontrada")
+    
+    # Verificar se alguma despesa usa essa classificação
+    expenses = await db_call(sqlite_db.get_expenses_by_classification, classification_id)
+    if expenses:
+        raise HTTPException(
+            status_code=400, 
+            detail=f"Não é possível excluir. {len(expenses)} despesa(s) usa(m) esta classificação."
+        )
+    
+    await db_call(sqlite_db.delete_expense_classification, classification_id)
+    await log_audit("DELETE", "expense_classification", classification["name"], current_user, "alta")
+    
+    return {"message": "Classificação deletada"}
+
+
+@api_router.post("/expense-classifications/initialize")
+async def initialize_expense_classifications(current_user: User = Depends(get_current_user)):
+    """Inicializa classificações padrão se não existirem"""
+    check_role(current_user, ["proprietario", "administrador"])
+    
+    default_classifications = [
+        "Água", "Energia", "Aluguel", "Internet", "Telefone", 
+        "Seguro", "Manutenção", "Marketing", "Salários", "Impostos", "Outros"
+    ]
+    created = []
+    
+    for name in default_classifications:
+        existing = await db_call(sqlite_db.get_expense_classification_by_name, name)
+        if not existing:
+            class_id = str(uuid.uuid4())
+            created_at = datetime.now(timezone.utc)
+            await db_call(sqlite_db.create_expense_classification, {
+                "id": class_id,
+                "name": name,
+                "created_at": created_at.isoformat()
+            })
+            created.append(name)
+    
+    return {"message": "Classificações inicializadas", "created": created}
+
+
+# ==================== EXPENSE ENDPOINTS ====================
+
+@api_router.get("/expenses", response_model=List[Expense])
+async def get_expenses(current_user: User = Depends(get_current_user)):
+    """Lista todas as despesas"""
+    expenses = await db_call(sqlite_db.get_all_expenses)
+    for e in expenses:
+        if isinstance(e.get("created_at"), str):
+            e["created_at"] = datetime.fromisoformat(e["created_at"].replace('Z', '+00:00'))
+        e["is_paid"] = bool(e.get("is_paid", 0))
+        e["is_recurring"] = bool(e.get("is_recurring", 0))
+    return expenses
+
+
+@api_router.get("/expenses/stats", response_model=ExpenseStats)
+async def get_expenses_stats(current_user: User = Depends(get_current_user)):
+    """Retorna estatísticas das despesas"""
+    stats = await db_call(sqlite_db.get_expenses_stats)
+    return ExpenseStats(**stats)
+
+
+@api_router.get("/expenses/pending", response_model=List[Expense])
+async def get_pending_expenses(current_user: User = Depends(get_current_user)):
+    """Lista despesas pendentes"""
+    expenses = await db_call(sqlite_db.get_pending_expenses)
+    for e in expenses:
+        if isinstance(e.get("created_at"), str):
+            e["created_at"] = datetime.fromisoformat(e["created_at"].replace('Z', '+00:00'))
+        e["is_paid"] = bool(e.get("is_paid", 0))
+        e["is_recurring"] = bool(e.get("is_recurring", 0))
+    return expenses
+
+
+@api_router.get("/expenses/month/{year}/{month}", response_model=List[Expense])
+async def get_expenses_by_month(year: int, month: int, current_user: User = Depends(get_current_user)):
+    """Lista despesas de um mês específico"""
+    expenses = await db_call(sqlite_db.get_expenses_by_month, year, month)
+    for e in expenses:
+        if isinstance(e.get("created_at"), str):
+            e["created_at"] = datetime.fromisoformat(e["created_at"].replace('Z', '+00:00'))
+        e["is_paid"] = bool(e.get("is_paid", 0))
+        e["is_recurring"] = bool(e.get("is_recurring", 0))
+    return expenses
+
+
+@api_router.post("/expenses", response_model=Expense)
+async def create_expense(expense_data: ExpenseCreate, current_user: User = Depends(get_current_user)):
+    """Cria uma nova despesa"""
+    check_role(current_user, ["proprietario", "administrador"])
+    
+    # Buscar nome da classificação se tiver ID
+    classification_name = expense_data.classification_name
+    if expense_data.classification_id and not classification_name:
+        classification = await db_call(sqlite_db.get_expense_classification_by_id, expense_data.classification_id)
+        if classification:
+            classification_name = classification["name"]
+    
+    expense_id = str(uuid.uuid4())
+    created_at = datetime.now(timezone.utc)
+    
+    expense_dict = {
+        "id": expense_id,
+        "name": expense_data.name,
+        "classification_id": expense_data.classification_id,
+        "classification_name": classification_name,
+        "supplier": expense_data.supplier,
+        "value": expense_data.value,
+        "due_date": expense_data.due_date,
+        "is_paid": expense_data.is_paid,
+        "paid_date": expense_data.paid_date,
+        "is_recurring": expense_data.is_recurring,
+        "recurring_period": expense_data.recurring_period,
+        "installments_total": expense_data.installments_total or 0,
+        "installment_number": expense_data.installment_number or 1,
+        "parent_expense_id": expense_data.parent_expense_id,
+        "attachment_url": expense_data.attachment_url,
+        "notes": expense_data.notes,
+        "created_at": created_at.isoformat()
+    }
+    
+    await db_call(sqlite_db.create_expense, expense_dict)
+    
+    # Se é recorrente ou tem parcelas, gerar as próximas despesas
+    created_expenses = [expense_id]
+    
+    if expense_data.is_recurring and expense_data.recurring_period:
+        # Gerar despesas recorrentes para os próximos 12 meses
+        from dateutil.relativedelta import relativedelta
+        
+        base_date = datetime.strptime(expense_data.due_date, "%Y-%m-%d")
+        
+        for i in range(1, 12):
+            if expense_data.recurring_period == "monthly":
+                next_date = base_date + relativedelta(months=i)
+            elif expense_data.recurring_period == "weekly":
+                next_date = base_date + timedelta(weeks=i)
+            elif expense_data.recurring_period == "yearly":
+                next_date = base_date + relativedelta(years=i)
+            else:
+                break
+            
+            child_id = str(uuid.uuid4())
+            child_dict = {
+                "id": child_id,
+                "name": expense_data.name,
+                "classification_id": expense_data.classification_id,
+                "classification_name": classification_name,
+                "supplier": expense_data.supplier,
+                "value": expense_data.value,
+                "due_date": next_date.strftime("%Y-%m-%d"),
+                "is_paid": False,
+                "is_recurring": True,
+                "recurring_period": expense_data.recurring_period,
+                "parent_expense_id": expense_id,
+                "notes": expense_data.notes,
+                "created_at": created_at.isoformat()
+            }
+            await db_call(sqlite_db.create_expense, child_dict)
+            created_expenses.append(child_id)
+    
+    elif expense_data.installments_total and expense_data.installments_total > 1:
+        # Gerar parcelas
+        from dateutil.relativedelta import relativedelta
+        
+        base_date = datetime.strptime(expense_data.due_date, "%Y-%m-%d")
+        installment_value = expense_data.value
+        
+        for i in range(2, expense_data.installments_total + 1):
+            next_date = base_date + relativedelta(months=i-1)
+            
+            child_id = str(uuid.uuid4())
+            child_dict = {
+                "id": child_id,
+                "name": f"{expense_data.name} ({i}/{expense_data.installments_total})",
+                "classification_id": expense_data.classification_id,
+                "classification_name": classification_name,
+                "supplier": expense_data.supplier,
+                "value": installment_value,
+                "due_date": next_date.strftime("%Y-%m-%d"),
+                "is_paid": False,
+                "installments_total": expense_data.installments_total,
+                "installment_number": i,
+                "parent_expense_id": expense_id,
+                "notes": expense_data.notes,
+                "created_at": created_at.isoformat()
+            }
+            await db_call(sqlite_db.create_expense, child_dict)
+            created_expenses.append(child_id)
+        
+        # Atualizar a primeira parcela com o número correto
+        await db_call(sqlite_db.update_expense, expense_id, {
+            "name": f"{expense_data.name} (1/{expense_data.installments_total})",
+            "installment_number": 1
+        })
+    
+    await log_audit("CREATE", "expense", expense_data.name, current_user, "media", {"total_created": len(created_expenses)})
+    
+    created = await db_call(sqlite_db.get_expense_by_id, expense_id)
+    created["created_at"] = created_at
+    created["is_paid"] = bool(created.get("is_paid", 0))
+    created["is_recurring"] = bool(created.get("is_recurring", 0))
+    return Expense(**created)
+
+
+@api_router.put("/expenses/{expense_id}", response_model=Expense)
+async def update_expense(expense_id: str, expense_data: ExpenseCreate, current_user: User = Depends(get_current_user)):
+    """Atualiza uma despesa"""
+    check_role(current_user, ["proprietario", "administrador"])
+    
+    existing = await db_call(sqlite_db.get_expense_by_id, expense_id)
+    if not existing:
+        raise HTTPException(status_code=404, detail="Despesa não encontrada")
+    
+    # Buscar nome da classificação se tiver ID
+    classification_name = expense_data.classification_name
+    if expense_data.classification_id and not classification_name:
+        classification = await db_call(sqlite_db.get_expense_classification_by_id, expense_data.classification_id)
+        if classification:
+            classification_name = classification["name"]
+    
+    update_data = {
+        "name": expense_data.name,
+        "classification_id": expense_data.classification_id,
+        "classification_name": classification_name,
+        "supplier": expense_data.supplier,
+        "value": expense_data.value,
+        "due_date": expense_data.due_date,
+        "is_paid": expense_data.is_paid,
+        "paid_date": expense_data.paid_date,
+        "is_recurring": expense_data.is_recurring,
+        "recurring_period": expense_data.recurring_period,
+        "installments_total": expense_data.installments_total,
+        "installment_number": expense_data.installment_number,
+        "attachment_url": expense_data.attachment_url,
+        "notes": expense_data.notes
+    }
+    
+    await db_call(sqlite_db.update_expense, expense_id, update_data)
+    await log_audit("UPDATE", "expense", expense_data.name, current_user, "media")
+    
+    updated = await db_call(sqlite_db.get_expense_by_id, expense_id)
+    if isinstance(updated.get("created_at"), str):
+        updated["created_at"] = datetime.fromisoformat(updated["created_at"].replace('Z', '+00:00'))
+    updated["is_paid"] = bool(updated.get("is_paid", 0))
+    updated["is_recurring"] = bool(updated.get("is_recurring", 0))
+    return Expense(**updated)
+
+
+@api_router.patch("/expenses/{expense_id}/toggle-paid")
+async def toggle_expense_paid(expense_id: str, current_user: User = Depends(get_current_user)):
+    """Alterna o status de pagamento de uma despesa"""
+    check_role(current_user, ["proprietario", "administrador"])
+    
+    expense = await db_call(sqlite_db.get_expense_by_id, expense_id)
+    if not expense:
+        raise HTTPException(status_code=404, detail="Despesa não encontrada")
+    
+    new_status = not bool(expense.get("is_paid", 0))
+    paid_date = datetime.now(timezone.utc).strftime("%Y-%m-%d") if new_status else None
+    
+    await db_call(sqlite_db.update_expense, expense_id, {
+        "is_paid": new_status,
+        "paid_date": paid_date
+    })
+    
+    await log_audit("UPDATE", "expense", f"{expense['name']} - {'Pago' if new_status else 'Pendente'}", current_user, "baixa")
+    
+    return {"message": "Status atualizado", "is_paid": new_status, "paid_date": paid_date}
+
+
+@api_router.delete("/expenses/{expense_id}")
+async def delete_expense(expense_id: str, delete_children: bool = False, current_user: User = Depends(get_current_user)):
+    """Deleta uma despesa"""
+    check_role(current_user, ["proprietario", "administrador"])
+    
+    expense = await db_call(sqlite_db.get_expense_by_id, expense_id)
+    if not expense:
+        raise HTTPException(status_code=404, detail="Despesa não encontrada")
+    
+    # Se pediu para deletar filhos (parcelas/recorrentes)
+    if delete_children:
+        all_expenses = await db_call(sqlite_db.get_all_expenses)
+        children = [e for e in all_expenses if e.get("parent_expense_id") == expense_id]
+        for child in children:
+            await db_call(sqlite_db.delete_expense, child["id"])
+    
+    await db_call(sqlite_db.delete_expense, expense_id)
+    await log_audit("DELETE", "expense", expense["name"], current_user, "alta")
+    
+    return {"message": "Despesa deletada"}
+
+
 # Reports endpoints
 @api_router.get("/reports/price-history/{ingredient_id}", response_model=IngredientWithHistory)
 async def get_price_history(ingredient_id: str, current_user: User = Depends(get_current_user)):
