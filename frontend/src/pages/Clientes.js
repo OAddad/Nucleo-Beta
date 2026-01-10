@@ -950,8 +950,8 @@ export default function Clientes() {
               </div>
             </div>
 
-            {/* Segunda Linha: Telefone, CPF e Data de Nascimento */}
-            <div className="grid grid-cols-3 gap-4">
+            {/* Segunda Linha: Telefone, CPF, Data de Nascimento e Pontuação */}
+            <div className="grid grid-cols-4 gap-4">
               <div>
                 <Label>Telefone *</Label>
                 <Input
@@ -980,6 +980,20 @@ export default function Clientes() {
                   placeholder="DD/MM/AAAA"
                   className="mt-1"
                   maxLength={10}
+                />
+              </div>
+              <div>
+                <Label className="flex items-center gap-1">
+                  <Award className="w-3 h-3 text-purple-500" />
+                  Pontuação
+                </Label>
+                <Input
+                  type="number"
+                  value={pontuacao}
+                  onChange={(e) => setPontuacao(e.target.value)}
+                  placeholder="0"
+                  className="mt-1"
+                  min={0}
                 />
               </div>
             </div>
