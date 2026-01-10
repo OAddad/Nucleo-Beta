@@ -2982,3 +2982,7 @@
 2026-01-10T13:25:55.999001+00:00 | DB_CALL get_all_categories | P3 | 0.73ms | success
 2026-01-10T13:25:55.999466+00:00 | DB_CALL get_user_by_id | P3 | 0.73ms | success
 2026-01-10T13:25:55.999752+00:00 | DB_CALL get_all_products | P3 | 0.21ms | success
+2026-01-10T13:25:58.954278+00:00 | DB_CALL init_database | P3 | 3.24ms | success
+2026-01-10T13:25:58.954731+00:00 | DB_CALL count_ingredients | P3 | 0.23ms | success
+2026-01-10T13:25:58.954940+00:00 | DB_CALL count_products | P3 | 0.15ms | success
+2026-01-10T13:25:58.955090+00:00 | DB_CALL count_users | P3 | 0.09ms | success
