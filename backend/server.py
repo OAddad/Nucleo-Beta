@@ -1561,6 +1561,10 @@ async def check_must_change_password(current_user: User = Depends(get_current_us
     return {"must_change_password": must_change}
 
 
+# Include router APÓS definir todos os endpoints
+app.include_router(api_router)
+
+
 
 # ==================== MAIN ====================
 
