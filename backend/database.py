@@ -1412,6 +1412,15 @@ def count_clientes() -> int:
         return cursor.fetchone()[0]
 
 
+def get_total_pontuacao() -> int:
+    """Retorna o total de pontos distribuídos para todos os clientes"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT COALESCE(SUM(pontuacao), 0) FROM clientes")
+        return cursor.fetchone()[0]
+
+
 def update_cliente_pedido_stats(cliente_id: str, order_value: float) -> Optional[Dict]:
     """Atualiza estatísticas de pedido do cliente"""
     with db_lock:
