@@ -561,11 +561,11 @@ def get_all_products() -> List[Dict]:
             p = dict(row)
             try:
                 p['recipe'] = json.loads(p['recipe']) if p['recipe'] else []
-            except:
+            except (json.JSONDecodeError, TypeError):
                 p['recipe'] = []
             try:
                 p['order_steps'] = json.loads(p['order_steps']) if p['order_steps'] else []
-            except:
+            except (json.JSONDecodeError, TypeError):
                 p['order_steps'] = []
             p['is_insumo'] = bool(p['is_insumo'])
             p['is_divisible'] = bool(p['is_divisible'])
@@ -585,11 +585,11 @@ def get_product_by_id(product_id: str) -> Optional[Dict]:
             p = dict(row)
             try:
                 p['recipe'] = json.loads(p['recipe']) if p['recipe'] else []
-            except:
+            except (json.JSONDecodeError, TypeError):
                 p['recipe'] = []
             try:
                 p['order_steps'] = json.loads(p['order_steps']) if p['order_steps'] else []
-            except:
+            except (json.JSONDecodeError, TypeError):
                 p['order_steps'] = []
             p['is_insumo'] = bool(p['is_insumo'])
             p['is_divisible'] = bool(p['is_divisible'])
