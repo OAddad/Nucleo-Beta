@@ -1587,6 +1587,42 @@ async def check_must_change_password(current_user: User = Depends(get_current_us
 app.include_router(api_router)
 
 
+# ==================== ROTAS DO FRONTEND (SPA) ====================
+# Definidas APÓS api_router para não conflitar
+
+@app.get("/", include_in_schema=False)
+async def serve_root():
+    """Serve o index.html do React"""
+    if FRONTEND_PATH and (FRONTEND_PATH / "index.html").exists():
+        return FileResponse(str(FRONTEND_PATH / "index.html"))
+    return {"message": "Núcleo API", "health": "/api/health", "docs": "/docs"}
+
+
+# Esta rota DEVE vir por último para ser catch-all
+@app.get("/{full_path:path}", include_in_schema=False)
+async def serve_spa(full_path: str):
+    """Serve arquivos estáticos ou index.html para rotas do React (SPA)"""
+    # Ignorar rotas da API (já tratadas pelo api_router)
+    if full_path.startswith("api"):
+        raise HTTPException(status_code=404, detail="Endpoint não encontrado")
+    
+    # Se frontend não configurado
+    if not FRONTEND_PATH:
+        raise HTTPException(status_code=404, detail="Frontend não disponível")
+    
+    # Verificar se é arquivo estático
+    file_path = FRONTEND_PATH / full_path
+    if file_path.exists() and file_path.is_file():
+        return FileResponse(str(file_path))
+    
+    # Retornar index.html para rotas do React (SPA)
+    index_path = FRONTEND_PATH / "index.html"
+    if index_path.exists():
+        return FileResponse(str(index_path))
+    
+    raise HTTPException(status_code=404, detail="Página não encontrada")
+
+
 
 # ==================== MAIN ====================
 
