@@ -735,6 +735,7 @@ export default function Clientes() {
                 <TableHead>Status</TableHead>
                 <TableHead>Telefone</TableHead>
                 <TableHead>Pedidos</TableHead>
+                <TableHead>Pontos</TableHead>
                 <TableHead>Cadastro</TableHead>
                 <TableHead className="w-16">Ações</TableHead>
               </TableRow>
