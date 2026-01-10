@@ -196,11 +196,12 @@ export default function Ingredients() {
   
   const handleToggleActive = async (ingredient) => {
     try {
-      await axios.patch(`${API}/ingredients/${ingredient.id}/toggle-active`, {}, getAuthHeader());
-      toast.success(ingredient.is_active ? "Item desativado!" : "Item ativado!");
+      const response = await axios.patch(`${API}/ingredients/${ingredient.id}/toggle-active`, {}, getAuthHeader());
+      toast.success(response.data.is_active ? "Item ativado!" : "Item desativado!");
       fetchIngredients();
       fetchStockValue();
     } catch (error) {
+      console.error("Erro ao alterar status:", error);
       toast.error("Erro ao alterar status do item");
     }
   };
