@@ -348,6 +348,9 @@ backend:
       - working: "NA"
         agent: "main"
         comment: "Sistema de despesas implementado. Tabelas expense_classifications e expenses criadas. Endpoints: GET/POST/PUT/DELETE /api/expense-classifications, GET/POST/PUT/DELETE /api/expenses, PATCH /api/expenses/{id}/toggle-paid, GET /api/expenses/stats. Funcionalidades: cadastro de classificações, despesas com recorrência automática (gera 12 meses) e parcelamento automático. Testado manualmente com sucesso."
+      - working: true
+        agent: "testing"
+        comment: "✅ EXPENSE MODULE COMPREHENSIVE TESTING COMPLETED: Testado exatamente conforme especificado na review request. RESULTADOS: ✅ TEST 1 PASSED: Tabelas expense_classifications e expenses existem no SQLite (verificado via /api/health). ✅ TEST 2 PASSED: CRUD completo de classificações funcionando - GET/POST/PUT/DELETE /api/expense-classifications, inicialização de classificações padrão. ✅ TEST 3 PASSED: Criação de despesa simples funcionando perfeitamente. ✅ TEST 4 PASSED: Despesas parceladas com geração automática de 4 parcelas funcionando. ✅ TEST 5 PASSED: Despesas recorrentes com geração automática de 12 meses funcionando. ✅ TEST 6 PASSED: Toggle de status pago/pendente via PATCH /api/expenses/{id}/toggle-paid funcionando. ✅ TEST 7 PASSED: Estatísticas /api/expenses/stats retornando total, pending_count, pending_value, paid_count, paid_value. ✅ TEST 8 PASSED: Exclusão de despesas com controle de filhos (parcelas) funcionando - comportamento correto de não deletar filhos automaticamente por segurança. ✅ ADDITIONAL TESTS: Endpoints mensais (/api/expenses/month/{year}/{month}) e pendentes (/api/expenses/pending) funcionando. Autenticação com Addad/Addad123 funcionando perfeitamente. Sistema de despesas 100% operacional conforme especificações."
 
 frontend:
   - task: "Login Page"
