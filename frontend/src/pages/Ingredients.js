@@ -100,6 +100,12 @@ export default function Ingredients() {
   // Estados de paginação
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
+  
+  // Aba ativa (ativos ou desativados)
+  const [activeTab, setActiveTab] = useState("ativos");
+  
+  // Valor total em estoque
+  const [stockValue, setStockValue] = useState({ total_value: 0, items_with_stock: 0, total_items: 0 });
 
   useEffect(() => {
     fetchIngredients();
