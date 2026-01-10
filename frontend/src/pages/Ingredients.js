@@ -179,6 +179,26 @@ export default function Ingredients() {
       console.error("Erro ao carregar categorias");
     }
   };
+  
+  const fetchStockValue = async () => {
+    try {
+      const response = await axios.get(`${API}/ingredients/stats/stock-value`, getAuthHeader());
+      setStockValue(response.data);
+    } catch (error) {
+      console.error("Erro ao carregar valor do estoque");
+    }
+  };
+  
+  const handleToggleActive = async (ingredient) => {
+    try {
+      await axios.patch(`${API}/ingredients/${ingredient.id}/toggle-active`, {}, getAuthHeader());
+      toast.success(ingredient.is_active ? "Item desativado!" : "Item ativado!");
+      fetchIngredients();
+      fetchStockValue();
+    } catch (error) {
+      toast.error("Erro ao alterar status do item");
+    }
+  };
 
   // Filtrar ingredientes
   const filteredIngredients = useMemo(() => {
