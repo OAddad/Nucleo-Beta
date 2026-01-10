@@ -748,6 +748,9 @@ async def create_purchase_batch(batch_data: PurchaseBatchCreate, current_user: U
             "average_price": avg_price, 
             "stock_quantity": new_stock
         })
+        
+        # Atualizar custo das receitas que usam este ingrediente
+        await update_recipe_costs_for_ingredient(item.ingredient_id)
     
     # Registrar auditoria
     await log_audit("CREATE", "purchase", f"Lote de {batch_data.supplier}", current_user, "baixa", {"items": len(purchases_created)})
