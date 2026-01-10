@@ -6153,3 +6153,7 @@
 2026-01-10T19:36:13.120872+00:00 | DB_CALL get_all_expenses | P3 | 0.5ms | success
 2026-01-10T19:36:13.121872+00:00 | DB_CALL get_expenses_stats | P3 | 1.43ms | success
 2026-01-10T19:36:13.122440+00:00 | DB_CALL get_all_expense_classifications | P3 | 1.9ms | success
+2026-01-10T19:37:32.478511+00:00 | DB_CALL init_database | P3 | 2.94ms | success
+2026-01-10T19:37:32.478929+00:00 | DB_CALL count_ingredients | P3 | 0.2ms | success
+2026-01-10T19:37:32.479125+00:00 | DB_CALL count_products | P3 | 0.13ms | success
+2026-01-10T19:37:32.479276+00:00 | DB_CALL count_users | P3 | 0.1ms | success

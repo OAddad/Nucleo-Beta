@@ -159,6 +159,8 @@ class PurchaseBatchCreate(BaseModel):
     supplier: str
     purchase_date: Optional[str] = None
     items: List[PurchaseItemCreate]
+    is_paid: Optional[bool] = True  # Por padrão, compras são consideradas pagas
+    due_date: Optional[str] = None  # Data de vencimento se não foi paga
 
 class PurchaseCreate(BaseModel):
     ingredient_id: str
@@ -178,6 +180,9 @@ class Purchase(BaseModel):
     price: float
     unit_price: float
     purchase_date: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    is_paid: bool = True
+    due_date: Optional[str] = None
+    expense_id: Optional[str] = None  # ID da despesa vinculada
 
 class PurchaseBatch(BaseModel):
     batch_id: str
@@ -186,6 +191,9 @@ class PurchaseBatch(BaseModel):
     total_quantity: float
     total_price: float
     items: List[Purchase]
+    is_paid: bool = True
+    due_date: Optional[str] = None
+    expense_id: Optional[str] = None
 
 class RecipeIngredient(BaseModel):
     ingredient_id: str
