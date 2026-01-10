@@ -516,6 +516,10 @@ export default function Products() {
     preco: "desc"
   });
 
+  // Estados de paginação
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+
   // Calcular estatísticas de performance do cardápio
   const cardapioStats = useMemo(() => {
     const total = products.length;
