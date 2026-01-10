@@ -310,6 +310,10 @@ export default function Despesas() {
       toast.error("Informe a data de vencimento");
       return;
     }
+    if (expenseIsRecurring && (!expenseRecurringCount || parseInt(expenseRecurringCount) < 1)) {
+      toast.error("Informe quantas vezes a despesa vai se repetir");
+      return;
+    }
     
     const expenseData = {
       name: expenseName,
@@ -321,6 +325,7 @@ export default function Despesas() {
       paid_date: expenseIsPaid ? new Date().toISOString().split("T")[0] : null,
       is_recurring: expenseIsRecurring,
       recurring_period: expenseIsRecurring ? expenseRecurringPeriod : null,
+      recurring_count: expenseIsRecurring ? parseInt(expenseRecurringCount) : null,
       installments_total: expenseInstallments ? parseInt(expenseInstallments) : 0,
       notes: expenseNotes || null
     };
@@ -336,7 +341,7 @@ export default function Despesas() {
       } else {
         await axios.post(`${API}/expenses`, expenseData, getAuthHeader());
         const msg = expenseIsRecurring 
-          ? "Despesa recorrente criada! Próximos 12 meses gerados." 
+          ? `Despesa recorrente criada! ${expenseRecurringCount} repetições geradas.` 
           : expenseInstallments && parseInt(expenseInstallments) > 1
             ? `Despesa parcelada criada! ${expenseInstallments} parcelas geradas.`
             : "Despesa criada!";

@@ -6689,3 +6689,9 @@
 2026-01-10T20:01:05.178460+00:00 | DB_CALL create_audit_log | P3 | 5.15ms | success
 2026-01-10T20:01:05.342135+00:00 | DB_CALL get_user_by_id | P3 | 0.2ms | success
 2026-01-10T20:01:05.342500+00:00 | DB_CALL get_all_purchases | P3 | 0.25ms | success
+2026-01-10T20:01:08.974461+00:00 | DB_CALL get_user_by_id | P3 | 0.23ms | success
+2026-01-10T20:01:08.974696+00:00 | DB_CALL get_expenses_stats | P3 | 0.11ms | success
+2026-01-10T20:01:08.976648+00:00 | DB_CALL get_user_by_id | P3 | 0.13ms | success
+2026-01-10T20:01:08.976895+00:00 | DB_CALL get_all_expenses | P3 | 0.17ms | success
+2026-01-10T20:01:08.980313+00:00 | DB_CALL get_user_by_id | P3 | 0.13ms | success
+2026-01-10T20:01:08.980569+00:00 | DB_CALL get_all_expense_classifications | P3 | 0.17ms | success
