@@ -1487,26 +1487,16 @@ export default function Products() {
                       return (
                         <div key={index} className="flex gap-2">
                           <div className="flex-1">
-                            <Select
+                            <IngredientCombobox
+                              ingredients={ingredients}
                               value={item.ingredient_id}
-                              onValueChange={(value) =>
+                              onChange={(value) =>
                                 updateRecipeItem(index, "ingredient_id", value, "packaging")
                               }
-                            >
-                              <SelectTrigger
-                                data-testid={`recipe-packaging-${index}`}
-                                className="h-11"
-                              >
-                                <SelectValue placeholder="Embalagem" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {ingredients.map((ing) => (
-                                  <SelectItem key={ing.id} value={ing.id}>
-                                    {ing.name} ({getIngredientUnit(ing)})
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
+                              placeholder="Buscar embalagem..."
+                              onCreateNew={handleQuickIngredientCreate}
+                              getIngredientUnit={getIngredientUnit}
+                            />
                           </div>
                           <div className="w-40">
                             <Input
@@ -1546,6 +1536,66 @@ export default function Products() {
                     </Button>
                   </TabsContent>
                 </Tabs>
+                )}
+
+                {/* Campo de Rendimento para Receitas */}
+                {productType === "receita" && (
+                  <div className="bg-amber-50 dark:bg-amber-900/20 p-4 rounded-lg border border-amber-200 dark:border-amber-800 space-y-4">
+                    <div className="flex items-center gap-2">
+                      <ChefHat className="w-5 h-5 text-amber-600" />
+                      <Label className="text-base font-medium text-amber-800 dark:text-amber-300">Configuração da Receita</Label>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="recipeYield">Rendimento</Label>
+                        <Input
+                          id="recipeYield"
+                          type="number"
+                          step="0.01"
+                          value={recipeYield}
+                          onChange={(e) => setRecipeYield(e.target.value)}
+                          placeholder="Ex: 2"
+                          className="mt-1 h-11"
+                        />
+                        <p className="text-xs text-muted-foreground mt-1">
+                          Quantidade que a receita rende
+                        </p>
+                      </div>
+                      <div>
+                        <Label htmlFor="recipeYieldUnit">Unidade do Rendimento</Label>
+                        <Select value={recipeYieldUnit} onValueChange={setRecipeYieldUnit}>
+                          <SelectTrigger className="mt-1 h-11">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="kg">Quilograma (kg)</SelectItem>
+                            <SelectItem value="un">Unidade (un)</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <Label htmlFor="linkedIngredient">Item de Estoque Vinculado</Label>
+                      <Select value={linkedIngredientId || "none"} onValueChange={(val) => setLinkedIngredientId(val === "none" ? "" : val)}>
+                        <SelectTrigger className="mt-1 h-11">
+                          <SelectValue placeholder="Selecione o item no estoque" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="none">Nenhum</SelectItem>
+                          {ingredients.map((ing) => (
+                            <SelectItem key={ing.id} value={ing.id}>
+                              {ing.name} ({ing.unit})
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        O custo unitário da receita será enviado para este item no estoque
+                      </p>
+                    </div>
+                  </div>
                 )}
 
                 {/* Conteúdo da aba Etapas */}
