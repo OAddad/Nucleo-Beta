@@ -66,7 +66,7 @@
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
       "shortcutName": "Núcleo",
-      "license": "LICENSE.txt"
+      "menuCategory": "Núcleo"
     },
     "mac": {
       "target": "dmg",
