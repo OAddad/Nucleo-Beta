@@ -325,8 +325,9 @@ export default function Pedidos() {
         </div>
       ) : viewMode === "grade" ? (
         /* Visualização em Grade */
+        <>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          {filteredPedidos.map(pedido => {
+          {paginatedPedidos.map(pedido => {
             const status = statusConfig[getNormalizedStatus(pedido.status)] || statusConfig.producao;
             const StatusIcon = status.icon;
             const pagamento = formasPagamento[pedido.formaPagamento];
