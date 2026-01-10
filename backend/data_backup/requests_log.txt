@@ -5059,3 +5059,8 @@
 2026-01-10T18:05:36.021113+00:00 | DB_CALL get_user_by_id | P3 | 0.74ms | success
 2026-01-10T18:05:36.021467+00:00 | DB_CALL get_all_purchases | P3 | 0.42ms | success
 2026-01-10T18:05:36.022305+00:00 | DB_CALL get_all_ingredients | P3 | 1.12ms | success
+2026-01-10T18:08:48.351524+00:00 | DB_CALL get_user_by_username | P3 | 0.29ms | success
+2026-01-10T18:08:48.377812+00:00 | DB_CALL get_user_by_id | P3 | 0.23ms | success
+2026-01-10T18:08:48.378157+00:00 | DB_CALL get_all_purchases | P3 | 0.22ms | success
+2026-01-10T18:08:48.398808+00:00 | DB_CALL get_user_by_id | P3 | 0.23ms | success
+2026-01-10T18:08:48.399137+00:00 | DB_CALL get_all_purchases | P3 | 0.21ms | success
