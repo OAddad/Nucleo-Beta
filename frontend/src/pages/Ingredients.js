@@ -507,13 +507,20 @@ export default function Ingredients() {
   // Contadores para os filtros
   const stockCounts = useMemo(() => {
     const counts = { low: 0, normal: 0, high: 0 };
-    ingredients.forEach(ing => {
+    ingredients.filter(i => i.is_active !== false).forEach(ing => {
       const status = getStockStatus(ing);
       if (status.label === "Baixo") counts.low++;
       else if (status.label === "Alto") counts.high++;
       else counts.normal++;
     });
     return counts;
+  }, [ingredients]);
+  
+  // Contadores de ativos/desativados
+  const activeCounts = useMemo(() => {
+    const active = ingredients.filter(i => i.is_active !== false).length;
+    const inactive = ingredients.filter(i => i.is_active === false).length;
+    return { active, inactive };
   }, [ingredients]);
 
   return (
@@ -525,6 +532,50 @@ export default function Ingredients() {
             Gerencie os itens de estoque e suas categorias
           </p>
         </div>
+        
+        {/* Card de Valor Total em Estoque */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          <div className="bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl p-5 text-white shadow-lg">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-emerald-100 text-sm font-medium">Valor Total em Estoque</p>
+                <p className="text-3xl font-bold mt-1">
+                  {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(stockValue.total_value)}
+                </p>
+              </div>
+              <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
+                <Package className="w-6 h-6" />
+              </div>
+            </div>
+            <p className="text-emerald-100 text-xs mt-2">
+              {stockValue.items_with_stock} itens com estoque de {stockValue.total_items} ativos
+            </p>
+          </div>
+          
+          <div className="bg-card rounded-xl border p-5">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center">
+                <AlertTriangle className="w-5 h-5 text-red-600" />
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">Estoque Baixo</p>
+                <p className="text-2xl font-bold text-red-600">{stockCounts.low}</p>
+              </div>
+            </div>
+          </div>
+          
+          <div className="bg-card rounded-xl border p-5">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-amber-100 dark:bg-amber-900/30 rounded-full flex items-center justify-center">
+                <Package className="w-5 h-5 text-amber-600" />
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">Itens Desativados</p>
+                <p className="text-2xl font-bold text-amber-600">{activeCounts.inactive}</p>
+              </div>
+            </div>
+          </div>
+        </div>
 
         <Tabs defaultValue="estoque" className="w-full">
           <TabsList className="mb-6">
@@ -534,6 +585,32 @@ export default function Ingredients() {
 
           {/* Tab: Estoque */}
           <TabsContent value="estoque">
+            {/* Sub-abas: Ativos / Desativados */}
+            <div className="flex items-center gap-4 mb-4">
+              <div className="inline-flex rounded-lg border p-1 bg-muted/50">
+                <button
+                  onClick={() => setActiveTab("ativos")}
+                  className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                    activeTab === "ativos" 
+                      ? "bg-background shadow text-foreground" 
+                      : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  Ativos ({activeCounts.active})
+                </button>
+                <button
+                  onClick={() => setActiveTab("desativados")}
+                  className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                    activeTab === "desativados" 
+                      ? "bg-background shadow text-foreground" 
+                      : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  Desativados ({activeCounts.inactive})
+                </button>
+              </div>
+            </div>
+            
             {/* Barra de Filtros */}
             <div className="bg-card rounded-xl border shadow-sm p-4 mb-4">
               <div className="flex flex-col lg:flex-row gap-4">
