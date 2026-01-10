@@ -4597,3 +4597,11 @@
 2026-01-10T17:15:39.604552+00:00 | DB_CALL count_ingredients | P3 | 0.23ms | success
 2026-01-10T17:15:39.604734+00:00 | DB_CALL count_products | P3 | 0.12ms | success
 2026-01-10T17:15:39.604879+00:00 | DB_CALL count_users | P3 | 0.09ms | success
+2026-01-10T17:16:08.639504+00:00 | DB_CALL init_database | P3 | 2.85ms | success
+2026-01-10T17:16:08.640179+00:00 | DB_CALL count_ingredients | P3 | 0.31ms | success
+2026-01-10T17:16:08.640461+00:00 | DB_CALL count_products | P3 | 0.19ms | success
+2026-01-10T17:16:08.640660+00:00 | DB_CALL count_users | P3 | 0.15ms | success
+2026-01-10T17:16:14.980187+00:00 | DB_CALL init_database | P3 | 2.68ms | success
+2026-01-10T17:16:14.980681+00:00 | DB_CALL count_ingredients | P3 | 0.23ms | success
+2026-01-10T17:16:14.980866+00:00 | DB_CALL count_products | P3 | 0.12ms | success
+2026-01-10T17:16:14.981002+00:00 | DB_CALL count_users | P3 | 0.09ms | success
