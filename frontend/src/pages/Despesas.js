@@ -1226,49 +1226,42 @@ export default function Despesas() {
           </AlertDialogContent>
         </AlertDialog>
         
-        {/* Dialog Confirmar Exclusão Despesa Recorrente/Parcelada */}
+        {/* Dialog Confirmar Exclusão Despesa Recorrente/Parcelada - 3 opções */}
         <AlertDialog open={deleteRecurringDialogOpen} onOpenChange={setDeleteRecurringDialogOpen}>
           <AlertDialogContent className="sm:max-w-md">
             <AlertDialogHeader>
-              <AlertDialogTitle>Excluir Despesa</AlertDialogTitle>
-              <AlertDialogDescription className="space-y-2">
-                <span className="block">
-                  A despesa "{expenseToDelete?.name}" faz parte de uma série 
-                  {expenseToDelete?.is_recurring ? " recorrente" : " parcelada"}.
-                </span>
-                <span className="block">
-                  Existem <strong>{countFutureExpenses(expenseToDelete)}</strong> despesas futuras nesta série.
-                </span>
-                <span className="block font-medium text-foreground">
-                  Como deseja proceder?
-                </span>
+              <AlertDialogTitle>Excluir Despesa Recorrente</AlertDialogTitle>
+              <AlertDialogDescription>
+                A despesa "<strong>{expenseToDelete?.name}</strong>" é uma despesa recorrente.
+                O que deseja fazer?
               </AlertDialogDescription>
             </AlertDialogHeader>
-            <div className="flex flex-col gap-2 mt-4">
+            <div className="flex flex-col gap-3 mt-4">
               <Button
                 variant="outline"
-                className="justify-start h-auto py-3 px-4"
+                className="w-full justify-center"
                 onClick={() => handleDeleteExpense(false)}
               >
-                <div className="text-left">
-                  <p className="font-medium">Excluir apenas esta despesa</p>
-                  <p className="text-xs text-muted-foreground">As demais despesas da série serão mantidas</p>
-                </div>
+                Deletar somente esta despesa
               </Button>
               <Button
                 variant="destructive"
-                className="justify-start h-auto py-3 px-4"
+                className="w-full justify-center"
                 onClick={() => handleDeleteExpense(true)}
               >
-                <div className="text-left">
-                  <p className="font-medium">Excluir esta e todas as futuras ({countFutureExpenses(expenseToDelete) + 1})</p>
-                  <p className="text-xs opacity-90">Esta despesa e as {countFutureExpenses(expenseToDelete)} futuras serão excluídas</p>
-                </div>
+                Deletar todas as despesas recorrentes
+              </Button>
+              <Button
+                variant="ghost"
+                className="w-full justify-center"
+                onClick={() => {
+                  setDeleteRecurringDialogOpen(false);
+                  setExpenseToDelete(null);
+                }}
+              >
+                Cancelar
               </Button>
             </div>
-            <AlertDialogFooter className="mt-4">
-              <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
       </div>
