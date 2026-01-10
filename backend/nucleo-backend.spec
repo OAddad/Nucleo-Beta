@@ -2,6 +2,9 @@
 """
 PyInstaller spec file para Núcleo Backend
 Gera um executável standalone do servidor FastAPI
+
+NOTA: SEM ÍCONE - o ícone é responsabilidade do Electron, não do backend.
+Isso evita problemas de conversão de .ico pelo PyInstaller/Pillow.
 """
 
 import os
@@ -89,5 +92,6 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon='../build-resources/icon.ico' if os.path.exists('../build-resources/icon.ico') else None,
+    # SEM ÍCONE - evita erros de conversão
+    # icon é responsabilidade do Electron/electron-builder
 )

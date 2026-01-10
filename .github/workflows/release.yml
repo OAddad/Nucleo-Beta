@@ -13,6 +13,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
       
+      - name: Extract version from tag
+        id: version
+        shell: bash
+        run: |
+          VERSION=${GITHUB_REF_NAME#v}
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+          echo "Versão extraída da tag: $VERSION"
+      
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -22,6 +30,31 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+      
+      - name: Install Pillow for icon generation
+        run: pip install Pillow
+      
+      - name: Generate/Validate icon.ico
+        shell: bash
+        run: |
+          echo "=== Gerando icon.ico ==="
+          python tools/make_icon.py
+          
+          # Validar resultado
+          if [ ! -f "build-resources/icon.ico" ]; then
+            echo "ERRO: icon.ico não foi gerado!"
+            exit 1
+          fi
+          
+          SIZE=$(stat -c%s "build-resources/icon.ico" 2>/dev/null || stat -f%z "build-resources/icon.ico")
+          echo "Tamanho do icon.ico: $SIZE bytes"
+          
+          if [ "$SIZE" -lt 1000 ]; then
+            echo "ERRO: icon.ico muito pequeno ($SIZE bytes). Arquivo inválido!"
+            exit 1
+          fi
+          
+          echo "✅ icon.ico válido!"
       
       - name: Install Python dependencies
         run: |
@@ -35,13 +68,15 @@ jobs:
           python build_backend.py
       
       - name: Verify Backend Build
+        shell: pwsh
         run: |
-          dir desktop-build\backend
-          if (!(Test-Path "desktop-build\backend\nucleo-backend.exe")) {
+          if (!(Test-Path "desktop-build/backend/nucleo-backend.exe")) {
             Write-Error "Backend build failed - nucleo-backend.exe not found"
+            Get-ChildItem -Recurse desktop-build
             exit 1
           }
-        shell: pwsh
+          $size = (Get-Item "desktop-build/backend/nucleo-backend.exe").Length / 1MB
+          Write-Host "✅ nucleo-backend.exe gerado: $([math]::Round($size, 2)) MB"
       
       - name: Install Node dependencies
         run: |
@@ -49,85 +84,70 @@ jobs:
           cd frontend
           yarn install
       
+      - name: Set version in package.json
+        shell: bash
+        run: |
+          npm pkg set version="${{ steps.version.outputs.VERSION }}"
+          echo "Versão definida no package.json: ${{ steps.version.outputs.VERSION }}"
+      
       - name: Build Frontend
+        env:
+          REACT_APP_VERSION: ${{ steps.version.outputs.VERSION }}
         run: |
           cd frontend
           yarn build
       
       - name: Verify Frontend Build
+        shell: pwsh
         run: |
-          dir frontend\build
-          if (!(Test-Path "frontend\build\index.html")) {
+          if (!(Test-Path "frontend/build/index.html")) {
             Write-Error "Frontend build failed - index.html not found"
             exit 1
           }
-        shell: pwsh
+          Write-Host "✅ Frontend build OK"
       
-      - name: Build Electron App
+      - name: Build Electron App (NSIS Installer)
         run: npm run dist:win
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
-      - name: List dist folder
-        run: dir dist
+      - name: Verify Installer
         shell: pwsh
+        run: |
+          Get-ChildItem dist
+          if (!(Test-Path "dist/Nucleo-Setup.exe")) {
+            Write-Error "Installer not found: Nucleo-Setup.exe"
+            exit 1
+          }
+          $size = (Get-Item "dist/Nucleo-Setup.exe").Length / 1MB
+          Write-Host "✅ Nucleo-Setup.exe gerado: $([math]::Round($size, 2)) MB"
       
       - name: Upload Release Asset
         uses: softprops/action-gh-release@v1
         with:
           files: dist/Nucleo-Setup.exe
+          name: Núcleo v${{ steps.version.outputs.VERSION }}
+          body: |
+            ## Núcleo v${{ steps.version.outputs.VERSION }}
+            
+            ### Instalação
+            1. Baixe `Nucleo-Setup.exe`
+            2. Execute o instalador
+            3. O Núcleo aparecerá no Menu Iniciar
+            
+            ### Primeiro acesso
+            - Login: `admin`
+            - Senha: `admin`
+            - Troque a senha no primeiro acesso!
+            
+            ### Dados
+            - Banco: `%APPDATA%\\nucleo\\nucleo.db`
+            - Logs: `%APPDATA%\\nucleo\\logs\\nucleo.log`
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  build-linux:
-    runs-on: ubuntu-latest
-    
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-      
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-      
-      - name: Install Python dependencies
-        run: |
-          cd backend
-          pip install -r requirements.txt
-          pip install pyinstaller
-      
-      - name: Build Backend (PyInstaller)
-        run: |
-          cd backend
-          python build_backend.py
-      
-      - name: Install Node dependencies
-        run: |
-          npm install
-          cd frontend
-          yarn install
-      
-      - name: Build Frontend
-        run: |
-          cd frontend
-          yarn build
-      
-      - name: Build Electron App
-        run: npm run dist
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      
-      - name: Upload Release Asset
-        uses: softprops/action-gh-release@v1
-        with:
-          files: |
-            dist/*.AppImage
-            dist/*.deb
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  # Job Linux desabilitado - foco é Windows
+  # build-linux:
+  #   runs-on: ubuntu-latest
+  #   continue-on-error: true
+  #   ...
