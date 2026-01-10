@@ -6725,3 +6725,7 @@
 2026-01-10T20:01:48.081308+00:00 | DB_CALL get_all_expenses | P3 | 0.97ms | success
 2026-01-10T20:01:48.082005+00:00 | DB_CALL get_user_by_id | P3 | 0.13ms | success
 2026-01-10T20:01:48.082199+00:00 | DB_CALL get_expenses_stats | P3 | 0.11ms | success
+2026-01-10T20:02:01.309893+00:00 | DB_CALL init_database | P3 | 2.93ms | success
+2026-01-10T20:02:01.310343+00:00 | DB_CALL count_ingredients | P3 | 0.21ms | success
+2026-01-10T20:02:01.310523+00:00 | DB_CALL count_products | P3 | 0.12ms | success
+2026-01-10T20:02:01.310673+00:00 | DB_CALL count_users | P3 | 0.1ms | success
