@@ -247,11 +247,36 @@ export default function Despesas() {
     setExpenseInstallments("");
     setAdvancedOpen(false);
     setEditingExpense(null);
+    setNewClassificationName("");
+    setShowNewClassificationInput(false);
   };
   
   const handleOpenNewExpense = () => {
     resetExpenseForm();
     setExpenseDialogOpen(true);
+  };
+  
+  // Criar classificação inline
+  const handleCreateClassificationInline = async () => {
+    if (!newClassificationName.trim()) {
+      toast.error("Informe o nome da classificação");
+      return;
+    }
+    
+    try {
+      const response = await axios.post(
+        `${API}/expense-classifications`,
+        { name: newClassificationName },
+        getAuthHeader()
+      );
+      toast.success("Classificação criada!");
+      setExpenseClassificationId(response.data.id);
+      setNewClassificationName("");
+      setShowNewClassificationInput(false);
+      fetchClassifications();
+    } catch (error) {
+      toast.error(error.response?.data?.detail || "Erro ao criar classificação");
+    }
   };
   
   const handleEditExpense = (expense) => {
