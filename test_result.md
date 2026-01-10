@@ -422,6 +422,30 @@ frontend:
         agent: "main"
         comment: "Página de moderação/auditoria"
 
+  - task: "Despesas Page"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/pages/Despesas.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Página de Despesas implementada com abas Despesas/Classificação. Funcionalidades: CRUD de classificações, CRUD de despesas com busca de fornecedor (autocomplete), seção avançada para recorrência e parcelas, agrupamento por mês, filtros, estatísticas."
+
+  - task: "Financeiro Menu Module"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/pages/Dashboard.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Módulo FINANCEIRO adicionado ao menu lateral com hierarquia: Extrato Financeiro, Despesas, Compras. Rotas configuradas."
+
 metadata:
   created_by: "main_agent"
   version: "1.0"
