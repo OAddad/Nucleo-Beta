@@ -358,23 +358,21 @@ export default function Fornecedores() {
     setFornecedorToDelete(null);
   };
 
-  // Filtrar e ordenar fornecedores
+  // Filtrar e ordenar fornecedores (agora usa filteredFornecedores que já tem a lógica de filtro de período)
   const sortedFornecedores = useMemo(() => {
-    let result = getAllFornecedores();
-    
-    if (searchTerm) {
-      result = result.filter(f => 
-        f.nome.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }
-    
     // Ordenar por total gasto (decrescente)
-    return result.sort((a, b) => {
+    return [...filteredFornecedores].sort((a, b) => {
       const statsA = getEstatisticasFornecedor(a.nome);
       const statsB = getEstatisticasFornecedor(b.nome);
       return statsB.totalGasto - statsA.totalGasto;
     });
-  }, [fornecedores, compras, searchTerm, periodoFiltro]);
+  }, [filteredFornecedores, compras, periodoFiltro]);
+
+  // Fornecedores paginados após ordenação
+  const finalPaginatedFornecedores = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    return sortedFornecedores.slice(startIndex, startIndex + itemsPerPage);
+  }, [sortedFornecedores, currentPage, itemsPerPage]);
 
   // Totais gerais
   const { totalGeral, totalCompras } = useMemo(() => {
