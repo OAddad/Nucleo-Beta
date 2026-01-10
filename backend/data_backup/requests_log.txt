@@ -7655,3 +7655,7 @@
 2026-01-10T20:35:56.784980+00:00 | DB_CALL count_ingredients | P3 | 0.25ms | success
 2026-01-10T20:35:56.785158+00:00 | DB_CALL count_products | P3 | 0.12ms | success
 2026-01-10T20:35:56.785296+00:00 | DB_CALL count_users | P3 | 0.09ms | success
+2026-01-10T20:36:06.864860+00:00 | DB_CALL get_user_by_id | P3 | 0.34ms | success
+2026-01-10T20:36:06.868112+00:00 | DB_CALL get_ingredient_by_id | P3 | 3.02ms | success
+2026-01-10T20:36:06.872701+00:00 | DB_CALL update_ingredient | P3 | 4.42ms | success
+2026-01-10T20:36:06.875182+00:00 | DB_CALL create_audit_log | P3 | 2.3ms | success
