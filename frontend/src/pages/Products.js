@@ -1366,20 +1366,22 @@ export default function Products() {
                       />
                     </div>
 
-                    {/* Preço de Venda */}
-                    <div>
-                      <Label htmlFor="salePrice">Preço de Venda (R$)</Label>
-                      <Input
-                        id="salePrice"
-                        data-testid="product-sale-price-input"
-                        type="number"
-                        step="0.01"
-                        value={salePrice}
-                        onChange={(e) => setSalePrice(e.target.value)}
-                        placeholder="0.00"
-                        className="mt-1 h-11"
-                      />
-                    </div>
+                    {/* Preço de Venda - Oculto para RECEITA */}
+                    {productType !== "receita" && (
+                      <div>
+                        <Label htmlFor="salePrice">Preço de Venda (R$)</Label>
+                        <Input
+                          id="salePrice"
+                          data-testid="product-sale-price-input"
+                          type="number"
+                          step="0.01"
+                          value={salePrice}
+                          onChange={(e) => setSalePrice(e.target.value)}
+                          placeholder="0.00"
+                          className="mt-1 h-11"
+                        />
+                      </div>
+                    )}
                   </div>
                 </div>
 
