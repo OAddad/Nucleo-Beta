@@ -584,8 +584,8 @@ export default function Ingredients() {
           </p>
         </div>
         
-        {/* Card de Valor Total em Estoque */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        {/* Cards de Valor Total em Estoque */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
           <div className="bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl p-5 text-white shadow-lg">
             <div className="flex items-center justify-between">
               <div>
@@ -600,6 +600,23 @@ export default function Ingredients() {
             </div>
             <p className="text-emerald-100 text-xs mt-2">
               {stockValue.items_with_stock} itens com estoque de {stockValue.total_items} ativos
+            </p>
+          </div>
+          
+          <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-5 text-white shadow-lg">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-blue-100 text-sm font-medium">Necessário p/ Estoque Mín.</p>
+                <p className="text-3xl font-bold mt-1">
+                  {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(stockDeficitValue.value)}
+                </p>
+              </div>
+              <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
+                <ShoppingCart className="w-6 h-6" />
+              </div>
+            </div>
+            <p className="text-blue-100 text-xs mt-2">
+              {stockDeficitValue.items} itens abaixo do mínimo
             </p>
           </div>
           
