@@ -165,6 +165,7 @@ export default function Clientes() {
   const [currentCliente, setCurrentCliente] = useState(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [clienteToDelete, setClienteToDelete] = useState(null);
+  const [totalPontuacao, setTotalPontuacao] = useState(0);
   
   // Estados de paginação
   const [currentPage, setCurrentPage] = useState(1);
@@ -189,6 +190,7 @@ export default function Clientes() {
 
   useEffect(() => {
     fetchClientes();
+    fetchTotalPontuacao();
   }, []);
 
   const fetchClientes = async () => {
