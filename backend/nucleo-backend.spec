@@ -15,8 +15,10 @@ a = Analysis(
     pathex=[base_path],
     binaries=[],
     datas=[
-        # Incluir arquivos necessários
-        ('data_backup', 'data_backup'),
+        # Incluir seed database para bootstrap
+        ('data_backup/nucleo.db', 'data_backup'),
+        # Incluir arquivos de configuração
+        ('.env', '.'),
     ],
     hiddenimports=[
         'uvicorn',
@@ -32,6 +34,8 @@ a = Analysis(
         'uvicorn.lifespan.on',
         'fastapi',
         'starlette',
+        'starlette.responses',
+        'starlette.staticfiles',
         'pydantic',
         'pydantic_core',
         'sqlite3',
@@ -48,6 +52,9 @@ a = Analysis(
         'h11',
         'httptools',
         'watchfiles',
+        'database',
+        'bug_tracker',
+        'excel_backup',
     ],
     hookspath=[],
     hooksconfig={},
@@ -78,7 +85,7 @@ exe = EXE(
     upx=True,
     upx_exclude=[],
     runtime_tmpdir=None,
-    console=True,  # Console para ver logs durante desenvolvimento
+    console=True,  # Console para ver logs
     disable_windowed_traceback=False,
     argv_emulation=False,
     target_arch=None,
