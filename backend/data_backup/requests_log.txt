@@ -8315,3 +8315,10 @@
 2026-01-10T21:24:39.349670+00:00 | DB_CALL get_user_by_id | P3 | 0.27ms | success
 2026-01-10T21:24:39.349933+00:00 | DB_CALL get_total_pontuacao | P3 | 0.11ms | success
 2026-01-10T21:24:39.350064+00:00 | DB_CALL count_clientes | P3 | 0.08ms | success
+2026-01-10T21:24:49.328404+00:00 | DB_CALL get_user_by_id | P3 | 0.24ms | success
+2026-01-10T21:24:49.328808+00:00 | DB_CALL get_all_purchases | P3 | 0.26ms | success
+2026-01-10T21:24:49.776404+00:00 | DB_CALL get_user_by_id | P3 | 0.29ms | success
+2026-01-10T21:24:49.776800+00:00 | DB_CALL get_total_pontuacao | P3 | 0.16ms | success
+2026-01-10T21:24:49.777088+00:00 | DB_CALL count_clientes | P3 | 0.23ms | success
+2026-01-10T21:24:49.778050+00:00 | DB_CALL get_user_by_id | P3 | 0.14ms | success
+2026-01-10T21:24:49.778277+00:00 | DB_CALL get_all_clientes | P3 | 0.14ms | success

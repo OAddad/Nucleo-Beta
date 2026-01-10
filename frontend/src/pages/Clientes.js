@@ -228,7 +228,8 @@ export default function Clientes() {
         pedidos_count: 0,
         total_gasto: 0,
         last_order_date: null,
-        orders_last_30_days: 0
+        orders_last_30_days: 0,
+        pontuacao: 0
       },
       {
         nome: "João Santos",
@@ -239,7 +240,8 @@ export default function Clientes() {
         pedidos_count: 1,
         total_gasto: 45.90,
         last_order_date: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
-        orders_last_30_days: 1
+        orders_last_30_days: 1,
+        pontuacao: 50
       },
       {
         nome: "Ana Costa",
@@ -250,7 +252,8 @@ export default function Clientes() {
         pedidos_count: 4,
         total_gasto: 320.50,
         last_order_date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
-        orders_last_30_days: 4
+        orders_last_30_days: 4,
+        pontuacao: 320
       },
       {
         nome: "Pedro Oliveira",
@@ -261,7 +264,8 @@ export default function Clientes() {
         pedidos_count: 8,
         total_gasto: 890.00,
         last_order_date: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
-        orders_last_30_days: 5
+        orders_last_30_days: 5,
+        pontuacao: 890
       },
       {
         nome: "Carla Mendes",
@@ -272,7 +276,8 @@ export default function Clientes() {
         pedidos_count: 3,
         total_gasto: 150.00,
         last_order_date: new Date(Date.now() - 45 * 24 * 60 * 60 * 1000).toISOString(),
-        orders_last_30_days: 0
+        orders_last_30_days: 0,
+        pontuacao: 150
       },
       {
         nome: "Roberto Lima",
