@@ -3150,3 +3150,15 @@
 2026-01-10T13:29:18.936251+00:00 | DB_CALL create_audit_log | P3 | 3.28ms | success
 2026-01-10T13:29:19.101510+00:00 | DB_CALL get_user_by_id | P3 | 0.24ms | success
 2026-01-10T13:29:19.101865+00:00 | DB_CALL get_all_purchases | P3 | 0.22ms | success
+2026-01-10T13:29:27.466003+00:00 | DB_CALL get_user_by_id | P3 | 1.32ms | success
+2026-01-10T13:29:27.466228+00:00 | DB_CALL get_user_by_id | P3 | 1.44ms | success
+2026-01-10T13:29:27.466303+00:00 | DB_CALL get_user_by_id | P3 | 0.81ms | success
+2026-01-10T13:29:27.466696+00:00 | DB_CALL get_all_products | P3 | 0.5ms | success
+2026-01-10T13:29:27.467477+00:00 | DB_CALL count_ingredients | P3 | 1.16ms | success
+2026-01-10T13:29:27.467582+00:00 | DB_CALL get_all_ingredients | P3 | 1.21ms | success
+2026-01-10T13:29:27.468198+00:00 | DB_CALL count_products | P3 | 0.62ms | success
+2026-01-10T13:29:27.468355+00:00 | DB_CALL count_purchases | P3 | 0.09ms | success
+2026-01-10T13:29:27.468603+00:00 | DB_CALL get_all_products | P3 | 0.18ms | success
+2026-01-10T13:29:27.693226+00:00 | DB_CALL get_user_by_id | P3 | 0.25ms | success
+2026-01-10T13:29:27.693486+00:00 | DB_CALL get_ingredient_by_id | P3 | 0.11ms | success
+2026-01-10T13:29:27.693642+00:00 | DB_CALL get_purchases_by_ingredient | P3 | 0.1ms | success
