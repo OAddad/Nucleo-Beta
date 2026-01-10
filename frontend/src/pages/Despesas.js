@@ -245,6 +245,7 @@ export default function Despesas() {
     setExpenseNotes("");
     setExpenseIsRecurring(false);
     setExpenseRecurringPeriod("monthly");
+    setExpenseRecurringCount("12");
     setExpenseInstallments("");
     setAdvancedOpen(false);
     setEditingExpense(null);

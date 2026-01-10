@@ -6665,3 +6665,9 @@
 2026-01-10T20:00:47.085862+00:00 | DB_CALL get_expenses_stats | P3 | 0.4ms | success
 2026-01-10T20:00:47.086268+00:00 | DB_CALL get_all_expense_classifications | P3 | 0.62ms | success
 2026-01-10T20:00:47.086758+00:00 | DB_CALL get_all_expenses | P3 | 1.16ms | success
+2026-01-10T20:00:55.071539+00:00 | DB_CALL get_user_by_id | P3 | 1.01ms | success
+2026-01-10T20:00:55.071733+00:00 | DB_CALL get_user_by_id | P3 | 0.79ms | success
+2026-01-10T20:00:55.071797+00:00 | DB_CALL get_user_by_id | P3 | 0.53ms | success
+2026-01-10T20:00:55.072046+00:00 | DB_CALL get_expenses_stats | P3 | 0.34ms | success
+2026-01-10T20:00:55.072536+00:00 | DB_CALL get_all_expense_classifications | P3 | 0.74ms | success
+2026-01-10T20:00:55.072850+00:00 | DB_CALL get_all_expenses | P3 | 1.0ms | success
