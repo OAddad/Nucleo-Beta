@@ -604,6 +604,11 @@ export default function Clientes() {
           <Download className="w-4 h-4 mr-2" />
           Exportar
         </Button>
+        {clientes.length === 0 && (
+          <Button variant="outline" onClick={loadTestData} className="border-dashed">
+            Carregar Dados Teste
+          </Button>
+        )}
         <Button onClick={handleOpenNew}>
           <Plus className="w-4 h-4 mr-2" />
           Novo Cliente
