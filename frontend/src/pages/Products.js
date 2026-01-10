@@ -2051,7 +2051,8 @@ export default function Products() {
               </p>
             </div>
           ) : (
-            sortedProducts.map((product) => {
+            <>
+            {paginatedProducts.map((product) => {
               const isExpanded = expandedProducts.has(product.id);
               
               return (
