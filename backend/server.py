@@ -235,6 +235,7 @@ class ExpenseCreate(BaseModel):
     paid_date: Optional[str] = None
     is_recurring: Optional[bool] = False
     recurring_period: Optional[str] = None  # monthly, weekly, yearly
+    recurring_count: Optional[int] = 12  # Quantas vezes vai se repetir
     installments_total: Optional[int] = 0  # Total de parcelas
     installment_number: Optional[int] = 0  # Número da parcela atual
     parent_expense_id: Optional[str] = None  # ID da despesa pai (para parcelas)
