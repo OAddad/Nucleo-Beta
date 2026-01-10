@@ -634,7 +634,15 @@ export default function Clientes() {
       </div>
 
       {/* Estatísticas por Tag */}
-      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3 mb-6">
+      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3 mb-6">
+        {/* Card de Pontuação Total */}
+        <div className="bg-gradient-to-br from-purple-500/10 to-purple-600/10 rounded-xl border border-purple-200 dark:border-purple-800 p-3">
+          <div className="flex items-center gap-2">
+            <Award className="w-4 h-4 text-purple-600" />
+            <span className="text-xs text-purple-700 dark:text-purple-400 font-medium">Pontos Distribuídos</span>
+          </div>
+          <p className="text-xl font-bold mt-1 text-purple-700 dark:text-purple-400">{totalPontuacao.toLocaleString('pt-BR')}</p>
+        </div>
         <div 
           className={`bg-card rounded-xl border p-3 cursor-pointer transition-all ${tagFilter === 'vip' ? 'ring-2 ring-amber-500' : 'hover:border-amber-300'}`}
           onClick={() => setTagFilter(tagFilter === 'vip' ? 'all' : 'vip')}
