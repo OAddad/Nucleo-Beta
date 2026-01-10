@@ -153,11 +153,6 @@ export default function Despesas() {
       console.error("Erro ao carregar despesas:", error);
     }
   };
-      setStats(response.data);
-    } catch (error) {
-      console.error("Erro ao carregar estatísticas:", error);
-    }
-  };
   
   // ==================== CLASSIFICAÇÕES ====================
   
