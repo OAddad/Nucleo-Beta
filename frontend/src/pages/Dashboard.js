@@ -69,7 +69,19 @@ export default function Dashboard({ setIsAuthenticated }) {
 
   const handleSidebarClick = (path) => {
     setActiveTopMenu(null); // Desativa aba superior
+    // Se o sidebar estiver retraído, expandir
+    if (!sidebarOpen) {
+      setSidebarOpen(true);
+    }
     navigate(path);
+  };
+
+  // Função para expandir sidebar ao clicar em módulo quando retraído
+  const handleModuleClick = (toggleFn) => {
+    if (!sidebarOpen) {
+      setSidebarOpen(true);
+    }
+    toggleFn();
   };
 
   const [configExpanded, setConfigExpanded] = useState(false);
