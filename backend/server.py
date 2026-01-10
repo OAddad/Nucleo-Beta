@@ -291,6 +291,7 @@ class ClienteCreate(BaseModel):
     total_gasto: Optional[float] = 0
     last_order_date: Optional[str] = None
     orders_last_30_days: Optional[int] = 0
+    pontuacao: Optional[int] = 0
 
 
 class Cliente(BaseModel):
@@ -312,6 +313,7 @@ class Cliente(BaseModel):
     total_gasto: float = 0
     last_order_date: Optional[str] = None
     orders_last_30_days: int = 0
+    pontuacao: int = 0
     created_at: Optional[datetime] = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 
