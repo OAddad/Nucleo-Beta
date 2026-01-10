@@ -1261,12 +1261,14 @@ export default function Despesas() {
         <AlertDialog open={deleteRecurringDialogOpen} onOpenChange={setDeleteRecurringDialogOpen}>
           <AlertDialogContent className="sm:max-w-md">
             <AlertDialogHeader>
-              <AlertDialogTitle>Excluir Despesa Recorrente</AlertDialogTitle>
+              <AlertDialogTitle>Excluir Despesa</AlertDialogTitle>
               <AlertDialogDescription className="space-y-2">
                 <span className="block">
-                  A despesa "{expenseToDelete?.name}" possui{" "}
-                  <strong>{countChildExpenses(expenseToDelete)}</strong>{" "}
-                  {expenseToDelete?.is_recurring ? "recorrências futuras" : "parcelas"} vinculadas.
+                  A despesa "{expenseToDelete?.name}" faz parte de uma série 
+                  {expenseToDelete?.is_recurring ? " recorrente" : " parcelada"}.
+                </span>
+                <span className="block">
+                  Existem <strong>{countFutureExpenses(expenseToDelete)}</strong> despesas futuras nesta série.
                 </span>
                 <span className="block font-medium text-foreground">
                   Como deseja proceder?
@@ -1281,7 +1283,7 @@ export default function Despesas() {
               >
                 <div className="text-left">
                   <p className="font-medium">Excluir apenas esta despesa</p>
-                  <p className="text-xs text-muted-foreground">As {countChildExpenses(expenseToDelete)} {expenseToDelete?.is_recurring ? "recorrências futuras" : "outras parcelas"} serão mantidas</p>
+                  <p className="text-xs text-muted-foreground">As demais despesas da série serão mantidas</p>
                 </div>
               </Button>
               <Button
@@ -1290,8 +1292,8 @@ export default function Despesas() {
                 onClick={() => handleDeleteExpense(true)}
               >
                 <div className="text-left">
-                  <p className="font-medium">Excluir todas ({countChildExpenses(expenseToDelete) + 1} despesas)</p>
-                  <p className="text-xs opacity-90">Esta despesa e todas as {expenseToDelete?.is_recurring ? "recorrências" : "parcelas"} serão excluídas permanentemente</p>
+                  <p className="font-medium">Excluir esta e todas as futuras ({countFutureExpenses(expenseToDelete) + 1})</p>
+                  <p className="text-xs opacity-90">Esta despesa e as {countFutureExpenses(expenseToDelete)} futuras serão excluídas</p>
                 </div>
               </Button>
             </div>
