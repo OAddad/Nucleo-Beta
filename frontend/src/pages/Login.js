@@ -78,7 +78,7 @@ export default function Login({ setIsAuthenticated }) {
                 id="password"
                 type="password"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}}
+                onChange={(e) => setPassword(e.target.value)}
                 placeholder="Digite sua senha"
                 required
                 className="mt-1 h-11"
