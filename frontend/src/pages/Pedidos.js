@@ -401,6 +401,23 @@ export default function Pedidos() {
             );
           })}
         </div>
+        
+        {/* Paginação para Grade */}
+        {filteredPedidos.length > 0 && (
+          <div className="bg-card rounded-xl border shadow-sm overflow-hidden mt-4">
+            <TablePagination
+              currentPage={currentPage}
+              totalItems={filteredPedidos.length}
+              itemsPerPage={itemsPerPage}
+              onPageChange={setCurrentPage}
+              onItemsPerPageChange={(value) => {
+                setItemsPerPage(value);
+                setCurrentPage(1);
+              }}
+            />
+          </div>
+        )}
+        </>
       ) : (
         /* Visualização em Lista */
         <>
