@@ -133,6 +133,19 @@ export default function Dashboard({ setIsAuthenticated }) {
     ]
   };
 
+  // Estrutura hierárquica de Financeiro
+  const financeiroModule = {
+    label: "Financeiro",
+    icon: Wallet,
+    expanded: financeiroExpanded,
+    toggle: () => setFinanceiroExpanded(!financeiroExpanded),
+    children: [
+      { path: "/financeiro/extrato", label: "Extrato Financeiro", icon: Receipt },
+      { path: "/financeiro/despesas", label: "Despesas", icon: CreditCard },
+      { path: "/compras", label: "Compras", icon: ShoppingCart },
+    ]
+  };
+
 
   const isActive = (path) => {
     if (path === "/") return location.pathname === "/";
@@ -153,6 +166,10 @@ export default function Dashboard({ setIsAuthenticated }) {
 
   const isConfigActive = () => {
     return location.pathname.startsWith("/configuracoes");
+  };
+
+  const isFinanceiroActive = () => {
+    return location.pathname.startsWith("/financeiro") || location.pathname === "/compras";
   };
 
   return (
