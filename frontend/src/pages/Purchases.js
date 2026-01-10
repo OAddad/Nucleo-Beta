@@ -659,14 +659,9 @@ export default function Purchases() {
                         const lastPrice = getLastPriceForIngredient(selectedIngredient);
                         if (lastPrice) {
                           return (
-                            <div className="mt-2 p-3 bg-amber-50 dark:bg-amber-900/30 rounded-lg border-2 border-amber-300 dark:border-amber-700">
-                              <p className="text-sm text-amber-800 dark:text-amber-200 font-medium">
-                                💰 <strong>Última compra:</strong> R$ {lastPrice.unitPrice.toFixed(2)}/{ingredients.find(i => i.id === selectedIngredient)?.unit || 'un'}
-                              </p>
-                              <p className="text-xs text-amber-600 dark:text-amber-400 mt-1">
-                                {lastPrice.quantity} {ingredients.find(i => i.id === selectedIngredient)?.unit || 'un'} por R$ {lastPrice.price.toFixed(2)} em {new Date(lastPrice.date).toLocaleDateString('pt-BR')}
-                              </p>
-                            </div>
+                            <p className="text-xs text-muted-foreground mt-1">
+                              Última: R$ {lastPrice.unitPrice.toFixed(2)}/{ingredients.find(i => i.id === selectedIngredient)?.unit || 'un'} em {new Date(lastPrice.date).toLocaleDateString('pt-BR')}
+                            </p>
                           );
                         }
                         return null;
