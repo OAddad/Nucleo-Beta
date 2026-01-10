@@ -530,7 +530,7 @@ export default function Fornecedores() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {sortedFornecedores.map(fornecedor => {
+              {finalPaginatedFornecedores.map(fornecedor => {
                 const stats = getEstatisticasFornecedor(fornecedor.nome);
                 const doc = fornecedor.documento || fornecedor.cnpj || "";
                 const tipoDoc = getTipoDocumento(doc);
