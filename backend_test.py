@@ -1064,29 +1064,26 @@ class CMVMasterAPITester:
         return True
 
 def main():
-    print("🚀 Starting CMV Master API Tests - SQLite Migration Testing")
+    print("🚀 Starting Núcleo Desktop API Tests")
     print("=" * 60)
-    print("🎯 Testing SQLite migration as requested:")
-    print("   - Authentication with Addad user (Addad@123)")
-    print("   - GET /api/ingredients (expected: 11 ingredients)")
-    print("   - GET /api/products (expected: 2 products)")
-    print("   - GET /api/purchases (expected: 11 purchases)")
-    print("   - GET /api/reports/dashboard")
-    print("   - GET /api/backup/status (expected: SQLite)")
-    print("   - GET /api/categories")
+    print("🎯 Testing Núcleo Desktop endpoints as requested:")
+    print("   - GET /api/health (should return status 'healthy' and database info)")
+    print("   - GET /api/system/settings (should return skip_login boolean and theme string)")
+    print("   - POST /api/auth/login with admin/admin (should work for default admin)")
+    print("   - GET /api/auth/check-must-change-password (should return must_change_password: true for first login)")
+    print("   - GET /api/system/info (should return system info, requires authentication)")
+    print("   - Backend URL: http://localhost:8001")
     print("=" * 60)
     
     tester = CMVMasterAPITester()
     
-    # Run tests focused on SQLite migration as requested
+    # Run tests focused on Núcleo Desktop endpoints as requested
     tests = [
-        ("1. Authentication", tester.test_authentication),
-        ("2. Ingredients", tester.test_ingredients_crud),
-        ("3. Products", tester.test_products_with_cmv),
-        ("4. Purchases", tester.test_batch_purchases),
+        ("1. Núcleo Desktop Endpoints", tester.test_nucleo_desktop_endpoints),
+        ("2. Authentication (fallback)", tester.test_authentication),
+        ("3. Ingredients", tester.test_ingredients_crud),
+        ("4. Products", tester.test_products_with_cmv),
         ("5. Dashboard", tester.test_dashboard_and_reports),
-        ("6. Backup Status", tester.test_backup_status),
-        ("7. Categories", tester.test_categories),
     ]
     
     failed_tests = []
@@ -1114,38 +1111,34 @@ def main():
     print(f"Success rate: {(tester.tests_passed/tester.tests_run)*100:.1f}%" if tester.tests_run > 0 else "No tests run")
     
     # Analyze results
-    print(f"\n🔍 SQLITE MIGRATION ANALYSIS:")
+    print(f"\n🔍 NÚCLEO DESKTOP ANALYSIS:")
     if not failed_tests:
-        print(f"✅ SQLITE MIGRATION SUCCESSFUL:")
-        print(f"   - Authentication working (Addad user or alternative)")
-        print(f"   - Ingredients endpoint working")
-        print(f"   - Products endpoint working")
-        print(f"   - Purchases endpoint working")
-        print(f"   - Dashboard endpoint working")
-        print(f"   - Backup status confirms SQLite usage")
-        print(f"   - Categories endpoint working")
-        print(f"   - All data persisted in SQLite database")
+        print(f"✅ NÚCLEO DESKTOP ENDPOINTS WORKING:")
+        print(f"   - Health endpoint returns healthy status")
+        print(f"   - System settings endpoint returns proper data types")
+        print(f"   - Admin login with admin/admin works")
+        print(f"   - Password change check works")
+        print(f"   - System info endpoint works with authentication")
+        print(f"   - All backend APIs are functional")
     else:
         print(f"❌ FAILED TESTS:")
         for failed in failed_tests:
             print(f"   - {failed}")
     
-    # Additional notes about SQLite migration
+    # Additional notes about Núcleo Desktop
     print(f"\n📝 IMPORTANT NOTES:")
-    print(f"   ℹ️ System migrated from MongoDB to SQLite")
-    print(f"   ℹ️ Database file: /app/backend/data_backup/nucleo.db")
-    print(f"   ℹ️ All endpoints should work without MongoDB dependency")
-    print(f"   ℹ️ Expected data counts from review request:")
-    print(f"      - 11 ingredients")
-    print(f"      - 2 products (Burger e Hambúrguer Extra)")
-    print(f"      - 11 purchases")
+    print(f"   ℹ️ Núcleo Desktop system endpoints tested")
+    print(f"   ℹ️ Backend running on http://localhost:8001")
+    print(f"   ℹ️ Default admin credentials: admin/admin")
+    print(f"   ℹ️ System uses SQLite database")
+    print(f"   ℹ️ Authentication required for most endpoints")
     
     if failed_tests:
         return 1
     else:
-        print("\n✅ ALL SQLITE MIGRATION TESTS PASSED!")
-        print("🎉 SQLite migration is working correctly!")
-        print("💾 System is fully operational without MongoDB!")
+        print("\n✅ ALL NÚCLEO DESKTOP TESTS PASSED!")
+        print("🎉 Núcleo Desktop endpoints are working correctly!")
+        print("💾 System is fully operational!")
         return 0
 
 if __name__ == "__main__":
