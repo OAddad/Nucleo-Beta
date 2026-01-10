@@ -1135,21 +1135,36 @@ export default function Despesas() {
                   </div>
                   
                   {expenseIsRecurring && (
-                    <div>
-                      <Label>Período de Recorrência</Label>
-                      <Select value={expenseRecurringPeriod} onValueChange={setExpenseRecurringPeriod}>
-                        <SelectTrigger className="mt-1">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="weekly">Semanal</SelectItem>
-                          <SelectItem value="monthly">Mensal</SelectItem>
-                          <SelectItem value="yearly">Anual</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        Serão criadas automaticamente despesas para os próximos 12 períodos
-                      </p>
+                    <div className="space-y-4">
+                      <div>
+                        <Label>Período de Recorrência</Label>
+                        <Select value={expenseRecurringPeriod} onValueChange={setExpenseRecurringPeriod}>
+                          <SelectTrigger className="mt-1">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="weekly">Semanal</SelectItem>
+                            <SelectItem value="monthly">Mensal</SelectItem>
+                            <SelectItem value="yearly">Anual</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div>
+                        <Label>Quantas vezes vai se repetir? *</Label>
+                        <Input
+                          type="number"
+                          min="1"
+                          max="60"
+                          value={expenseRecurringCount}
+                          onChange={(e) => setExpenseRecurringCount(e.target.value)}
+                          placeholder="Ex: 12"
+                          className="mt-1"
+                          disabled={!!editingExpense}
+                        />
+                        <p className="text-xs text-muted-foreground mt-1">
+                          Serão criadas {expenseRecurringCount || 0} despesas no total
+                        </p>
+                      </div>
                     </div>
                   )}
                   
