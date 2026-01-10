@@ -34,6 +34,15 @@ jobs:
           cd backend
           python build_backend.py
       
+      - name: Verify Backend Build
+        run: |
+          dir desktop-build\backend
+          if (!(Test-Path "desktop-build\backend\nucleo-backend.exe")) {
+            Write-Error "Backend build failed - nucleo-backend.exe not found"
+            exit 1
+          }
+        shell: pwsh
+      
       - name: Install Node dependencies
         run: |
           npm install
@@ -45,10 +54,23 @@ jobs:
           cd frontend
           yarn build
       
+      - name: Verify Frontend Build
+        run: |
+          dir frontend\build
+          if (!(Test-Path "frontend\build\index.html")) {
+            Write-Error "Frontend build failed - index.html not found"
+            exit 1
+          }
+        shell: pwsh
+      
       - name: Build Electron App
         run: npm run dist:win
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: List dist folder
+        run: dir dist
+        shell: pwsh
       
       - name: Upload Release Asset
         uses: softprops/action-gh-release@v1
