@@ -80,6 +80,8 @@ export default function Purchases() {
   const [purchaseDate, setPurchaseDate] = useState(
     new Date().toISOString().split("T")[0]
   );
+  const [isPaid, setIsPaid] = useState(true); // Switch de pagamento
+  const [dueDate, setDueDate] = useState(""); // Data de vencimento
   
   // Cart states
   const [cart, setCart] = useState([]);
