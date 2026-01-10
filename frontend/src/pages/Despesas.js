@@ -785,12 +785,10 @@ export default function Despesas() {
                                   variant="ghost"
                                   size="icon"
                                   className="h-8 w-8 text-destructive hover:text-destructive"
-                                  onClick={() => {
-                                    setExpenseToDelete(expense);
-                                    setDeleteExpenseDialogOpen(true);
-                                  }}
+                                  onClick={() => handleOpenDeleteDialog(expense)}
                                 >
                                   <Trash2 className="w-4 h-4" />
+                                </Button>
                                 </Button>
                               </div>
                             </TableCell>
