@@ -736,6 +736,48 @@ async def check_ingredient_usage(ingredient_id: str, current_user: User = Depend
                 break
     return {"used_in_products": used_in, "can_delete": len(used_in) == 0}
 
+
+@api_router.patch("/ingredients/{ingredient_id}/toggle-active")
+async def toggle_ingredient_active(ingredient_id: str, current_user: User = Depends(get_current_user)):
+    """Ativa ou desativa um ingrediente"""
+    check_role(current_user, ["proprietario", "administrador"])
+    
+    ingredient = await db_call(sqlite_db.get_ingredient_by_id, ingredient_id)
+    if not ingredient:
+        raise HTTPException(status_code=404, detail="Ingrediente não encontrado")
+    
+    new_status = not bool(ingredient.get("is_active", 1))
+    await db_call(sqlite_db.update_ingredient, ingredient_id, {"is_active": new_status})
+    
+    status_text = "ativado" if new_status else "desativado"
+    await log_audit("UPDATE", "ingredient", f"{ingredient['name']} - {status_text}", current_user, "media")
+    
+    return {"message": f"Ingrediente {status_text}", "is_active": new_status}
+
+
+@api_router.get("/ingredients/stats/stock-value")
+async def get_stock_value(current_user: User = Depends(get_current_user)):
+    """Retorna o valor total em estoque (quantidade * preço médio)"""
+    ingredients = await db_call(sqlite_db.get_all_ingredients)
+    
+    total_value = 0
+    items_count = 0
+    
+    for ing in ingredients:
+        if ing.get("is_active", 1):
+            qty = ing.get("stock_quantity", 0) or 0
+            price = ing.get("average_price", 0) or 0
+            total_value += qty * price
+            if qty > 0:
+                items_count += 1
+    
+    return {
+        "total_value": total_value,
+        "items_with_stock": items_count,
+        "total_items": len([i for i in ingredients if i.get("is_active", 1)])
+    }
+
+
 @api_router.delete("/ingredients/{ingredient_id}")
 async def delete_ingredient(ingredient_id: str, current_user: User = Depends(get_current_user)):
     check_role(current_user, ["proprietario", "administrador"])
