@@ -378,6 +378,7 @@ export default function Clientes() {
     setComplemento("");
     setBairro("");
     setCep("");
+    setPontuacao(0);
     setEditMode(false);
     setCurrentCliente(null);
   };
@@ -399,6 +400,12 @@ export default function Clientes() {
     setFotoPreview(cliente.foto || "");
     setEndereco(cliente.endereco || "");
     setNumero(cliente.numero || "");
+    setComplemento(cliente.complemento || "");
+    setBairro(cliente.bairro || "");
+    setCep(cliente.cep || "");
+    setPontuacao(cliente.pontuacao || 0);
+    setDialogOpen(true);
+  };
     setComplemento(cliente.complemento || "");
     setBairro(cliente.bairro || "");
     setCep(cliente.cep || "");
