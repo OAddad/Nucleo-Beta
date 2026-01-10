@@ -3077,3 +3077,5 @@
 2026-01-10T13:28:24.296228+00:00 | DB_CALL count_users | P3 | 0.1ms | success
 2026-01-10T13:28:24.298310+00:00 | DB_CALL create_user | P3 | 2.01ms | success
 2026-01-10T13:28:28.643099+00:00 | DB_CALL get_user_by_username | P3 | 0.25ms | success
+2026-01-10T13:28:34.504366+00:00 | DB_CALL get_user_by_id | P3 | 0.24ms | success
+2026-01-10T13:28:34.504599+00:00 | DB_CALL get_user_by_id | P3 | 0.1ms | success
