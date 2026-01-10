@@ -323,6 +323,43 @@ def init_database():
             ''', (datetime.now(timezone.utc).isoformat(),))
             conn.commit()
         
+        # Migração: Adicionar colunas de receita na tabela products
+        try:
+            cursor.execute("ALTER TABLE products ADD COLUMN linked_ingredient_id TEXT")
+            conn.commit()
+            print("[DATABASE] Coluna linked_ingredient_id adicionada em products")
+        except:
+            pass  # Coluna já existe
+        
+        try:
+            cursor.execute("ALTER TABLE products ADD COLUMN recipe_yield REAL")
+            conn.commit()
+            print("[DATABASE] Coluna recipe_yield adicionada em products")
+        except:
+            pass  # Coluna já existe
+        
+        try:
+            cursor.execute("ALTER TABLE products ADD COLUMN recipe_yield_unit TEXT")
+            conn.commit()
+            print("[DATABASE] Coluna recipe_yield_unit adicionada em products")
+        except:
+            pass  # Coluna já existe
+        
+        try:
+            cursor.execute("ALTER TABLE products ADD COLUMN unit_cost REAL")
+            conn.commit()
+            print("[DATABASE] Coluna unit_cost adicionada em products")
+        except:
+            pass  # Coluna já existe
+        
+        # Migração: Adicionar coluna recipe_cost_history na tabela ingredients
+        try:
+            cursor.execute("ALTER TABLE ingredients ADD COLUMN recipe_cost_history TEXT")
+            conn.commit()
+            print("[DATABASE] Coluna recipe_cost_history adicionada em ingredients")
+        except:
+            pass  # Coluna já existe
+        
         _initialized = True
         print(f"[DATABASE] Inicializado em: {DB_PATH}")
 
