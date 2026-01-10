@@ -6221,3 +6221,17 @@
 2026-01-10T19:43:10.159968+00:00 | DB_CALL get_user_by_id | P3 | 0.5ms | success
 2026-01-10T19:43:10.160185+00:00 | DB_CALL get_all_expense_classifications | P3 | 0.25ms | success
 2026-01-10T19:43:10.160529+00:00 | DB_CALL get_expenses_stats | P3 | 0.51ms | success
+2026-01-10T19:43:30.624520+00:00 | DB_CALL get_user_by_username | P3 | 0.43ms | success
+2026-01-10T19:43:30.646037+00:00 | DB_CALL get_user_by_id | P3 | 0.2ms | success
+2026-01-10T19:43:30.646463+00:00 | DB_CALL get_all_ingredients | P3 | 0.31ms | success
+2026-01-10T19:43:30.671039+00:00 | DB_CALL get_user_by_id | P3 | 0.17ms | success
+2026-01-10T19:43:30.671347+00:00 | DB_CALL get_ingredient_by_id | P3 | 0.14ms | success
+2026-01-10T19:43:30.681472+00:00 | DB_CALL create_purchase | P3 | 10.04ms | success
+2026-01-10T19:43:30.681723+00:00 | DB_CALL get_purchases_by_ingredient | P3 | 0.17ms | success
+2026-01-10T19:43:30.686796+00:00 | DB_CALL update_ingredient | P3 | 5.01ms | success
+2026-01-10T19:43:30.687120+00:00 | DB_CALL get_all_products | P3 | 0.25ms | success
+2026-01-10T19:43:30.687268+00:00 | DB_CALL get_expense_classification_by_name | P3 | 0.09ms | success
+2026-01-10T19:43:30.692351+00:00 | DB_CALL create_expense_classification | P3 | 5.03ms | success
+2026-01-10T19:43:30.697493+00:00 | DB_CALL create_expense | P3 | 5.07ms | success
+2026-01-10T19:43:30.702498+00:00 | DB_CALL update_purchase_payment | P3 | 4.94ms | success
+2026-01-10T19:43:30.707414+00:00 | DB_CALL create_audit_log | P3 | 4.84ms | success
