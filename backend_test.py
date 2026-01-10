@@ -1153,10 +1153,15 @@ class CMVMasterAPITester:
             # Show details of products with new fields
             for i, product in enumerate(products_with_new_fields[:3]):  # Show first 3
                 print(f"\n      📦 Product {i+1}: {product['name']}")
-                print(f"         - recipe_yield: {product.get('recipe_yield', 'N/A')}")
-                print(f"         - recipe_yield_unit: {product.get('recipe_yield_unit', 'N/A')}")
-                print(f"         - unit_cost: R$ {product.get('unit_cost', 0):.2f}")
-                print(f"         - linked_ingredient_id: {product.get('linked_ingredient_id', 'N/A')}")
+                recipe_yield = product.get('recipe_yield')
+                recipe_yield_unit = product.get('recipe_yield_unit')
+                unit_cost = product.get('unit_cost', 0)
+                linked_ingredient_id = product.get('linked_ingredient_id')
+                
+                print(f"         - recipe_yield: {recipe_yield if recipe_yield is not None else 'N/A'}")
+                print(f"         - recipe_yield_unit: {recipe_yield_unit if recipe_yield_unit is not None else 'N/A'}")
+                print(f"         - unit_cost: R$ {unit_cost:.2f}" if unit_cost is not None else "         - unit_cost: N/A")
+                print(f"         - linked_ingredient_id: {linked_ingredient_id if linked_ingredient_id is not None else 'N/A'}")
                 print(f"         - product_type: {product.get('product_type', 'N/A')}")
                 print(f"         - cmv: R$ {product.get('cmv', 0):.2f}")
             
