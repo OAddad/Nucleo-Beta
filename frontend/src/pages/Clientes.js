@@ -430,6 +430,20 @@ export default function Clientes() {
               ))}
             </TableBody>
           </Table>
+          
+          {/* Paginação */}
+          {filteredClientes.length > 0 && (
+            <TablePagination
+              currentPage={currentPage}
+              totalItems={filteredClientes.length}
+              itemsPerPage={itemsPerPage}
+              onPageChange={setCurrentPage}
+              onItemsPerPageChange={(value) => {
+                setItemsPerPage(value);
+                setCurrentPage(1);
+              }}
+            />
+          )}
         )}
       </div>
 
