@@ -6403,3 +6403,15 @@
 2026-01-10T19:48:56.072635+00:00 | DB_CALL get_all_expenses | P3 | 0.78ms | success
 2026-01-10T19:48:56.073402+00:00 | DB_CALL get_user_by_id | P3 | 0.15ms | success
 2026-01-10T19:48:56.073569+00:00 | DB_CALL get_expenses_stats | P3 | 0.09ms | success
+2026-01-10T19:49:11.067176+00:00 | DB_CALL get_user_by_id | P3 | 1.57ms | success
+2026-01-10T19:49:11.067345+00:00 | DB_CALL get_user_by_id | P3 | 0.86ms | success
+2026-01-10T19:49:11.067414+00:00 | DB_CALL get_user_by_id | P3 | 0.78ms | success
+2026-01-10T19:49:11.067647+00:00 | DB_CALL get_expenses_stats | P3 | 0.18ms | success
+2026-01-10T19:49:11.068146+00:00 | DB_CALL get_all_expenses | P3 | 0.82ms | success
+2026-01-10T19:49:11.068409+00:00 | DB_CALL get_all_expense_classifications | P3 | 1.0ms | success
+2026-01-10T19:49:11.090665+00:00 | DB_CALL get_user_by_id | P3 | 0.15ms | success
+2026-01-10T19:49:11.091601+00:00 | DB_CALL get_user_by_id | P3 | 0.46ms | success
+2026-01-10T19:49:11.091999+00:00 | DB_CALL get_all_expense_classifications | P3 | 1.2ms | success
+2026-01-10T19:49:11.092395+00:00 | DB_CALL get_user_by_id | P3 | 0.93ms | success
+2026-01-10T19:49:11.092479+00:00 | DB_CALL get_all_expenses | P3 | 0.79ms | success
+2026-01-10T19:49:11.092772+00:00 | DB_CALL get_expenses_stats | P3 | 0.3ms | success
