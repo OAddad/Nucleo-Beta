@@ -640,14 +640,37 @@ export default function Products() {
   };
 
   // Handler para cadastro rápido de ingrediente
-  const handleQuickIngredientCreate = (initialName) => {
+  const handleQuickIngredientCreate = (initialName, targetType, targetIndex) => {
     setQuickIngredientName(initialName);
+    setQuickIngredientTarget({ type: targetType, index: targetIndex });
     setQuickIngredientOpen(true);
   };
 
-  // Callback após criar ingrediente rápido
+  // Callback após criar ingrediente rápido - auto-preenche o campo
   const handleQuickIngredientSuccess = (newIngredient) => {
+    // Adicionar o novo ingrediente à lista
     setIngredients(prev => [...prev, newIngredient]);
+    
+    // Auto-preencher o campo que estava sendo editado
+    if (quickIngredientTarget) {
+      const { type, index } = quickIngredientTarget;
+      if (type === "ingredient") {
+        setRecipeIngredients(prev => {
+          const updated = [...prev];
+          updated[index] = { ...updated[index], ingredient_id: newIngredient.id };
+          return updated;
+        });
+      } else if (type === "packaging") {
+        setRecipePackaging(prev => {
+          const updated = [...prev];
+          updated[index] = { ...updated[index], ingredient_id: newIngredient.id };
+          return updated;
+        });
+      }
+    }
+    
+    // Limpar o target
+    setQuickIngredientTarget(null);
   };
 
 
