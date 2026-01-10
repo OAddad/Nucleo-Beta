@@ -77,6 +77,7 @@ export default function Despesas() {
   const [editingExpense, setEditingExpense] = useState(null);
   const [expenseToDelete, setExpenseToDelete] = useState(null);
   const [deleteExpenseDialogOpen, setDeleteExpenseDialogOpen] = useState(false);
+  const [deleteRecurringDialogOpen, setDeleteRecurringDialogOpen] = useState(false); // Novo dialog para despesas recorrentes
   
   // State para fornecedores (do localStorage)
   const [fornecedores, setFornecedores] = useState([]);
