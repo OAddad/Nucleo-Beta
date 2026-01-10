@@ -1242,6 +1242,7 @@ export default function Despesas() {
               <AlertDialogDescription className="space-y-2">
                 <span className="block">
                   A despesa "{expenseToDelete?.name}" possui{" "}
+                  <strong>{countChildExpenses(expenseToDelete)}</strong>{" "}
                   {expenseToDelete?.is_recurring ? "recorrências futuras" : "parcelas"} vinculadas.
                 </span>
                 <span className="block font-medium text-foreground">
@@ -1257,7 +1258,7 @@ export default function Despesas() {
               >
                 <div className="text-left">
                   <p className="font-medium">Excluir apenas esta despesa</p>
-                  <p className="text-xs text-muted-foreground">As {expenseToDelete?.is_recurring ? "recorrências futuras" : "outras parcelas"} serão mantidas</p>
+                  <p className="text-xs text-muted-foreground">As {countChildExpenses(expenseToDelete)} {expenseToDelete?.is_recurring ? "recorrências futuras" : "outras parcelas"} serão mantidas</p>
                 </div>
               </Button>
               <Button
@@ -1266,8 +1267,8 @@ export default function Despesas() {
                 onClick={() => handleDeleteExpense(true)}
               >
                 <div className="text-left">
-                  <p className="font-medium">Excluir todas as {expenseToDelete?.is_recurring ? "recorrências" : "parcelas"}</p>
-                  <p className="text-xs opacity-90">Todas as despesas vinculadas serão excluídas permanentemente</p>
+                  <p className="font-medium">Excluir todas ({countChildExpenses(expenseToDelete) + 1} despesas)</p>
+                  <p className="text-xs opacity-90">Esta despesa e todas as {expenseToDelete?.is_recurring ? "recorrências" : "parcelas"} serão excluídas permanentemente</p>
                 </div>
               </Button>
             </div>
