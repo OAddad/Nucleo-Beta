@@ -606,7 +606,7 @@ export default function Dashboard({ setIsAuthenticated }) {
               {/* Rotas de Vendas */}
               <Route path="/vendas/relatorio" element={
                 <div className="p-8">
-                  <div className="max-w-7xl mx-auto">
+                  <div className="max-w-7xl">
                     <div className="mb-8">
                       <h1 className="text-3xl font-bold tracking-tight">Relatório de Vendas</h1>
                       <p className="text-muted-foreground mt-1">Análise de vendas e desempenho</p>
