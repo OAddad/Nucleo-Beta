@@ -203,6 +203,11 @@ export default function Ingredients() {
   // Filtrar ingredientes
   const filteredIngredients = useMemo(() => {
     return ingredients.filter(ingredient => {
+      // Filtro por ativo/desativado (baseado na aba)
+      const isActive = ingredient.is_active !== false;
+      if (activeTab === "ativos" && !isActive) return false;
+      if (activeTab === "desativados" && isActive) return false;
+      
       // Filtro por texto (nome ou código)
       const matchesSearch = searchTerm === "" || 
         ingredient.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -231,7 +236,7 @@ export default function Ingredients() {
       
       return matchesSearch && matchesCategory && matchesStock;
     });
-  }, [ingredients, searchTerm, filterCategory, filterStock]);
+  }, [ingredients, searchTerm, filterCategory, filterStock, activeTab]);
 
   // Ingredientes paginados
   const paginatedIngredients = useMemo(() => {
@@ -242,7 +247,7 @@ export default function Ingredients() {
   // Reset página quando filtros mudam
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchTerm, filterCategory, filterStock]);
+  }, [searchTerm, filterCategory, filterStock, activeTab]);
 
   const resetForm = () => {
     setName("");
