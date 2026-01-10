@@ -1276,6 +1276,157 @@ def get_expenses_stats() -> Dict:
         }
 
 
+# ==================== CLIENTES ====================
+def get_all_clientes() -> List[Dict]:
+    """Retorna todos os clientes"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM clientes ORDER BY nome")
+        columns = [desc[0] for desc in cursor.description]
+        return [dict(zip(columns, row)) for row in cursor.fetchall()]
+
+
+def get_cliente_by_id(cliente_id: str) -> Optional[Dict]:
+    """Retorna um cliente pelo ID"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM clientes WHERE id = ?", (cliente_id,))
+        row = cursor.fetchone()
+        if row:
+            columns = [desc[0] for desc in cursor.description]
+            return dict(zip(columns, row))
+        return None
+
+
+def create_cliente(data: Dict) -> Dict:
+    """Cria um novo cliente"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        
+        cliente_id = str(uuid.uuid4())
+        created_at = datetime.now(timezone.utc).isoformat()
+        
+        cursor.execute('''
+            INSERT INTO clientes (id, nome, telefone, email, cpf, data_nascimento, genero, foto,
+                                  endereco, numero, complemento, bairro, cep,
+                                  pedidos_count, total_gasto, last_order_date, orders_last_30_days, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ''', (
+            cliente_id,
+            data.get('nome'),
+            data.get('telefone'),
+            data.get('email'),
+            data.get('cpf'),
+            data.get('data_nascimento'),
+            data.get('genero'),
+            data.get('foto'),
+            data.get('endereco'),
+            data.get('numero'),
+            data.get('complemento'),
+            data.get('bairro'),
+            data.get('cep'),
+            data.get('pedidos_count', 0),
+            data.get('total_gasto', 0),
+            data.get('last_order_date'),
+            data.get('orders_last_30_days', 0),
+            created_at
+        ))
+        conn.commit()
+        
+        return get_cliente_by_id(cliente_id)
+
+
+def update_cliente(cliente_id: str, data: Dict) -> Optional[Dict]:
+    """Atualiza um cliente existente"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        
+        set_clauses = []
+        params = []
+        
+        fields = ['nome', 'telefone', 'email', 'cpf', 'data_nascimento', 'genero', 'foto',
+                  'endereco', 'numero', 'complemento', 'bairro', 'cep',
+                  'pedidos_count', 'total_gasto', 'last_order_date', 'orders_last_30_days']
+        
+        for field in fields:
+            if field in data:
+                set_clauses.append(f"{field} = ?")
+                params.append(data[field])
+        
+        if not set_clauses:
+            return get_cliente_by_id(cliente_id)
+        
+        params.append(cliente_id)
+        query = f"UPDATE clientes SET {', '.join(set_clauses)} WHERE id = ?"
+        cursor.execute(query, params)
+        conn.commit()
+        
+        return get_cliente_by_id(cliente_id)
+
+
+def delete_cliente(cliente_id: str) -> bool:
+    """Deleta um cliente"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM clientes WHERE id = ?", (cliente_id,))
+        conn.commit()
+        return cursor.rowcount > 0
+
+
+def search_clientes(term: str) -> List[Dict]:
+    """Busca clientes por nome, telefone, email ou CPF"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        search_term = f"%{term}%"
+        cursor.execute('''
+            SELECT * FROM clientes 
+            WHERE nome LIKE ? OR telefone LIKE ? OR email LIKE ? OR cpf LIKE ?
+            ORDER BY nome
+        ''', (search_term, search_term, search_term, search_term))
+        columns = [desc[0] for desc in cursor.description]
+        return [dict(zip(columns, row)) for row in cursor.fetchall()]
+
+
+def count_clientes() -> int:
+    """Conta total de clientes"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT COUNT(*) FROM clientes")
+        return cursor.fetchone()[0]
+
+
+def update_cliente_pedido_stats(cliente_id: str, order_value: float) -> Optional[Dict]:
+    """Atualiza estatísticas de pedido do cliente"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        
+        # Buscar cliente atual
+        cliente = get_cliente_by_id(cliente_id)
+        if not cliente:
+            return None
+        
+        now = datetime.now(timezone.utc).isoformat()
+        new_pedidos_count = (cliente.get('pedidos_count') or 0) + 1
+        new_total_gasto = (cliente.get('total_gasto') or 0) + order_value
+        
+        cursor.execute('''
+            UPDATE clientes 
+            SET pedidos_count = ?, total_gasto = ?, last_order_date = ?
+            WHERE id = ?
+        ''', (new_pedidos_count, new_total_gasto, now, cliente_id))
+        conn.commit()
+        
+        return get_cliente_by_id(cliente_id)
+
+
 # ==================== UTILITY ====================
 def get_database_info() -> Dict:
     """Retorna informações do banco de dados"""
