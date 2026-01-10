@@ -978,12 +978,27 @@ export default function Purchases() {
                   </div>
                 );
               })}
-              {getFilteredAndSortedBatches().length === 0 && (
+              {filteredBatches.length === 0 && (
                 <div className="text-center py-12 text-muted-foreground">
                   Nenhuma compra encontrada com os filtros aplicados.
                 </div>
               )}
             </div>
+            
+            {/* Paginação */}
+            {filteredBatches.length > 0 && (
+              <TablePagination
+                currentPage={currentPage}
+                totalItems={filteredBatches.length}
+                itemsPerPage={itemsPerPage}
+                onPageChange={setCurrentPage}
+                onItemsPerPageChange={(value) => {
+                  setItemsPerPage(value);
+                  setCurrentPage(1);
+                }}
+              />
+            )}
+            </>
           )}
         </div>
 
