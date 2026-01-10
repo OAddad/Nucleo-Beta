@@ -638,6 +638,7 @@ export default function Fornecedores() {
               }}
             />
           )}
+        </>
         )}
       </div>
 
