@@ -5256,3 +5256,8 @@
 2026-01-10T19:14:57.942492+00:00 | DB_CALL get_user_by_id | P3 | 0.18ms | success
 2026-01-10T19:14:57.966362+00:00 | DB_CALL get_user_by_id | P3 | 0.32ms | success
 2026-01-10T19:14:57.966592+00:00 | DB_CALL get_all_expenses | P3 | 0.11ms | success
+2026-01-10T19:15:06.018274+00:00 | DB_CALL get_user_by_username | P3 | 0.35ms | success
+2026-01-10T19:15:06.039619+00:00 | DB_CALL get_user_by_id | P3 | 0.17ms | success
+2026-01-10T19:15:06.039878+00:00 | DB_CALL get_expense_classification_by_name | P3 | 0.13ms | success
+2026-01-10T19:15:06.050723+00:00 | DB_CALL create_expense_classification | P3 | 10.77ms | success
+2026-01-10T19:15:06.056635+00:00 | DB_CALL create_audit_log | P3 | 5.8ms | success
