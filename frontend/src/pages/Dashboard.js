@@ -153,23 +153,28 @@ export default function Dashboard({ setIsAuthenticated }) {
   };
 
   return (
-    <div className="flex min-h-screen bg-background">
-      {/* Sidebar - Sempre relativo, empurra o conteúdo */}
+    <div className="flex h-screen bg-background overflow-hidden">
+      {/* Sidebar - Fixo com scroll próprio */}
       <aside className={`
         bg-sidebar text-sidebar-foreground flex-col border-r
-        transition-all duration-300 ease-in-out
+        transition-all duration-300 ease-in-out flex-shrink-0
+        fixed left-0 top-0 h-screen z-40
         ${sidebarOpen ? 'w-64' : 'w-0 lg:w-16'}
         ${sidebarOpen ? 'flex' : 'hidden lg:flex'}
       `}>
         {/* Conteúdo do Sidebar */}
-        <div className={`${sidebarOpen ? 'block' : 'hidden lg:block'} w-64 lg:w-full`}>
-          <div className="p-6 border-b flex items-center justify-between">
+        <div className={`${sidebarOpen ? 'block' : 'hidden lg:block'} w-64 lg:w-full h-full flex flex-col`}>
+          <div className="p-6 border-b flex items-center justify-between flex-shrink-0">
             <button 
               onClick={() => handleSidebarClick("/")}
               className={`flex items-center gap-3 hover:opacity-80 transition-opacity ${sidebarOpen ? '' : 'lg:justify-center lg:w-full'}`}
             >
-              <div className="bg-primary p-2 rounded-lg flex-shrink-0">
-                <ChefHat className="w-6 h-6 text-primary-foreground" strokeWidth={1.5} />
+              <div className="flex-shrink-0">
+                <img 
+                  src="/logo-nucleo.png" 
+                  alt="Núcleo" 
+                  className="w-10 h-10 object-contain"
+                />
               </div>
               {sidebarOpen && (
                 <div className="text-left">
@@ -180,7 +185,7 @@ export default function Dashboard({ setIsAuthenticated }) {
             </button>
           </div>
 
-        <nav className="flex-1 p-4 space-y-1 overflow-auto">
+        <nav className="flex-1 p-4 space-y-1 overflow-y-auto overflow-x-hidden">
           {/* Tabs Principais */}
           {mainTabs.map((tab) => {
             const Icon = tab.icon;
