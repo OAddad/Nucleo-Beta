@@ -659,7 +659,7 @@ export default function Purchases() {
                         const lastPrice = getLastPriceForIngredient(selectedIngredient);
                         if (lastPrice) {
                           return (
-                            <p className="text-xs text-muted-foreground mt-1">
+                            <p className="text-xs text-amber-600 dark:text-amber-400 mt-1">
                               Última: R$ {lastPrice.unitPrice.toFixed(2)}/{ingredients.find(i => i.id === selectedIngredient)?.unit || 'un'} em {new Date(lastPrice.date).toLocaleDateString('pt-BR')}
                             </p>
                           );
