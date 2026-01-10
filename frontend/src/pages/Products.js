@@ -662,6 +662,9 @@ export default function Products() {
     setEditMode(false);
     setCurrentProductId(null);
     setActiveFormTab("ficha");
+    setRecipeYield("");
+    setRecipeYieldUnit("kg");
+    setLinkedIngredientId("");
   };
 
   const handleEdit = (product) => {
@@ -677,6 +680,9 @@ export default function Products() {
     setIsInsumo(product.is_insumo || false);
     setIsDivisible(product.is_divisible || false);
     setOrderSteps(product.order_steps || []);
+    setRecipeYield(product.recipe_yield ? product.recipe_yield.toString() : "");
+    setRecipeYieldUnit(product.recipe_yield_unit || "kg");
+    setLinkedIngredientId(product.linked_ingredient_id || "");
     
     // Separar ingredientes e embalagens baseado no item_type
     const ingredients = product.recipe
