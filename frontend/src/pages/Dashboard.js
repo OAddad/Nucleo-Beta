@@ -619,6 +619,9 @@ export default function Dashboard({ setIsAuthenticated }) {
                   </div>
                 </div>
               } />
+              {/* Rotas de Financeiro */}
+              <Route path="/financeiro/extrato" element={<ExtratoFinanceiro />} />
+              <Route path="/financeiro/despesas" element={<Despesas />} />
               {/* Rotas de Configurações */}
               <Route path="/configuracoes/horarios" element={
                 <div className="p-8">
