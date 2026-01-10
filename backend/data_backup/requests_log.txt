@@ -3097,3 +3097,5 @@
 2026-01-10T13:28:49.706835+00:00 | DB_CALL count_purchases | P3 | 0.08ms | success
 2026-01-10T13:28:49.706952+00:00 | DB_CALL count_users | P3 | 0.07ms | success
 2026-01-10T13:28:49.707054+00:00 | DB_CALL count_categories | P3 | 0.07ms | success
+2026-01-10T13:28:56.863919+00:00 | DB_CALL get_user_by_id | P3 | 0.25ms | success
+2026-01-10T13:28:56.864150+00:00 | DB_CALL get_user_by_id | P3 | 0.1ms | success
