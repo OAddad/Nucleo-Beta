@@ -178,7 +178,7 @@ export default function Dashboard({ setIsAuthenticated }) {
   };
 
   const isFinanceiroActive = () => {
-    return location.pathname.startsWith("/financeiro") || location.pathname === "/compras";
+    return location.pathname.startsWith("/financeiro");
   };
 
   return (
