@@ -96,7 +96,7 @@ def bootstrap_database():
                     dst = target_path.parent / (target_path.name + ext)
                     shutil.copy2(src, dst)
             
-            print(f"[DATABASE] Seed copiado com sucesso!")
+            print("[DATABASE] Seed copiado com sucesso!")
             return target_path
         except Exception as e:
             print(f"[DATABASE] Erro ao copiar seed: {e}")
@@ -305,8 +305,8 @@ def init_database():
             ''', (admin_id, 'admin', admin_password_hash, 'proprietario', 1, created_at))
             
             conn.commit()
-            print(f"[DATABASE] Usuário admin criado (login: admin / senha: admin)")
-            print(f"[DATABASE] IMPORTANTE: Troque a senha no primeiro acesso!")
+            print("[DATABASE] Usuário admin criado (login: admin / senha: admin)")
+            print("[DATABASE] IMPORTANTE: Troque a senha no primeiro acesso!")
         
         # Inicializar configurações padrão
         cursor.execute("SELECT value FROM system_settings WHERE key = 'skip_login'")
