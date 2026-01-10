@@ -623,21 +623,47 @@ def update_ingredient(ingredient_id: str, data: Dict) -> Optional[Dict]:
         conn = get_connection()
         cursor = conn.cursor()
         
-        cursor.execute('''
-            UPDATE ingredients SET 
-                name = COALESCE(?, name),
-                unit = COALESCE(?, unit),
-                unit_weight = COALESCE(?, unit_weight),
-                units_per_package = COALESCE(?, units_per_package),
-                average_price = COALESCE(?, average_price),
-                category = COALESCE(?, category),
-                stock_quantity = COALESCE(?, stock_quantity),
-                stock_min = COALESCE(?, stock_min),
-                stock_max = COALESCE(?, stock_max)
-            WHERE id = ?
-        ''', (data.get('name'), data.get('unit'), data.get('unit_weight'), data.get('units_per_package'),
-              data.get('average_price'), data.get('category'), data.get('stock_quantity'),
-              data.get('stock_min'), data.get('stock_max'), ingredient_id))
+        # Construir query dinamicamente para incluir is_active quando necessário
+        set_clauses = []
+        params = []
+        
+        if 'name' in data:
+            set_clauses.append("name = ?")
+            params.append(data['name'])
+        if 'unit' in data:
+            set_clauses.append("unit = ?")
+            params.append(data['unit'])
+        if 'unit_weight' in data:
+            set_clauses.append("unit_weight = ?")
+            params.append(data['unit_weight'])
+        if 'units_per_package' in data:
+            set_clauses.append("units_per_package = ?")
+            params.append(data['units_per_package'])
+        if 'average_price' in data:
+            set_clauses.append("average_price = ?")
+            params.append(data['average_price'])
+        if 'category' in data:
+            set_clauses.append("category = ?")
+            params.append(data['category'])
+        if 'stock_quantity' in data:
+            set_clauses.append("stock_quantity = ?")
+            params.append(data['stock_quantity'])
+        if 'stock_min' in data:
+            set_clauses.append("stock_min = ?")
+            params.append(data['stock_min'])
+        if 'stock_max' in data:
+            set_clauses.append("stock_max = ?")
+            params.append(data['stock_max'])
+        if 'is_active' in data:
+            set_clauses.append("is_active = ?")
+            params.append(1 if data['is_active'] else 0)
+        
+        if not set_clauses:
+            return get_ingredient_by_id(ingredient_id)
+        
+        params.append(ingredient_id)
+        query = f"UPDATE ingredients SET {', '.join(set_clauses)} WHERE id = ?"
+        cursor.execute(query, params)
         conn.commit()
         
         return get_ingredient_by_id(ingredient_id)
