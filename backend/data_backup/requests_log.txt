@@ -7996,3 +7996,7 @@
 2026-01-10T20:57:34.738600+00:00 | DB_CALL get_user_by_id | P3 | 0.25ms | success
 2026-01-10T20:57:34.738872+00:00 | DB_CALL get_ingredient_by_id | P3 | 0.11ms | success
 2026-01-10T20:57:34.739056+00:00 | DB_CALL get_purchases_by_ingredient | P3 | 0.13ms | success
+2026-01-10T20:59:22.822335+00:00 | DB_CALL get_user_by_id | P3 | 1.09ms | success
+2026-01-10T20:59:22.822541+00:00 | DB_CALL get_user_by_id | P3 | 0.62ms | success
+2026-01-10T20:59:22.822840+00:00 | DB_CALL get_all_categories | P3 | 0.2ms | success
+2026-01-10T20:59:22.823461+00:00 | DB_CALL get_all_products | P3 | 0.97ms | success
