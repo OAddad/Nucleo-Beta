@@ -54,7 +54,7 @@
         }
       ],
       "icon": "build-resources/icon.ico",
-      "artifactName": "Nucleo-Setup-${version}.${ext}"
+      "artifactName": "Nucleo-Setup.${ext}"
     },
     "nsis": {
       "oneClick": false,
