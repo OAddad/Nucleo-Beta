@@ -281,7 +281,7 @@ export default function Despesas() {
     
     const expenseData = {
       name: expenseName,
-      classification_id: expenseClassificationId || null,
+      classification_id: expenseClassificationId && expenseClassificationId !== "none" ? expenseClassificationId : null,
       supplier: expenseSupplier || null,
       value: parseFloat(expenseValue),
       due_date: expenseDueDate,
