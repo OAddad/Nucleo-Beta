@@ -858,6 +858,9 @@ async def create_purchase(purchase_data: PurchaseCreate, current_user: User = De
     
     await db_call(sqlite_db.update_ingredient, purchase_data.ingredient_id, {"average_price": avg_price})
     
+    # Atualizar custo das receitas que usam este ingrediente
+    await update_recipe_costs_for_ingredient(purchase_data.ingredient_id)
+    
     purchase["purchase_date"] = purchase_date
     return Purchase(**purchase)
 
