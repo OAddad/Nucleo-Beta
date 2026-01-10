@@ -4,7 +4,6 @@ import { toast } from "sonner";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
-import { ChefHat } from "lucide-react";
 
 // URL relativa - funciona em qualquer domínio
 const API = '/api';
@@ -43,9 +42,11 @@ export default function Login({ setIsAuthenticated }) {
         {/* Logo e Título no Topo */}
         <div className="text-center mb-8">
           <div className="flex justify-center mb-4">
-            <div className="bg-primary p-4 rounded-2xl shadow-lg">
-              <ChefHat className="w-12 h-12 text-primary-foreground" strokeWidth={1.5} />
-            </div>
+            <img 
+              src="/logo-nucleo.png" 
+              alt="Núcleo" 
+              className="w-20 h-20 object-contain"
+            />
           </div>
           <h1 className="text-4xl font-bold mb-2">Núcleo</h1>
           <p className="text-muted-foreground text-lg">
@@ -77,7 +78,7 @@ export default function Login({ setIsAuthenticated }) {
                 id="password"
                 type="password"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => setPassword(e.target.value)}}
                 placeholder="Digite sua senha"
                 required
                 className="mt-1 h-11"
