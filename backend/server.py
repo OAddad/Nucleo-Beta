@@ -1466,9 +1466,9 @@ async def health_check():
             "timestamp": datetime.now(timezone.utc).isoformat()
         }
 
-@api_router.get("/system/info")
-async def get_system_info():
-    """Retorna informações do sistema para diagnóstico"""
+@api_router.get("/desktop/system-info")
+async def get_desktop_system_info():
+    """Retorna informações do sistema para diagnóstico desktop"""
     db_info = await db_call(sqlite_db.get_database_info)
     settings = await db_call(sqlite_db.get_all_settings)
     
