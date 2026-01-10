@@ -3181,3 +3181,9 @@
 2026-01-10T13:29:42.276962+00:00 | DB_CALL count_ingredients | P3 | 0.27ms | success
 2026-01-10T13:29:42.277158+00:00 | DB_CALL count_products | P3 | 0.13ms | success
 2026-01-10T13:29:42.277318+00:00 | DB_CALL count_users | P3 | 0.1ms | success
+2026-01-10T13:29:44.973262+00:00 | DB_CALL get_user_by_id | P3 | 0.36ms | success
+2026-01-10T13:29:44.973634+00:00 | DB_CALL get_product_by_id | P3 | 0.19ms | success
+2026-01-10T13:29:44.978086+00:00 | DB_CALL delete_product | P3 | 4.37ms | success
+2026-01-10T13:29:44.980216+00:00 | DB_CALL create_audit_log | P3 | 2.01ms | success
+2026-01-10T13:29:45.150437+00:00 | DB_CALL get_user_by_id | P3 | 0.27ms | success
+2026-01-10T13:29:45.150833+00:00 | DB_CALL get_all_products | P3 | 0.26ms | success
