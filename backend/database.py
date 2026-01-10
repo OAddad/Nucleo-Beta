@@ -396,6 +396,28 @@ def init_database():
         except:
             pass  # Coluna já existe
         
+        # Migração: Adicionar colunas de pagamento na tabela purchases
+        try:
+            cursor.execute("ALTER TABLE purchases ADD COLUMN is_paid INTEGER DEFAULT 1")
+            conn.commit()
+            print("[DATABASE] Coluna is_paid adicionada em purchases")
+        except:
+            pass  # Coluna já existe
+        
+        try:
+            cursor.execute("ALTER TABLE purchases ADD COLUMN due_date TEXT")
+            conn.commit()
+            print("[DATABASE] Coluna due_date adicionada em purchases")
+        except:
+            pass  # Coluna já existe
+        
+        try:
+            cursor.execute("ALTER TABLE purchases ADD COLUMN expense_id TEXT")
+            conn.commit()
+            print("[DATABASE] Coluna expense_id adicionada em purchases")
+        except:
+            pass  # Coluna já existe
+        
         _initialized = True
         print(f"[DATABASE] Inicializado em: {DB_PATH}")
 
