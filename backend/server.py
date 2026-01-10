@@ -1381,3 +1381,124 @@ async def startup_event():
 @app.on_event("shutdown")
 async def shutdown_db_client():
     logger.info("[SHUTDOWN] Sistema encerrado")
+
+
+# ==================== DESKTOP/HEALTH ENDPOINTS ====================
+
+class SystemSettingsUpdate(BaseModel):
+    skip_login: Optional[bool] = None
+    theme: Optional[str] = None
+
+@api_router.get("/health")
+async def health_check():
+    """Endpoint de healthcheck para o Electron verificar se o backend está rodando"""
+    try:
+        # Verificar conexão com banco
+        db_info = await db_call(sqlite_db.get_database_info)
+        return {
+            "status": "healthy",
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "database": {
+                "path": db_info.get("path"),
+                "size_bytes": db_info.get("size_bytes"),
+                "tables": db_info.get("tables")
+            }
+        }
+    except Exception as e:
+        return {
+            "status": "unhealthy",
+            "error": str(e),
+            "timestamp": datetime.now(timezone.utc).isoformat()
+        }
+
+@api_router.get("/system/info")
+async def get_system_info():
+    """Retorna informações do sistema para diagnóstico"""
+    db_info = await db_call(sqlite_db.get_database_info)
+    settings = await db_call(sqlite_db.get_all_settings)
+    
+    return {
+        "version": "1.0.0",
+        "database": db_info,
+        "settings": settings,
+        "environment": {
+            "data_path": os.environ.get("NUCLEO_DATA_PATH", "N/A"),
+            "db_path": os.environ.get("NUCLEO_DB_PATH", "N/A"),
+            "logs_path": os.environ.get("NUCLEO_LOGS_PATH", "N/A"),
+            "port": os.environ.get("NUCLEO_PORT", "8001")
+        }
+    }
+
+@api_router.get("/system/settings")
+async def get_system_settings():
+    """Retorna configurações do sistema"""
+    settings = await db_call(sqlite_db.get_all_settings)
+    return {
+        "skip_login": settings.get("skip_login", "false") == "true",
+        "theme": settings.get("theme", "light")
+    }
+
+@api_router.put("/system/settings")
+async def update_system_settings(settings_data: SystemSettingsUpdate, current_user: User = Depends(get_current_user)):
+    """Atualiza configurações do sistema"""
+    check_role(current_user, ["proprietario", "administrador"])
+    
+    if settings_data.skip_login is not None:
+        await db_call(sqlite_db.set_setting, "skip_login", "true" if settings_data.skip_login else "false")
+    
+    if settings_data.theme is not None:
+        await db_call(sqlite_db.set_setting, "theme", settings_data.theme)
+    
+    # Registrar auditoria
+    await log_audit("UPDATE", "system", "Configurações do Sistema", current_user, "alta", {
+        "skip_login": settings_data.skip_login,
+        "theme": settings_data.theme
+    })
+    
+    return await get_system_settings()
+
+@api_router.get("/system/logs")
+async def get_system_logs():
+    """Retorna caminho dos logs para diagnóstico"""
+    logs_path = os.environ.get("NUCLEO_LOGS_PATH", "/app/backend/logs")
+    log_file = os.path.join(logs_path, "nucleo.log") if logs_path else None
+    
+    # Tentar ler últimas linhas do log
+    log_content = []
+    if log_file and os.path.exists(log_file):
+        try:
+            with open(log_file, 'r', encoding='utf-8', errors='ignore') as f:
+                lines = f.readlines()
+                log_content = lines[-100:]  # Últimas 100 linhas
+        except Exception as e:
+            log_content = [f"Erro ao ler logs: {str(e)}"]
+    
+    return {
+        "logs_path": logs_path,
+        "log_file": log_file,
+        "recent_logs": log_content
+    }
+
+@api_router.post("/auth/force-change-password")
+async def force_change_password(password_data: ChangePassword, current_user: User = Depends(get_current_user)):
+    """Força troca de senha (para primeiro login do admin)"""
+    user_doc = await db_call(sqlite_db.get_user_by_id, current_user.id)
+    
+    # Verificar senha atual
+    if not user_doc or user_doc.get("password") != password_data.old_password:
+        raise HTTPException(status_code=401, detail="Senha atual incorreta")
+    
+    # Atualizar senha e remover flag de must_change_password
+    await db_call(sqlite_db.update_user, current_user.id, {
+        "password": password_data.new_password,
+        "must_change_password": 0
+    })
+    
+    return {"message": "Senha alterada com sucesso", "must_change_password": False}
+
+@api_router.get("/auth/check-must-change-password")
+async def check_must_change_password(current_user: User = Depends(get_current_user)):
+    """Verifica se usuário deve trocar senha no primeiro login"""
+    user_doc = await db_call(sqlite_db.get_user_by_id, current_user.id)
+    must_change = bool(user_doc.get("must_change_password", 0)) if user_doc else False
+    return {"must_change_password": must_change}

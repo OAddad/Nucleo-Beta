@@ -1,18 +1,32 @@
 """
-SQLite Database Module
+SQLite Database Module para Núcleo Desktop
 Gerencia todas as operações de banco de dados usando SQLite
+Suporta tanto ambiente web quanto desktop Electron
 """
 import sqlite3
 import json
 import uuid
+import os
+import hashlib
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import List, Optional, Dict, Any
 import threading
 from contextlib import contextmanager
 
-# Caminho do banco de dados
-DB_PATH = Path(__file__).parent / "data_backup" / "nucleo.db"
+# Detectar ambiente
+def get_db_path():
+    """Retorna o caminho do banco de dados baseado no ambiente"""
+    # Verificar se está rodando no Electron (variável de ambiente definida pelo main.js)
+    electron_db_path = os.environ.get('NUCLEO_DB_PATH')
+    if electron_db_path:
+        return Path(electron_db_path)
+    
+    # Fallback para ambiente de desenvolvimento
+    return Path(__file__).parent / "data_backup" / "nucleo.db"
+
+# Caminho do banco de dados (será atualizado na inicialização)
+DB_PATH = get_db_path()
 
 # Lock para thread safety
 db_lock = threading.RLock()
@@ -23,9 +37,11 @@ _connection_lock = threading.Lock()
 
 def get_connection():
     """Retorna uma conexão com o banco SQLite"""
-    global _connection
+    global _connection, DB_PATH
     with _connection_lock:
         if _connection is None:
+            # Atualizar DB_PATH caso tenha mudado
+            DB_PATH = get_db_path()
             DB_PATH.parent.mkdir(parents=True, exist_ok=True)
             _connection = sqlite3.connect(str(DB_PATH), check_same_thread=False, timeout=30.0)
             _connection.row_factory = sqlite3.Row
@@ -48,23 +64,47 @@ def get_db():
 # Flag para evitar inicialização múltipla
 _initialized = False
 
+def hash_password(password: str) -> str:
+    """Hash simples para senha (em produção usar bcrypt)"""
+    # Para compatibilidade, mantendo texto simples por enquanto
+    # Em futuras versões pode-se usar: hashlib.sha256(password.encode()).hexdigest()
+    return password
+
+def verify_password_hash(password: str, hashed: str) -> bool:
+    """Verifica se a senha corresponde ao hash"""
+    # Para compatibilidade com sistema atual (texto simples)
+    return password == hashed
+
 def init_database():
-    """Inicializa o banco de dados criando as tabelas (apenas uma vez)"""
-    global _initialized
+    """Inicializa o banco de dados criando as tabelas e usuário admin padrão"""
+    global _initialized, DB_PATH
     if _initialized:
         return
+    
+    # Atualizar caminho
+    DB_PATH = get_db_path()
     
     with db_lock:
         conn = get_connection()
         cursor = conn.cursor()
         
-        # Tabela de Usuários (senha em texto simples)
+        # Tabela de Configurações do Sistema
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS system_settings (
+                key TEXT PRIMARY KEY,
+                value TEXT,
+                updated_at TEXT
+            )
+        ''')
+        
+        # Tabela de Usuários (senha em texto simples para compatibilidade)
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS users (
                 id TEXT PRIMARY KEY,
                 username TEXT UNIQUE NOT NULL,
                 password TEXT NOT NULL,
                 role TEXT DEFAULT 'observador',
+                must_change_password INTEGER DEFAULT 0,
                 created_at TEXT
             )
         ''')
@@ -155,11 +195,75 @@ def init_database():
             cursor.execute("ALTER TABLE ingredients ADD COLUMN code TEXT")
             print("[DATABASE] Coluna 'code' adicionada à tabela ingredients")
         
+        # Migração: Adicionar coluna 'must_change_password' em users se não existir
+        try:
+            cursor.execute("SELECT must_change_password FROM users LIMIT 1")
+        except sqlite3.OperationalError:
+            cursor.execute("ALTER TABLE users ADD COLUMN must_change_password INTEGER DEFAULT 0")
+            print("[DATABASE] Coluna 'must_change_password' adicionada à tabela users")
+        
         conn.commit()
         
+        # Criar usuário admin padrão se não existir nenhum usuário
+        cursor.execute("SELECT COUNT(*) FROM users")
+        user_count = cursor.fetchone()[0]
+        
+        if user_count == 0:
+            admin_id = str(uuid.uuid4())
+            created_at = datetime.now(timezone.utc).isoformat()
+            
+            cursor.execute('''
+                INSERT INTO users (id, username, password, role, must_change_password, created_at)
+                VALUES (?, ?, ?, ?, ?, ?)
+            ''', (admin_id, 'admin', 'admin', 'proprietario', 1, created_at))
+            
+            conn.commit()
+            print(f"[DATABASE] Usuário admin criado automaticamente (login: admin / senha: admin)")
+            print(f"[DATABASE] IMPORTANTE: Troque a senha no primeiro acesso!")
+        
+        # Inicializar configurações padrão
+        cursor.execute("SELECT value FROM system_settings WHERE key = 'skip_login'")
+        if not cursor.fetchone():
+            cursor.execute('''
+                INSERT INTO system_settings (key, value, updated_at)
+                VALUES ('skip_login', 'false', ?)
+            ''', (datetime.now(timezone.utc).isoformat(),))
+            conn.commit()
+        
         _initialized = True
-        # Log apenas na primeira inicialização (quando tabelas são criadas)
-        # print(f"[DATABASE] SQLite inicializado em: {DB_PATH}")
+        print(f"[DATABASE] SQLite inicializado em: {DB_PATH}")
+
+# ==================== SYSTEM SETTINGS ====================
+
+def get_setting(key: str) -> Optional[str]:
+    """Obtém uma configuração do sistema"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT value FROM system_settings WHERE key = ?", (key,))
+        row = cursor.fetchone()
+        return row[0] if row else None
+
+def set_setting(key: str, value: str) -> bool:
+    """Define uma configuração do sistema"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute('''
+            INSERT OR REPLACE INTO system_settings (key, value, updated_at)
+            VALUES (?, ?, ?)
+        ''', (key, value, datetime.now(timezone.utc).isoformat()))
+        conn.commit()
+        return True
+
+def get_all_settings() -> Dict[str, str]:
+    """Retorna todas as configurações"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT key, value FROM system_settings")
+        rows = cursor.fetchall()
+        return {row[0]: row[1] for row in rows}
 
 # ==================== USERS ====================
 
@@ -215,19 +319,20 @@ def create_user(user_data: Dict) -> Dict:
         
         user_id = user_data.get('id', str(uuid.uuid4()))
         created_at = user_data.get('created_at', datetime.now(timezone.utc).isoformat())
+        must_change = user_data.get('must_change_password', 0)
         
         cursor.execute('''
-            INSERT INTO users (id, username, password, role, created_at)
-            VALUES (?, ?, ?, ?, ?)
+            INSERT INTO users (id, username, password, role, must_change_password, created_at)
+            VALUES (?, ?, ?, ?, ?, ?)
         ''', (
             user_id,
             user_data['username'],
-            user_data['password'],  # Texto simples!
+            user_data['password'],  # Texto simples para compatibilidade
             user_data.get('role', 'observador'),
+            must_change,
             created_at
         ))
         conn.commit()
-        
         
         return get_user_by_id(user_id)
 
@@ -246,12 +351,14 @@ def update_user(user_id: str, user_data: Dict) -> Optional[Dict]:
         if 'role' in user_data:
             updates.append("role = ?")
             values.append(user_data['role'])
+        if 'must_change_password' in user_data:
+            updates.append("must_change_password = ?")
+            values.append(user_data['must_change_password'])
         
         if updates:
             values.append(user_id)
             cursor.execute(f"UPDATE users SET {', '.join(updates)} WHERE id = ?", values)
             conn.commit()
-        
         
         return get_user_by_id(user_id)
 
@@ -267,7 +374,7 @@ def delete_user(user_id: str) -> bool:
         return deleted
 
 def verify_password(username: str, password: str) -> bool:
-    """Verifica senha do usuário (texto simples)"""
+    """Verifica senha do usuário (texto simples para compatibilidade)"""
     user = get_user_by_username(username)
     if user and user.get('password') == password:
         return True
@@ -339,7 +446,6 @@ def create_ingredient(data: Dict) -> Dict:
         ))
         conn.commit()
         
-        
         return get_ingredient_by_id(ing_id)
 
 def update_ingredient(ingredient_id: str, data: Dict) -> Optional[Dict]:
@@ -374,7 +480,6 @@ def update_ingredient(ingredient_id: str, data: Dict) -> Optional[Dict]:
         ))
         conn.commit()
         
-        
         return get_ingredient_by_id(ingredient_id)
 
 def delete_ingredient(ingredient_id: str) -> bool:
@@ -408,7 +513,6 @@ def get_all_products() -> List[Dict]:
         cursor.execute("SELECT * FROM products ORDER BY name")
         rows = cursor.fetchall()
         
-        
         products = []
         for row in rows:
             p = dict(row)
@@ -439,7 +543,6 @@ def get_product_by_id(product_id: str) -> Optional[Dict]:
         cursor.execute("SELECT * FROM products WHERE id = ?", (product_id,))
         row = cursor.fetchone()
         
-        
         if row:
             p = dict(row)
             try:
@@ -466,7 +569,6 @@ def get_next_product_code() -> str:
         cursor = conn.cursor()
         cursor.execute("SELECT MAX(CAST(code AS INTEGER)) FROM products WHERE code IS NOT NULL")
         max_code = cursor.fetchone()[0]
-        
         
         if max_code:
             return str(int(max_code) + 1).zfill(5)
@@ -505,7 +607,6 @@ def create_product(data: Dict) -> Dict:
             created_at
         ))
         conn.commit()
-        
         
         return get_product_by_id(prod_id)
 
@@ -551,7 +652,6 @@ def update_product(product_id: str, data: Dict) -> Optional[Dict]:
             product_id
         ))
         conn.commit()
-        
         
         return get_product_by_id(product_id)
 
@@ -613,7 +713,6 @@ def create_purchase(data: Dict) -> Dict:
             data.get('purchase_date', datetime.now(timezone.utc).isoformat())
         ))
         conn.commit()
-        
         
         return data
 
@@ -721,7 +820,6 @@ def create_category(data: Dict) -> Dict:
         ''', (cat_id, data['name'], created_at))
         conn.commit()
         
-        
         return get_category_by_id(cat_id)
 
 def update_category(category_id: str, data: Dict) -> Optional[Dict]:
@@ -790,68 +888,28 @@ def create_audit_log(data: Dict) -> Dict:
         ))
         conn.commit()
         
-        
         return data
 
-# ==================== MIGRATION ====================
+# ==================== UTILITY ====================
 
-def migrate_from_mongo(mongo_db):
-    """Migra dados do MongoDB para SQLite"""
-    import asyncio
-    
-    async def _migrate():
-        print("[MIGRATION] Iniciando migração do MongoDB para SQLite...")
+def get_database_info() -> Dict:
+    """Retorna informações do banco de dados"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
         
-        # Migrar usuários
-        users = await mongo_db.users.find({}, {"_id": 0}).to_list(1000)
-        for u in users:
-            if not get_user_by_id(u.get('id')):
-                # Converter senha hash para texto simples (padrão: Admin123)
-                create_user({
-                    'id': u.get('id'),
-                    'username': u.get('username'),
-                    'password': 'Admin123',  # Senha padrão em texto simples
-                    'role': u.get('role', 'observador'),
-                    'created_at': u.get('created_at')
-                })
-        print(f"[MIGRATION] {len(users)} usuários migrados")
+        info = {
+            "path": str(DB_PATH),
+            "size_bytes": DB_PATH.stat().st_size if DB_PATH.exists() else 0,
+            "tables": {}
+        }
         
-        # Migrar ingredientes
-        ingredients = await mongo_db.ingredients.find({}, {"_id": 0}).to_list(1000)
-        for ing in ingredients:
-            if not get_ingredient_by_id(ing.get('id')):
-                create_ingredient(ing)
-        print(f"[MIGRATION] {len(ingredients)} ingredientes migrados")
+        tables = ["users", "ingredients", "products", "purchases", "categories", "audit_logs"]
+        for table in tables:
+            cursor.execute(f"SELECT COUNT(*) FROM {table}")
+            info["tables"][table] = cursor.fetchone()[0]
         
-        # Migrar produtos
-        products = await mongo_db.products.find({}, {"_id": 0}).to_list(1000)
-        for p in products:
-            if not get_product_by_id(p.get('id')):
-                create_product(p)
-        print(f"[MIGRATION] {len(products)} produtos migrados")
-        
-        # Migrar compras
-        purchases = await mongo_db.purchases.find({}, {"_id": 0}).to_list(10000)
-        for pur in purchases:
-            create_purchase(pur)
-        print(f"[MIGRATION] {len(purchases)} compras migradas")
-        
-        # Migrar categorias
-        categories = await mongo_db.categories.find({}, {"_id": 0}).to_list(1000)
-        for cat in categories:
-            if not get_category_by_name(cat.get('name')):
-                create_category(cat)
-        print(f"[MIGRATION] {len(categories)} categorias migradas")
-        
-        # Migrar logs de auditoria
-        logs = await mongo_db.audit_logs.find({}, {"_id": 0}).to_list(10000)
-        for log in logs:
-            create_audit_log(log)
-        print(f"[MIGRATION] {len(logs)} logs migrados")
-        
-        print("[MIGRATION] Migração concluída!")
-    
-    asyncio.get_event_loop().run_until_complete(_migrate())
+        return info
 
 # Inicializar banco ao importar o módulo
 init_database()
