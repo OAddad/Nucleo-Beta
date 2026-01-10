@@ -1559,3 +1559,24 @@ async def check_must_change_password(current_user: User = Depends(get_current_us
     user_doc = await db_call(sqlite_db.get_user_by_id, current_user.id)
     must_change = bool(user_doc.get("must_change_password", 0)) if user_doc else False
     return {"must_change_password": must_change}
+
+
+
+# ==================== MAIN ====================
+
+if __name__ == "__main__":
+    import uvicorn
+    
+    # Porta configurável via variável de ambiente (para Electron)
+    port = int(os.environ.get("NUCLEO_PORT", 8001))
+    host = os.environ.get("NUCLEO_HOST", "0.0.0.0")
+    
+    logger.info(f"[MAIN] Iniciando servidor em {host}:{port}")
+    
+    uvicorn.run(
+        app,
+        host=host,
+        port=port,
+        log_level="info",
+        access_log=True
+    )
