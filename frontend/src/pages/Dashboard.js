@@ -606,11 +606,29 @@ export default function Dashboard({ setIsAuthenticated }) {
               {/* Rotas de Vendas */}
               <Route path="/vendas/relatorio" element={
                 <div className="p-8">
-                  <h1 className="text-3xl font-bold">Relatório de Vendas</h1>
-                  <p className="text-muted-foreground mt-2">Em breve...</p>
-                  <div className="mt-8 p-6 bg-muted/50 rounded-xl border text-center">
-                    <BarChart3 className="w-16 h-16 mx-auto text-muted-foreground/50 mb-4" />
-                    <p className="text-muted-foreground">Esta funcionalidade está em desenvolvimento.</p>
+                  <div className="max-w-7xl mx-auto">
+                    <div className="mb-8">
+                      <h1 className="text-3xl font-bold tracking-tight">Relatório de Vendas</h1>
+                      <p className="text-muted-foreground mt-1">Análise de vendas e desempenho</p>
+                    </div>
+                    <div className="bg-gradient-to-br from-primary/5 to-primary/10 rounded-2xl border border-primary/20 p-8">
+                      <div className="flex items-start gap-6">
+                        <div className="flex-shrink-0">
+                          <div className="w-16 h-16 bg-primary/10 rounded-xl flex items-center justify-center">
+                            <BarChart3 className="w-8 h-8 text-primary" strokeWidth={1.5} />
+                          </div>
+                        </div>
+                        <div className="flex-1">
+                          <div className="inline-flex items-center gap-2 px-3 py-1 bg-amber-500/20 text-amber-700 dark:text-amber-400 rounded-full text-xs font-medium mb-3">
+                            Em Desenvolvimento
+                          </div>
+                          <h2 className="text-xl font-bold mb-2">Em breve...</h2>
+                          <p className="text-muted-foreground">
+                            Esta funcionalidade está em desenvolvimento. Em breve você poderá visualizar relatórios completos de vendas.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               } />
