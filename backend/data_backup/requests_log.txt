@@ -6169,3 +6169,7 @@
 2026-01-10T19:38:25.625738+00:00 | DB_CALL count_ingredients | P3 | 0.2ms | success
 2026-01-10T19:38:25.625908+00:00 | DB_CALL count_products | P3 | 0.11ms | success
 2026-01-10T19:38:25.626061+00:00 | DB_CALL count_users | P3 | 0.1ms | success
+2026-01-10T19:39:13.945523+00:00 | DB_CALL init_database | P3 | 2.84ms | success
+2026-01-10T19:39:13.945935+00:00 | DB_CALL count_ingredients | P3 | 0.2ms | success
+2026-01-10T19:39:13.946129+00:00 | DB_CALL count_products | P3 | 0.13ms | success
+2026-01-10T19:39:13.946271+00:00 | DB_CALL count_users | P3 | 0.09ms | success

@@ -1006,7 +1006,10 @@ async def get_purchases_grouped(current_user: User = Depends(get_current_user)):
                 "total_quantity": 0,
                 "total_price": 0,
                 "items": [],
-                "purchases": []  # Adicionar campo purchases para compatibilidade
+                "purchases": [],
+                "is_paid": p.get("is_paid", True),
+                "due_date": p.get("due_date"),
+                "expense_id": p.get("expense_id")
             }
         
         batches_dict[batch_id]["total_quantity"] += p["quantity"]
