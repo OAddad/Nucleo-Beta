@@ -126,7 +126,6 @@ export default function Despesas() {
   useEffect(() => {
     fetchClassifications();
     fetchExpenses();
-    fetchStats();
     loadFornecedores();
   }, []);
   
@@ -154,10 +153,6 @@ export default function Despesas() {
       console.error("Erro ao carregar despesas:", error);
     }
   };
-  
-  const fetchStats = async () => {
-    try {
-      const response = await axios.get(`${API}/expenses/stats`, getAuthHeader());
       setStats(response.data);
     } catch (error) {
       console.error("Erro ao carregar estatísticas:", error);
