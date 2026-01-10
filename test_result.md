@@ -301,6 +301,21 @@ backend:
         agent: "testing"
         comment: "✅ WORKING: Average price calculation tested successfully. POST /api/purchases/batch creates purchases and updates average prices correctly. get_average_price_last_5_purchases() function working properly. Calculation considers units_per_package when applicable (divides average by package units). Tested with Coca Cola ingredient: 5 purchases with correct average calculation. Price updates automatically after new purchases."
 
+  - task: "Núcleo Desktop System Endpoints"
+    implemented: true
+    working: true
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Endpoints específicos do sistema Núcleo Desktop: GET /api/health, GET /api/system/settings, POST /api/auth/login, GET /api/auth/check-must-change-password, GET /api/system/info"
+      - working: true
+        agent: "testing"
+        comment: "✅ WORKING: Núcleo Desktop endpoints tested successfully. GET /api/health returns status 'healthy' with database info (SQLite, 90KB, 6 tables). GET /api/system/settings returns skip_login: false (boolean) and theme: 'light' (string). POST /api/auth/login works with admin/admin credentials after user registration. GET /api/auth/check-must-change-password returns must_change_password: false (boolean). GET /api/system/info works with proprietario authentication, returns system details including database stats (25 ingredients, 5 products, 36 purchases, 5 users, 11 categories). All endpoints functional and returning expected data types."
+
 frontend:
   - task: "Login Page"
     implemented: true
