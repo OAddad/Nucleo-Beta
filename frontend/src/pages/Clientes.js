@@ -393,7 +393,7 @@ export default function Clientes() {
     setDialogOpen(true);
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!nome.trim()) {
       toast.error("Informe o nome do cliente");
       return;
@@ -418,30 +418,22 @@ export default function Clientes() {
       cep,
     };
 
-    if (editMode && currentCliente) {
-      const updatedClientes = clientes.map(c =>
-        c.id === currentCliente.id
-          ? { ...c, ...clienteData }
-          : c
-      );
-      saveClientes(updatedClientes);
-      toast.success("Cliente atualizado!");
-    } else {
-      const novoCliente = {
-        id: `cliente-${Date.now()}`,
-        ...clienteData,
-        created_at: new Date().toISOString(),
-        pedidos_count: 0,
-        total_gasto: 0,
-        last_order_date: null,
-        orders_last_30_days: 0
-      };
-      saveClientes([...clientes, novoCliente]);
-      toast.success("Cliente cadastrado!");
+    try {
+      if (editMode && currentCliente) {
+        await axios.put(`${API}/clientes/${currentCliente.id}`, clienteData, getAuthHeader());
+        toast.success("Cliente atualizado!");
+      } else {
+        await axios.post(`${API}/clientes`, clienteData, getAuthHeader());
+        toast.success("Cliente cadastrado!");
+      }
+      
+      setDialogOpen(false);
+      resetForm();
+      fetchClientes();
+    } catch (error) {
+      console.error("Erro ao salvar cliente:", error);
+      toast.error("Erro ao salvar cliente");
     }
-
-    setDialogOpen(false);
-    resetForm();
   };
 
   const handleDelete = (cliente) => {
@@ -449,10 +441,16 @@ export default function Clientes() {
     setDeleteDialogOpen(true);
   };
 
-  const confirmDelete = () => {
+  const confirmDelete = async () => {
     if (clienteToDelete) {
-      saveClientes(clientes.filter(c => c.id !== clienteToDelete.id));
-      toast.success("Cliente excluído!");
+      try {
+        await axios.delete(`${API}/clientes/${clienteToDelete.id}`, getAuthHeader());
+        toast.success("Cliente excluído!");
+        fetchClientes();
+      } catch (error) {
+        console.error("Erro ao excluir cliente:", error);
+        toast.error("Erro ao excluir cliente");
+      }
     }
     setDeleteDialogOpen(false);
     setClienteToDelete(null);
