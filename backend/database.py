@@ -341,6 +341,7 @@ def init_database():
                 total_gasto REAL DEFAULT 0,
                 last_order_date TEXT,
                 orders_last_30_days INTEGER DEFAULT 0,
+                pontuacao INTEGER DEFAULT 0,
                 created_at TEXT
             )
         ''')
