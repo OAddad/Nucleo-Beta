@@ -463,6 +463,12 @@ export default function Despesas() {
       );
     }
     
+    // Filtro por mês selecionado
+    result = result.filter(e => {
+      const date = new Date(e.due_date + "T00:00:00");
+      return date.getMonth() === selectedMonth && date.getFullYear() === selectedYear;
+    });
+    
     // Filtro por status
     if (statusFilter !== "all") {
       result = result.filter(e => statusFilter === "paid" ? e.is_paid : !e.is_paid);
@@ -473,52 +479,43 @@ export default function Despesas() {
       result = result.filter(e => e.classification_id === classificationFilter);
     }
     
-    return result;
-  }, [expenses, searchTerm, statusFilter, classificationFilter]);
-  
-  // Agrupar por mês
-  const expensesByMonth = useMemo(() => {
-    const grouped = {};
+    // Ordenar por data
+    result.sort((a, b) => a.due_date.localeCompare(b.due_date));
     
-    filteredExpenses.forEach(expense => {
-      const date = new Date(expense.due_date);
-      const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
-      const monthLabel = date.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
-      
-      if (!grouped[monthKey]) {
-        grouped[monthKey] = {
-          label: monthLabel,
-          expenses: [],
-          total: 0,
-          paid: 0,
-          pending: 0
-        };
-      }
-      
-      grouped[monthKey].expenses.push(expense);
-      grouped[monthKey].total += expense.value;
-      if (expense.is_paid) {
-        grouped[monthKey].paid += expense.value;
+    return result;
+  }, [expenses, searchTerm, statusFilter, classificationFilter, selectedMonth, selectedYear]);
+  
+  // Estatísticas do mês selecionado
+  const monthStats = useMemo(() => {
+    let total = 0;
+    let pendingCount = 0;
+    let pendingValue = 0;
+    let paidCount = 0;
+    let paidValue = 0;
+    
+    filteredExpenses.forEach(e => {
+      total++;
+      if (e.is_paid) {
+        paidCount++;
+        paidValue += e.value;
       } else {
-        grouped[monthKey].pending += expense.value;
+        pendingCount++;
+        pendingValue += e.value;
       }
     });
     
-    // Ordenar por mês (mais recente primeiro)
-    return Object.entries(grouped)
-      .sort(([a], [b]) => b.localeCompare(a))
-      .map(([key, data]) => ({ key, ...data }));
+    return { total, pendingCount, pendingValue, paidCount, paidValue };
   }, [filteredExpenses]);
   
-  // Paginação por mês
-  const paginatedMonths = useMemo(() => {
+  // Paginação
+  const paginatedExpenses = useMemo(() => {
     const startIndex = (currentPage - 1) * itemsPerPage;
-    return expensesByMonth.slice(startIndex, startIndex + itemsPerPage);
-  }, [expensesByMonth, currentPage, itemsPerPage]);
+    return filteredExpenses.slice(startIndex, startIndex + itemsPerPage);
+  }, [filteredExpenses, currentPage, itemsPerPage]);
   
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchTerm, statusFilter, classificationFilter]);
+  }, [searchTerm, statusFilter, classificationFilter, selectedMonth, selectedYear]);
   
   // ==================== HELPERS ====================
   
