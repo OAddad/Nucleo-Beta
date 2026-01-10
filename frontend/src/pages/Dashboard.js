@@ -154,7 +154,7 @@ export default function Dashboard({ setIsAuthenticated }) {
   };
 
   const isStockControlActive = () => {
-    return ["/produtos", "/estoque", "/compras"].some(path => location.pathname.startsWith(path));
+    return ["/produtos", "/estoque", "/compras", "/estoque/relatorio"].some(path => location.pathname.startsWith(path));
   };
 
   const isSalesActive = () => {
