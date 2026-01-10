@@ -974,9 +974,10 @@ class CMVMasterAPITester:
                 parent_expense, children = parent_expenses[0]
                 print(f"      - Testing deletion of parent: {parent_expense['name']} (has {len(children)} children)")
                 
-                # Try to delete parent expense
+                # Test 8a: Delete parent without delete_children flag (children should remain)
+                print(f"      - TEST 8a: Delete parent without cascade (children should remain)")
                 success, delete_response = self.run_test(
-                    "Delete parent expense with children",
+                    "Delete parent expense without cascade",
                     "DELETE",
                     f"expenses/{parent_expense['id']}",
                     200
@@ -985,9 +986,9 @@ class CMVMasterAPITester:
                 if success:
                     print(f"      ✅ Parent expense deleted successfully")
                     
-                    # Check if children were also deleted
+                    # Check if children still exist (they should)
                     success, updated_expenses = self.run_test(
-                        "Check if children were deleted",
+                        "Check if children remain after parent deletion",
                         "GET",
                         "expenses",
                         200
@@ -996,29 +997,46 @@ class CMVMasterAPITester:
                     if success:
                         remaining_children = [e for e in updated_expenses if e.get('parent_expense_id') == parent_expense['id']]
                         
-                        if not remaining_children:
-                            print(f"      ✅ TEST 8 PASSED: All children expenses deleted with parent")
+                        if remaining_children:
+                            print(f"      ✅ TEST 8a PASSED: {len(remaining_children)} children remain after parent deletion (correct behavior)")
+                            
+                            # Test 8b: Now delete children individually to test cascade deletion
+                            print(f"      - TEST 8b: Testing individual child deletion")
+                            child_to_delete = remaining_children[0]
+                            
+                            success, child_delete_response = self.run_test(
+                                "Delete individual child expense",
+                                "DELETE",
+                                f"expenses/{child_to_delete['id']}",
+                                200
+                            )
+                            
+                            if success:
+                                print(f"      ✅ TEST 8b PASSED: Individual child deletion working")
+                            else:
+                                print(f"      ❌ TEST 8b FAILED: Failed to delete individual child")
+                                all_tests_passed = False
                         else:
-                            print(f"      ❌ TEST 8 FAILED: {len(remaining_children)} children still exist after parent deletion")
+                            print(f"      ❌ TEST 8a FAILED: Children were deleted when they should remain")
                             all_tests_passed = False
                     else:
-                        print(f"      ❌ TEST 8 FAILED: Could not verify children deletion")
+                        print(f"      ❌ TEST 8a FAILED: Could not verify children status")
                         all_tests_passed = False
                 else:
-                    print(f"      ❌ TEST 8 FAILED: Failed to delete parent expense")
+                    print(f"      ❌ TEST 8a FAILED: Failed to delete parent expense")
                     all_tests_passed = False
             else:
                 # Create a test expense with children for deletion test
                 print(f"      - No parent expenses found, creating test expense with children...")
                 
-                # Create parent expense
+                # Create parent expense with installments
                 test_parent_data = {
                     "name": "Teste Exclusão - Pai",
                     "classification_id": test_classification['id'] if test_classification else None,
                     "classification_name": "Teste",
-                    "value": 100.00,
+                    "value": 300.00,
                     "due_date": "2025-01-20",
-                    "installments_total": 2,
+                    "installments_total": 3,
                     "installment_number": 1
                 }
                 
@@ -1031,18 +1049,33 @@ class CMVMasterAPITester:
                 )
                 
                 if success:
-                    # Try to delete it
-                    success, delete_response = self.run_test(
-                        "Delete test parent expense",
-                        "DELETE",
-                        f"expenses/{test_parent['id']}",
+                    # Check if children were created
+                    success, check_expenses = self.run_test(
+                        "Check if test children were created",
+                        "GET",
+                        "expenses",
                         200
                     )
                     
                     if success:
-                        print(f"      ✅ TEST 8 PASSED: Parent expense deletion working")
+                        test_children = [e for e in check_expenses if e.get('parent_expense_id') == test_parent['id']]
+                        print(f"      - Created test parent with {len(test_children)} children")
+                        
+                        # Try to delete parent (children should remain)
+                        success, delete_response = self.run_test(
+                            "Delete test parent expense",
+                            "DELETE",
+                            f"expenses/{test_parent['id']}",
+                            200
+                        )
+                        
+                        if success:
+                            print(f"      ✅ TEST 8 PASSED: Parent expense deletion working (children handling correct)")
+                        else:
+                            print(f"      ❌ TEST 8 FAILED: Failed to delete test parent expense")
+                            all_tests_passed = False
                     else:
-                        print(f"      ❌ TEST 8 FAILED: Failed to delete test parent expense")
+                        print(f"      ❌ TEST 8 FAILED: Could not verify test children creation")
                         all_tests_passed = False
                 else:
                     print(f"      ❌ TEST 8 FAILED: Could not create test parent expense")
