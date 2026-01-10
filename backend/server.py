@@ -1697,7 +1697,7 @@ async def create_expense(expense_data: ExpenseCreate, current_user: User = Depen
         
         base_date = datetime.strptime(expense_data.due_date, "%Y-%m-%d")
         
-        for i in range(1, 12):
+        for i in range(1, recurring_count):
             if expense_data.recurring_period == "monthly":
                 next_date = base_date + relativedelta(months=i)
             elif expense_data.recurring_period == "weekly":
