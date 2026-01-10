@@ -1041,7 +1041,11 @@ export default function Ingredients() {
                           <tr
                             key={ingredient.id}
                             data-testid={`ingredient-row-${ingredient.id}`}
-                            className="border-b hover:bg-muted/30 transition-colors"
+                            className={`border-b transition-colors ${
+                              ingredient.is_active === false 
+                                ? 'bg-muted/50 opacity-60 hover:opacity-80' 
+                                : 'hover:bg-muted/30'
+                            }`}
                           >
                             <td className="py-3 px-4 font-mono text-sm text-muted-foreground">
                               {ingredient.code || "-"}
