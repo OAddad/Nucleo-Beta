@@ -397,6 +397,16 @@ export default function Products() {
   const [currentUser, setCurrentUser] = useState(null);
   const [activeFormTab, setActiveFormTab] = useState("ficha"); // "ficha" ou "etapas"
   
+  // Estados para campos de receita (rendimento)
+  const [recipeYield, setRecipeYield] = useState("");
+  const [recipeYieldUnit, setRecipeYieldUnit] = useState("kg");
+  const [linkedIngredientId, setLinkedIngredientId] = useState("");
+  
+  // Estados para cadastro rápido de ingrediente
+  const [quickIngredientOpen, setQuickIngredientOpen] = useState(false);
+  const [quickIngredientName, setQuickIngredientName] = useState("");
+  const [ingredientCategories, setIngredientCategories] = useState([]);
+  
   // Category management states
   const [categoryDialogOpen, setCategoryDialogOpen] = useState(false);
   const [editCategoryMode, setEditCategoryMode] = useState(false);
