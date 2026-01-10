@@ -406,7 +406,7 @@ export default function Dashboard({ setIsAuthenticated }) {
           </div>
         </nav>
 
-        <div className="p-4 border-t space-y-2">
+        <div className="p-4 border-t space-y-2 flex-shrink-0">
           {sidebarOpen && (
             <div className="flex justify-center pb-2">
               <DarkModeToggle />
@@ -426,10 +426,13 @@ export default function Dashboard({ setIsAuthenticated }) {
         </div>
       </aside>
 
+      {/* Espaçador para compensar o sidebar fixo */}
+      <div className={`flex-shrink-0 transition-all duration-300 ${sidebarOpen ? 'w-64' : 'w-0 lg:w-16'}`}></div>
+
       {/* Conteúdo Principal */}
-      <div className="flex-1 flex flex-col min-w-0">
-        {/* Header com Botão Hamburguer e Mini Menu */}
-        <header className="bg-card border-b flex items-stretch">
+      <div className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
+        {/* Header com Botão Hamburguer e Mini Menu - Fixo */}
+        <header className="bg-card border-b flex items-stretch flex-shrink-0 sticky top-0 z-30">
           {/* Área do botão hamburguer - mesmo tamanho da logo */}
           <div className={`flex items-center justify-center border-r transition-all duration-300 ${sidebarOpen ? 'w-64' : 'w-16'}`}>
             <Button
