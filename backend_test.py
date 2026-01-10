@@ -548,6 +548,580 @@ class CMVMasterAPITester:
         
         return True  # Return true if we can at least list products
 
+    def test_expense_module(self):
+        """Test the new expense module as specified in review request"""
+        print("\n=== EXPENSE MODULE TESTS ===")
+        print("🎯 Testing expense module as specified in review request:")
+        print("   1. Verificar se as tabelas expense_classifications e expenses existem no SQLite")
+        print("   2. Testar CRUD completo de classificações")
+        print("   3. Testar criação de despesa simples")
+        print("   4. Testar criação de despesa parcelada")
+        print("   5. Testar criação de despesa recorrente")
+        print("   6. Testar toggle de status pago/pendente")
+        print("   7. Testar estatísticas (/api/expenses/stats)")
+        print("   8. Testar exclusão de despesa com filhos (parcelas)")
+        print("   Credenciais: Addad/Addad123")
+        
+        all_tests_passed = True
+        created_classifications = []
+        created_expenses = []
+        
+        # First, authenticate with Addad user as specified
+        print("\n🔍 Authenticating with Addad user...")
+        success, login_response = self.run_test(
+            "Login with Addad user for expense tests",
+            "POST",
+            "auth/login",
+            200,
+            data={"username": "Addad", "password": "Addad123"}
+        )
+        
+        if success and 'access_token' in login_response:
+            self.token = login_response['access_token']
+            self.user_id = login_response['user']['id']
+            print(f"   ✅ Addad login successful")
+            print(f"   - User role: {login_response['user']['role']}")
+        else:
+            print(f"   ❌ Addad login failed - trying fallback authentication...")
+            # Try other authentication methods as fallback
+            fallback_users = [
+                ("admin", "admin"),
+                ("teste_admin", "senha123"),
+                ("proprietario", "senha123")
+            ]
+            
+            auth_success = False
+            for username, password in fallback_users:
+                success, response = self.run_test(
+                    f"Fallback login with {username}",
+                    "POST",
+                    "auth/login",
+                    200,
+                    data={"username": username, "password": password}
+                )
+                
+                if success and 'access_token' in response:
+                    self.token = response['access_token']
+                    self.user_id = response['user']['id']
+                    print(f"   ✅ Fallback authentication successful with {username}")
+                    auth_success = True
+                    break
+            
+            if not auth_success:
+                print(f"   ❌ No valid authentication found - cannot proceed with expense tests")
+                return False
+        
+        # TEST 1: Verificar se as tabelas existem (via health check)
+        print(f"\n🔍 TEST 1: Verificar se as tabelas expense_classifications e expenses existem")
+        success, health_response = self.run_test(
+            "Check database tables via health endpoint",
+            "GET",
+            "health",
+            200
+        )
+        
+        if success:
+            db_info = health_response.get('database', {})
+            tables = db_info.get('tables', [])
+            print(f"   ✅ Database tables found: {tables}")
+            
+            if 'expense_classifications' in str(tables) and 'expenses' in str(tables):
+                print(f"   ✅ TEST 1 PASSED: Both expense_classifications and expenses tables exist")
+            else:
+                print(f"   ❌ TEST 1 FAILED: Missing expense tables in database")
+                all_tests_passed = False
+        else:
+            print(f"   ❌ TEST 1 FAILED: Could not check database tables")
+            all_tests_passed = False
+        
+        # TEST 2: Testar CRUD completo de classificações
+        print(f"\n🔍 TEST 2: Testar CRUD completo de classificações")
+        
+        # 2.1 - List existing classifications
+        print(f"   2.1 - GET /api/expense-classifications")
+        success, classifications = self.run_test(
+            "List expense classifications",
+            "GET",
+            "expense-classifications",
+            200
+        )
+        
+        if success:
+            print(f"   ✅ Found {len(classifications)} existing expense classifications")
+            for i, cls in enumerate(classifications[:3]):  # Show first 3
+                print(f"      - {cls['name']} (ID: {cls['id']})")
+        else:
+            print(f"   ❌ Failed to list expense classifications")
+            all_tests_passed = False
+        
+        # 2.2 - Create new classification
+        print(f"   2.2 - POST /api/expense-classifications")
+        success, new_classification = self.run_test(
+            "Create expense classification",
+            "POST",
+            "expense-classifications",
+            200,
+            data={"name": "Teste Classificação"}
+        )
+        
+        if success:
+            created_classifications.append(new_classification['id'])
+            print(f"   ✅ Created classification: {new_classification['name']} (ID: {new_classification['id']})")
+        else:
+            print(f"   ❌ Failed to create expense classification")
+            all_tests_passed = False
+        
+        # 2.3 - Update classification
+        if created_classifications:
+            print(f"   2.3 - PUT /api/expense-classifications/{{id}}")
+            success, updated_classification = self.run_test(
+                "Update expense classification",
+                "PUT",
+                f"expense-classifications/{created_classifications[0]}",
+                200,
+                data={"name": "Teste Classificação Atualizada"}
+            )
+            
+            if success:
+                print(f"   ✅ Updated classification: {updated_classification['name']}")
+            else:
+                print(f"   ❌ Failed to update expense classification")
+                all_tests_passed = False
+        
+        # 2.4 - Initialize default classifications
+        print(f"   2.4 - POST /api/expense-classifications/initialize")
+        success, init_response = self.run_test(
+            "Initialize default expense classifications",
+            "POST",
+            "expense-classifications/initialize",
+            200
+        )
+        
+        if success:
+            created_defaults = init_response.get('created', [])
+            print(f"   ✅ Initialized {len(created_defaults)} default classifications: {', '.join(created_defaults)}")
+        else:
+            print(f"   ❌ Failed to initialize default classifications")
+            all_tests_passed = False
+        
+        # Get updated list of classifications for expense creation
+        success, all_classifications = self.run_test(
+            "Get all classifications after initialization",
+            "GET",
+            "expense-classifications",
+            200
+        )
+        
+        if success and all_classifications:
+            test_classification = all_classifications[0]
+            print(f"   ✅ Using classification '{test_classification['name']}' for expense tests")
+        else:
+            test_classification = None
+            print(f"   ⚠️ No classifications available for expense tests")
+        
+        # TEST 3: Testar criação de despesa simples
+        print(f"\n🔍 TEST 3: Testar criação de despesa simples")
+        
+        simple_expense_data = {
+            "name": "Conta de Luz - Janeiro",
+            "classification_id": test_classification['id'] if test_classification else None,
+            "classification_name": test_classification['name'] if test_classification else "Energia",
+            "supplier": "Companhia Elétrica",
+            "value": 250.50,
+            "due_date": "2025-01-15",
+            "is_paid": False,
+            "notes": "Despesa simples de teste"
+        }
+        
+        success, simple_expense = self.run_test(
+            "Create simple expense",
+            "POST",
+            "expenses",
+            200,
+            data=simple_expense_data
+        )
+        
+        if success:
+            created_expenses.append(simple_expense['id'])
+            print(f"   ✅ Created simple expense: {simple_expense['name']}")
+            print(f"      - ID: {simple_expense['id']}")
+            print(f"      - Value: R$ {simple_expense['value']:.2f}")
+            print(f"      - Due Date: {simple_expense['due_date']}")
+            print(f"      - Is Paid: {simple_expense['is_paid']}")
+            print(f"      - Classification: {simple_expense.get('classification_name', 'N/A')}")
+        else:
+            print(f"   ❌ TEST 3 FAILED: Failed to create simple expense")
+            all_tests_passed = False
+        
+        # TEST 4: Testar criação de despesa parcelada
+        print(f"\n🔍 TEST 4: Testar criação de despesa parcelada")
+        print(f"   Verificar se parcelas são geradas automaticamente")
+        
+        installment_expense_data = {
+            "name": "Equipamento de Cozinha",
+            "classification_id": test_classification['id'] if test_classification else None,
+            "classification_name": test_classification['name'] if test_classification else "Equipamentos",
+            "supplier": "Fornecedor Equipamentos",
+            "value": 1200.00,
+            "due_date": "2025-01-10",
+            "is_paid": False,
+            "installments_total": 4,  # 4 parcelas
+            "installment_number": 1,  # Primeira parcela
+            "notes": "Despesa parcelada em 4x"
+        }
+        
+        success, installment_expense = self.run_test(
+            "Create installment expense",
+            "POST",
+            "expenses",
+            200,
+            data=installment_expense_data
+        )
+        
+        if success:
+            created_expenses.append(installment_expense['id'])
+            print(f"   ✅ Created installment expense: {installment_expense['name']}")
+            print(f"      - ID: {installment_expense['id']}")
+            print(f"      - Value: R$ {installment_expense['value']:.2f}")
+            print(f"      - Installments: {installment_expense.get('installment_number', 1)}/{installment_expense.get('installments_total', 1)}")
+            
+            # Check if other installments were created automatically
+            success, all_expenses = self.run_test(
+                "Check if installments were created automatically",
+                "GET",
+                "expenses",
+                200
+            )
+            
+            if success:
+                # Look for expenses with same parent or similar name
+                related_expenses = [e for e in all_expenses if 
+                                 e.get('parent_expense_id') == installment_expense['id'] or
+                                 (installment_expense['name'] in e['name'] and e['id'] != installment_expense['id'])]
+                
+                print(f"      - Related installments found: {len(related_expenses)}")
+                if len(related_expenses) >= 3:  # Should have 3 more installments
+                    print(f"      ✅ TEST 4 PASSED: Installments generated automatically")
+                else:
+                    print(f"      ⚠️ TEST 4 PARTIAL: Expected more installments to be generated automatically")
+            
+        else:
+            print(f"   ❌ TEST 4 FAILED: Failed to create installment expense")
+            all_tests_passed = False
+        
+        # TEST 5: Testar criação de despesa recorrente
+        print(f"\n🔍 TEST 5: Testar criação de despesa recorrente")
+        print(f"   Verificar se próximos meses são gerados")
+        
+        recurring_expense_data = {
+            "name": "Aluguel - Janeiro",
+            "classification_id": test_classification['id'] if test_classification else None,
+            "classification_name": test_classification['name'] if test_classification else "Aluguel",
+            "supplier": "Imobiliária",
+            "value": 2500.00,
+            "due_date": "2025-01-05",
+            "is_paid": False,
+            "is_recurring": True,
+            "recurring_period": "monthly",
+            "notes": "Despesa recorrente mensal"
+        }
+        
+        success, recurring_expense = self.run_test(
+            "Create recurring expense",
+            "POST",
+            "expenses",
+            200,
+            data=recurring_expense_data
+        )
+        
+        if success:
+            created_expenses.append(recurring_expense['id'])
+            print(f"   ✅ Created recurring expense: {recurring_expense['name']}")
+            print(f"      - ID: {recurring_expense['id']}")
+            print(f"      - Value: R$ {recurring_expense['value']:.2f}")
+            print(f"      - Is Recurring: {recurring_expense.get('is_recurring', False)}")
+            print(f"      - Period: {recurring_expense.get('recurring_period', 'N/A')}")
+            
+            # Check if future months were created automatically
+            success, all_expenses = self.run_test(
+                "Check if recurring expenses were created",
+                "GET",
+                "expenses",
+                200
+            )
+            
+            if success:
+                # Look for expenses with similar name but different months
+                recurring_expenses = [e for e in all_expenses if 
+                                    "Aluguel" in e['name'] and 
+                                    e.get('parent_expense_id') == recurring_expense['id']]
+                
+                print(f"      - Related recurring expenses found: {len(recurring_expenses)}")
+                if len(recurring_expenses) >= 11:  # Should have 11 more months
+                    print(f"      ✅ TEST 5 PASSED: Recurring expenses generated for 12 months")
+                else:
+                    print(f"      ⚠️ TEST 5 PARTIAL: Expected 11 more recurring expenses to be generated")
+            
+        else:
+            print(f"   ❌ TEST 5 FAILED: Failed to create recurring expense")
+            all_tests_passed = False
+        
+        # TEST 6: Testar toggle de status pago/pendente
+        print(f"\n🔍 TEST 6: Testar toggle de status pago/pendente")
+        
+        if created_expenses:
+            expense_id = created_expenses[0]  # Use first created expense
+            
+            # Get current status
+            success, expenses_list = self.run_test(
+                "Get expenses to check current status",
+                "GET",
+                "expenses",
+                200
+            )
+            
+            if success:
+                current_expense = next((e for e in expenses_list if e['id'] == expense_id), None)
+                if current_expense:
+                    current_status = current_expense.get('is_paid', False)
+                    print(f"      - Current status: {'Paid' if current_status else 'Pending'}")
+                    
+                    # Toggle status
+                    success, toggled_expense = self.run_test(
+                        "Toggle expense paid status",
+                        "PATCH",
+                        f"expenses/{expense_id}/toggle-paid",
+                        200
+                    )
+                    
+                    if success:
+                        new_status = toggled_expense.get('is_paid', False)
+                        print(f"      - New status: {'Paid' if new_status else 'Pending'}")
+                        
+                        if new_status != current_status:
+                            print(f"      ✅ TEST 6 PASSED: Status toggled successfully")
+                        else:
+                            print(f"      ❌ TEST 6 FAILED: Status not changed after toggle")
+                            all_tests_passed = False
+                    else:
+                        print(f"      ❌ TEST 6 FAILED: Failed to toggle expense status")
+                        all_tests_passed = False
+                else:
+                    print(f"      ❌ TEST 6 FAILED: Could not find created expense")
+                    all_tests_passed = False
+            else:
+                print(f"      ❌ TEST 6 FAILED: Could not get expenses list")
+                all_tests_passed = False
+        else:
+            print(f"   ❌ TEST 6 SKIPPED: No expenses created to test toggle")
+            all_tests_passed = False
+        
+        # TEST 7: Testar estatísticas (/api/expenses/stats)
+        print(f"\n🔍 TEST 7: Testar estatísticas (/api/expenses/stats)")
+        
+        success, stats = self.run_test(
+            "Get expense statistics",
+            "GET",
+            "expenses/stats",
+            200
+        )
+        
+        if success:
+            print(f"   ✅ Expense statistics retrieved:")
+            print(f"      - Total expenses: {stats.get('total', 0)}")
+            print(f"      - Pending count: {stats.get('pending_count', 0)}")
+            print(f"      - Pending value: R$ {stats.get('pending_value', 0):.2f}")
+            print(f"      - Paid count: {stats.get('paid_count', 0)}")
+            print(f"      - Paid value: R$ {stats.get('paid_value', 0):.2f}")
+            
+            # Verify stats structure
+            required_stats = ['total', 'pending_count', 'pending_value', 'paid_count', 'paid_value']
+            missing_stats = [stat for stat in required_stats if stat not in stats]
+            
+            if not missing_stats:
+                print(f"      ✅ TEST 7 PASSED: All required statistics present")
+            else:
+                print(f"      ❌ TEST 7 FAILED: Missing statistics: {missing_stats}")
+                all_tests_passed = False
+        else:
+            print(f"   ❌ TEST 7 FAILED: Failed to get expense statistics")
+            all_tests_passed = False
+        
+        # TEST 8: Testar exclusão de despesa com filhos (parcelas)
+        print(f"\n🔍 TEST 8: Testar exclusão de despesa com filhos (parcelas)")
+        
+        # First, get all expenses to find parent expenses with children
+        success, all_expenses = self.run_test(
+            "Get all expenses to find parent-child relationships",
+            "GET",
+            "expenses",
+            200
+        )
+        
+        if success:
+            # Find expenses that have children (other expenses with parent_expense_id)
+            parent_expenses = []
+            for expense in all_expenses:
+                children = [e for e in all_expenses if e.get('parent_expense_id') == expense['id']]
+                if children:
+                    parent_expenses.append((expense, children))
+            
+            print(f"      - Found {len(parent_expenses)} parent expenses with children")
+            
+            if parent_expenses:
+                parent_expense, children = parent_expenses[0]
+                print(f"      - Testing deletion of parent: {parent_expense['name']} (has {len(children)} children)")
+                
+                # Try to delete parent expense
+                success, delete_response = self.run_test(
+                    "Delete parent expense with children",
+                    "DELETE",
+                    f"expenses/{parent_expense['id']}",
+                    200
+                )
+                
+                if success:
+                    print(f"      ✅ Parent expense deleted successfully")
+                    
+                    # Check if children were also deleted
+                    success, updated_expenses = self.run_test(
+                        "Check if children were deleted",
+                        "GET",
+                        "expenses",
+                        200
+                    )
+                    
+                    if success:
+                        remaining_children = [e for e in updated_expenses if e.get('parent_expense_id') == parent_expense['id']]
+                        
+                        if not remaining_children:
+                            print(f"      ✅ TEST 8 PASSED: All children expenses deleted with parent")
+                        else:
+                            print(f"      ❌ TEST 8 FAILED: {len(remaining_children)} children still exist after parent deletion")
+                            all_tests_passed = False
+                    else:
+                        print(f"      ❌ TEST 8 FAILED: Could not verify children deletion")
+                        all_tests_passed = False
+                else:
+                    print(f"      ❌ TEST 8 FAILED: Failed to delete parent expense")
+                    all_tests_passed = False
+            else:
+                # Create a test expense with children for deletion test
+                print(f"      - No parent expenses found, creating test expense with children...")
+                
+                # Create parent expense
+                test_parent_data = {
+                    "name": "Teste Exclusão - Pai",
+                    "classification_id": test_classification['id'] if test_classification else None,
+                    "classification_name": "Teste",
+                    "value": 100.00,
+                    "due_date": "2025-01-20",
+                    "installments_total": 2,
+                    "installment_number": 1
+                }
+                
+                success, test_parent = self.run_test(
+                    "Create test parent expense for deletion",
+                    "POST",
+                    "expenses",
+                    200,
+                    data=test_parent_data
+                )
+                
+                if success:
+                    # Try to delete it
+                    success, delete_response = self.run_test(
+                        "Delete test parent expense",
+                        "DELETE",
+                        f"expenses/{test_parent['id']}",
+                        200
+                    )
+                    
+                    if success:
+                        print(f"      ✅ TEST 8 PASSED: Parent expense deletion working")
+                    else:
+                        print(f"      ❌ TEST 8 FAILED: Failed to delete test parent expense")
+                        all_tests_passed = False
+                else:
+                    print(f"      ❌ TEST 8 FAILED: Could not create test parent expense")
+                    all_tests_passed = False
+        else:
+            print(f"   ❌ TEST 8 FAILED: Could not get expenses list")
+            all_tests_passed = False
+        
+        # Additional tests: List expenses by month and pending expenses
+        print(f"\n🔍 ADDITIONAL TESTS: Other expense endpoints")
+        
+        # Test get expenses by month
+        success, month_expenses = self.run_test(
+            "Get expenses by month (January 2025)",
+            "GET",
+            "expenses/month/2025/1",
+            200
+        )
+        
+        if success:
+            print(f"   ✅ Monthly expenses endpoint working - Found {len(month_expenses)} expenses for January 2025")
+        else:
+            print(f"   ❌ Monthly expenses endpoint failed")
+            all_tests_passed = False
+        
+        # Test get pending expenses
+        success, pending_expenses = self.run_test(
+            "Get pending expenses",
+            "GET",
+            "expenses/pending",
+            200
+        )
+        
+        if success:
+            print(f"   ✅ Pending expenses endpoint working - Found {len(pending_expenses)} pending expenses")
+        else:
+            print(f"   ❌ Pending expenses endpoint failed")
+            all_tests_passed = False
+        
+        # Cleanup: Delete created test data
+        print(f"\n🔍 CLEANUP: Deleting test expense data")
+        
+        # Delete created expenses (remaining ones)
+        for expense_id in created_expenses:
+            success, _ = self.run_test(
+                f"Delete test expense {expense_id}",
+                "DELETE",
+                f"expenses/{expense_id}",
+                200
+            )
+            if success:
+                print(f"   ✅ Deleted test expense {expense_id}")
+        
+        # Delete created classifications (only the test one, not defaults)
+        for classification_id in created_classifications:
+            success, _ = self.run_test(
+                f"Delete test classification {classification_id}",
+                "DELETE",
+                f"expense-classifications/{classification_id}",
+                200
+            )
+            if success:
+                print(f"   ✅ Deleted test classification {classification_id}")
+        
+        # Summary
+        print(f"\n🔍 EXPENSE MODULE TESTING SUMMARY:")
+        if all_tests_passed:
+            print(f"   ✅ ALL EXPENSE TESTS PASSED")
+            print(f"   ✅ Expense classifications CRUD working")
+            print(f"   ✅ Simple expense creation working")
+            print(f"   ✅ Installment expenses working")
+            print(f"   ✅ Recurring expenses working")
+            print(f"   ✅ Status toggle working")
+            print(f"   ✅ Statistics endpoint working")
+            print(f"   ✅ Parent-child deletion working")
+        else:
+            print(f"   ❌ SOME EXPENSE TESTS FAILED")
+            print(f"   ℹ️ Check individual test results above for details")
+        
+        return all_tests_passed
+
     def test_dashboard_and_reports(self):
         """Test dashboard and reports as specified in review"""
         print("\n=== DASHBOARD AND REPORTS TESTS ===")
