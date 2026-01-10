@@ -2368,7 +2368,24 @@ export default function Products() {
                   )}
                 </div>
               );
-            })
+            })}
+            
+            {/* Paginação */}
+            {sortedProducts.length > 0 && (
+              <div className="bg-card rounded-xl border shadow-sm overflow-hidden">
+                <TablePagination
+                  currentPage={currentPage}
+                  totalItems={sortedProducts.length}
+                  itemsPerPage={itemsPerPage}
+                  onPageChange={setCurrentPage}
+                  onItemsPerPageChange={(value) => {
+                    setItemsPerPage(value);
+                    setCurrentPage(1);
+                  }}
+                />
+              </div>
+            )}
+            </>
           )}
         </div>
 
