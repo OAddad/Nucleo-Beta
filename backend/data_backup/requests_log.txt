@@ -3287,3 +3287,7 @@
 2026-01-10T13:46:32.422808+00:00 | DB_CALL create_audit_log | P3 | 1.65ms | success
 2026-01-10T13:46:44.647167+00:00 | DB_CALL get_user_by_username | P3 | 0.27ms | success
 2026-01-10T13:46:51.030749+00:00 | DB_CALL get_user_by_username | P3 | 0.24ms | success
+2026-01-10T13:47:29.542940+00:00 | DB_CALL init_database | P3 | 6.21ms | success
+2026-01-10T13:47:29.544197+00:00 | DB_CALL count_ingredients | P3 | 0.26ms | success
+2026-01-10T13:47:29.544422+00:00 | DB_CALL count_products | P3 | 0.14ms | success
+2026-01-10T13:47:29.544573+00:00 | DB_CALL count_users | P3 | 0.1ms | success
