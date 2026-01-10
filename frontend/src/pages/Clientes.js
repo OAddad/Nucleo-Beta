@@ -252,12 +252,25 @@ export default function Clientes() {
     setClienteToDelete(null);
   };
 
-  const filteredClientes = clientes.filter(c =>
-    c.nome?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (c.telefone && c.telefone.includes(searchTerm)) ||
-    (c.email && c.email.toLowerCase().includes(searchTerm.toLowerCase())) ||
-    (c.cpf && c.cpf.includes(searchTerm))
-  );
+  const filteredClientes = useMemo(() => {
+    return clientes.filter(c =>
+      c.nome?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (c.telefone && c.telefone.includes(searchTerm)) ||
+      (c.email && c.email.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (c.cpf && c.cpf.includes(searchTerm))
+    );
+  }, [clientes, searchTerm]);
+
+  // Clientes paginados
+  const paginatedClientes = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    return filteredClientes.slice(startIndex, startIndex + itemsPerPage);
+  }, [filteredClientes, currentPage, itemsPerPage]);
+
+  // Reset página quando filtros mudam
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm]);
 
   const formatDate = (dateStr) => {
     if (!dateStr) return "-";
