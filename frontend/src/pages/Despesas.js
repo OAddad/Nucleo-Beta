@@ -728,56 +728,152 @@ export default function Despesas() {
               </div>
             </div>
             
-            {/* Lista de Despesas agrupadas por mês */}
-            <div className="space-y-4">
-              {paginatedMonths.length === 0 ? (
-                <div className="bg-card rounded-xl border p-12 text-center">
+            {/* Lista de Despesas do mês selecionado */}
+            <div className="bg-card rounded-xl border shadow-sm overflow-hidden">
+              {paginatedExpenses.length === 0 ? (
+                <div className="p-12 text-center">
                   <DollarSign className="w-12 h-12 mx-auto mb-4 text-muted-foreground/30" />
-                  <p className="text-muted-foreground">Nenhuma despesa encontrada</p>
+                  <p className="text-muted-foreground">Nenhuma despesa em {monthNamesFull[selectedMonth]} de {selectedYear}</p>
                   <Button variant="outline" className="mt-4" onClick={handleOpenNewExpense}>
                     <Plus className="w-4 h-4 mr-2" />
                     Cadastrar Despesa
                   </Button>
                 </div>
               ) : (
-                paginatedMonths.map(month => (
-                  <div key={month.key} className="bg-card rounded-xl border shadow-sm overflow-hidden">
-                    {/* Header do mês */}
-                    <div className="bg-muted/50 px-6 py-4 border-b flex justify-between items-center">
-                      <div>
-                        <h3 className="font-semibold text-lg capitalize">{month.label}</h3>
-                        <p className="text-sm text-muted-foreground">
-                          {month.expenses.length} despesa(s)
-                        </p>
-                      </div>
-                      <div className="flex gap-6 text-sm">
-                        <div className="text-right">
-                          <p className="text-muted-foreground">Pendente</p>
-                          <p className="font-bold text-amber-600">{formatCurrency(month.pending)}</p>
-                        </div>
-                        <div className="text-right">
-                          <p className="text-muted-foreground">Pago</p>
-                          <p className="font-bold text-green-600">{formatCurrency(month.paid)}</p>
-                        </div>
-                        <div className="text-right">
-                          <p className="text-muted-foreground">Total</p>
-                          <p className="font-bold">{formatCurrency(month.total)}</p>
-                        </div>
-                      </div>
+                <>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="w-12"></TableHead>
+                        <TableHead>Despesa</TableHead>
+                        <TableHead>Classificação</TableHead>
+                        <TableHead>Fornecedor</TableHead>
+                        <TableHead className="text-right">Valor</TableHead>
+                        <TableHead>Vencimento</TableHead>
+                        <TableHead className="text-center">Status</TableHead>
+                        <TableHead className="w-24">Ações</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {paginatedExpenses.map(expense => (
+                        <TableRow key={expense.id} className={isOverdue(expense) ? "bg-red-50 dark:bg-red-950/20" : ""}>
+                          <TableCell>
+                            <button
+                              onClick={() => handleTogglePaid(expense)}
+                              className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${
+                                expense.is_paid 
+                                  ? "bg-green-500 border-green-500 text-white" 
+                                  : "border-muted-foreground/30 hover:border-green-500"
+                              }`}
+                            >
+                              {expense.is_paid && <Check className="w-4 h-4" />}
+                            </button>
+                          </TableCell>
+                          <TableCell>
+                            <div>
+                              <p className="font-medium">{expense.name}</p>
+                              {expense.is_recurring && (
+                                <span className="text-xs text-blue-600 flex items-center gap-1">
+                                  <RefreshCw className="w-3 h-3" />
+                                  Recorrente
+                                </span>
+                              )}
+                              {expense.installments_total > 0 && (
+                                <span className="text-xs text-purple-600 flex items-center gap-1">
+                                  <CreditCard className="w-3 h-3" />
+                                  Parcela {expense.installment_number}/{expense.installments_total}
+                                </span>
+                              )}
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            {expense.classification_name ? (
+                              <span className="px-2 py-1 bg-muted rounded-full text-xs">
+                                {expense.classification_name}
+                              </span>
+                            ) : (
+                              <span className="text-muted-foreground">-</span>
+                            )}
+                          </TableCell>
+                          <TableCell>
+                            {expense.supplier ? (
+                              <span className="flex items-center gap-1 text-sm">
+                                <Building2 className="w-3 h-3 text-muted-foreground" />
+                                {expense.supplier}
+                              </span>
+                            ) : (
+                              <span className="text-muted-foreground">-</span>
+                            )}
+                          </TableCell>
+                          <TableCell className="text-right font-mono font-medium">
+                            {formatCurrency(expense.value)}
+                          </TableCell>
+                          <TableCell>
+                            <span className={`flex items-center gap-1 text-sm ${isOverdue(expense) ? "text-red-600 font-medium" : ""}`}>
+                              <Calendar className="w-3 h-3" />
+                              {formatDate(expense.due_date)}
+                              {isOverdue(expense) && <AlertCircle className="w-3 h-3" />}
+                            </span>
+                          </TableCell>
+                          <TableCell className="text-center">
+                            {expense.is_paid ? (
+                              <span className="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full">
+                                Pago
+                              </span>
+                            ) : (
+                              <span className={`px-2 py-1 text-xs rounded-full ${
+                                isOverdue(expense) 
+                                  ? "bg-red-100 text-red-700" 
+                                  : "bg-amber-100 text-amber-700"
+                              }`}>
+                                {isOverdue(expense) ? "Vencido" : "Pendente"}
+                              </span>
+                            )}
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex gap-1">
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8"
+                                onClick={() => handleEditExpense(expense)}
+                              >
+                                <Edit className="w-4 h-4" />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 text-destructive hover:text-destructive"
+                                onClick={() => handleOpenDeleteDialog(expense)}
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </Button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                  
+                  {/* Paginação */}
+                  {filteredExpenses.length > itemsPerPage && (
+                    <div className="p-4 border-t">
+                      <TablePagination
+                        currentPage={currentPage}
+                        totalItems={filteredExpenses.length}
+                        itemsPerPage={itemsPerPage}
+                        onPageChange={setCurrentPage}
+                        onItemsPerPageChange={(value) => {
+                          setItemsPerPage(value);
+                          setCurrentPage(1);
+                        }}
+                      />
                     </div>
-                    
-                    {/* Tabela de despesas do mês */}
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead className="w-12"></TableHead>
-                          <TableHead>Despesa</TableHead>
-                          <TableHead>Classificação</TableHead>
-                          <TableHead>Fornecedor</TableHead>
-                          <TableHead className="text-right">Valor</TableHead>
-                          <TableHead>Vencimento</TableHead>
-                          <TableHead className="text-center">Status</TableHead>
-                          <TableHead className="w-24">Ações</TableHead>
+                  )}
+                </>
+              )}
+            </div>
+          </TabsContent>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
