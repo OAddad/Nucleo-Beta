@@ -1,7 +1,11 @@
 """
 SQLite Database Module para Núcleo Desktop
 Gerencia todas as operações de banco de dados usando SQLite
-Suporta tanto ambiente web quanto desktop Electron
+
+REGRAS FUNDAMENTAIS (produção):
+- SOMENTE usar NUCLEO_DB_PATH (de userData)
+- Se DB não existe em userData: copiar seed empacotado
+- NUNCA usar fallback silencioso para data_backup em produção
 """
 import sqlite3
 import json
@@ -16,36 +20,36 @@ from typing import List, Optional, Dict, Any
 import threading
 from contextlib import contextmanager
 
-# Lock para thread safety
+# ==================== CONFIGURAÇÃO ====================
 db_lock = threading.RLock()
-
-# Conexão global para evitar múltiplas aberturas/fechamentos
 _connection = None
 _connection_lock = threading.Lock()
-
-# Flag para evitar inicialização múltipla
 _initialized = False
-
-# Caminho do banco de dados (será definido na inicialização)
 DB_PATH = None
+
+
+# ==================== DETECÇÃO DE AMBIENTE ====================
+def is_production():
+    """Verifica se está rodando em produção (PyInstaller)"""
+    return getattr(sys, 'frozen', False)
 
 
 def get_seed_db_path():
     """Retorna o caminho do banco seed (empacotado no app)"""
-    # Em produção (PyInstaller), o seed está em _MEIPASS ou no diretório do executável
-    if getattr(sys, 'frozen', False):
-        # Executável empacotado
-        base_path = Path(sys._MEIPASS) if hasattr(sys, '_MEIPASS') else Path(sys.executable).parent
-        possible_paths = [
-            base_path / "data_backup" / "nucleo.db",
-            base_path / "nucleo.db",
-            Path(sys.executable).parent / "data_backup" / "nucleo.db",
-        ]
-        for p in possible_paths:
-            if p.exists():
-                return p
+    if is_production():
+        # PyInstaller: seed está em _MEIPASS/data_backup
+        if hasattr(sys, '_MEIPASS'):
+            seed_path = Path(sys._MEIPASS) / "data_backup" / "nucleo.db"
+            if seed_path.exists():
+                return seed_path
+        
+        # Fallback: ao lado do executável
+        exe_dir = Path(sys.executable).parent
+        seed_path = exe_dir / "data_backup" / "nucleo.db"
+        if seed_path.exists():
+            return seed_path
     
-    # Em desenvolvimento
+    # Desenvolvimento: no projeto
     dev_path = Path(__file__).parent / "data_backup" / "nucleo.db"
     if dev_path.exists():
         return dev_path
@@ -54,71 +58,91 @@ def get_seed_db_path():
 
 
 def get_db_path():
-    """Retorna o caminho do banco de dados baseado no ambiente"""
-    global DB_PATH
+    """
+    Retorna o caminho do banco de dados.
     
-    # Verificar se está rodando no Electron (variável de ambiente definida pelo main.js)
-    electron_db_path = os.environ.get('NUCLEO_DB_PATH')
-    if electron_db_path:
-        return Path(electron_db_path)
+    REGRA OBRIGATÓRIA:
+    - Em produção: SOMENTE usar NUCLEO_DB_PATH (userData)
+    - Em desenvolvimento: pode usar data_backup local
+    """
+    # Verificar variável de ambiente (definida pelo Electron)
+    env_db_path = os.environ.get('NUCLEO_DB_PATH')
     
-    # Fallback para ambiente de desenvolvimento
-    return Path(__file__).parent / "data_backup" / "nucleo.db"
+    if env_db_path:
+        # Produção: usar caminho do userData
+        print(f"[DATABASE] Usando NUCLEO_DB_PATH: {env_db_path}")
+        return Path(env_db_path)
+    
+    if is_production():
+        # ERRO: produção sem NUCLEO_DB_PATH definido
+        print("[DATABASE] ERRO CRÍTICO: NUCLEO_DB_PATH não definido em produção!")
+        # Fallback para evitar crash, mas logar erro
+        return Path(os.environ.get('APPDATA', '')) / 'nucleo' / 'nucleo.db'
+    
+    # Desenvolvimento: usar data_backup local
+    dev_path = Path(__file__).parent / "data_backup" / "nucleo.db"
+    print(f"[DATABASE] Modo desenvolvimento, usando: {dev_path}")
+    return dev_path
 
 
 def bootstrap_database():
     """
     Bootstrap do banco de dados:
-    - Se NUCLEO_DB_PATH aponta para arquivo que NÃO existe, copia o seed
-    - Nunca sobrescreve se já existir
+    - Se NUCLEO_DB_PATH não existe: copia o seed
+    - Se existe: NÃO sobrescreve
+    
+    Retorna o caminho final do banco.
     """
     target_path = get_db_path()
     
-    # Se o banco já existe, não fazer nada
-    if target_path.exists():
-        print(f"[DATABASE] Banco existente encontrado: {target_path}")
-        return target_path
+    print(f"[DATABASE] Bootstrap - Target: {target_path}")
+    print(f"[DATABASE] Bootstrap - Produção: {is_production()}")
     
-    # Criar diretório pai se não existir
+    # Criar diretório pai
     target_path.parent.mkdir(parents=True, exist_ok=True)
     
-    # Tentar copiar o seed
+    # Se o banco já existe, usar ele
+    if target_path.exists():
+        print(f"[DATABASE] Banco existente encontrado: {target_path}")
+        print(f"[DATABASE] Tamanho: {target_path.stat().st_size} bytes")
+        return target_path
+    
+    # Banco não existe - tentar copiar seed
     seed_path = get_seed_db_path()
+    
     if seed_path and seed_path.exists():
-        print(f"[DATABASE] Copiando seed de {seed_path} para {target_path}")
+        print(f"[DATABASE] Copiando seed: {seed_path} -> {target_path}")
         try:
             shutil.copy2(seed_path, target_path)
-            
-            # Copiar também os arquivos WAL e SHM se existirem
-            for ext in ['-wal', '-shm']:
-                src = seed_path.parent / (seed_path.name + ext)
-                if src.exists():
-                    dst = target_path.parent / (target_path.name + ext)
-                    shutil.copy2(src, dst)
-            
-            print("[DATABASE] Seed copiado com sucesso!")
+            print(f"[DATABASE] Seed copiado com sucesso!")
+            print(f"[DATABASE] Novo tamanho: {target_path.stat().st_size} bytes")
             return target_path
         except Exception as e:
-            print(f"[DATABASE] Erro ao copiar seed: {e}")
+            print(f"[DATABASE] ERRO ao copiar seed: {e}")
+    else:
+        print(f"[DATABASE] Seed não encontrado em: {seed_path}")
     
-    # Se não há seed, será criado banco novo
-    print(f"[DATABASE] Criando novo banco em: {target_path}")
+    # Criar banco vazio (será inicializado depois)
+    print(f"[DATABASE] Criando banco vazio em: {target_path}")
     return target_path
 
 
+# ==================== CONEXÃO ====================
 def get_connection():
     """Retorna uma conexão com o banco SQLite"""
     global _connection, DB_PATH
+    
     with _connection_lock:
         if _connection is None:
-            # Bootstrap - copiar seed se necessário
+            # Bootstrap do banco
             DB_PATH = bootstrap_database()
             
+            print(f"[DATABASE] Conectando ao banco: {DB_PATH}")
             _connection = sqlite3.connect(str(DB_PATH), check_same_thread=False, timeout=30.0)
             _connection.row_factory = sqlite3.Row
-            # Habilitar WAL mode para melhor concorrência
             _connection.execute("PRAGMA journal_mode=WAL")
             _connection.execute("PRAGMA busy_timeout=30000")
+        
         return _connection
 
 
@@ -134,40 +158,32 @@ def get_db():
         raise e
 
 
-# ==================== PASSWORD HASHING ====================
-
+# ==================== HASH DE SENHA ====================
 def hash_password(password: str) -> str:
-    """Hash de senha usando SHA256 com salt fixo (para simplicidade)"""
-    # Salt fixo para o Núcleo (em produção usar salt aleatório por usuário)
+    """Hash de senha usando SHA256 com salt"""
     salt = "nucleo_salt_2025"
     salted = f"{salt}{password}{salt}"
     return hashlib.sha256(salted.encode('utf-8')).hexdigest()
 
 
 def verify_password(stored_hash: str, password: str) -> bool:
-    """Verifica se a senha corresponde ao hash"""
-    # Compatibilidade: se o hash armazenado não parece ser SHA256 (64 chars hex),
-    # assumir que é texto puro e migrar
-    if len(stored_hash) != 64 or not all(c in '0123456789abcdef' for c in stored_hash.lower()):
-        # Senha em texto puro (legado) - verificar diretamente
-        return password == stored_hash
+    """
+    Verifica se a senha corresponde ao hash.
+    Suporta tanto senhas hasheadas quanto texto puro (legado).
+    """
+    # Se o hash armazenado tem 64 chars hex, é SHA256
+    if len(stored_hash) == 64 and all(c in '0123456789abcdef' for c in stored_hash.lower()):
+        return hash_password(password) == stored_hash
     
-    # Verificar hash SHA256
-    return hash_password(password) == stored_hash
+    # Senha em texto puro (legado)
+    return password == stored_hash
 
 
-def migrate_password_to_hash(user_id: str, plain_password: str):
-    """Migra senha de texto puro para hash"""
-    hashed = hash_password(plain_password)
-    update_user(user_id, {"password": hashed})
-    return hashed
-
-
-# ==================== DATABASE INITIALIZATION ====================
-
+# ==================== INICIALIZAÇÃO ====================
 def init_database():
     """Inicializa o banco de dados criando as tabelas e usuário admin padrão"""
     global _initialized, DB_PATH
+    
     if _initialized:
         return
     
@@ -175,7 +191,7 @@ def init_database():
         conn = get_connection()
         cursor = conn.cursor()
         
-        # Tabela de Configurações do Sistema
+        # Criar tabelas
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS system_settings (
                 key TEXT PRIMARY KEY,
@@ -184,7 +200,6 @@ def init_database():
             )
         ''')
         
-        # Tabela de Usuários
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS users (
                 id TEXT PRIMARY KEY,
@@ -196,7 +211,6 @@ def init_database():
             )
         ''')
         
-        # Tabela de Ingredientes
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS ingredients (
                 id TEXT PRIMARY KEY,
@@ -214,7 +228,6 @@ def init_database():
             )
         ''')
         
-        # Tabela de Produtos
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS products (
                 id TEXT PRIMARY KEY,
@@ -235,7 +248,6 @@ def init_database():
             )
         ''')
         
-        # Tabela de Compras
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS purchases (
                 id TEXT PRIMARY KEY,
@@ -251,7 +263,6 @@ def init_database():
             )
         ''')
         
-        # Tabela de Categorias
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS categories (
                 id TEXT PRIMARY KEY,
@@ -260,7 +271,6 @@ def init_database():
             )
         ''')
         
-        # Tabela de Logs de Auditoria
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS audit_logs (
                 id TEXT PRIMARY KEY,
@@ -280,35 +290,31 @@ def init_database():
             cursor.execute("SELECT code FROM ingredients LIMIT 1")
         except sqlite3.OperationalError:
             cursor.execute("ALTER TABLE ingredients ADD COLUMN code TEXT")
-            print("[DATABASE] Coluna 'code' adicionada à tabela ingredients")
         
         try:
             cursor.execute("SELECT must_change_password FROM users LIMIT 1")
         except sqlite3.OperationalError:
             cursor.execute("ALTER TABLE users ADD COLUMN must_change_password INTEGER DEFAULT 0")
-            print("[DATABASE] Coluna 'must_change_password' adicionada à tabela users")
         
         conn.commit()
         
-        # Criar usuário admin padrão se não existir nenhum usuário
+        # Criar admin se não existir nenhum usuário
         cursor.execute("SELECT COUNT(*) FROM users")
         user_count = cursor.fetchone()[0]
         
         if user_count == 0:
             admin_id = str(uuid.uuid4())
             created_at = datetime.now(timezone.utc).isoformat()
-            admin_password_hash = hash_password("admin")
+            admin_hash = hash_password("admin")
             
             cursor.execute('''
                 INSERT INTO users (id, username, password, role, must_change_password, created_at)
                 VALUES (?, ?, ?, ?, ?, ?)
-            ''', (admin_id, 'admin', admin_password_hash, 'proprietario', 1, created_at))
-            
+            ''', (admin_id, 'admin', admin_hash, 'proprietario', 1, created_at))
             conn.commit()
-            print("[DATABASE] Usuário admin criado (login: admin / senha: admin)")
-            print("[DATABASE] IMPORTANTE: Troque a senha no primeiro acesso!")
+            print("[DATABASE] Usuário admin criado (admin/admin)")
         
-        # Inicializar configurações padrão
+        # Configurações padrão
         cursor.execute("SELECT value FROM system_settings WHERE key = 'skip_login'")
         if not cursor.fetchone():
             cursor.execute('''
@@ -318,13 +324,11 @@ def init_database():
             conn.commit()
         
         _initialized = True
-        print(f"[DATABASE] SQLite inicializado em: {DB_PATH}")
+        print(f"[DATABASE] Inicializado em: {DB_PATH}")
 
 
 # ==================== SYSTEM SETTINGS ====================
-
 def get_setting(key: str) -> Optional[str]:
-    """Obtém uma configuração do sistema"""
     with db_lock:
         conn = get_connection()
         cursor = conn.cursor()
@@ -334,7 +338,6 @@ def get_setting(key: str) -> Optional[str]:
 
 
 def set_setting(key: str, value: str) -> bool:
-    """Define uma configuração do sistema"""
     with db_lock:
         conn = get_connection()
         cursor = conn.cursor()
@@ -347,67 +350,49 @@ def set_setting(key: str, value: str) -> bool:
 
 
 def get_all_settings() -> Dict[str, str]:
-    """Retorna todas as configurações"""
     with db_lock:
         conn = get_connection()
         cursor = conn.cursor()
         cursor.execute("SELECT key, value FROM system_settings")
-        rows = cursor.fetchall()
-        return {row[0]: row[1] for row in rows}
+        return {row[0]: row[1] for row in cursor.fetchall()}
 
 
 # ==================== USERS ====================
-
 def get_user_by_username(username: str) -> Optional[Dict]:
-    """Busca usuário pelo username"""
     with db_lock:
         conn = get_connection()
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM users WHERE username = ?", (username,))
         row = cursor.fetchone()
-        
-        if row:
-            return dict(row)
-        return None
+        return dict(row) if row else None
 
 
 def get_user_by_id(user_id: str) -> Optional[Dict]:
-    """Busca usuário pelo ID"""
     with db_lock:
         conn = get_connection()
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM users WHERE id = ?", (user_id,))
         row = cursor.fetchone()
-        
-        if row:
-            return dict(row)
-        return None
+        return dict(row) if row else None
 
 
 def get_all_users() -> List[Dict]:
-    """Retorna todos os usuários"""
     with db_lock:
         conn = get_connection()
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM users ORDER BY created_at")
-        rows = cursor.fetchall()
-        
-        return [dict(row) for row in rows]
+        return [dict(row) for row in cursor.fetchall()]
 
 
 def count_users() -> int:
-    """Conta total de usuários"""
     with db_lock:
         conn = get_connection()
         cursor = conn.cursor()
         cursor.execute("SELECT COUNT(*) FROM users")
-        count = cursor.fetchone()[0]
-        
-        return count
+        return cursor.fetchone()[0]
 
 
 def create_user(user_data: Dict) -> Dict:
-    """Cria novo usuário"""
     with db_lock:
         conn = get_connection()
         cursor = conn.cursor()
@@ -416,7 +401,7 @@ def create_user(user_data: Dict) -> Dict:
         created_at = user_data.get('created_at', datetime.now(timezone.utc).isoformat())
         must_change = user_data.get('must_change_password', 0)
         
-        # Hash da senha se não estiver já em hash
+        # Hash da senha
         password = user_data['password']
         if len(password) != 64 or not all(c in '0123456789abcdef' for c in password.lower()):
             password = hash_password(password)
@@ -424,21 +409,13 @@ def create_user(user_data: Dict) -> Dict:
         cursor.execute('''
             INSERT INTO users (id, username, password, role, must_change_password, created_at)
             VALUES (?, ?, ?, ?, ?, ?)
-        ''', (
-            user_id,
-            user_data['username'],
-            password,
-            user_data.get('role', 'observador'),
-            must_change,
-            created_at
-        ))
+        ''', (user_id, user_data['username'], password, user_data.get('role', 'observador'), must_change, created_at))
         conn.commit()
         
         return get_user_by_id(user_id)
 
 
 def update_user(user_id: str, user_data: Dict) -> Optional[Dict]:
-    """Atualiza usuário"""
     with db_lock:
         conn = get_connection()
         cursor = conn.cursor()
@@ -447,15 +424,16 @@ def update_user(user_id: str, user_data: Dict) -> Optional[Dict]:
         values = []
         
         if 'password' in user_data:
-            updates.append("password = ?")
-            # Hash da senha se não estiver já em hash
             password = user_data['password']
             if len(password) != 64 or not all(c in '0123456789abcdef' for c in password.lower()):
                 password = hash_password(password)
+            updates.append("password = ?")
             values.append(password)
+        
         if 'role' in user_data:
             updates.append("role = ?")
             values.append(user_data['role'])
+        
         if 'must_change_password' in user_data:
             updates.append("must_change_password = ?")
             values.append(user_data['must_change_password'])
@@ -469,58 +447,45 @@ def update_user(user_id: str, user_data: Dict) -> Optional[Dict]:
 
 
 def delete_user(user_id: str) -> bool:
-    """Deleta usuário"""
     with db_lock:
         conn = get_connection()
         cursor = conn.cursor()
         cursor.execute("DELETE FROM users WHERE id = ?", (user_id,))
         deleted = cursor.rowcount > 0
         conn.commit()
-        
         return deleted
 
 
 # ==================== INGREDIENTS ====================
-
 def get_next_ingredient_code() -> str:
-    """Gera próximo código de ingrediente (série 20000)"""
     with db_lock:
         conn = get_connection()
         cursor = conn.cursor()
         cursor.execute("SELECT MAX(CAST(code AS INTEGER)) FROM ingredients WHERE code IS NOT NULL AND code != ''")
         max_code = cursor.fetchone()[0]
-        
         if max_code and int(max_code) >= 20000:
             return str(int(max_code) + 1).zfill(5)
         return "20001"
 
 
 def get_all_ingredients() -> List[Dict]:
-    """Retorna todos os ingredientes"""
     with db_lock:
         conn = get_connection()
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM ingredients ORDER BY name")
-        rows = cursor.fetchall()
-        
-        return [dict(row) for row in rows]
+        return [dict(row) for row in cursor.fetchall()]
 
 
 def get_ingredient_by_id(ingredient_id: str) -> Optional[Dict]:
-    """Busca ingrediente pelo ID"""
     with db_lock:
         conn = get_connection()
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM ingredients WHERE id = ?", (ingredient_id,))
         row = cursor.fetchone()
-        
-        if row:
-            return dict(row)
-        return None
+        return dict(row) if row else None
 
 
 def create_ingredient(data: Dict) -> Dict:
-    """Cria novo ingrediente"""
     with db_lock:
         conn = get_connection()
         cursor = conn.cursor()
@@ -533,27 +498,15 @@ def create_ingredient(data: Dict) -> Dict:
             INSERT INTO ingredients (id, code, name, unit, unit_weight, units_per_package, 
                                     average_price, category, stock_quantity, stock_min, stock_max, created_at)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        ''', (
-            ing_id,
-            code,
-            data['name'],
-            data.get('unit', 'kg'),
-            data.get('unit_weight', 0),
-            data.get('units_per_package', 0),
-            data.get('average_price', 0),
-            data.get('category'),
-            data.get('stock_quantity', 0),
-            data.get('stock_min', 0),
-            data.get('stock_max', 0),
-            created_at
-        ))
+        ''', (ing_id, code, data['name'], data.get('unit', 'kg'), data.get('unit_weight', 0),
+              data.get('units_per_package', 0), data.get('average_price', 0), data.get('category'),
+              data.get('stock_quantity', 0), data.get('stock_min', 0), data.get('stock_max', 0), created_at))
         conn.commit()
         
         return get_ingredient_by_id(ing_id)
 
 
 def update_ingredient(ingredient_id: str, data: Dict) -> Optional[Dict]:
-    """Atualiza ingrediente"""
     with db_lock:
         conn = get_connection()
         cursor = conn.cursor()
@@ -570,69 +523,50 @@ def update_ingredient(ingredient_id: str, data: Dict) -> Optional[Dict]:
                 stock_min = COALESCE(?, stock_min),
                 stock_max = COALESCE(?, stock_max)
             WHERE id = ?
-        ''', (
-            data.get('name'),
-            data.get('unit'),
-            data.get('unit_weight'),
-            data.get('units_per_package'),
-            data.get('average_price'),
-            data.get('category'),
-            data.get('stock_quantity'),
-            data.get('stock_min'),
-            data.get('stock_max'),
-            ingredient_id
-        ))
+        ''', (data.get('name'), data.get('unit'), data.get('unit_weight'), data.get('units_per_package'),
+              data.get('average_price'), data.get('category'), data.get('stock_quantity'),
+              data.get('stock_min'), data.get('stock_max'), ingredient_id))
         conn.commit()
         
         return get_ingredient_by_id(ingredient_id)
 
 
 def delete_ingredient(ingredient_id: str) -> bool:
-    """Deleta ingrediente"""
     with db_lock:
         conn = get_connection()
         cursor = conn.cursor()
         cursor.execute("DELETE FROM ingredients WHERE id = ?", (ingredient_id,))
         deleted = cursor.rowcount > 0
         conn.commit()
-        
         return deleted
 
 
 def count_ingredients() -> int:
-    """Conta total de ingredientes"""
     with db_lock:
         conn = get_connection()
         cursor = conn.cursor()
         cursor.execute("SELECT COUNT(*) FROM ingredients")
-        count = cursor.fetchone()[0]
-        
-        return count
+        return cursor.fetchone()[0]
 
 
 # ==================== PRODUCTS ====================
-
 def get_all_products() -> List[Dict]:
-    """Retorna todos os produtos"""
     with db_lock:
         conn = get_connection()
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM products ORDER BY name")
-        rows = cursor.fetchall()
         
         products = []
-        for row in rows:
+        for row in cursor.fetchall():
             p = dict(row)
             try:
                 p['recipe'] = json.loads(p['recipe']) if p['recipe'] else []
-            except (json.JSONDecodeError, TypeError):
+            except:
                 p['recipe'] = []
-            
             try:
                 p['order_steps'] = json.loads(p['order_steps']) if p['order_steps'] else []
-            except (json.JSONDecodeError, TypeError):
+            except:
                 p['order_steps'] = []
-            
             p['is_insumo'] = bool(p['is_insumo'])
             p['is_divisible'] = bool(p['is_divisible'])
             products.append(p)
@@ -641,7 +575,6 @@ def get_all_products() -> List[Dict]:
 
 
 def get_product_by_id(product_id: str) -> Optional[Dict]:
-    """Busca produto pelo ID"""
     with db_lock:
         conn = get_connection()
         cursor = conn.cursor()
@@ -652,14 +585,12 @@ def get_product_by_id(product_id: str) -> Optional[Dict]:
             p = dict(row)
             try:
                 p['recipe'] = json.loads(p['recipe']) if p['recipe'] else []
-            except (json.JSONDecodeError, TypeError):
+            except:
                 p['recipe'] = []
-            
             try:
                 p['order_steps'] = json.loads(p['order_steps']) if p['order_steps'] else []
-            except (json.JSONDecodeError, TypeError):
+            except:
                 p['order_steps'] = []
-            
             p['is_insumo'] = bool(p['is_insumo'])
             p['is_divisible'] = bool(p['is_divisible'])
             return p
@@ -667,20 +598,17 @@ def get_product_by_id(product_id: str) -> Optional[Dict]:
 
 
 def get_next_product_code() -> str:
-    """Gera próximo código de produto"""
     with db_lock:
         conn = get_connection()
         cursor = conn.cursor()
         cursor.execute("SELECT MAX(CAST(code AS INTEGER)) FROM products WHERE code IS NOT NULL")
         max_code = cursor.fetchone()[0]
-        
         if max_code:
             return str(int(max_code) + 1).zfill(5)
         return "10001"
 
 
 def create_product(data: Dict) -> Dict:
-    """Cria novo produto"""
     with db_lock:
         conn = get_connection()
         cursor = conn.cursor()
@@ -694,30 +622,17 @@ def create_product(data: Dict) -> Dict:
                                  sale_price, photo_url, recipe, cmv, profit_margin,
                                  is_insumo, is_divisible, order_steps, created_at)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        ''', (
-            prod_id,
-            code,
-            data['name'],
-            data.get('description'),
-            data.get('category'),
-            data.get('product_type', 'produto'),
-            data.get('sale_price'),
-            data.get('photo_url'),
-            json.dumps(data.get('recipe', [])),
-            data.get('cmv', 0),
-            data.get('profit_margin'),
-            1 if data.get('is_insumo') else 0,
-            1 if data.get('is_divisible') else 0,
-            json.dumps(data.get('order_steps', [])),
-            created_at
-        ))
+        ''', (prod_id, code, data['name'], data.get('description'), data.get('category'),
+              data.get('product_type', 'produto'), data.get('sale_price'), data.get('photo_url'),
+              json.dumps(data.get('recipe', [])), data.get('cmv', 0), data.get('profit_margin'),
+              1 if data.get('is_insumo') else 0, 1 if data.get('is_divisible') else 0,
+              json.dumps(data.get('order_steps', [])), created_at))
         conn.commit()
         
         return get_product_by_id(prod_id)
 
 
 def update_product(product_id: str, data: Dict) -> Optional[Dict]:
-    """Atualiza produto"""
     with db_lock:
         conn = get_connection()
         cursor = conn.cursor()
@@ -728,77 +643,51 @@ def update_product(product_id: str, data: Dict) -> Optional[Dict]:
         
         cursor.execute('''
             UPDATE products SET 
-                name = ?,
-                description = ?,
-                category = ?,
-                product_type = ?,
-                sale_price = ?,
-                photo_url = ?,
-                recipe = ?,
-                cmv = ?,
-                profit_margin = ?,
-                is_insumo = ?,
-                is_divisible = ?,
-                order_steps = ?
+                name = ?, description = ?, category = ?, product_type = ?,
+                sale_price = ?, photo_url = ?, recipe = ?, cmv = ?, profit_margin = ?,
+                is_insumo = ?, is_divisible = ?, order_steps = ?
             WHERE id = ?
-        ''', (
-            data.get('name', current['name']),
-            data.get('description', current.get('description')),
-            data.get('category', current.get('category')),
-            data.get('product_type', current.get('product_type', 'produto')),
-            data.get('sale_price', current.get('sale_price')),
-            data.get('photo_url', current.get('photo_url')),
-            json.dumps(data.get('recipe', current.get('recipe', []))),
-            data.get('cmv', current.get('cmv', 0)),
-            data.get('profit_margin', current.get('profit_margin')),
-            1 if data.get('is_insumo', current.get('is_insumo')) else 0,
-            1 if data.get('is_divisible', current.get('is_divisible')) else 0,
-            json.dumps(data.get('order_steps', current.get('order_steps', []))),
-            product_id
-        ))
+        ''', (data.get('name', current['name']), data.get('description', current.get('description')),
+              data.get('category', current.get('category')), data.get('product_type', current.get('product_type', 'produto')),
+              data.get('sale_price', current.get('sale_price')), data.get('photo_url', current.get('photo_url')),
+              json.dumps(data.get('recipe', current.get('recipe', []))), data.get('cmv', current.get('cmv', 0)),
+              data.get('profit_margin', current.get('profit_margin')),
+              1 if data.get('is_insumo', current.get('is_insumo')) else 0,
+              1 if data.get('is_divisible', current.get('is_divisible')) else 0,
+              json.dumps(data.get('order_steps', current.get('order_steps', []))), product_id))
         conn.commit()
         
         return get_product_by_id(product_id)
 
 
 def delete_product(product_id: str) -> bool:
-    """Deleta produto"""
     with db_lock:
         conn = get_connection()
         cursor = conn.cursor()
         cursor.execute("DELETE FROM products WHERE id = ?", (product_id,))
         deleted = cursor.rowcount > 0
         conn.commit()
-        
         return deleted
 
 
 def count_products() -> int:
-    """Conta total de produtos"""
     with db_lock:
         conn = get_connection()
         cursor = conn.cursor()
         cursor.execute("SELECT COUNT(*) FROM products")
-        count = cursor.fetchone()[0]
-        
-        return count
+        return cursor.fetchone()[0]
 
 
 # ==================== PURCHASES ====================
-
 def get_all_purchases() -> List[Dict]:
-    """Retorna todas as compras"""
     with db_lock:
         conn = get_connection()
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM purchases ORDER BY purchase_date DESC")
-        rows = cursor.fetchall()
-        
-        return [dict(row) for row in rows]
+        return [dict(row) for row in cursor.fetchall()]
 
 
 def create_purchase(data: Dict) -> Dict:
-    """Cria nova compra"""
     with db_lock:
         conn = get_connection()
         cursor = conn.cursor()
@@ -809,59 +698,42 @@ def create_purchase(data: Dict) -> Dict:
             INSERT INTO purchases (id, batch_id, supplier, ingredient_id, ingredient_name,
                                   ingredient_unit, quantity, price, unit_price, purchase_date)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        ''', (
-            purchase_id,
-            data.get('batch_id'),
-            data.get('supplier'),
-            data.get('ingredient_id'),
-            data.get('ingredient_name'),
-            data.get('ingredient_unit'),
-            data.get('quantity'),
-            data.get('price'),
-            data.get('unit_price'),
-            data.get('purchase_date', datetime.now(timezone.utc).isoformat())
-        ))
+        ''', (purchase_id, data.get('batch_id'), data.get('supplier'), data.get('ingredient_id'),
+              data.get('ingredient_name'), data.get('ingredient_unit'), data.get('quantity'),
+              data.get('price'), data.get('unit_price'),
+              data.get('purchase_date', datetime.now(timezone.utc).isoformat())))
         conn.commit()
         
         return data
 
 
 def delete_purchases_by_batch(batch_id: str) -> bool:
-    """Deleta compras por batch_id"""
     with db_lock:
         conn = get_connection()
         cursor = conn.cursor()
         cursor.execute("DELETE FROM purchases WHERE batch_id = ?", (batch_id,))
         deleted = cursor.rowcount > 0
         conn.commit()
-        
         return deleted
 
 
 def count_purchases() -> int:
-    """Conta total de compras"""
     with db_lock:
         conn = get_connection()
         cursor = conn.cursor()
         cursor.execute("SELECT COUNT(*) FROM purchases")
-        count = cursor.fetchone()[0]
-        
-        return count
+        return cursor.fetchone()[0]
 
 
 def get_purchases_by_ingredient(ingredient_id: str) -> List[Dict]:
-    """Retorna compras de um ingrediente"""
     with db_lock:
         conn = get_connection()
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM purchases WHERE ingredient_id = ? ORDER BY purchase_date", (ingredient_id,))
-        rows = cursor.fetchall()
-        
-        return [dict(row) for row in rows]
+        return [dict(row) for row in cursor.fetchall()]
 
 
 def get_average_price_last_5_purchases(ingredient_id: str) -> float:
-    """Calcula preço médio das últimas 5 compras de um ingrediente"""
     with db_lock:
         conn = get_connection()
         cursor = conn.cursor()
@@ -871,100 +743,70 @@ def get_average_price_last_5_purchases(ingredient_id: str) -> float:
             ORDER BY purchase_date DESC 
             LIMIT 5
         """, (ingredient_id,))
-        rows = cursor.fetchall()
         
-        if not rows:
-            return 0.0
-        
-        prices = [row[0] for row in rows if row[0] is not None]
-        if not prices:
-            return 0.0
-        
-        return sum(prices) / len(prices)
+        prices = [row[0] for row in cursor.fetchall() if row[0] is not None]
+        return sum(prices) / len(prices) if prices else 0.0
 
 
 # ==================== CATEGORIES ====================
-
 def get_all_categories() -> List[Dict]:
-    """Retorna todas as categorias"""
     with db_lock:
         conn = get_connection()
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM categories ORDER BY name")
-        rows = cursor.fetchall()
-        
-        return [dict(row) for row in rows]
+        return [dict(row) for row in cursor.fetchall()]
 
 
 def get_category_by_id(category_id: str) -> Optional[Dict]:
-    """Busca categoria pelo ID"""
     with db_lock:
         conn = get_connection()
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM categories WHERE id = ?", (category_id,))
         row = cursor.fetchone()
-        
-        if row:
-            return dict(row)
-        return None
+        return dict(row) if row else None
 
 
 def get_category_by_name(name: str) -> Optional[Dict]:
-    """Busca categoria pelo nome"""
     with db_lock:
         conn = get_connection()
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM categories WHERE name = ?", (name,))
         row = cursor.fetchone()
-        
-        if row:
-            return dict(row)
-        return None
+        return dict(row) if row else None
 
 
 def create_category(data: Dict) -> Dict:
-    """Cria nova categoria"""
     with db_lock:
         conn = get_connection()
         cursor = conn.cursor()
-        
         cat_id = data.get('id', str(uuid.uuid4()))
         created_at = data.get('created_at', datetime.now(timezone.utc).isoformat())
-        
-        cursor.execute('''
-            INSERT INTO categories (id, name, created_at)
-            VALUES (?, ?, ?)
-        ''', (cat_id, data['name'], created_at))
+        cursor.execute('INSERT INTO categories (id, name, created_at) VALUES (?, ?, ?)',
+                      (cat_id, data['name'], created_at))
         conn.commit()
-        
         return get_category_by_id(cat_id)
 
 
 def update_category(category_id: str, data: Dict) -> Optional[Dict]:
-    """Atualiza categoria"""
     with db_lock:
         conn = get_connection()
         cursor = conn.cursor()
         cursor.execute("UPDATE categories SET name = ? WHERE id = ?", (data['name'], category_id))
         conn.commit()
-        
         return get_category_by_id(category_id)
 
 
 def delete_category(category_id: str) -> bool:
-    """Deleta categoria"""
     with db_lock:
         conn = get_connection()
         cursor = conn.cursor()
         cursor.execute("DELETE FROM categories WHERE id = ?", (category_id,))
         deleted = cursor.rowcount > 0
         conn.commit()
-        
         return deleted
 
 
 def count_categories() -> int:
-    """Conta total de categorias"""
     with db_lock:
         conn = get_connection()
         cursor = conn.cursor()
@@ -973,48 +815,31 @@ def count_categories() -> int:
 
 
 # ==================== AUDIT LOGS ====================
-
 def get_all_audit_logs() -> List[Dict]:
-    """Retorna todos os logs de auditoria"""
     with db_lock:
         conn = get_connection()
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM audit_logs ORDER BY timestamp DESC")
-        rows = cursor.fetchall()
-        
-        return [dict(row) for row in rows]
+        return [dict(row) for row in cursor.fetchall()]
 
 
 def create_audit_log(data: Dict) -> Dict:
-    """Cria novo log de auditoria"""
     with db_lock:
         conn = get_connection()
         cursor = conn.cursor()
-        
         log_id = data.get('id', str(uuid.uuid4()))
-        
         cursor.execute('''
             INSERT INTO audit_logs (id, action, resource_type, resource_name, user_id,
                                    username, priority, timestamp, details)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-        ''', (
-            log_id,
-            data.get('action'),
-            data.get('resource_type'),
-            data.get('resource_name'),
-            data.get('user_id'),
-            data.get('username'),
-            data.get('priority', 'normal'),
-            data.get('timestamp', datetime.now(timezone.utc).isoformat()),
-            data.get('details')
-        ))
+        ''', (log_id, data.get('action'), data.get('resource_type'), data.get('resource_name'),
+              data.get('user_id'), data.get('username'), data.get('priority', 'normal'),
+              data.get('timestamp', datetime.now(timezone.utc).isoformat()), data.get('details')))
         conn.commit()
-        
         return data
 
 
 # ==================== UTILITY ====================
-
 def get_database_info() -> Dict:
     """Retorna informações do banco de dados"""
     global DB_PATH
@@ -1027,11 +852,11 @@ def get_database_info() -> Dict:
         info = {
             "path": str(db_path),
             "size_bytes": db_path.stat().st_size if db_path.exists() else 0,
+            "is_production": is_production(),
             "tables": {}
         }
         
-        tables = ["users", "ingredients", "products", "purchases", "categories", "audit_logs"]
-        for table in tables:
+        for table in ["users", "ingredients", "products", "purchases", "categories", "audit_logs"]:
             cursor.execute(f"SELECT COUNT(*) FROM {table}")
             info["tables"][table] = cursor.fetchone()[0]
         
