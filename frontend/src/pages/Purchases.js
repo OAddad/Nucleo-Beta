@@ -440,6 +440,29 @@ export default function Purchases() {
     }
   };
 
+  // Função para alternar status de pagamento de um lote
+  const handleTogglePaymentStatus = async (batch) => {
+    try {
+      const newStatus = !batch.is_paid;
+      const payload = {
+        is_paid: newStatus,
+        due_date: batch.due_date
+      };
+      
+      await axios.patch(
+        `${API}/purchases/batch/${batch.batch_id}/payment`, 
+        payload, 
+        getAuthHeader()
+      );
+      
+      toast.success(newStatus ? "Compra marcada como paga!" : "Compra marcada como pendente!");
+      fetchPurchases();
+    } catch (error) {
+      toast.error("Erro ao atualizar status de pagamento");
+      console.error(error);
+    }
+  };
+
   const confirmDeleteBatch = (batchId, supplier) => {
     setBatchToDelete({ id: batchId, supplier });
     setDeleteDialogOpen(true);
