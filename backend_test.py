@@ -1304,9 +1304,16 @@ class CMVMasterAPITester:
             if success_update:
                 print(f"   ✅ Recipe product updated successfully")
                 print(f"      - Updated Name: {updated_recipe['name']}")
-                print(f"      - Updated Recipe Yield: {updated_recipe.get('recipe_yield', 'N/A')} {updated_recipe.get('recipe_yield_unit', '')}")
-                print(f"      - Updated CMV: R$ {updated_recipe.get('cmv', 0):.2f}")
-                print(f"      - Updated Unit Cost: R$ {updated_recipe.get('unit_cost', 0):.2f}")
+                
+                updated_yield = updated_recipe.get('recipe_yield')
+                updated_yield_unit = updated_recipe.get('recipe_yield_unit')
+                updated_cmv = updated_recipe.get('cmv', 0)
+                updated_unit_cost = updated_recipe.get('unit_cost', 0)
+                
+                yield_text = f"{updated_yield} {updated_yield_unit}" if updated_yield is not None and updated_yield_unit is not None else "N/A"
+                print(f"      - Updated Recipe Yield: {yield_text}")
+                print(f"      - Updated CMV: R$ {updated_cmv:.2f}")
+                print(f"      - Updated Unit Cost: R$ {updated_unit_cost:.2f}" if updated_unit_cost is not None else "      - Updated Unit Cost: N/A")
                 
                 # Verify unit_cost recalculation
                 new_cmv = updated_recipe.get('cmv', 0)
