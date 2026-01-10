@@ -962,17 +962,61 @@ export default function Ingredients() {
                       <th className="text-center py-3 px-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                         Unidade
                       </th>
-                      <th className="text-right py-3 px-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                        <span title="Média das últimas 5 compras">Preço Médio*</span>
+                      <th 
+                        className="text-right py-3 px-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider cursor-pointer hover:bg-muted/80 select-none transition-colors"
+                        onClick={() => handleSort("average_price")}
+                        title="Clique para ordenar"
+                      >
+                        <span className="flex items-center justify-end gap-1">
+                          <span title="Média das últimas 5 compras">Preço Médio*</span>
+                          {sortField === "average_price" ? (
+                            sortDirection === "asc" ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />
+                          ) : (
+                            <ArrowUpDown className="w-3 h-3 opacity-50" />
+                          )}
+                        </span>
                       </th>
-                      <th className="text-center py-3 px-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                        Qtd Estoque
+                      <th 
+                        className="text-center py-3 px-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider cursor-pointer hover:bg-muted/80 select-none transition-colors"
+                        onClick={() => handleSort("stock_quantity")}
+                        title="Clique para ordenar"
+                      >
+                        <span className="flex items-center justify-center gap-1">
+                          Qtd Estoque
+                          {sortField === "stock_quantity" ? (
+                            sortDirection === "asc" ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />
+                          ) : (
+                            <ArrowUpDown className="w-3 h-3 opacity-50" />
+                          )}
+                        </span>
                       </th>
-                      <th className="text-center py-3 px-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                        Qtd Máx
+                      <th 
+                        className="text-center py-3 px-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider cursor-pointer hover:bg-muted/80 select-none transition-colors"
+                        onClick={() => handleSort("stock_max")}
+                        title="Clique para ordenar"
+                      >
+                        <span className="flex items-center justify-center gap-1">
+                          Qtd Máx
+                          {sortField === "stock_max" ? (
+                            sortDirection === "asc" ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />
+                          ) : (
+                            <ArrowUpDown className="w-3 h-3 opacity-50" />
+                          )}
+                        </span>
                       </th>
-                      <th className="text-center py-3 px-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                        Qtd Mín
+                      <th 
+                        className="text-center py-3 px-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider cursor-pointer hover:bg-muted/80 select-none transition-colors"
+                        onClick={() => handleSort("stock_min")}
+                        title="Clique para ordenar"
+                      >
+                        <span className="flex items-center justify-center gap-1">
+                          Qtd Mín
+                          {sortField === "stock_min" ? (
+                            sortDirection === "asc" ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />
+                          ) : (
+                            <ArrowUpDown className="w-3 h-3 opacity-50" />
+                          )}
+                        </span>
                       </th>
                       <th className="text-right py-3 px-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                         Ações
