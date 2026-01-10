@@ -3881,3 +3881,9 @@
 2026-01-10T16:10:37.200207+00:00 | DB_CALL get_ingredient_by_id | P3 | 0.45ms | success
 2026-01-10T16:10:37.367160+00:00 | DB_CALL get_user_by_id | P3 | 0.31ms | success
 2026-01-10T16:10:37.367675+00:00 | DB_CALL get_all_ingredients | P3 | 0.36ms | success
+2026-01-10T16:10:48.191578+00:00 | DB_CALL get_user_by_id | P3 | 1.77ms | success
+2026-01-10T16:10:48.200756+00:00 | DB_CALL create_ingredient | P3 | 8.9ms | success
+2026-01-10T16:10:48.206282+00:00 | DB_CALL create_audit_log | P3 | 5.37ms | success
+2026-01-10T16:10:48.206544+00:00 | DB_CALL get_ingredient_by_id | P3 | 0.16ms | success
+2026-01-10T16:10:48.372064+00:00 | DB_CALL get_user_by_id | P3 | 0.27ms | success
+2026-01-10T16:10:48.372439+00:00 | DB_CALL get_all_ingredients | P3 | 0.24ms | success
