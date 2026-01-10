@@ -888,8 +888,9 @@ export default function Purchases() {
               Nenhuma compra registrada. Clique em "Lançar Compras" para começar.
             </div>
           ) : (
+            <>
             <div className="divide-y divide-border">
-              {getFilteredAndSortedBatches().map((batch) => {
+              {paginatedBatches.map((batch) => {
                 const isExpanded = expandedBatches.has(batch.batch_id);
                 return (
                   <div key={batch.batch_id} data-testid={`purchase-batch-${batch.batch_id}`}>
