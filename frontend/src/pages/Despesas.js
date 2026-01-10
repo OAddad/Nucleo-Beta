@@ -550,37 +550,78 @@ export default function Despesas() {
           </div>
         </div>
         
-        {/* Estatísticas */}
+        {/* Filtro de Meses - 12 meses visíveis */}
+        <div className="bg-card rounded-xl border p-4 mb-6">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <Calendar className="w-5 h-5 text-primary" />
+              <span className="font-medium">Selecione o Mês</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setSelectedYear(selectedYear - 1)}
+              >
+                &lt;
+              </Button>
+              <span className="font-bold text-lg w-16 text-center">{selectedYear}</span>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setSelectedYear(selectedYear + 1)}
+              >
+                &gt;
+              </Button>
+            </div>
+          </div>
+          <div className="grid grid-cols-6 md:grid-cols-12 gap-2">
+            {monthNames.map((month, index) => (
+              <Button
+                key={index}
+                variant={selectedMonth === index ? "default" : "outline"}
+                size="sm"
+                className={`${selectedMonth === index ? "" : "hover:bg-muted"}`}
+                onClick={() => setSelectedMonth(index)}
+              >
+                {month}
+              </Button>
+            ))}
+          </div>
+        </div>
+        
+        {/* Estatísticas do mês selecionado */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
           <div className="bg-card rounded-xl border p-4">
             <div className="flex items-center gap-2 text-muted-foreground mb-1">
               <FileText className="w-4 h-4" />
               <span className="text-sm">Total de Despesas</span>
             </div>
-            <p className="text-2xl font-bold">{stats.total}</p>
+            <p className="text-2xl font-bold">{monthStats.total}</p>
+            <p className="text-xs text-muted-foreground">{monthNamesFull[selectedMonth]} {selectedYear}</p>
           </div>
           <div className="bg-card rounded-xl border p-4">
             <div className="flex items-center gap-2 text-amber-600 mb-1">
               <AlertCircle className="w-4 h-4" />
               <span className="text-sm">Pendentes</span>
             </div>
-            <p className="text-2xl font-bold text-amber-600">{formatCurrency(stats.pending_value)}</p>
-            <p className="text-xs text-muted-foreground">{stats.pending_count} despesas</p>
+            <p className="text-2xl font-bold text-amber-600">{formatCurrency(monthStats.pendingValue)}</p>
+            <p className="text-xs text-muted-foreground">{monthStats.pendingCount} despesas</p>
           </div>
           <div className="bg-card rounded-xl border p-4">
             <div className="flex items-center gap-2 text-green-600 mb-1">
               <CheckCircle2 className="w-4 h-4" />
               <span className="text-sm">Pagas</span>
             </div>
-            <p className="text-2xl font-bold text-green-600">{formatCurrency(stats.paid_value)}</p>
-            <p className="text-xs text-muted-foreground">{stats.paid_count} despesas</p>
+            <p className="text-2xl font-bold text-green-600">{formatCurrency(monthStats.paidValue)}</p>
+            <p className="text-xs text-muted-foreground">{monthStats.paidCount} despesas</p>
           </div>
           <div className="bg-card rounded-xl border p-4">
             <div className="flex items-center gap-2 text-primary mb-1">
               <DollarSign className="w-4 h-4" />
               <span className="text-sm">Total Geral</span>
             </div>
-            <p className="text-2xl font-bold text-primary">{formatCurrency(stats.pending_value + stats.paid_value)}</p>
+            <p className="text-2xl font-bold text-primary">{formatCurrency(monthStats.pendingValue + monthStats.paidValue)}</p>
           </div>
         </div>
         
@@ -604,7 +645,7 @@ export default function Despesas() {
                     status: e.is_paid ? "Pago" : "Pendente",
                     data_pagamento: e.paid_date || ""
                   }));
-                  exportToExcel(dataToExport, "despesas", {
+                  exportToExcel(dataToExport, `despesas_${monthNamesFull[selectedMonth]}_${selectedYear}`, {
                     nome: "Nome",
                     classificacao: "Classificação",
                     fornecedor: "Fornecedor",
