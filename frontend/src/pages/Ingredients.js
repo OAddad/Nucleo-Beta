@@ -1012,6 +1012,21 @@ export default function Ingredients() {
                                     <Edit className="w-4 h-4" strokeWidth={1.5} />
                                   </Button>
                                   <Button
+                                    onClick={() => handleToggleActive(ingredient)}
+                                    variant="ghost"
+                                    size="sm"
+                                    className={ingredient.is_active !== false 
+                                      ? "text-amber-600 hover:text-amber-700 hover:bg-amber-50" 
+                                      : "text-green-600 hover:text-green-700 hover:bg-green-50"}
+                                    title={ingredient.is_active !== false ? "Desativar" : "Reativar"}
+                                  >
+                                    {ingredient.is_active !== false ? (
+                                      <Power className="w-4 h-4" strokeWidth={1.5} />
+                                    ) : (
+                                      <RotateCcw className="w-4 h-4" strokeWidth={1.5} />
+                                    )}
+                                  </Button>
+                                  <Button
                                     data-testid={`delete-ingredient-${ingredient.id}`}
                                     onClick={() => checkUsageAndDelete(ingredient.id, ingredient.name)}
                                     variant="ghost"
