@@ -8204,3 +8204,17 @@
 2026-01-10T21:17:30.651537+00:00 | DB_CALL count_ingredients | P3 | 0.24ms | success
 2026-01-10T21:17:30.651721+00:00 | DB_CALL count_products | P3 | 0.12ms | success
 2026-01-10T21:17:30.651867+00:00 | DB_CALL count_users | P3 | 0.09ms | success
+2026-01-10T21:17:52.299757+00:00 | DB_CALL get_user_by_id | P3 | 0.36ms | success
+2026-01-10T21:17:52.300230+00:00 | DB_CALL get_all_purchases | P3 | 0.31ms | success
+2026-01-10T21:17:52.685564+00:00 | DB_CALL get_user_by_id | P3 | 0.27ms | success
+2026-01-10T21:17:52.685994+00:00 | DB_CALL get_all_clientes | P3 | 0.27ms | success
+2026-01-10T21:19:10.079955+00:00 | DB_CALL get_user_by_id | P3 | 0.27ms | success
+2026-01-10T21:19:10.080542+00:00 | DB_CALL get_all_purchases | P3 | 0.42ms | success
+2026-01-10T21:19:10.455220+00:00 | DB_CALL get_user_by_id | P3 | 0.29ms | success
+2026-01-10T21:19:10.455506+00:00 | DB_CALL get_all_clientes | P3 | 0.15ms | success
+2026-01-10T21:19:53.651441+00:00 | DB_CALL get_user_by_id | P3 | 0.27ms | success
+2026-01-10T21:19:53.651752+00:00 | DB_CALL get_all_clientes | P3 | 0.17ms | success
+2026-01-10T21:20:05.838073+00:00 | DB_CALL init_database | P3 | 2.84ms | success
+2026-01-10T21:20:05.838576+00:00 | DB_CALL count_ingredients | P3 | 0.23ms | success
+2026-01-10T21:20:05.838755+00:00 | DB_CALL count_products | P3 | 0.12ms | success
+2026-01-10T21:20:05.838902+00:00 | DB_CALL count_users | P3 | 0.1ms | success

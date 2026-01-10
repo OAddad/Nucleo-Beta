@@ -2062,6 +2062,14 @@ async def register_cliente_pedido(cliente_id: str, order_value: float = 0, curre
     return {"message": "Estatísticas atualizadas", "pedidos_count": updated.get("pedidos_count")}
 
 
+@api_router.get("/clientes/stats/pontuacao")
+async def get_total_pontuacao(current_user: User = Depends(get_current_user)):
+    """Retorna o total de pontos distribuídos para todos os clientes"""
+    total = await db_call(sqlite_db.get_total_pontuacao)
+    count = await db_call(sqlite_db.count_clientes)
+    return {"total_pontuacao": total, "total_clientes": count}
+
+
 # Reports endpoints
 @api_router.get("/reports/price-history/{ingredient_id}", response_model=IngredientWithHistory)
 async def get_price_history(ingredient_id: str, current_user: User = Depends(get_current_user)):
