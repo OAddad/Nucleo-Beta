@@ -97,6 +97,10 @@ export default function Ingredients() {
   const [ingredientToDuplicate, setIngredientToDuplicate] = useState(null);
   const [duplicateName, setDuplicateName] = useState("");
 
+  // Estados de paginação
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+
   useEffect(() => {
     fetchIngredients();
     fetchCategories();
