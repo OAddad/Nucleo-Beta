@@ -637,6 +637,55 @@ export default function Purchases() {
                     </div>
                   </div>
 
+                  {/* Status de Pagamento */}
+                  <div className="border rounded-lg p-4 bg-muted/30">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        {isPaid ? (
+                          <CheckCircle2 className="w-5 h-5 text-green-600" />
+                        ) : (
+                          <AlertCircle className="w-5 h-5 text-amber-600" />
+                        )}
+                        <div>
+                          <Label className="cursor-pointer text-base">
+                            {isPaid ? "Compra paga" : "Compra a pagar"}
+                          </Label>
+                          <p className="text-xs text-muted-foreground">
+                            {isPaid ? "O valor já foi pago ao fornecedor" : "O valor ainda será pago ao fornecedor"}
+                          </p>
+                        </div>
+                      </div>
+                      <Switch
+                        checked={isPaid}
+                        onCheckedChange={(checked) => {
+                          setIsPaid(checked);
+                          if (checked) {
+                            setDueDate("");
+                          }
+                        }}
+                      />
+                    </div>
+                    
+                    {/* Data de vencimento - só aparece se não foi paga */}
+                    {!isPaid && (
+                      <div className="mt-4 pt-4 border-t">
+                        <Label htmlFor="dueDate" className="flex items-center gap-2">
+                          <Calendar className="w-4 h-4" />
+                          Data de Vencimento *
+                        </Label>
+                        <Input
+                          id="dueDate"
+                          type="date"
+                          value={dueDate}
+                          onChange={(e) => setDueDate(e.target.value)}
+                          required
+                          className="mt-1 h-11"
+                          min={new Date().toISOString().split("T")[0]}
+                        />
+                      </div>
+                    )}
+                  </div>
+
                   <div className="border-t pt-4">
                     <h3 className="font-semibold mb-3">Adicionar itens</h3>
                     
