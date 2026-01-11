@@ -17120,3 +17120,7 @@
 2026-01-11T21:34:02.762696+00:00 | DB_CALL set_setting | P3 | 5.39ms | success
 2026-01-11T21:34:02.767380+00:00 | DB_CALL set_setting | P3 | 4.59ms | success
 2026-01-11T21:34:02.767535+00:00 | DB_CALL get_all_settings | P3 | 0.09ms | success
+2026-01-11T21:34:51.416551+00:00 | DB_CALL get_all_settings | P3 | 1.45ms | success
+2026-01-11T21:34:51.417517+00:00 | DB_CALL get_all_pedidos | P3 | 2.12ms | success
+2026-01-11T21:34:51.418510+00:00 | DB_CALL get_all_entregadores | P3 | 2.43ms | success
+2026-01-11T21:34:51.608989+00:00 | DB_CALL update_pedido_status | P3 | 6.3ms | success
