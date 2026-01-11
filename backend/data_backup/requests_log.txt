@@ -14693,3 +14693,8 @@
 2026-01-11T18:38:35.887130+00:00 | DB_CALL get_all_settings | P3 | 1.03ms | success
 2026-01-11T18:38:35.887745+00:00 | DB_CALL get_all_entregadores | P3 | 1.5ms | success
 2026-01-11T18:38:35.888476+00:00 | DB_CALL get_all_pedidos | P3 | 1.86ms | success
+2026-01-11T18:38:37.300923+00:00 | DB_CALL get_entregador_by_id | P3 | 0.33ms | success
+2026-01-11T18:38:37.302722+00:00 | DB_CALL get_pedidos_by_entregador | P3 | 0.24ms | success
+2026-01-11T18:38:40.881185+00:00 | DB_CALL get_all_entregadores | P3 | 1.42ms | success
+2026-01-11T18:38:40.881906+00:00 | DB_CALL get_all_settings | P3 | 1.03ms | success
+2026-01-11T18:38:40.882493+00:00 | DB_CALL get_all_pedidos | P3 | 2.11ms | success
