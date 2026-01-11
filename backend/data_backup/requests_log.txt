@@ -17033,3 +17033,11 @@
 2026-01-11T21:08:22.525946+00:00 | DB_CALL get_all_entregadores | P3 | 2.66ms | success
 2026-01-11T21:08:22.536242+00:00 | DB_CALL get_all_pedidos | P3 | 12.35ms | success
 2026-01-11T21:08:22.537328+00:00 | DB_CALL get_all_settings | P3 | 13.24ms | success
+2026-01-11T21:09:52.216907+00:00 | DB_CALL init_database | P3 | 8.82ms | success
+2026-01-11T21:09:52.221965+00:00 | DB_CALL count_ingredients | P3 | 0.27ms | success
+2026-01-11T21:09:52.222170+00:00 | DB_CALL count_products | P3 | 0.12ms | success
+2026-01-11T21:09:52.222312+00:00 | DB_CALL count_users | P3 | 0.09ms | success
+2026-01-11T21:10:02.008965+00:00 | DB_CALL get_all_products | P3 | 1.95ms | success
+2026-01-11T21:10:02.009886+00:00 | DB_CALL get_all_business_hours | P3 | 2.22ms | success
+2026-01-11T21:10:02.010246+00:00 | DB_CALL get_all_categories | P3 | 1.76ms | success
+2026-01-11T21:10:02.226383+00:00 | DB_CALL get_all_bairros | P3 | 4.23ms | success
