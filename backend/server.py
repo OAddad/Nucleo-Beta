@@ -2541,9 +2541,10 @@ async def update_system_settings(settings_data: SystemSettingsUpdate, current_us
 async def get_business_hours(current_user: User = Depends(get_current_user)):
     """Retorna horários de funcionamento (requer autenticação)"""
     hours = await db_call(sqlite_db.get_all_business_hours)
-    # Converter is_open de int para bool
+    # Converter is_open e has_second_period de int para bool
     for h in hours:
         h['is_open'] = bool(h.get('is_open', 1))
+        h['has_second_period'] = bool(h.get('has_second_period', 0))
     return hours
 
 
@@ -2551,9 +2552,10 @@ async def get_business_hours(current_user: User = Depends(get_current_user)):
 async def get_public_business_hours():
     """Retorna horários de funcionamento (público para cardápio)"""
     hours = await db_call(sqlite_db.get_all_business_hours)
-    # Converter is_open de int para bool
+    # Converter is_open e has_second_period de int para bool
     for h in hours:
         h['is_open'] = bool(h.get('is_open', 1))
+        h['has_second_period'] = bool(h.get('has_second_period', 0))
     return hours
 
 
@@ -2567,9 +2569,10 @@ async def update_business_hours_endpoint(data: BusinessHoursUpdateRequest, curre
     
     updated = await db_call(sqlite_db.update_business_hours, hours_list)
     
-    # Converter is_open de int para bool
+    # Converter is_open e has_second_period de int para bool
     for h in updated:
         h['is_open'] = bool(h.get('is_open', 1))
+        h['has_second_period'] = bool(h.get('has_second_period', 0))
     
     # Registrar auditoria
     await log_audit("UPDATE", "business_hours", "Horários de Funcionamento", current_user, "media", {
@@ -2593,13 +2596,17 @@ async def update_single_business_hour_endpoint(day_of_week: int, data: BusinessH
         raise HTTPException(status_code=404, detail="Horário não encontrado")
     
     updated['is_open'] = bool(updated.get('is_open', 1))
+    updated['has_second_period'] = bool(updated.get('has_second_period', 0))
     
     # Registrar auditoria
     await log_audit("UPDATE", "business_hours", f"Horário {updated.get('day_name', day_of_week)}", current_user, "media", {
         "day_of_week": day_of_week,
         "is_open": updated['is_open'],
         "opening_time": updated.get('opening_time'),
-        "closing_time": updated.get('closing_time')
+        "closing_time": updated.get('closing_time'),
+        "has_second_period": updated['has_second_period'],
+        "opening_time_2": updated.get('opening_time_2'),
+        "closing_time_2": updated.get('closing_time_2')
     })
     
     return updated
