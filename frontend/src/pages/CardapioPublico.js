@@ -187,6 +187,25 @@ function OrderTrackingScreen({ pedido, onClose, darkMode }) {
                         Atual
                       </span>
                     )}
+                    {/* Mostrar endereço do estabelecimento na etapa Pedido Pronto (retirada) */}
+                    {step.showAddress && isPickup && (
+                      <div className={`mt-3 p-3 rounded-lg ${darkMode ? 'bg-zinc-700' : 'bg-gray-100'}`}>
+                        <p className={`font-semibold text-sm ${t.text}`}>
+                          <MapPin className="w-4 h-4 inline mr-1" />
+                          Local de Retirada
+                        </p>
+                        <p className={`text-sm mt-1 ${t.textMuted}`}>{establishmentAddress.name}</p>
+                        <p className={`text-sm ${t.textMuted}`}>{establishmentAddress.address}</p>
+                        <p className={`text-sm ${t.textMuted}`}>{establishmentAddress.city}</p>
+                        <button
+                          onClick={openMapsLink}
+                          className="mt-2 flex items-center gap-2 text-blue-500 hover:text-blue-600 text-sm font-medium"
+                        >
+                          <MapPin className="w-4 h-4" />
+                          Ver no Google Maps
+                        </button>
+                      </div>
+                    )}
                   </div>
                 </div>
               );
