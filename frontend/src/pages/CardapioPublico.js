@@ -639,6 +639,15 @@ export default function CardapioPublico({ onAdminLogin }) {
       </button>
 
       <LoginModal isOpen={showLoginModal} onClose={() => setShowLoginModal(false)} onLoginSuccess={handleLoginSuccess} />
+      
+      {/* Popup de Produto */}
+      <ProductPopup
+        product={selectedProduct}
+        open={productPopupOpen}
+        onClose={() => setProductPopupOpen(false)}
+        onAddToCart={addToCart}
+        darkMode={darkMode}
+      />
     </div>
   );
 }
