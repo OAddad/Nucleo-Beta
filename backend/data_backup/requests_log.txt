@@ -16246,3 +16246,9 @@
 2026-01-11T19:31:41.982056+00:00 | DB_CALL get_all_products | P3 | 0.96ms | success
 2026-01-11T19:31:41.982715+00:00 | DB_CALL get_client_addresses | P3 | 1.74ms | success
 2026-01-11T19:31:42.143811+00:00 | DB_CALL get_client_addresses | P3 | 0.27ms | success
+2026-01-11T19:31:58.992948+00:00 | DB_CALL get_all_categories | P3 | 73.21ms | success
+2026-01-11T19:31:58.999242+00:00 | DB_CALL get_all_bairros | P3 | 81.89ms | success
+2026-01-11T19:31:59.003389+00:00 | DB_CALL get_all_products | P3 | 83.16ms | success
+2026-01-11T19:31:59.008252+00:00 | DB_CALL get_client_addresses | P3 | 88.25ms | success
+2026-01-11T19:31:59.012684+00:00 | DB_CALL get_all_business_hours | P3 | 4.49ms | success
+2026-01-11T19:31:59.185084+00:00 | DB_CALL get_client_addresses | P3 | 0.38ms | success
