@@ -17050,3 +17050,7 @@
 2026-01-11T21:17:07.116213+00:00 | DB_CALL get_user_by_username | P3 | 0.27ms | success
 2026-01-11T21:18:15.477293+00:00 | DB_CALL get_user_by_username | P3 | 0.25ms | success
 2026-01-11T21:19:50.891586+00:00 | DB_CALL get_user_by_username | P3 | 0.25ms | success
+2026-01-11T21:20:03.643429+00:00 | DB_CALL get_all_products | P3 | 0.45ms | success
+2026-01-11T21:20:03.649467+00:00 | DB_CALL get_all_business_hours | P3 | 0.87ms | success
+2026-01-11T21:20:03.650033+00:00 | DB_CALL get_all_categories | P3 | 0.97ms | success
+2026-01-11T21:20:03.852635+00:00 | DB_CALL get_all_bairros | P3 | 0.28ms | success
