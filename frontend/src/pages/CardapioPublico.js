@@ -50,8 +50,8 @@ export default function CardapioPublico({ onAdminLogin }) {
 
   const fetchProducts = async () => {
     try {
-      const response = await axios.get(`${API}/products`);
-      setProducts(response.data.filter(p => p.sale_price && p.sale_price > 0 && !p.is_insumo));
+      const response = await axios.get(`${API}/public/products`);
+      setProducts(response.data);
     } catch (error) {
       console.error("Erro ao carregar produtos:", error);
     } finally {
@@ -61,7 +61,7 @@ export default function CardapioPublico({ onAdminLogin }) {
 
   const fetchCategories = async () => {
     try {
-      const response = await axios.get(`${API}/categories`);
+      const response = await axios.get(`${API}/public/categories`);
       setCategories(response.data);
     } catch (error) {
       console.error("Erro ao carregar categorias:", error);
