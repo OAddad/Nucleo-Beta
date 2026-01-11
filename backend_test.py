@@ -2769,37 +2769,38 @@ class CMVMasterAPITester:
         return all_tests_passed
 
 def main():
-    print("🚀 Starting Business Hours Endpoints Testing")
+    print("🚀 Starting Business Hours Multiple Periods Testing")
     print("=" * 80)
     print("🎯 Testing EXACTLY as specified in review request:")
-    print("   1. GET /api/public/business-hours (público)")
-    print("      - Deve retornar lista de 7 dias (Segunda a Domingo)")
-    print("      - Cada dia deve ter: id, day_of_week, day_name, is_open, opening_time, closing_time")
+    print("   1. GET /api/public/business-hours")
+    print("      - Verificar se todos os novos campos existem: has_second_period, opening_time_2, closing_time_2")
     print("")
-    print("   2. GET /api/business-hours (autenticado)")
-    print("      - Usar credenciais: Addad/Addad123 ou admin/admin")
-    print("      - Deve retornar os mesmos dados do público")
-    print("")
-    print("   3. PUT /api/business-hours (autenticado - admin)")
-    print("      - Atualizar horários, testando:")
-    print("        - Mudar is_open de um dia")
-    print("        - Mudar opening_time e closing_time")
-    print("      - Formato do payload:")
+    print("   2. PUT /api/business-hours (autenticado - Addad/Addad123)")
+    print("      - Atualizar Segunda-feira com dois períodos:")
     print("        {")
     print("          \"hours\": [")
-    print("            {\"day_of_week\": 0, \"is_open\": true, \"opening_time\": \"09:00\", \"closing_time\": \"23:00\"},")
-    print("            ...")
+    print("            {")
+    print("              \"day_of_week\": 0,")
+    print("              \"is_open\": true,")
+    print("              \"opening_time\": \"10:00\",")
+    print("              \"closing_time\": \"15:00\",")
+    print("              \"has_second_period\": true,")
+    print("              \"opening_time_2\": \"18:00\",")
+    print("              \"closing_time_2\": \"23:59\"")
+    print("            }")
     print("          ]")
     print("        }")
+    print("")
+    print("   3. Verificar GET novamente para confirmar que has_second_period=true para segunda-feira")
     print("")
     print("   Backend URL: http://localhost:8001")
     print("=" * 80)
     
     tester = CMVMasterAPITester()
     
-    # Run the business hours tests as specified in review request
+    # Run the business hours multiple periods tests as specified in review request
     tests = [
-        ("Business Hours Endpoints", tester.test_business_hours_endpoints),
+        ("Business Hours Multiple Periods", tester.test_business_hours_multiple_periods),
     ]
     
     failed_tests = []
@@ -2827,40 +2828,35 @@ def main():
     print(f"Success rate: {(tester.tests_passed/tester.tests_run)*100:.1f}%" if tester.tests_run > 0 else "No tests run")
     
     # Analyze results
-    print(f"\n🔍 BUSINESS HOURS ENDPOINTS ANALYSIS:")
+    print(f"\n🔍 BUSINESS HOURS MULTIPLE PERIODS ANALYSIS:")
     if not failed_tests:
-        print(f"✅ BUSINESS HOURS ENDPOINTS WORKING:")
-        print(f"   - GET /api/public/business-hours (público) working")
-        print(f"   - Returns 7 days (Segunda a Domingo) with correct structure")
-        print(f"   - Each day has: id, day_of_week, day_name, is_open, opening_time, closing_time")
-        print(f"   - GET /api/business-hours (autenticado) working")
-        print(f"   - Returns same data as public endpoint")
-        print(f"   - PUT /api/business-hours (autenticado - admin) working")
-        print(f"   - Can update is_open, opening_time, closing_time")
-        print(f"   - Changes persist correctly")
-        print(f"   - All business hours backend APIs are functional")
+        print(f"✅ BUSINESS HOURS MULTIPLE PERIODS WORKING:")
+        print(f"   - GET /api/public/business-hours returns new fields: has_second_period, opening_time_2, closing_time_2")
+        print(f"   - PUT /api/business-hours supports multiple periods update")
+        print(f"   - Monday updated with two periods: 10:00-15:00 and 18:00-23:59")
+        print(f"   - has_second_period=true persists correctly")
+        print(f"   - All new multiple periods fields functional")
+        print(f"   - Business hours with multiple periods support is fully operational")
     else:
         print(f"❌ FAILED TESTS:")
         for failed in failed_tests:
             print(f"   - {failed}")
     
-    # Additional notes about Business Hours functionality
+    # Additional notes about Business Hours Multiple Periods functionality
     print(f"\n📝 IMPORTANT NOTES:")
-    print(f"   ℹ️ Business hours endpoints tested comprehensively")
+    print(f"   ℹ️ Business hours multiple periods endpoints tested as specified in review request")
     print(f"   ℹ️ Backend running on http://localhost:8001")
-    print(f"   ℹ️ Authentication with Addad/Addad123 or admin/admin credentials")
-    print(f"   ℹ️ Public endpoint: No authentication required")
-    print(f"   ℹ️ Authenticated endpoint: Same data as public")
-    print(f"   ℹ️ Update endpoint: Requires admin privileges")
-    print(f"   ℹ️ Data structure: 7 days with all required fields")
-    print(f"   ℹ️ Data types: day_of_week (int), is_open (bool), day_name (str)")
+    print(f"   ℹ️ Authentication with Addad/Addad123 credentials")
+    print(f"   ℹ️ New fields: has_second_period (bool), opening_time_2 (str), closing_time_2 (str)")
+    print(f"   ℹ️ Multiple periods support allows restaurants to have split operating hours")
+    print(f"   ℹ️ Example: Open 10:00-15:00 (lunch) and 18:00-23:59 (dinner)")
     
     if failed_tests:
         return 1
     else:
-        print("\n✅ ALL BUSINESS HOURS TESTS PASSED!")
-        print("🎉 Business hours endpoints working correctly!")
-        print("💾 Business hours functionality is fully operational!")
+        print("\n✅ ALL BUSINESS HOURS MULTIPLE PERIODS TESTS PASSED!")
+        print("🎉 Business hours multiple periods endpoints working correctly!")
+        print("💾 Multiple periods functionality is fully operational!")
         return 0
 
 if __name__ == "__main__":
