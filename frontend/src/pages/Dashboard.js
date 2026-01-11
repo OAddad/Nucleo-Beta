@@ -20,6 +20,10 @@ import Fornecedores from "./Fornecedores";
 import Pedidos from "./Pedidos";
 import Despesas from "./Despesas";
 import ExtratoFinanceiro from "./ExtratoFinanceiro";
+import RelatorioOfertas from "./RelatorioOfertas";
+import Promocoes from "./Promocoes";
+import CuponsDesconto from "./CuponsDesconto";
+import Campanhas from "./Campanhas";
 
 // Ícone do WhatsApp customizado
 const WhatsAppIcon = ({ className }) => (
