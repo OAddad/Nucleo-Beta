@@ -51,11 +51,6 @@ export default function Delivery() {
   const [autoAccept, setAutoAccept] = useState(false);
   const autoAcceptProcessing = useRef(false);
   
-  // Modal de entregador
-  const [entregadorModalOpen, setEntregadorModalOpen] = useState(false);
-  const [selectedEntregador, setSelectedEntregador] = useState(null);
-  const [entregadorPedidos, setEntregadorPedidos] = useState({ na_bag: [], em_rota: [] });
-  
   // Modal de criar entregador
   const [criarEntregadorModalOpen, setCriarEntregadorModalOpen] = useState(false);
   const [novoEntregadorNome, setNovoEntregadorNome] = useState("");
