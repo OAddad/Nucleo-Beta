@@ -296,6 +296,24 @@ export default function Delivery() {
     }
   };
 
+  // Concluir entrega (marcar como entregue no modal do entregador)
+  const handleConcluirEntrega = async (pedidoId) => {
+    try {
+      await axios.patch(`${API}/pedidos/${pedidoId}/status?status=concluido`, {}, getAuthHeader());
+      toast.success("Pedido entregue com sucesso!");
+      
+      // Atualizar a lista de pedidos do entregador no modal
+      setEntregadorPedidos(prev => ({
+        na_bag: prev.na_bag.filter(p => p.id !== pedidoId),
+        em_rota: prev.em_rota.filter(p => p.id !== pedidoId)
+      }));
+      
+      fetchData();
+    } catch (error) {
+      toast.error("Erro ao concluir entrega");
+    }
+  };
+
   // Abrir modal de cancelamento
   const handleAbrirCancelar = (pedido, e) => {
     if (e) e.stopPropagation();
