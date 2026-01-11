@@ -695,7 +695,8 @@ function CheckoutModal({ open, onClose, cart, cartTotal, client, darkMode, onOrd
       endereco_complemento: deliveryType === 'delivery' && selectedAddr ? selectedAddr.complemento : null,
       endereco_bairro: deliveryType === 'delivery' && selectedAddr ? selectedAddr.bairro : null,
       endereco_cep: deliveryType === 'delivery' && selectedAddr ? selectedAddr.cep : null,
-      modulo: "Cardapio"
+      modulo: "Cardapio",
+      valor_entrega: deliveryType === 'delivery' ? valorEntrega : 0
     };
 
     try {
