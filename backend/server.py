@@ -2529,6 +2529,75 @@ async def update_system_settings(settings_data: SystemSettingsUpdate, current_us
     
     return await get_system_settings()
 
+
+# ========== BUSINESS HOURS ENDPOINTS ==========
+@api_router.get("/business-hours", response_model=List[BusinessHour])
+async def get_business_hours(current_user: User = Depends(get_current_user)):
+    """Retorna horários de funcionamento (requer autenticação)"""
+    hours = await db_call(sqlite_db.get_all_business_hours)
+    # Converter is_open de int para bool
+    for h in hours:
+        h['is_open'] = bool(h.get('is_open', 1))
+    return hours
+
+
+@api_router.get("/public/business-hours", response_model=List[BusinessHour])
+async def get_public_business_hours():
+    """Retorna horários de funcionamento (público para cardápio)"""
+    hours = await db_call(sqlite_db.get_all_business_hours)
+    # Converter is_open de int para bool
+    for h in hours:
+        h['is_open'] = bool(h.get('is_open', 1))
+    return hours
+
+
+@api_router.put("/business-hours", response_model=List[BusinessHour])
+async def update_business_hours_endpoint(data: BusinessHoursUpdateRequest, current_user: User = Depends(get_current_user)):
+    """Atualiza horários de funcionamento"""
+    check_role(current_user, ["proprietario", "administrador"])
+    
+    # Converter para lista de dicts
+    hours_list = [h.model_dump() for h in data.hours]
+    
+    updated = await db_call(sqlite_db.update_business_hours, hours_list)
+    
+    # Converter is_open de int para bool
+    for h in updated:
+        h['is_open'] = bool(h.get('is_open', 1))
+    
+    # Registrar auditoria
+    await log_audit("UPDATE", "business_hours", "Horários de Funcionamento", current_user, "media", {
+        "updated_days": len(hours_list)
+    })
+    
+    return updated
+
+
+@api_router.put("/business-hours/{day_of_week}", response_model=BusinessHour)
+async def update_single_business_hour_endpoint(day_of_week: int, data: BusinessHourUpdate, current_user: User = Depends(get_current_user)):
+    """Atualiza horário de funcionamento de um dia específico"""
+    check_role(current_user, ["proprietario", "administrador"])
+    
+    if day_of_week < 0 or day_of_week > 6:
+        raise HTTPException(status_code=400, detail="Dia da semana inválido (0=Segunda, 6=Domingo)")
+    
+    updated = await db_call(sqlite_db.update_single_business_hour, day_of_week, data.model_dump())
+    
+    if not updated:
+        raise HTTPException(status_code=404, detail="Horário não encontrado")
+    
+    updated['is_open'] = bool(updated.get('is_open', 1))
+    
+    # Registrar auditoria
+    await log_audit("UPDATE", "business_hours", f"Horário {updated.get('day_name', day_of_week)}", current_user, "media", {
+        "day_of_week": day_of_week,
+        "is_open": updated['is_open'],
+        "opening_time": updated.get('opening_time'),
+        "closing_time": updated.get('closing_time')
+    })
+    
+    return updated
+
 @api_router.get("/system/logs")
 async def get_system_logs():
     """Retorna caminho dos logs para diagnóstico"""
