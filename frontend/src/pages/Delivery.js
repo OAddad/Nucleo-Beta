@@ -1352,7 +1352,7 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
           produto_id: item.id,
           produto_nome: item.name,
           quantidade: item.quantity,
-          preco_unitario: item.selling_price || 0,
+          preco_unitario: item.sale_price || 0,
           observacao: item.observation || ""
         })),
         subtotal: subtotal,
