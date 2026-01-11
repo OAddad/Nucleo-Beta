@@ -9087,3 +9087,9 @@
 2026-01-11T14:13:05.769175+00:00 | DB_CALL get_all_categories | P3 | 0.82ms | success
 2026-01-11T14:13:05.769739+00:00 | DB_CALL get_all_categories | P3 | 0.86ms | success
 2026-01-11T14:13:05.770096+00:00 | DB_CALL get_all_business_hours | P3 | 1.3ms | success
+2026-01-11T14:13:21.761157+00:00 | DB_CALL get_all_products | P3 | 0.51ms | success
+2026-01-11T14:13:21.763460+00:00 | DB_CALL get_all_business_hours | P3 | 0.2ms | success
+2026-01-11T14:13:21.764967+00:00 | DB_CALL get_all_categories | P3 | 0.16ms | success
+2026-01-11T14:13:22.769729+00:00 | DB_CALL get_all_products | P3 | 0.4ms | success
+2026-01-11T14:13:22.771227+00:00 | DB_CALL get_all_categories | P3 | 0.2ms | success
+2026-01-11T14:13:22.774537+00:00 | DB_CALL get_all_business_hours | P3 | 0.19ms | success
