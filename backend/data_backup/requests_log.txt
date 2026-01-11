@@ -8997,3 +8997,6 @@
 2026-01-11T14:06:28.609467+00:00 | DB_CALL get_user_by_id | P3 | 0.2ms | success
 2026-01-11T14:06:28.611841+00:00 | DB_CALL update_business_hours | P3 | 2.17ms | success
 2026-01-11T14:06:28.614037+00:00 | DB_CALL create_audit_log | P3 | 2.06ms | success
+2026-01-11T14:06:57.634994+00:00 | DB_CALL get_user_by_id | P3 | 0.28ms | success
+2026-01-11T14:06:57.637657+00:00 | DB_CALL update_business_hours | P3 | 2.42ms | success
+2026-01-11T14:06:57.639489+00:00 | DB_CALL create_audit_log | P3 | 1.73ms | success
