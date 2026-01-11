@@ -9289,3 +9289,4 @@
 2026-01-11T15:10:33.792407+00:00 | DB_CALL get_all_business_hours | P3 | 0.25ms | success
 2026-01-11T15:10:33.792795+00:00 | DB_CALL get_all_categories | P3 | 1.01ms | success
 2026-01-11T15:11:30.799184+00:00 | DB_CALL get_all_pedidos | P3 | 0.38ms | success
+2026-01-11T15:11:36.790877+00:00 | DB_CALL get_all_pedidos | P3 | 0.28ms | success
