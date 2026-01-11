@@ -6,11 +6,12 @@ import {
   Plus, Check, Clock, ChefHat, Package, Truck, User, Phone, MapPin,
   ArrowLeft, X, RefreshCw, ToggleLeft, ToggleRight, Bike, ShoppingBag,
   Store, CreditCard, DollarSign, Banknote, Eye, FileText, MessageSquare,
-  Navigation, Calendar, Hash
+  Navigation, Calendar, Hash, XCircle, AlertTriangle
 } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
+import { Textarea } from "../components/ui/textarea";
 import {
   Dialog,
   DialogContent,
@@ -55,11 +56,6 @@ export default function Delivery() {
   const [selectedEntregador, setSelectedEntregador] = useState(null);
   const [entregadorPedidos, setEntregadorPedidos] = useState({ na_bag: [], em_rota: [] });
   
-  // Modal de designar entregador
-  const [designarModalOpen, setDesignarModalOpen] = useState(false);
-  const [pedidoParaDesignar, setPedidoParaDesignar] = useState(null);
-  const [entregadorSelecionado, setEntregadorSelecionado] = useState("");
-  
   // Modal de criar entregador
   const [criarEntregadorModalOpen, setCriarEntregadorModalOpen] = useState(false);
   const [novoEntregadorNome, setNovoEntregadorNome] = useState("");
@@ -77,6 +73,11 @@ export default function Delivery() {
   // Modal de detalhes do pedido
   const [detalhesModalOpen, setDetalhesModalOpen] = useState(false);
   const [pedidoDetalhes, setPedidoDetalhes] = useState(null);
+
+  // Modal de cancelamento
+  const [cancelarModalOpen, setCancelarModalOpen] = useState(false);
+  const [pedidoParaCancelar, setPedidoParaCancelar] = useState(null);
+  const [motivoCancelamento, setMotivoCancelamento] = useState("");
 
   // Carregar dados
   const fetchData = useCallback(async () => {
@@ -170,32 +171,6 @@ export default function Delivery() {
     }
   };
 
-  // Abrir modal para designar entregador
-  const handleAbrirDesignar = (pedido) => {
-    setPedidoParaDesignar(pedido);
-    setEntregadorSelecionado("");
-    setDesignarModalOpen(true);
-  };
-
-  // Designar entregador e enviar para BAG
-  const handleDesignarEntregador = async () => {
-    if (!entregadorSelecionado || !pedidoParaDesignar) return;
-    
-    try {
-      await axios.patch(
-        `${API}/pedidos/${pedidoParaDesignar.id}/entregador?entregador_id=${entregadorSelecionado}`,
-        {},
-        getAuthHeader()
-      );
-      toast.success("Pedido enviado para a BAG do entregador!");
-      setDesignarModalOpen(false);
-      setPedidoParaDesignar(null);
-      fetchData();
-    } catch (error) {
-      toast.error("Erro ao designar entregador");
-    }
-  };
-
   // Abrir modal do entregador
   const handleAbrirEntregador = async (entregador) => {
     setSelectedEntregador(entregador);
@@ -221,7 +196,6 @@ export default function Delivery() {
       await axios.patch(`${API}/pedidos/${pedidoId}/status?status=em_rota`);
       toast.success("Pedido enviado para rota de entrega!");
       
-      // Atualizar dados do modal
       if (selectedEntregador) {
         const res = await axios.get(`${API}/entregadores/${selectedEntregador.id}/pedidos`);
         setEntregadorPedidos({
@@ -242,7 +216,6 @@ export default function Delivery() {
       await axios.patch(`${API}/pedidos/${pedidoId}/status?status=concluido`);
       toast.success("Entrega concluída!");
       
-      // Atualizar dados do modal
       if (selectedEntregador) {
         const res = await axios.get(`${API}/entregadores/${selectedEntregador.id}/pedidos`);
         setEntregadorPedidos({
@@ -314,7 +287,6 @@ export default function Delivery() {
     }
 
     try {
-      // Enviar cada pedido para o entregador
       await Promise.all(pedidosSelecionados.map(pedidoId =>
         axios.patch(
           `${API}/pedidos/${pedidoId}/entregador?entregador_id=${entregadorProntoSelecionado}`,
@@ -353,14 +325,12 @@ export default function Delivery() {
     }
     
     try {
-      // Atualizar forma de pagamento se necessário
       if (formaPagamentoSelecionada !== pedidoParaPagamento.forma_pagamento) {
         await axios.put(`${API}/pedidos/${pedidoParaPagamento.id}`, {
           forma_pagamento: formaPagamentoSelecionada
         }, getAuthHeader());
       }
       
-      // Marcar como concluído
       await axios.patch(`${API}/pedidos/${pedidoParaPagamento.id}/status?status=concluido`);
       
       toast.success("Pedido finalizado com sucesso!");
@@ -370,6 +340,39 @@ export default function Delivery() {
       fetchData();
     } catch (error) {
       toast.error("Erro ao finalizar pedido");
+    }
+  };
+
+  // Abrir modal de cancelamento
+  const handleAbrirCancelar = (pedido, e) => {
+    if (e) e.stopPropagation();
+    setPedidoParaCancelar(pedido);
+    setMotivoCancelamento("");
+    setCancelarModalOpen(true);
+  };
+
+  // Cancelar pedido com motivo
+  const handleCancelarPedido = async () => {
+    if (!pedidoParaCancelar) return;
+    
+    if (!motivoCancelamento || motivoCancelamento.trim().length < 3) {
+      toast.error("Informe o motivo do cancelamento (mínimo 3 caracteres)");
+      return;
+    }
+    
+    try {
+      await axios.patch(`${API}/pedidos/${pedidoParaCancelar.id}/cancelar`, {
+        motivo: motivoCancelamento.trim()
+      }, getAuthHeader());
+      
+      toast.success("Pedido cancelado!");
+      setCancelarModalOpen(false);
+      setPedidoParaCancelar(null);
+      setMotivoCancelamento("");
+      setDetalhesModalOpen(false);
+      fetchData();
+    } catch (error) {
+      toast.error("Erro ao cancelar pedido");
     }
   };
 
@@ -385,21 +388,28 @@ export default function Delivery() {
     toast.info("Selecione os produtos no cardápio para criar um novo pedido");
   };
 
-  // Filtrar pedidos por status - inclui pedidos de delivery E retirada
-  // Pedidos de retirada ficam no topo (destacados)
+  // Filtrar pedidos por status
   const getPedidosByStatus = (status) => {
     const filtered = pedidos.filter(p => 
       p.status === status && 
       (p.modulo === 'Delivery' || p.tipo_entrega === 'delivery' || p.tipo_entrega === 'pickup')
     );
     
-    // Ordenar: retirada primeiro, depois delivery
     return filtered.sort((a, b) => {
       if (a.tipo_entrega === 'pickup' && b.tipo_entrega !== 'pickup') return -1;
       if (a.tipo_entrega !== 'pickup' && b.tipo_entrega === 'pickup') return 1;
       return 0;
     });
   };
+
+  // Entregadores com pedidos na BAG (filtrados)
+  const entregadoresComPedidos = entregadores.filter(e => {
+    const count = pedidos.filter(p => 
+      p.entregador_id === e.id && 
+      (p.status === 'na_bag' || p.status === 'em_rota')
+    ).length;
+    return count > 0;
+  });
 
   // Calcular pedidos na bag por entregador
   const getEntregadorBagCount = (entregadorId) => {
@@ -422,33 +432,60 @@ export default function Delivery() {
     return date.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric" });
   };
 
-  // Renderizar etapas do pedido
-  const renderEtapas = (status) => {
-    const etapas = [
-      { key: 'aguardando_aceite', label: 'Aguardando' },
+  // Renderizar etapas do pedido (corrigido e simétrico)
+  const renderEtapas = (pedido) => {
+    const isPickup = isRetirada(pedido);
+    const status = pedido.status;
+    
+    const etapasDelivery = [
+      { key: 'aguardando_aceite', label: 'Aceite' },
       { key: 'producao', label: 'Produção' },
       { key: 'pronto', label: 'Pronto' },
-      { key: 'na_bag', label: 'Na Bag' },
-      { key: 'em_rota', label: 'Em Rota' },
-      { key: 'concluido', label: 'Concluído' },
+      { key: 'na_bag', label: 'Bag' },
+      { key: 'em_rota', label: 'Rota' },
+      { key: 'concluido', label: 'Entregue' },
     ];
     
-    const currentStep = statusConfig[status]?.step || 0;
+    const etapasRetirada = [
+      { key: 'aguardando_aceite', label: 'Aceite' },
+      { key: 'producao', label: 'Produção' },
+      { key: 'pronto', label: 'Pronto' },
+      { key: 'concluido', label: 'Retirado' },
+    ];
+    
+    const etapas = isPickup ? etapasRetirada : etapasDelivery;
+    const currentIndex = etapas.findIndex(e => e.key === status);
+    
+    if (status === 'cancelado') {
+      return (
+        <div className="flex items-center justify-center gap-2 text-red-600 bg-red-50 dark:bg-red-950/20 p-3 rounded-lg">
+          <XCircle className="w-5 h-5" />
+          <span className="font-semibold">Pedido Cancelado</span>
+        </div>
+      );
+    }
     
     return (
-      <div className="flex items-center gap-1">
+      <div className="flex items-center justify-between w-full">
         {etapas.map((etapa, index) => (
-          <div key={etapa.key} className="flex items-center">
-            <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
-              index + 1 <= currentStep 
-                ? 'bg-green-500 text-white' 
-                : 'bg-gray-200 dark:bg-gray-700 text-gray-500'
-            }`}>
-              {index + 1 <= currentStep ? <Check className="w-3 h-3" /> : index + 1}
+          <div key={etapa.key} className="flex items-center flex-1">
+            <div className="flex flex-col items-center flex-1">
+              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold border-2 ${
+                index <= currentIndex 
+                  ? 'bg-primary text-primary-foreground border-primary' 
+                  : 'bg-muted text-muted-foreground border-muted'
+              }`}>
+                {index <= currentIndex ? <Check className="w-4 h-4" /> : index + 1}
+              </div>
+              <span className={`text-[10px] mt-1 text-center ${
+                index <= currentIndex ? 'text-primary font-medium' : 'text-muted-foreground'
+              }`}>
+                {etapa.label}
+              </span>
             </div>
             {index < etapas.length - 1 && (
-              <div className={`w-4 h-0.5 ${
-                index + 1 < currentStep ? 'bg-green-500' : 'bg-gray-200 dark:bg-gray-700'
+              <div className={`h-0.5 flex-1 -mt-4 ${
+                index < currentIndex ? 'bg-primary' : 'bg-muted'
               }`} />
             )}
           </div>
@@ -553,32 +590,32 @@ export default function Delivery() {
         
         {/* Coluna 1: AGUARDANDO ACEITE */}
         <div className={`flex flex-col rounded-xl border bg-card overflow-hidden min-w-0 transition-all ${
-          autoAccept ? 'flex-[0.3]' : 'flex-1'
+          autoAccept ? 'flex-[0.5]' : 'flex-1'
         }`}>
-          <div className={`p-3 bg-muted/50 border-b ${autoAccept ? 'py-2' : ''}`}>
-            <div className="flex items-center justify-between mb-2">
-              <h3 className={`font-bold ${autoAccept ? 'text-xs' : 'text-sm'}`}>AGUARDANDO ACEITE</h3>
+          <div className={`p-3 bg-muted/50 border-b`}>
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="font-bold text-sm">AGUARDANDO ACEITE</h3>
               <span className="bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400 px-2 py-0.5 rounded-full text-xs font-bold">
                 {getPedidosByStatus('aguardando_aceite').length}
               </span>
             </div>
             
-            {/* Switch de aceite automático */}
+            {/* Switch de aceite automático - MAIOR */}
             <button
               onClick={handleToggleAutoAccept}
-              className={`w-full flex items-center justify-between p-2 rounded-lg border text-xs transition-all ${
+              className={`w-full flex items-center justify-between p-3 rounded-xl border-2 text-sm transition-all ${
                 autoAccept 
                   ? 'bg-green-500 border-green-400 text-white' 
                   : 'bg-background border-input hover:bg-muted/50'
               }`}
             >
-              <span className="font-medium">
+              <span className="font-semibold">
                 {autoAccept ? '✓ Auto-aceite ATIVO' : 'Aceite automático'}
               </span>
               {autoAccept ? (
-                <ToggleRight className="w-5 h-5" />
+                <ToggleRight className="w-8 h-8" />
               ) : (
-                <ToggleLeft className="w-5 h-5 text-muted-foreground" />
+                <ToggleLeft className="w-8 h-8 text-muted-foreground" />
               )}
             </button>
           </div>
@@ -605,15 +642,15 @@ export default function Delivery() {
           {autoAccept && (
             <div className="flex-1 flex items-center justify-center p-2">
               <div className="text-center text-green-600">
-                <RefreshCw className="w-6 h-6 mx-auto mb-1 animate-spin" />
-                <p className="text-xs font-medium">Aceitando automaticamente</p>
+                <RefreshCw className="w-8 h-8 mx-auto mb-2 animate-spin" />
+                <p className="text-sm font-medium">Aceitando automaticamente</p>
               </div>
             </div>
           )}
         </div>
 
         {/* Coluna 2: EM PRODUÇÃO */}
-        <div className="flex-1 flex flex-col rounded-xl border bg-card overflow-hidden min-w-0">
+        <div className="flex-[1.2] flex flex-col rounded-xl border bg-card overflow-hidden min-w-0">
           <div className="p-3 bg-muted/50 border-b">
             <div className="flex items-center justify-between">
               <h3 className="font-bold text-sm">EM PRODUÇÃO</h3>
@@ -644,7 +681,7 @@ export default function Delivery() {
         </div>
 
         {/* Coluna 3: PRONTO */}
-        <div className="flex-1 flex flex-col rounded-xl border bg-card overflow-hidden min-w-0">
+        <div className="flex-[1.2] flex flex-col rounded-xl border bg-card overflow-hidden min-w-0">
           <div className="p-3 bg-muted/50 border-b space-y-2">
             <div className="flex items-center justify-between">
               <h3 className="font-bold text-sm">PRONTO</h3>
@@ -723,8 +760,8 @@ export default function Delivery() {
           </div>
         </div>
 
-        {/* Coluna 4: ENTREGADORES */}
-        <div className="flex-1 flex flex-col rounded-xl border bg-card overflow-hidden min-w-0">
+        {/* Coluna 4: ENTREGADORES - MENOR */}
+        <div className="flex-[0.8] flex flex-col rounded-xl border bg-card overflow-hidden min-w-0">
           <div className="p-3 bg-muted/50 border-b">
             <div className="flex items-center justify-between">
               <h3 className="font-bold text-sm">ENTREGADORES</h3>
@@ -741,45 +778,35 @@ export default function Delivery() {
           </div>
           
           <div className="flex-1 overflow-auto p-2 space-y-2">
-            {entregadores.length === 0 ? (
-              <div className="flex flex-col items-center justify-center h-full text-muted-foreground text-sm">
+            {entregadoresComPedidos.length === 0 ? (
+              <div className="flex flex-col items-center justify-center h-full text-muted-foreground text-sm p-4 text-center">
                 <Bike className="w-8 h-8 mb-2 opacity-30" />
-                <p>Nenhum entregador cadastrado</p>
-                <Button 
-                  size="sm" 
-                  variant="outline" 
-                  className="mt-2"
-                  onClick={() => setCriarEntregadorModalOpen(true)}
-                >
-                  <Plus className="w-4 h-4 mr-1" />
-                  Cadastrar
-                </Button>
+                <p>Nenhum entregador com pedidos</p>
+                <p className="text-xs mt-1">Entregadores aparecem aqui quando têm pedidos na BAG</p>
               </div>
             ) : (
-              entregadores.map(entregador => {
+              entregadoresComPedidos.map(entregador => {
                 const bagCount = getEntregadorBagCount(entregador.id);
                 return (
                   <button
                     key={entregador.id}
                     onClick={() => handleAbrirEntregador(entregador)}
-                    className="w-full bg-background rounded-lg border p-3 shadow-sm hover:border-primary/50 hover:shadow-md transition-all text-left"
+                    className="w-full bg-background rounded-xl border p-4 shadow-sm hover:border-primary/50 hover:shadow-md transition-all text-left"
                   >
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center">
-                        <Bike className="w-5 h-5 text-muted-foreground" />
+                      <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center">
+                        <Bike className="w-6 h-6 text-muted-foreground" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="font-semibold text-sm truncate">{entregador.nome}</p>
+                        <p className="font-semibold truncate">{entregador.nome}</p>
                         {entregador.telefone && (
                           <p className="text-xs text-muted-foreground">{entregador.telefone}</p>
                         )}
                       </div>
-                      {bagCount > 0 && (
-                        <div className="flex items-center gap-1 bg-primary/10 text-primary px-2 py-1 rounded-full">
-                          <ShoppingBag className="w-3 h-3" />
-                          <span className="text-xs font-bold">{bagCount}</span>
-                        </div>
-                      )}
+                      <div className="flex items-center gap-1 bg-primary/10 text-primary px-3 py-2 rounded-full">
+                        <ShoppingBag className="w-4 h-4" />
+                        <span className="text-sm font-bold">{bagCount}</span>
+                      </div>
                     </div>
                   </button>
                 );
@@ -812,28 +839,30 @@ export default function Delivery() {
                   {statusConfig[pedidoDetalhes.status]?.label || pedidoDetalhes.status}
                 </span>
                 {isRetirada(pedidoDetalhes) && (
-                  <span className="bg-gradient-to-r from-amber-500 to-orange-500 text-white text-sm px-3 py-1 rounded-full font-bold flex items-center gap-1">
+                  <span className="bg-amber-500 text-white text-sm px-3 py-1 rounded-full font-bold flex items-center gap-1">
                     <Store className="w-4 h-4" />
                     RETIRADA
                   </span>
                 )}
               </div>
 
-              {/* Etapas */}
-              <div className="bg-muted/30 rounded-lg p-3">
-                <h4 className="text-sm font-semibold mb-2 flex items-center gap-2">
+              {/* Etapas - CORRIGIDO */}
+              <div className="bg-muted/30 rounded-lg p-4">
+                <h4 className="text-sm font-semibold mb-3 flex items-center gap-2">
                   <Navigation className="w-4 h-4" /> Etapas do Pedido
                 </h4>
-                {renderEtapas(pedidoDetalhes.status)}
-                <div className="flex justify-between text-[10px] text-muted-foreground mt-1 px-1">
-                  <span>Aguard.</span>
-                  <span>Produção</span>
-                  <span>Pronto</span>
-                  <span>Bag</span>
-                  <span>Rota</span>
-                  <span>Entregue</span>
-                </div>
+                {renderEtapas(pedidoDetalhes)}
               </div>
+
+              {/* Motivo do Cancelamento */}
+              {pedidoDetalhes.status === 'cancelado' && pedidoDetalhes.motivo_cancelamento && (
+                <div className="bg-red-50 dark:bg-red-950/20 rounded-lg p-3 border border-red-200 dark:border-red-800">
+                  <h4 className="text-sm font-semibold mb-1 flex items-center gap-2 text-red-700 dark:text-red-400">
+                    <AlertTriangle className="w-4 h-4" /> Motivo do Cancelamento
+                  </h4>
+                  <p className="text-sm">{pedidoDetalhes.motivo_cancelamento}</p>
+                </div>
+              )}
 
               {/* Cliente */}
               <div className="bg-muted/30 rounded-lg p-3">
@@ -855,21 +884,14 @@ export default function Delivery() {
                     <MapPin className="w-4 h-4" /> Endereço de Entrega
                   </h4>
                   <p className="text-sm">
-                    {pedidoDetalhes.endereco_rua && (
-                      <span>{pedidoDetalhes.endereco_rua}</span>
-                    )}
-                    {pedidoDetalhes.endereco_numero && (
-                      <span>, {pedidoDetalhes.endereco_numero}</span>
-                    )}
+                    {pedidoDetalhes.endereco_rua && <span>{pedidoDetalhes.endereco_rua}</span>}
+                    {pedidoDetalhes.endereco_numero && <span>, {pedidoDetalhes.endereco_numero}</span>}
                   </p>
                   {pedidoDetalhes.endereco_complemento && (
                     <p className="text-sm text-muted-foreground">{pedidoDetalhes.endereco_complemento}</p>
                   )}
                   {pedidoDetalhes.endereco_bairro && (
                     <p className="text-sm text-muted-foreground">{pedidoDetalhes.endereco_bairro}</p>
-                  )}
-                  {pedidoDetalhes.endereco_cep && (
-                    <p className="text-sm text-muted-foreground">CEP: {pedidoDetalhes.endereco_cep}</p>
                   )}
                 </div>
               )}
@@ -892,7 +914,7 @@ export default function Delivery() {
                           )}
                         </div>
                         <p className="text-sm font-medium">
-                          R$ {((item.preco_unitario || item.price || 0) * (item.quantidade || item.qty || 1)).toFixed(2)}
+                          R$ {((item.preco_unitario || item.preco || item.price || 0) * (item.quantidade || item.qty || 1)).toFixed(2)}
                         </p>
                       </div>
                     ))
@@ -936,57 +958,78 @@ export default function Delivery() {
 
               {/* Entregador */}
               {pedidoDetalhes.entregador_nome && (
-                <div className="bg-blue-50 dark:bg-blue-950/20 rounded-lg p-3 border border-blue-200 dark:border-blue-800">
-                  <h4 className="text-sm font-semibold mb-1 flex items-center gap-2 text-blue-700 dark:text-blue-400">
+                <div className="bg-muted/30 rounded-lg p-3">
+                  <h4 className="text-sm font-semibold mb-1 flex items-center gap-2">
                     <Bike className="w-4 h-4" /> Entregador
                   </h4>
                   <p className="text-sm font-medium">{pedidoDetalhes.entregador_nome}</p>
                 </div>
+              )}
+
+              {/* Botão de Cancelar */}
+              {pedidoDetalhes.status !== 'cancelado' && pedidoDetalhes.status !== 'concluido' && (
+                <Button 
+                  variant="destructive" 
+                  className="w-full"
+                  onClick={(e) => handleAbrirCancelar(pedidoDetalhes, e)}
+                >
+                  <XCircle className="w-4 h-4 mr-2" />
+                  Cancelar Pedido
+                </Button>
               )}
             </div>
           )}
         </DialogContent>
       </Dialog>
 
-      {/* Modal de Designar Entregador */}
-      <Dialog open={designarModalOpen} onOpenChange={setDesignarModalOpen}>
+      {/* Modal de Cancelamento */}
+      <Dialog open={cancelarModalOpen} onOpenChange={setCancelarModalOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Designar Entregador</DialogTitle>
+            <DialogTitle className="flex items-center gap-2 text-red-600">
+              <XCircle className="w-5 h-5" />
+              Cancelar Pedido
+            </DialogTitle>
           </DialogHeader>
           
           <div className="space-y-4">
-            {pedidoParaDesignar && (
-              <div className="p-3 bg-muted/30 rounded-lg">
-                <p className="font-mono text-sm">{pedidoParaDesignar.codigo}</p>
-                <p className="font-semibold">{pedidoParaDesignar.cliente_nome}</p>
-                <p className="text-sm text-muted-foreground">{pedidoParaDesignar.endereco_rua}</p>
+            {pedidoParaCancelar && (
+              <div className="p-3 bg-red-50 dark:bg-red-950/20 rounded-lg border border-red-200 dark:border-red-800">
+                <p className="font-mono text-sm">{pedidoParaCancelar.codigo}</p>
+                <p className="font-semibold">{pedidoParaCancelar.cliente_nome}</p>
+                <p className="text-lg font-bold text-primary mt-1">
+                  R$ {(pedidoParaCancelar.total || 0).toFixed(2)}
+                </p>
               </div>
             )}
             
             <div>
-              <Label>Selecione o Entregador</Label>
-              <Select value={entregadorSelecionado} onValueChange={setEntregadorSelecionado}>
-                <SelectTrigger className="mt-1">
-                  <SelectValue placeholder="Escolha um entregador" />
-                </SelectTrigger>
-                <SelectContent>
-                  {entregadores.map(e => (
-                    <SelectItem key={e.id} value={e.id}>
-                      {e.nome}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <Label className="text-sm font-semibold">
+                Motivo do Cancelamento <span className="text-red-500">*</span>
+              </Label>
+              <Textarea
+                value={motivoCancelamento}
+                onChange={(e) => setMotivoCancelamento(e.target.value)}
+                placeholder="Informe o motivo do cancelamento..."
+                className="mt-2 min-h-[100px]"
+              />
+              <p className="text-xs text-muted-foreground mt-1">
+                Este motivo será visível para o cliente no rastreio do pedido.
+              </p>
             </div>
             
             <div className="flex gap-2">
-              <Button variant="outline" onClick={() => setDesignarModalOpen(false)} className="flex-1">
-                Cancelar
+              <Button variant="outline" onClick={() => setCancelarModalOpen(false)} className="flex-1">
+                Voltar
               </Button>
-              <Button onClick={handleDesignarEntregador} disabled={!entregadorSelecionado} className="flex-1">
-                <ShoppingBag className="w-4 h-4 mr-1" />
-                Enviar para BAG
+              <Button 
+                variant="destructive"
+                onClick={handleCancelarPedido} 
+                disabled={!motivoCancelamento || motivoCancelamento.trim().length < 3}
+                className="flex-1"
+              >
+                <XCircle className="w-4 h-4 mr-1" />
+                Confirmar Cancelamento
               </Button>
             </div>
           </div>
@@ -1035,7 +1078,6 @@ export default function Delivery() {
                       </div>
                       <Button 
                         size="sm" 
-                        className="bg-green-600 hover:bg-green-700"
                         onClick={() => handleConcluirEntrega(pedido.id)}
                       >
                         <Check className="w-4 h-4 mr-1" />
