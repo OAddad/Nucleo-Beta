@@ -12179,3 +12179,7 @@
 2026-01-11T17:39:21.848491+00:00 | DB_CALL get_all_pedidos | P3 | 3.34ms | success
 2026-01-11T17:39:21.853182+00:00 | DB_CALL get_all_entregadores | P3 | 3.44ms | success
 2026-01-11T17:39:21.856167+00:00 | DB_CALL get_all_settings | P3 | 6.58ms | success
+2026-01-11T17:39:24.871581+00:00 | DB_CALL get_all_settings | P3 | 0.6ms | success
+2026-01-11T17:39:24.872295+00:00 | DB_CALL get_all_pedidos | P3 | 1.01ms | success
+2026-01-11T17:39:24.874037+00:00 | DB_CALL get_all_entregadores | P3 | 0.19ms | success
+2026-01-11T17:39:25.895514+00:00 | DB_CALL get_all_pedidos | P3 | 0.55ms | success
