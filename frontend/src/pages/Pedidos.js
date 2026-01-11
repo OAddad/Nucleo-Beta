@@ -102,6 +102,30 @@ export default function Pedidos() {
 
   useEffect(() => {
     fetchPedidos();
+    
+    // Listener para atualizar quando localStorage mudar (de outra aba ou componente)
+    const handleStorageChange = (e) => {
+      if (e.key === 'pedidos') {
+        fetchPedidos();
+      }
+    };
+    
+    // Listener custom para mesma aba
+    const handlePedidosUpdate = () => {
+      fetchPedidos();
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('pedidosUpdated', handlePedidosUpdate);
+    
+    // Verificar a cada 2 segundos se há novos pedidos (fallback)
+    const interval = setInterval(fetchPedidos, 2000);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('pedidosUpdated', handlePedidosUpdate);
+      clearInterval(interval);
+    };
   }, []);
 
   const fetchPedidos = () => {
