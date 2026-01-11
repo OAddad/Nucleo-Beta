@@ -205,6 +205,10 @@ function CheckoutModal({ open, onClose, cart, cartTotal, client, darkMode, onOrd
   const [paymentMethod, setPaymentMethod] = useState(null);
   const [loadingAddresses, setLoadingAddresses] = useState(false);
   const [savingAddress, setSavingAddress] = useState(false);
+  // Estados para popup de troco
+  const [showChangeDialog, setShowChangeDialog] = useState(false);
+  const [needsChange, setNeedsChange] = useState(null); // null = não respondeu, true = precisa, false = não precisa
+  const [changeAmount, setChangeAmount] = useState('');
 
   // Reset quando abrir
   useEffect(() => {
@@ -214,6 +218,9 @@ function CheckoutModal({ open, onClose, cart, cartTotal, client, darkMode, onOrd
       setSelectedAddress(null);
       setPaymentMethod(null);
       setShowNewAddressForm(false);
+      setShowChangeDialog(false);
+      setNeedsChange(null);
+      setChangeAmount('');
       fetchAddresses();
     }
   }, [open, client]);
