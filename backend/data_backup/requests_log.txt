@@ -16431,3 +16431,7 @@
 2026-01-11T19:36:40.720847+00:00 | DB_CALL get_user_by_id | P3 | 2.66ms | success
 2026-01-11T19:36:40.723029+00:00 | DB_CALL recalculate_all_cliente_stats | P3 | 1.9ms | success
 2026-01-11T19:36:40.727527+00:00 | DB_CALL get_all_clientes | P3 | 3.98ms | success
+2026-01-11T19:36:42.119199+00:00 | DB_CALL get_all_categories | P3 | 0.3ms | success
+2026-01-11T19:36:42.121716+00:00 | DB_CALL get_all_business_hours | P3 | 0.24ms | success
+2026-01-11T19:36:42.123502+00:00 | DB_CALL get_all_products | P3 | 0.4ms | success
+2026-01-11T19:36:42.420016+00:00 | DB_CALL get_all_bairros | P3 | 0.34ms | success
