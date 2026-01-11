@@ -737,6 +737,7 @@ export default function Dashboard({ setIsAuthenticated }) {
               {/* Rotas de Clientes e Fornecedores */}
               <Route path="/clientes-fornecedores/clientes" element={<Clientes />} />
               <Route path="/clientes-fornecedores/fornecedores" element={<Fornecedores />} />
+              <Route path="/clientes-fornecedores/funcionarios" element={<Funcionarios />} />
               {/* Rotas de Vendas */}
               <Route path="/vendas/relatorio" element={
                 <div className="p-8">
