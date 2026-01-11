@@ -804,8 +804,14 @@ export default function Pedidos() {
         </DialogContent>
       </Dialog>
 
-      {/* Dialog Confirmar Cancelamento */}
-      <AlertDialog open={cancelDialogOpen} onOpenChange={setCancelDialogOpen}>
+      {/* Dialog Confirmar Cancelamento com Senha Admin */}
+      <AlertDialog open={cancelDialogOpen} onOpenChange={(open) => {
+        setCancelDialogOpen(open);
+        if (!open) {
+          setAdminPassword("");
+          setCancelError("");
+        }
+      }}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Cancelar Pedido?</AlertDialogTitle>
@@ -814,14 +820,31 @@ export default function Pedidos() {
               O pedido não será excluído, apenas terá seu status alterado para "Cancelado".
             </AlertDialogDescription>
           </AlertDialogHeader>
+          
+          <div className="py-4">
+            <Label htmlFor="admin-password">Senha do Administrador</Label>
+            <Input
+              id="admin-password"
+              type="password"
+              placeholder="Digite a senha do admin para confirmar"
+              value={adminPassword}
+              onChange={(e) => setAdminPassword(e.target.value)}
+              className="mt-2"
+            />
+            {cancelError && (
+              <p className="text-sm text-red-500 mt-2">{cancelError}</p>
+            )}
+          </div>
+          
           <AlertDialogFooter>
             <AlertDialogCancel>Voltar</AlertDialogCancel>
-            <AlertDialogAction 
+            <Button
+              variant="destructive"
               onClick={handleCancelPedido}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              disabled={!adminPassword}
             >
               Cancelar Pedido
-            </AlertDialogAction>
+            </Button>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
