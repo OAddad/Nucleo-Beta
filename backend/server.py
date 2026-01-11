@@ -2516,7 +2516,7 @@ async def update_pedido(pedido_id: str, data: PedidoUpdate):
 @api_router.patch("/pedidos/{pedido_id}/status")
 async def update_pedido_status(pedido_id: str, status: str):
     """Atualiza o status de um pedido"""
-    valid_statuses = ['producao', 'transito', 'concluido', 'cancelado']
+    valid_statuses = ['aguardando_aceite', 'producao', 'pronto', 'na_bag', 'em_rota', 'concluido', 'cancelado']
     if status not in valid_statuses:
         raise HTTPException(status_code=400, detail=f"Status inválido. Use: {valid_statuses}")
     
