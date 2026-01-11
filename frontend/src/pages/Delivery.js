@@ -698,8 +698,8 @@ export default function Delivery() {
           
           <div className="flex-1 overflow-auto p-2 space-y-2">
             {getPedidosByStatus('pronto').length === 0 ? (
-              <div className="flex flex-col items-center justify-center h-full text-green-500 text-sm">
-                <Package className="w-8 h-8 mb-2 opacity-50" />
+              <div className="flex flex-col items-center justify-center h-full text-muted-foreground text-sm">
+                <Package className="w-8 h-8 mb-2 opacity-30" />
                 <p>Nenhum pedido pronto</p>
               </div>
             ) : (
@@ -728,8 +728,7 @@ export default function Delivery() {
         </div>
 
         {/* Coluna 4: ENTREGADORES */}
-        <div className="flex-1 flex flex-col rounded-xl border-2 border-blue-300 overflow-hidden min-w-0"
-             style={{ backgroundColor: 'rgba(219, 234, 254, 0.5)' }}>
+        <div className="flex-1 flex flex-col rounded-xl border-2 border-blue-400 bg-card overflow-hidden min-w-0">
           <div className="p-3 bg-gradient-to-r from-blue-400 to-indigo-500 text-white">
             <div className="flex items-center justify-between">
               <h3 className="font-bold text-sm">ENTREGADORES</h3>
@@ -747,8 +746,8 @@ export default function Delivery() {
           
           <div className="flex-1 overflow-auto p-2 space-y-2">
             {entregadores.length === 0 ? (
-              <div className="flex flex-col items-center justify-center h-full text-blue-400 text-sm">
-                <Bike className="w-8 h-8 mb-2 opacity-50" />
+              <div className="flex flex-col items-center justify-center h-full text-muted-foreground text-sm">
+                <Bike className="w-8 h-8 mb-2 opacity-30" />
                 <p>Nenhum entregador cadastrado</p>
                 <Button 
                   size="sm" 
