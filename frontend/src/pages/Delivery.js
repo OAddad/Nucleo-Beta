@@ -74,11 +74,6 @@ export default function Delivery() {
   const [pedidoParaCancelar, setPedidoParaCancelar] = useState(null);
   const [motivoCancelamento, setMotivoCancelamento] = useState("");
 
-  // Modal do Entregador (BAG e EM ROTA)
-  const [entregadorModalOpen, setEntregadorModalOpen] = useState(false);
-  const [selectedEntregador, setSelectedEntregador] = useState(null);
-  const [entregadorPedidos, setEntregadorPedidos] = useState({ na_bag: [], em_rota: [] });
-
   // Carregar dados
   const fetchData = useCallback(async () => {
     try {

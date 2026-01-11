@@ -13542,3 +13542,6 @@
 2026-01-11T18:15:17.895638+00:00 | DB_CALL get_all_settings | P3 | 0.27ms | success
 2026-01-11T18:15:17.896951+00:00 | DB_CALL get_all_pedidos | P3 | 0.49ms | success
 2026-01-11T18:15:17.900468+00:00 | DB_CALL get_all_entregadores | P3 | 0.17ms | success
+2026-01-11T18:15:23.873806+00:00 | DB_CALL get_all_entregadores | P3 | 0.3ms | success
+2026-01-11T18:15:23.875284+00:00 | DB_CALL get_all_settings | P3 | 0.28ms | success
+2026-01-11T18:15:23.876064+00:00 | DB_CALL get_all_pedidos | P3 | 1.28ms | success
