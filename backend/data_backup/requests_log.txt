@@ -13563,3 +13563,12 @@
 2026-01-11T18:16:35.481419+00:00 | DB_CALL get_user_by_id | P3 | 5.56ms | success
 2026-01-11T18:16:35.482163+00:00 | DB_CALL get_total_pontuacao | P3 | 0.55ms | success
 2026-01-11T18:16:35.482408+00:00 | DB_CALL count_clientes | P3 | 0.12ms | success
+2026-01-11T18:16:46.281065+00:00 | DB_CALL get_user_by_id | P3 | 0.76ms | success
+2026-01-11T18:16:46.281299+00:00 | DB_CALL get_user_by_id | P3 | 0.86ms | success
+2026-01-11T18:16:46.281917+00:00 | DB_CALL recalculate_all_cliente_stats | P3 | 0.53ms | success
+2026-01-11T18:16:46.282015+00:00 | DB_CALL get_total_pontuacao | P3 | 0.8ms | success
+2026-01-11T18:16:46.282830+00:00 | DB_CALL get_all_clientes | P3 | 0.84ms | success
+2026-01-11T18:16:46.286479+00:00 | DB_CALL count_clientes | P3 | 4.39ms | success
+2026-01-11T18:16:46.323131+00:00 | DB_CALL get_all_products | P3 | 0.55ms | success
+2026-01-11T18:16:46.324637+00:00 | DB_CALL get_all_categories | P3 | 0.33ms | success
+2026-01-11T18:16:46.325793+00:00 | DB_CALL get_all_business_hours | P3 | 0.25ms | success
