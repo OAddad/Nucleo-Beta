@@ -17232,3 +17232,12 @@
 2026-01-11T21:36:38.617631+00:00 | DB_CALL search_ruas | P3 | 0.36ms | success
 2026-01-11T21:36:39.311524+00:00 | DB_CALL search_ruas | P3 | 0.36ms | success
 2026-01-11T21:36:40.033007+00:00 | DB_CALL search_ruas | P3 | 0.39ms | success
+2026-01-11T21:36:40.413284+00:00 | DB_CALL search_ruas | P3 | 0.36ms | success
+2026-01-11T21:36:41.586990+00:00 | DB_CALL search_ruas | P3 | 0.38ms | success
+2026-01-11T21:36:42.391281+00:00 | DB_CALL search_ruas | P3 | 0.39ms | success
+2026-01-11T21:36:42.941175+00:00 | DB_CALL search_ruas | P3 | 0.36ms | success
+2026-01-11T21:36:44.045862+00:00 | DB_CALL get_all_pedidos | P3 | 1.37ms | success
+2026-01-11T21:36:44.047198+00:00 | DB_CALL get_all_entregadores | P3 | 2.23ms | success
+2026-01-11T21:36:44.048025+00:00 | DB_CALL get_all_settings | P3 | 0.16ms | success
+2026-01-11T21:36:44.059737+00:00 | DB_CALL search_ruas | P3 | 0.31ms | success
+2026-01-11T21:36:44.263470+00:00 | DB_CALL search_ruas | P3 | 0.34ms | success
