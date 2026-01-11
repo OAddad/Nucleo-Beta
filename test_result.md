@@ -397,6 +397,21 @@ backend:
         agent: "testing"
         comment: "✅ DELIVERY AND ENTREGADORES ENDPOINTS TESTING COMPLETED (Jan 11, 2026): Testei os novos endpoints de Delivery e Entregadores exatamente conforme especificado na review request. RESULTADOS: ✅ TEST 1 PASSED: GET /api/entregadores retorna lista (possivelmente vazia) - encontrou 0 entregadores inicialmente. ✅ TEST 2 PASSED: POST /api/entregadores criou novo entregador 'João Motoboy' com telefone '(11) 99999-9999' usando autenticação Addad/Addad123. ✅ TEST 3 PASSED: GET /api/system/settings retorna novo campo delivery_auto_accept (boolean) corretamente. ✅ TEST 4 PASSED: PUT /api/system/settings alterou delivery_auto_accept para true com autenticação. ✅ TEST 5 PASSED: GET /api/pedidos retorna novos campos entregador_id e entregador_nome em todos os 10 pedidos existentes. ✅ TEST 6 PASSED: PATCH /api/pedidos/{id}/status testou todos os novos status válidos (aguardando_aceite, producao, pronto, na_bag, em_rota, concluido) - todos funcionando. ✅ TEST 7 PASSED: PATCH /api/pedidos/{id}/entregador designou entregador ao pedido e mudou status automaticamente para 'na_bag'. ✅ TEST 8 PASSED: GET /api/entregadores/{id}/pedidos listou pedidos do entregador (1 pedido com status na_bag). ✅ AUTHENTICATION: Credenciais Addad/Addad123 funcionando perfeitamente. Sistema de delivery e entregadores 100% operacional conforme especificações da review request. Todos os 8 testes passaram com 15/15 requests bem-sucedidos (100% success rate)."
 
+  - task: "Funcionários Endpoints"
+    implemented: true
+    working: true
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Endpoints de funcionários implementados: GET/POST/PUT/DELETE /api/funcionarios, integração com entregadores via cargo"
+      - working: true
+        agent: "testing"
+        comment: "✅ FUNCIONÁRIOS ENDPOINTS TESTING COMPLETED (Jan 11, 2026): Testei os novos endpoints de funcionários exatamente conforme especificado na review request. RESULTADOS: ✅ TEST 1 PASSED: GET /api/funcionarios retorna lista (possivelmente vazia) - encontrou 0 funcionários inicialmente. ✅ TEST 2a PASSED: GET /api/clientes encontrou 3 clientes existentes - usando cliente Diego Addad. ✅ TEST 2b PASSED: POST /api/funcionarios criou funcionário com cargo 'entregador' usando cliente_id e autenticação Addad/Addad123. ✅ TEST 3 PASSED: Funcionário com cargo 'entregador' aparece corretamente em GET /api/entregadores (integração funcionando). ✅ TEST 4 PASSED: GET /api/funcionarios/{id} retorna funcionário criado com todos os dados corretos. ✅ TEST 5 PASSED: PUT /api/funcionarios/{id} mudou cargo para 'cozinheiro' com sucesso. ✅ TEST 6 PASSED: Funcionário com cargo 'cozinheiro' NÃO aparece mais em GET /api/entregadores (lógica de cargo funcionando). ✅ TEST 7 PASSED: DELETE /api/funcionarios/{id} removeu funcionário com sucesso e verificou remoção da lista. ✅ AUTHENTICATION: Credenciais Addad/Addad123 funcionando perfeitamente. Sistema de funcionários 100% operacional conforme especificações da review request. Todos os 7 testes passaram com 100% de sucesso."
+
 frontend:
   - task: "Login Page"
     implemented: true
