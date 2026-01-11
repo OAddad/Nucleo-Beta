@@ -328,10 +328,10 @@ function CheckoutModal({ open, onClose, cart, cartTotal, client, darkMode, onOrd
     return code;
   };
 
-  const finalizeOrder = () => {
+  const finalizeOrder = async () => {
     const selectedAddr = addresses.find(a => a.id === selectedAddress);
     
-    // Mapear forma de pagamento para o formato esperado pelo Pedidos.js
+    // Mapear forma de pagamento para o formato esperado
     const paymentMap = {
       'pix': 'pix',
       'credit': 'cartao',
@@ -339,19 +339,12 @@ function CheckoutModal({ open, onClose, cart, cartTotal, client, darkMode, onOrd
       'cash': 'dinheiro'
     };
 
-    // Buscar pedidos existentes
-    const existingPedidos = JSON.parse(localStorage.getItem("pedidos") || "[]");
-    
-    // Criar novo pedido no formato esperado
-    const newPedido = {
-      id: Date.now().toString(),
-      codigo: generateUniqueCode(existingPedidos),
-      cliente: {
-        id: client.id,
-        nome: client.nome,
-        telefone: client.telefone,
-        email: client.email
-      },
+    // Criar pedido via API (banco de dados)
+    const pedidoData = {
+      cliente_id: client.id,
+      cliente_nome: client.nome,
+      cliente_telefone: client.telefone,
+      cliente_email: client.email,
       items: cart.map(item => ({
         id: item.id,
         nome: item.name,
@@ -361,34 +354,33 @@ function CheckoutModal({ open, onClose, cart, cartTotal, client, darkMode, onOrd
       })),
       total: cartTotal,
       status: "producao",
-      formaPagamento: paymentMap[paymentMethod],
-      troco: paymentMethod === 'cash' ? {
-        precisa: needsChange,
-        valor: needsChange ? parseFloat(changeAmount) : null
-      } : null,
-      tipoEntrega: deliveryType, // 'pickup' ou 'delivery'
-      endereco: deliveryType === 'delivery' && selectedAddr ? {
-        label: selectedAddr.label,
-        endereco: selectedAddr.endereco,
-        numero: selectedAddr.numero,
-        complemento: selectedAddr.complemento,
-        bairro: selectedAddr.bairro,
-        cep: selectedAddr.cep
-      } : null,
-      modulo: "Cardapio", // Origem do pedido
-      created_at: new Date().toISOString()
+      forma_pagamento: paymentMap[paymentMethod],
+      troco_precisa: paymentMethod === 'cash' ? needsChange : false,
+      troco_valor: paymentMethod === 'cash' && needsChange ? parseFloat(changeAmount) : null,
+      tipo_entrega: deliveryType,
+      endereco_label: deliveryType === 'delivery' && selectedAddr ? selectedAddr.label : null,
+      endereco_rua: deliveryType === 'delivery' && selectedAddr ? selectedAddr.endereco : null,
+      endereco_numero: deliveryType === 'delivery' && selectedAddr ? selectedAddr.numero : null,
+      endereco_complemento: deliveryType === 'delivery' && selectedAddr ? selectedAddr.complemento : null,
+      endereco_bairro: deliveryType === 'delivery' && selectedAddr ? selectedAddr.bairro : null,
+      endereco_cep: deliveryType === 'delivery' && selectedAddr ? selectedAddr.cep : null,
+      modulo: "Cardapio"
     };
 
-    // Salvar no localStorage
-    const updatedPedidos = [newPedido, ...existingPedidos];
-    localStorage.setItem("pedidos", JSON.stringify(updatedPedidos));
-    
-    // Disparar evento para atualizar outras abas/componentes
-    window.dispatchEvent(new Event('pedidosUpdated'));
+    try {
+      const response = await axios.post(`${API}/pedidos`, pedidoData);
+      const newPedido = response.data;
+      
+      // Disparar evento para atualizar outras abas/componentes
+      window.dispatchEvent(new Event('pedidosUpdated'));
 
-    toast.success(`Pedido ${newPedido.codigo} realizado com sucesso! 🎉`);
-    onOrderComplete(newPedido);
-    onClose();
+      toast.success(`Pedido ${newPedido.codigo} realizado com sucesso! 🎉`);
+      onOrderComplete(newPedido);
+      onClose();
+    } catch (error) {
+      console.error("Erro ao criar pedido:", error);
+      toast.error("Erro ao criar pedido. Tente novamente.");
+    }
   };
 
   const t = {
