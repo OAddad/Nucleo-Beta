@@ -1670,7 +1670,7 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
                       />
                     </div>
                     {taxaEntrega > 0 && (
-                      <div className="p-3 bg-blue-50 rounded-lg text-blue-700">
+                      <div className="p-3 bg-blue-500/10 rounded-lg text-blue-500">
                         Taxa de entrega: <strong>R$ {taxaEntrega.toFixed(2)}</strong>
                       </div>
                     )}
@@ -1696,7 +1696,7 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
                     <button
                       key={fp.id}
                       className={`p-3 border-2 rounded-lg flex items-center gap-2 transition-all ${
-                        formaPagamento === fp.id ? "border-orange-500 bg-orange-50" : "border-gray-200"
+                        formaPagamento === fp.id ? "border-orange-500 bg-orange-500/10" : "border-border"
                       }`}
                       onClick={() => setFormaPagamento(fp.id)}
                     >
@@ -1732,8 +1732,8 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
           </div>
           
           {/* Carrinho lateral */}
-          <div className="w-80 border-l bg-gray-50 flex flex-col">
-            <div className="p-3 border-b bg-white">
+          <div className="w-80 border-l bg-muted/30 flex flex-col">
+            <div className="p-3 border-b bg-card">
               <h3 className="font-semibold flex items-center gap-2">
                 <ShoppingBag className="w-4 h-4" /> Carrinho ({cart.length})
               </h3>
@@ -1741,10 +1741,10 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
             
             <div className="flex-1 overflow-y-auto p-3 space-y-2">
               {cart.length === 0 ? (
-                <p className="text-center text-gray-500 py-8">Carrinho vazio</p>
+                <p className="text-center text-muted-foreground py-8">Carrinho vazio</p>
               ) : (
                 cart.map(item => (
-                  <div key={item.id} className="bg-white p-3 rounded-lg border">
+                  <div key={item.id} className="bg-card p-3 rounded-lg border">
                     <div className="flex justify-between items-start">
                       <div className="flex-1">
                         <p className="font-medium text-sm">{item.name}</p>
