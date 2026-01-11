@@ -14800,3 +14800,9 @@
 2026-01-11T18:42:31.007337+00:00 | DB_CALL get_user_by_id | P3 | 0.32ms | success
 2026-01-11T18:42:31.007754+00:00 | DB_CALL get_all_purchases | P3 | 0.27ms | success
 2026-01-11T18:42:31.789465+00:00 | DB_CALL get_all_funcionarios | P3 | 0.8ms | success
+2026-01-11T18:42:40.599996+00:00 | DB_CALL get_all_settings | P3 | 0.24ms | success
+2026-01-11T18:42:40.604715+00:00 | DB_CALL get_all_pedidos | P3 | 1.25ms | success
+2026-01-11T18:42:40.605718+00:00 | DB_CALL get_all_entregadores | P3 | 1.82ms | success
+2026-01-11T18:42:44.113926+00:00 | DB_CALL get_all_settings | P3 | 1.18ms | success
+2026-01-11T18:42:44.114868+00:00 | DB_CALL get_all_entregadores | P3 | 1.51ms | success
+2026-01-11T18:42:44.115233+00:00 | DB_CALL get_all_pedidos | P3 | 1.75ms | success
