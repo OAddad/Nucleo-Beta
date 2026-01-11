@@ -960,26 +960,30 @@ function CheckoutModal({ open, onClose, cart, cartTotal, client, darkMode, onOrd
                           <ChevronDown className={`w-4 h-4 transition-transform ${showBairroDropdown ? 'rotate-180' : ''}`} />
                         </div>
                         {showBairroDropdown && (
-                          <div className={`absolute z-50 w-full mt-1 max-h-48 overflow-auto rounded-lg border shadow-lg ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
-                            {bairros.length === 0 ? (
-                              <div className={`px-3 py-4 text-center text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                                Nenhum bairro cadastrado
-                              </div>
-                            ) : (
-                              bairros.map(bairro => (
-                                <button
-                                  key={bairro.id}
-                                  onClick={() => handleSelectBairro(bairro)}
-                                  className={`w-full px-3 py-2 text-left text-sm hover:bg-orange-500/10 transition-colors flex items-center justify-between ${darkMode ? 'text-white' : 'text-gray-900'} ${newAddress.bairro === bairro.nome ? 'bg-orange-500/20' : ''}`}
-                                >
-                                  <span className="font-medium">{bairro.nome}</span>
-                                  {bairro.valor_entrega > 0 && (
-                                    <span className="text-green-500 text-xs">+R$ {bairro.valor_entrega.toFixed(2)}</span>
-                                  )}
-                                </button>
-                              ))
-                            )}
-                          </div>
+                          <>
+                            {/* Overlay para fechar ao clicar fora */}
+                            <div className="fixed inset-0 z-40" onClick={() => setShowBairroDropdown(false)} />
+                            <div className={`absolute z-50 w-full mt-1 max-h-48 overflow-auto rounded-lg border shadow-lg ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
+                              {bairros.length === 0 ? (
+                                <div className={`px-3 py-4 text-center text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                                  Nenhum bairro cadastrado
+                                </div>
+                              ) : (
+                                bairros.map(bairro => (
+                                  <button
+                                    key={bairro.id}
+                                    onClick={() => handleSelectBairro(bairro)}
+                                    className={`w-full px-3 py-2 text-left text-sm hover:bg-orange-500/10 transition-colors flex items-center justify-between ${darkMode ? 'text-white' : 'text-gray-900'} ${newAddress.bairro === bairro.nome ? 'bg-orange-500/20' : ''}`}
+                                  >
+                                    <span className="font-medium">{bairro.nome}</span>
+                                    {bairro.valor_entrega > 0 && (
+                                      <span className="text-green-500 text-xs">+R$ {bairro.valor_entrega.toFixed(2)}</span>
+                                    )}
+                                  </button>
+                                ))
+                              )}
+                            </div>
+                          </>
                         )}
                       </div>
                       <Input
