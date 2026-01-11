@@ -9860,3 +9860,5 @@
 2026-01-11T16:00:56.111504+00:00 | DB_CALL count_products | P3 | 0.13ms | success
 2026-01-11T16:00:56.111650+00:00 | DB_CALL count_users | P3 | 0.1ms | success
 2026-01-11T16:00:59.561067+00:00 | DB_CALL get_all_pedidos | P3 | 0.5ms | success
+2026-01-11T16:01:04.561577+00:00 | DB_CALL get_all_pedidos | P3 | 0.41ms | success
+2026-01-11T16:01:06.212452+00:00 | DB_CALL get_cliente_by_id | P3 | 0.34ms | success
