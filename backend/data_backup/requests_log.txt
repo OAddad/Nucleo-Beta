@@ -17086,3 +17086,7 @@
 2026-01-11T21:25:15.732519+00:00 | DB_CALL get_all_flow_edges | P3 | 0.08ms | success
 2026-01-11T21:25:16.670959+00:00 | DB_CALL get_user_by_id | P3 | 0.25ms | success
 2026-01-11T21:26:12.998955+00:00 | DB_CALL get_user_by_username | P3 | 0.25ms | success
+2026-01-11T21:27:39.163720+00:00 | DB_CALL get_all_products | P3 | 0.47ms | success
+2026-01-11T21:27:39.166162+00:00 | DB_CALL get_all_categories | P3 | 0.18ms | success
+2026-01-11T21:27:39.167729+00:00 | DB_CALL get_all_business_hours | P3 | 0.17ms | success
+2026-01-11T21:27:39.356553+00:00 | DB_CALL get_all_bairros | P3 | 1.84ms | success
