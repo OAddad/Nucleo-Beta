@@ -10761,3 +10761,6 @@
 2026-01-11T17:06:10.047925+00:00 | DB_CALL get_all_pedidos | P3 | 0.4ms | success
 2026-01-11T17:06:15.048734+00:00 | DB_CALL get_all_pedidos | P3 | 0.42ms | success
 2026-01-11T17:06:20.051606+00:00 | DB_CALL get_all_pedidos | P3 | 0.44ms | success
+2026-01-11T17:06:25.044487+00:00 | DB_CALL get_all_pedidos | P3 | 0.44ms | success
+2026-01-11T17:06:30.057053+00:00 | DB_CALL get_all_pedidos | P3 | 0.4ms | success
+2026-01-11T17:06:35.052430+00:00 | DB_CALL get_all_pedidos | P3 | 0.4ms | success
