@@ -839,16 +839,7 @@ export default function Dashboard({ setIsAuthenticated }) {
                 </div>
               } />
               <Route path="/vendas/pedidos" element={<Pedidos />} />
-              <Route path="/vendas/entregas" element={
-                <div className="p-8">
-                  <h1 className="text-3xl font-bold">Entregas</h1>
-                  <p className="text-muted-foreground mt-2">Em breve...</p>
-                  <div className="mt-8 p-6 bg-muted/50 rounded-xl border text-center">
-                    <Truck className="w-16 h-16 mx-auto text-muted-foreground/50 mb-4" />
-                    <p className="text-muted-foreground">Esta funcionalidade está em desenvolvimento.</p>
-                  </div>
-                </div>
-              } />
+              <Route path="/vendas/entregas" element={<RelatorioEntregas />} />
               <Route path="/vendas/clientes" element={
                 <div className="p-8">
                   <h1 className="text-3xl font-bold">Clientes</h1>
