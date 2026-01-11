@@ -1548,15 +1548,24 @@ def update_cliente_pedido_stats(cliente_id: str, order_value: float) -> Optional
         if not cliente:
             return None
         
-        now = datetime.now(timezone.utc).isoformat()
+        now = datetime.now(timezone.utc)
+        now_iso = now.isoformat()
         new_pedidos_count = (cliente.get('pedidos_count') or 0) + 1
         new_total_gasto = (cliente.get('total_gasto') or 0) + order_value
         
+        # Calcular pedidos nos últimos 30 dias
+        thirty_days_ago = (now - timedelta(days=30)).isoformat()
+        cursor.execute('''
+            SELECT COUNT(*) FROM pedidos 
+            WHERE cliente_id = ? AND created_at >= ?
+        ''', (cliente_id, thirty_days_ago))
+        orders_last_30 = cursor.fetchone()[0] + 1  # +1 para incluir o pedido atual
+        
         cursor.execute('''
             UPDATE clientes 
-            SET pedidos_count = ?, total_gasto = ?, last_order_date = ?
+            SET pedidos_count = ?, total_gasto = ?, last_order_date = ?, orders_last_30_days = ?
             WHERE id = ?
-        ''', (new_pedidos_count, new_total_gasto, now, cliente_id))
+        ''', (new_pedidos_count, new_total_gasto, now_iso, orders_last_30, cliente_id))
         conn.commit()
         
         return get_cliente_by_id(cliente_id)
