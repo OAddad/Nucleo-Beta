@@ -3410,6 +3410,200 @@ async def whatsapp_messages(limit: int = 20, current_user: User = Depends(get_cu
     except Exception as e:
         return {"success": False, "messages": [], "error": str(e)}
 
+@api_router.post("/whatsapp/toggle-auto-reply")
+async def whatsapp_toggle_auto_reply(current_user: User = Depends(get_current_user)):
+    """Toggle resposta automática do chatbot"""
+    try:
+        async with httpx.AsyncClient(timeout=10.0) as client:
+            response = await client.post(f"{WHATSAPP_SERVICE_URL}/toggle-auto-reply")
+            return response.json()
+    except httpx.ConnectError:
+        return {"success": False, "message": "Serviço WhatsApp não está rodando"}
+    except Exception as e:
+        return {"success": False, "message": str(e)}
+
+
+# ==================== CHATBOT AI PROCESSING ====================
+import chatbot_ai
+
+class ChatbotProcessMessage(BaseModel):
+    phone: str
+    message: str
+    push_name: Optional[str] = ""
+
+@api_router.post("/chatbot/process")
+async def chatbot_process_message(data: ChatbotProcessMessage):
+    """Processa mensagem do WhatsApp com IA"""
+    try:
+        response = await chatbot_ai.process_message(
+            phone=data.phone,
+            message=data.message,
+            push_name=data.push_name or ""
+        )
+        return {"success": True, "response": response}
+    except Exception as e:
+        logger.error(f"Erro no chatbot: {e}")
+        return {"success": False, "response": "Desculpe, ocorreu um erro. Tente novamente."}
+
+@api_router.post("/chatbot/reset-conversation")
+async def chatbot_reset_conversation(phone: str, current_user: User = Depends(get_current_user)):
+    """Reseta a conversa de um telefone"""
+    try:
+        success = await chatbot_ai.reset_conversation(phone)
+        return {"success": success}
+    except Exception as e:
+        return {"success": False, "error": str(e)}
+
+
+# ==================== CHATBOT FLOW EDITOR ====================
+
+class FlowNodeCreate(BaseModel):
+    type: str  # start, message, question, condition, action, ai, end
+    title: str
+    content: Optional[str] = ""
+    position_x: float = 0
+    position_y: float = 0
+    config: Optional[str] = "{}"
+    is_active: bool = True
+
+class FlowNodeUpdate(BaseModel):
+    type: Optional[str] = None
+    title: Optional[str] = None
+    content: Optional[str] = None
+    position_x: Optional[float] = None
+    position_y: Optional[float] = None
+    config: Optional[str] = None
+    is_active: Optional[bool] = None
+
+class FlowEdgeCreate(BaseModel):
+    source_id: str
+    target_id: str
+    condition: Optional[str] = ""
+    label: Optional[str] = ""
+
+@api_router.get("/chatbot/flow")
+async def get_chatbot_flow(current_user: User = Depends(get_current_user)):
+    """Retorna todos os nós e conexões do fluxograma"""
+    nodes = await db_call(sqlite_db.get_all_flow_nodes)
+    edges = await db_call(sqlite_db.get_all_flow_edges)
+    return {"success": True, "nodes": nodes, "edges": edges}
+
+@api_router.post("/chatbot/flow/node")
+async def create_flow_node(data: FlowNodeCreate, current_user: User = Depends(get_current_user)):
+    """Cria um novo nó no fluxograma"""
+    if current_user.role not in ["proprietario", "administrador"]:
+        raise HTTPException(status_code=403, detail="Sem permissão")
+    
+    now = datetime.now(timezone.utc).isoformat()
+    node_data = {
+        "id": str(uuid.uuid4()),
+        "type": data.type,
+        "title": data.title,
+        "content": data.content,
+        "position_x": data.position_x,
+        "position_y": data.position_y,
+        "config": data.config,
+        "is_active": data.is_active,
+        "created_at": now,
+        "updated_at": now
+    }
+    
+    node = await db_call(sqlite_db.create_flow_node, node_data)
+    return {"success": True, "node": node}
+
+@api_router.put("/chatbot/flow/node/{node_id}")
+async def update_flow_node(node_id: str, data: FlowNodeUpdate, current_user: User = Depends(get_current_user)):
+    """Atualiza um nó existente"""
+    if current_user.role not in ["proprietario", "administrador"]:
+        raise HTTPException(status_code=403, detail="Sem permissão")
+    
+    update_data = {k: v for k, v in data.model_dump().items() if v is not None}
+    update_data["updated_at"] = datetime.now(timezone.utc).isoformat()
+    
+    node = await db_call(sqlite_db.update_flow_node, node_id, update_data)
+    if not node:
+        raise HTTPException(status_code=404, detail="Nó não encontrado")
+    return {"success": True, "node": node}
+
+@api_router.delete("/chatbot/flow/node/{node_id}")
+async def delete_flow_node(node_id: str, current_user: User = Depends(get_current_user)):
+    """Deleta um nó"""
+    if current_user.role not in ["proprietario", "administrador"]:
+        raise HTTPException(status_code=403, detail="Sem permissão")
+    
+    success = await db_call(sqlite_db.delete_flow_node, node_id)
+    return {"success": success}
+
+@api_router.post("/chatbot/flow/edge")
+async def create_flow_edge(data: FlowEdgeCreate, current_user: User = Depends(get_current_user)):
+    """Cria uma nova conexão entre nós"""
+    if current_user.role not in ["proprietario", "administrador"]:
+        raise HTTPException(status_code=403, detail="Sem permissão")
+    
+    edge_data = {
+        "id": str(uuid.uuid4()),
+        "source_id": data.source_id,
+        "target_id": data.target_id,
+        "condition": data.condition,
+        "label": data.label,
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    edge = await db_call(sqlite_db.create_flow_edge, edge_data)
+    return {"success": True, "edge": edge}
+
+@api_router.delete("/chatbot/flow/edge/{edge_id}")
+async def delete_flow_edge(edge_id: str, current_user: User = Depends(get_current_user)):
+    """Deleta uma conexão"""
+    if current_user.role not in ["proprietario", "administrador"]:
+        raise HTTPException(status_code=403, detail="Sem permissão")
+    
+    success = await db_call(sqlite_db.delete_flow_edge, edge_id)
+    return {"success": success}
+
+@api_router.post("/chatbot/flow/save-all")
+async def save_all_flow(nodes: List[dict], edges: List[dict], current_user: User = Depends(get_current_user)):
+    """Salva todo o fluxograma (substitui existente)"""
+    if current_user.role not in ["proprietario", "administrador"]:
+        raise HTTPException(status_code=403, detail="Sem permissão")
+    
+    # Limpar fluxograma existente
+    existing_nodes = await db_call(sqlite_db.get_all_flow_nodes)
+    for node in existing_nodes:
+        await db_call(sqlite_db.delete_flow_node, node['id'])
+    
+    now = datetime.now(timezone.utc).isoformat()
+    
+    # Criar novos nós
+    for node in nodes:
+        node_data = {
+            "id": node.get('id', str(uuid.uuid4())),
+            "type": node['type'],
+            "title": node['title'],
+            "content": node.get('content', ''),
+            "position_x": node.get('position_x', node.get('position', {}).get('x', 0)),
+            "position_y": node.get('position_y', node.get('position', {}).get('y', 0)),
+            "config": node.get('config', '{}'),
+            "is_active": node.get('is_active', True),
+            "created_at": now,
+            "updated_at": now
+        }
+        await db_call(sqlite_db.create_flow_node, node_data)
+    
+    # Criar novas conexões
+    for edge in edges:
+        edge_data = {
+            "id": edge.get('id', str(uuid.uuid4())),
+            "source_id": edge.get('source_id', edge.get('source')),
+            "target_id": edge.get('target_id', edge.get('target')),
+            "condition": edge.get('condition', ''),
+            "label": edge.get('label', ''),
+            "created_at": now
+        }
+        await db_call(sqlite_db.create_flow_edge, edge_data)
+    
+    return {"success": True, "message": "Fluxograma salvo com sucesso"}
+
 
 # ==================== DECISION TREE (ÁRVORE DE DECISÃO) ====================
 
