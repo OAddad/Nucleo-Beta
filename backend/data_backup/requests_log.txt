@@ -9045,3 +9045,9 @@
 2026-01-11T14:10:15.853006+00:00 | DB_CALL count_users | P3 | 0.1ms | success
 2026-01-11T14:10:54.824862+00:00 | DB_CALL get_user_by_id | P3 | 0.45ms | success
 2026-01-11T14:10:54.825509+00:00 | DB_CALL get_all_business_hours | P3 | 0.26ms | success
+2026-01-11T14:11:09.771662+00:00 | DB_CALL get_all_categories | P3 | 2.33ms | success
+2026-01-11T14:11:09.772541+00:00 | DB_CALL get_all_business_hours | P3 | 2.93ms | success
+2026-01-11T14:11:09.773153+00:00 | DB_CALL get_all_products | P3 | 3.28ms | success
+2026-01-11T14:11:09.773748+00:00 | DB_CALL get_all_categories | P3 | 2.69ms | success
+2026-01-11T14:11:09.774076+00:00 | DB_CALL get_all_products | P3 | 2.56ms | success
+2026-01-11T14:11:09.834763+00:00 | DB_CALL get_all_business_hours | P3 | 0.29ms | success

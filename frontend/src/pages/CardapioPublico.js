@@ -46,6 +46,147 @@ const fetchWithFallback = async (endpoint) => {
   }
 };
 
+// Popup de Produto para adicionar ao carrinho
+function ProductPopup({ product, open, onClose, onAddToCart, darkMode }) {
+  const [imageError, setImageError] = useState(false);
+  const [quantity, setQuantity] = useState(1);
+  const [observation, setObservation] = useState("");
+
+  // Reset quando abrir com novo produto
+  useEffect(() => {
+    if (open && product) {
+      setQuantity(1);
+      setObservation("");
+      setImageError(false);
+    }
+  }, [open, product]);
+
+  if (!product) return null;
+
+  const totalPrice = (product.sale_price || 0) * quantity;
+
+  const handleAdd = () => {
+    onAddToCart({
+      ...product,
+      quantity,
+      observation: observation.trim() || null
+    });
+    onClose();
+  };
+
+  const t = {
+    bg: darkMode ? 'bg-zinc-900' : 'bg-white',
+    bgMuted: darkMode ? 'bg-zinc-800' : 'bg-gray-100',
+    text: darkMode ? 'text-white' : 'text-gray-900',
+    textMuted: darkMode ? 'text-zinc-400' : 'text-gray-500',
+    border: darkMode ? 'border-zinc-700' : 'border-gray-200',
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={onClose}>
+      <DialogContent className={`sm:max-w-lg p-0 gap-0 overflow-hidden ${t.bg} ${t.text} border-0`}>
+        {/* Header com X */}
+        <div className="absolute top-4 right-4 z-10">
+          <button
+            onClick={onClose}
+            className={`rounded-full p-2 ${t.bgMuted} hover:opacity-80 transition-opacity shadow-sm`}
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        {/* Conteúdo */}
+        <div className="p-6">
+          {/* Foto e Info lado a lado */}
+          <div className="flex gap-6 mb-6">
+            {/* Foto Grande */}
+            <div className={`w-40 h-40 rounded-xl ${t.bgMuted} overflow-hidden flex-shrink-0 shadow-sm`}>
+              {product.photo_url && !imageError ? (
+                <img
+                  src={getImageUrl(product.photo_url)}
+                  alt={product.name}
+                  className="w-full h-full object-cover"
+                  onError={() => setImageError(true)}
+                />
+              ) : (
+                <div className={`w-full h-full flex flex-col items-center justify-center ${t.textMuted}`}>
+                  <ImageOff className="w-12 h-12" />
+                  <span className="text-xs mt-2">Sem foto</span>
+                </div>
+              )}
+            </div>
+
+            {/* Info do Produto */}
+            <div className="flex-1">
+              <h2 className="text-2xl font-bold mb-1">{product.name}</h2>
+              {product.description && (
+                <p className={`${t.textMuted} text-sm mb-4 line-clamp-3`}>{product.description}</p>
+              )}
+              
+              {/* Preço */}
+              <div className="text-2xl font-bold text-orange-500">
+                R$ {(product.sale_price || 0).toFixed(2).replace('.', ',')}
+              </div>
+            </div>
+          </div>
+
+          {/* Campo de Observação */}
+          <div className="mb-6">
+            <Label className={`text-base font-medium mb-2 block ${t.text}`}>Alguma observação?</Label>
+            <Textarea
+              value={observation}
+              onChange={(e) => setObservation(e.target.value)}
+              placeholder="Ex: tirar cebola, maionese à parte, etc..."
+              className={`resize-none ${t.bgMuted} ${t.text} ${t.border} border focus:ring-orange-500`}
+              maxLength={255}
+              rows={3}
+            />
+            <p className={`text-xs ${t.textMuted} text-right mt-1`}>
+              {observation.length} / 255
+            </p>
+          </div>
+        </div>
+
+        {/* Footer Fixo - Quantidade e Botão Adicionar */}
+        <div className={`border-t ${t.border} ${t.bgMuted} p-4`}>
+          <div className="flex items-center justify-between gap-4">
+            {/* Controle de Quantidade */}
+            <div className={`flex items-center gap-1 ${t.bg} rounded-full border ${t.border} p-1`}>
+              <Button
+                variant="ghost"
+                size="icon"
+                className={`h-12 w-12 rounded-full hover:${t.bgMuted}`}
+                onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                disabled={quantity <= 1}
+              >
+                <Minus className="w-5 h-5" />
+              </Button>
+              <span className="w-10 text-center text-xl font-bold">{quantity}</span>
+              <Button
+                variant="ghost"
+                size="icon"
+                className={`h-12 w-12 rounded-full hover:${t.bgMuted}`}
+                onClick={() => setQuantity(quantity + 1)}
+              >
+                <Plus className="w-5 h-5" />
+              </Button>
+            </div>
+
+            {/* Botão Adicionar Grande */}
+            <Button
+              onClick={handleAdd}
+              className="flex-1 h-14 text-lg font-bold rounded-full bg-orange-500 hover:bg-orange-600 text-white shadow-lg"
+            >
+              <ShoppingBag className="w-6 h-6 mr-2" />
+              Adicionar  R$ {totalPrice.toFixed(2).replace('.', ',')}
+            </Button>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
 export default function CardapioPublico({ onAdminLogin }) {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
