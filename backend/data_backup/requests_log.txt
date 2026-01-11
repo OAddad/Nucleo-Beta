@@ -9642,3 +9642,10 @@
 2026-01-11T15:39:19.227005+00:00 | DB_CALL get_all_categories | P3 | 0.14ms | success
 2026-01-11T15:39:19.391419+00:00 | DB_CALL get_user_by_id | P3 | 0.24ms | success
 2026-01-11T15:39:19.391689+00:00 | DB_CALL get_all_categories | P3 | 0.13ms | success
+2026-01-11T15:39:52.921864+00:00 | DB_CALL get_user_by_id | P3 | 0.42ms | success
+2026-01-11T15:39:52.922269+00:00 | DB_CALL get_next_product_code | P3 | 0.2ms | success
+2026-01-11T15:39:52.922452+00:00 | DB_CALL get_ingredient_by_id | P3 | 0.12ms | success
+2026-01-11T15:39:52.925340+00:00 | DB_CALL create_product | P3 | 2.78ms | success
+2026-01-11T15:39:52.927604+00:00 | DB_CALL create_audit_log | P3 | 2.14ms | success
+2026-01-11T15:39:53.105004+00:00 | DB_CALL get_user_by_id | P3 | 0.24ms | success
+2026-01-11T15:39:53.105449+00:00 | DB_CALL get_all_products | P3 | 0.27ms | success
