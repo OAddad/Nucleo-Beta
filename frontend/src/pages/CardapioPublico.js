@@ -1345,9 +1345,9 @@ export default function CardapioPublico({ onAdminLogin }) {
     try {
       const data = await fetchWithFallback('/public/categories');
       setCategories(Array.isArray(data) ? data : []);
-      setCategories(data);
     } catch (error) {
       console.error("Erro ao carregar categorias:", error);
+      setCategories([]);
     }
   };
 
