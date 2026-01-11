@@ -8820,3 +8820,4 @@
 2026-01-11T13:39:21.954298+00:00 | DB_CALL count_products | P3 | 0.13ms | success
 2026-01-11T13:39:21.954459+00:00 | DB_CALL count_users | P3 | 0.11ms | success
 2026-01-11T13:39:25.996816+00:00 | DB_CALL get_all_products | P3 | 0.49ms | success
+2026-01-11T13:42:01.981261+00:00 | DB_CALL get_all_products | P3 | 0.39ms | success
