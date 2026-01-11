@@ -9805,3 +9805,4 @@
 2026-01-11T15:57:38.764506+00:00 | DB_CALL get_total_pontuacao | P3 | 2.65ms | success
 2026-01-11T15:57:38.764864+00:00 | DB_CALL count_clientes | P3 | 0.21ms | success
 2026-01-11T15:57:38.769617+00:00 | DB_CALL get_user_by_username | P3 | 0.2ms | success
+2026-01-11T15:57:45.018369+00:00 | DB_CALL get_user_by_username | P3 | 0.24ms | success
