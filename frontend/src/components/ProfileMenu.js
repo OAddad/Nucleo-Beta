@@ -545,10 +545,15 @@ function PontuacaoModal({ isOpen, onClose, client }) {
 function MeusPedidosModal({ isOpen, onClose, client, darkMode }) {
   const [pedidos, setPedidos] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [pedidoSelecionado, setPedidoSelecionado] = useState(null);
 
   useEffect(() => {
     if (isOpen && client) {
       fetchPedidos();
+    }
+    // Limpar seleção ao fechar
+    if (!isOpen) {
+      setPedidoSelecionado(null);
     }
   }, [isOpen, client]);
 
@@ -556,7 +561,11 @@ function MeusPedidosModal({ isOpen, onClose, client, darkMode }) {
     setLoading(true);
     try {
       const response = await axios.get(`${API}/pedidos/cliente/${client.id}`);
-      setPedidos(response.data || []);
+      // Ordenar por data mais recente
+      const pedidosOrdenados = (response.data || []).sort((a, b) => 
+        new Date(b.created_at) - new Date(a.created_at)
+      );
+      setPedidos(pedidosOrdenados);
     } catch (error) {
       console.error("Erro ao carregar pedidos:", error);
       setPedidos([]);
@@ -568,15 +577,25 @@ function MeusPedidosModal({ isOpen, onClose, client, darkMode }) {
   const formatDate = (dateStr) => {
     if (!dateStr) return "-";
     const date = new Date(dateStr);
-    return date.toLocaleDateString("pt-BR") + " " + date.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+    return date.toLocaleDateString("pt-BR") + " às " + date.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
   };
 
-  const statusLabels = {
-    producao: { label: "Em Produção", color: "bg-yellow-500" },
-    aguardando: { label: "Aguardando", color: "bg-blue-500" },
-    transito: { label: "Em Trânsito", color: "bg-purple-500" },
-    concluido: { label: "Entregue", color: "bg-green-500" },
-    cancelado: { label: "Cancelado", color: "bg-red-500" },
+  const statusConfig = {
+    aguardando_aceite: { label: "Aguardando Aceite", color: "bg-yellow-500", icon: "⏳" },
+    producao: { label: "Em Produção", color: "bg-orange-500", icon: "🍳" },
+    pronto: { label: "Pronto", color: "bg-blue-500", icon: "✅" },
+    na_bag: { label: "Na Bag", color: "bg-purple-500", icon: "📦" },
+    em_rota: { label: "Em Rota", color: "bg-indigo-500", icon: "🛵" },
+    concluido: { label: "Entregue", color: "bg-green-500", icon: "🎉" },
+    cancelado: { label: "Cancelado", color: "bg-red-500", icon: "❌" },
+    aguardando: { label: "Aguardando", color: "bg-gray-500", icon: "⏳" },
+    transito: { label: "Em Trânsito", color: "bg-purple-500", icon: "🛵" },
+  };
+
+  const formasPagamento = {
+    pix: { label: "PIX", icon: "📱" },
+    cartao: { label: "Cartão", icon: "💳" },
+    dinheiro: { label: "Dinheiro", icon: "💵" },
   };
 
   if (!isOpen) return null;
@@ -587,8 +606,129 @@ function MeusPedidosModal({ isOpen, onClose, client, darkMode }) {
     textMuted: darkMode ? 'text-zinc-400' : 'text-gray-500',
     border: darkMode ? 'border-zinc-700' : 'border-gray-200',
     bgCard: darkMode ? 'bg-zinc-800' : 'bg-gray-50',
+    bgHover: darkMode ? 'hover:bg-zinc-700' : 'hover:bg-gray-100',
   };
 
+  // Visualização de detalhes do pedido
+  if (pedidoSelecionado) {
+    const status = statusConfig[pedidoSelecionado.status] || { label: pedidoSelecionado.status, color: 'bg-gray-500', icon: '📋' };
+    const pagamento = formasPagamento[pedidoSelecionado.forma_pagamento] || { label: pedidoSelecionado.forma_pagamento, icon: '💰' };
+    
+    return (
+      <div className="fixed inset-0 z-[100] flex items-center justify-center">
+        <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
+        <div className={`relative ${t.bg} rounded-2xl shadow-2xl w-full max-w-2xl mx-4 border ${t.border} max-h-[90vh] overflow-hidden`}>
+          {/* Header */}
+          <div className={`flex items-center justify-between p-4 border-b ${t.border}`}>
+            <button 
+              onClick={() => setPedidoSelecionado(null)} 
+              className={`text-sm flex items-center gap-1 ${t.textMuted} hover:text-orange-500`}
+            >
+              ← Voltar
+            </button>
+            <h2 className={`font-bold text-lg ${t.text}`}>
+              Pedido {pedidoSelecionado.codigo}
+            </h2>
+            <button onClick={onClose} className={`w-8 h-8 flex items-center justify-center rounded-lg hover:bg-zinc-700/50 ${t.textMuted}`}>
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+          
+          <div className="overflow-y-auto max-h-[70vh] p-4 space-y-4">
+            {/* Status Badge */}
+            <div className="flex items-center justify-center">
+              <div className={`px-4 py-2 rounded-full text-white font-medium flex items-center gap-2 ${status.color}`}>
+                <span className="text-lg">{status.icon}</span>
+                {status.label}
+              </div>
+            </div>
+
+            {/* Info do Pedido */}
+            <div className={`${t.bgCard} rounded-xl p-4 border ${t.border}`}>
+              <h3 className={`font-semibold mb-3 ${t.text}`}>📋 Informações do Pedido</h3>
+              <div className={`space-y-2 text-sm ${t.textMuted}`}>
+                <p><strong>Data:</strong> {formatDate(pedidoSelecionado.created_at)}</p>
+                <p><strong>Tipo:</strong> {pedidoSelecionado.tipo_entrega === 'delivery' ? '🛵 Entrega' : '🏪 Retirada'}</p>
+                <p><strong>Pagamento:</strong> {pagamento.icon} {pagamento.label}</p>
+                {pedidoSelecionado.troco_precisa && pedidoSelecionado.troco_valor && (
+                  <p><strong>Troco para:</strong> R$ {pedidoSelecionado.troco_valor.toFixed(2).replace('.', ',')}</p>
+                )}
+              </div>
+            </div>
+
+            {/* Endereço de Entrega */}
+            {pedidoSelecionado.tipo_entrega === 'delivery' && pedidoSelecionado.endereco_rua && (
+              <div className={`${t.bgCard} rounded-xl p-4 border ${t.border}`}>
+                <h3 className={`font-semibold mb-3 ${t.text}`}>📍 Endereço de Entrega</h3>
+                <div className={`text-sm ${t.textMuted}`}>
+                  <p>{pedidoSelecionado.endereco_rua}, {pedidoSelecionado.endereco_numero}</p>
+                  {pedidoSelecionado.endereco_complemento && <p>{pedidoSelecionado.endereco_complemento}</p>}
+                  <p>{pedidoSelecionado.endereco_bairro}</p>
+                  {pedidoSelecionado.endereco_cep && <p>CEP: {pedidoSelecionado.endereco_cep}</p>}
+                </div>
+              </div>
+            )}
+
+            {/* Itens do Pedido */}
+            <div className={`${t.bgCard} rounded-xl p-4 border ${t.border}`}>
+              <h3 className={`font-semibold mb-3 ${t.text}`}>🛒 Itens do Pedido</h3>
+              <div className="space-y-3">
+                {pedidoSelecionado.items?.map((item, idx) => (
+                  <div key={idx} className={`flex justify-between items-start pb-2 ${idx < pedidoSelecionado.items.length - 1 ? `border-b ${t.border}` : ''}`}>
+                    <div className="flex-1">
+                      <p className={`font-medium ${t.text}`}>{item.quantidade}x {item.nome}</p>
+                      {item.observacao && (
+                        <p className={`text-xs ${t.textMuted} mt-1`}>Obs: {item.observacao}</p>
+                      )}
+                    </div>
+                    <p className={`font-medium ${t.text}`}>
+                      R$ {((item.preco || 0) * (item.quantidade || 1)).toFixed(2).replace('.', ',')}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Observação */}
+            {pedidoSelecionado.observacao && (
+              <div className={`${t.bgCard} rounded-xl p-4 border ${t.border}`}>
+                <h3 className={`font-semibold mb-2 ${t.text}`}>📝 Observação</h3>
+                <p className={`text-sm ${t.textMuted}`}>{pedidoSelecionado.observacao}</p>
+              </div>
+            )}
+
+            {/* Total */}
+            <div className={`${t.bgCard} rounded-xl p-4 border-2 border-orange-500`}>
+              <div className="space-y-2">
+                {pedidoSelecionado.tipo_entrega === 'delivery' && (pedidoSelecionado.valor_entrega > 0) && (
+                  <div className="flex justify-between text-sm">
+                    <span className={t.textMuted}>Taxa de entrega:</span>
+                    <span className={t.text}>R$ {(pedidoSelecionado.valor_entrega || 0).toFixed(2).replace('.', ',')}</span>
+                  </div>
+                )}
+                <div className="flex justify-between items-center">
+                  <span className={`font-semibold ${t.text}`}>Total:</span>
+                  <span className="font-bold text-xl text-orange-500">
+                    R$ {(pedidoSelecionado.total || 0).toFixed(2).replace('.', ',')}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Motivo de cancelamento */}
+            {pedidoSelecionado.status === 'cancelado' && pedidoSelecionado.motivo_cancelamento && (
+              <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-4">
+                <h3 className="font-semibold mb-2 text-red-500">❌ Motivo do Cancelamento</h3>
+                <p className={`text-sm ${t.textMuted}`}>{pedidoSelecionado.motivo_cancelamento}</p>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Lista de pedidos
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center">
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
@@ -616,37 +756,51 @@ function MeusPedidosModal({ isOpen, onClose, client, darkMode }) {
             </div>
           ) : (
             <div className="space-y-3">
-              {pedidos.map((pedido) => (
-                <div key={pedido.id} className={`${t.bgCard} rounded-xl p-4 border ${t.border}`}>
-                  <div className="flex items-center justify-between mb-3">
-                    <div>
-                      <span className={`font-bold text-lg ${t.text}`}>{pedido.codigo}</span>
-                      <p className={`text-sm ${t.textMuted}`}>{formatDate(pedido.created_at)}</p>
+              {pedidos.map((pedido) => {
+                const status = statusConfig[pedido.status] || { label: pedido.status, color: 'bg-gray-500', icon: '📋' };
+                return (
+                  <div 
+                    key={pedido.id} 
+                    onClick={() => setPedidoSelecionado(pedido)}
+                    className={`${t.bgCard} rounded-xl p-4 border ${t.border} cursor-pointer ${t.bgHover} transition-all`}
+                  >
+                    <div className="flex items-center justify-between mb-3">
+                      <div>
+                        <span className={`font-bold text-lg ${t.text}`}>{pedido.codigo}</span>
+                        <p className={`text-sm ${t.textMuted}`}>{formatDate(pedido.created_at)}</p>
+                      </div>
+                      <div className={`px-3 py-1 rounded-full text-white text-sm font-medium flex items-center gap-1 ${status.color}`}>
+                        <span>{status.icon}</span>
+                        {status.label}
+                      </div>
                     </div>
-                    <div className={`px-3 py-1 rounded-full text-white text-sm font-medium ${statusLabels[pedido.status]?.color || 'bg-gray-500'}`}>
-                      {statusLabels[pedido.status]?.label || pedido.status}
+                    
+                    <div className={`text-sm ${t.textMuted} mb-2`}>
+                      {pedido.items?.slice(0, 3).map((item, idx) => (
+                        <span key={idx}>
+                          {item.quantidade}x {item.nome}
+                          {idx < Math.min(pedido.items.length, 3) - 1 ? ', ' : ''}
+                        </span>
+                      ))}
+                      {pedido.items?.length > 3 && (
+                        <span className="text-orange-500"> +{pedido.items.length - 3} itens</span>
+                      )}
                     </div>
-                  </div>
-                  
-                  <div className={`text-sm ${t.textMuted} mb-2`}>
-                    {pedido.items?.map((item, idx) => (
-                      <span key={idx}>
-                        {item.quantidade}x {item.nome}
-                        {idx < pedido.items.length - 1 ? ', ' : ''}
+                    
+                    <div className="flex items-center justify-between">
+                      <span className={`text-sm ${t.textMuted}`}>
+                        {pedido.tipo_entrega === 'delivery' ? '🛵 Entrega' : '🏪 Retirada'}
                       </span>
-                    ))}
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold text-orange-500">
+                          R$ {(pedido.total || 0).toFixed(2).replace('.', ',')}
+                        </span>
+                        <span className={`text-xs ${t.textMuted}`}>→</span>
+                      </div>
+                    </div>
                   </div>
-                  
-                  <div className="flex items-center justify-between">
-                    <span className={`text-sm ${t.textMuted}`}>
-                      {pedido.tipo_entrega === 'delivery' ? '🛵 Entrega' : '🏪 Retirada'}
-                    </span>
-                    <span className="font-bold text-orange-500">
-                      R$ {(pedido.total || 0).toFixed(2).replace('.', ',')}
-                    </span>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>
