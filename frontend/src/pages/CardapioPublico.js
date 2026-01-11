@@ -949,15 +949,28 @@ function CheckoutModal({ open, onClose, cart, cartTotal, client, darkMode, onOrd
                       />
                     </div>
 
-                    {/* Campo Bairro - Dropdown com todos os bairros */}
+                    {/* Campo Bairro - Input com autocomplete */}
                     <div className="grid grid-cols-2 gap-3">
                       <div className="relative">
-                        <div
-                          onClick={() => setShowBairroDropdown(!showBairroDropdown)}
-                          className={`flex items-center justify-between px-3 py-2 rounded-lg border cursor-pointer ${t.input} ${newAddress.bairro ? '' : 'text-gray-400'}`}
-                        >
-                          <span>{newAddress.bairro || 'Selecione o Bairro *'}</span>
-                          <ChevronDown className={`w-4 h-4 transition-transform ${showBairroDropdown ? 'rotate-180' : ''}`} />
+                        <div className="relative">
+                          <Input
+                            placeholder="Digite o bairro *"
+                            value={newAddress.bairro}
+                            onChange={e => {
+                              setNewAddress(prev => ({ ...prev, bairro: e.target.value }));
+                              setShowBairroDropdown(true);
+                            }}
+                            onFocus={() => setShowBairroDropdown(true)}
+                            className={t.input}
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setShowBairroDropdown(!showBairroDropdown)}
+                            className={`absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors`}
+                            title="Ver todos os bairros"
+                          >
+                            <ChevronDown className={`w-4 h-4 ${darkMode ? 'text-gray-400' : 'text-gray-500'} transition-transform ${showBairroDropdown ? 'rotate-180' : ''}`} />
+                          </button>
                         </div>
                         {showBairroDropdown && (
                           <>
@@ -969,18 +982,28 @@ function CheckoutModal({ open, onClose, cart, cartTotal, client, darkMode, onOrd
                                   Nenhum bairro cadastrado
                                 </div>
                               ) : (
-                                bairros.map(bairro => (
-                                  <button
-                                    key={bairro.id}
-                                    onClick={() => handleSelectBairro(bairro)}
-                                    className={`w-full px-3 py-2 text-left text-sm hover:bg-orange-500/10 transition-colors flex items-center justify-between ${darkMode ? 'text-white' : 'text-gray-900'} ${newAddress.bairro === bairro.nome ? 'bg-orange-500/20' : ''}`}
-                                  >
-                                    <span className="font-medium">{bairro.nome}</span>
-                                    {bairro.valor_entrega > 0 && (
-                                      <span className="text-green-500 text-xs">+R$ {bairro.valor_entrega.toFixed(2)}</span>
-                                    )}
-                                  </button>
-                                ))
+                                <>
+                                  {bairros
+                                    .filter(b => !newAddress.bairro || b.nome.toLowerCase().includes(newAddress.bairro.toLowerCase()))
+                                    .map(bairro => (
+                                      <button
+                                        key={bairro.id}
+                                        onClick={() => handleSelectBairro(bairro)}
+                                        className={`w-full px-3 py-2 text-left text-sm hover:bg-orange-500/10 transition-colors flex items-center justify-between ${darkMode ? 'text-white' : 'text-gray-900'} ${newAddress.bairro === bairro.nome ? 'bg-orange-500/20' : ''}`}
+                                      >
+                                        <span className="font-medium">{bairro.nome}</span>
+                                        {bairro.valor_entrega > 0 && (
+                                          <span className="text-green-500 text-xs">+R$ {bairro.valor_entrega.toFixed(2)}</span>
+                                        )}
+                                      </button>
+                                    ))
+                                  }
+                                  {bairros.filter(b => !newAddress.bairro || b.nome.toLowerCase().includes(newAddress.bairro.toLowerCase())).length === 0 && (
+                                    <div className={`px-3 py-3 text-center text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                                      Nenhum bairro encontrado
+                                    </div>
+                                  )}
+                                </>
                               )}
                             </div>
                           </>
@@ -990,7 +1013,7 @@ function CheckoutModal({ open, onClose, cart, cartTotal, client, darkMode, onOrd
                         placeholder="CEP"
                         value={cepUnicoAtivo ? cepUnicoValue : newAddress.cep}
                         onChange={e => !cepUnicoAtivo && setNewAddress(prev => ({ ...prev, cep: e.target.value }))}
-                        className={`${t.input} ${cepUnicoAtivo ? 'bg-gray-100 dark:bg-gray-700 cursor-not-allowed' : ''}`}
+                        className={`${t.input} ${cepUnicoAtivo ? 'opacity-70 cursor-not-allowed' : ''}`}
                         readOnly={cepUnicoAtivo}
                       />
                     </div>

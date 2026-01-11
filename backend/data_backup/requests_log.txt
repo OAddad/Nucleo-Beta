@@ -16447,3 +16447,4 @@
 2026-01-11T19:37:53.239261+00:00 | DB_CALL delete_client_address | P3 | 6.78ms | success
 2026-01-11T19:37:57.736518+00:00 | DB_CALL search_ruas | P3 | 1.51ms | success
 2026-01-11T19:38:13.246365+00:00 | DB_CALL get_client_addresses | P3 | 0.24ms | success
+2026-01-11T19:41:30.607119+00:00 | DB_CALL get_client_addresses | P3 | 0.27ms | success
