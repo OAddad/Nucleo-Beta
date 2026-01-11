@@ -1197,8 +1197,9 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
     try {
       const res = await axios.get(`${API}/products`, getAuthHeader());
       const prods = Array.isArray(res.data) ? res.data : [];
-      // Mostrar todos os produtos (não filtrar por available)
-      setProducts(prods);
+      // Filtrar produtos que NÃO são insumos (is_insumo = false)
+      // Insumos são ingredientes/adicionais internos que não aparecem no cardápio
+      setProducts(prods.filter(p => !p.is_insumo));
     } catch (error) {
       console.error("Erro ao carregar produtos:", error);
       setProducts([]);

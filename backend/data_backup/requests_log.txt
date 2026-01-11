@@ -18160,3 +18160,9 @@
 2026-01-11T22:51:10.306852+00:00 | DB_CALL get_user_by_username | P3 | 0.27ms | success
 2026-01-11T22:51:10.329706+00:00 | DB_CALL get_user_by_id | P3 | 0.23ms | success
 2026-01-11T22:51:10.330122+00:00 | DB_CALL get_all_products | P3 | 0.29ms | success
+2026-01-11T22:51:14.998834+00:00 | DB_CALL get_all_pedidos | P3 | 0.84ms | success
+2026-01-11T22:51:15.001971+00:00 | DB_CALL get_all_entregadores | P3 | 1.12ms | success
+2026-01-11T22:51:15.002491+00:00 | DB_CALL get_all_settings | P3 | 1.98ms | success
+2026-01-11T22:51:19.988393+00:00 | DB_CALL get_all_settings | P3 | 0.28ms | success
+2026-01-11T22:51:19.990325+00:00 | DB_CALL get_all_pedidos | P3 | 0.9ms | success
+2026-01-11T22:51:19.991694+00:00 | DB_CALL get_all_entregadores | P3 | 0.13ms | success
