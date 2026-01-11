@@ -24,6 +24,7 @@ import RelatorioOfertas from "./RelatorioOfertas";
 import Promocoes from "./Promocoes";
 import CuponsDesconto from "./CuponsDesconto";
 import Campanhas from "./Campanhas";
+import CardapioPublico from "./CardapioPublico";
 
 // Ícone do WhatsApp customizado
 const WhatsAppIcon = ({ className }) => (
