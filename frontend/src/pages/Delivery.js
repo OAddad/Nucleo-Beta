@@ -913,6 +913,109 @@ export default function Delivery() {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Modal de Pagamento para Retirada */}
+      <Dialog open={pagamentoModalOpen} onOpenChange={setPagamentoModalOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <DollarSign className="w-5 h-5 text-green-600" />
+              Finalizar Pedido - Retirada
+            </DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-4">
+            {pedidoParaPagamento && (
+              <div className="p-3 bg-amber-50 dark:bg-amber-950/20 rounded-lg border border-amber-300">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="bg-amber-500 text-white text-[10px] px-1.5 py-0.5 rounded font-bold flex items-center gap-1">
+                    <Store className="w-3 h-3" />
+                    RETIRADA
+                  </span>
+                  <span className="font-mono text-sm">{pedidoParaPagamento.codigo}</span>
+                </div>
+                <p className="font-semibold">{pedidoParaPagamento.cliente_nome}</p>
+                <p className="text-2xl font-bold text-primary mt-2">
+                  R$ {(pedidoParaPagamento.total || 0).toFixed(2)}
+                </p>
+              </div>
+            )}
+            
+            <div>
+              <Label className="text-base font-semibold">Forma de Pagamento</Label>
+              <div className="grid grid-cols-2 gap-2 mt-2">
+                <button
+                  type="button"
+                  onClick={() => setFormaPagamentoSelecionada('dinheiro')}
+                  className={`p-3 rounded-lg border-2 flex flex-col items-center gap-1 transition-all ${
+                    formaPagamentoSelecionada === 'dinheiro'
+                      ? 'border-green-500 bg-green-50 dark:bg-green-950/30'
+                      : 'border-muted hover:border-muted-foreground/50'
+                  }`}
+                >
+                  <Banknote className={`w-6 h-6 ${formaPagamentoSelecionada === 'dinheiro' ? 'text-green-600' : 'text-muted-foreground'}`} />
+                  <span className={`text-sm font-medium ${formaPagamentoSelecionada === 'dinheiro' ? 'text-green-700' : ''}`}>Dinheiro</span>
+                </button>
+                
+                <button
+                  type="button"
+                  onClick={() => setFormaPagamentoSelecionada('pix')}
+                  className={`p-3 rounded-lg border-2 flex flex-col items-center gap-1 transition-all ${
+                    formaPagamentoSelecionada === 'pix'
+                      ? 'border-green-500 bg-green-50 dark:bg-green-950/30'
+                      : 'border-muted hover:border-muted-foreground/50'
+                  }`}
+                >
+                  <svg className={`w-6 h-6 ${formaPagamentoSelecionada === 'pix' ? 'text-green-600' : 'text-muted-foreground'}`} viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M13.13 22.19L11.5 18.36C13.07 17.78 14.54 17 15.9 16.09L18.36 18.55L13.13 22.19M5.64 12.5L1.81 10.87L5.45 5.64L7.91 8.1C7 9.46 6.22 10.93 5.64 12.5M19.36 8.1L21.82 5.64L18.19 1.81L16.56 5.45C17.67 6.19 18.64 7.09 19.36 8.1M6.64 15.36L5.27 19.55L1.64 18.18L5.09 12.82L6.64 15.36M12 8C9.79 8 8 9.79 8 12S9.79 16 12 16 16 14.21 16 12 14.21 8 12 8M17.36 6.64L12.82 5.09L18.18 1.64L19.55 5.27L17.36 6.64M15.36 17.36L19.55 18.73L18.18 22.36L12.82 18.91L15.36 17.36M8.64 6.64L5.27 4.45L4.45 5.27L6.64 8.64L8.64 6.64Z"/>
+                  </svg>
+                  <span className={`text-sm font-medium ${formaPagamentoSelecionada === 'pix' ? 'text-green-700' : ''}`}>PIX</span>
+                </button>
+                
+                <button
+                  type="button"
+                  onClick={() => setFormaPagamentoSelecionada('credito')}
+                  className={`p-3 rounded-lg border-2 flex flex-col items-center gap-1 transition-all ${
+                    formaPagamentoSelecionada === 'credito'
+                      ? 'border-green-500 bg-green-50 dark:bg-green-950/30'
+                      : 'border-muted hover:border-muted-foreground/50'
+                  }`}
+                >
+                  <CreditCard className={`w-6 h-6 ${formaPagamentoSelecionada === 'credito' ? 'text-green-600' : 'text-muted-foreground'}`} />
+                  <span className={`text-sm font-medium ${formaPagamentoSelecionada === 'credito' ? 'text-green-700' : ''}`}>Crédito</span>
+                </button>
+                
+                <button
+                  type="button"
+                  onClick={() => setFormaPagamentoSelecionada('debito')}
+                  className={`p-3 rounded-lg border-2 flex flex-col items-center gap-1 transition-all ${
+                    formaPagamentoSelecionada === 'debito'
+                      ? 'border-green-500 bg-green-50 dark:bg-green-950/30'
+                      : 'border-muted hover:border-muted-foreground/50'
+                  }`}
+                >
+                  <CreditCard className={`w-6 h-6 ${formaPagamentoSelecionada === 'debito' ? 'text-green-600' : 'text-muted-foreground'}`} />
+                  <span className={`text-sm font-medium ${formaPagamentoSelecionada === 'debito' ? 'text-green-700' : ''}`}>Débito</span>
+                </button>
+              </div>
+            </div>
+            
+            <div className="flex gap-2 pt-2">
+              <Button variant="outline" onClick={() => setPagamentoModalOpen(false)} className="flex-1">
+                Cancelar
+              </Button>
+              <Button 
+                onClick={handleFinalizarRetirada} 
+                disabled={!formaPagamentoSelecionada}
+                className="flex-1 bg-green-600 hover:bg-green-700"
+              >
+                <Check className="w-4 h-4 mr-1" />
+                Finalizar Pedido
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
