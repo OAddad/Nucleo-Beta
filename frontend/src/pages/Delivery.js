@@ -1749,7 +1749,7 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
                     <div className="flex justify-between items-start">
                       <div className="flex-1">
                         <p className="font-medium text-sm">{item.name}</p>
-                        <p className="text-orange-600 text-sm">R$ {(item.selling_price || 0).toFixed(2)}</p>
+                        <p className="text-orange-600 text-sm">R$ {(item.sale_price || 0).toFixed(2)}</p>
                       </div>
                       <div className="flex items-center gap-2">
                         <button 
