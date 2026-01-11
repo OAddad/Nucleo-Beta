@@ -278,7 +278,7 @@ export default function CardapioPublico({ onAdminLogin }) {
                     {categoryProducts.map(product => (
                       <div key={product.id} className={`${t.bgCard} rounded-xl overflow-hidden hover:ring-2 hover:ring-orange-500/50 transition-all group border ${t.border}`}>
                         <div className={`aspect-square ${t.bgMuted} relative overflow-hidden`}>
-                          {product.photo_url ? <img src={product.photo_url} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" /> : <div className="w-full h-full flex items-center justify-center"><span className="text-4xl">🍽️</span></div>}
+                          {product.photo_url ? <img src={getImageUrl(product.photo_url)} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" /> : <div className="w-full h-full flex items-center justify-center"><span className="text-4xl">🍽️</span></div>}
                           <button onClick={() => addToCart(product)} className="absolute bottom-2 right-2 w-10 h-10 bg-orange-500 hover:bg-orange-600 rounded-full flex items-center justify-center shadow-lg transition-all opacity-0 group-hover:opacity-100"><Plus className="w-5 h-5 text-white" /></button>
                         </div>
                         <div className="p-3">
