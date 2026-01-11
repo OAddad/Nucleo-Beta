@@ -9783,3 +9783,7 @@
 2026-01-11T15:56:45.817875+00:00 | DB_CALL count_ingredients | P3 | 0.25ms | success
 2026-01-11T15:56:45.818198+00:00 | DB_CALL count_products | P3 | 0.24ms | success
 2026-01-11T15:56:45.818451+00:00 | DB_CALL count_users | P3 | 0.16ms | success
+2026-01-11T15:57:01.181926+00:00 | DB_CALL init_database | P3 | 3.49ms | success
+2026-01-11T15:57:01.182478+00:00 | DB_CALL count_ingredients | P3 | 0.27ms | success
+2026-01-11T15:57:01.182776+00:00 | DB_CALL count_products | P3 | 0.21ms | success
+2026-01-11T15:57:01.182960+00:00 | DB_CALL count_users | P3 | 0.11ms | success
