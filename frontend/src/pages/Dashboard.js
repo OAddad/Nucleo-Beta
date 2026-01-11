@@ -196,7 +196,7 @@ export default function Dashboard({ setIsAuthenticated }) {
     toggle: () => setLocalizacaoExpanded(!localizacaoExpanded),
     children: [
       { path: "/localizacao/bairros", label: "Bairros", icon: MapPin },
-      { path: "/localizacao/ruas", label: "Ruas", icon: Route },
+      { path: "/localizacao/ruas", label: "Ruas", icon: RouteIcon },
       { path: "/localizacao/area-entrega", label: "Área de Entrega", icon: MapPinned },
     ]
   };
