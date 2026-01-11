@@ -9824,3 +9824,4 @@
 2026-01-11T15:57:57.748010+00:00 | DB_CALL recalculate_all_cliente_stats | P3 | 0.49ms | success
 2026-01-11T15:57:57.748633+00:00 | DB_CALL get_all_clientes | P3 | 0.55ms | success
 2026-01-11T15:57:57.820660+00:00 | DB_CALL get_cliente_by_id | P3 | 0.45ms | success
+2026-01-11T15:58:05.024223+00:00 | DB_CALL get_all_pedidos | P3 | 0.56ms | success
