@@ -442,6 +442,84 @@ function CheckoutModal({ open, onClose, cart, cartTotal, client, darkMode, onOrd
   const [showChangeDialog, setShowChangeDialog] = useState(false);
   const [needsChange, setNeedsChange] = useState(null); // null = não respondeu, true = precisa, false = não precisa
   const [changeAmount, setChangeAmount] = useState('');
+  
+  // Estados para autocomplete de bairros e ruas
+  const [bairros, setBairros] = useState([]);
+  const [ruasSugestoes, setRuasSugestoes] = useState([]);
+  const [bairrosSugestoes, setBairrosSugestoes] = useState([]);
+  const [valorEntrega, setValorEntrega] = useState(0);
+
+  // Carregar bairros
+  useEffect(() => {
+    const fetchBairros = async () => {
+      try {
+        const res = await axios.get(`${API}/bairros`);
+        setBairros(res.data);
+      } catch (error) {
+        console.error("Erro ao carregar bairros:", error);
+      }
+    };
+    fetchBairros();
+  }, []);
+
+  // Buscar sugestões de ruas
+  const handleRuaChange = async (value) => {
+    setNewAddress(prev => ({ ...prev, endereco: value }));
+    if (value.length >= 2) {
+      try {
+        const res = await axios.get(`${API}/ruas/search?termo=${encodeURIComponent(value)}`);
+        setRuasSugestoes(res.data);
+      } catch (error) {
+        setRuasSugestoes([]);
+      }
+    } else {
+      setRuasSugestoes([]);
+    }
+  };
+
+  // Filtrar sugestões de bairros
+  const handleBairroChange = (value) => {
+    setNewAddress(prev => ({ ...prev, bairro: value }));
+    if (value.length >= 1) {
+      const filtered = bairros.filter(b => 
+        b.nome.toLowerCase().includes(value.toLowerCase())
+      );
+      setBairrosSugestoes(filtered);
+    } else {
+      setBairrosSugestoes([]);
+    }
+    // Limpar valor de entrega se mudar bairro
+    setValorEntrega(0);
+  };
+
+  // Selecionar rua da sugestão
+  const handleSelectRua = (rua) => {
+    setNewAddress(prev => ({ 
+      ...prev, 
+      endereco: rua.nome,
+      bairro: rua.bairro_nome || prev.bairro,
+      cep: rua.bairro_cep || rua.cep || prev.cep
+    }));
+    setRuasSugestoes([]);
+    // Se tem bairro, buscar valor de entrega
+    if (rua.bairro_nome) {
+      const bairro = bairros.find(b => b.nome === rua.bairro_nome);
+      if (bairro) {
+        setValorEntrega(bairro.valor_entrega || 0);
+      }
+    }
+  };
+
+  // Selecionar bairro da sugestão
+  const handleSelectBairro = (bairro) => {
+    setNewAddress(prev => ({ 
+      ...prev, 
+      bairro: bairro.nome,
+      cep: bairro.cep || prev.cep
+    }));
+    setBairrosSugestoes([]);
+    setValorEntrega(bairro.valor_entrega || 0);
+  };
 
   // Reset quando abrir
   useEffect(() => {
