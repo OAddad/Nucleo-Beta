@@ -16225,3 +16225,9 @@
 2026-01-11T19:29:20.299300+00:00 | DB_CALL get_all_business_hours | P3 | 298.06ms | success
 2026-01-11T19:29:20.300081+00:00 | DB_CALL get_all_categories | P3 | 142.38ms | success
 2026-01-11T19:29:20.432000+00:00 | DB_CALL get_client_addresses | P3 | 0.49ms | success
+2026-01-11T19:29:56.911678+00:00 | DB_CALL get_all_bairros | P3 | 0.55ms | success
+2026-01-11T19:29:56.916289+00:00 | DB_CALL get_all_categories | P3 | 2.01ms | success
+2026-01-11T19:29:56.917214+00:00 | DB_CALL get_client_addresses | P3 | 2.09ms | success
+2026-01-11T19:29:56.917555+00:00 | DB_CALL get_all_products | P3 | 2.07ms | success
+2026-01-11T19:29:56.919278+00:00 | DB_CALL get_all_business_hours | P3 | 0.36ms | success
+2026-01-11T19:29:57.081908+00:00 | DB_CALL get_client_addresses | P3 | 0.28ms | success
