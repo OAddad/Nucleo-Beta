@@ -628,7 +628,9 @@ export default function Pedidos() {
                         {status.label}
                       </span>
                     </TableCell>
-                    <TableCell className="text-right font-bold">R$ {(pedido.total || 0).toFixed(2)}</TableCell>
+                    <TableCell className={`text-right font-bold ${isCancelado ? 'text-red-600 dark:text-red-400 line-through' : ''}`}>
+                      R$ {(pedido.total || 0).toFixed(2)}
+                    </TableCell>
                   </TableRow>
                 );
               })}
