@@ -62,6 +62,10 @@ export default function Delivery() {
   const [novoEntregadorNome, setNovoEntregadorNome] = useState("");
   const [novoEntregadorTelefone, setNovoEntregadorTelefone] = useState("");
 
+  // Seleção múltipla na coluna PRONTO
+  const [entregadorProntoSelecionado, setEntregadorProntoSelecionado] = useState("");
+  const [pedidosSelecionados, setPedidosSelecionados] = useState([]);
+
   // Carregar dados
   const fetchData = useCallback(async () => {
     try {
