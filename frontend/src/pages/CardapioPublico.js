@@ -601,19 +601,22 @@ export default function CardapioPublico({ onAdminLogin }) {
             ) : (
               <div className="space-y-3">
                 {cart.map(item => (
-                  <div key={item.id} className={`${t.bgCartItem} rounded-lg p-3`}>
+                  <div key={item.cartItemId || item.id} className={`${t.bgCartItem} rounded-lg p-3`}>
                     <div className="flex gap-3">
                       <div className={`w-16 h-16 ${t.bgMuted} rounded-lg flex-shrink-0 overflow-hidden`}>
                         {item.photo_url ? <img src={getImageUrl(item.photo_url)} alt={item.name} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center"><span className="text-2xl">🍽️</span></div>}
                       </div>
                       <div className="flex-1 min-w-0">
                         <h4 className={`font-medium ${t.text} text-sm truncate`}>{item.name}</h4>
+                        {item.observation && (
+                          <p className={`text-xs ${t.textMuted} truncate mt-0.5`}>📝 {item.observation}</p>
+                        )}
                         <p className="text-orange-500 font-semibold text-sm mt-1">R$ {(item.sale_price * item.quantity).toFixed(2).replace('.', ',')}</p>
                         <div className="flex items-center gap-2 mt-2">
-                          <button onClick={() => updateQuantity(item.id, -1)} className={`w-7 h-7 ${t.bgMuted} rounded flex items-center justify-center hover:opacity-80`}><Minus className="w-3 h-3" /></button>
+                          <button onClick={() => updateQuantity(item.cartItemId || item.id, -1)} className={`w-7 h-7 ${t.bgMuted} rounded flex items-center justify-center hover:opacity-80`}><Minus className="w-3 h-3" /></button>
                           <span className={`${t.text} font-medium w-6 text-center`}>{item.quantity}</span>
-                          <button onClick={() => updateQuantity(item.id, 1)} className={`w-7 h-7 ${t.bgMuted} rounded flex items-center justify-center hover:opacity-80`}><Plus className="w-3 h-3" /></button>
-                          <button onClick={() => removeFromCart(item.id)} className="w-7 h-7 bg-red-500/20 hover:bg-red-500/30 rounded flex items-center justify-center ml-auto"><Trash2 className="w-3 h-3 text-red-400" /></button>
+                          <button onClick={() => updateQuantity(item.cartItemId || item.id, 1)} className={`w-7 h-7 ${t.bgMuted} rounded flex items-center justify-center hover:opacity-80`}><Plus className="w-3 h-3" /></button>
+                          <button onClick={() => removeFromCart(item.cartItemId || item.id)} className="w-7 h-7 bg-red-500/20 hover:bg-red-500/30 rounded flex items-center justify-center ml-auto"><Trash2 className="w-3 h-3 text-red-400" /></button>
                         </div>
                       </div>
                     </div>

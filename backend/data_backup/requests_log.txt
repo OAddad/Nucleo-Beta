@@ -9081,3 +9081,9 @@
 2026-01-11T14:12:47.772670+00:00 | DB_CALL get_all_business_hours | P3 | 2.91ms | success
 2026-01-11T14:12:47.772944+00:00 | DB_CALL get_all_business_hours | P3 | 2.39ms | success
 2026-01-11T14:12:48.183768+00:00 | DB_CALL get_all_categories | P3 | 0.27ms | success
+2026-01-11T14:13:05.766090+00:00 | DB_CALL get_all_business_hours | P3 | 1.15ms | success
+2026-01-11T14:13:05.767079+00:00 | DB_CALL get_all_products | P3 | 1.39ms | success
+2026-01-11T14:13:05.767592+00:00 | DB_CALL get_all_products | P3 | 2.6ms | success
+2026-01-11T14:13:05.769175+00:00 | DB_CALL get_all_categories | P3 | 0.82ms | success
+2026-01-11T14:13:05.769739+00:00 | DB_CALL get_all_categories | P3 | 0.86ms | success
+2026-01-11T14:13:05.770096+00:00 | DB_CALL get_all_business_hours | P3 | 1.3ms | success
