@@ -3464,10 +3464,11 @@ async def chatbot_reset_conversation(phone: str, current_user: User = Depends(ge
 async def get_word_analytics(
     limit: int = 100, 
     order_by: str = "count",
+    text_type: str = "all",
     current_user: User = Depends(get_current_user)
 ):
-    """Retorna analytics de palavras"""
-    words = await db_call(sqlite_db.get_word_analytics, limit, order_by)
+    """Retorna analytics de palavras e frases"""
+    words = await db_call(sqlite_db.get_word_analytics, limit, order_by, text_type)
     return {"success": True, "words": words}
 
 @api_router.get("/chatbot/analytics/summary")
