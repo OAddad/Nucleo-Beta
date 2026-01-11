@@ -538,13 +538,14 @@ export default function Delivery() {
     <div className="h-full flex flex-col overflow-hidden bg-background">
       {/* Header com botão NOVO PEDIDO */}
       <div className="p-4">
-        <button
+        <Button
           onClick={handleNovoPedido}
-          className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-bold text-xl py-4 px-6 rounded-xl shadow-lg transition-all flex items-center justify-center gap-3"
+          className="w-full h-14 text-lg font-bold"
+          size="lg"
         >
-          <Plus className="w-6 h-6" />
+          <Plus className="w-6 h-6 mr-2" />
           NOVO PEDIDO
-        </button>
+        </Button>
       </div>
 
       {/* Área principal com 4 colunas */}
