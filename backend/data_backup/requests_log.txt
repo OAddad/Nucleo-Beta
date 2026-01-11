@@ -10727,3 +10727,12 @@
 2026-01-11T17:05:35.832545+00:00 | DB_CALL get_all_pedidos | P3 | 0.73ms | success
 2026-01-11T17:05:35.833070+00:00 | DB_CALL get_all_settings | P3 | 0.89ms | success
 2026-01-11T17:05:36.447778+00:00 | DB_CALL get_all_pedidos | P3 | 0.41ms | success
+2026-01-11T17:05:40.826683+00:00 | DB_CALL get_all_pedidos | P3 | 0.41ms | success
+2026-01-11T17:05:40.827820+00:00 | DB_CALL get_all_entregadores | P3 | 0.21ms | success
+2026-01-11T17:05:40.828896+00:00 | DB_CALL get_all_settings | P3 | 0.16ms | success
+2026-01-11T17:05:41.447225+00:00 | DB_CALL get_all_pedidos | P3 | 0.4ms | success
+2026-01-11T17:05:45.841566+00:00 | DB_CALL get_all_entregadores | P3 | 0.34ms | success
+2026-01-11T17:05:45.843555+00:00 | DB_CALL get_all_pedidos | P3 | 0.36ms | success
+2026-01-11T17:05:45.845701+00:00 | DB_CALL get_all_settings | P3 | 0.13ms | success
+2026-01-11T17:05:46.446876+00:00 | DB_CALL get_all_pedidos | P3 | 0.4ms | success
+2026-01-11T17:05:47.567161+00:00 | DB_CALL get_user_by_username | P3 | 0.26ms | success
