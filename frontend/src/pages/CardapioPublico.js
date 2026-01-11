@@ -949,37 +949,45 @@ function CheckoutModal({ open, onClose, cart, cartTotal, client, darkMode, onOrd
                       />
                     </div>
 
-                    {/* Campo Bairro com autocomplete */}
+                    {/* Campo Bairro - Dropdown com todos os bairros */}
                     <div className="grid grid-cols-2 gap-3">
                       <div className="relative">
-                        <Input
-                          placeholder="Bairro *"
-                          value={newAddress.bairro}
-                          onChange={e => handleBairroChange(e.target.value)}
-                          className={t.input}
-                        />
-                        {bairrosSugestoes.length > 0 && (
+                        <div
+                          onClick={() => setShowBairroDropdown(!showBairroDropdown)}
+                          className={`flex items-center justify-between px-3 py-2 rounded-lg border cursor-pointer ${t.input} ${newAddress.bairro ? '' : 'text-gray-400'}`}
+                        >
+                          <span>{newAddress.bairro || 'Selecione o Bairro *'}</span>
+                          <ChevronDown className={`w-4 h-4 transition-transform ${showBairroDropdown ? 'rotate-180' : ''}`} />
+                        </div>
+                        {showBairroDropdown && (
                           <div className={`absolute z-50 w-full mt-1 max-h-48 overflow-auto rounded-lg border shadow-lg ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
-                            {bairrosSugestoes.map(bairro => (
-                              <button
-                                key={bairro.id}
-                                onClick={() => handleSelectBairro(bairro)}
-                                className={`w-full px-3 py-2 text-left text-sm hover:bg-orange-500/10 transition-colors ${darkMode ? 'text-white' : 'text-gray-900'}`}
-                              >
-                                <span className="font-medium">{bairro.nome}</span>
-                                {bairro.valor_entrega > 0 && (
-                                  <span className="text-green-500 ml-2">+R$ {bairro.valor_entrega.toFixed(2)}</span>
-                                )}
-                              </button>
-                            ))}
+                            {bairros.length === 0 ? (
+                              <div className={`px-3 py-4 text-center text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                                Nenhum bairro cadastrado
+                              </div>
+                            ) : (
+                              bairros.map(bairro => (
+                                <button
+                                  key={bairro.id}
+                                  onClick={() => handleSelectBairro(bairro)}
+                                  className={`w-full px-3 py-2 text-left text-sm hover:bg-orange-500/10 transition-colors flex items-center justify-between ${darkMode ? 'text-white' : 'text-gray-900'} ${newAddress.bairro === bairro.nome ? 'bg-orange-500/20' : ''}`}
+                                >
+                                  <span className="font-medium">{bairro.nome}</span>
+                                  {bairro.valor_entrega > 0 && (
+                                    <span className="text-green-500 text-xs">+R$ {bairro.valor_entrega.toFixed(2)}</span>
+                                  )}
+                                </button>
+                              ))
+                            )}
                           </div>
                         )}
                       </div>
                       <Input
                         placeholder="CEP"
-                        value={newAddress.cep}
-                        onChange={e => setNewAddress(prev => ({ ...prev, cep: e.target.value }))}
-                        className={t.input}
+                        value={cepUnicoAtivo ? cepUnicoValue : newAddress.cep}
+                        onChange={e => !cepUnicoAtivo && setNewAddress(prev => ({ ...prev, cep: e.target.value }))}
+                        className={`${t.input} ${cepUnicoAtivo ? 'bg-gray-100 dark:bg-gray-700 cursor-not-allowed' : ''}`}
+                        readOnly={cepUnicoAtivo}
                       />
                     </div>
 
