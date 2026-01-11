@@ -1,13 +1,16 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { 
   MessageSquare, QrCode, Wifi, WifiOff, RefreshCw, LogOut, 
-  GitBranch, Plus, Edit2, Trash2, ChevronRight, ChevronDown,
-  Save, X, AlertCircle, CheckCircle, Loader2
+  GitBranch, Plus, Edit2, Trash2, Save, X, AlertCircle, CheckCircle, 
+  Loader2, Bot, MessageCircle, HelpCircle, Zap, Play, Square,
+  Move, Link2, Settings, Eye, EyeOff, ChevronDown, ChevronRight,
+  Send, User, Clock, MapPin, ShoppingBag
 } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Textarea } from "../components/ui/textarea";
 import { Label } from "../components/ui/label";
+import { Switch } from "../components/ui/switch";
 import {
   Dialog,
   DialogContent,
@@ -15,6 +18,13 @@ import {
   DialogTitle,
   DialogFooter,
 } from "../components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../components/ui/select";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -29,6 +39,29 @@ import { useToast } from "../hooks/use-toast";
 
 const API_URL = process.env.REACT_APP_BACKEND_URL || "";
 
+// Tipos de nós disponíveis
+const NODE_TYPES = {
+  start: { label: "Início", icon: Play, color: "bg-green-500", description: "Ponto de entrada do fluxo" },
+  message: { label: "Mensagem", icon: MessageCircle, color: "bg-blue-500", description: "Envia uma mensagem" },
+  question: { label: "Pergunta", icon: HelpCircle, color: "bg-purple-500", description: "Aguarda resposta do cliente" },
+  condition: { label: "Condição", icon: GitBranch, color: "bg-yellow-500", description: "Decisão baseada em dados" },
+  action: { label: "Ação", icon: Zap, color: "bg-orange-500", description: "Executa uma ação no sistema" },
+  ai: { label: "IA", icon: Bot, color: "bg-pink-500", description: "Resposta inteligente da IA" },
+  end: { label: "Fim", icon: Square, color: "bg-red-500", description: "Encerra o fluxo" }
+};
+
+// Variáveis disponíveis para templates
+const TEMPLATE_VARIABLES = [
+  { key: "{cliente_nome}", label: "Nome do Cliente", icon: User },
+  { key: "{pedido_numero}", label: "Número do Pedido", icon: ShoppingBag },
+  { key: "{pedido_status}", label: "Status do Pedido", icon: Clock },
+  { key: "{pedido_itens}", label: "Itens do Pedido", icon: ShoppingBag },
+  { key: "{pedido_total}", label: "Total do Pedido", icon: ShoppingBag },
+  { key: "{entregador_nome}", label: "Nome do Entregador", icon: User },
+  { key: "{endereco}", label: "Endereço do Cliente", icon: MapPin },
+  { key: "{horario_funcionamento}", label: "Horário de Funcionamento", icon: Clock },
+];
+
 export default function ChatBot() {
   const [activeTab, setActiveTab] = useState("whatsapp");
   const { toast } = useToast();
@@ -39,11 +72,11 @@ export default function ChatBot() {
       <div className="p-4 border-b bg-card flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="p-2 rounded-lg bg-green-500 text-white">
-            <MessageSquare className="w-5 h-5" />
+            <Bot className="w-5 h-5" />
           </div>
           <div>
-            <h1 className="text-xl font-bold">ChatBot - WhatsApp</h1>
-            <p className="text-sm text-muted-foreground">Integração com WhatsApp e Árvore de Decisão</p>
+            <h1 className="text-xl font-bold">ChatBot Inteligente</h1>
+            <p className="text-sm text-muted-foreground">Atendimento automatizado com IA</p>
           </div>
         </div>
       </div>
@@ -65,27 +98,42 @@ export default function ChatBot() {
             </div>
           </button>
           <button
-            onClick={() => setActiveTab("decision-tree")}
+            onClick={() => setActiveTab("flow-editor")}
             className={`px-4 py-3 font-medium text-sm border-b-2 transition-colors ${
-              activeTab === "decision-tree"
+              activeTab === "flow-editor"
                 ? "border-blue-500 text-blue-600"
                 : "border-transparent text-muted-foreground hover:text-foreground"
             }`}
           >
             <div className="flex items-center gap-2">
               <GitBranch className="w-4 h-4" />
-              Árvore de Decisão
+              Editor de Fluxo
+            </div>
+          </button>
+          <button
+            onClick={() => setActiveTab("messages")}
+            className={`px-4 py-3 font-medium text-sm border-b-2 transition-colors ${
+              activeTab === "messages"
+                ? "border-purple-500 text-purple-600"
+                : "border-transparent text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            <div className="flex items-center gap-2">
+              <MessageSquare className="w-4 h-4" />
+              Conversas
             </div>
           </button>
         </div>
       </div>
 
       {/* Conteúdo */}
-      <div className="flex-1 overflow-auto p-6">
+      <div className="flex-1 overflow-auto">
         {activeTab === "whatsapp" ? (
           <WhatsAppTab toast={toast} />
+        ) : activeTab === "flow-editor" ? (
+          <FlowEditorTab toast={toast} />
         ) : (
-          <DecisionTreeTab toast={toast} />
+          <MessagesTab toast={toast} />
         )}
       </div>
     </div>
@@ -108,7 +156,6 @@ function WhatsAppTab({ toast }) {
       const data = await res.json();
       setStatus(data);
       
-      // Se não conectado, buscar QR
       if (data.status === "waiting_qr" || data.status === "disconnected") {
         fetchQR();
       } else {
@@ -150,26 +197,41 @@ function WhatsAppTab({ toast }) {
       });
       const data = await res.json();
       if (data.success) {
-        toast({
-          title: "Desconectado",
-          description: "WhatsApp desconectado com sucesso"
-        });
+        toast({ title: "Desconectado", description: "WhatsApp desconectado com sucesso" });
         fetchStatus();
       }
     } catch (error) {
-      toast({
-        title: "Erro",
-        description: "Erro ao desconectar",
-        variant: "destructive"
-      });
+      toast({ title: "Erro", description: "Erro ao desconectar", variant: "destructive" });
     } finally {
       setDisconnecting(false);
     }
   };
 
+  const handleToggleAutoReply = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`${API_URL}/api/whatsapp/toggle-auto-reply`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {})
+        }
+      });
+      const data = await res.json();
+      if (data.success) {
+        toast({ 
+          title: data.autoReplyEnabled ? "IA Ativada" : "IA Desativada", 
+          description: data.autoReplyEnabled ? "Respostas automáticas ativadas" : "Respostas automáticas desativadas"
+        });
+        fetchStatus();
+      }
+    } catch (error) {
+      toast({ title: "Erro", description: "Erro ao alternar IA", variant: "destructive" });
+    }
+  };
+
   useEffect(() => {
     fetchStatus();
-    // Atualizar a cada 5 segundos
     const interval = setInterval(fetchStatus, 5000);
     return () => clearInterval(interval);
   }, [fetchStatus]);
@@ -205,7 +267,7 @@ function WhatsAppTab({ toast }) {
   }
 
   return (
-    <div className="max-w-2xl mx-auto space-y-6">
+    <div className="p-6 max-w-2xl mx-auto space-y-6">
       {/* Card de Status */}
       <div className="bg-card rounded-xl border shadow-sm p-6">
         <div className="flex items-center justify-between mb-6">
@@ -217,10 +279,10 @@ function WhatsAppTab({ toast }) {
               "bg-gray-100 dark:bg-gray-900/30"
             }`}>
               <StatusIcon className={`w-6 h-6 ${
-                statusInfo.color === "green" ? "text-green-600 dark:text-green-400" :
-                statusInfo.color === "yellow" ? "text-yellow-600 dark:text-yellow-400" :
-                statusInfo.color === "red" ? "text-red-600 dark:text-red-400" :
-                "text-gray-600 dark:text-gray-400"
+                statusInfo.color === "green" ? "text-green-600" :
+                statusInfo.color === "yellow" ? "text-yellow-600" :
+                statusInfo.color === "red" ? "text-red-600" :
+                "text-gray-600"
               } ${statusInfo.icon === Loader2 || statusInfo.icon === RefreshCw ? "animate-spin" : ""}`} />
             </div>
             <div>
@@ -242,26 +304,30 @@ function WhatsAppTab({ toast }) {
               Atualizar
             </Button>
             {status?.connected && (
-              <Button 
-                variant="destructive" 
-                size="sm" 
-                onClick={handleDisconnect}
-                disabled={disconnecting}
-              >
-                {disconnecting ? (
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                ) : (
-                  <LogOut className="w-4 h-4 mr-2" />
-                )}
+              <Button variant="destructive" size="sm" onClick={handleDisconnect} disabled={disconnecting}>
+                {disconnecting ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <LogOut className="w-4 h-4 mr-2" />}
                 Desconectar
               </Button>
             )}
           </div>
         </div>
 
-        {status?.error && (
-          <div className="p-3 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-lg mb-4">
-            <p className="text-sm text-red-700 dark:text-red-300">{status.error}</p>
+        {/* Toggle IA */}
+        {status?.connected && (
+          <div className="flex items-center justify-between p-4 bg-muted/50 rounded-lg mb-4">
+            <div className="flex items-center gap-3">
+              <Bot className="w-5 h-5 text-pink-500" />
+              <div>
+                <p className="font-medium">Resposta Automática (IA)</p>
+                <p className="text-sm text-muted-foreground">
+                  {status?.autoReplyEnabled ? "A IA está respondendo automaticamente" : "Respostas automáticas desativadas"}
+                </p>
+              </div>
+            </div>
+            <Switch 
+              checked={status?.autoReplyEnabled || false}
+              onCheckedChange={handleToggleAutoReply}
+            />
           </div>
         )}
 
@@ -269,52 +335,42 @@ function WhatsAppTab({ toast }) {
         {qrCode && !status?.connected && (
           <div className="flex flex-col items-center p-6 bg-white dark:bg-gray-900 rounded-xl border">
             <h3 className="text-lg font-medium mb-4">Escaneie o QR Code</h3>
-            <img 
-              src={qrCode} 
-              alt="QR Code WhatsApp" 
-              className="w-64 h-64 rounded-lg border"
-            />
+            <img src={qrCode} alt="QR Code WhatsApp" className="w-64 h-64 rounded-lg border" />
             <p className="text-sm text-muted-foreground mt-4 text-center">
-              Abra o WhatsApp no seu celular → Menu → Dispositivos conectados → Conectar dispositivo
+              WhatsApp → Menu → Dispositivos conectados → Conectar
             </p>
           </div>
         )}
 
         {/* Conectado */}
         {status?.connected && (
-          <div className="flex flex-col items-center p-6 bg-green-50 dark:bg-green-950/30 rounded-xl border border-green-200 dark:border-green-800">
+          <div className="flex flex-col items-center p-6 bg-green-50 dark:bg-green-950/30 rounded-xl border border-green-200">
             <CheckCircle className="w-16 h-16 text-green-500 mb-4" />
             <h3 className="text-lg font-medium text-green-700 dark:text-green-300">WhatsApp Conectado!</h3>
-            <p className="text-sm text-green-600 dark:text-green-400 text-center mt-2">
-              Seu WhatsApp está conectado e pronto para receber mensagens.
+            <p className="text-sm text-green-600 text-center mt-2">
+              O ChatBot está pronto para atender seus clientes.
             </p>
           </div>
         )}
       </div>
 
-      {/* Instruções */}
-      <div className="bg-card rounded-xl border shadow-sm p-6">
-        <h3 className="text-lg font-semibold mb-4">Como conectar</h3>
-        <div className="space-y-3">
-          <div className="flex gap-3">
-            <div className="flex-shrink-0 w-8 h-8 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center text-green-600 font-medium">1</div>
-            <div>
-              <p className="font-medium">Abra o WhatsApp no celular</p>
-              <p className="text-sm text-muted-foreground">Use o aplicativo oficial do WhatsApp</p>
-            </div>
+      {/* Info da IA */}
+      <div className="bg-gradient-to-r from-pink-50 to-purple-50 dark:from-pink-950/30 dark:to-purple-950/30 rounded-xl border p-6">
+        <div className="flex items-start gap-4">
+          <div className="p-3 rounded-xl bg-gradient-to-r from-pink-500 to-purple-500 text-white">
+            <Bot className="w-6 h-6" />
           </div>
-          <div className="flex gap-3">
-            <div className="flex-shrink-0 w-8 h-8 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center text-green-600 font-medium">2</div>
-            <div>
-              <p className="font-medium">Acesse Menu → Dispositivos conectados</p>
-              <p className="text-sm text-muted-foreground">Toque nos três pontos no canto superior direito</p>
-            </div>
-          </div>
-          <div className="flex gap-3">
-            <div className="flex-shrink-0 w-8 h-8 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center text-green-600 font-medium">3</div>
-            <div>
-              <p className="font-medium">Escaneie o QR Code acima</p>
-              <p className="text-sm text-muted-foreground">Aponte a câmera para o código QR</p>
+          <div>
+            <h3 className="font-semibold text-lg">ChatBot com IA Integrada</h3>
+            <p className="text-sm text-muted-foreground mt-1">
+              Seu atendente virtual usa inteligência artificial para conversar naturalmente com os clientes.
+              Ele conhece seu cardápio, horários, e pode consultar pedidos em tempo real.
+            </p>
+            <div className="flex flex-wrap gap-2 mt-3">
+              <span className="px-2 py-1 bg-white dark:bg-gray-800 rounded-full text-xs">✨ Conversas naturais</span>
+              <span className="px-2 py-1 bg-white dark:bg-gray-800 rounded-full text-xs">📋 Consulta pedidos</span>
+              <span className="px-2 py-1 bg-white dark:bg-gray-800 rounded-full text-xs">🕐 Horários</span>
+              <span className="px-2 py-1 bg-white dark:bg-gray-800 rounded-full text-xs">📍 Endereço</span>
             </div>
           </div>
         </div>
@@ -323,239 +379,150 @@ function WhatsAppTab({ toast }) {
   );
 }
 
-// ==================== ABA ÁRVORE DE DECISÃO ====================
-function DecisionTreeTab({ toast }) {
+// ==================== ABA EDITOR DE FLUXO ====================
+function FlowEditorTab({ toast }) {
   const [nodes, setNodes] = useState([]);
+  const [edges, setEdges] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [expandedNodes, setExpandedNodes] = useState({});
-  const [editingNode, setEditingNode] = useState(null);
-  const [showAddModal, setShowAddModal] = useState(false);
-  const [parentForNewNode, setParentForNewNode] = useState(null);
-  const [deleteConfirm, setDeleteConfirm] = useState(null);
   const [saving, setSaving] = useState(false);
+  const [selectedNode, setSelectedNode] = useState(null);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [deleteConfirm, setDeleteConfirm] = useState(null);
+  const canvasRef = useRef(null);
+  const [dragging, setDragging] = useState(null);
+  const [connecting, setConnecting] = useState(null);
 
-  const fetchNodes = useCallback(async () => {
+  const fetchFlow = useCallback(async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(`${API_URL}/api/decision-tree`, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
+      const res = await fetch(`${API_URL}/api/chatbot/flow`, {
+        headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();
       if (data.success) {
         setNodes(data.nodes || []);
+        setEdges(data.edges || []);
       }
     } catch (error) {
-      console.error("Erro ao buscar nós:", error);
-      toast({
-        title: "Erro",
-        description: "Erro ao carregar árvore de decisão",
-        variant: "destructive"
-      });
+      console.error("Erro ao carregar fluxo:", error);
     } finally {
       setLoading(false);
     }
-  }, [toast]);
+  }, []);
 
   useEffect(() => {
-    fetchNodes();
-  }, [fetchNodes]);
+    fetchFlow();
+  }, [fetchFlow]);
 
-  // Organizar nós em árvore
-  const buildTree = (nodes) => {
-    const nodeMap = {};
-    const roots = [];
-    
-    nodes.forEach(node => {
-      nodeMap[node.id] = { ...node, children: [] };
-    });
-    
-    nodes.forEach(node => {
-      if (node.parent_id && nodeMap[node.parent_id]) {
-        nodeMap[node.parent_id].children.push(nodeMap[node.id]);
-      } else if (!node.parent_id) {
-        roots.push(nodeMap[node.id]);
-      }
-    });
-    
-    // Ordenar por order
-    const sortByOrder = (arr) => {
-      arr.sort((a, b) => (a.order || 0) - (b.order || 0));
-      arr.forEach(item => sortByOrder(item.children));
-    };
-    sortByOrder(roots);
-    
-    return roots;
-  };
-
-  const tree = buildTree(nodes);
-
-  const toggleExpand = (nodeId) => {
-    setExpandedNodes(prev => ({
-      ...prev,
-      [nodeId]: !prev[nodeId]
-    }));
-  };
-
-  const handleSaveNode = async (nodeData, isEdit = false) => {
+  const handleSaveFlow = async () => {
     setSaving(true);
     try {
       const token = localStorage.getItem("token");
-      const url = isEdit 
-        ? `${API_URL}/api/decision-tree/${editingNode.id}`
-        : `${API_URL}/api/decision-tree`;
-      
-      const res = await fetch(url, {
-        method: isEdit ? "PUT" : "POST",
+      const res = await fetch(`${API_URL}/api/chatbot/flow/save-all`, {
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`
         },
-        body: JSON.stringify(nodeData)
+        body: JSON.stringify({ nodes, edges })
       });
-      
       const data = await res.json();
-      
       if (data.success) {
-        toast({
-          title: "Sucesso",
-          description: isEdit ? "Nó atualizado com sucesso" : "Nó criado com sucesso"
-        });
-        setEditingNode(null);
-        setShowAddModal(false);
-        setParentForNewNode(null);
-        fetchNodes();
-      } else {
-        throw new Error(data.detail || "Erro ao salvar");
+        toast({ title: "Salvo!", description: "Fluxo salvo com sucesso" });
       }
     } catch (error) {
-      toast({
-        title: "Erro",
-        description: error.message,
-        variant: "destructive"
-      });
+      toast({ title: "Erro", description: "Erro ao salvar fluxo", variant: "destructive" });
     } finally {
       setSaving(false);
     }
   };
 
-  const handleDeleteNode = async (nodeId) => {
-    try {
-      const token = localStorage.getItem("token");
-      const res = await fetch(`${API_URL}/api/decision-tree/${nodeId}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
-      
-      const data = await res.json();
-      
-      if (data.success) {
-        toast({
-          title: "Sucesso",
-          description: "Nó deletado com sucesso"
-        });
-        setDeleteConfirm(null);
-        fetchNodes();
-      } else {
-        throw new Error(data.detail || "Erro ao deletar");
-      }
-    } catch (error) {
-      toast({
-        title: "Erro",
-        description: error.message,
-        variant: "destructive"
+  const addNode = (type) => {
+    const newNode = {
+      id: `node_${Date.now()}`,
+      type,
+      title: NODE_TYPES[type].label,
+      content: "",
+      position_x: 200 + Math.random() * 200,
+      position_y: 100 + Math.random() * 200,
+      config: "{}",
+      is_active: true
+    };
+    setNodes([...nodes, newNode]);
+    setShowAddModal(false);
+    setSelectedNode(newNode);
+  };
+
+  const updateNode = (nodeId, updates) => {
+    setNodes(nodes.map(n => n.id === nodeId ? { ...n, ...updates } : n));
+    if (selectedNode?.id === nodeId) {
+      setSelectedNode({ ...selectedNode, ...updates });
+    }
+  };
+
+  const deleteNode = (nodeId) => {
+    setNodes(nodes.filter(n => n.id !== nodeId));
+    setEdges(edges.filter(e => e.source_id !== nodeId && e.target_id !== nodeId));
+    setSelectedNode(null);
+    setDeleteConfirm(null);
+  };
+
+  const addEdge = (sourceId, targetId) => {
+    // Verificar se já existe
+    if (edges.some(e => e.source_id === sourceId && e.target_id === targetId)) return;
+    
+    const newEdge = {
+      id: `edge_${Date.now()}`,
+      source_id: sourceId,
+      target_id: targetId,
+      condition: "",
+      label: ""
+    };
+    setEdges([...edges, newEdge]);
+  };
+
+  const deleteEdge = (edgeId) => {
+    setEdges(edges.filter(e => e.id !== edgeId));
+  };
+
+  // Handlers de drag
+  const handleMouseDown = (e, node) => {
+    if (e.button === 0) {
+      setDragging({ nodeId: node.id, startX: e.clientX, startY: e.clientY, nodeX: node.position_x, nodeY: node.position_y });
+    }
+  };
+
+  const handleMouseMove = (e) => {
+    if (dragging) {
+      const dx = e.clientX - dragging.startX;
+      const dy = e.clientY - dragging.startY;
+      updateNode(dragging.nodeId, {
+        position_x: dragging.nodeX + dx,
+        position_y: dragging.nodeY + dy
       });
     }
   };
 
-  const renderNode = (node, level = 0) => {
-    const hasChildren = node.children && node.children.length > 0;
-    const isExpanded = expandedNodes[node.id];
+  const handleMouseUp = () => {
+    setDragging(null);
+    setConnecting(null);
+  };
+
+  // Inicializar com fluxo padrão se vazio
+  const initializeDefaultFlow = () => {
+    const defaultNodes = [
+      { id: "start_1", type: "start", title: "Início", content: "", position_x: 100, position_y: 200, config: "{}", is_active: true },
+      { id: "ai_1", type: "ai", title: "Saudação IA", content: "Cumprimente o cliente de forma calorosa e pergunte como pode ajudar.", position_x: 300, position_y: 200, config: "{}", is_active: true },
+      { id: "ai_2", type: "ai", title: "Atendimento Geral", content: "Responda às dúvidas do cliente sobre cardápio, horários, pedidos, etc.", position_x: 550, position_y: 200, config: "{}", is_active: true },
+    ];
     
-    return (
-      <div key={node.id} className="select-none">
-        <div 
-          className={`flex items-center gap-2 p-3 rounded-lg hover:bg-muted/50 transition-colors ${
-            level > 0 ? "ml-6 border-l-2 border-muted" : ""
-          }`}
-        >
-          {/* Expand/Collapse */}
-          <button
-            onClick={() => toggleExpand(node.id)}
-            className="p-1 hover:bg-muted rounded"
-          >
-            {hasChildren ? (
-              isExpanded ? (
-                <ChevronDown className="w-4 h-4 text-muted-foreground" />
-              ) : (
-                <ChevronRight className="w-4 h-4 text-muted-foreground" />
-              )
-            ) : (
-              <div className="w-4 h-4" />
-            )}
-          </button>
-          
-          {/* Node Content */}
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2">
-              <span className={`px-2 py-0.5 rounded text-xs font-medium ${
-                node.is_active 
-                  ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
-                  : "bg-gray-100 text-gray-600 dark:bg-gray-900/30 dark:text-gray-400"
-              }`}>
-                {node.trigger}
-              </span>
-              {!node.is_active && (
-                <span className="text-xs text-muted-foreground">(inativo)</span>
-              )}
-            </div>
-            <p className="text-sm text-muted-foreground mt-1 truncate">{node.response}</p>
-          </div>
-          
-          {/* Actions */}
-          <div className="flex items-center gap-1">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => {
-                setParentForNewNode(node.id);
-                setShowAddModal(true);
-              }}
-              title="Adicionar sub-opção"
-            >
-              <Plus className="w-4 h-4" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setEditingNode(node)}
-              title="Editar"
-            >
-              <Edit2 className="w-4 h-4" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setDeleteConfirm(node)}
-              title="Excluir"
-              className="text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30"
-            >
-              <Trash2 className="w-4 h-4" />
-            </Button>
-          </div>
-        </div>
-        
-        {/* Children */}
-        {hasChildren && isExpanded && (
-          <div className="pl-4">
-            {node.children.map(child => renderNode(child, level + 1))}
-          </div>
-        )}
-      </div>
-    );
+    const defaultEdges = [
+      { id: "edge_1", source_id: "start_1", target_id: "ai_1", condition: "", label: "" },
+      { id: "edge_2", source_id: "ai_1", target_id: "ai_2", condition: "", label: "" },
+    ];
+    
+    setNodes(defaultNodes);
+    setEdges(defaultEdges);
   };
 
   if (loading) {
@@ -567,71 +534,260 @@ function DecisionTreeTab({ toast }) {
   }
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-xl font-semibold">Árvore de Decisão</h2>
-          <p className="text-sm text-muted-foreground">
-            Configure as respostas automáticas do chatbot
-          </p>
-        </div>
-        <Button onClick={() => {
-          setParentForNewNode(null);
-          setShowAddModal(true);
-        }}>
-          <Plus className="w-4 h-4 mr-2" />
-          Nova Opção
-        </Button>
-      </div>
-
-      {/* Árvore */}
-      <div className="bg-card rounded-xl border shadow-sm p-4">
-        {tree.length === 0 ? (
-          <div className="text-center py-12">
-            <GitBranch className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-            <h3 className="text-lg font-medium mb-2">Nenhuma opção cadastrada</h3>
-            <p className="text-sm text-muted-foreground mb-4">
-              Comece adicionando opções de resposta para o chatbot
-            </p>
-            <Button onClick={() => {
-              setParentForNewNode(null);
-              setShowAddModal(true);
-            }}>
-              <Plus className="w-4 h-4 mr-2" />
-              Adicionar primeira opção
+    <div className="h-full flex">
+      {/* Canvas do Fluxograma */}
+      <div 
+        ref={canvasRef}
+        className="flex-1 relative bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAwIDEwIEwgNDAgMTAgTSAxMCAwIEwgMTAgNDAgTSAwIDIwIEwgNDAgMjAgTSAyMCAwIEwgMjAgNDAgTSAwIDMwIEwgNDAgMzAgTSAzMCAwIEwgMzAgNDAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2UwZTBlMCIgb3BhY2l0eT0iMC4zIiBzdHJva2Utd2lkdGg9IjEiLz48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZTBlMGUwIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] overflow-auto"
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+        onMouseLeave={handleMouseUp}
+      >
+        {/* Toolbar */}
+        <div className="absolute top-4 left-4 flex gap-2 z-10">
+          <Button onClick={() => setShowAddModal(true)}>
+            <Plus className="w-4 h-4 mr-2" />
+            Adicionar Nó
+          </Button>
+          <Button variant="outline" onClick={handleSaveFlow} disabled={saving}>
+            {saving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
+            Salvar
+          </Button>
+          {nodes.length === 0 && (
+            <Button variant="secondary" onClick={initializeDefaultFlow}>
+              <Zap className="w-4 h-4 mr-2" />
+              Criar Fluxo Padrão
             </Button>
-          </div>
-        ) : (
-          <div className="space-y-1">
-            {tree.map(node => renderNode(node))}
+          )}
+        </div>
+
+        {/* SVG para as conexões */}
+        <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ minHeight: '600px', minWidth: '800px' }}>
+          {edges.map(edge => {
+            const sourceNode = nodes.find(n => n.id === edge.source_id);
+            const targetNode = nodes.find(n => n.id === edge.target_id);
+            if (!sourceNode || !targetNode) return null;
+            
+            const x1 = sourceNode.position_x + 100;
+            const y1 = sourceNode.position_y + 40;
+            const x2 = targetNode.position_x;
+            const y2 = targetNode.position_y + 40;
+            
+            // Curva bezier
+            const midX = (x1 + x2) / 2;
+            
+            return (
+              <g key={edge.id}>
+                <path
+                  d={`M ${x1} ${y1} C ${midX} ${y1}, ${midX} ${y2}, ${x2} ${y2}`}
+                  fill="none"
+                  stroke="#94a3b8"
+                  strokeWidth="2"
+                  markerEnd="url(#arrowhead)"
+                />
+                {/* Botão de deletar na linha */}
+                <circle
+                  cx={midX}
+                  cy={(y1 + y2) / 2}
+                  r="10"
+                  fill="#ef4444"
+                  className="cursor-pointer opacity-0 hover:opacity-100 pointer-events-auto transition-opacity"
+                  onClick={() => deleteEdge(edge.id)}
+                />
+                <text
+                  x={midX}
+                  y={(y1 + y2) / 2 + 4}
+                  textAnchor="middle"
+                  fill="white"
+                  fontSize="12"
+                  className="pointer-events-none opacity-0 hover:opacity-100"
+                >
+                  ×
+                </text>
+              </g>
+            );
+          })}
+          <defs>
+            <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+              <polygon points="0 0, 10 3.5, 0 7" fill="#94a3b8" />
+            </marker>
+          </defs>
+        </svg>
+
+        {/* Nós */}
+        {nodes.map(node => {
+          const nodeType = NODE_TYPES[node.type] || NODE_TYPES.message;
+          const NodeIcon = nodeType.icon;
+          const isSelected = selectedNode?.id === node.id;
+          
+          return (
+            <div
+              key={node.id}
+              className={`absolute w-48 bg-card border-2 rounded-lg shadow-lg cursor-move select-none transition-shadow ${
+                isSelected ? "border-blue-500 shadow-blue-200" : "border-border hover:border-gray-400"
+              }`}
+              style={{ left: node.position_x, top: node.position_y }}
+              onMouseDown={(e) => handleMouseDown(e, node)}
+              onClick={() => setSelectedNode(node)}
+            >
+              {/* Header */}
+              <div className={`flex items-center gap-2 p-2 rounded-t-md ${nodeType.color} text-white`}>
+                <NodeIcon className="w-4 h-4" />
+                <span className="text-sm font-medium truncate">{node.title}</span>
+              </div>
+              
+              {/* Content Preview */}
+              <div className="p-2">
+                <p className="text-xs text-muted-foreground line-clamp-2">
+                  {node.content || nodeType.description}
+                </p>
+              </div>
+              
+              {/* Connection Points */}
+              <div
+                className="absolute -right-2 top-1/2 -translate-y-1/2 w-4 h-4 bg-blue-500 rounded-full border-2 border-white cursor-crosshair"
+                title="Arraste para conectar"
+                onMouseDown={(e) => {
+                  e.stopPropagation();
+                  setConnecting(node.id);
+                }}
+              />
+              <div
+                className="absolute -left-2 top-1/2 -translate-y-1/2 w-4 h-4 bg-green-500 rounded-full border-2 border-white"
+                onMouseUp={(e) => {
+                  e.stopPropagation();
+                  if (connecting && connecting !== node.id) {
+                    addEdge(connecting, node.id);
+                  }
+                }}
+              />
+            </div>
+          );
+        })}
+
+        {/* Empty State */}
+        {nodes.length === 0 && (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="text-center">
+              <GitBranch className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+              <h3 className="text-lg font-medium mb-2">Nenhum fluxo criado</h3>
+              <p className="text-sm text-muted-foreground mb-4">
+                Comece criando um fluxo de atendimento ou use o fluxo padrão
+              </p>
+            </div>
           </div>
         )}
       </div>
 
-      {/* Explicação */}
-      <div className="bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
-        <h4 className="font-medium text-blue-800 dark:text-blue-200 mb-2">Como funciona</h4>
-        <ul className="text-sm text-blue-700 dark:text-blue-300 space-y-1">
-          <li>• <strong>Gatilho:</strong> Palavra ou frase que o cliente envia (ex: "oi", "cardápio", "1")</li>
-          <li>• <strong>Resposta:</strong> Mensagem que o bot responderá automaticamente</li>
-          <li>• <strong>Sub-opções:</strong> Crie respostas aninhadas para fluxos de conversa mais complexos</li>
-        </ul>
-      </div>
+      {/* Painel Lateral - Propriedades do Nó */}
+      {selectedNode && (
+        <div className="w-80 border-l bg-card p-4 overflow-auto">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="font-semibold">Propriedades</h3>
+            <Button variant="ghost" size="sm" onClick={() => setSelectedNode(null)}>
+              <X className="w-4 h-4" />
+            </Button>
+          </div>
+          
+          <div className="space-y-4">
+            <div>
+              <Label>Tipo</Label>
+              <Select
+                value={selectedNode.type}
+                onValueChange={(value) => updateNode(selectedNode.id, { type: value })}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {Object.entries(NODE_TYPES).map(([key, type]) => (
+                    <SelectItem key={key} value={key}>
+                      <div className="flex items-center gap-2">
+                        <type.icon className="w-4 h-4" />
+                        {type.label}
+                      </div>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            
+            <div>
+              <Label>Título</Label>
+              <Input
+                value={selectedNode.title}
+                onChange={(e) => updateNode(selectedNode.id, { title: e.target.value })}
+              />
+            </div>
+            
+            <div>
+              <Label>Conteúdo / Instrução</Label>
+              <Textarea
+                value={selectedNode.content}
+                onChange={(e) => updateNode(selectedNode.id, { content: e.target.value })}
+                rows={4}
+                placeholder="Instrução para a IA ou mensagem a ser enviada..."
+              />
+            </div>
+            
+            {/* Variáveis disponíveis */}
+            <div>
+              <Label className="text-xs text-muted-foreground">Variáveis disponíveis</Label>
+              <div className="flex flex-wrap gap-1 mt-2">
+                {TEMPLATE_VARIABLES.map(v => (
+                  <button
+                    key={v.key}
+                    className="px-2 py-1 text-xs bg-muted rounded hover:bg-muted/80"
+                    onClick={() => updateNode(selectedNode.id, { 
+                      content: (selectedNode.content || "") + " " + v.key 
+                    })}
+                    title={v.label}
+                  >
+                    {v.key}
+                  </button>
+                ))}
+              </div>
+            </div>
+            
+            <div className="pt-4 border-t">
+              <Button
+                variant="destructive"
+                className="w-full"
+                onClick={() => setDeleteConfirm(selectedNode)}
+              >
+                <Trash2 className="w-4 h-4 mr-2" />
+                Excluir Nó
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
 
-      {/* Modal de Adicionar/Editar */}
-      <NodeFormModal
-        isOpen={showAddModal || editingNode !== null}
-        onClose={() => {
-          setShowAddModal(false);
-          setEditingNode(null);
-          setParentForNewNode(null);
-        }}
-        onSave={handleSaveNode}
-        node={editingNode}
-        parentId={parentForNewNode}
-        saving={saving}
-      />
+      {/* Modal Adicionar Nó */}
+      <Dialog open={showAddModal} onOpenChange={setShowAddModal}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Adicionar Nó</DialogTitle>
+          </DialogHeader>
+          <div className="grid grid-cols-2 gap-3">
+            {Object.entries(NODE_TYPES).map(([key, type]) => (
+              <button
+                key={key}
+                className="flex items-center gap-3 p-3 border rounded-lg hover:bg-muted transition-colors text-left"
+                onClick={() => addNode(key)}
+              >
+                <div className={`p-2 rounded-lg ${type.color} text-white`}>
+                  <type.icon className="w-5 h-5" />
+                </div>
+                <div>
+                  <p className="font-medium">{type.label}</p>
+                  <p className="text-xs text-muted-foreground">{type.description}</p>
+                </div>
+              </button>
+            ))}
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* Confirmação de Exclusão */}
       <AlertDialog open={deleteConfirm !== null} onOpenChange={() => setDeleteConfirm(null)}>
@@ -639,20 +795,12 @@ function DecisionTreeTab({ toast }) {
           <AlertDialogHeader>
             <AlertDialogTitle>Excluir nó</AlertDialogTitle>
             <AlertDialogDescription>
-              Tem certeza que deseja excluir o nó "{deleteConfirm?.trigger}"?
-              {deleteConfirm?.children?.length > 0 && (
-                <span className="block mt-2 text-red-600">
-                  Atenção: Este nó possui sub-opções que também serão excluídas!
-                </span>
-              )}
+              Tem certeza que deseja excluir "{deleteConfirm?.title}"? Esta ação também removerá as conexões.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={() => handleDeleteNode(deleteConfirm.id)}
-              className="bg-red-600 hover:bg-red-700"
-            >
+            <AlertDialogAction onClick={() => deleteNode(deleteConfirm.id)} className="bg-red-600">
               Excluir
             </AlertDialogAction>
           </AlertDialogFooter>
@@ -662,125 +810,85 @@ function DecisionTreeTab({ toast }) {
   );
 }
 
-// ==================== MODAL DE FORMULÁRIO ====================
-function NodeFormModal({ isOpen, onClose, onSave, node, parentId, saving }) {
-  const [trigger, setTrigger] = useState("");
-  const [response, setResponse] = useState("");
-  const [isActive, setIsActive] = useState(true);
-  const [order, setOrder] = useState(0);
+// ==================== ABA CONVERSAS ====================
+function MessagesTab({ toast }) {
+  const [messages, setMessages] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchMessages = useCallback(async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`${API_URL}/api/whatsapp/messages?limit=50`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (data.success) {
+        setMessages(data.messages || []);
+      }
+    } catch (error) {
+      console.error("Erro ao buscar mensagens:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
-    if (node) {
-      setTrigger(node.trigger || "");
-      setResponse(node.response || "");
-      setIsActive(node.is_active !== false);
-      setOrder(node.order || 0);
-    } else {
-      setTrigger("");
-      setResponse("");
-      setIsActive(true);
-      setOrder(0);
-    }
-  }, [node, isOpen]);
+    fetchMessages();
+    const interval = setInterval(fetchMessages, 10000);
+    return () => clearInterval(interval);
+  }, [fetchMessages]);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    
-    if (!trigger.trim() || !response.trim()) {
-      return;
-    }
-    
-    const data = {
-      trigger: trigger.trim(),
-      response: response.trim(),
-      is_active: isActive,
-      order: order,
-      parent_id: node ? node.parent_id : parentId
-    };
-    
-    onSave(data, !!node);
-  };
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[500px]">
-        <DialogHeader>
-          <DialogTitle>
-            {node ? "Editar Nó" : parentId ? "Adicionar Sub-opção" : "Nova Opção"}
-          </DialogTitle>
-        </DialogHeader>
-        
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <Label htmlFor="trigger">Gatilho (palavra/frase que dispara)</Label>
-            <Input
-              id="trigger"
-              value={trigger}
-              onChange={(e) => setTrigger(e.target.value)}
-              placeholder="Ex: oi, cardápio, 1, horário"
-              required
-            />
-            <p className="text-xs text-muted-foreground mt-1">
-              Quando o cliente enviar esta palavra, o bot responderá automaticamente
-            </p>
-          </div>
-          
-          <div>
-            <Label htmlFor="response">Resposta do Bot</Label>
-            <Textarea
-              id="response"
-              value={response}
-              onChange={(e) => setResponse(e.target.value)}
-              placeholder="Mensagem que o bot enviará..."
-              rows={4}
-              required
-            />
-          </div>
-          
-          <div className="flex gap-4">
-            <div className="flex-1">
-              <Label htmlFor="order">Ordem</Label>
-              <Input
-                id="order"
-                type="number"
-                value={order}
-                onChange={(e) => setOrder(parseInt(e.target.value) || 0)}
-                min={0}
-              />
+    <div className="p-6 max-w-4xl mx-auto">
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-xl font-semibold">Mensagens Recebidas</h2>
+        <Button variant="outline" onClick={fetchMessages}>
+          <RefreshCw className="w-4 h-4 mr-2" />
+          Atualizar
+        </Button>
+      </div>
+
+      {messages.length === 0 ? (
+        <div className="text-center py-12 bg-card rounded-xl border">
+          <MessageSquare className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+          <h3 className="text-lg font-medium mb-2">Nenhuma mensagem</h3>
+          <p className="text-sm text-muted-foreground">
+            As mensagens recebidas aparecerão aqui
+          </p>
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {messages.map((msg, index) => (
+            <div key={msg.id || index} className="bg-card rounded-lg border p-4">
+              <div className="flex items-start gap-3">
+                <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
+                  <User className="w-5 h-5 text-green-600" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2">
+                    <span className="font-medium">{msg.pushName || "Cliente"}</span>
+                    <span className="text-xs text-muted-foreground">
+                      {msg.from?.replace("@s.whatsapp.net", "")}
+                    </span>
+                  </div>
+                  <p className="mt-1 text-sm">{msg.message}</p>
+                  <p className="text-xs text-muted-foreground mt-2">
+                    {new Date(msg.timestamp).toLocaleString("pt-BR")}
+                  </p>
+                </div>
+              </div>
             </div>
-            
-            <div className="flex items-center gap-2 pt-6">
-              <input
-                type="checkbox"
-                id="isActive"
-                checked={isActive}
-                onChange={(e) => setIsActive(e.target.checked)}
-                className="rounded"
-              />
-              <Label htmlFor="isActive">Ativo</Label>
-            </div>
-          </div>
-          
-          <DialogFooter>
-            <Button type="button" variant="outline" onClick={onClose}>
-              Cancelar
-            </Button>
-            <Button type="submit" disabled={saving}>
-              {saving ? (
-                <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Salvando...
-                </>
-              ) : (
-                <>
-                  <Save className="w-4 h-4 mr-2" />
-                  Salvar
-                </>
-              )}
-            </Button>
-          </DialogFooter>
-        </form>
-      </DialogContent>
-    </Dialog>
+          ))}
+        </div>
+      )}
+    </div>
   );
 }
