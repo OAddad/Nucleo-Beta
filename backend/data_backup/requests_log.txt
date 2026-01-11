@@ -17548,3 +17548,4 @@
 2026-01-11T22:05:48.760472+00:00 | DB_CALL count_products | P3 | 0.12ms | success
 2026-01-11T22:05:48.760620+00:00 | DB_CALL count_users | P3 | 0.09ms | success
 2026-01-11T22:06:19.992102+00:00 | DB_CALL get_all_settings | P3 | 0.35ms | success
+2026-01-11T22:06:39.977776+00:00 | DB_CALL get_all_settings | P3 | 0.28ms | success
