@@ -14888,3 +14888,6 @@
 2026-01-11T18:44:13.392562+00:00 | DB_CALL get_all_settings | P3 | 3.66ms | success
 2026-01-11T18:44:13.393055+00:00 | DB_CALL get_all_entregadores | P3 | 3.18ms | success
 2026-01-11T18:44:13.403594+00:00 | DB_CALL get_all_funcionarios | P3 | 0.35ms | success
+2026-01-11T18:44:22.560385+00:00 | DB_CALL get_all_business_hours | P3 | 0.86ms | success
+2026-01-11T18:44:22.561239+00:00 | DB_CALL get_all_categories | P3 | 2.14ms | success
+2026-01-11T18:44:22.561610+00:00 | DB_CALL get_all_products | P3 | 1.64ms | success
