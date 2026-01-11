@@ -16742,3 +16742,9 @@
 2026-01-11T19:56:04.988981+00:00 | DB_CALL update_pedido_status | P3 | 4.88ms | success
 2026-01-11T19:56:05.164219+00:00 | DB_CALL get_entregador_by_id | P3 | 0.28ms | success
 2026-01-11T19:56:05.168137+00:00 | DB_CALL get_pedidos_by_entregador | P3 | 0.28ms | success
+2026-01-11T19:56:05.931016+00:00 | DB_CALL update_pedido_status | P3 | 5.95ms | success
+2026-01-11T19:56:06.107871+00:00 | DB_CALL get_entregador_by_id | P3 | 0.26ms | success
+2026-01-11T19:56:06.111264+00:00 | DB_CALL get_pedidos_by_entregador | P3 | 0.18ms | success
+2026-01-11T19:56:07.292604+00:00 | DB_CALL get_all_settings | P3 | 0.92ms | success
+2026-01-11T19:56:07.293973+00:00 | DB_CALL get_all_pedidos | P3 | 1.9ms | success
+2026-01-11T19:56:07.294921+00:00 | DB_CALL get_all_entregadores | P3 | 1.51ms | success
