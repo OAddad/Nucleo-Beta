@@ -17642,3 +17642,4 @@
 2026-01-11T22:22:31.944723+00:00 | DB_CALL get_all_categories | P3 | 0.71ms | success
 2026-01-11T22:22:31.945577+00:00 | DB_CALL get_user_by_id | P3 | 1.05ms | success
 2026-01-11T22:22:31.945939+00:00 | DB_CALL get_all_products | P3 | 0.27ms | success
+2026-01-11T22:26:20.185519+00:00 | DB_CALL get_database_info | P3 | 0.46ms | success
