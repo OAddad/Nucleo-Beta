@@ -67,6 +67,11 @@ export default function Delivery() {
   const [entregadorProntoSelecionado, setEntregadorProntoSelecionado] = useState("");
   const [pedidosSelecionados, setPedidosSelecionados] = useState([]);
 
+  // Modal de pagamento para retirada
+  const [pagamentoModalOpen, setPagamentoModalOpen] = useState(false);
+  const [pedidoParaPagamento, setPedidoParaPagamento] = useState(null);
+  const [formaPagamentoSelecionada, setFormaPagamentoSelecionada] = useState("");
+
   // Carregar dados
   const fetchData = useCallback(async () => {
     try {
