@@ -13107,3 +13107,5 @@
 2026-01-11T17:51:07.027285+00:00 | DB_CALL get_all_pedidos | P3 | 0.61ms | success
 2026-01-11T17:51:11.859245+00:00 | DB_CALL get_all_pedidos | P3 | 0.56ms | success
 2026-01-11T17:51:12.030091+00:00 | DB_CALL get_all_pedidos | P3 | 0.57ms | success
+2026-01-11T17:51:16.872337+00:00 | DB_CALL get_all_pedidos | P3 | 0.56ms | success
+2026-01-11T17:51:17.043628+00:00 | DB_CALL get_all_pedidos | P3 | 0.56ms | success
