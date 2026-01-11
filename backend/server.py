@@ -2533,6 +2533,22 @@ async def update_pedido_status(pedido_id: str, status: str):
     return pedido
 
 
+class CancelPedidoRequest(BaseModel):
+    motivo: str
+
+
+@api_router.patch("/pedidos/{pedido_id}/cancelar")
+async def cancel_pedido(pedido_id: str, data: CancelPedidoRequest, current_user: User = Depends(get_current_user)):
+    """Cancela um pedido com motivo obrigatório"""
+    if not data.motivo or len(data.motivo.strip()) < 3:
+        raise HTTPException(status_code=400, detail="Motivo do cancelamento é obrigatório (mínimo 3 caracteres)")
+    
+    pedido = await db_call(sqlite_db.cancel_pedido, pedido_id, data.motivo.strip())
+    if not pedido:
+        raise HTTPException(status_code=404, detail="Pedido não encontrado")
+    return pedido
+
+
 @api_router.delete("/pedidos/{pedido_id}")
 async def delete_pedido(pedido_id: str, current_user: User = Depends(get_current_user)):
     """Deleta um pedido (requer autenticação)"""
