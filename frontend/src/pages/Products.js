@@ -387,7 +387,7 @@ function ProductThumbnail({ photoUrl, name }) {
 
   if (!photoUrl || imageError) {
     return (
-      <div className="flex flex-col items-center justify-center w-full h-full">
+      <div className="flex flex-col items-center justify-center w-full h-full bg-muted">
         <ImageOff className="w-6 h-6 text-muted-foreground mb-1" strokeWidth={1.5} />
         <span className="text-xs text-muted-foreground">{imageError ? "Erro" : "Sem foto"}</span>
       </div>
@@ -398,7 +398,7 @@ function ProductThumbnail({ photoUrl, name }) {
     <img
       src={`/api${photoUrl}`}
       alt={name}
-      className="w-full h-full object-cover"
+      className="w-full h-full object-contain"
       onError={() => setImageError(true)}
     />
   );
