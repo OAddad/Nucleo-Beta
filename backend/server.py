@@ -292,6 +292,7 @@ class ClienteCreate(BaseModel):
     last_order_date: Optional[str] = None
     orders_last_30_days: Optional[int] = 0
     pontuacao: Optional[int] = 0
+    senha: Optional[str] = None  # Senha opcional para clientes
 
 
 class Cliente(BaseModel):
@@ -314,6 +315,7 @@ class Cliente(BaseModel):
     last_order_date: Optional[str] = None
     orders_last_30_days: int = 0
     pontuacao: int = 0
+    senha: Optional[str] = None  # Senha opcional para clientes
     created_at: Optional[datetime] = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 
