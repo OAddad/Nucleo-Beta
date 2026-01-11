@@ -2242,7 +2242,27 @@ async def update_cliente(cliente_id: str, cliente_data: ClienteCreate, current_u
     return Cliente(**updated)
 
 
-@api_router.delete("/clientes/{cliente_id}")
+@api_router.put("/public/clientes/{cliente_id}", response_model=Cliente)
+async def update_cliente_public(cliente_id: str, cliente_data: ClienteCreate):
+    """Atualiza um cliente (público - para o cliente atualizar seu próprio perfil)"""
+    cliente = await db_call(sqlite_db.get_cliente_by_id, cliente_id)
+    if not cliente:
+        raise HTTPException(status_code=404, detail="Cliente não encontrado")
+    
+    update_data = cliente_data.model_dump(exclude_none=True)
+    # Não permitir que o cliente altere certos campos
+    update_data.pop('pedidos_count', None)
+    update_data.pop('total_gasto', None)
+    update_data.pop('last_order_date', None)
+    update_data.pop('orders_last_30_days', None)
+    # Pontuação só pode ser mantida, não alterada
+    update_data['pontuacao'] = cliente.get('pontuacao', 0)
+    
+    updated = await db_call(sqlite_db.update_cliente, cliente_id, update_data)
+    if not updated:
+        raise HTTPException(status_code=500, detail="Erro ao atualizar cliente")
+    
+    return Cliente(**updated)
 async def delete_cliente(cliente_id: str, current_user: User = Depends(get_current_user)):
     """Deleta um cliente"""
     cliente = await db_call(sqlite_db.get_cliente_by_id, cliente_id)

@@ -196,7 +196,7 @@ function EditAccountModal({ isOpen, onClose, client, onUpdate }) {
         pontuacao: client?.pontuacao || 0,
       };
 
-      const response = await axios.put(`${API}/clientes/${client.id}`, clienteData);
+      const response = await axios.put(`${API}/public/clientes/${client.id}`, clienteData);
       localStorage.setItem("client", JSON.stringify(response.data));
       onUpdate(response.data);
       toast.success("Conta atualizada com sucesso!");

@@ -9845,3 +9845,10 @@
 2026-01-11T16:00:19.567593+00:00 | DB_CALL get_all_pedidos | P3 | 0.36ms | success
 2026-01-11T16:00:24.570153+00:00 | DB_CALL get_all_pedidos | P3 | 0.39ms | success
 2026-01-11T16:00:29.561194+00:00 | DB_CALL get_all_pedidos | P3 | 0.4ms | success
+2026-01-11T16:00:34.582298+00:00 | DB_CALL get_all_pedidos | P3 | 0.38ms | success
+2026-01-11T16:00:39.570520+00:00 | DB_CALL get_all_pedidos | P3 | 0.39ms | success
+2026-01-11T16:00:43.455513+00:00 | DB_CALL init_database | P3 | 4.52ms | success
+2026-01-11T16:00:43.456034+00:00 | DB_CALL count_ingredients | P3 | 0.25ms | success
+2026-01-11T16:00:43.456212+00:00 | DB_CALL count_products | P3 | 0.11ms | success
+2026-01-11T16:00:43.456353+00:00 | DB_CALL count_users | P3 | 0.09ms | success
+2026-01-11T16:00:44.608414+00:00 | DB_CALL get_all_pedidos | P3 | 0.51ms | success
