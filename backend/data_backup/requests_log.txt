@@ -16043,3 +16043,6 @@
 2026-01-11T19:19:49.912005+00:00 | DB_CALL get_all_products | P3 | 4.85ms | success
 2026-01-11T19:19:49.912619+00:00 | DB_CALL get_all_business_hours | P3 | 1.07ms | success
 2026-01-11T19:19:50.066614+00:00 | DB_CALL get_client_addresses | P3 | 0.31ms | success
+2026-01-11T19:20:01.833153+00:00 | DB_CALL search_ruas | P3 | 1.59ms | success
+2026-01-11T19:20:02.062806+00:00 | DB_CALL search_ruas | P3 | 0.38ms | success
+2026-01-11T19:20:02.373202+00:00 | DB_CALL search_ruas | P3 | 0.4ms | success

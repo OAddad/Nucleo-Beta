@@ -938,8 +938,17 @@ function CheckoutModal({ open, onClose, cart, cartTotal, client, darkMode, onOrd
                         onChange={e => setNewAddress(prev => ({ ...prev, cep: e.target.value }))}
                         className={t.input}
                       />
-                      />
                     </div>
+
+                    {/* Mostrar valor de entrega do bairro */}
+                    {valorEntrega > 0 && (
+                      <div className="p-3 bg-green-500/10 border border-green-500/30 rounded-lg">
+                        <p className="text-sm text-green-600 dark:text-green-400 flex items-center gap-2">
+                          <Truck className="w-4 h-4" />
+                          Taxa de entrega: <strong>R$ {valorEntrega.toFixed(2)}</strong>
+                        </p>
+                      </div>
+                    )}
 
                     <Button
                       onClick={handleSaveNewAddress}
