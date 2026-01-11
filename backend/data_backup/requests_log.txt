@@ -15817,3 +15817,6 @@
 2026-01-11T19:08:47.529265+00:00 | DB_CALL count_ingredients | P3 | 0.3ms | success
 2026-01-11T19:08:47.529462+00:00 | DB_CALL count_products | P3 | 0.13ms | success
 2026-01-11T19:08:47.529612+00:00 | DB_CALL count_users | P3 | 0.1ms | success
+2026-01-11T19:09:43.241742+00:00 | DB_CALL get_user_by_username | P3 | 0.36ms | success
+2026-01-11T19:09:43.256937+00:00 | DB_CALL get_user_by_id | P3 | 0.39ms | success
+2026-01-11T19:09:43.260634+00:00 | DB_CALL delete_entregador | P3 | 3.46ms | success
