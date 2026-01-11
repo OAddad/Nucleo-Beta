@@ -522,12 +522,7 @@ export default function Delivery() {
         {showButton && (
           <Button 
             size="sm" 
-            className={`w-full ${
-              buttonType === 'aceitar' ? 'bg-green-600 hover:bg-green-700' :
-              buttonType === 'pronto' ? 'bg-amber-600 hover:bg-amber-700' :
-              buttonType === 'finalizar' ? 'bg-emerald-600 hover:bg-emerald-700' :
-              'bg-blue-600 hover:bg-blue-700'
-            }`}
+            className="w-full"
             onClick={(e) => onButtonClick && onButtonClick(e)}
           >
             {buttonType === 'aceitar' && <><Check className="w-4 h-4 mr-1" /> Aceitar</>}
