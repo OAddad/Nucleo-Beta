@@ -1511,6 +1511,23 @@ def count_clientes() -> int:
         return cursor.fetchone()[0]
 
 
+def get_cliente_by_telefone(telefone: str) -> Optional[Dict]:
+    """Retorna um cliente pelo telefone"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        # Remover formatação para busca
+        telefone_limpo = ''.join(filter(str.isdigit, telefone))
+        cursor.execute('''
+            SELECT * FROM clientes 
+            WHERE REPLACE(REPLACE(REPLACE(REPLACE(telefone, '(', ''), ')', ''), '-', ''), ' ', '') = ?
+            OR telefone = ?
+        ''', (telefone_limpo, telefone))
+        columns = [desc[0] for desc in cursor.description]
+        row = cursor.fetchone()
+        return dict(zip(columns, row)) if row else None
+
+
 def get_total_pontuacao() -> int:
     """Retorna o total de pontos distribuídos para todos os clientes"""
     with db_lock:

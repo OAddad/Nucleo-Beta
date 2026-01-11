@@ -9355,3 +9355,4 @@
 2026-01-11T15:14:21.790071+00:00 | DB_CALL get_all_pedidos | P3 | 0.44ms | success
 2026-01-11T15:14:26.780490+00:00 | DB_CALL get_all_pedidos | P3 | 0.36ms | success
 2026-01-11T15:14:31.780047+00:00 | DB_CALL get_all_pedidos | P3 | 0.34ms | success
+2026-01-11T15:14:36.785535+00:00 | DB_CALL get_all_pedidos | P3 | 0.36ms | success
