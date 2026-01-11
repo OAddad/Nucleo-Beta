@@ -16955,3 +16955,7 @@
 2026-01-11T20:21:30.322930+00:00 | DB_CALL count_ingredients | P3 | 0.24ms | success
 2026-01-11T20:21:30.323119+00:00 | DB_CALL count_products | P3 | 0.13ms | success
 2026-01-11T20:21:30.323264+00:00 | DB_CALL count_users | P3 | 0.1ms | success
+2026-01-11T20:21:35.775745+00:00 | DB_CALL get_user_by_id | P3 | 0.36ms | success
+2026-01-11T20:21:37.260876+00:00 | DB_CALL get_user_by_id | P3 | 0.28ms | success
+2026-01-11T20:21:37.261225+00:00 | DB_CALL get_all_flow_nodes | P3 | 0.2ms | success
+2026-01-11T20:21:37.261401+00:00 | DB_CALL get_all_flow_edges | P3 | 0.12ms | success
