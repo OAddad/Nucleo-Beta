@@ -74,6 +74,9 @@ export default function Delivery() {
   const [pedidoParaCancelar, setPedidoParaCancelar] = useState(null);
   const [motivoCancelamento, setMotivoCancelamento] = useState("");
 
+  // Modal de novo pedido (cardápio popup)
+  const [novoPedidoModalOpen, setNovoPedidoModalOpen] = useState(false);
+
   // Carregar dados
   const fetchData = useCallback(async () => {
     try {
