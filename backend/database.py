@@ -448,6 +448,32 @@ def init_database():
             )
         ''')
         
+        # Tabela de analytics de palavras do WhatsApp
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS word_analytics (
+                id TEXT PRIMARY KEY,
+                word TEXT NOT NULL,
+                count INTEGER DEFAULT 1,
+                last_used TEXT,
+                first_used TEXT,
+                sender_phones TEXT,
+                created_at TEXT,
+                updated_at TEXT
+            )
+        ''')
+        
+        # Tabela de mensagens do WhatsApp (histórico)
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS whatsapp_messages (
+                id TEXT PRIMARY KEY,
+                sender_phone TEXT NOT NULL,
+                sender_name TEXT,
+                message TEXT NOT NULL,
+                response TEXT,
+                created_at TEXT
+            )
+        ''')
+        
         # Migrações
         try:
             cursor.execute("SELECT code FROM ingredients LIMIT 1")
