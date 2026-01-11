@@ -16850,3 +16850,7 @@
 2026-01-11T20:06:34.194734+00:00 | DB_CALL get_all_bairros | P3 | 0.42ms | success
 2026-01-11T20:06:37.023247+00:00 | DB_CALL get_user_by_username | P3 | 0.34ms | success
 2026-01-11T20:06:39.886824+00:00 | DB_CALL get_user_by_username | P3 | 0.26ms | success
+2026-01-11T20:06:53.137511+00:00 | DB_CALL init_database | P3 | 2.7ms | success
+2026-01-11T20:06:53.138004+00:00 | DB_CALL count_ingredients | P3 | 0.24ms | success
+2026-01-11T20:06:53.138182+00:00 | DB_CALL count_products | P3 | 0.12ms | success
+2026-01-11T20:06:53.138332+00:00 | DB_CALL count_users | P3 | 0.1ms | success
