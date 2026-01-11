@@ -17102,3 +17102,7 @@
 2026-01-11T21:31:07.005879+00:00 | DB_CALL count_users | P3 | 0.1ms | success
 2026-01-11T21:31:10.663928+00:00 | DB_CALL get_user_by_id | P3 | 0.33ms | success
 2026-01-11T21:31:10.664320+00:00 | DB_CALL get_all_business_hours | P3 | 0.22ms | success
+2026-01-11T21:33:17.560620+00:00 | DB_CALL init_database | P3 | 3.25ms | success
+2026-01-11T21:33:17.561258+00:00 | DB_CALL count_ingredients | P3 | 0.23ms | success
+2026-01-11T21:33:17.561442+00:00 | DB_CALL count_products | P3 | 0.12ms | success
+2026-01-11T21:33:17.561590+00:00 | DB_CALL count_users | P3 | 0.1ms | success
