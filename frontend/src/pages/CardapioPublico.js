@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import axios from "axios";
-import { Search, ShoppingBag, Plus, Minus, Trash2, X, Clock, Star, ChevronLeft, ChevronRight, User, ImageOff, MapPin, Store, Truck, CreditCard, Banknote, QrCode, Check, Home, Building, Edit2 } from "lucide-react";
+import { Search, ShoppingBag, Plus, Minus, Trash2, X, Clock, Star, ChevronLeft, ChevronRight, User, ImageOff, MapPin, Store, Truck, CreditCard, Banknote, QrCode, Check, Home, Building, Edit2, Package, Send, ChefHat, Timer, Bike, CheckCircle, MessageCircle } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Textarea } from "../components/ui/textarea";
@@ -18,6 +18,172 @@ const MotoIcon = ({ className }) => (
     <path d="M19.44 9.03L15.41 5H11v2h3.59l2 2H5c-2.8 0-5 2.2-5 5s2.2 5 5 5c2.46 0 4.45-1.69 4.9-4h1.65l2.77-2.77c-.21.54-.32 1.14-.32 1.77 0 2.8 2.2 5 5 5s5-2.2 5-5c0-2.65-1.97-4.77-4.56-4.97zM7.82 15C7.4 16.15 6.28 17 5 17c-1.63 0-3-1.37-3-3s1.37-3 3-3c1.28 0 2.4.85 2.82 2H5v2h2.82zM19 17c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3z"/>
   </svg>
 );
+
+// Componente de Acompanhamento de Pedido
+function OrderTrackingScreen({ pedido, onClose, darkMode }) {
+  const [currentStatus, setCurrentStatus] = useState('enviado');
+  
+  // Etapas do pedido
+  const steps = [
+    { id: 'enviado', label: 'Pedido Enviado', icon: Send, description: 'Seu pedido foi enviado para o restaurante' },
+    { id: 'aceito', label: 'Pedido Aceito', icon: Check, description: 'O restaurante aceitou seu pedido' },
+    { id: 'producao', label: 'Em Produção', icon: ChefHat, description: 'Seu pedido está sendo preparado' },
+    { id: 'aguardando_entregador', label: 'Aguardando Entregador', icon: Timer, description: 'Aguardando um entregador disponível' },
+    { id: 'bag_entregador', label: 'Na Bag do Entregador', icon: Package, description: 'Seu pedido está com o entregador' },
+    { id: 'em_rota', label: 'Em Rota de Entrega', icon: Bike, description: 'O entregador está a caminho' },
+    { id: 'entregue', label: 'Pedido Entregue', icon: CheckCircle, description: 'Seu pedido foi entregue!' },
+  ];
+
+  // Mapear status do pedido para as etapas
+  useEffect(() => {
+    if (pedido?.status) {
+      const statusMap = {
+        'producao': 'producao',
+        'aguardando': 'aguardando_entregador',
+        'transito': 'em_rota',
+        'concluido': 'entregue',
+      };
+      setCurrentStatus(statusMap[pedido.status] || 'enviado');
+    }
+  }, [pedido]);
+
+  const getCurrentStepIndex = () => {
+    return steps.findIndex(s => s.id === currentStatus);
+  };
+
+  const t = {
+    bg: darkMode ? 'bg-zinc-900' : 'bg-gray-50',
+    bgCard: darkMode ? 'bg-zinc-800' : 'bg-white',
+    text: darkMode ? 'text-white' : 'text-gray-900',
+    textMuted: darkMode ? 'text-zinc-400' : 'text-gray-500',
+    border: darkMode ? 'border-zinc-700' : 'border-gray-200',
+  };
+
+  return (
+    <div className={`fixed inset-0 z-[100] ${t.bg} overflow-y-auto`}>
+      {/* Header */}
+      <div className="bg-orange-500 text-white p-4 sticky top-0 z-10">
+        <div className="flex items-center justify-between max-w-2xl mx-auto">
+          <button onClick={onClose} className="p-2 hover:bg-white/20 rounded-full">
+            <X className="w-6 h-6" />
+          </button>
+          <div className="text-center">
+            <h1 className="font-bold text-lg">Acompanhar Pedido</h1>
+            <p className="text-white/80 text-sm">{pedido?.codigo}</p>
+          </div>
+          <div className="w-10" /> {/* Spacer */}
+        </div>
+      </div>
+
+      <div className="max-w-2xl mx-auto p-4 pb-40">
+        {/* Info do Pedido */}
+        <div className={`${t.bgCard} rounded-xl p-4 mb-6 border ${t.border}`}>
+          <div className="flex items-center justify-between">
+            <div>
+              <p className={`font-bold ${t.text}`}>{pedido?.codigo}</p>
+              <p className={`text-sm ${t.textMuted}`}>
+                {pedido?.created_at ? new Date(pedido.created_at).toLocaleString('pt-BR') : 'Agora'}
+              </p>
+            </div>
+            <div className="text-right">
+              <p className={`text-sm ${t.textMuted}`}>Total</p>
+              <p className="font-bold text-orange-500 text-xl">
+                R$ {(pedido?.total || 0).toFixed(2).replace('.', ',')}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Timeline de Etapas */}
+        <div className={`${t.bgCard} rounded-xl p-6 mb-6 border ${t.border}`}>
+          <h2 className={`font-bold text-lg mb-6 ${t.text}`}>Status do Pedido</h2>
+          
+          <div className="relative">
+            {steps.map((step, index) => {
+              const isCompleted = index <= getCurrentStepIndex();
+              const isCurrent = index === getCurrentStepIndex();
+              const StepIcon = step.icon;
+              
+              return (
+                <div key={step.id} className="flex items-start mb-6 last:mb-0">
+                  {/* Linha vertical */}
+                  {index < steps.length - 1 && (
+                    <div 
+                      className={`absolute left-5 w-0.5 h-12 mt-10 -ml-px ${
+                        index < getCurrentStepIndex() ? 'bg-green-500' : t.border
+                      }`}
+                      style={{ top: `${index * 72 + 40}px` }}
+                    />
+                  )}
+                  
+                  {/* Ícone */}
+                  <div className={`
+                    w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 z-10
+                    ${isCompleted 
+                      ? 'bg-green-500 text-white' 
+                      : `${darkMode ? 'bg-zinc-700' : 'bg-gray-200'} ${t.textMuted}`
+                    }
+                    ${isCurrent ? 'ring-4 ring-green-500/30 animate-pulse' : ''}
+                  `}>
+                    <StepIcon className="w-5 h-5" />
+                  </div>
+                  
+                  {/* Texto */}
+                  <div className="ml-4 flex-1">
+                    <p className={`font-medium ${isCompleted ? t.text : t.textMuted}`}>
+                      {step.label}
+                    </p>
+                    <p className={`text-sm ${t.textMuted}`}>
+                      {step.description}
+                    </p>
+                    {isCurrent && (
+                      <span className="inline-block mt-1 text-xs bg-green-500 text-white px-2 py-0.5 rounded-full">
+                        Atual
+                      </span>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Itens do Pedido */}
+        <div className={`${t.bgCard} rounded-xl p-4 mb-6 border ${t.border}`}>
+          <h3 className={`font-bold mb-3 ${t.text}`}>Itens do Pedido</h3>
+          <div className="space-y-2">
+            {pedido?.items?.map((item, idx) => (
+              <div key={idx} className={`flex justify-between py-2 border-b last:border-0 ${t.border}`}>
+                <span className={t.text}>{item.quantidade}x {item.nome}</span>
+                <span className={t.textMuted}>R$ {((item.preco || 0) * item.quantidade).toFixed(2)}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Card WhatsApp Fixo no Bottom */}
+      <div className="fixed bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 to-transparent">
+        <a
+          href="https://web.whatsapp.com/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="block max-w-2xl mx-auto"
+        >
+          <div className="bg-green-500 hover:bg-green-600 transition-colors rounded-2xl p-6 text-white shadow-2xl">
+            <div className="flex items-center justify-center gap-4">
+              <MessageCircle className="w-10 h-10" />
+              <div className="text-center">
+                <h3 className="font-bold text-xl">Acompanhar meu pedido via WhatsApp</h3>
+                <p className="text-white/80 text-sm">Clique para abrir o WhatsApp</p>
+              </div>
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+  );
+}
 
 // Função para obter URL completa de imagem
 // Usa /api/uploads para passar pelo proxy do Kubernetes
