@@ -3192,6 +3192,187 @@ def get_all_chatbot_settings() -> Dict[str, str]:
         return {row[0]: row[1] for row in cursor.fetchall()}
 
 
+# ==================== ANALYTICS DE PALAVRAS ====================
+def process_message_words(message: str, sender_phone: str, sender_name: str = None) -> None:
+    """Processa uma mensagem e contabiliza as palavras"""
+    import re
+    from datetime import datetime
+    import uuid
+    
+    # Limpar e tokenizar a mensagem
+    # Remove pontuação e converte para minúsculas
+    words = re.findall(r'\b[a-záàâãéèêíïóôõöúçñ]+\b', message.lower())
+    
+    # Palavras comuns a ignorar (stop words em português)
+    stop_words = {
+        'a', 'o', 'e', 'de', 'da', 'do', 'em', 'um', 'uma', 'para', 'com', 'não', 'nao',
+        'que', 'os', 'as', 'dos', 'das', 'no', 'na', 'por', 'mais', 'se', 'já', 'ja',
+        'ou', 'quando', 'muito', 'nos', 'nas', 'esse', 'essa', 'isso', 'este', 'esta',
+        'isto', 'aquele', 'aquela', 'aquilo', 'ele', 'ela', 'eles', 'elas', 'você', 'voce',
+        'eu', 'meu', 'minha', 'seu', 'sua', 'nosso', 'nossa', 'me', 'te', 'lhe', 'nos',
+        'mas', 'como', 'qual', 'quais', 'onde', 'porque', 'pq', 'tb', 'tbm', 'vc',
+        'ai', 'aí', 'la', 'lá', 'aqui', 'ali', 'sim', 'nao', 'ok', 'ta', 'tá',
+        'oi', 'ola', 'olá', 'bom', 'boa', 'dia', 'tarde', 'noite', 'obrigado', 'obrigada',
+        'por', 'favor', 'pfv', 'pf', 'blz', 'beleza'
+    }
+    
+    # Filtrar palavras curtas e stop words
+    words = [w for w in words if len(w) > 2 and w not in stop_words]
+    
+    now = datetime.utcnow().isoformat() + "Z"
+    
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        
+        # Salvar mensagem no histórico
+        msg_id = str(uuid.uuid4())
+        cursor.execute('''
+            INSERT INTO whatsapp_messages (id, sender_phone, sender_name, message, created_at)
+            VALUES (?, ?, ?, ?, ?)
+        ''', (msg_id, sender_phone, sender_name, message, now))
+        
+        # Processar cada palavra
+        for word in words:
+            # Verificar se a palavra já existe
+            cursor.execute("SELECT id, count, sender_phones FROM word_analytics WHERE word = ?", (word,))
+            row = cursor.fetchone()
+            
+            if row:
+                # Atualizar contagem
+                word_id = row[0]
+                new_count = row[1] + 1
+                phones = row[2] or ""
+                if sender_phone not in phones:
+                    phones = f"{phones},{sender_phone}" if phones else sender_phone
+                
+                cursor.execute('''
+                    UPDATE word_analytics 
+                    SET count = ?, last_used = ?, sender_phones = ?, updated_at = ?
+                    WHERE id = ?
+                ''', (new_count, now, phones, now, word_id))
+            else:
+                # Inserir nova palavra
+                word_id = str(uuid.uuid4())
+                cursor.execute('''
+                    INSERT INTO word_analytics (id, word, count, first_used, last_used, sender_phones, created_at, updated_at)
+                    VALUES (?, ?, 1, ?, ?, ?, ?, ?)
+                ''', (word_id, word, now, now, sender_phone, now, now))
+        
+        conn.commit()
+
+
+def get_word_analytics(limit: int = 100, order_by: str = "count") -> List[Dict]:
+    """Retorna analytics de palavras ordenadas"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        
+        valid_orders = {"count": "count DESC", "word": "word ASC", "last_used": "last_used DESC"}
+        order = valid_orders.get(order_by, "count DESC")
+        
+        cursor.execute(f'''
+            SELECT id, word, count, first_used, last_used, sender_phones, created_at
+            FROM word_analytics
+            ORDER BY {order}
+            LIMIT ?
+        ''', (limit,))
+        
+        results = []
+        for row in cursor.fetchall():
+            phones = row[5].split(",") if row[5] else []
+            results.append({
+                "id": row[0],
+                "word": row[1],
+                "count": row[2],
+                "first_used": row[3],
+                "last_used": row[4],
+                "unique_senders": len(set(phones)),
+                "created_at": row[6]
+            })
+        return results
+
+
+def get_word_analytics_summary() -> Dict:
+    """Retorna resumo geral das analytics"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        
+        # Total de palavras únicas
+        cursor.execute("SELECT COUNT(*) FROM word_analytics")
+        total_words = cursor.fetchone()[0]
+        
+        # Total de ocorrências
+        cursor.execute("SELECT SUM(count) FROM word_analytics")
+        total_occurrences = cursor.fetchone()[0] or 0
+        
+        # Total de mensagens
+        cursor.execute("SELECT COUNT(*) FROM whatsapp_messages")
+        total_messages = cursor.fetchone()[0]
+        
+        # Clientes únicos
+        cursor.execute("SELECT COUNT(DISTINCT sender_phone) FROM whatsapp_messages")
+        unique_senders = cursor.fetchone()[0]
+        
+        # Top 10 palavras
+        cursor.execute('''
+            SELECT word, count FROM word_analytics
+            ORDER BY count DESC
+            LIMIT 10
+        ''')
+        top_words = [{"word": row[0], "count": row[1]} for row in cursor.fetchall()]
+        
+        # Palavras por dia (últimos 7 dias)
+        cursor.execute('''
+            SELECT DATE(created_at) as day, COUNT(*) as messages
+            FROM whatsapp_messages
+            WHERE created_at >= datetime('now', '-7 days')
+            GROUP BY DATE(created_at)
+            ORDER BY day DESC
+        ''')
+        messages_by_day = [{"day": row[0], "count": row[1]} for row in cursor.fetchall()]
+        
+        return {
+            "total_unique_words": total_words,
+            "total_word_occurrences": total_occurrences,
+            "total_messages": total_messages,
+            "unique_senders": unique_senders,
+            "top_words": top_words,
+            "messages_by_day": messages_by_day
+        }
+
+
+def get_recent_messages(limit: int = 50) -> List[Dict]:
+    """Retorna mensagens recentes"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute('''
+            SELECT id, sender_phone, sender_name, message, response, created_at
+            FROM whatsapp_messages
+            ORDER BY created_at DESC
+            LIMIT ?
+        ''', (limit,))
+        return [dict(row) for row in cursor.fetchall()]
+
+
+def clear_word_analytics() -> int:
+    """Limpa todos os dados de analytics"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        
+        cursor.execute("SELECT COUNT(*) FROM word_analytics")
+        count = cursor.fetchone()[0]
+        
+        cursor.execute("DELETE FROM word_analytics")
+        cursor.execute("DELETE FROM whatsapp_messages")
+        conn.commit()
+        
+        return count
+
+
 # ==================== FUNÇÕES DE LIMPEZA DE DADOS ====================
 def clear_products_and_ingredients() -> int:
     """Limpa produtos, ingredientes e dados relacionados"""
