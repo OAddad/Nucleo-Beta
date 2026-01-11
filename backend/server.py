@@ -2398,7 +2398,7 @@ class PedidoCreate(BaseModel):
     cliente_email: Optional[str] = None
     items: List[PedidoItemCreate]
     total: float = 0
-    status: Optional[str] = "producao"
+    status: Optional[str] = None
     forma_pagamento: Optional[str] = None
     troco_precisa: Optional[bool] = False
     troco_valor: Optional[float] = None

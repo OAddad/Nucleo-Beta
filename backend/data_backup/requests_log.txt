@@ -10797,3 +10797,9 @@
 2026-01-11T17:08:30.052610+00:00 | DB_CALL get_all_pedidos | P3 | 0.42ms | success
 2026-01-11T17:08:35.049010+00:00 | DB_CALL get_all_pedidos | P3 | 0.42ms | success
 2026-01-11T17:08:40.047957+00:00 | DB_CALL get_all_pedidos | P3 | 0.42ms | success
+2026-01-11T17:08:45.045875+00:00 | DB_CALL get_all_pedidos | P3 | 0.42ms | success
+2026-01-11T17:08:50.061334+00:00 | DB_CALL get_all_pedidos | P3 | 0.43ms | success
+2026-01-11T17:08:51.339449+00:00 | DB_CALL init_database | P3 | 2.46ms | success
+2026-01-11T17:08:51.339887+00:00 | DB_CALL count_ingredients | P3 | 0.21ms | success
+2026-01-11T17:08:51.340068+00:00 | DB_CALL count_products | P3 | 0.12ms | success
+2026-01-11T17:08:51.340224+00:00 | DB_CALL count_users | P3 | 0.11ms | success
