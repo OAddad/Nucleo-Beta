@@ -11418,3 +11418,14 @@
 2026-01-11T17:24:11.721437+00:00 | DB_CALL get_all_pedidos | P3 | 0.58ms | success
 2026-01-11T17:24:11.728311+00:00 | DB_CALL get_all_entregadores | P3 | 0.22ms | success
 2026-01-11T17:24:11.733365+00:00 | DB_CALL get_all_settings | P3 | 0.21ms | success
+2026-01-11T17:24:13.389562+00:00 | DB_CALL get_user_by_id | P3 | 0.24ms | success
+2026-01-11T17:24:13.389752+00:00 | DB_CALL get_user_by_id | P3 | 1.07ms | success
+2026-01-11T17:24:13.390110+00:00 | DB_CALL get_total_pontuacao | P3 | 0.38ms | success
+2026-01-11T17:24:13.393421+00:00 | DB_CALL recalculate_all_cliente_stats | P3 | 3.56ms | success
+2026-01-11T17:24:13.393581+00:00 | DB_CALL count_clientes | P3 | 3.37ms | success
+2026-01-11T17:24:13.394653+00:00 | DB_CALL get_all_clientes | P3 | 1.13ms | success
+2026-01-11T17:24:13.836497+00:00 | DB_CALL get_all_pedidos | P3 | 0.52ms | success
+2026-01-11T17:24:13.839705+00:00 | DB_CALL get_all_entregadores | P3 | 0.18ms | success
+2026-01-11T17:24:13.844273+00:00 | DB_CALL get_all_settings | P3 | 0.19ms | success
+2026-01-11T17:24:14.351909+00:00 | DB_CALL get_all_pedidos | P3 | 0.49ms | success
+2026-01-11T17:24:18.330357+00:00 | DB_CALL get_all_pedidos | P3 | 0.5ms | success
