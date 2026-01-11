@@ -50,9 +50,10 @@ import {
 // URL da API
 const API = '/api';
 
-const getAuthHeader = () => ({
-  headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-});
+const getAuthHeader = () => {
+  const token = localStorage.getItem("token");
+  return token ? { headers: { Authorization: `Bearer ${token}` } } : {};
+};
 
 // Função para calcular tempo desde cadastro
 const getTimeSinceRegistration = (dateStr) => {
