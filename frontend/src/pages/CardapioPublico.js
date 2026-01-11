@@ -1565,17 +1565,22 @@ export default function CardapioPublico({ onAdminLogin }) {
         {/* Restaurant Info */}
         <div className="bg-gradient-to-r from-orange-600 to-orange-500 px-4 py-4">
           <div className="flex items-start gap-4 max-w-7xl mx-auto">
-            <div className="w-16 h-16 bg-white rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg">
-              <img src="/logo-nucleo.png" alt="Logo" className="w-12 h-12 object-contain" onError={(e) => { e.target.style.display = 'none'; e.target.parentElement.innerHTML = '<span class="text-orange-500 font-bold text-2xl">N</span>'; }} />
+            <div className="w-16 h-16 bg-white rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg overflow-hidden">
+              <img 
+                src={companySettings.logo_url ? `/api${companySettings.logo_url}` : "/logo-nucleo.png"} 
+                alt="Logo" 
+                className="w-12 h-12 object-contain" 
+                onError={(e) => { e.target.style.display = 'none'; e.target.parentElement.innerHTML = `<span class="text-orange-500 font-bold text-2xl">${(companySettings.company_name || 'N').charAt(0)}</span>`; }} 
+              />
             </div>
             <div className="flex-1">
               <div className="flex items-center gap-2">
-                <h1 className="text-xl font-bold text-white">Núcleo Restaurante</h1>
+                <h1 className="text-xl font-bold text-white">{companySettings.fantasy_name || companySettings.company_name || "Núcleo"}</h1>
                 <div className="flex items-center gap-1 bg-white/20 px-2 py-0.5 rounded-full">
                   <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" /><span className="text-xs font-medium">5.0</span>
                 </div>
               </div>
-              <p className="text-white/80 text-sm">O melhor da culinária</p>
+              <p className="text-white/80 text-sm">{companySettings.slogan || "O melhor da culinária"}</p>
               <div className="flex items-center gap-4 mt-2">
                 <div className="flex items-center gap-1 text-sm">
                   <div className={`w-2 h-2 rounded-full ${isOpen ? 'bg-green-400 animate-pulse' : 'bg-red-400'}`}></div>
