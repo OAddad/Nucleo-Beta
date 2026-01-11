@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import { toast } from "sonner";
 import { 
-  Route, Search, MapPin, Edit, Trash2, Plus
+  Route as RouteIcon, Search, MapPin, Edit, Trash2, Plus
 } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
