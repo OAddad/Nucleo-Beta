@@ -14630,3 +14630,10 @@
 2026-01-11T18:37:17.291235+00:00 | DB_CALL get_entregador_by_id | P3 | 1.05ms | success
 2026-01-11T18:37:27.328294+00:00 | DB_CALL get_entregador_by_id | P3 | 0.86ms | success
 2026-01-11T18:37:27.328889+00:00 | DB_CALL get_pedidos_by_entregador | P3 | 1.12ms | success
+2026-01-11T18:37:37.568792+00:00 | DB_CALL get_entregador_by_id | P3 | 0.32ms | success
+2026-01-11T18:37:37.592746+00:00 | DB_CALL get_pedidos_by_entregador | P3 | 0.3ms | success
+2026-01-11T18:37:41.794357+00:00 | DB_CALL get_entregador_by_id | P3 | 0.89ms | success
+2026-01-11T18:37:41.794884+00:00 | DB_CALL get_pedidos_by_entregador | P3 | 0.94ms | success
+2026-01-11T18:37:43.591581+00:00 | DB_CALL get_all_pedidos | P3 | 0.63ms | success
+2026-01-11T18:37:43.593692+00:00 | DB_CALL get_all_entregadores | P3 | 0.18ms | success
+2026-01-11T18:37:43.596681+00:00 | DB_CALL get_all_settings | P3 | 0.17ms | success

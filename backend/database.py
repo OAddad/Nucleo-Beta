@@ -409,6 +409,19 @@ def init_database():
             )
         ''')
         
+        # Criar tabela de funcionários (liga clientes a cargos)
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS funcionarios (
+                id TEXT PRIMARY KEY,
+                cliente_id TEXT NOT NULL,
+                cargo TEXT NOT NULL,
+                ativo INTEGER DEFAULT 1,
+                created_at TEXT,
+                updated_at TEXT,
+                FOREIGN KEY (cliente_id) REFERENCES clientes(id)
+            )
+        ''')
+        
         # Migrações
         try:
             cursor.execute("SELECT code FROM ingredients LIMIT 1")
