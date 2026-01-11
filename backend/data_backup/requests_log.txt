@@ -9452,3 +9452,6 @@
 2026-01-11T15:22:09.408351+00:00 | DB_CALL get_user_by_username | P3 | 0.26ms | success
 2026-01-11T15:22:09.434832+00:00 | DB_CALL get_user_by_id | P3 | 0.3ms | success
 2026-01-11T15:22:09.435199+00:00 | DB_CALL get_all_clientes | P3 | 0.19ms | success
+2026-01-11T15:22:24.183099+00:00 | DB_CALL get_all_products | P3 | 0.38ms | success
+2026-01-11T15:22:24.190493+00:00 | DB_CALL get_all_categories | P3 | 0.25ms | success
+2026-01-11T15:22:24.192700+00:00 | DB_CALL get_all_business_hours | P3 | 0.21ms | success
