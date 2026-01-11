@@ -9947,3 +9947,4 @@
 2026-01-11T16:03:44.109899+00:00 | DB_CALL get_user_by_id | P3 | 0.21ms | success
 2026-01-11T16:03:44.110187+00:00 | DB_CALL get_all_categories | P3 | 0.17ms | success
 2026-01-11T16:03:44.810730+00:00 | DB_CALL get_all_pedidos | P3 | 0.39ms | success
+2026-01-11T16:03:49.798472+00:00 | DB_CALL get_all_pedidos | P3 | 0.41ms | success
