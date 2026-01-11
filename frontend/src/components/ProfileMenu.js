@@ -542,11 +542,9 @@ function PontuacaoModal({ isOpen, onClose, client }) {
 }
 
 // Modal de Meus Pedidos
-function MeusPedidosModal({ isOpen, onClose, client }) {
+function MeusPedidosModal({ isOpen, onClose, client, darkMode }) {
   const [pedidos, setPedidos] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [dataInicio, setDataInicio] = useState("");
-  const [dataFim, setDataFim] = useState("");
 
   useEffect(() => {
     if (isOpen && client) {
@@ -554,20 +552,10 @@ function MeusPedidosModal({ isOpen, onClose, client }) {
     }
   }, [isOpen, client]);
 
-  useEffect(() => {
-    if (isOpen && client) {
-      fetchPedidos();
-    }
-  }, [dataInicio, dataFim]);
-
   const fetchPedidos = async () => {
     setLoading(true);
     try {
-      let url = `${API}/orders?cliente_telefone=${encodeURIComponent(client?.telefone || "")}`;
-      if (dataInicio) url += `&data_inicio=${dataInicio}`;
-      if (dataFim) url += `&data_fim=${dataFim}`;
-      
-      const response = await axios.get(url);
+      const response = await axios.get(`${API}/pedidos/cliente/${client.id}`);
       setPedidos(response.data || []);
     } catch (error) {
       console.error("Erro ao carregar pedidos:", error);
@@ -577,27 +565,95 @@ function MeusPedidosModal({ isOpen, onClose, client }) {
     }
   };
 
+  const formatDate = (dateStr) => {
+    if (!dateStr) return "-";
+    const date = new Date(dateStr);
+    return date.toLocaleDateString("pt-BR") + " " + date.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+  };
+
+  const statusLabels = {
+    producao: { label: "Em Produção", color: "bg-yellow-500" },
+    aguardando: { label: "Aguardando", color: "bg-blue-500" },
+    transito: { label: "Em Trânsito", color: "bg-purple-500" },
+    concluido: { label: "Entregue", color: "bg-green-500" },
+    cancelado: { label: "Cancelado", color: "bg-red-500" },
+  };
+
   if (!isOpen) return null;
+
+  const t = {
+    bg: darkMode ? 'bg-zinc-900' : 'bg-white',
+    text: darkMode ? 'text-white' : 'text-gray-900',
+    textMuted: darkMode ? 'text-zinc-400' : 'text-gray-500',
+    border: darkMode ? 'border-zinc-700' : 'border-gray-200',
+    bgCard: darkMode ? 'bg-zinc-800' : 'bg-gray-50',
+  };
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center">
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative bg-card rounded-2xl shadow-2xl w-full max-w-2xl mx-4 border max-h-[90vh] overflow-hidden">
-        <div className="flex items-center justify-between p-4 border-b">
-          <h2 className="font-bold text-lg flex items-center gap-2">
-            <ShoppingBag className="w-5 h-5 text-primary" />
+      <div className={`relative ${t.bg} rounded-2xl shadow-2xl w-full max-w-2xl mx-4 border ${t.border} max-h-[90vh] overflow-hidden`}>
+        <div className={`flex items-center justify-between p-4 border-b ${t.border}`}>
+          <h2 className={`font-bold text-lg flex items-center gap-2 ${t.text}`}>
+            <ShoppingBag className="w-5 h-5 text-orange-500" />
             Meus Pedidos
           </h2>
-          <button onClick={onClose} className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-muted">
+          <button onClick={onClose} className={`w-8 h-8 flex items-center justify-center rounded-lg hover:bg-zinc-700/50 ${t.textMuted}`}>
             <X className="w-5 h-5" />
           </button>
         </div>
         
-        {/* Filtros de Data */}
-        <div className="p-4 border-b flex gap-4">
-          <div className="flex-1">
-            <Label className="text-xs">Data Início</Label>
-            <Input
+        <div className="overflow-y-auto max-h-[70vh] p-4">
+          {loading ? (
+            <div className="text-center py-8">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500 mx-auto mb-4"></div>
+              <p className={t.textMuted}>Carregando pedidos...</p>
+            </div>
+          ) : pedidos.length === 0 ? (
+            <div className="text-center py-8">
+              <ShoppingBag className={`w-16 h-16 mx-auto mb-4 ${t.textMuted} opacity-50`} />
+              <p className={t.textMuted}>Você ainda não fez nenhum pedido</p>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {pedidos.map((pedido) => (
+                <div key={pedido.id} className={`${t.bgCard} rounded-xl p-4 border ${t.border}`}>
+                  <div className="flex items-center justify-between mb-3">
+                    <div>
+                      <span className={`font-bold text-lg ${t.text}`}>{pedido.codigo}</span>
+                      <p className={`text-sm ${t.textMuted}`}>{formatDate(pedido.created_at)}</p>
+                    </div>
+                    <div className={`px-3 py-1 rounded-full text-white text-sm font-medium ${statusLabels[pedido.status]?.color || 'bg-gray-500'}`}>
+                      {statusLabels[pedido.status]?.label || pedido.status}
+                    </div>
+                  </div>
+                  
+                  <div className={`text-sm ${t.textMuted} mb-2`}>
+                    {pedido.items?.map((item, idx) => (
+                      <span key={idx}>
+                        {item.quantidade}x {item.nome}
+                        {idx < pedido.items.length - 1 ? ', ' : ''}
+                      </span>
+                    ))}
+                  </div>
+                  
+                  <div className="flex items-center justify-between">
+                    <span className={`text-sm ${t.textMuted}`}>
+                      {pedido.tipo_entrega === 'delivery' ? '🛵 Entrega' : '🏪 Retirada'}
+                    </span>
+                    <span className="font-bold text-orange-500">
+                      R$ {(pedido.total || 0).toFixed(2).replace('.', ',')}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
               type="date"
               value={dataInicio}
               onChange={(e) => setDataInicio(e.target.value)}
