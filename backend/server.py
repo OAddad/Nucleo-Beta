@@ -2445,6 +2445,7 @@ class PedidoResponse(BaseModel):
     entregador_id: Optional[str] = None
     entregador_nome: Optional[str] = None
     motivo_cancelamento: Optional[str] = None
+    valor_entrega: Optional[float] = 0
     created_at: Optional[str] = None
     updated_at: Optional[str] = None
 
