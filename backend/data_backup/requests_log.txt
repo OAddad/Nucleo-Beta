@@ -8843,3 +8843,5 @@
 2026-01-11T13:50:21.245141+00:00 | DB_CALL get_all_products | P3 | 0.39ms | success
 2026-01-11T13:51:18.652097+00:00 | DB_CALL get_all_products | P3 | 0.88ms | success
 2026-01-11T13:51:18.664458+00:00 | DB_CALL get_all_categories | P3 | 12.99ms | success
+2026-01-11T13:52:57.637917+00:00 | DB_CALL get_all_products | P3 | 0.55ms | success
+2026-01-11T13:52:57.639121+00:00 | DB_CALL get_all_categories | P3 | 0.16ms | success
