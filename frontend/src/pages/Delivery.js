@@ -556,13 +556,13 @@ export default function Delivery() {
       <div className="flex-1 flex gap-3 p-4 pt-0 overflow-hidden">
         
         {/* Coluna 1: AGUARDANDO ACEITE */}
-        <div className={`flex flex-col rounded-xl border-2 border-orange-400 bg-card overflow-hidden min-w-0 transition-all ${
+        <div className={`flex flex-col rounded-xl border bg-card overflow-hidden min-w-0 transition-all ${
           autoAccept ? 'flex-[0.3]' : 'flex-1'
         }`}>
-          <div className={`p-3 bg-gradient-to-r from-orange-400 to-orange-500 text-white ${autoAccept ? 'py-2' : ''}`}>
+          <div className={`p-3 bg-muted/50 border-b ${autoAccept ? 'py-2' : ''}`}>
             <div className="flex items-center justify-between mb-2">
               <h3 className={`font-bold ${autoAccept ? 'text-xs' : 'text-sm'}`}>AGUARDANDO ACEITE</h3>
-              <span className="bg-white/20 px-2 py-0.5 rounded-full text-xs font-bold">
+              <span className="bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400 px-2 py-0.5 rounded-full text-xs font-bold">
                 {getPedidosByStatus('aguardando_aceite').length}
               </span>
             </div>
@@ -573,7 +573,7 @@ export default function Delivery() {
               className={`w-full flex items-center justify-between p-2 rounded-lg border text-xs transition-all ${
                 autoAccept 
                   ? 'bg-green-500 border-green-400 text-white' 
-                  : 'bg-white/20 border-white/30 text-white'
+                  : 'bg-background border-input hover:bg-muted/50'
               }`}
             >
               <span className="font-medium">
@@ -582,7 +582,7 @@ export default function Delivery() {
               {autoAccept ? (
                 <ToggleRight className="w-5 h-5" />
               ) : (
-                <ToggleLeft className="w-5 h-5" />
+                <ToggleLeft className="w-5 h-5 text-muted-foreground" />
               )}
             </button>
           </div>
