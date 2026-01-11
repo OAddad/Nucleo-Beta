@@ -10201,3 +10201,11 @@
 2026-01-11T16:33:22.960184+00:00 | DB_CALL count_ingredients | P3 | 0.22ms | success
 2026-01-11T16:33:22.960360+00:00 | DB_CALL count_products | P3 | 0.12ms | success
 2026-01-11T16:33:22.960505+00:00 | DB_CALL count_users | P3 | 0.09ms | success
+2026-01-11T16:33:43.356198+00:00 | DB_CALL init_database | P3 | 2.39ms | success
+2026-01-11T16:33:43.356626+00:00 | DB_CALL count_ingredients | P3 | 0.22ms | success
+2026-01-11T16:33:43.356812+00:00 | DB_CALL count_products | P3 | 0.13ms | success
+2026-01-11T16:33:43.357065+00:00 | DB_CALL count_users | P3 | 0.16ms | success
+2026-01-11T16:33:51.528993+00:00 | DB_CALL init_database | P3 | 3.51ms | success
+2026-01-11T16:33:51.529685+00:00 | DB_CALL count_ingredients | P3 | 0.46ms | success
+2026-01-11T16:33:51.529964+00:00 | DB_CALL count_products | P3 | 0.21ms | success
+2026-01-11T16:33:51.530124+00:00 | DB_CALL count_users | P3 | 0.11ms | success
