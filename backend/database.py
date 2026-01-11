@@ -476,10 +476,23 @@ def init_database():
                 is_open INTEGER DEFAULT 1,
                 opening_time TEXT DEFAULT '08:00',
                 closing_time TEXT DEFAULT '22:00',
+                has_second_period INTEGER DEFAULT 0,
+                opening_time_2 TEXT DEFAULT '18:00',
+                closing_time_2 TEXT DEFAULT '23:59',
                 updated_at TEXT
             )
         ''')
         conn.commit()
+        
+        # Verificar se precisa adicionar novas colunas (migração)
+        try:
+            cursor.execute("SELECT has_second_period FROM business_hours LIMIT 1")
+        except sqlite3.OperationalError:
+            cursor.execute("ALTER TABLE business_hours ADD COLUMN has_second_period INTEGER DEFAULT 0")
+            cursor.execute("ALTER TABLE business_hours ADD COLUMN opening_time_2 TEXT DEFAULT '18:00'")
+            cursor.execute("ALTER TABLE business_hours ADD COLUMN closing_time_2 TEXT DEFAULT '23:59'")
+            conn.commit()
+            print("[DATABASE] Colunas de segundo período adicionadas em business_hours")
         
         # Inicializar horários padrão se tabela vazia
         cursor.execute("SELECT COUNT(*) FROM business_hours")
@@ -498,9 +511,9 @@ def init_database():
                 # Domingo fechado por padrão
                 is_open = 0 if day_num == 6 else 1
                 cursor.execute('''
-                    INSERT INTO business_hours (id, day_of_week, day_name, is_open, opening_time, closing_time, updated_at)
-                    VALUES (?, ?, ?, ?, ?, ?, ?)
-                ''', (str(uuid.uuid4()), day_num, day_name, is_open, '08:00', '22:00', now))
+                    INSERT INTO business_hours (id, day_of_week, day_name, is_open, opening_time, closing_time, has_second_period, opening_time_2, closing_time_2, updated_at)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ''', (str(uuid.uuid4()), day_num, day_name, is_open, '08:00', '22:00', 0, '18:00', '23:59', now))
             conn.commit()
             print("[DATABASE] Horários de funcionamento padrão criados")
         
