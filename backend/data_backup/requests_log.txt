@@ -16686,3 +16686,7 @@
 2026-01-11T19:53:27.978450+00:00 | DB_CALL count_ingredients | P3 | 0.29ms | success
 2026-01-11T19:53:27.978693+00:00 | DB_CALL count_products | P3 | 0.15ms | success
 2026-01-11T19:53:27.978852+00:00 | DB_CALL count_users | P3 | 0.1ms | success
+2026-01-11T19:53:38.165516+00:00 | DB_CALL init_database | P3 | 2.85ms | success
+2026-01-11T19:53:38.166539+00:00 | DB_CALL count_ingredients | P3 | 0.73ms | success
+2026-01-11T19:53:38.166810+00:00 | DB_CALL count_products | P3 | 0.18ms | success
+2026-01-11T19:53:38.166984+00:00 | DB_CALL count_users | P3 | 0.12ms | success

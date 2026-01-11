@@ -2411,6 +2411,7 @@ class PedidoCreate(BaseModel):
     endereco_cep: Optional[str] = None
     modulo: Optional[str] = "Cardapio"
     observacao: Optional[str] = None
+    valor_entrega: Optional[float] = 0
 
 
 class PedidoUpdate(BaseModel):
