@@ -218,6 +218,8 @@ export default function CardapioPublico({ onAdminLogin }) {
               client={loggedClient} 
               onLogout={handleLogout}
               onClientUpdate={handleClientUpdate}
+              darkMode={darkMode}
+              onToggleTheme={toggleTheme}
             />
           ) : (
             <Button 
