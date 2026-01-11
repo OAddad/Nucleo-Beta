@@ -673,42 +673,113 @@ export default function Pedidos() {
                 </div>
               </div>
 
+              {/* Tipo de Entrega e Endereço */}
+              <div className="bg-muted/30 rounded-xl p-4">
+                <h4 className="font-semibold mb-3 flex items-center gap-2">
+                  {selectedPedido.tipoEntrega === 'pickup' ? (
+                    <>
+                      <Store className="w-4 h-4" />
+                      Retirada no Local
+                    </>
+                  ) : (
+                    <>
+                      <Truck className="w-4 h-4" />
+                      Entrega
+                    </>
+                  )}
+                </h4>
+                
+                {/* Badge visual do tipo de entrega */}
+                <div className="mb-3">
+                  <span className={`px-3 py-1.5 rounded-full text-sm font-medium inline-flex items-center gap-2 ${
+                    selectedPedido.tipoEntrega === 'pickup' 
+                      ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400'
+                      : 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
+                  }`}>
+                    {selectedPedido.tipoEntrega === 'pickup' ? (
+                      <>
+                        <Store className="w-4 h-4" />
+                        Retirada no Balcão
+                      </>
+                    ) : (
+                      <>
+                        <Truck className="w-4 h-4" />
+                        Delivery
+                      </>
+                    )}
+                  </span>
+                </div>
+                
+                {/* Endereço de entrega (se for delivery) */}
+                {selectedPedido.tipoEntrega === 'delivery' && selectedPedido.endereco && (
+                  <div className="bg-background rounded-lg p-3 border">
+                    <p className="text-sm font-medium flex items-center gap-2 mb-1">
+                      <MapPin className="w-4 h-4 text-primary" />
+                      Endereço de Entrega
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      {selectedPedido.endereco.endereco}
+                      {selectedPedido.endereco.numero && `, ${selectedPedido.endereco.numero}`}
+                    </p>
+                    {selectedPedido.endereco.complemento && (
+                      <p className="text-sm text-muted-foreground">{selectedPedido.endereco.complemento}</p>
+                    )}
+                    <p className="text-sm text-muted-foreground">
+                      {selectedPedido.endereco.bairro}
+                      {selectedPedido.endereco.cep && ` - CEP: ${selectedPedido.endereco.cep}`}
+                    </p>
+                  </div>
+                )}
+              </div>
+
               {/* Itens do Pedido */}
               <div>
                 <h4 className="font-semibold mb-3 flex items-center gap-2">
                   <Package className="w-4 h-4" />
-                  Itens do Pedido
+                  Itens do Pedido ({selectedPedido.items?.length || 0} {selectedPedido.items?.length === 1 ? 'item' : 'itens'})
                 </h4>
-                <div className="border rounded-xl overflow-hidden">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Item</TableHead>
-                        <TableHead className="w-20 text-center">Qtd</TableHead>
-                        <TableHead className="w-28 text-right">Preço</TableHead>
-                        <TableHead className="w-28 text-right">Subtotal</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {selectedPedido.items?.map((item, index) => (
-                        <TableRow key={index}>
-                          <TableCell>
-                            <div>
-                              <p className="font-medium">{item.name}</p>
-                              {item.observation && (
-                                <p className="text-xs text-muted-foreground">Obs: {item.observation}</p>
-                              )}
-                            </div>
-                          </TableCell>
-                          <TableCell className="text-center">{item.quantity}</TableCell>
-                          <TableCell className="text-right">R$ {(item.sale_price || 0).toFixed(2)}</TableCell>
-                          <TableCell className="text-right font-medium">
-                            R$ {((item.sale_price || 0) * item.quantity).toFixed(2)}
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
+                <div className="space-y-3">
+                  {selectedPedido.items?.map((item, index) => (
+                    <div key={index} className="bg-muted/30 rounded-xl p-3 flex items-center gap-3">
+                      {/* Foto do item */}
+                      <div className="w-16 h-16 rounded-lg bg-muted flex-shrink-0 overflow-hidden">
+                        {item.photo_url ? (
+                          <img 
+                            src={item.photo_url.startsWith('/uploads') ? `/api${item.photo_url}` : item.photo_url} 
+                            alt={item.name} 
+                            className="w-full h-full object-cover" 
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center">
+                            <Package className="w-6 h-6 text-muted-foreground" />
+                          </div>
+                        )}
+                      </div>
+                      
+                      {/* Info do item */}
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium">{item.name || item.nome}</p>
+                        {item.observation && (
+                          <p className="text-xs text-muted-foreground mt-0.5">📝 {item.observation}</p>
+                        )}
+                        <div className="flex items-center gap-2 mt-1">
+                          <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded">
+                            Qtd: {item.quantity || item.quantidade}
+                          </span>
+                          <span className="text-xs text-muted-foreground">
+                            R$ {(item.sale_price || item.preco || 0).toFixed(2)} cada
+                          </span>
+                        </div>
+                      </div>
+                      
+                      {/* Subtotal */}
+                      <div className="text-right">
+                        <p className="font-bold text-primary">
+                          R$ {(((item.sale_price || item.preco || 0) * (item.quantity || item.quantidade || 1))).toFixed(2)}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
 
