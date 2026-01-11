@@ -9148,3 +9148,7 @@
 2026-01-11T14:44:52.990306+00:00 | DB_CALL get_user_by_username | P3 | 0.18ms | success
 2026-01-11T14:44:52.991265+00:00 | DB_CALL get_all_clientes | P3 | 0.9ms | success
 2026-01-11T14:44:53.161951+00:00 | DB_CALL get_cliente_by_id | P3 | 0.36ms | success
+2026-01-11T14:49:32.749454+00:00 | DB_CALL get_user_by_username | P3 | 1.1ms | success
+2026-01-11T14:49:32.750236+00:00 | DB_CALL get_user_by_username | P3 | 0.12ms | success
+2026-01-11T14:49:32.750412+00:00 | DB_CALL get_all_clientes | P3 | 0.11ms | success
+2026-01-11T14:49:32.921957+00:00 | DB_CALL get_cliente_by_id | P3 | 0.25ms | success
