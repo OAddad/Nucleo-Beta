@@ -9929,3 +9929,8 @@
 2026-01-11T16:03:29.998560+00:00 | DB_CALL update_product | P3 | 2.8ms | success
 2026-01-11T16:03:30.003704+00:00 | DB_CALL create_audit_log | P3 | 4.98ms | success
 2026-01-11T16:03:30.004094+00:00 | DB_CALL get_product_by_id | P3 | 0.28ms | success
+2026-01-11T16:03:30.164371+00:00 | DB_CALL get_user_by_id | P3 | 0.26ms | success
+2026-01-11T16:03:30.164628+00:00 | DB_CALL get_all_categories | P3 | 0.12ms | success
+2026-01-11T16:03:30.167298+00:00 | DB_CALL get_user_by_id | P3 | 0.13ms | success
+2026-01-11T16:03:30.167681+00:00 | DB_CALL get_all_products | P3 | 0.29ms | success
+2026-01-11T16:03:34.799038+00:00 | DB_CALL get_all_pedidos | P3 | 0.4ms | success
