@@ -10803,3 +10803,14 @@
 2026-01-11T17:08:51.339887+00:00 | DB_CALL count_ingredients | P3 | 0.21ms | success
 2026-01-11T17:08:51.340068+00:00 | DB_CALL count_products | P3 | 0.12ms | success
 2026-01-11T17:08:51.340224+00:00 | DB_CALL count_users | P3 | 0.11ms | success
+2026-01-11T17:08:55.057239+00:00 | DB_CALL get_all_pedidos | P3 | 0.58ms | success
+2026-01-11T17:08:58.005504+00:00 | DB_CALL init_database | P3 | 2.52ms | success
+2026-01-11T17:08:58.005933+00:00 | DB_CALL count_ingredients | P3 | 0.22ms | success
+2026-01-11T17:08:58.006110+00:00 | DB_CALL count_products | P3 | 0.12ms | success
+2026-01-11T17:08:58.006246+00:00 | DB_CALL count_users | P3 | 0.09ms | success
+2026-01-11T17:09:00.071939+00:00 | DB_CALL get_all_pedidos | P3 | 0.55ms | success
+2026-01-11T17:09:05.051220+00:00 | DB_CALL get_all_pedidos | P3 | 0.45ms | success
+2026-01-11T17:09:10.046869+00:00 | DB_CALL get_all_pedidos | P3 | 0.45ms | success
+2026-01-11T17:09:15.067509+00:00 | DB_CALL get_all_pedidos | P3 | 0.43ms | success
+2026-01-11T17:09:20.062342+00:00 | DB_CALL get_all_pedidos | P3 | 0.41ms | success
+2026-01-11T17:09:25.047973+00:00 | DB_CALL get_all_pedidos | P3 | 0.43ms | success
