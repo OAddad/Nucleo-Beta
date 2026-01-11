@@ -9852,3 +9852,11 @@
 2026-01-11T16:00:43.456212+00:00 | DB_CALL count_products | P3 | 0.11ms | success
 2026-01-11T16:00:43.456353+00:00 | DB_CALL count_users | P3 | 0.09ms | success
 2026-01-11T16:00:44.608414+00:00 | DB_CALL get_all_pedidos | P3 | 0.51ms | success
+2026-01-11T16:00:49.604424+00:00 | DB_CALL get_all_pedidos | P3 | 39.74ms | success
+2026-01-11T16:00:52.923286+00:00 | DB_CALL get_client_addresses | P3 | 0.52ms | success
+2026-01-11T16:00:54.566129+00:00 | DB_CALL get_all_pedidos | P3 | 0.44ms | success
+2026-01-11T16:00:56.110756+00:00 | DB_CALL init_database | P3 | 4.24ms | success
+2026-01-11T16:00:56.111315+00:00 | DB_CALL count_ingredients | P3 | 0.25ms | success
+2026-01-11T16:00:56.111504+00:00 | DB_CALL count_products | P3 | 0.13ms | success
+2026-01-11T16:00:56.111650+00:00 | DB_CALL count_users | P3 | 0.1ms | success
+2026-01-11T16:00:59.561067+00:00 | DB_CALL get_all_pedidos | P3 | 0.5ms | success
