@@ -9919,3 +9919,4 @@
 2026-01-11T16:03:15.876461+00:00 | DB_CALL get_all_categories | P3 | 0.12ms | success
 2026-01-11T16:03:16.035614+00:00 | DB_CALL get_user_by_id | P3 | 0.27ms | success
 2026-01-11T16:03:16.036033+00:00 | DB_CALL get_all_categories | P3 | 0.27ms | success
+2026-01-11T16:03:19.809120+00:00 | DB_CALL get_all_pedidos | P3 | 0.42ms | success
