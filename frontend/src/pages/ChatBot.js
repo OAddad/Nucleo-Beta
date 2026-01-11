@@ -394,6 +394,341 @@ function WhatsAppTab({ toast }) {
   );
 }
 
+// ==================== ABA SIMULADOR ====================
+function SimulatorTab({ toast }) {
+  const [messages, setMessages] = useState([
+    {
+      id: "welcome",
+      type: "bot",
+      text: "👋 Olá! Eu sou o assistente virtual. Como posso ajudar você hoje?\n\nVocê pode me perguntar sobre:\n• 📋 Cardápio e produtos\n• 🕐 Horários de funcionamento\n• 📍 Endereço e localização\n• 🛵 Status de pedidos\n• ❓ Outras dúvidas",
+      timestamp: new Date()
+    }
+  ]);
+  const [inputMessage, setInputMessage] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [sessionId] = useState(() => `sim_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`);
+  const messagesEndRef = useRef(null);
+  const inputRef = useRef(null);
+
+  // Auto-scroll para a última mensagem
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
+  // Enviar mensagem para a IA
+  const sendMessage = async () => {
+    const text = inputMessage.trim();
+    if (!text || loading) return;
+
+    // Adicionar mensagem do usuário
+    const userMessage = {
+      id: `user_${Date.now()}`,
+      type: "user",
+      text,
+      timestamp: new Date()
+    };
+    setMessages(prev => [...prev, userMessage]);
+    setInputMessage("");
+    setLoading(true);
+
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`${API_URL}/api/chatbot/process`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {})
+        },
+        body: JSON.stringify({
+          message: text,
+          sender_phone: "simulador",
+          sender_name: "Simulador de Teste",
+          session_id: sessionId
+        })
+      });
+      
+      const data = await res.json();
+      
+      if (data.success && data.response) {
+        const botMessage = {
+          id: `bot_${Date.now()}`,
+          type: "bot",
+          text: data.response,
+          timestamp: new Date()
+        };
+        setMessages(prev => [...prev, botMessage]);
+      } else {
+        throw new Error(data.error || "Erro ao processar mensagem");
+      }
+    } catch (error) {
+      console.error("Erro ao enviar mensagem:", error);
+      const errorMessage = {
+        id: `error_${Date.now()}`,
+        type: "bot",
+        text: "❌ Desculpe, ocorreu um erro ao processar sua mensagem. Por favor, tente novamente.",
+        timestamp: new Date(),
+        isError: true
+      };
+      setMessages(prev => [...prev, errorMessage]);
+      toast({
+        title: "Erro",
+        description: "Não foi possível processar a mensagem",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+      inputRef.current?.focus();
+    }
+  };
+
+  // Enviar com Enter
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
+  };
+
+  // Limpar conversa
+  const clearConversation = () => {
+    setMessages([{
+      id: "welcome",
+      type: "bot",
+      text: "👋 Olá! Eu sou o assistente virtual. Como posso ajudar você hoje?\n\nVocê pode me perguntar sobre:\n• 📋 Cardápio e produtos\n• 🕐 Horários de funcionamento\n• 📍 Endereço e localização\n• 🛵 Status de pedidos\n• ❓ Outras dúvidas",
+      timestamp: new Date()
+    }]);
+    toast({
+      title: "Conversa limpa",
+      description: "O histórico foi apagado"
+    });
+  };
+
+  // Sugestões rápidas
+  const quickSuggestions = [
+    "Qual o horário de funcionamento?",
+    "Vocês fazem entrega?",
+    "Quais são as formas de pagamento?",
+    "Qual o endereço do restaurante?",
+    "Quero ver o cardápio",
+    "Quero fazer um pedido"
+  ];
+
+  const handleQuickSuggestion = (suggestion) => {
+    setInputMessage(suggestion);
+    inputRef.current?.focus();
+  };
+
+  return (
+    <div className="h-full flex">
+      {/* Área principal do chat - simulando tela de celular */}
+      <div className="flex-1 flex flex-col max-w-2xl mx-auto">
+        {/* Header do Simulador */}
+        <div className="bg-gradient-to-r from-green-600 to-green-500 text-white p-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
+              <Bot className="w-6 h-6" />
+            </div>
+            <div>
+              <h2 className="font-semibold">Atendente Virtual</h2>
+              <p className="text-xs text-green-100 flex items-center gap-1">
+                <span className="w-2 h-2 rounded-full bg-green-300 animate-pulse"></span>
+                Online - Teste do ChatBot
+              </p>
+            </div>
+          </div>
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className="text-white hover:bg-white/20"
+            onClick={clearConversation}
+          >
+            <RotateCcw className="w-4 h-4 mr-2" />
+            Limpar
+          </Button>
+        </div>
+
+        {/* Área de Mensagens - Estilo WhatsApp */}
+        <div 
+          className="flex-1 overflow-auto p-4 space-y-3"
+          style={{ 
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cg fill-rule='evenodd'%3E%3Cg fill='%23e5ddd5' fill-opacity='0.4'%3E%3Cpath opacity='.5' d='M96 95h4v1h-4v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9zm-1 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9z'/%3E%3Cpath d='M6 5V0H5v5H0v1h5v94h1V6h94V5H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+            backgroundColor: "#e5ddd5"
+          }}
+        >
+          {messages.map((msg) => (
+            <div
+              key={msg.id}
+              className={`flex ${msg.type === "user" ? "justify-end" : "justify-start"}`}
+            >
+              <div
+                className={`max-w-[85%] rounded-lg p-3 shadow-sm ${
+                  msg.type === "user"
+                    ? "bg-green-100 dark:bg-green-900 rounded-tr-none"
+                    : msg.isError
+                    ? "bg-red-50 dark:bg-red-950 border border-red-200 rounded-tl-none"
+                    : "bg-white dark:bg-gray-800 rounded-tl-none"
+                }`}
+              >
+                <p className="text-sm whitespace-pre-wrap">{msg.text}</p>
+                <p className={`text-xs mt-1 text-right ${
+                  msg.type === "user" ? "text-green-600" : "text-gray-400"
+                }`}>
+                  {msg.timestamp.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}
+                </p>
+              </div>
+            </div>
+          ))}
+
+          {/* Indicador de digitando */}
+          {loading && (
+            <div className="flex justify-start">
+              <div className="bg-white dark:bg-gray-800 rounded-lg rounded-tl-none p-3 shadow-sm">
+                <div className="flex items-center gap-1">
+                  <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "0ms" }}></span>
+                  <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "150ms" }}></span>
+                  <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "300ms" }}></span>
+                </div>
+              </div>
+            </div>
+          )}
+          
+          <div ref={messagesEndRef} />
+        </div>
+
+        {/* Sugestões Rápidas */}
+        {messages.length <= 2 && (
+          <div className="px-4 pb-2">
+            <p className="text-xs text-muted-foreground mb-2">Sugestões rápidas:</p>
+            <div className="flex flex-wrap gap-2">
+              {quickSuggestions.map((suggestion, index) => (
+                <button
+                  key={index}
+                  onClick={() => handleQuickSuggestion(suggestion)}
+                  className="px-3 py-1.5 text-xs bg-white dark:bg-gray-800 border rounded-full hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                >
+                  {suggestion}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Input de Mensagem */}
+        <div className="p-3 bg-gray-100 dark:bg-gray-900 border-t">
+          <div className="flex items-center gap-2">
+            <Input
+              ref={inputRef}
+              value={inputMessage}
+              onChange={(e) => setInputMessage(e.target.value)}
+              onKeyPress={handleKeyPress}
+              placeholder="Digite uma mensagem..."
+              className="flex-1 bg-white dark:bg-gray-800 border-0 focus-visible:ring-1"
+              disabled={loading}
+            />
+            <Button 
+              onClick={sendMessage} 
+              disabled={!inputMessage.trim() || loading}
+              className="bg-green-500 hover:bg-green-600 text-white"
+            >
+              {loading ? (
+                <Loader2 className="w-5 h-5 animate-spin" />
+              ) : (
+                <Send className="w-5 h-5" />
+              )}
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      {/* Painel lateral de informações */}
+      <div className="w-80 border-l bg-card p-4 hidden lg:block">
+        <div className="space-y-6">
+          {/* Info do Simulador */}
+          <div className="p-4 bg-gradient-to-r from-emerald-50 to-green-50 dark:from-emerald-950/30 dark:to-green-950/30 rounded-xl border">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="p-2 rounded-lg bg-emerald-500 text-white">
+                <Smartphone className="w-5 h-5" />
+              </div>
+              <h3 className="font-semibold">Simulador de Conversas</h3>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              Teste o ChatBot com IA sem precisar conectar o WhatsApp. 
+              As respostas são processadas pelo mesmo sistema que atende os clientes reais.
+            </p>
+          </div>
+
+          {/* O que testar */}
+          <div>
+            <h4 className="font-medium mb-3 flex items-center gap-2">
+              <CheckCircle className="w-4 h-4 text-green-500" />
+              O que você pode testar:
+            </h4>
+            <ul className="space-y-2 text-sm text-muted-foreground">
+              <li className="flex items-start gap-2">
+                <span className="text-green-500">✓</span>
+                Respostas sobre cardápio e produtos
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-green-500">✓</span>
+                Horários de funcionamento
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-green-500">✓</span>
+                Endereço e localização
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-green-500">✓</span>
+                Consulta de pedidos
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-green-500">✓</span>
+                Dúvidas gerais
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-green-500">✓</span>
+                Fluxo de conversa natural
+              </li>
+            </ul>
+          </div>
+
+          {/* Dicas */}
+          <div className="p-4 bg-blue-50 dark:bg-blue-950/30 rounded-xl border border-blue-100">
+            <h4 className="font-medium mb-2 flex items-center gap-2 text-blue-700 dark:text-blue-300">
+              <HelpCircle className="w-4 h-4" />
+              Dicas
+            </h4>
+            <ul className="text-xs text-blue-600 dark:text-blue-400 space-y-1">
+              <li>• Faça perguntas como um cliente faria</li>
+              <li>• Teste variações da mesma pergunta</li>
+              <li>• Verifique se as informações estão corretas</li>
+              <li>• Use para treinar a equipe</li>
+            </ul>
+          </div>
+
+          {/* Estatísticas da sessão */}
+          <div className="p-4 bg-muted/50 rounded-xl">
+            <h4 className="font-medium mb-2 text-sm">Sessão atual</h4>
+            <div className="grid grid-cols-2 gap-3 text-sm">
+              <div>
+                <p className="text-2xl font-bold text-green-600">{messages.filter(m => m.type === "user").length}</p>
+                <p className="text-xs text-muted-foreground">Mensagens enviadas</p>
+              </div>
+              <div>
+                <p className="text-2xl font-bold text-blue-600">{messages.filter(m => m.type === "bot").length}</p>
+                <p className="text-xs text-muted-foreground">Respostas da IA</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ==================== ABA EDITOR DE FLUXO ====================
 function FlowEditorTab({ toast }) {
   const [nodes, setNodes] = useState([]);
