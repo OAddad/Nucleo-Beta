@@ -17,6 +17,7 @@ from datetime import datetime, timezone, timedelta
 import jwt
 from PIL import Image
 import shutil
+import httpx
 
 # Banco de dados SQLite - ÚNICA fonte de dados
 import database as sqlite_db
