@@ -14437,3 +14437,12 @@
 2026-01-11T18:30:50.878493+00:00 | DB_CALL get_all_entregadores | P3 | 0.38ms | success
 2026-01-11T18:30:50.879635+00:00 | DB_CALL get_all_settings | P3 | 0.14ms | success
 2026-01-11T18:30:50.893119+00:00 | DB_CALL get_all_pedidos | P3 | 0.63ms | success
+2026-01-11T18:30:55.876077+00:00 | DB_CALL get_all_pedidos | P3 | 1.06ms | success
+2026-01-11T18:30:55.877150+00:00 | DB_CALL get_all_settings | P3 | 1.93ms | success
+2026-01-11T18:30:55.879238+00:00 | DB_CALL get_all_entregadores | P3 | 0.28ms | success
+2026-01-11T18:31:00.879277+00:00 | DB_CALL get_all_pedidos | P3 | 0.65ms | success
+2026-01-11T18:31:00.881056+00:00 | DB_CALL get_all_settings | P3 | 0.18ms | success
+2026-01-11T18:31:00.883792+00:00 | DB_CALL get_all_entregadores | P3 | 0.16ms | success
+2026-01-11T18:31:05.874130+00:00 | DB_CALL get_all_pedidos | P3 | 1.15ms | success
+2026-01-11T18:31:05.875325+00:00 | DB_CALL get_all_settings | P3 | 1.75ms | success
+2026-01-11T18:31:05.877672+00:00 | DB_CALL get_all_entregadores | P3 | 0.25ms | success
