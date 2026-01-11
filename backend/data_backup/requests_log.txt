@@ -18015,3 +18015,8 @@
 2026-01-11T22:36:44.133430+00:00 | DB_CALL get_all_pedidos | P3 | 2.07ms | success
 2026-01-11T22:36:44.134585+00:00 | DB_CALL get_all_settings | P3 | 2.45ms | success
 2026-01-11T22:36:44.134844+00:00 | DB_CALL get_all_entregadores | P3 | 2.25ms | success
+2026-01-11T22:37:12.006543+00:00 | DB_CALL get_all_settings | P3 | 0.97ms | success
+2026-01-11T22:37:12.007126+00:00 | DB_CALL get_all_categories | P3 | 1.02ms | success
+2026-01-11T22:37:12.008674+00:00 | DB_CALL get_all_bairros | P3 | 0.53ms | success
+2026-01-11T22:37:12.009384+00:00 | DB_CALL get_all_products | P3 | 0.91ms | success
+2026-01-11T22:37:12.010625+00:00 | DB_CALL get_all_business_hours | P3 | 0.16ms | success

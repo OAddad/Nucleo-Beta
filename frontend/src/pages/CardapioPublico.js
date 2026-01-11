@@ -530,7 +530,7 @@ function CheckoutModal({ open, onClose, cart, cartTotal, client, darkMode, onOrd
   const [showBairroDropdown, setShowBairroDropdown] = useState(false);
   
   // Verificar se CEP único está ativo (todos os bairros têm o mesmo CEP)
-  const cepUnicoAtivo = bairros.length > 0 && bairros.every(b => b.cep && b.cep === bairros[0].cep);
+  const cepUnicoAtivo = Array.isArray(bairros) && bairros.length > 0 && bairros.every(b => b.cep && b.cep === bairros[0].cep);
   const cepUnicoValue = cepUnicoAtivo ? bairros[0].cep : '';
 
   // Reset quando abrir
