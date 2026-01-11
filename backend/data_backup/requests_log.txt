@@ -17107,3 +17107,11 @@
 2026-01-11T21:33:17.561442+00:00 | DB_CALL count_products | P3 | 0.12ms | success
 2026-01-11T21:33:17.561590+00:00 | DB_CALL count_users | P3 | 0.1ms | success
 2026-01-11T21:33:32.019490+00:00 | DB_CALL get_database_info | P3 | 0.43ms | success
+2026-01-11T21:33:36.416734+00:00 | DB_CALL get_all_settings | P3 | 0.34ms | success
+2026-01-11T21:33:55.104799+00:00 | DB_CALL get_user_by_username | P3 | 0.34ms | success
+2026-01-11T21:33:55.138683+00:00 | DB_CALL get_all_settings | P3 | 0.27ms | success
+2026-01-11T21:33:55.157066+00:00 | DB_CALL get_user_by_id | P3 | 0.3ms | success
+2026-01-11T21:33:55.167023+00:00 | DB_CALL set_setting | P3 | 9.76ms | success
+2026-01-11T21:33:55.175074+00:00 | DB_CALL set_setting | P3 | 7.92ms | success
+2026-01-11T21:33:55.180299+00:00 | DB_CALL set_setting | P3 | 5.11ms | success
+2026-01-11T21:33:55.180562+00:00 | DB_CALL get_all_settings | P3 | 0.17ms | success
