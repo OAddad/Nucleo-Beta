@@ -2298,6 +2298,274 @@ def get_funcionarios_by_cargo(cargo: str) -> List[Dict]:
         return [dict(row) for row in cursor.fetchall()]
 
 
+# ==================== BAIRROS ====================
+def get_all_bairros() -> List[Dict]:
+    """Retorna todos os bairros ativos"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM bairros WHERE ativo = 1 ORDER BY nome")
+        return [dict(row) for row in cursor.fetchall()]
+
+
+def get_bairro_by_id(bairro_id: str) -> Optional[Dict]:
+    """Retorna um bairro pelo ID"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM bairros WHERE id = ?", (bairro_id,))
+        row = cursor.fetchone()
+        return dict(row) if row else None
+
+
+def get_bairro_by_nome(nome: str) -> Optional[Dict]:
+    """Retorna um bairro pelo nome"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM bairros WHERE nome = ? AND ativo = 1", (nome,))
+        row = cursor.fetchone()
+        return dict(row) if row else None
+
+
+def create_bairro(data: Dict) -> Dict:
+    """Cria um novo bairro"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        bairro_id = str(uuid.uuid4())
+        now = datetime.now(timezone.utc).isoformat()
+        
+        cursor.execute('''
+            INSERT INTO bairros (id, nome, valor_entrega, cep, ativo, created_at, updated_at)
+            VALUES (?, ?, ?, ?, 1, ?, ?)
+        ''', (bairro_id, data['nome'], data.get('valor_entrega', 0), data.get('cep'), now, now))
+        conn.commit()
+        
+        return get_bairro_by_id(bairro_id)
+
+
+def update_bairro(bairro_id: str, data: Dict) -> Optional[Dict]:
+    """Atualiza um bairro"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        now = datetime.now(timezone.utc).isoformat()
+        
+        updates = []
+        values = []
+        
+        if 'nome' in data:
+            updates.append("nome = ?")
+            values.append(data['nome'])
+        if 'valor_entrega' in data:
+            updates.append("valor_entrega = ?")
+            values.append(data['valor_entrega'])
+        if 'cep' in data:
+            updates.append("cep = ?")
+            values.append(data['cep'])
+        
+        if updates:
+            updates.append("updated_at = ?")
+            values.append(now)
+            values.append(bairro_id)
+            
+            cursor.execute(f"UPDATE bairros SET {', '.join(updates)} WHERE id = ?", values)
+            conn.commit()
+        
+        return get_bairro_by_id(bairro_id)
+
+
+def update_all_bairros_valor(valor_entrega: float) -> int:
+    """Atualiza o valor de entrega de todos os bairros"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        now = datetime.now(timezone.utc).isoformat()
+        
+        cursor.execute("UPDATE bairros SET valor_entrega = ?, updated_at = ? WHERE ativo = 1", (valor_entrega, now))
+        conn.commit()
+        return cursor.rowcount
+
+
+def update_all_bairros_cep(cep: str) -> int:
+    """Atualiza o CEP de todos os bairros (CEP único)"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        now = datetime.now(timezone.utc).isoformat()
+        
+        cursor.execute("UPDATE bairros SET cep = ?, updated_at = ? WHERE ativo = 1", (cep, now))
+        conn.commit()
+        return cursor.rowcount
+
+
+def delete_bairro(bairro_id: str) -> bool:
+    """Remove um bairro (soft delete)"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        now = datetime.now(timezone.utc).isoformat()
+        
+        # Verificar se tem ruas ou clientes usando este bairro
+        cursor.execute("SELECT COUNT(*) FROM ruas WHERE bairro_id = ?", (bairro_id,))
+        ruas_count = cursor.fetchone()[0]
+        
+        cursor.execute("SELECT COUNT(*) FROM clientes WHERE endereco_bairro = (SELECT nome FROM bairros WHERE id = ?)", (bairro_id,))
+        clientes_count = cursor.fetchone()[0]
+        
+        if ruas_count > 0 or clientes_count > 0:
+            return False  # Não pode deletar bairro em uso
+        
+        cursor.execute("UPDATE bairros SET ativo = 0, updated_at = ? WHERE id = ?", (now, bairro_id))
+        conn.commit()
+        return cursor.rowcount > 0
+
+
+def check_bairros_have_cep() -> bool:
+    """Verifica se algum bairro tem CEP preenchido"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT COUNT(*) FROM bairros WHERE cep IS NOT NULL AND cep != '' AND ativo = 1")
+        return cursor.fetchone()[0] > 0
+
+
+# ==================== RUAS ====================
+def get_all_ruas() -> List[Dict]:
+    """Retorna todas as ruas com dados do bairro"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute('''
+            SELECT r.*, b.nome as bairro_nome, b.valor_entrega, b.cep as bairro_cep
+            FROM ruas r
+            LEFT JOIN bairros b ON r.bairro_id = b.id
+            ORDER BY r.nome
+        ''')
+        return [dict(row) for row in cursor.fetchall()]
+
+
+def get_rua_by_id(rua_id: str) -> Optional[Dict]:
+    """Retorna uma rua pelo ID"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute('''
+            SELECT r.*, b.nome as bairro_nome, b.valor_entrega, b.cep as bairro_cep
+            FROM ruas r
+            LEFT JOIN bairros b ON r.bairro_id = b.id
+            WHERE r.id = ?
+        ''', (rua_id,))
+        row = cursor.fetchone()
+        return dict(row) if row else None
+
+
+def get_rua_by_nome(nome: str) -> Optional[Dict]:
+    """Retorna uma rua pelo nome"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute('''
+            SELECT r.*, b.nome as bairro_nome, b.valor_entrega, b.cep as bairro_cep
+            FROM ruas r
+            LEFT JOIN bairros b ON r.bairro_id = b.id
+            WHERE r.nome = ?
+        ''', (nome,))
+        row = cursor.fetchone()
+        return dict(row) if row else None
+
+
+def search_ruas(termo: str) -> List[Dict]:
+    """Busca ruas pelo nome"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute('''
+            SELECT r.*, b.nome as bairro_nome, b.valor_entrega, b.cep as bairro_cep
+            FROM ruas r
+            LEFT JOIN bairros b ON r.bairro_id = b.id
+            WHERE r.nome LIKE ?
+            ORDER BY r.nome
+            LIMIT 10
+        ''', (f"%{termo}%",))
+        return [dict(row) for row in cursor.fetchall()]
+
+
+def create_rua(data: Dict) -> Dict:
+    """Cria uma nova rua"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        rua_id = str(uuid.uuid4())
+        now = datetime.now(timezone.utc).isoformat()
+        
+        cursor.execute('''
+            INSERT INTO ruas (id, nome, bairro_id, cep, created_at, updated_at)
+            VALUES (?, ?, ?, ?, ?, ?)
+        ''', (rua_id, data['nome'], data.get('bairro_id'), data.get('cep'), now, now))
+        conn.commit()
+        
+        return get_rua_by_id(rua_id)
+
+
+def update_rua(rua_id: str, data: Dict) -> Optional[Dict]:
+    """Atualiza uma rua"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        now = datetime.now(timezone.utc).isoformat()
+        
+        updates = []
+        values = []
+        
+        if 'nome' in data:
+            updates.append("nome = ?")
+            values.append(data['nome'])
+        if 'bairro_id' in data:
+            updates.append("bairro_id = ?")
+            values.append(data['bairro_id'])
+        if 'cep' in data:
+            updates.append("cep = ?")
+            values.append(data['cep'])
+        
+        if updates:
+            updates.append("updated_at = ?")
+            values.append(now)
+            values.append(rua_id)
+            
+            cursor.execute(f"UPDATE ruas SET {', '.join(updates)} WHERE id = ?", values)
+            conn.commit()
+        
+        return get_rua_by_id(rua_id)
+
+
+def delete_rua(rua_id: str) -> bool:
+    """Remove uma rua"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM ruas WHERE id = ?", (rua_id,))
+        conn.commit()
+        return cursor.rowcount > 0
+
+
+def get_or_create_rua(nome: str, bairro_id: str = None, cep: str = None) -> Dict:
+    """Obtém ou cria uma rua pelo nome"""
+    existing = get_rua_by_nome(nome)
+    if existing:
+        return existing
+    return create_rua({'nome': nome, 'bairro_id': bairro_id, 'cep': cep})
+
+
+def get_or_create_bairro(nome: str, valor_entrega: float = 0, cep: str = None) -> Dict:
+    """Obtém ou cria um bairro pelo nome"""
+    existing = get_bairro_by_nome(nome)
+    if existing:
+        return existing
+    return create_bairro({'nome': nome, 'valor_entrega': valor_entrega, 'cep': cep})
+
+
 # ==================== BUSINESS HOURS ====================
 def get_all_business_hours() -> List[Dict]:
     """Retorna todos os horários de funcionamento ordenados por dia da semana"""
