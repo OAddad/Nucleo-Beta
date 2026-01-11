@@ -8,8 +8,6 @@ import LoginModal from "../components/LoginModal";
 import ProfileMenu from "../components/ProfileMenu";
 
 const API = '/api';
-const API_DIRECT = 'http://localhost:8001/api'; // Fallback direto para o backend
-const BACKEND_URL = 'http://localhost:8001'; // URL base do backend para assets
 
 // Ícone de Moto para a BAG
 const MotoIcon = ({ className }) => (
@@ -19,32 +17,29 @@ const MotoIcon = ({ className }) => (
 );
 
 // Função para obter URL completa de imagem
+// Usa /api/uploads para passar pelo proxy do Kubernetes
 const getImageUrl = (url) => {
   if (!url) return null;
   // Se já é uma URL completa (http/https), retorna como está
   if (url.startsWith('http://') || url.startsWith('https://')) {
     return url;
   }
-  // Se é uma URL relativa, adiciona o backend URL
-  return `${BACKEND_URL}${url}`;
+  // Se é uma URL de uploads, adiciona /api na frente para passar pelo proxy
+  if (url.startsWith('/uploads/')) {
+    return `/api${url}`;
+  }
+  // Outros casos, retorna como está
+  return url;
 };
 
 // Função helper para fazer requests com fallback
 const fetchWithFallback = async (endpoint) => {
   try {
-    // Primeiro tenta via proxy
     const response = await axios.get(`${API}${endpoint}`);
     return response.data;
   } catch (error) {
-    // Se falhar (404, etc), tenta direto no backend
-    console.log(`Proxy failed for ${endpoint}, trying direct connection...`);
-    try {
-      const response = await axios.get(`${API_DIRECT}${endpoint}`);
-      return response.data;
-    } catch (directError) {
-      console.error(`Direct connection also failed for ${endpoint}:`, directError);
-      throw directError;
-    }
+    console.error(`Error fetching ${endpoint}:`, error);
+    throw error;
   }
 };
 
