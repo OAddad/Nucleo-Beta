@@ -314,6 +314,27 @@ export default function Delivery() {
     }
   };
 
+  // Enviar pedido para rota (mudar status de na_bag para em_rota)
+  const handleEnviarParaRota = async (pedidoId) => {
+    try {
+      await axios.patch(`${API}/pedidos/${pedidoId}/status?status=em_rota`, {}, getAuthHeader());
+      toast.success("Pedido enviado para rota!");
+      
+      // Mover pedido de na_bag para em_rota no modal
+      setEntregadorPedidos(prev => {
+        const pedido = prev.na_bag.find(p => p.id === pedidoId);
+        return {
+          na_bag: prev.na_bag.filter(p => p.id !== pedidoId),
+          em_rota: pedido ? [...prev.em_rota, { ...pedido, status: 'em_rota' }] : prev.em_rota
+        };
+      });
+      
+      fetchData();
+    } catch (error) {
+      toast.error("Erro ao enviar para rota");
+    }
+  };
+
   // Abrir modal de cancelamento
   const handleAbrirCancelar = (pedido, e) => {
     if (e) e.stopPropagation();
