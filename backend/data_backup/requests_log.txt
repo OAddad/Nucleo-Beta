@@ -17554,3 +17554,13 @@
 2026-01-11T22:07:38.990205+00:00 | DB_CALL get_all_settings | P3 | 2.63ms | success
 2026-01-11T22:07:38.990519+00:00 | DB_CALL get_all_business_hours | P3 | 2.75ms | success
 2026-01-11T22:07:39.157166+00:00 | DB_CALL get_all_bairros | P3 | 0.43ms | success
+2026-01-11T22:07:59.981820+00:00 | DB_CALL get_all_bairros | P3 | 1.14ms | success
+2026-01-11T22:07:59.982510+00:00 | DB_CALL get_all_settings | P3 | 1.17ms | success
+2026-01-11T22:07:59.984687+00:00 | DB_CALL get_all_products | P3 | 1.32ms | success
+2026-01-11T22:07:59.985526+00:00 | DB_CALL get_all_business_hours | P3 | 1.49ms | success
+2026-01-11T22:07:59.985871+00:00 | DB_CALL get_all_categories | P3 | 1.76ms | success
+2026-01-11T22:08:06.845084+00:00 | DB_CALL init_database | P3 | 3.35ms | success
+2026-01-11T22:08:06.845707+00:00 | DB_CALL count_ingredients | P3 | 0.23ms | success
+2026-01-11T22:08:06.845890+00:00 | DB_CALL count_products | P3 | 0.12ms | success
+2026-01-11T22:08:06.846060+00:00 | DB_CALL count_users | P3 | 0.1ms | success
+2026-01-11T22:08:11.160170+00:00 | DB_CALL get_database_info | P3 | 0.45ms | success
