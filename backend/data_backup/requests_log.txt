@@ -15947,3 +15947,6 @@
 2026-01-11T19:13:38.482773+00:00 | DB_CALL get_user_by_id | P3 | 0.26ms | success
 2026-01-11T19:13:38.485760+00:00 | DB_CALL create_rua | P3 | 2.75ms | success
 2026-01-11T19:13:39.061738+00:00 | DB_CALL get_all_ruas | P3 | 0.28ms | success
+2026-01-11T19:13:46.192313+00:00 | DB_CALL get_user_by_id | P3 | 0.29ms | success
+2026-01-11T19:13:46.195096+00:00 | DB_CALL create_rua | P3 | 2.55ms | success
+2026-01-11T19:13:46.357272+00:00 | DB_CALL get_all_ruas | P3 | 0.32ms | success

@@ -69,16 +69,8 @@ export default function Dashboard({ setIsAuthenticated }) {
   useEffect(() => {
     const path = location.pathname;
     
-    // Se a URL é de entregas, ativar a aba delivery
-    if (path.includes('/vendas/entregas')) {
-      if (activeTopMenu !== 'delivery') {
-        setActiveTopMenu('delivery');
-      }
-      return;
-    }
-    
     // Se a URL contém rotas específicas que não são do top menu, limpar activeTopMenu
-    const nonTopMenuPaths = ['/entregador/', '/financeiro/', '/configuracoes/', '/impulsione/', '/clientes-fornecedores/', '/vendas/', '/estoque/', '/ingredientes', '/produtos', '/compras', '/moderacao'];
+    const nonTopMenuPaths = ['/entregador/', '/financeiro/', '/configuracoes/', '/impulsione/', '/clientes-fornecedores/', '/vendas/', '/estoque/', '/ingredientes', '/produtos', '/compras', '/moderacao', '/localizacao/'];
     const shouldClearTopMenu = nonTopMenuPaths.some(p => path.includes(p));
     if (shouldClearTopMenu && activeTopMenu) {
       setActiveTopMenu(null);
