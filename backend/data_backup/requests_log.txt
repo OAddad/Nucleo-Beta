@@ -9304,3 +9304,7 @@
 2026-01-11T15:12:09.543892+00:00 | DB_CALL get_all_clientes | P3 | 0.17ms | success
 2026-01-11T15:12:09.711854+00:00 | DB_CALL get_cliente_by_id | P3 | 0.33ms | success
 2026-01-11T15:12:10.195396+00:00 | DB_CALL get_client_addresses | P3 | 0.38ms | success
+2026-01-11T15:12:13.336421+00:00 | DB_CALL create_pedido | P3 | 4.73ms | success
+2026-01-11T15:12:13.338696+00:00 | DB_CALL update_cliente_pedido_stats | P3 | 2.14ms | success
+2026-01-11T15:12:15.871174+00:00 | DB_CALL get_all_pedidos | P3 | 0.43ms | success
+2026-01-11T15:12:17.276799+00:00 | DB_CALL get_all_pedidos | P3 | 0.31ms | success
