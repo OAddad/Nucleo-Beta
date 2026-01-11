@@ -103,7 +103,7 @@ function App() {
           />
         </Routes>
       </HashRouter>
-      <Toaster position="top-right" richColors />
+      <Toaster position="bottom-left" richColors />
     </div>
   );
 }
