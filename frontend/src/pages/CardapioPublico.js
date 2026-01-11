@@ -1418,8 +1418,8 @@ export default function CardapioPublico({ onAdminLogin }) {
           </div>
         </main>
 
-        {/* Cart */}
-        <aside className={`fixed right-0 top-0 h-full w-80 ${t.bgCart} border-l ${t.border} flex flex-col transition-transform duration-300 z-50 ${cartOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+        {/* Cart - ajustado para não sobrepor a barra superior */}
+        <aside className={`fixed right-0 top-16 h-[calc(100%-4rem)] w-80 ${t.bgCart} border-l ${t.border} flex flex-col transition-transform duration-300 z-40 ${cartOpen ? 'translate-x-0' : 'translate-x-full'}`}>
           <div className={`p-4 border-b ${t.border} flex items-center justify-between`}>
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-orange-500 rounded-lg flex items-center justify-center"><MotoIcon className="w-6 h-6 text-white" /></div>
