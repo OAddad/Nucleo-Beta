@@ -58,8 +58,8 @@ export default function Funcionarios() {
   const fetchData = useCallback(async () => {
     try {
       const [funcRes, clientesRes] = await Promise.all([
-        axios.get(`${API}/funcionarios`),
-        axios.get(`${API}/clientes`)
+        axios.get(`${API}/funcionarios`, getAuthHeader()),
+        axios.get(`${API}/clientes`, getAuthHeader())
       ]);
       setFuncionarios(funcRes.data);
       setClientes(clientesRes.data);
