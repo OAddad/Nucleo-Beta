@@ -4,6 +4,8 @@ import { Search, ShoppingBag, Plus, Minus, Trash2, X, Clock, Star, ChevronLeft, 
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { toast } from "sonner";
+import LoginModal from "../components/LoginModal";
+import ProfileMenu from "../components/ProfileMenu";
 
 const API = '/api';
 
@@ -14,7 +16,7 @@ const DeliveryIcon = ({ className }) => (
   </svg>
 );
 
-export default function CardapioPublico({ onLoginClick }) {
+export default function CardapioPublico({ onAdminLogin }) {
   // Estados
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -23,22 +25,14 @@ export default function CardapioPublico({ onLoginClick }) {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [cart, setCart] = useState([]);
   const [cartOpen, setCartOpen] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
   
-  // Verificar se há usuário/cliente logado
-  const [loggedUser, setLoggedUser] = useState(null);
+  // Verificar se há cliente logado
   const [loggedClient, setLoggedClient] = useState(null);
 
-  // Carregar dados do usuário/cliente logado
+  // Carregar dados do cliente logado
   useEffect(() => {
-    const user = localStorage.getItem("user");
     const client = localStorage.getItem("client");
-    
-    if (user) {
-      try {
-        setLoggedUser(JSON.parse(user));
-      } catch (e) {}
-    }
-    
     if (client) {
       try {
         setLoggedClient(JSON.parse(client));
@@ -55,7 +49,6 @@ export default function CardapioPublico({ onLoginClick }) {
   const fetchProducts = async () => {
     try {
       const response = await axios.get(`${API}/products`);
-      // Filtrar apenas produtos que têm preço de venda e não são insumos
       const publicProducts = response.data.filter(p => 
         p.sale_price && p.sale_price > 0 && !p.is_insumo
       );
@@ -85,13 +78,9 @@ export default function CardapioPublico({ onLoginClick }) {
   // Produtos filtrados
   const filteredProducts = useMemo(() => {
     let filtered = products;
-    
-    // Filtrar por categoria
     if (selectedCategory) {
       filtered = filtered.filter(p => p.category === selectedCategory);
     }
-    
-    // Filtrar por busca
     if (searchTerm) {
       const term = searchTerm.toLowerCase();
       filtered = filtered.filter(p => 
@@ -99,7 +88,6 @@ export default function CardapioPublico({ onLoginClick }) {
         (p.description && p.description.toLowerCase().includes(term))
       );
     }
-    
     return filtered;
   }, [products, selectedCategory, searchTerm]);
 
@@ -108,9 +96,7 @@ export default function CardapioPublico({ onLoginClick }) {
     const grouped = {};
     filteredProducts.forEach(product => {
       const cat = product.category || "Outros";
-      if (!grouped[cat]) {
-        grouped[cat] = [];
-      }
+      if (!grouped[cat]) grouped[cat] = [];
       grouped[cat].push(product);
     });
     return grouped;
@@ -122,9 +108,7 @@ export default function CardapioPublico({ onLoginClick }) {
       const existing = prev.find(item => item.id === product.id);
       if (existing) {
         return prev.map(item =>
-          item.id === product.id
-            ? { ...item, quantity: item.quantity + 1 }
-            : item
+          item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
         );
       }
       return [...prev, { ...product, quantity: 1 }];
@@ -138,16 +122,14 @@ export default function CardapioPublico({ onLoginClick }) {
   };
 
   const updateQuantity = (productId, delta) => {
-    setCart(prev => {
-      return prev.map(item => {
-        if (item.id === productId) {
-          const newQty = item.quantity + delta;
-          if (newQty <= 0) return null;
-          return { ...item, quantity: newQty };
-        }
-        return item;
-      }).filter(Boolean);
-    });
+    setCart(prev => prev.map(item => {
+      if (item.id === productId) {
+        const newQty = item.quantity + delta;
+        if (newQty <= 0) return null;
+        return { ...item, quantity: newQty };
+      }
+      return item;
+    }).filter(Boolean));
   };
 
   const cartTotal = useMemo(() => {
@@ -162,30 +144,34 @@ export default function CardapioPublico({ onLoginClick }) {
   const scrollCategories = (direction) => {
     const container = document.getElementById('categories-scroll');
     if (container) {
-      const scrollAmount = 200;
       container.scrollBy({
-        left: direction === 'left' ? -scrollAmount : scrollAmount,
+        left: direction === 'left' ? -200 : 200,
         behavior: 'smooth'
       });
     }
   };
 
-  // Verificar se está logado
-  const isLoggedIn = loggedUser || loggedClient;
-  const currentUserName = loggedClient?.nome || loggedUser?.username;
-  const currentUserPhoto = loggedClient?.foto || null;
-
-  // Handle do botão Entrar/Perfil
-  const handleUserButton = () => {
-    if (isLoggedIn) {
-      // Se logado como admin, ir para admin
-      if (loggedUser) {
-        window.location.href = "#/admin";
+  // Handle login success
+  const handleLoginSuccess = (type, userData) => {
+    if (type === "admin") {
+      // Admin logou - redirecionar para dashboard
+      if (onAdminLogin) {
+        onAdminLogin(userData);
       }
-      // Se logado como cliente, poderia abrir perfil
     } else {
-      onLoginClick();
+      // Cliente logou
+      setLoggedClient(userData);
     }
+  };
+
+  // Handle logout
+  const handleLogout = () => {
+    setLoggedClient(null);
+  };
+
+  // Handle client update
+  const handleClientUpdate = (updatedClient) => {
+    setLoggedClient(updatedClient);
   };
 
   if (loading) {
@@ -201,7 +187,7 @@ export default function CardapioPublico({ onLoginClick }) {
 
   return (
     <div className="min-h-screen bg-zinc-900 text-white">
-      {/* Header Fixo - Ocupa toda a largura */}
+      {/* Header Fixo */}
       <header className="bg-zinc-900 border-b border-zinc-800 sticky top-0 z-40">
         {/* Top Bar */}
         <div className="flex items-center justify-between px-4 py-2 bg-zinc-950">
@@ -212,28 +198,16 @@ export default function CardapioPublico({ onLoginClick }) {
             <span className="font-semibold text-lg">Cardápio</span>
           </div>
           
-          {/* Botão Entrar ou Foto do Usuário */}
-          {isLoggedIn ? (
-            <button 
-              onClick={handleUserButton}
-              className="flex items-center gap-2 hover:opacity-80 transition-opacity"
-            >
-              {currentUserPhoto ? (
-                <img 
-                  src={currentUserPhoto} 
-                  alt={currentUserName}
-                  className="w-10 h-10 rounded-full object-cover border-2 border-orange-500"
-                />
-              ) : (
-                <div className="w-10 h-10 rounded-full bg-zinc-700 flex items-center justify-center border-2 border-orange-500">
-                  <User className="w-5 h-5 text-zinc-400" />
-                </div>
-              )}
-              <span className="text-sm font-medium hidden sm:block">{currentUserName}</span>
-            </button>
+          {/* Botão Entrar ou Menu de Perfil */}
+          {loggedClient ? (
+            <ProfileMenu 
+              client={loggedClient} 
+              onLogout={handleLogout}
+              onClientUpdate={handleClientUpdate}
+            />
           ) : (
             <Button 
-              onClick={onLoginClick}
+              onClick={() => setShowLoginModal(true)}
               className="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-6"
             >
               ENTRAR
@@ -275,9 +249,6 @@ export default function CardapioPublico({ onLoginClick }) {
                 </div>
               </div>
             </div>
-            <button className="text-white/80 hover:text-white text-sm underline hidden sm:block">
-              Ver mais
-            </button>
           </div>
         </div>
 
@@ -293,10 +264,7 @@ export default function CardapioPublico({ onLoginClick }) {
               className="pl-10 bg-zinc-800 border-zinc-700 text-white placeholder:text-zinc-500 h-11"
             />
             {searchTerm && (
-              <button 
-                onClick={() => setSearchTerm("")}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white"
-              >
+              <button onClick={() => setSearchTerm("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white">
                 <X className="w-4 h-4" />
               </button>
             )}
@@ -307,25 +275,14 @@ export default function CardapioPublico({ onLoginClick }) {
         {categoriesWithProducts.length > 0 && (
           <div className="relative px-4 py-2 bg-zinc-900 border-t border-zinc-800">
             <div className="flex items-center gap-2 max-w-7xl mx-auto">
-              <button 
-                onClick={() => scrollCategories('left')}
-                className="flex-shrink-0 w-8 h-8 flex items-center justify-center bg-zinc-800 rounded-lg hover:bg-zinc-700"
-              >
+              <button onClick={() => scrollCategories('left')} className="flex-shrink-0 w-8 h-8 flex items-center justify-center bg-zinc-800 rounded-lg hover:bg-zinc-700">
                 <ChevronLeft className="w-4 h-4" />
               </button>
               
-              <div 
-                id="categories-scroll"
-                className="flex-1 overflow-x-auto scrollbar-hide flex gap-2"
-                style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-              >
+              <div id="categories-scroll" className="flex-1 overflow-x-auto scrollbar-hide flex gap-2" style={{ scrollbarWidth: 'none' }}>
                 <button
                   onClick={() => setSelectedCategory(null)}
-                  className={`flex-shrink-0 px-4 py-2 rounded-lg font-medium text-sm transition-all ${
-                    !selectedCategory
-                      ? 'bg-orange-500 text-white'
-                      : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700'
-                  }`}
+                  className={`flex-shrink-0 px-4 py-2 rounded-lg font-medium text-sm transition-all ${!selectedCategory ? 'bg-orange-500 text-white' : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700'}`}
                 >
                   TODOS
                 </button>
@@ -333,21 +290,14 @@ export default function CardapioPublico({ onLoginClick }) {
                   <button
                     key={cat.id}
                     onClick={() => setSelectedCategory(cat.name)}
-                    className={`flex-shrink-0 px-4 py-2 rounded-lg font-medium text-sm transition-all uppercase ${
-                      selectedCategory === cat.name
-                        ? 'bg-orange-500 text-white'
-                        : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700'
-                    }`}
+                    className={`flex-shrink-0 px-4 py-2 rounded-lg font-medium text-sm transition-all uppercase ${selectedCategory === cat.name ? 'bg-orange-500 text-white' : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700'}`}
                   >
                     {cat.name}
                   </button>
                 ))}
               </div>
 
-              <button 
-                onClick={() => scrollCategories('right')}
-                className="flex-shrink-0 w-8 h-8 flex items-center justify-center bg-zinc-800 rounded-lg hover:bg-zinc-700"
-              >
+              <button onClick={() => scrollCategories('right')} className="flex-shrink-0 w-8 h-8 flex items-center justify-center bg-zinc-800 rounded-lg hover:bg-zinc-700">
                 <ChevronRight className="w-4 h-4" />
               </button>
             </div>
@@ -367,70 +317,36 @@ export default function CardapioPublico({ onLoginClick }) {
                 </div>
                 <h3 className="text-xl font-semibold text-zinc-400 mb-2">Nenhum produto encontrado</h3>
                 <p className="text-zinc-500 text-center max-w-md">
-                  {searchTerm 
-                    ? `Não encontramos produtos com "${searchTerm}"`
-                    : "Ainda não há produtos cadastrados no cardápio"}
+                  {searchTerm ? `Não encontramos produtos com "${searchTerm}"` : "Ainda não há produtos cadastrados no cardápio"}
                 </p>
               </div>
             ) : (
               Object.entries(productsByCategory).map(([category, categoryProducts]) => (
                 <div key={category} className="mb-8">
-                  {/* Category Header */}
                   <div className="mb-4">
                     <h2 className="text-2xl font-bold text-orange-500 uppercase">{category}</h2>
                     <p className="text-zinc-500 text-sm">Confira nossos deliciosos produtos</p>
                   </div>
 
-                  {/* Products Grid */}
                   <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
                     {categoryProducts.map(product => (
-                      <div 
-                        key={product.id}
-                        className="bg-zinc-800 rounded-xl overflow-hidden hover:ring-2 hover:ring-orange-500/50 transition-all group"
-                      >
-                        {/* Product Image */}
+                      <div key={product.id} className="bg-zinc-800 rounded-xl overflow-hidden hover:ring-2 hover:ring-orange-500/50 transition-all group">
                         <div className="aspect-square bg-zinc-700 relative overflow-hidden">
                           {product.photo_url ? (
-                            <img
-                              src={product.photo_url}
-                              alt={product.name}
-                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                            />
+                            <img src={product.photo_url} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                           ) : (
-                            <div className="w-full h-full flex items-center justify-center">
-                              <span className="text-4xl">🍽️</span>
-                            </div>
+                            <div className="w-full h-full flex items-center justify-center"><span className="text-4xl">🍽️</span></div>
                           )}
-                          
-                          {/* Add Button Overlay */}
-                          <button
-                            onClick={() => addToCart(product)}
-                            className="absolute bottom-2 right-2 w-10 h-10 bg-orange-500 hover:bg-orange-600 rounded-full flex items-center justify-center shadow-lg transition-all opacity-0 group-hover:opacity-100"
-                          >
+                          <button onClick={() => addToCart(product)} className="absolute bottom-2 right-2 w-10 h-10 bg-orange-500 hover:bg-orange-600 rounded-full flex items-center justify-center shadow-lg transition-all opacity-0 group-hover:opacity-100">
                             <Plus className="w-5 h-5 text-white" />
                           </button>
                         </div>
-
-                        {/* Product Info */}
                         <div className="p-3">
-                          <h3 className="font-semibold text-white text-sm mb-1 line-clamp-2">
-                            {product.name}
-                          </h3>
-                          {product.description && (
-                            <p className="text-zinc-400 text-xs mb-2 line-clamp-2">
-                              {product.description}
-                            </p>
-                          )}
+                          <h3 className="font-semibold text-white text-sm mb-1 line-clamp-2">{product.name}</h3>
+                          {product.description && <p className="text-zinc-400 text-xs mb-2 line-clamp-2">{product.description}</p>}
                           <div className="flex items-center justify-between">
-                            <span className="text-orange-500 font-bold">
-                              R$ {product.sale_price?.toFixed(2).replace('.', ',')}
-                            </span>
-                            <button
-                              onClick={() => addToCart(product)}
-                              className="text-xs bg-zinc-700 hover:bg-orange-500 px-3 py-1 rounded-full transition-colors"
-                            >
-                              Adicionar
-                            </button>
+                            <span className="text-orange-500 font-bold">R$ {product.sale_price?.toFixed(2).replace('.', ',')}</span>
+                            <button onClick={() => addToCart(product)} className="text-xs bg-zinc-700 hover:bg-orange-500 px-3 py-1 rounded-full transition-colors">Adicionar</button>
                           </div>
                         </div>
                       </div>
@@ -444,7 +360,6 @@ export default function CardapioPublico({ onLoginClick }) {
 
         {/* Cart Sidebar */}
         <aside className={`fixed right-0 top-0 h-full w-80 bg-zinc-800 border-l border-zinc-700 flex flex-col transition-transform duration-300 z-50 ${cartOpen ? 'translate-x-0' : 'translate-x-full'}`}>
-          {/* Cart Header */}
           <div className="p-4 border-b border-zinc-700 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-orange-500 rounded-lg flex items-center justify-center">
@@ -455,15 +370,11 @@ export default function CardapioPublico({ onLoginClick }) {
                 <p className="text-xs text-zinc-400">{cartItemsCount} {cartItemsCount === 1 ? 'item' : 'itens'}</p>
               </div>
             </div>
-            <button 
-              onClick={() => setCartOpen(false)}
-              className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-zinc-700"
-            >
+            <button onClick={() => setCartOpen(false)} className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-zinc-700">
               <X className="w-5 h-5" />
             </button>
           </div>
 
-          {/* Cart Items */}
           <div className="flex-1 overflow-y-auto p-4">
             {cart.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-full text-center">
@@ -476,45 +387,17 @@ export default function CardapioPublico({ onLoginClick }) {
                 {cart.map(item => (
                   <div key={item.id} className="bg-zinc-900 rounded-lg p-3">
                     <div className="flex gap-3">
-                      {/* Item Image */}
                       <div className="w-16 h-16 bg-zinc-700 rounded-lg flex-shrink-0 overflow-hidden">
-                        {item.photo_url ? (
-                          <img src={item.photo_url} alt={item.name} className="w-full h-full object-cover" />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center">
-                            <span className="text-2xl">🍽️</span>
-                          </div>
-                        )}
+                        {item.photo_url ? <img src={item.photo_url} alt={item.name} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center"><span className="text-2xl">🍽️</span></div>}
                       </div>
-                      
-                      {/* Item Info */}
                       <div className="flex-1 min-w-0">
                         <h4 className="font-medium text-white text-sm truncate">{item.name}</h4>
-                        <p className="text-orange-500 font-semibold text-sm mt-1">
-                          R$ {(item.sale_price * item.quantity).toFixed(2).replace('.', ',')}
-                        </p>
-                        
-                        {/* Quantity Controls */}
+                        <p className="text-orange-500 font-semibold text-sm mt-1">R$ {(item.sale_price * item.quantity).toFixed(2).replace('.', ',')}</p>
                         <div className="flex items-center gap-2 mt-2">
-                          <button
-                            onClick={() => updateQuantity(item.id, -1)}
-                            className="w-7 h-7 bg-zinc-700 hover:bg-zinc-600 rounded flex items-center justify-center"
-                          >
-                            <Minus className="w-3 h-3" />
-                          </button>
+                          <button onClick={() => updateQuantity(item.id, -1)} className="w-7 h-7 bg-zinc-700 hover:bg-zinc-600 rounded flex items-center justify-center"><Minus className="w-3 h-3" /></button>
                           <span className="text-white font-medium w-6 text-center">{item.quantity}</span>
-                          <button
-                            onClick={() => updateQuantity(item.id, 1)}
-                            className="w-7 h-7 bg-zinc-700 hover:bg-zinc-600 rounded flex items-center justify-center"
-                          >
-                            <Plus className="w-3 h-3" />
-                          </button>
-                          <button
-                            onClick={() => removeFromCart(item.id)}
-                            className="w-7 h-7 bg-red-500/20 hover:bg-red-500/30 rounded flex items-center justify-center ml-auto"
-                          >
-                            <Trash2 className="w-3 h-3 text-red-400" />
-                          </button>
+                          <button onClick={() => updateQuantity(item.id, 1)} className="w-7 h-7 bg-zinc-700 hover:bg-zinc-600 rounded flex items-center justify-center"><Plus className="w-3 h-3" /></button>
+                          <button onClick={() => removeFromCart(item.id)} className="w-7 h-7 bg-red-500/20 hover:bg-red-500/30 rounded flex items-center justify-center ml-auto"><Trash2 className="w-3 h-3 text-red-400" /></button>
                         </div>
                       </div>
                     </div>
@@ -524,24 +407,21 @@ export default function CardapioPublico({ onLoginClick }) {
             )}
           </div>
 
-          {/* Cart Footer */}
           <div className="p-4 border-t border-zinc-700 bg-zinc-900">
             <div className="flex items-center justify-between mb-4">
               <span className="text-zinc-400">Total</span>
-              <span className="text-2xl font-bold text-orange-500">
-                R$ {cartTotal.toFixed(2).replace('.', ',')}
-              </span>
+              <span className="text-2xl font-bold text-orange-500">R$ {cartTotal.toFixed(2).replace('.', ',')}</span>
             </div>
             <Button 
               onClick={() => {
-                if (!isLoggedIn) {
-                  onLoginClick();
+                if (!loggedClient) {
+                  setShowLoginModal(true);
                 } else {
                   toast.success("Pedido em desenvolvimento!");
                 }
               }}
               disabled={cart.length === 0}
-              className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold h-12 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold h-12 disabled:opacity-50"
             >
               {cart.length === 0 ? 'Adicione itens para continuar' : 'Fazer Pedido'}
             </Button>
@@ -549,18 +429,23 @@ export default function CardapioPublico({ onLoginClick }) {
         </aside>
       </div>
 
-      {/* Cart Toggle Button (Floating) */}
+      {/* Cart Toggle Button */}
       <button
         onClick={() => setCartOpen(!cartOpen)}
         className={`fixed bottom-4 right-4 w-14 h-14 bg-orange-500 rounded-full flex items-center justify-center shadow-lg z-50 hover:bg-orange-600 transition-colors ${cartOpen ? 'hidden' : ''}`}
       >
         <ShoppingBag className="w-6 h-6 text-white" />
         {cartItemsCount > 0 && (
-          <span className="absolute -top-1 -right-1 w-6 h-6 bg-red-500 rounded-full text-xs font-bold flex items-center justify-center">
-            {cartItemsCount}
-          </span>
+          <span className="absolute -top-1 -right-1 w-6 h-6 bg-red-500 rounded-full text-xs font-bold flex items-center justify-center">{cartItemsCount}</span>
         )}
       </button>
+
+      {/* Login Modal */}
+      <LoginModal 
+        isOpen={showLoginModal} 
+        onClose={() => setShowLoginModal(false)}
+        onLoginSuccess={handleLoginSuccess}
+      />
     </div>
   );
 }
