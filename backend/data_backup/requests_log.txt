@@ -16861,3 +16861,5 @@
 2026-01-11T20:08:55.690516+00:00 | DB_CALL get_all_entregadores | P3 | 0.53ms | success
 2026-01-11T20:08:55.692074+00:00 | DB_CALL get_all_settings | P3 | 0.79ms | success
 2026-01-11T20:08:55.693062+00:00 | DB_CALL get_all_pedidos | P3 | 1.48ms | success
+2026-01-11T20:09:00.249978+00:00 | DB_CALL get_user_by_id | P3 | 0.36ms | success
+2026-01-11T20:09:00.250317+00:00 | DB_CALL get_all_decision_nodes | P3 | 0.19ms | success
