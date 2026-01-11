@@ -15810,3 +15810,6 @@
 2026-01-11T19:08:18.901669+00:00 | DB_CALL get_all_bairros | P3 | 0.29ms | success
 2026-01-11T19:08:20.188329+00:00 | DB_CALL get_all_bairros | P3 | 0.65ms | success
 2026-01-11T19:08:28.478356+00:00 | DB_CALL get_all_entregadores | P3 | 0.33ms | success
+2026-01-11T19:08:35.361466+00:00 | DB_CALL get_all_bairros | P3 | 1.05ms | success
+2026-01-11T19:08:35.362007+00:00 | DB_CALL get_all_ruas | P3 | 0.91ms | success
+2026-01-11T19:08:35.833727+00:00 | DB_CALL get_all_bairros | P3 | 0.29ms | success

@@ -2476,10 +2476,21 @@ async def get_pedido_by_codigo(codigo: str):
 @api_router.post("/pedidos", response_model=PedidoResponse)
 async def create_pedido(data: PedidoCreate):
     """Cria um novo pedido (público para cardápio)"""
-    # Para pedidos do Delivery OU tipo_entrega delivery, começar com aguardando_aceite
-    # Para outros módulos/tipos, começar com producao
-    is_delivery = data.modulo == 'Delivery' or data.tipo_entrega == 'delivery'
-    default_status = 'aguardando_aceite' if is_delivery else 'producao'
+    # Verificar configuração de aceite automático
+    settings = await db_call(sqlite_db.get_all_settings)
+    aceite_automatico = False
+    for s in settings:
+        if s.get('key') == 'aceite_automatico':
+            aceite_automatico = s.get('value', 'false').lower() == 'true'
+            break
+    
+    # Definir status inicial baseado no aceite automático
+    # Se aceite automático desativado: sempre começa com aguardando_aceite
+    # Se aceite automático ativado: vai direto para producao
+    if aceite_automatico:
+        default_status = 'producao'
+    else:
+        default_status = 'aguardando_aceite'
     
     pedido_data = {
         'cliente_id': data.cliente_id,
