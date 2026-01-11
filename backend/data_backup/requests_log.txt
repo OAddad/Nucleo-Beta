@@ -12308,3 +12308,11 @@
 2026-01-11T17:41:51.878533+00:00 | DB_CALL get_all_entregadores | P3 | 4.31ms | success
 2026-01-11T17:41:51.878941+00:00 | DB_CALL get_all_settings | P3 | 3.17ms | success
 2026-01-11T17:41:52.875872+00:00 | DB_CALL get_all_pedidos | P3 | 1.25ms | success
+2026-01-11T17:41:57.853292+00:00 | DB_CALL get_all_entregadores | P3 | 0.53ms | success
+2026-01-11T17:41:57.855574+00:00 | DB_CALL get_all_settings | P3 | 1.11ms | success
+2026-01-11T17:41:57.856121+00:00 | DB_CALL get_all_pedidos | P3 | 2.08ms | success
+2026-01-11T17:41:58.031359+00:00 | DB_CALL get_all_pedidos | P3 | 0.6ms | success
+2026-01-11T17:42:02.860280+00:00 | DB_CALL get_all_pedidos | P3 | 0.92ms | success
+2026-01-11T17:42:02.862453+00:00 | DB_CALL get_all_entregadores | P3 | 0.87ms | success
+2026-01-11T17:42:02.863104+00:00 | DB_CALL get_all_settings | P3 | 0.91ms | success
+2026-01-11T17:42:03.032768+00:00 | DB_CALL get_all_pedidos | P3 | 0.56ms | success
