@@ -768,6 +768,8 @@ export default function Dashboard({ setIsAuthenticated }) {
               {/* Rotas de Financeiro */}
               <Route path="/financeiro/extrato" element={<ExtratoFinanceiro />} />
               <Route path="/financeiro/despesas" element={<Despesas />} />
+              {/* Rota de Entregador Detalhe */}
+              <Route path="/entregador/:entregadorId" element={<EntregadorDetalhe />} />
               {/* Rotas de Impulsione suas Vendas */}
               <Route path="/impulsione/relatorio-ofertas" element={<RelatorioOfertas />} />
               <Route path="/impulsione/promocoes" element={<Promocoes />} />
