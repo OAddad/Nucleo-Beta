@@ -9721,3 +9721,14 @@
 2026-01-11T15:47:29.100124+00:00 | DB_CALL count_ingredients | P3 | 0.3ms | success
 2026-01-11T15:47:29.100322+00:00 | DB_CALL count_products | P3 | 0.13ms | success
 2026-01-11T15:47:29.100586+00:00 | DB_CALL count_users | P3 | 0.19ms | success
+2026-01-11T15:48:03.101309+00:00 | DB_CALL get_all_products | P3 | 1.92ms | success
+2026-01-11T15:48:03.110413+00:00 | DB_CALL get_all_business_hours | P3 | 10.05ms | success
+2026-01-11T15:48:03.110917+00:00 | DB_CALL get_all_categories | P3 | 10.46ms | success
+2026-01-11T15:48:03.617806+00:00 | DB_CALL get_all_products | P3 | 1.46ms | success
+2026-01-11T15:48:03.618830+00:00 | DB_CALL get_all_business_hours | P3 | 2.08ms | success
+2026-01-11T15:48:03.619275+00:00 | DB_CALL get_all_categories | P3 | 1.93ms | success
+2026-01-11T15:48:09.173966+00:00 | DB_CALL get_user_by_username | P3 | 0.31ms | success
+2026-01-11T15:48:09.174197+00:00 | DB_CALL get_user_by_username | P3 | 0.1ms | success
+2026-01-11T15:48:09.174435+00:00 | DB_CALL get_all_clientes | P3 | 0.18ms | success
+2026-01-11T15:48:09.341549+00:00 | DB_CALL get_cliente_by_id | P3 | 0.95ms | success
+2026-01-11T15:48:09.826034+00:00 | DB_CALL get_client_addresses | P3 | 0.4ms | success
