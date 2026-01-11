@@ -17115,3 +17115,8 @@
 2026-01-11T21:33:55.175074+00:00 | DB_CALL set_setting | P3 | 7.92ms | success
 2026-01-11T21:33:55.180299+00:00 | DB_CALL set_setting | P3 | 5.11ms | success
 2026-01-11T21:33:55.180562+00:00 | DB_CALL get_all_settings | P3 | 0.17ms | success
+2026-01-11T21:34:02.734953+00:00 | DB_CALL get_user_by_username | P3 | 0.25ms | success
+2026-01-11T21:34:02.757101+00:00 | DB_CALL get_user_by_id | P3 | 0.24ms | success
+2026-01-11T21:34:02.762696+00:00 | DB_CALL set_setting | P3 | 5.39ms | success
+2026-01-11T21:34:02.767380+00:00 | DB_CALL set_setting | P3 | 4.59ms | success
+2026-01-11T21:34:02.767535+00:00 | DB_CALL get_all_settings | P3 | 0.09ms | success
