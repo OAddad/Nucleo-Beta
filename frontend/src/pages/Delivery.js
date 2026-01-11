@@ -1178,41 +1178,50 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
   const [step, setStep] = useState(1); // 1 = Produtos, 2 = Cliente, 3 = Entrega, 4 = Pagamento
   
   const [submitting, setSubmitting] = useState(false);
+  const [loadingProducts, setLoadingProducts] = useState(true);
 
   // Carregar dados
   useEffect(() => {
     if (open) {
-      fetchProducts();
-      fetchCategories();
-      fetchClientes();
-      fetchBairros();
+      setLoadingProducts(true);
+      Promise.all([
+        fetchProducts(),
+        fetchCategories(),
+        fetchClientes(),
+        fetchBairros()
+      ]).finally(() => setLoadingProducts(false));
     }
   }, [open]);
 
   const fetchProducts = async () => {
     try {
       const res = await axios.get(`${API}/products`, getAuthHeader());
-      setProducts(res.data.filter(p => p.available));
+      const prods = Array.isArray(res.data) ? res.data : [];
+      // Mostrar todos os produtos (não filtrar por available)
+      setProducts(prods);
     } catch (error) {
       console.error("Erro ao carregar produtos:", error);
+      setProducts([]);
     }
   };
 
   const fetchCategories = async () => {
     try {
       const res = await axios.get(`${API}/categories`, getAuthHeader());
-      setCategories(res.data);
+      setCategories(Array.isArray(res.data) ? res.data : []);
     } catch (error) {
       console.error("Erro ao carregar categorias:", error);
+      setCategories([]);
     }
   };
 
   const fetchClientes = async () => {
     try {
       const res = await axios.get(`${API}/clientes`, getAuthHeader());
-      setClientes(res.data);
+      setClientes(Array.isArray(res.data) ? res.data : []);
     } catch (error) {
       console.error("Erro ao carregar clientes:", error);
+      setClientes([]);
     } finally {
       setLoading(false);
     }
@@ -1221,9 +1230,10 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
   const fetchBairros = async () => {
     try {
       const res = await axios.get(`${API}/bairros`, getAuthHeader());
-      setBairros(res.data);
+      setBairros(Array.isArray(res.data) ? res.data : []);
     } catch (error) {
       console.error("Erro ao carregar bairros:", error);
+      setBairros([]);
     }
   };
 
