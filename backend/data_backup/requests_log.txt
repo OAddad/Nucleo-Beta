@@ -9449,3 +9449,6 @@
 2026-01-11T15:21:16.518306+00:00 | DB_CALL get_all_pedidos | P3 | 0.34ms | success
 2026-01-11T15:21:21.785743+00:00 | DB_CALL get_all_pedidos | P3 | 0.33ms | success
 2026-01-11T15:21:26.783301+00:00 | DB_CALL get_all_pedidos | P3 | 0.39ms | success
+2026-01-11T15:22:09.408351+00:00 | DB_CALL get_user_by_username | P3 | 0.26ms | success
+2026-01-11T15:22:09.434832+00:00 | DB_CALL get_user_by_id | P3 | 0.3ms | success
+2026-01-11T15:22:09.435199+00:00 | DB_CALL get_all_clientes | P3 | 0.19ms | success
