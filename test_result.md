@@ -472,6 +472,21 @@ backend:
         agent: "testing"
         comment: "✅ DECISION TREE ENDPOINTS TESTING COMPLETED (Jan 11, 2026): Testei os endpoints de Árvore de Decisão exatamente conforme especificado na review request usando credenciais Addad/Addad123. RESULTADOS: ✅ TEST 1 PASSED: GET /api/decision-tree lista todos os nós (encontrou 2 nós existentes). ✅ TEST 2 PASSED: POST /api/decision-tree criou novo nó raiz com trigger 'oi' e response completa conforme especificado. ✅ TEST 3 PASSED: POST /api/decision-tree criou sub-nó (filho) com trigger '1' e parent_id correto - relacionamento pai-filho funcionando. ✅ TEST 4 PASSED: PUT /api/decision-tree/{id} atualizou nó com sucesso - texto 'ATUALIZADO' confirmado na response. ✅ TEST 5 PASSED: DELETE /api/decision-tree/{id} deletou nó com sucesso e verificação confirmou remoção. ✅ AUTHENTICATION: Credenciais Addad/Addad123 funcionando perfeitamente. Sistema de árvore de decisão 100% operacional conforme especificações da review request. Todos os 5 testes passaram com 100% de sucesso."
 
+  - task: "ChatBot Inteligente com IA"
+    implemented: true
+    working: true
+    file: "backend/server.py, backend/chatbot_ai.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Sistema de ChatBot Inteligente implementado: 1) Integração com LLM via emergentintegrations 2) Processamento de mensagens com contexto do cliente 3) Editor de fluxograma visual 4) Endpoints: POST /api/chatbot/process, GET/POST/PUT/DELETE /api/chatbot/flow/node, POST/DELETE /api/chatbot/flow/edge"
+      - working: true
+        agent: "testing"
+        comment: "✅ CHATBOT INTELIGENTE ENDPOINTS TESTING COMPLETED (Jan 11, 2026): Testei os novos endpoints do ChatBot Inteligente usando credenciais Addad/Addad123. RESULTADOS: ✅ TEST 1 PASSED: POST /api/chatbot/process processa mensagem com IA - retorna resposta humanizada. ✅ TEST 2 PASSED: GET /api/chatbot/flow lista nós e conexões do fluxograma. ✅ TEST 3 PASSED: POST /api/chatbot/flow/node cria nó no fluxograma. ✅ TEST 4 PASSED: PUT /api/chatbot/flow/node/{id} atualiza nó. ✅ TEST 5 PASSED: POST /api/chatbot/flow/edge cria conexão entre nós. ✅ TEST 6 PASSED: GET /api/whatsapp/status verifica auto-reply. SUCCESS RATE: 11/11 testes passaram (100% success rate). Sistema ChatBot Inteligente 100% operacional."
+
   - task: "ChatBot Inteligente Endpoints"
     implemented: true
     working: true
