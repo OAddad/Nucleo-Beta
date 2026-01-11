@@ -1526,12 +1526,17 @@ def update_business_hours(hours_list: List[Dict]) -> List[Dict]:
         for hour in hours_list:
             cursor.execute('''
                 UPDATE business_hours 
-                SET is_open = ?, opening_time = ?, closing_time = ?, updated_at = ?
+                SET is_open = ?, opening_time = ?, closing_time = ?, 
+                    has_second_period = ?, opening_time_2 = ?, closing_time_2 = ?,
+                    updated_at = ?
                 WHERE day_of_week = ?
             ''', (
                 1 if hour.get('is_open', True) else 0,
                 hour.get('opening_time', '08:00'),
                 hour.get('closing_time', '22:00'),
+                1 if hour.get('has_second_period', False) else 0,
+                hour.get('opening_time_2', '18:00'),
+                hour.get('closing_time_2', '23:59'),
                 now,
                 hour.get('day_of_week')
             ))
@@ -1549,12 +1554,17 @@ def update_single_business_hour(day_of_week: int, data: Dict) -> Optional[Dict]:
         
         cursor.execute('''
             UPDATE business_hours 
-            SET is_open = ?, opening_time = ?, closing_time = ?, updated_at = ?
+            SET is_open = ?, opening_time = ?, closing_time = ?, 
+                has_second_period = ?, opening_time_2 = ?, closing_time_2 = ?,
+                updated_at = ?
             WHERE day_of_week = ?
         ''', (
             1 if data.get('is_open', True) else 0,
             data.get('opening_time', '08:00'),
             data.get('closing_time', '22:00'),
+            1 if data.get('has_second_period', False) else 0,
+            data.get('opening_time_2', '18:00'),
+            data.get('closing_time_2', '23:59'),
             now,
             day_of_week
         ))
