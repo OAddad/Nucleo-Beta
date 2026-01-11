@@ -2543,6 +2543,94 @@ async def get_pedidos_by_cliente(cliente_id: str):
     return pedidos
 
 
+# ========== ENTREGADORES ENDPOINTS ==========
+class EntregadorCreate(BaseModel):
+    nome: str
+    telefone: Optional[str] = None
+
+
+class EntregadorUpdate(BaseModel):
+    nome: Optional[str] = None
+    telefone: Optional[str] = None
+
+
+class EntregadorResponse(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str
+    nome: str
+    telefone: Optional[str] = None
+    ativo: int = 1
+    created_at: Optional[str] = None
+    updated_at: Optional[str] = None
+
+
+@api_router.get("/entregadores", response_model=List[EntregadorResponse])
+async def get_all_entregadores():
+    """Retorna todos os entregadores ativos"""
+    entregadores = await db_call(sqlite_db.get_all_entregadores)
+    return entregadores
+
+
+@api_router.get("/entregadores/{entregador_id}", response_model=EntregadorResponse)
+async def get_entregador(entregador_id: str):
+    """Retorna um entregador pelo ID"""
+    entregador = await db_call(sqlite_db.get_entregador_by_id, entregador_id)
+    if not entregador:
+        raise HTTPException(status_code=404, detail="Entregador não encontrado")
+    return entregador
+
+
+@api_router.post("/entregadores", response_model=EntregadorResponse)
+async def create_entregador(data: EntregadorCreate, current_user: User = Depends(get_current_user)):
+    """Cria um novo entregador"""
+    check_role(current_user, ["proprietario", "administrador"])
+    entregador = await db_call(sqlite_db.create_entregador, data.model_dump())
+    return entregador
+
+
+@api_router.put("/entregadores/{entregador_id}", response_model=EntregadorResponse)
+async def update_entregador(entregador_id: str, data: EntregadorUpdate, current_user: User = Depends(get_current_user)):
+    """Atualiza um entregador"""
+    check_role(current_user, ["proprietario", "administrador"])
+    entregador = await db_call(sqlite_db.update_entregador, entregador_id, data.model_dump(exclude_none=True))
+    if not entregador:
+        raise HTTPException(status_code=404, detail="Entregador não encontrado")
+    return entregador
+
+
+@api_router.delete("/entregadores/{entregador_id}")
+async def delete_entregador(entregador_id: str, current_user: User = Depends(get_current_user)):
+    """Desativa um entregador"""
+    check_role(current_user, ["proprietario", "administrador"])
+    deleted = await db_call(sqlite_db.delete_entregador, entregador_id)
+    if not deleted:
+        raise HTTPException(status_code=404, detail="Entregador não encontrado")
+    return {"message": "Entregador removido com sucesso"}
+
+
+@api_router.get("/entregadores/{entregador_id}/pedidos")
+async def get_pedidos_by_entregador(entregador_id: str):
+    """Retorna todos os pedidos de um entregador (na_bag e em_rota)"""
+    pedidos = await db_call(sqlite_db.get_pedidos_by_entregador, entregador_id)
+    return pedidos
+
+
+@api_router.patch("/pedidos/{pedido_id}/entregador")
+async def assign_entregador_to_pedido(pedido_id: str, entregador_id: str, current_user: User = Depends(get_current_user)):
+    """Atribui um entregador a um pedido e muda status para na_bag"""
+    entregador = await db_call(sqlite_db.get_entregador_by_id, entregador_id)
+    if not entregador:
+        raise HTTPException(status_code=404, detail="Entregador não encontrado")
+    
+    pedido = await db_call(sqlite_db.update_pedido_entregador, pedido_id, entregador_id, entregador['nome'])
+    if not pedido:
+        raise HTTPException(status_code=404, detail="Pedido não encontrado")
+    
+    # Atualiza status para na_bag
+    pedido = await db_call(sqlite_db.update_pedido_status, pedido_id, "na_bag")
+    return pedido
+
+
 # Reports endpoints
 @api_router.get("/reports/price-history/{ingredient_id}", response_model=IngredientWithHistory)
 async def get_price_history(ingredient_id: str, current_user: User = Depends(get_current_user)):
