@@ -970,7 +970,7 @@ export default function Products() {
         category: productToDuplicate.category || null,
         product_type: productToDuplicate.product_type || "produto",
         sale_price: productToDuplicate.sale_price || null,
-        photo_url: productToDuplicate.photo_url || null,
+        photo_url: null, // NÃO duplicar a foto
         recipe: productToDuplicate.recipe || [],
         is_insumo: productToDuplicate.is_insumo || false,
         is_divisible: productToDuplicate.is_divisible || false,
