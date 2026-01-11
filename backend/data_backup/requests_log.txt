@@ -16373,3 +16373,8 @@
 2026-01-11T19:35:47.259162+00:00 | DB_CALL update_pedido_status | P3 | 2.09ms | success
 2026-01-11T19:35:47.421067+00:00 | DB_CALL get_pedidos_by_entregador | P3 | 0.71ms | success
 2026-01-11T19:35:47.422089+00:00 | DB_CALL get_entregador_by_id | P3 | 1.42ms | success
+2026-01-11T19:35:48.461088+00:00 | DB_CALL update_pedido_status | P3 | 3.15ms | success
+2026-01-11T19:35:48.623448+00:00 | DB_CALL get_entregador_by_id | P3 | 0.85ms | success
+2026-01-11T19:35:48.624803+00:00 | DB_CALL get_pedidos_by_entregador | P3 | 0.36ms | success
+2026-01-11T19:35:50.119059+00:00 | DB_CALL get_all_entregadores | P3 | 0.9ms | success
+2026-01-11T19:35:50.120376+00:00 | DB_CALL get_all_pedidos | P3 | 1.8ms | success
