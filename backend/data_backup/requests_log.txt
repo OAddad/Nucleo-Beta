@@ -9600,3 +9600,9 @@
 2026-01-11T15:34:38.839883+00:00 | DB_CALL get_user_by_username | P3 | 0.22ms | success
 2026-01-11T15:34:38.840118+00:00 | DB_CALL get_all_clientes | P3 | 0.16ms | success
 2026-01-11T15:34:39.009767+00:00 | DB_CALL get_cliente_by_id | P3 | 0.48ms | success
+2026-01-11T15:38:40.370718+00:00 | DB_CALL get_all_pedidos | P3 | 0.34ms | success
+2026-01-11T15:38:45.267147+00:00 | DB_CALL get_all_pedidos | P3 | 0.37ms | success
+2026-01-11T15:38:45.960709+00:00 | DB_CALL update_pedido_status | P3 | 3.03ms | success
+2026-01-11T15:38:46.128892+00:00 | DB_CALL get_all_pedidos | P3 | 0.37ms | success
+2026-01-11T15:38:48.799655+00:00 | DB_CALL update_pedido_status | P3 | 2.57ms | success
+2026-01-11T15:38:48.967456+00:00 | DB_CALL get_all_pedidos | P3 | 0.39ms | success
