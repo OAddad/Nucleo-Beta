@@ -9746,3 +9746,9 @@
 2026-01-11T15:49:02.806452+00:00 | DB_CALL get_all_products | P3 | 0.41ms | success
 2026-01-11T15:49:02.807207+00:00 | DB_CALL get_all_categories | P3 | 1.55ms | success
 2026-01-11T15:49:02.814151+00:00 | DB_CALL get_all_business_hours | P3 | 0.25ms | success
+2026-01-11T15:50:21.622936+00:00 | DB_CALL get_all_categories | P3 | 1.07ms | success
+2026-01-11T15:50:21.623491+00:00 | DB_CALL get_all_business_hours | P3 | 1.15ms | success
+2026-01-11T15:50:21.624990+00:00 | DB_CALL get_all_products | P3 | 0.32ms | success
+2026-01-11T15:50:21.804915+00:00 | DB_CALL get_all_products | P3 | 0.91ms | success
+2026-01-11T15:50:21.805687+00:00 | DB_CALL get_all_categories | P3 | 1.39ms | success
+2026-01-11T15:50:21.806426+00:00 | DB_CALL get_all_business_hours | P3 | 0.19ms | success
