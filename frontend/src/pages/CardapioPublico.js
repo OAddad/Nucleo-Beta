@@ -270,7 +270,7 @@ export default function CardapioPublico({ onAdminLogin }) {
         <aside className={`fixed right-0 top-0 h-full w-80 ${t.bgCart} border-l ${t.border} flex flex-col transition-transform duration-300 z-50 ${cartOpen ? 'translate-x-0' : 'translate-x-full'}`}>
           <div className={`p-4 border-b ${t.border} flex items-center justify-between`}>
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-orange-500 rounded-lg flex items-center justify-center"><DeliveryIcon className="w-6 h-6 text-white" /></div>
+              <div className="w-10 h-10 bg-orange-500 rounded-lg flex items-center justify-center"><MotoIcon className="w-6 h-6 text-white" /></div>
               <div><h3 className={`font-bold ${t.text}`}>BAG DO ENTREGADOR</h3><p className={`text-xs ${t.textMuted}`}>{cartItemsCount} {cartItemsCount === 1 ? 'item' : 'itens'}</p></div>
             </div>
             <button onClick={() => setCartOpen(false)} className={`w-8 h-8 flex items-center justify-center rounded-lg hover:${t.bgMuted}`}><X className="w-5 h-5" /></button>
