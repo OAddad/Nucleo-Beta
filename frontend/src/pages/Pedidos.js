@@ -518,12 +518,16 @@ export default function Pedidos() {
                 </div>
                 
                 {/* Footer com total */}
-                <div className="p-4 border-t bg-muted/30 flex items-center justify-between">
-                  <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                <div className={`p-4 border-t flex items-center justify-between ${
+                  isCancelado 
+                    ? 'bg-red-100/50 dark:bg-red-900/20 border-red-200 dark:border-red-800' 
+                    : 'bg-muted/30'
+                }`}>
+                  <div className={`flex items-center gap-1 text-sm ${isCancelado ? 'text-red-500' : 'text-muted-foreground'}`}>
                     {pagamento?.icon && <pagamento.icon className="w-4 h-4" />}
                     {pagamento?.label || pedido.formaPagamento}
                   </div>
-                  <span className="font-bold text-lg text-primary">
+                  <span className={`font-bold text-lg ${isCancelado ? 'text-red-600 dark:text-red-400 line-through' : 'text-primary'}`}>
                     R$ {(pedido.total || 0).toFixed(2)}
                   </span>
                 </div>
