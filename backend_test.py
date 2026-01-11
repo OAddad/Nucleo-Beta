@@ -4260,14 +4260,16 @@ def main():
         """Run specific tests as requested in the review"""
         print("🚀 Starting Review Request Specific Tests...")
         print(f"Base URL: {self.base_url}")
-        print("🎯 Testing new functionality as specified in review request:")
-        print("   1. Campo valor_entrega em Pedidos")
-        print("   2. Verificar Bairros valor_entrega")
+        print("🎯 Testing ChatBot Inteligente endpoint for Simulador as specified in review request:")
+        print("   1. Login with credentials Addad/Addad123")
+        print("   2. POST /api/chatbot/process with 'Olá, qual o horário de funcionamento?'")
+        print("   3. POST /api/chatbot/process with 'Quero ver o cardápio'")
+        print("   4. POST /api/chatbot/process with 'Qual o endereço?'")
+        print("   Expected: All should return success: true and AI responses")
         
         # Run specific tests for the review request
         test_results = {
-            "valor_entrega_pedidos": self.test_valor_entrega_pedidos(),
-            "bairros_valor_entrega": self.test_bairros_valor_entrega()
+            "chatbot_simulador": self.test_chatbot_simulador_specific()
         }
         
         # Print summary
