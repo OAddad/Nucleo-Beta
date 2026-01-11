@@ -9233,3 +9233,8 @@
 2026-01-11T15:00:02.205484+00:00 | DB_CALL get_user_by_username | P3 | 0.31ms | success
 2026-01-11T15:00:02.205781+00:00 | DB_CALL get_user_by_username | P3 | 0.15ms | success
 2026-01-11T15:00:02.206004+00:00 | DB_CALL get_all_clientes | P3 | 0.17ms | success
+2026-01-11T15:01:56.207276+00:00 | DB_CALL get_user_by_username | P3 | 1.05ms | success
+2026-01-11T15:01:56.210919+00:00 | DB_CALL get_user_by_username | P3 | 0.26ms | success
+2026-01-11T15:01:56.211717+00:00 | DB_CALL get_all_clientes | P3 | 0.41ms | success
+2026-01-11T15:01:56.383418+00:00 | DB_CALL get_cliente_by_id | P3 | 1.32ms | success
+2026-01-11T15:01:56.860840+00:00 | DB_CALL get_client_addresses | P3 | 0.29ms | success
