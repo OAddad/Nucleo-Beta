@@ -28,16 +28,19 @@ export default function RelatorioEntregas() {
   const [dataFim, setDataFim] = useState(() => {
     return new Date().toISOString().split('T')[0];
   });
+  const [bairros, setBairros] = useState([]);
 
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-      const [entregadoresRes, pedidosRes] = await Promise.all([
+      const [entregadoresRes, pedidosRes, bairrosRes] = await Promise.all([
         axios.get(`${API}/entregadores`, getAuthHeader()),
-        axios.get(`${API}/pedidos`, getAuthHeader())
+        axios.get(`${API}/pedidos`, getAuthHeader()),
+        axios.get(`${API}/bairros`, getAuthHeader())
       ]);
       setEntregadores(entregadoresRes.data.filter(e => e.ativo));
       setPedidos(pedidosRes.data);
+      setBairros(bairrosRes.data);
     } catch (error) {
       console.error("Erro ao carregar dados:", error);
       toast.error("Erro ao carregar dados");
