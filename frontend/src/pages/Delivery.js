@@ -312,12 +312,34 @@ export default function Delivery() {
     toast.info("Selecione os produtos no cardápio para criar um novo pedido");
   };
 
-  // Filtrar pedidos por status - inclui pedidos do módulo Delivery OU com tipo_entrega delivery
+  // Filtrar pedidos por status - inclui pedidos de delivery E retirada
+  // Pedidos de retirada ficam no topo (destacados)
   const getPedidosByStatus = (status) => {
-    return pedidos.filter(p => 
+    const filtered = pedidos.filter(p => 
       p.status === status && 
-      (p.modulo === 'Delivery' || p.tipo_entrega === 'delivery')
+      (p.modulo === 'Delivery' || p.tipo_entrega === 'delivery' || p.tipo_entrega === 'pickup')
     );
+    
+    // Ordenar: retirada primeiro, depois delivery
+    return filtered.sort((a, b) => {
+      if (a.tipo_entrega === 'pickup' && b.tipo_entrega !== 'pickup') return -1;
+      if (a.tipo_entrega !== 'pickup' && b.tipo_entrega === 'pickup') return 1;
+      return 0;
+    });
+  };
+
+  // Verificar se é pedido de retirada
+  const isRetirada = (pedido) => pedido.tipo_entrega === 'pickup';
+
+  // Finalizar pedido de retirada (marcar como concluído)
+  const handleFinalizarRetirada = async (pedidoId) => {
+    try {
+      await axios.patch(`${API}/pedidos/${pedidoId}/status?status=concluido`);
+      toast.success("Pedido finalizado com sucesso!");
+      fetchData();
+    } catch (error) {
+      toast.error("Erro ao finalizar pedido");
+    }
   };
 
   // Calcular pedidos na bag por entregador
