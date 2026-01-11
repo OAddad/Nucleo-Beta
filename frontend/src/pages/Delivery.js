@@ -1404,7 +1404,7 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="max-w-6xl h-[90vh] p-0 flex flex-col">
+      <DialogContent className="max-w-6xl h-[90vh] p-0 flex flex-col bg-background">
         <DialogHeader className="p-4 border-b flex-shrink-0">
           <DialogTitle className="flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -1412,29 +1412,28 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
               <span>Novo Pedido - Delivery</span>
             </div>
             <div className="flex items-center gap-2 text-sm font-normal">
-              <span className={`px-2 py-1 rounded ${step === 1 ? 'bg-orange-500 text-white' : 'bg-gray-200'}`}>1. Produtos</span>
-              <span className={`px-2 py-1 rounded ${step === 2 ? 'bg-orange-500 text-white' : 'bg-gray-200'}`}>2. Cliente</span>
-              <span className={`px-2 py-1 rounded ${step === 3 ? 'bg-orange-500 text-white' : 'bg-gray-200'}`}>3. Entrega</span>
-              <span className={`px-2 py-1 rounded ${step === 4 ? 'bg-orange-500 text-white' : 'bg-gray-200'}`}>4. Pagamento</span>
+              <span className={`px-2 py-1 rounded ${step === 1 ? 'bg-orange-500 text-white' : 'bg-muted text-muted-foreground'}`}>1. Produtos</span>
+              <span className={`px-2 py-1 rounded ${step === 2 ? 'bg-orange-500 text-white' : 'bg-muted text-muted-foreground'}`}>2. Cliente</span>
+              <span className={`px-2 py-1 rounded ${step === 3 ? 'bg-orange-500 text-white' : 'bg-muted text-muted-foreground'}`}>3. Entrega</span>
+              <span className={`px-2 py-1 rounded ${step === 4 ? 'bg-orange-500 text-white' : 'bg-muted text-muted-foreground'}`}>4. Pagamento</span>
             </div>
           </DialogTitle>
         </DialogHeader>
         
         <div className="flex-1 overflow-hidden flex">
           {/* Área principal */}
-          <div className="flex-1 overflow-y-auto p-4">
+          <div className="flex-1 overflow-y-auto p-4 bg-background">
             {/* ETAPA 1: PRODUTOS */}
             {step === 1 && (
               <div className="space-y-4">
                 {/* Busca e categorias */}
                 <div className="flex gap-4">
                   <div className="flex-1 relative">
-                    <input
+                    <Input
                       type="text"
                       placeholder="Buscar produtos..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
-                      className="w-full px-4 py-2 border rounded-lg"
                     />
                   </div>
                   <Select value={selectedCategory || "all"} onValueChange={(v) => setSelectedCategory(v === "all" ? null : v)}>
@@ -1450,30 +1449,47 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
                   </Select>
                 </div>
                 
-                {/* Grid de produtos */}
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-                  {filteredProducts.map(product => (
-                    <div 
-                      key={product.id}
-                      className="border rounded-lg p-3 hover:border-orange-500 cursor-pointer transition-all"
-                      onClick={() => addToCart(product)}
-                    >
-                      {product.image_url && (
-                        <img 
-                          src={`/api${product.image_url}`} 
-                          alt={product.name}
-                          className="w-full h-24 object-cover rounded mb-2"
-                          onError={(e) => e.target.style.display = 'none'}
-                        />
-                      )}
-                      <h4 className="font-medium text-sm truncate">{product.name}</h4>
-                      <p className="text-orange-600 font-bold">R$ {(product.selling_price || 0).toFixed(2)}</p>
-                      <Button size="sm" className="w-full mt-2 bg-orange-500 hover:bg-orange-600">
-                        <Plus className="w-4 h-4 mr-1" /> Adicionar
-                      </Button>
-                    </div>
-                  ))}
-                </div>
+                {/* Loading state */}
+                {loadingProducts ? (
+                  <div className="flex items-center justify-center py-12">
+                    <RefreshCw className="w-8 h-8 animate-spin text-orange-500" />
+                    <span className="ml-2">Carregando produtos...</span>
+                  </div>
+                ) : filteredProducts.length === 0 ? (
+                  <div className="text-center py-12 text-muted-foreground">
+                    <Package className="w-12 h-12 mx-auto mb-2 opacity-50" />
+                    <p>Nenhum produto encontrado</p>
+                  </div>
+                ) : (
+                  /* Grid de produtos */
+                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                    {filteredProducts.map(product => (
+                      <div 
+                        key={product.id}
+                        className="border rounded-lg p-3 hover:border-orange-500 cursor-pointer transition-all bg-card"
+                        onClick={() => addToCart(product)}
+                      >
+                        {product.image_url ? (
+                          <img 
+                            src={`/api${product.image_url}`} 
+                            alt={product.name}
+                            className="w-full h-24 object-cover rounded mb-2"
+                            onError={(e) => e.target.style.display = 'none'}
+                          />
+                        ) : (
+                          <div className="w-full h-24 bg-muted rounded mb-2 flex items-center justify-center">
+                            <Package className="w-8 h-8 text-muted-foreground" />
+                          </div>
+                        )}
+                        <h4 className="font-medium text-sm truncate">{product.name}</h4>
+                        <p className="text-orange-600 font-bold">R$ {(product.selling_price || 0).toFixed(2)}</p>
+                        <Button size="sm" className="w-full mt-2 bg-orange-500 hover:bg-orange-600">
+                          <Plus className="w-4 h-4 mr-1" /> Adicionar
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
             
