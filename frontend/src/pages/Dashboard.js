@@ -91,6 +91,7 @@ export default function Dashboard({ setIsAuthenticated }) {
   const [configExpanded, setConfigExpanded] = useState(false);
   const [clientesFornecedoresExpanded, setClientesFornecedoresExpanded] = useState(false);
   const [financeiroExpanded, setFinanceiroExpanded] = useState(true);
+  const [impulsioneVendasExpanded, setImpulsioneVendasExpanded] = useState(false);
 
   // Estrutura de navegação principal
   const mainTabs = [
