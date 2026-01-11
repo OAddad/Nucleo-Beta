@@ -16863,3 +16863,7 @@
 2026-01-11T20:08:55.693062+00:00 | DB_CALL get_all_pedidos | P3 | 1.48ms | success
 2026-01-11T20:09:00.249978+00:00 | DB_CALL get_user_by_id | P3 | 0.36ms | success
 2026-01-11T20:09:00.250317+00:00 | DB_CALL get_all_decision_nodes | P3 | 0.19ms | success
+2026-01-11T20:09:10.682568+00:00 | DB_CALL init_database | P3 | 3.31ms | success
+2026-01-11T20:09:10.683133+00:00 | DB_CALL count_ingredients | P3 | 0.27ms | success
+2026-01-11T20:09:10.683328+00:00 | DB_CALL count_products | P3 | 0.13ms | success
+2026-01-11T20:09:10.683471+00:00 | DB_CALL count_users | P3 | 0.09ms | success
