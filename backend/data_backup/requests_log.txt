@@ -14580,3 +14580,7 @@
 2026-01-11T18:35:07.087971+00:00 | DB_CALL get_pedidos_by_entregador | P3 | 1.21ms | success
 2026-01-11T18:35:07.291207+00:00 | DB_CALL get_entregador_by_id | P3 | 0.27ms | success
 2026-01-11T18:35:07.293697+00:00 | DB_CALL get_pedidos_by_entregador | P3 | 0.35ms | success
+2026-01-11T18:35:17.292544+00:00 | DB_CALL get_entregador_by_id | P3 | 1.3ms | success
+2026-01-11T18:35:17.296009+00:00 | DB_CALL get_pedidos_by_entregador | P3 | 4.53ms | success
+2026-01-11T18:35:17.877460+00:00 | DB_CALL get_entregador_by_id | P3 | 0.25ms | success
+2026-01-11T18:35:17.880652+00:00 | DB_CALL get_pedidos_by_entregador | P3 | 0.27ms | success
