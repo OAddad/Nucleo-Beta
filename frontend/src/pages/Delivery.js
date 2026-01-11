@@ -1125,6 +1125,679 @@ export default function Delivery() {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Modal de Novo Pedido - Cardápio Completo */}
+      <CardapioPopup 
+        open={novoPedidoModalOpen} 
+        onClose={() => setNovoPedidoModalOpen(false)}
+        onPedidoCriado={() => {
+          setNovoPedidoModalOpen(false);
+          fetchData();
+          toast.success("Pedido criado com sucesso!");
+        }}
+      />
     </div>
+  );
+}
+
+// ==================== COMPONENTE CARDÁPIO POPUP ====================
+function CardapioPopup({ open, onClose, onPedidoCriado }) {
+  const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [clientes, setClientes] = useState([]);
+  const [bairros, setBairros] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [cart, setCart] = useState([]);
+  
+  // Cliente selecionado ou novo
+  const [selectedCliente, setSelectedCliente] = useState(null);
+  const [clienteSearch, setClienteSearch] = useState("");
+  const [showClienteDropdown, setShowClienteDropdown] = useState(false);
+  const [novoCliente, setNovoCliente] = useState({ nome: "", telefone: "" });
+  const [creatingCliente, setCreatingCliente] = useState(false);
+  
+  // Tipo de entrega e endereço
+  const [tipoEntrega, setTipoEntrega] = useState("delivery"); // delivery ou pickup
+  const [endereco, setEndereco] = useState({
+    rua: "",
+    numero: "",
+    bairro: "",
+    complemento: "",
+    referencia: ""
+  });
+  const [taxaEntrega, setTaxaEntrega] = useState(0);
+  
+  // Pagamento e observações
+  const [formaPagamento, setFormaPagamento] = useState("");
+  const [observacao, setObservacao] = useState("");
+  const [trocoPara, setTrocoPara] = useState("");
+  
+  // Etapa do checkout
+  const [step, setStep] = useState(1); // 1 = Produtos, 2 = Cliente, 3 = Entrega, 4 = Pagamento
+  
+  const [submitting, setSubmitting] = useState(false);
+
+  // Carregar dados
+  useEffect(() => {
+    if (open) {
+      fetchProducts();
+      fetchCategories();
+      fetchClientes();
+      fetchBairros();
+    }
+  }, [open]);
+
+  const fetchProducts = async () => {
+    try {
+      const res = await axios.get(`${API}/products`, getAuthHeader());
+      setProducts(res.data.filter(p => p.available));
+    } catch (error) {
+      console.error("Erro ao carregar produtos:", error);
+    }
+  };
+
+  const fetchCategories = async () => {
+    try {
+      const res = await axios.get(`${API}/categories`, getAuthHeader());
+      setCategories(res.data);
+    } catch (error) {
+      console.error("Erro ao carregar categorias:", error);
+    }
+  };
+
+  const fetchClientes = async () => {
+    try {
+      const res = await axios.get(`${API}/clientes`, getAuthHeader());
+      setClientes(res.data);
+    } catch (error) {
+      console.error("Erro ao carregar clientes:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchBairros = async () => {
+    try {
+      const res = await axios.get(`${API}/bairros`, getAuthHeader());
+      setBairros(res.data);
+    } catch (error) {
+      console.error("Erro ao carregar bairros:", error);
+    }
+  };
+
+  // Filtrar produtos
+  const filteredProducts = products.filter(p => {
+    const matchSearch = p.name.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchCategory = !selectedCategory || p.category === selectedCategory;
+    return matchSearch && matchCategory;
+  });
+
+  // Filtrar clientes
+  const filteredClientes = clientes.filter(c => 
+    c.nome?.toLowerCase().includes(clienteSearch.toLowerCase()) ||
+    c.telefone?.includes(clienteSearch)
+  ).slice(0, 10);
+
+  // Adicionar ao carrinho
+  const addToCart = (product) => {
+    const existing = cart.find(item => item.id === product.id);
+    if (existing) {
+      setCart(cart.map(item => 
+        item.id === product.id 
+          ? { ...item, quantity: item.quantity + 1 }
+          : item
+      ));
+    } else {
+      setCart([...cart, { ...product, quantity: 1 }]);
+    }
+  };
+
+  // Remover do carrinho
+  const removeFromCart = (productId) => {
+    const existing = cart.find(item => item.id === productId);
+    if (existing && existing.quantity > 1) {
+      setCart(cart.map(item => 
+        item.id === productId 
+          ? { ...item, quantity: item.quantity - 1 }
+          : item
+      ));
+    } else {
+      setCart(cart.filter(item => item.id !== productId));
+    }
+  };
+
+  // Calcular totais
+  const subtotal = cart.reduce((acc, item) => acc + (item.selling_price || 0) * item.quantity, 0);
+  const total = subtotal + (tipoEntrega === "delivery" ? taxaEntrega : 0);
+
+  // Buscar taxa de entrega pelo bairro
+  useEffect(() => {
+    if (endereco.bairro && tipoEntrega === "delivery") {
+      const bairro = bairros.find(b => b.nome.toLowerCase() === endereco.bairro.toLowerCase());
+      if (bairro) {
+        setTaxaEntrega(bairro.taxa_entrega || 0);
+      }
+    }
+  }, [endereco.bairro, bairros, tipoEntrega]);
+
+  // Criar cliente
+  const handleCriarCliente = async () => {
+    if (!novoCliente.nome || !novoCliente.telefone) {
+      toast.error("Nome e telefone são obrigatórios");
+      return;
+    }
+    
+    setCreatingCliente(true);
+    try {
+      const res = await axios.post(`${API}/clientes`, {
+        nome: novoCliente.nome,
+        telefone: novoCliente.telefone
+      }, getAuthHeader());
+      
+      setSelectedCliente(res.data);
+      setClientes([...clientes, res.data]);
+      setNovoCliente({ nome: "", telefone: "" });
+      toast.success("Cliente criado!");
+    } catch (error) {
+      toast.error("Erro ao criar cliente");
+    } finally {
+      setCreatingCliente(false);
+    }
+  };
+
+  // Criar pedido
+  const handleSubmit = async () => {
+    if (cart.length === 0) {
+      toast.error("Adicione produtos ao carrinho");
+      return;
+    }
+    
+    if (!selectedCliente) {
+      toast.error("Selecione um cliente");
+      return;
+    }
+    
+    if (tipoEntrega === "delivery" && !endereco.rua) {
+      toast.error("Informe o endereço de entrega");
+      return;
+    }
+    
+    if (!formaPagamento) {
+      toast.error("Selecione a forma de pagamento");
+      return;
+    }
+    
+    setSubmitting(true);
+    try {
+      const pedidoData = {
+        cliente_id: selectedCliente.id,
+        cliente_nome: selectedCliente.nome,
+        cliente_telefone: selectedCliente.telefone,
+        tipo_entrega: tipoEntrega,
+        modulo: "Delivery",
+        itens: cart.map(item => ({
+          produto_id: item.id,
+          produto_nome: item.name,
+          quantidade: item.quantity,
+          preco_unitario: item.selling_price || 0,
+          observacao: item.observation || ""
+        })),
+        subtotal: subtotal,
+        taxa_entrega: tipoEntrega === "delivery" ? taxaEntrega : 0,
+        total: total,
+        forma_pagamento: formaPagamento,
+        troco_para: formaPagamento === "dinheiro" && trocoPara ? parseFloat(trocoPara) : null,
+        observacao: observacao,
+        endereco_entrega: tipoEntrega === "delivery" ? {
+          rua: endereco.rua,
+          numero: endereco.numero,
+          bairro: endereco.bairro,
+          complemento: endereco.complemento,
+          referencia: endereco.referencia
+        } : null,
+        status: "aguardando_aceite"
+      };
+      
+      await axios.post(`${API}/pedidos`, pedidoData, getAuthHeader());
+      
+      // Reset estado
+      setCart([]);
+      setSelectedCliente(null);
+      setEndereco({ rua: "", numero: "", bairro: "", complemento: "", referencia: "" });
+      setFormaPagamento("");
+      setObservacao("");
+      setTrocoPara("");
+      setStep(1);
+      
+      onPedidoCriado();
+    } catch (error) {
+      console.error("Erro ao criar pedido:", error);
+      toast.error("Erro ao criar pedido");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  // Reset ao fechar
+  const handleClose = () => {
+    setCart([]);
+    setSelectedCliente(null);
+    setStep(1);
+    setSearchTerm("");
+    setSelectedCategory(null);
+    onClose();
+  };
+
+  if (!open) return null;
+
+  return (
+    <Dialog open={open} onOpenChange={handleClose}>
+      <DialogContent className="max-w-6xl h-[90vh] p-0 flex flex-col">
+        <DialogHeader className="p-4 border-b flex-shrink-0">
+          <DialogTitle className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <ShoppingBag className="w-5 h-5 text-orange-500" />
+              <span>Novo Pedido - Delivery</span>
+            </div>
+            <div className="flex items-center gap-2 text-sm font-normal">
+              <span className={`px-2 py-1 rounded ${step === 1 ? 'bg-orange-500 text-white' : 'bg-gray-200'}`}>1. Produtos</span>
+              <span className={`px-2 py-1 rounded ${step === 2 ? 'bg-orange-500 text-white' : 'bg-gray-200'}`}>2. Cliente</span>
+              <span className={`px-2 py-1 rounded ${step === 3 ? 'bg-orange-500 text-white' : 'bg-gray-200'}`}>3. Entrega</span>
+              <span className={`px-2 py-1 rounded ${step === 4 ? 'bg-orange-500 text-white' : 'bg-gray-200'}`}>4. Pagamento</span>
+            </div>
+          </DialogTitle>
+        </DialogHeader>
+        
+        <div className="flex-1 overflow-hidden flex">
+          {/* Área principal */}
+          <div className="flex-1 overflow-y-auto p-4">
+            {/* ETAPA 1: PRODUTOS */}
+            {step === 1 && (
+              <div className="space-y-4">
+                {/* Busca e categorias */}
+                <div className="flex gap-4">
+                  <div className="flex-1 relative">
+                    <input
+                      type="text"
+                      placeholder="Buscar produtos..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="w-full px-4 py-2 border rounded-lg"
+                    />
+                  </div>
+                  <Select value={selectedCategory || "all"} onValueChange={(v) => setSelectedCategory(v === "all" ? null : v)}>
+                    <SelectTrigger className="w-48">
+                      <SelectValue placeholder="Categoria" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Todas categorias</SelectItem>
+                      {categories.map(cat => (
+                        <SelectItem key={cat.id} value={cat.name}>{cat.name}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                {/* Grid de produtos */}
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                  {filteredProducts.map(product => (
+                    <div 
+                      key={product.id}
+                      className="border rounded-lg p-3 hover:border-orange-500 cursor-pointer transition-all"
+                      onClick={() => addToCart(product)}
+                    >
+                      {product.image_url && (
+                        <img 
+                          src={`/api${product.image_url}`} 
+                          alt={product.name}
+                          className="w-full h-24 object-cover rounded mb-2"
+                          onError={(e) => e.target.style.display = 'none'}
+                        />
+                      )}
+                      <h4 className="font-medium text-sm truncate">{product.name}</h4>
+                      <p className="text-orange-600 font-bold">R$ {(product.selling_price || 0).toFixed(2)}</p>
+                      <Button size="sm" className="w-full mt-2 bg-orange-500 hover:bg-orange-600">
+                        <Plus className="w-4 h-4 mr-1" /> Adicionar
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+            
+            {/* ETAPA 2: CLIENTE */}
+            {step === 2 && (
+              <div className="space-y-4 max-w-xl">
+                <h3 className="font-semibold text-lg flex items-center gap-2">
+                  <User className="w-5 h-5" /> Selecione o Cliente
+                </h3>
+                
+                {/* Buscar cliente existente */}
+                <div className="relative">
+                  <Label>Buscar cliente</Label>
+                  <Input
+                    placeholder="Nome ou telefone..."
+                    value={clienteSearch}
+                    onChange={(e) => {
+                      setClienteSearch(e.target.value);
+                      setShowClienteDropdown(true);
+                    }}
+                    onFocus={() => setShowClienteDropdown(true)}
+                  />
+                  {showClienteDropdown && clienteSearch && filteredClientes.length > 0 && (
+                    <div className="absolute z-10 w-full mt-1 bg-white border rounded-lg shadow-lg max-h-48 overflow-auto">
+                      {filteredClientes.map(cliente => (
+                        <div
+                          key={cliente.id}
+                          className="p-3 hover:bg-gray-100 cursor-pointer flex justify-between"
+                          onClick={() => {
+                            setSelectedCliente(cliente);
+                            setClienteSearch("");
+                            setShowClienteDropdown(false);
+                          }}
+                        >
+                          <span className="font-medium">{cliente.nome}</span>
+                          <span className="text-gray-500">{cliente.telefone}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                
+                {/* Cliente selecionado */}
+                {selectedCliente && (
+                  <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="font-semibold text-green-800">{selectedCliente.nome}</p>
+                        <p className="text-green-600">{selectedCliente.telefone}</p>
+                      </div>
+                      <Button variant="ghost" size="sm" onClick={() => setSelectedCliente(null)}>
+                        <X className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </div>
+                )}
+                
+                {/* Criar novo cliente */}
+                {!selectedCliente && (
+                  <div className="border-t pt-4 mt-4">
+                    <h4 className="font-medium mb-3">Ou criar novo cliente:</h4>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <Label>Nome *</Label>
+                        <Input
+                          value={novoCliente.nome}
+                          onChange={(e) => setNovoCliente({...novoCliente, nome: e.target.value})}
+                          placeholder="Nome do cliente"
+                        />
+                      </div>
+                      <div>
+                        <Label>Telefone *</Label>
+                        <Input
+                          value={novoCliente.telefone}
+                          onChange={(e) => setNovoCliente({...novoCliente, telefone: e.target.value})}
+                          placeholder="(00) 00000-0000"
+                        />
+                      </div>
+                    </div>
+                    <Button 
+                      className="mt-3 bg-green-600 hover:bg-green-700"
+                      onClick={handleCriarCliente}
+                      disabled={creatingCliente}
+                    >
+                      <Plus className="w-4 h-4 mr-1" /> Criar Cliente
+                    </Button>
+                  </div>
+                )}
+              </div>
+            )}
+            
+            {/* ETAPA 3: ENTREGA */}
+            {step === 3 && (
+              <div className="space-y-4 max-w-xl">
+                <h3 className="font-semibold text-lg flex items-center gap-2">
+                  <Truck className="w-5 h-5" /> Tipo de Entrega
+                </h3>
+                
+                {/* Tipo de entrega */}
+                <div className="grid grid-cols-2 gap-4">
+                  <button
+                    className={`p-4 border-2 rounded-xl flex flex-col items-center gap-2 transition-all ${
+                      tipoEntrega === "delivery" ? "border-orange-500 bg-orange-50" : "border-gray-200"
+                    }`}
+                    onClick={() => setTipoEntrega("delivery")}
+                  >
+                    <Bike className="w-8 h-8 text-orange-500" />
+                    <span className="font-medium">Delivery</span>
+                    <span className="text-xs text-gray-500">Entrega no endereço</span>
+                  </button>
+                  <button
+                    className={`p-4 border-2 rounded-xl flex flex-col items-center gap-2 transition-all ${
+                      tipoEntrega === "pickup" ? "border-orange-500 bg-orange-50" : "border-gray-200"
+                    }`}
+                    onClick={() => setTipoEntrega("pickup")}
+                  >
+                    <Store className="w-8 h-8 text-orange-500" />
+                    <span className="font-medium">Retirada</span>
+                    <span className="text-xs text-gray-500">Cliente retira no local</span>
+                  </button>
+                </div>
+                
+                {/* Endereço (se delivery) */}
+                {tipoEntrega === "delivery" && (
+                  <div className="space-y-3 border-t pt-4">
+                    <h4 className="font-medium flex items-center gap-2">
+                      <MapPin className="w-4 h-4" /> Endereço de Entrega
+                    </h4>
+                    <div className="grid grid-cols-3 gap-3">
+                      <div className="col-span-2">
+                        <Label>Rua *</Label>
+                        <Input
+                          value={endereco.rua}
+                          onChange={(e) => setEndereco({...endereco, rua: e.target.value})}
+                          placeholder="Nome da rua"
+                        />
+                      </div>
+                      <div>
+                        <Label>Número *</Label>
+                        <Input
+                          value={endereco.numero}
+                          onChange={(e) => setEndereco({...endereco, numero: e.target.value})}
+                          placeholder="Nº"
+                        />
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <Label>Bairro *</Label>
+                        <Select value={endereco.bairro} onValueChange={(v) => setEndereco({...endereco, bairro: v})}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Selecione" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {bairros.map(b => (
+                              <SelectItem key={b.id} value={b.nome}>
+                                {b.nome} - R$ {(b.taxa_entrega || 0).toFixed(2)}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div>
+                        <Label>Complemento</Label>
+                        <Input
+                          value={endereco.complemento}
+                          onChange={(e) => setEndereco({...endereco, complemento: e.target.value})}
+                          placeholder="Apto, bloco..."
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <Label>Referência</Label>
+                      <Input
+                        value={endereco.referencia}
+                        onChange={(e) => setEndereco({...endereco, referencia: e.target.value})}
+                        placeholder="Próximo a..."
+                      />
+                    </div>
+                    {taxaEntrega > 0 && (
+                      <div className="p-3 bg-blue-50 rounded-lg text-blue-700">
+                        Taxa de entrega: <strong>R$ {taxaEntrega.toFixed(2)}</strong>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
+            
+            {/* ETAPA 4: PAGAMENTO */}
+            {step === 4 && (
+              <div className="space-y-4 max-w-xl">
+                <h3 className="font-semibold text-lg flex items-center gap-2">
+                  <CreditCard className="w-5 h-5" /> Forma de Pagamento
+                </h3>
+                
+                <div className="grid grid-cols-2 gap-3">
+                  {[
+                    { id: "dinheiro", label: "Dinheiro", icon: DollarSign },
+                    { id: "pix", label: "PIX", icon: CreditCard },
+                    { id: "cartao_credito", label: "Crédito", icon: CreditCard },
+                    { id: "cartao_debito", label: "Débito", icon: CreditCard },
+                  ].map(fp => (
+                    <button
+                      key={fp.id}
+                      className={`p-3 border-2 rounded-lg flex items-center gap-2 transition-all ${
+                        formaPagamento === fp.id ? "border-orange-500 bg-orange-50" : "border-gray-200"
+                      }`}
+                      onClick={() => setFormaPagamento(fp.id)}
+                    >
+                      <fp.icon className="w-5 h-5" />
+                      <span>{fp.label}</span>
+                    </button>
+                  ))}
+                </div>
+                
+                {formaPagamento === "dinheiro" && (
+                  <div>
+                    <Label>Troco para (opcional)</Label>
+                    <Input
+                      type="number"
+                      value={trocoPara}
+                      onChange={(e) => setTrocoPara(e.target.value)}
+                      placeholder="Ex: 50.00"
+                    />
+                  </div>
+                )}
+                
+                <div>
+                  <Label>Observações do pedido</Label>
+                  <Textarea
+                    value={observacao}
+                    onChange={(e) => setObservacao(e.target.value)}
+                    placeholder="Alguma observação especial?"
+                    rows={3}
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+          
+          {/* Carrinho lateral */}
+          <div className="w-80 border-l bg-gray-50 flex flex-col">
+            <div className="p-3 border-b bg-white">
+              <h3 className="font-semibold flex items-center gap-2">
+                <ShoppingBag className="w-4 h-4" /> Carrinho ({cart.length})
+              </h3>
+            </div>
+            
+            <div className="flex-1 overflow-y-auto p-3 space-y-2">
+              {cart.length === 0 ? (
+                <p className="text-center text-gray-500 py-8">Carrinho vazio</p>
+              ) : (
+                cart.map(item => (
+                  <div key={item.id} className="bg-white p-3 rounded-lg border">
+                    <div className="flex justify-between items-start">
+                      <div className="flex-1">
+                        <p className="font-medium text-sm">{item.name}</p>
+                        <p className="text-orange-600 text-sm">R$ {(item.selling_price || 0).toFixed(2)}</p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <button 
+                          onClick={() => removeFromCart(item.id)}
+                          className="w-6 h-6 rounded bg-gray-200 hover:bg-gray-300 flex items-center justify-center"
+                        >
+                          <span className="text-lg leading-none">-</span>
+                        </button>
+                        <span className="w-6 text-center font-medium">{item.quantity}</span>
+                        <button 
+                          onClick={() => addToCart(item)}
+                          className="w-6 h-6 rounded bg-orange-500 hover:bg-orange-600 text-white flex items-center justify-center"
+                        >
+                          <span className="text-lg leading-none">+</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+            
+            {/* Resumo e navegação */}
+            <div className="p-3 border-t bg-white space-y-3">
+              {selectedCliente && (
+                <div className="text-sm">
+                  <span className="text-gray-500">Cliente:</span> {selectedCliente.nome}
+                </div>
+              )}
+              
+              <div className="space-y-1 text-sm">
+                <div className="flex justify-between">
+                  <span>Subtotal:</span>
+                  <span>R$ {subtotal.toFixed(2)}</span>
+                </div>
+                {tipoEntrega === "delivery" && taxaEntrega > 0 && (
+                  <div className="flex justify-between text-gray-600">
+                    <span>Taxa entrega:</span>
+                    <span>R$ {taxaEntrega.toFixed(2)}</span>
+                  </div>
+                )}
+                <div className="flex justify-between font-bold text-lg pt-2 border-t">
+                  <span>Total:</span>
+                  <span className="text-orange-600">R$ {total.toFixed(2)}</span>
+                </div>
+              </div>
+              
+              <div className="flex gap-2">
+                {step > 1 && (
+                  <Button variant="outline" onClick={() => setStep(step - 1)} className="flex-1">
+                    Voltar
+                  </Button>
+                )}
+                {step < 4 ? (
+                  <Button 
+                    onClick={() => setStep(step + 1)} 
+                    className="flex-1 bg-orange-500 hover:bg-orange-600"
+                    disabled={step === 1 && cart.length === 0}
+                  >
+                    Continuar
+                  </Button>
+                ) : (
+                  <Button 
+                    onClick={handleSubmit} 
+                    className="flex-1 bg-green-600 hover:bg-green-700"
+                    disabled={submitting || !formaPagamento}
+                  >
+                    {submitting ? "Criando..." : "Criar Pedido"}
+                  </Button>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 }
