@@ -9838,3 +9838,4 @@
 2026-01-11T15:58:35.658917+00:00 | DB_CALL count_clientes | P3 | 0.17ms | success
 2026-01-11T15:58:35.659638+00:00 | DB_CALL get_all_clientes | P3 | 0.93ms | success
 2026-01-11T15:59:20.877100+00:00 | DB_CALL get_client_addresses | P3 | 0.58ms | success
+2026-01-11T15:59:59.634008+00:00 | DB_CALL get_all_pedidos | P3 | 0.4ms | success
