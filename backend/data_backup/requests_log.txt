@@ -9264,3 +9264,7 @@
 2026-01-11T15:08:55.954207+00:00 | DB_CALL get_user_by_username | P3 | 0.35ms | success
 2026-01-11T15:08:55.954450+00:00 | DB_CALL get_user_by_username | P3 | 0.13ms | success
 2026-01-11T15:08:55.954698+00:00 | DB_CALL get_all_clientes | P3 | 0.19ms | success
+2026-01-11T15:09:06.773385+00:00 | DB_CALL init_database | P3 | 2.97ms | success
+2026-01-11T15:09:06.773990+00:00 | DB_CALL count_ingredients | P3 | 0.29ms | success
+2026-01-11T15:09:06.774313+00:00 | DB_CALL count_products | P3 | 0.23ms | success
+2026-01-11T15:09:06.774655+00:00 | DB_CALL count_users | P3 | 0.12ms | success
