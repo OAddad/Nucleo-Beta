@@ -229,24 +229,25 @@ export default function Pedidos() {
   };
 
   // Alterar status do pedido
-  const handleChangeStatus = (pedidoId, newStatus) => {
-    const updated = pedidos.map(p => 
-      p.id === pedidoId ? { ...p, status: newStatus } : p
-    );
-    savePedidos(updated);
-    
-    // Atualizar pedido selecionado se estiver aberto
-    if (selectedPedido?.id === pedidoId) {
-      setSelectedPedido({ ...selectedPedido, status: newStatus });
+  const handleChangeStatus = async (pedidoId, newStatus) => {
+    try {
+      await updatePedidoStatus(pedidoId, newStatus);
+      
+      // Atualizar pedido selecionado se estiver aberto
+      if (selectedPedido?.id === pedidoId) {
+        setSelectedPedido({ ...selectedPedido, status: newStatus });
+      }
+      
+      toast.success(`Status alterado para ${statusConfig[newStatus]?.label || newStatus}`);
+    } catch (error) {
+      console.error("Erro ao alterar status:", error);
     }
-    
-    toast.success(`Status alterado para ${statusConfig[newStatus]?.label || newStatus}`);
   };
 
   // Cancelar pedido
-  const handleCancelPedido = () => {
+  const handleCancelPedido = async () => {
     if (selectedPedido) {
-      handleChangeStatus(selectedPedido.id, "cancelado");
+      await handleChangeStatus(selectedPedido.id, "cancelado");
       setCancelDialogOpen(false);
     }
   };
