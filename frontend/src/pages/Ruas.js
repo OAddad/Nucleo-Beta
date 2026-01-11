@@ -149,7 +149,7 @@ export default function Ruas() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold flex items-center gap-2">
-            <Route className="w-7 h-7 text-primary" />
+            <RouteIcon className="w-7 h-7 text-primary" />
             Ruas
           </h1>
           <p className="text-muted-foreground text-sm mt-1">
@@ -184,7 +184,7 @@ export default function Ruas() {
       {/* Lista de Ruas */}
       {ruasFiltradas.length === 0 ? (
         <div className="text-center py-16 bg-muted/30 rounded-2xl border-2 border-dashed">
-          <Route className="w-16 h-16 mx-auto text-muted-foreground/30 mb-4" />
+          <RouteIcon className="w-16 h-16 mx-auto text-muted-foreground/30 mb-4" />
           <h3 className="text-lg font-semibold mb-2">Nenhuma rua cadastrada</h3>
           <p className="text-muted-foreground">
             As ruas serão cadastradas automaticamente quando clientes fizerem pedidos
@@ -209,7 +209,7 @@ export default function Ruas() {
                     className="bg-card rounded-lg border p-3 hover:shadow-sm transition-shadow flex items-center justify-between"
                   >
                     <div className="flex items-center gap-2 min-w-0">
-                      <Route className="w-4 h-4 text-muted-foreground shrink-0" />
+                      <RouteIcon className="w-4 h-4 text-muted-foreground shrink-0" />
                       <span className="truncate">{rua.nome}</span>
                     </div>
                     <div className="flex gap-1 shrink-0">
