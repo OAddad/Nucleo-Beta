@@ -16093,3 +16093,4 @@
 2026-01-11T19:21:24.601907+00:00 | DB_CALL search_ruas | P3 | 0.4ms | success
 2026-01-11T19:21:25.406908+00:00 | DB_CALL search_ruas | P3 | 0.36ms | success
 2026-01-11T19:21:32.612187+00:00 | DB_CALL create_client_address | P3 | 2.72ms | success
+2026-01-11T19:22:51.928895+00:00 | DB_CALL get_all_bairros | P3 | 0.27ms | success
