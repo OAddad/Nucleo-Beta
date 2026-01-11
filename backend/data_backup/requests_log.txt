@@ -10715,3 +10715,7 @@
 2026-01-11T17:05:20.831160+00:00 | DB_CALL get_all_settings | P3 | 0.24ms | success
 2026-01-11T17:05:20.831527+00:00 | DB_CALL get_all_entregadores | P3 | 0.84ms | success
 2026-01-11T17:05:21.450230+00:00 | DB_CALL get_all_pedidos | P3 | 0.41ms | success
+2026-01-11T17:05:25.836569+00:00 | DB_CALL get_all_entregadores | P3 | 0.32ms | success
+2026-01-11T17:05:25.839306+00:00 | DB_CALL get_all_pedidos | P3 | 0.4ms | success
+2026-01-11T17:05:25.840570+00:00 | DB_CALL get_all_settings | P3 | 0.18ms | success
+2026-01-11T17:05:26.447909+00:00 | DB_CALL get_all_pedidos | P3 | 0.44ms | success
