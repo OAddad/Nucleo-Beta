@@ -8976,3 +8976,9 @@
 2026-01-11T14:03:44.380174+00:00 | DB_CALL get_user_by_username | P3 | 0.49ms | success
 2026-01-11T14:03:46.793494+00:00 | DB_CALL get_user_by_id | P3 | 0.35ms | success
 2026-01-11T14:03:46.793777+00:00 | DB_CALL get_all_business_hours | P3 | 0.14ms | success
+2026-01-11T14:04:07.614696+00:00 | DB_CALL get_user_by_id | P3 | 0.3ms | success
+2026-01-11T14:04:07.619452+00:00 | DB_CALL update_business_hours | P3 | 4.48ms | success
+2026-01-11T14:04:07.621302+00:00 | DB_CALL create_audit_log | P3 | 1.7ms | success
+2026-01-11T14:04:10.329458+00:00 | DB_CALL get_user_by_id | P3 | 0.32ms | success
+2026-01-11T14:04:10.333341+00:00 | DB_CALL update_business_hours | P3 | 3.62ms | success
+2026-01-11T14:04:10.336381+00:00 | DB_CALL create_audit_log | P3 | 2.88ms | success
