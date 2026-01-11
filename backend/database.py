@@ -422,6 +422,32 @@ def init_database():
             )
         ''')
         
+        # Criar tabela de bairros para delivery
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS bairros (
+                id TEXT PRIMARY KEY,
+                nome TEXT NOT NULL UNIQUE,
+                valor_entrega REAL DEFAULT 0,
+                cep TEXT,
+                ativo INTEGER DEFAULT 1,
+                created_at TEXT,
+                updated_at TEXT
+            )
+        ''')
+        
+        # Criar tabela de ruas para delivery
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS ruas (
+                id TEXT PRIMARY KEY,
+                nome TEXT NOT NULL,
+                bairro_id TEXT,
+                cep TEXT,
+                created_at TEXT,
+                updated_at TEXT,
+                FOREIGN KEY (bairro_id) REFERENCES bairros(id)
+            )
+        ''')
+        
         # Migrações
         try:
             cursor.execute("SELECT code FROM ingredients LIMIT 1")
