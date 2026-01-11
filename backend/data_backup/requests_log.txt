@@ -9093,3 +9093,13 @@
 2026-01-11T14:13:22.769729+00:00 | DB_CALL get_all_products | P3 | 0.4ms | success
 2026-01-11T14:13:22.771227+00:00 | DB_CALL get_all_categories | P3 | 0.2ms | success
 2026-01-11T14:13:22.774537+00:00 | DB_CALL get_all_business_hours | P3 | 0.19ms | success
+2026-01-11T14:13:37.765378+00:00 | DB_CALL get_all_products | P3 | 1.03ms | success
+2026-01-11T14:13:37.766634+00:00 | DB_CALL get_all_categories | P3 | 2.2ms | success
+2026-01-11T14:13:37.769433+00:00 | DB_CALL get_all_business_hours | P3 | 4.82ms | success
+2026-01-11T14:13:37.770596+00:00 | DB_CALL get_all_business_hours | P3 | 1.89ms | success
+2026-01-11T14:13:37.771029+00:00 | DB_CALL get_all_categories | P3 | 2.23ms | success
+2026-01-11T14:13:37.771367+00:00 | DB_CALL get_all_products | P3 | 2.5ms | success
+2026-01-11T14:13:41.903387+00:00 | DB_CALL init_database | P3 | 2.8ms | success
+2026-01-11T14:13:41.903900+00:00 | DB_CALL count_ingredients | P3 | 0.22ms | success
+2026-01-11T14:13:41.904081+00:00 | DB_CALL count_products | P3 | 0.12ms | success
+2026-01-11T14:13:41.904244+00:00 | DB_CALL count_users | P3 | 0.11ms | success
