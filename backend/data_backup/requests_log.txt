@@ -9229,3 +9229,4 @@
 2026-01-11T14:59:23.792711+00:00 | DB_CALL get_all_business_hours | P3 | 0.64ms | success
 2026-01-11T14:59:23.793489+00:00 | DB_CALL get_all_products | P3 | 1.34ms | success
 2026-01-11T14:59:23.794021+00:00 | DB_CALL get_all_categories | P3 | 1.57ms | success
+2026-01-11T14:59:47.933434+00:00 | DB_CALL get_client_addresses | P3 | 0.48ms | success
