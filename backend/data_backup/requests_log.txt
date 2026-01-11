@@ -10775,3 +10775,5 @@
 2026-01-11T17:07:20.045064+00:00 | DB_CALL get_all_pedidos | P3 | 0.4ms | success
 2026-01-11T17:07:25.051517+00:00 | DB_CALL get_all_pedidos | P3 | 0.39ms | success
 2026-01-11T17:07:27.012949+00:00 | DB_CALL get_all_pedidos | P3 | 0.4ms | success
+2026-01-11T17:07:30.049849+00:00 | DB_CALL get_all_pedidos | P3 | 0.4ms | success
+2026-01-11T17:07:33.345480+00:00 | DB_CALL get_all_pedidos | P3 | 0.39ms | success
