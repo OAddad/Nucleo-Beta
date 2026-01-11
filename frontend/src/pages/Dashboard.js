@@ -79,7 +79,8 @@ export default function Dashboard({ setIsAuthenticated }) {
     if (!sidebarOpen) {
       setSidebarOpen(true);
     }
-    navigate(path);
+    // Navega para /admin + path
+    navigate(`/admin${path}`);
   };
 
   // Função para expandir sidebar ao clicar em módulo quando retraído
