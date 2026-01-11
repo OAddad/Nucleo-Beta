@@ -1265,8 +1265,9 @@ function PalavrasTab({ toast }) {
   const [summary, setSummary] = useState(null);
   const [words, setWords] = useState([]);
   const [messages, setMessages] = useState([]);
-  const [activeView, setActiveView] = useState("overview"); // overview, words, messages
+  const [activeView, setActiveView] = useState("overview"); // overview, words, phrases, messages
   const [orderBy, setOrderBy] = useState("count");
+  const [textType, setTextType] = useState("all"); // all, word, bigram, trigram
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -1281,8 +1282,8 @@ function PalavrasTab({ toast }) {
         setSummary(summaryData.summary);
       }
       
-      // Buscar palavras
-      const wordsRes = await fetch(`${API_URL}/api/chatbot/analytics/words?limit=100&order_by=${orderBy}`, { headers });
+      // Buscar palavras/frases
+      const wordsRes = await fetch(`${API_URL}/api/chatbot/analytics/words?limit=100&order_by=${orderBy}&text_type=${textType}`, { headers });
       const wordsData = await wordsRes.json();
       if (wordsData.success) {
         setWords(wordsData.words);
@@ -1299,7 +1300,7 @@ function PalavrasTab({ toast }) {
     } finally {
       setLoading(false);
     }
-  }, [orderBy]);
+  }, [orderBy, textType]);
 
   useEffect(() => {
     fetchData();
