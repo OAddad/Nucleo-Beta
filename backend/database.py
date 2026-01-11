@@ -1889,8 +1889,8 @@ def create_pedido(data: Dict) -> Dict:
                 items, total, status, forma_pagamento,
                 troco_precisa, troco_valor, tipo_entrega,
                 endereco_label, endereco_rua, endereco_numero, endereco_complemento, endereco_bairro, endereco_cep,
-                modulo, observacao, created_at, updated_at
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                modulo, observacao, valor_entrega, created_at, updated_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ''', (
             pedido_id,
             codigo,
@@ -1913,6 +1913,7 @@ def create_pedido(data: Dict) -> Dict:
             data.get('endereco_cep'),
             data.get('modulo', 'Cardapio'),
             data.get('observacao'),
+            data.get('valor_entrega', 0),
             created_at,
             created_at
         ))
