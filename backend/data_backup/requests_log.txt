@@ -13291,3 +13291,10 @@
 2026-01-11T17:56:09.868629+00:00 | DB_CALL get_all_pedidos | P3 | 0.53ms | success
 2026-01-11T17:56:09.875289+00:00 | DB_CALL get_all_settings | P3 | 0.15ms | success
 2026-01-11T17:56:11.873236+00:00 | DB_CALL get_all_pedidos | P3 | 0.59ms | success
+2026-01-11T17:56:14.870198+00:00 | DB_CALL get_all_pedidos | P3 | 0.94ms | success
+2026-01-11T17:56:14.871500+00:00 | DB_CALL get_all_settings | P3 | 0.22ms | success
+2026-01-11T17:56:14.875195+00:00 | DB_CALL get_all_entregadores | P3 | 0.28ms | success
+2026-01-11T17:56:15.044007+00:00 | DB_CALL get_all_settings | P3 | 0.28ms | success
+2026-01-11T17:56:15.046144+00:00 | DB_CALL get_all_pedidos | P3 | 0.48ms | success
+2026-01-11T17:56:15.053837+00:00 | DB_CALL get_all_entregadores | P3 | 0.16ms | success
+2026-01-11T17:56:16.860237+00:00 | DB_CALL get_all_pedidos | P3 | 0.63ms | success
