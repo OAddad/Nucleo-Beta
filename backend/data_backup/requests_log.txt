@@ -9160,3 +9160,11 @@
 2026-01-11T14:52:19.484046+00:00 | DB_CALL count_ingredients | P3 | 0.22ms | success
 2026-01-11T14:52:19.484253+00:00 | DB_CALL count_products | P3 | 0.15ms | success
 2026-01-11T14:52:19.484403+00:00 | DB_CALL count_users | P3 | 0.1ms | success
+2026-01-11T14:52:39.737358+00:00 | DB_CALL init_database | P3 | 2.79ms | success
+2026-01-11T14:52:39.737903+00:00 | DB_CALL count_ingredients | P3 | 0.28ms | success
+2026-01-11T14:52:39.738085+00:00 | DB_CALL count_products | P3 | 0.12ms | success
+2026-01-11T14:52:39.738243+00:00 | DB_CALL count_users | P3 | 0.1ms | success
+2026-01-11T14:52:47.741809+00:00 | DB_CALL init_database | P3 | 2.82ms | success
+2026-01-11T14:52:47.742321+00:00 | DB_CALL count_ingredients | P3 | 0.25ms | success
+2026-01-11T14:52:47.742507+00:00 | DB_CALL count_products | P3 | 0.11ms | success
+2026-01-11T14:52:47.742654+00:00 | DB_CALL count_users | P3 | 0.1ms | success
