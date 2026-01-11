@@ -8811,3 +8811,12 @@
 2026-01-11T13:39:06.491104+00:00 | DB_CALL get_all_products | P3 | 1.31ms | success
 2026-01-11T13:39:06.749772+00:00 | DB_CALL get_all_products | P3 | 0.45ms | success
 2026-01-11T13:39:06.750991+00:00 | DB_CALL get_all_categories | P3 | 0.19ms | success
+2026-01-11T13:39:14.749156+00:00 | DB_CALL get_all_categories | P3 | 1.15ms | success
+2026-01-11T13:39:14.749744+00:00 | DB_CALL get_all_products | P3 | 2.18ms | success
+2026-01-11T13:39:15.757232+00:00 | DB_CALL get_all_products | P3 | 0.38ms | success
+2026-01-11T13:39:15.758508+00:00 | DB_CALL get_all_categories | P3 | 0.21ms | success
+2026-01-11T13:39:21.953623+00:00 | DB_CALL init_database | P3 | 2.78ms | success
+2026-01-11T13:39:21.954111+00:00 | DB_CALL count_ingredients | P3 | 0.23ms | success
+2026-01-11T13:39:21.954298+00:00 | DB_CALL count_products | P3 | 0.13ms | success
+2026-01-11T13:39:21.954459+00:00 | DB_CALL count_users | P3 | 0.11ms | success
+2026-01-11T13:39:25.996816+00:00 | DB_CALL get_all_products | P3 | 0.49ms | success
