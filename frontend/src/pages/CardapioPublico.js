@@ -831,7 +831,7 @@ function CheckoutModal({ open, onClose, cart, cartTotal, client, darkMode, onOrd
                       >
                         {/* Botão de deletar */}
                         <button
-                          onClick={(e) => handleDeleteAddress(e, addr.id)}
+                          onClick={(e) => handleDeleteAddressClick(e, addr)}
                           className="absolute top-2 right-2 w-7 h-7 rounded-full bg-red-500/10 hover:bg-red-500/20 flex items-center justify-center transition-colors z-10"
                           title="Remover endereço"
                         >
