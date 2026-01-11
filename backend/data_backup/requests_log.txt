@@ -9168,3 +9168,9 @@
 2026-01-11T14:52:47.742321+00:00 | DB_CALL count_ingredients | P3 | 0.25ms | success
 2026-01-11T14:52:47.742507+00:00 | DB_CALL count_products | P3 | 0.11ms | success
 2026-01-11T14:52:47.742654+00:00 | DB_CALL count_users | P3 | 0.1ms | success
+2026-01-11T14:53:09.790757+00:00 | DB_CALL get_all_categories | P3 | 1.03ms | success
+2026-01-11T14:53:09.791862+00:00 | DB_CALL get_all_products | P3 | 1.61ms | success
+2026-01-11T14:53:09.793322+00:00 | DB_CALL get_all_business_hours | P3 | 0.28ms | success
+2026-01-11T14:53:09.794458+00:00 | DB_CALL get_all_business_hours | P3 | 0.17ms | success
+2026-01-11T14:53:09.795975+00:00 | DB_CALL get_all_products | P3 | 0.26ms | success
+2026-01-11T14:53:09.799977+00:00 | DB_CALL get_all_categories | P3 | 0.19ms | success
