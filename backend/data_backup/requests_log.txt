@@ -11548,3 +11548,6 @@
 2026-01-11T17:28:13.847511+00:00 | DB_CALL get_all_pedidos | P3 | 0.93ms | success
 2026-01-11T17:28:13.848426+00:00 | DB_CALL get_all_settings | P3 | 1.36ms | success
 2026-01-11T17:28:13.849818+00:00 | DB_CALL get_all_entregadores | P3 | 0.17ms | success
+2026-01-11T17:28:18.861332+00:00 | DB_CALL get_all_pedidos | P3 | 0.5ms | success
+2026-01-11T17:28:18.863568+00:00 | DB_CALL get_all_entregadores | P3 | 0.21ms | success
+2026-01-11T17:28:18.863911+00:00 | DB_CALL get_all_settings | P3 | 0.94ms | success
