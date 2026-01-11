@@ -22,7 +22,10 @@ function CardapioWrapper({ setIsAuthenticated }) {
 }
 
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    // Verificar token no estado inicial
+    return !!localStorage.getItem("token");
+  });
   const [skipLogin, setSkipLogin] = useState(false);
   const [loading, setLoading] = useState(true);
 
