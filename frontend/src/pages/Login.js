@@ -92,7 +92,7 @@ export default function Login({ setIsAuthenticated }) {
     setLoading(true);
     
     try {
-      const response = await axios.post(`${API}/auth/client-login`, {
+      const response = await axios.post(`${API_BASE}/auth/client-login`, {
         client_id: clientId,
         senha: senha
       });
