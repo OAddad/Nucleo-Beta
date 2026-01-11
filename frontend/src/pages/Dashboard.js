@@ -26,6 +26,7 @@ import Pedidos from "./Pedidos";
 import Despesas from "./Despesas";
 import ExtratoFinanceiro from "./ExtratoFinanceiro";
 import RelatorioOfertas from "./RelatorioOfertas";
+import RelatorioEntregas from "./RelatorioEntregas";
 import Promocoes from "./Promocoes";
 import CuponsDesconto from "./CuponsDesconto";
 import Campanhas from "./Campanhas";
