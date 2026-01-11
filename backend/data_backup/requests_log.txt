@@ -17124,3 +17124,9 @@
 2026-01-11T21:34:51.417517+00:00 | DB_CALL get_all_pedidos | P3 | 2.12ms | success
 2026-01-11T21:34:51.418510+00:00 | DB_CALL get_all_entregadores | P3 | 2.43ms | success
 2026-01-11T21:34:51.608989+00:00 | DB_CALL update_pedido_status | P3 | 6.3ms | success
+2026-01-11T21:34:51.775786+00:00 | DB_CALL get_all_entregadores | P3 | 0.27ms | success
+2026-01-11T21:34:51.777574+00:00 | DB_CALL get_all_pedidos | P3 | 0.59ms | success
+2026-01-11T21:34:51.779022+00:00 | DB_CALL get_all_settings | P3 | 0.15ms | success
+2026-01-11T21:34:56.409999+00:00 | DB_CALL get_all_pedidos | P3 | 0.74ms | success
+2026-01-11T21:34:56.411548+00:00 | DB_CALL get_all_entregadores | P3 | 0.22ms | success
+2026-01-11T21:34:56.412880+00:00 | DB_CALL get_all_settings | P3 | 0.11ms | success
