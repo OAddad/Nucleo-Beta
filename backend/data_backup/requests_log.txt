@@ -17759,3 +17759,14 @@
 2026-01-11T22:30:22.010733+00:00 | DB_CALL get_all_products | P3 | 2.82ms | success
 2026-01-11T22:30:22.011490+00:00 | DB_CALL get_all_bairros | P3 | 2.91ms | success
 2026-01-11T22:30:22.011873+00:00 | DB_CALL get_all_categories | P3 | 3.09ms | success
+2026-01-11T22:30:41.999756+00:00 | DB_CALL get_user_by_id | P3 | 0.5ms | success
+2026-01-11T22:30:42.000270+00:00 | DB_CALL get_all_products | P3 | 0.35ms | success
+2026-01-11T22:30:42.180008+00:00 | DB_CALL get_user_by_id | P3 | 0.27ms | success
+2026-01-11T22:30:42.180275+00:00 | DB_CALL get_all_categories | P3 | 0.13ms | success
+2026-01-11T22:30:42.185821+00:00 | DB_CALL get_user_by_id | P3 | 1.33ms | success
+2026-01-11T22:30:42.187212+00:00 | DB_CALL get_all_pedidos | P3 | 2.29ms | success
+2026-01-11T22:30:42.189098+00:00 | DB_CALL get_all_settings | P3 | 3.61ms | success
+2026-01-11T22:30:42.189553+00:00 | DB_CALL recalculate_all_cliente_stats | P3 | 3.55ms | success
+2026-01-11T22:30:42.189895+00:00 | DB_CALL get_all_bairros | P3 | 3.4ms | success
+2026-01-11T22:30:42.190460+00:00 | DB_CALL get_all_clientes | P3 | 0.82ms | success
+2026-01-11T22:30:42.194368+00:00 | DB_CALL get_all_entregadores | P3 | 0.16ms | success
