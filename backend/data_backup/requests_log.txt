@@ -13639,3 +13639,11 @@
 2026-01-11T18:18:24.866456+00:00 | DB_CALL get_all_settings | P3 | 0.42ms | success
 2026-01-11T18:18:24.871602+00:00 | DB_CALL get_all_pedidos | P3 | 0.56ms | success
 2026-01-11T18:18:25.899469+00:00 | DB_CALL get_user_by_username | P3 | 0.28ms | success
+2026-01-11T18:18:29.864282+00:00 | DB_CALL get_all_settings | P3 | 0.32ms | success
+2026-01-11T18:18:29.867911+00:00 | DB_CALL get_all_pedidos | P3 | 0.62ms | success
+2026-01-11T18:18:29.872688+00:00 | DB_CALL get_all_entregadores | P3 | 0.28ms | success
+2026-01-11T18:18:31.463730+00:00 | DB_CALL get_user_by_username | P3 | 0.59ms | success
+2026-01-11T18:18:31.463945+00:00 | DB_CALL get_user_by_username | P3 | 0.09ms | success
+2026-01-11T18:18:34.870630+00:00 | DB_CALL get_all_pedidos | P3 | 2.53ms | success
+2026-01-11T18:18:34.871727+00:00 | DB_CALL get_all_settings | P3 | 2.78ms | success
+2026-01-11T18:18:34.872043+00:00 | DB_CALL get_all_entregadores | P3 | 2.47ms | success
