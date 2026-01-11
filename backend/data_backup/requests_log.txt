@@ -11429,3 +11429,11 @@
 2026-01-11T17:24:13.844273+00:00 | DB_CALL get_all_settings | P3 | 0.19ms | success
 2026-01-11T17:24:14.351909+00:00 | DB_CALL get_all_pedidos | P3 | 0.49ms | success
 2026-01-11T17:24:18.330357+00:00 | DB_CALL get_all_pedidos | P3 | 0.5ms | success
+2026-01-11T17:24:18.852984+00:00 | DB_CALL get_all_entregadores | P3 | 1.49ms | success
+2026-01-11T17:24:18.853758+00:00 | DB_CALL get_all_pedidos | P3 | 1.65ms | success
+2026-01-11T17:24:18.854445+00:00 | DB_CALL get_all_settings | P3 | 1.83ms | success
+2026-01-11T17:24:19.352251+00:00 | DB_CALL get_all_pedidos | P3 | 0.51ms | success
+2026-01-11T17:24:24.119602+00:00 | DB_CALL get_all_pedidos | P3 | 0.49ms | success
+2026-01-11T17:24:24.121487+00:00 | DB_CALL get_all_entregadores | P3 | 0.67ms | success
+2026-01-11T17:24:24.121886+00:00 | DB_CALL get_all_settings | P3 | 0.62ms | success
+2026-01-11T17:24:24.472350+00:00 | DB_CALL get_all_pedidos | P3 | 0.47ms | success
