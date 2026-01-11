@@ -3144,6 +3144,312 @@ class CMVMasterAPITester:
         
         return all_tests_passed
 
+    def test_funcionarios_endpoints(self):
+        """Test funcionários endpoints as specified in review request"""
+        print("\n=== FUNCIONÁRIOS ENDPOINTS TESTS ===")
+        print("🎯 Testing funcionários endpoints as specified in review request:")
+        print("   1. GET /api/funcionarios - deve retornar lista (possivelmente vazia)")
+        print("   2. POST /api/funcionarios - criar um funcionário:")
+        print("      - Primeiro buscar um cliente existente via GET /api/clientes")
+        print("      - Depois criar funcionário com cliente_id e cargo 'entregador'")
+        print("   3. Verificar se o funcionário com cargo 'entregador' também aparece em GET /api/entregadores")
+        print("   4. GET /api/funcionarios/{id} - deve retornar o funcionário criado")
+        print("   5. PUT /api/funcionarios/{id} - mudar cargo para 'cozinheiro'")
+        print("   6. Verificar se agora NÃO aparece mais em GET /api/entregadores")
+        print("   7. DELETE /api/funcionarios/{id} - remover funcionário")
+        print("   Credenciais: Addad/Addad123")
+        
+        all_tests_passed = True
+        created_funcionario_id = None
+        cliente_id = None
+        created_funcionario = None
+        
+        # First, authenticate with Addad user as specified
+        print("\n🔍 Authenticating with Addad user...")
+        success, login_response = self.run_test(
+            "Login with Addad user for funcionários tests",
+            "POST",
+            "auth/login",
+            200,
+            data={"username": "Addad", "password": "Addad123"}
+        )
+        
+        if success and 'access_token' in login_response:
+            self.token = login_response['access_token']
+            self.user_id = login_response['user']['id']
+            print(f"   ✅ Addad login successful")
+            print(f"   - User role: {login_response['user']['role']}")
+        else:
+            print(f"   ❌ Addad login failed - trying fallback authentication...")
+            # Try other authentication methods as fallback
+            fallback_users = [
+                ("admin", "admin"),
+                ("teste_admin", "senha123"),
+                ("proprietario", "senha123")
+            ]
+            
+            auth_success = False
+            for username, password in fallback_users:
+                success, response = self.run_test(
+                    f"Fallback login with {username}",
+                    "POST",
+                    "auth/login",
+                    200,
+                    data={"username": username, "password": password}
+                )
+                
+                if success and 'access_token' in response:
+                    self.token = response['access_token']
+                    self.user_id = response['user']['id']
+                    print(f"   ✅ Fallback authentication successful with {username}")
+                    auth_success = True
+                    break
+            
+            if not auth_success:
+                print(f"   ❌ No valid authentication found - cannot proceed with funcionários tests")
+                return False
+        
+        # TEST 1: GET /api/funcionarios - deve retornar lista (possivelmente vazia)
+        print(f"\n🔍 TEST 1: GET /api/funcionarios - deve retornar lista (possivelmente vazia)")
+        success, funcionarios_list = self.run_test(
+            "Get all funcionários",
+            "GET",
+            "funcionarios",
+            200
+        )
+        
+        if success:
+            print(f"   ✅ TEST 1 PASSED: GET /api/funcionarios retorna lista com {len(funcionarios_list)} funcionários")
+            for func in funcionarios_list[:3]:  # Show first 3
+                print(f"      - {func.get('nome', 'N/A')} - Cargo: {func.get('cargo', 'N/A')}")
+        else:
+            print(f"   ❌ TEST 1 FAILED: Failed to get funcionários list")
+            all_tests_passed = False
+        
+        # TEST 2: Primeiro buscar um cliente existente via GET /api/clientes
+        print(f"\n🔍 TEST 2a: Buscar cliente existente via GET /api/clientes")
+        success, clientes_list = self.run_test(
+            "Get all clientes",
+            "GET",
+            "clientes",
+            200
+        )
+        
+        if success and clientes_list:
+            cliente = clientes_list[0]  # Use first client
+            cliente_id = cliente['id']
+            print(f"   ✅ TEST 2a PASSED: Found {len(clientes_list)} clientes")
+            print(f"      - Using cliente: {cliente.get('nome', 'N/A')} (ID: {cliente_id})")
+        else:
+            print(f"   ❌ TEST 2a FAILED: No clientes found or failed to get clientes")
+            print(f"   ℹ️ Creating a test cliente for funcionário testing...")
+            
+            # Create a test client
+            test_cliente_data = {
+                "nome": "João Silva Funcionário",
+                "telefone": "(11) 99999-8888",
+                "email": "joao.funcionario@test.com"
+            }
+            
+            success, created_cliente = self.run_test(
+                "Create test cliente for funcionário",
+                "POST",
+                "clientes",
+                200,
+                data=test_cliente_data
+            )
+            
+            if success:
+                cliente_id = created_cliente['id']
+                print(f"   ✅ Created test cliente: {created_cliente['nome']} (ID: {cliente_id})")
+            else:
+                print(f"   ❌ Failed to create test cliente - cannot proceed")
+                all_tests_passed = False
+                return False
+        
+        # TEST 2b: POST /api/funcionarios - criar funcionário com cargo "entregador"
+        print(f"\n🔍 TEST 2b: POST /api/funcionarios - criar funcionário com cargo 'entregador'")
+        funcionario_data = {
+            "cliente_id": cliente_id,
+            "cargo": "entregador"
+        }
+        
+        success, created_funcionario = self.run_test(
+            "Create funcionário with cargo entregador",
+            "POST",
+            "funcionarios",
+            200,
+            data=funcionario_data
+        )
+        
+        if success:
+            created_funcionario_id = created_funcionario['id']
+            print(f"   ✅ TEST 2b PASSED: Created funcionário with ID: {created_funcionario_id}")
+            print(f"      - Cliente ID: {created_funcionario.get('cliente_id')}")
+            print(f"      - Cargo: {created_funcionario.get('cargo')}")
+            print(f"      - Nome: {created_funcionario.get('nome', 'N/A')}")
+        else:
+            print(f"   ❌ TEST 2b FAILED: Failed to create funcionário")
+            all_tests_passed = False
+        
+        # TEST 3: Verificar se funcionário com cargo "entregador" aparece em GET /api/entregadores
+        print(f"\n🔍 TEST 3: Verificar se funcionário com cargo 'entregador' aparece em GET /api/entregadores")
+        success, entregadores_list = self.run_test(
+            "Get all entregadores",
+            "GET",
+            "entregadores",
+            200
+        )
+        
+        if success:
+            # Look for our funcionário in the entregadores list
+            funcionario_found_in_entregadores = False
+            for entregador in entregadores_list:
+                if (entregador.get('nome') == created_funcionario.get('nome') or 
+                    entregador.get('telefone') == created_funcionario.get('telefone')):
+                    funcionario_found_in_entregadores = True
+                    print(f"   ✅ TEST 3 PASSED: Funcionário encontrado em entregadores")
+                    print(f"      - Nome: {entregador.get('nome', 'N/A')}")
+                    print(f"      - Telefone: {entregador.get('telefone', 'N/A')}")
+                    break
+            
+            if not funcionario_found_in_entregadores:
+                print(f"   ❌ TEST 3 FAILED: Funcionário com cargo 'entregador' não aparece em /api/entregadores")
+                print(f"   ℹ️ Found {len(entregadores_list)} entregadores:")
+                for ent in entregadores_list[:3]:
+                    print(f"      - {ent.get('nome', 'N/A')} - {ent.get('telefone', 'N/A')}")
+                all_tests_passed = False
+        else:
+            print(f"   ❌ TEST 3 FAILED: Failed to get entregadores list")
+            all_tests_passed = False
+        
+        # TEST 4: GET /api/funcionarios/{id} - deve retornar o funcionário criado
+        if created_funcionario_id:
+            print(f"\n🔍 TEST 4: GET /api/funcionarios/{{id}} - deve retornar o funcionário criado")
+            success, funcionario_detail = self.run_test(
+                "Get funcionário by ID",
+                "GET",
+                f"funcionarios/{created_funcionario_id}",
+                200
+            )
+            
+            if success:
+                print(f"   ✅ TEST 4 PASSED: Funcionário encontrado por ID")
+                print(f"      - ID: {funcionario_detail.get('id')}")
+                print(f"      - Nome: {funcionario_detail.get('nome', 'N/A')}")
+                print(f"      - Cargo: {funcionario_detail.get('cargo')}")
+                print(f"      - Cliente ID: {funcionario_detail.get('cliente_id')}")
+            else:
+                print(f"   ❌ TEST 4 FAILED: Failed to get funcionário by ID")
+                all_tests_passed = False
+        
+        # TEST 5: PUT /api/funcionarios/{id} - mudar cargo para "cozinheiro"
+        if created_funcionario_id:
+            print(f"\n🔍 TEST 5: PUT /api/funcionarios/{{id}} - mudar cargo para 'cozinheiro'")
+            update_data = {
+                "cargo": "cozinheiro"
+            }
+            
+            success, updated_funcionario = self.run_test(
+                "Update funcionário cargo to cozinheiro",
+                "PUT",
+                f"funcionarios/{created_funcionario_id}",
+                200,
+                data=update_data
+            )
+            
+            if success:
+                print(f"   ✅ TEST 5 PASSED: Funcionário cargo updated successfully")
+                print(f"      - New cargo: {updated_funcionario.get('cargo')}")
+                print(f"      - Nome: {updated_funcionario.get('nome', 'N/A')}")
+                
+                if updated_funcionario.get('cargo') == 'cozinheiro':
+                    print(f"      ✅ Cargo correctly changed to 'cozinheiro'")
+                else:
+                    print(f"      ❌ Cargo not updated correctly")
+                    all_tests_passed = False
+            else:
+                print(f"   ❌ TEST 5 FAILED: Failed to update funcionário cargo")
+                all_tests_passed = False
+        
+        # TEST 6: Verificar se agora NÃO aparece mais em GET /api/entregadores
+        print(f"\n🔍 TEST 6: Verificar se agora NÃO aparece mais em GET /api/entregadores")
+        success, entregadores_list_after = self.run_test(
+            "Get entregadores after cargo change",
+            "GET",
+            "entregadores",
+            200
+        )
+        
+        if success:
+            # Look for our funcionário in the entregadores list (should NOT be found)
+            funcionario_still_in_entregadores = False
+            for entregador in entregadores_list_after:
+                if (entregador.get('nome') == created_funcionario.get('nome') or 
+                    entregador.get('telefone') == created_funcionario.get('telefone')):
+                    funcionario_still_in_entregadores = True
+                    break
+            
+            if not funcionario_still_in_entregadores:
+                print(f"   ✅ TEST 6 PASSED: Funcionário com cargo 'cozinheiro' NÃO aparece em /api/entregadores")
+                print(f"      - Entregadores encontrados: {len(entregadores_list_after)}")
+            else:
+                print(f"   ❌ TEST 6 FAILED: Funcionário ainda aparece em /api/entregadores após mudança de cargo")
+                all_tests_passed = False
+        else:
+            print(f"   ❌ TEST 6 FAILED: Failed to get entregadores list after cargo change")
+            all_tests_passed = False
+        
+        # TEST 7: DELETE /api/funcionarios/{id} - remover funcionário
+        if created_funcionario_id:
+            print(f"\n🔍 TEST 7: DELETE /api/funcionarios/{{id}} - remover funcionário")
+            success, delete_response = self.run_test(
+                "Delete funcionário",
+                "DELETE",
+                f"funcionarios/{created_funcionario_id}",
+                200
+            )
+            
+            if success:
+                print(f"   ✅ TEST 7 PASSED: Funcionário deleted successfully")
+                print(f"      - Response: {delete_response.get('message', 'Deleted')}")
+                
+                # Verify funcionário is no longer in the list
+                success, funcionarios_after_delete = self.run_test(
+                    "Verify funcionário deleted",
+                    "GET",
+                    "funcionarios",
+                    200
+                )
+                
+                if success:
+                    deleted_funcionario_found = any(f.get('id') == created_funcionario_id for f in funcionarios_after_delete)
+                    if not deleted_funcionario_found:
+                        print(f"      ✅ Funcionário successfully removed from list")
+                    else:
+                        print(f"      ❌ Funcionário still appears in list after deletion")
+                        all_tests_passed = False
+            else:
+                print(f"   ❌ TEST 7 FAILED: Failed to delete funcionário")
+                all_tests_passed = False
+        
+        # Summary
+        print(f"\n🔍 FUNCIONÁRIOS ENDPOINTS TESTING SUMMARY:")
+        if all_tests_passed:
+            print(f"   ✅ ALL FUNCIONÁRIOS TESTS PASSED")
+            print(f"   ✅ GET /api/funcionarios working")
+            print(f"   ✅ POST /api/funcionarios working")
+            print(f"   ✅ Integration with /api/entregadores working")
+            print(f"   ✅ GET /api/funcionarios/{{id}} working")
+            print(f"   ✅ PUT /api/funcionarios/{{id}} working")
+            print(f"   ✅ Cargo change logic working correctly")
+            print(f"   ✅ DELETE /api/funcionarios/{{id}} working")
+        else:
+            print(f"   ❌ SOME FUNCIONÁRIOS TESTS FAILED")
+            print(f"   ℹ️ Check individual test results above for details")
+        
+        return all_tests_passed
+
 def main():
     print("🚀 Starting Delivery and Entregadores Endpoints Testing")
     print("=" * 80)
