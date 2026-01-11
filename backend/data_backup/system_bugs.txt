@@ -1,0 +1,62 @@
+
+================================================================================
+BUG ID: 9826295e-82d9-4808-8524-9280ddaaccc5
+TIMESTAMP: 2026-01-11T19:01:25.543012+00:00
+TYPE: OperationalError
+ENDPOINT: delete_bairro
+USER: N/A
+STATUS: new
+MESSAGE: no such column: endereco_bairro
+STACK TRACE:
+Traceback (most recent call last):
+  File "/app/backend/server.py", line 44, in db_call
+    result = await run_in_threadpool(fn, *args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/.venv/lib/python3.11/site-packages/starlette/concurrency.py", line 42, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func, *args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/.venv/lib/python3.11/site-packages/anyio/to_thread.py", line 61, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/.venv/lib/python3.11/site-packages/anyio/_backends/_asyncio.py", line 2525, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "/root/.venv/lib/python3.11/site-packages/anyio/_backends/_asyncio.py", line 986, in run
+    result = context.run(func, *args)
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/backend/database.py", line 2414, in delete_bairro
+    cursor.execute("SELECT COUNT(*) FROM clientes WHERE endereco_bairro = (SELECT nome FROM bairros WHERE id = ?)", (bairro_id,))
+sqlite3.OperationalError: no such column: endereco_bairro
+
+================================================================================
+
+================================================================================
+BUG ID: 5ef6169b-2116-4c6a-a00d-3fccfc0f44a9
+TIMESTAMP: 2026-01-11T19:01:25.559591+00:00
+TYPE: OperationalError
+ENDPOINT: delete_bairro
+USER: N/A
+STATUS: new
+MESSAGE: no such column: endereco_bairro
+STACK TRACE:
+Traceback (most recent call last):
+  File "/app/backend/server.py", line 44, in db_call
+    result = await run_in_threadpool(fn, *args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/.venv/lib/python3.11/site-packages/starlette/concurrency.py", line 42, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func, *args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/.venv/lib/python3.11/site-packages/anyio/to_thread.py", line 61, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/.venv/lib/python3.11/site-packages/anyio/_backends/_asyncio.py", line 2525, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "/root/.venv/lib/python3.11/site-packages/anyio/_backends/_asyncio.py", line 986, in run
+    result = context.run(func, *args)
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/backend/database.py", line 2414, in delete_bairro
+    cursor.execute("SELECT COUNT(*) FROM clientes WHERE endereco_bairro = (SELECT nome FROM bairros WHERE id = ?)", (bairro_id,))
+sqlite3.OperationalError: no such column: endereco_bairro
+
+================================================================================

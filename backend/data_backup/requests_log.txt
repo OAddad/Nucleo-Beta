@@ -15582,3 +15582,36 @@
 2026-01-11T19:01:18.941633+00:00 | DB_CALL get_all_settings | P3 | 0.25ms | success
 2026-01-11T19:01:18.943021+00:00 | DB_CALL get_all_entregadores | P3 | 2.51ms | success
 2026-01-11T19:01:18.943559+00:00 | DB_CALL get_all_pedidos | P3 | 2.59ms | success
+2026-01-11T19:01:23.941729+00:00 | DB_CALL get_all_settings | P3 | 1.1ms | success
+2026-01-11T19:01:23.942686+00:00 | DB_CALL get_all_pedidos | P3 | 1.27ms | success
+2026-01-11T19:01:23.943727+00:00 | DB_CALL get_all_entregadores | P3 | 2.47ms | success
+2026-01-11T19:01:25.474264+00:00 | DB_CALL get_user_by_username | P3 | 0.29ms | success
+2026-01-11T19:01:25.476865+00:00 | DB_CALL get_all_bairros | P3 | 0.2ms | success
+2026-01-11T19:01:25.479209+00:00 | DB_CALL get_user_by_id | P3 | 0.22ms | success
+2026-01-11T19:01:25.479530+00:00 | DB_CALL get_bairro_by_nome | P3 | 0.16ms | success
+2026-01-11T19:01:25.481846+00:00 | DB_CALL create_bairro | P3 | 2.24ms | success
+2026-01-11T19:01:25.484628+00:00 | DB_CALL get_user_by_id | P3 | 0.26ms | success
+2026-01-11T19:01:25.484897+00:00 | DB_CALL get_bairro_by_nome | P3 | 0.1ms | success
+2026-01-11T19:01:25.486818+00:00 | DB_CALL create_bairro | P3 | 1.84ms | success
+2026-01-11T19:01:25.489296+00:00 | DB_CALL get_all_bairros | P3 | 0.23ms | success
+2026-01-11T19:01:25.491843+00:00 | DB_CALL get_user_by_id | P3 | 0.24ms | success
+2026-01-11T19:01:25.493735+00:00 | DB_CALL update_bairro | P3 | 1.67ms | success
+2026-01-11T19:01:25.496428+00:00 | DB_CALL get_user_by_id | P3 | 0.23ms | success
+2026-01-11T19:01:25.498957+00:00 | DB_CALL update_all_bairros_valor | P3 | 1.52ms | success
+2026-01-11T19:01:25.501346+00:00 | DB_CALL get_all_bairros | P3 | 0.2ms | success
+2026-01-11T19:01:25.503233+00:00 | DB_CALL check_bairros_have_cep | P3 | 0.15ms | success
+2026-01-11T19:01:25.505877+00:00 | DB_CALL get_all_ruas | P3 | 0.19ms | success
+2026-01-11T19:01:25.508816+00:00 | DB_CALL get_user_by_id | P3 | 0.23ms | success
+2026-01-11T19:01:25.510694+00:00 | DB_CALL create_rua | P3 | 1.68ms | success
+2026-01-11T19:01:25.512926+00:00 | DB_CALL get_user_by_id | P3 | 0.2ms | success
+2026-01-11T19:01:25.514890+00:00 | DB_CALL create_rua | P3 | 1.78ms | success
+2026-01-11T19:01:25.517233+00:00 | DB_CALL get_all_ruas | P3 | 0.26ms | success
+2026-01-11T19:01:25.519563+00:00 | DB_CALL search_ruas | P3 | 0.36ms | success
+2026-01-11T19:01:25.521561+00:00 | DB_CALL get_user_by_id | P3 | 0.17ms | success
+2026-01-11T19:01:25.523359+00:00 | DB_CALL delete_rua | P3 | 1.67ms | success
+2026-01-11T19:01:25.525819+00:00 | DB_CALL get_user_by_id | P3 | 0.19ms | success
+2026-01-11T19:01:25.527494+00:00 | DB_CALL delete_rua | P3 | 1.53ms | success
+2026-01-11T19:01:25.529922+00:00 | DB_CALL get_user_by_id | P3 | 0.19ms | success
+2026-01-11T19:01:25.535330+00:00 | DB_CALL delete_bairro | P3 | 5.22ms | error | ERROR: no such column: endereco_bairro
+2026-01-11T19:01:25.558917+00:00 | DB_CALL get_user_by_id | P3 | 0.25ms | success
+2026-01-11T19:01:25.559251+00:00 | DB_CALL delete_bairro | P3 | 0.18ms | error | ERROR: no such column: endereco_bairro
