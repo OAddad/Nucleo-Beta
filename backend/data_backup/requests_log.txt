@@ -15201,3 +15201,13 @@
 2026-01-11T18:51:49.886752+00:00 | DB_CALL get_all_pedidos | P3 | 0.64ms | success
 2026-01-11T18:51:49.890804+00:00 | DB_CALL get_all_settings | P3 | 1.09ms | success
 2026-01-11T18:51:49.891336+00:00 | DB_CALL get_all_entregadores | P3 | 1.03ms | success
+2026-01-11T18:51:55.465298+00:00 | DB_CALL init_database | P3 | 5.49ms | success
+2026-01-11T18:51:55.466153+00:00 | DB_CALL count_ingredients | P3 | 0.49ms | success
+2026-01-11T18:51:55.466553+00:00 | DB_CALL count_products | P3 | 0.31ms | success
+2026-01-11T18:51:55.466742+00:00 | DB_CALL count_users | P3 | 0.11ms | success
+2026-01-11T18:51:55.471185+00:00 | DB_CALL get_all_pedidos | P3 | 2.76ms | success
+2026-01-11T18:51:55.472428+00:00 | DB_CALL get_all_entregadores | P3 | 3.83ms | success
+2026-01-11T18:51:55.473200+00:00 | DB_CALL get_all_settings | P3 | 4.4ms | success
+2026-01-11T18:51:59.889003+00:00 | DB_CALL get_all_entregadores | P3 | 0.34ms | success
+2026-01-11T18:51:59.893853+00:00 | DB_CALL get_all_settings | P3 | 0.26ms | success
+2026-01-11T18:51:59.894789+00:00 | DB_CALL get_all_pedidos | P3 | 1.45ms | success
