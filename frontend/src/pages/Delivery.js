@@ -474,9 +474,9 @@ export default function Delivery() {
         onClick={() => handleAbrirDetalhes(pedido)}
         className={`rounded-lg border p-3 shadow-sm cursor-pointer transition-all hover:shadow-md ${
           retirada 
-            ? 'bg-gradient-to-br from-amber-100 to-orange-100 dark:from-amber-950/40 dark:to-orange-950/40 border-amber-400 border-2' 
+            ? 'bg-amber-50 dark:bg-amber-950/20 border-amber-400 border-2 border-dashed' 
             : selected 
-              ? 'bg-background border-blue-500 ring-2 ring-blue-200 dark:ring-blue-800'
+              ? 'bg-background border-primary ring-2 ring-primary/20'
               : 'bg-background hover:border-primary/30'
         }`}
       >
@@ -488,11 +488,11 @@ export default function Delivery() {
                 checked={selected}
                 onChange={(e) => onSelect && onSelect(pedido.id, e)}
                 onClick={(e) => e.stopPropagation()}
-                className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                className="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary"
               />
             )}
             {retirada && (
-              <span className="bg-gradient-to-r from-amber-500 to-orange-500 text-white text-[10px] px-2 py-1 rounded-full font-bold flex items-center gap-1 shadow-sm">
+              <span className="bg-amber-500 text-white text-[10px] px-2 py-1 rounded font-bold flex items-center gap-1">
                 <Store className="w-3 h-3" />
                 RETIRADA
               </span>
