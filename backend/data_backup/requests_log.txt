@@ -16231,3 +16231,6 @@
 2026-01-11T19:29:56.917555+00:00 | DB_CALL get_all_products | P3 | 2.07ms | success
 2026-01-11T19:29:56.919278+00:00 | DB_CALL get_all_business_hours | P3 | 0.36ms | success
 2026-01-11T19:29:57.081908+00:00 | DB_CALL get_client_addresses | P3 | 0.28ms | success
+2026-01-11T19:30:54.627737+00:00 | DB_CALL get_all_ruas | P3 | 0.98ms | success
+2026-01-11T19:30:55.482174+00:00 | DB_CALL get_all_bairros | P3 | 29.34ms | success
+2026-01-11T19:30:57.420657+00:00 | DB_CALL get_all_ruas | P3 | 1.25ms | success
