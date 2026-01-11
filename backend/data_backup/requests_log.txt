@@ -9345,3 +9345,4 @@
 2026-01-11T15:13:55.622883+00:00 | DB_CALL update_cliente_pedido_stats | P3 | 4.63ms | success
 2026-01-11T15:13:59.432529+00:00 | DB_CALL get_all_pedidos | P3 | 0.32ms | success
 2026-01-11T15:14:00.878412+00:00 | DB_CALL get_all_pedidos | P3 | 0.33ms | success
+2026-01-11T15:14:05.876004+00:00 | DB_CALL get_all_pedidos | P3 | 0.32ms | success
