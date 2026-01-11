@@ -13419,3 +13419,12 @@
 2026-01-11T18:11:28.199087+00:00 | DB_CALL count_ingredients | P3 | 0.27ms | success
 2026-01-11T18:11:28.199357+00:00 | DB_CALL count_products | P3 | 0.2ms | success
 2026-01-11T18:11:28.199512+00:00 | DB_CALL count_users | P3 | 0.1ms | success
+2026-01-11T18:12:35.638878+00:00 | DB_CALL get_all_products | P3 | 4.64ms | success
+2026-01-11T18:12:35.648172+00:00 | DB_CALL get_all_categories | P3 | 13.42ms | success
+2026-01-11T18:12:35.648656+00:00 | DB_CALL get_all_business_hours | P3 | 13.04ms | success
+2026-01-11T18:12:36.217558+00:00 | DB_CALL get_all_business_hours | P3 | 0.35ms | success
+2026-01-11T18:12:36.218232+00:00 | DB_CALL get_all_categories | P3 | 1.73ms | success
+2026-01-11T18:12:36.218885+00:00 | DB_CALL get_all_products | P3 | 1.96ms | success
+2026-01-11T18:12:42.312423+00:00 | DB_CALL get_all_products | P3 | 0.9ms | success
+2026-01-11T18:12:42.313733+00:00 | DB_CALL get_all_business_hours | P3 | 1.65ms | success
+2026-01-11T18:12:42.722416+00:00 | DB_CALL get_all_categories | P3 | 1.39ms | success
