@@ -664,8 +664,10 @@ export default function Dashboard({ setIsAuthenticated }) {
 
         {/* Conteúdo das Rotas */}
         <main className="flex-1 overflow-auto">
-          {/* Se a aba Balcão está ativa, mostrar a tela de vendas */}
-          {activeTopMenu === "balcao" ? (
+          {/* Se a aba Cardápio está ativa, mostrar o cardápio público */}
+          {activeTopMenu === "cardapio" ? (
+            <CardapioPublico onLoginClick={() => setActiveTopMenu(null)} />
+          ) : activeTopMenu === "balcao" ? (
             <BalcaoVendas />
           ) : activeTopMenu === "mesas" ? (
             <Mesas />
