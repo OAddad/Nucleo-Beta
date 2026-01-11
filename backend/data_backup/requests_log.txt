@@ -8845,3 +8845,11 @@
 2026-01-11T13:51:18.664458+00:00 | DB_CALL get_all_categories | P3 | 12.99ms | success
 2026-01-11T13:52:57.637917+00:00 | DB_CALL get_all_products | P3 | 0.55ms | success
 2026-01-11T13:52:57.639121+00:00 | DB_CALL get_all_categories | P3 | 0.16ms | success
+2026-01-11T13:53:12.867793+00:00 | DB_CALL init_database | P3 | 3.43ms | success
+2026-01-11T13:53:12.868263+00:00 | DB_CALL count_ingredients | P3 | 0.22ms | success
+2026-01-11T13:53:12.868466+00:00 | DB_CALL count_products | P3 | 0.14ms | success
+2026-01-11T13:53:12.868613+00:00 | DB_CALL count_users | P3 | 0.09ms | success
+2026-01-11T13:53:19.682972+00:00 | DB_CALL init_database | P3 | 2.81ms | success
+2026-01-11T13:53:19.683503+00:00 | DB_CALL count_ingredients | P3 | 0.27ms | success
+2026-01-11T13:53:19.683716+00:00 | DB_CALL count_products | P3 | 0.14ms | success
+2026-01-11T13:53:19.683936+00:00 | DB_CALL count_users | P3 | 0.16ms | success
