@@ -14141,3 +14141,6 @@
 2026-01-11T18:25:10.742430+00:00 | DB_CALL delete_pedido | P3 | 1.63ms | success
 2026-01-11T18:25:10.749269+00:00 | DB_CALL get_user_by_id | P3 | 2.24ms | success
 2026-01-11T18:25:10.752007+00:00 | DB_CALL delete_entregador | P3 | 2.51ms | success
+2026-01-11T18:25:11.116218+00:00 | DB_CALL get_all_entregadores | P3 | 0.54ms | success
+2026-01-11T18:25:11.119791+00:00 | DB_CALL get_all_pedidos | P3 | 0.95ms | success
+2026-01-11T18:25:11.121500+00:00 | DB_CALL get_all_settings | P3 | 2.83ms | success
