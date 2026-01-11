@@ -16,9 +16,10 @@ import {
 // URL relativa - funciona em qualquer domínio
 const API = '/api';
 
-const getAuthHeader = () => ({
-  headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-});
+const getAuthHeader = () => {
+  const token = localStorage.getItem("token");
+  return token ? { headers: { Authorization: `Bearer ${token}` } } : {};
+};
 
 // Componente de card do produto com gerenciamento de erro de imagem via estado React
 function ProductCard({ product, onClick }) {
