@@ -17223,3 +17223,12 @@
 2026-01-11T21:36:33.753784+00:00 | DB_CALL search_ruas | P3 | 0.35ms | success
 2026-01-11T21:36:33.883975+00:00 | DB_CALL search_ruas | P3 | 0.35ms | success
 2026-01-11T21:36:34.014605+00:00 | DB_CALL search_ruas | P3 | 0.38ms | success
+2026-01-11T21:36:36.321097+00:00 | DB_CALL search_ruas | P3 | 0.41ms | success
+2026-01-11T21:36:36.583119+00:00 | DB_CALL search_ruas | P3 | 0.42ms | success
+2026-01-11T21:36:36.795890+00:00 | DB_CALL search_ruas | P3 | 0.38ms | success
+2026-01-11T21:36:37.203597+00:00 | DB_CALL search_ruas | P3 | 0.34ms | success
+2026-01-11T21:36:38.108628+00:00 | DB_CALL search_ruas | P3 | 0.38ms | success
+2026-01-11T21:36:38.460513+00:00 | DB_CALL search_ruas | P3 | 0.38ms | success
+2026-01-11T21:36:38.617631+00:00 | DB_CALL search_ruas | P3 | 0.36ms | success
+2026-01-11T21:36:39.311524+00:00 | DB_CALL search_ruas | P3 | 0.36ms | success
+2026-01-11T21:36:40.033007+00:00 | DB_CALL search_ruas | P3 | 0.39ms | success
