@@ -1,10 +1,25 @@
 import { useState, useEffect } from "react";
-import { HashRouter, Routes, Route, Navigate } from "react-router-dom";
+import { HashRouter, Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
+import CardapioPublico from "./pages/CardapioPublico";
 import { Toaster } from "./components/ui/sonner";
 import { initApiConfig, getSettings } from "./config/api";
 import "./App.css";
+
+// Componente wrapper para o Cardápio com navegação
+function CardapioWrapper({ setIsAuthenticated }) {
+  const navigate = useNavigate();
+  const [showLoginModal, setShowLoginModal] = useState(false);
+
+  const handleLoginClick = () => {
+    navigate("/login");
+  };
+
+  return (
+    <CardapioPublico onLoginClick={handleLoginClick} />
+  );
+}
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -47,23 +62,50 @@ function App() {
     <div className="App">
       <HashRouter>
         <Routes>
+          {/* Cardápio Público - Tela Inicial */}
+          <Route
+            path="/cardapio"
+            element={<CardapioWrapper setIsAuthenticated={setIsAuthenticated} />}
+          />
+          
+          {/* Login */}
           <Route
             path="/login"
             element={
               isAuthenticated ? (
-                <Navigate to="/" replace />
+                <Navigate to="/admin" replace />
               ) : (
                 <Login setIsAuthenticated={setIsAuthenticated} />
               )
             }
           />
+          
+          {/* Dashboard Admin - Requer autenticação */}
           <Route
-            path="/*"
+            path="/admin/*"
             element={
               isAuthenticated || skipLogin ? (
                 <Dashboard setIsAuthenticated={setIsAuthenticated} />
               ) : (
                 <Navigate to="/login" replace />
+              )
+            }
+          />
+          
+          {/* Rota raiz - redireciona para cardápio público */}
+          <Route
+            path="/"
+            element={<Navigate to="/cardapio" replace />}
+          />
+          
+          {/* Rotas antigas do dashboard - redireciona para /admin */}
+          <Route
+            path="/*"
+            element={
+              isAuthenticated || skipLogin ? (
+                <Navigate to="/admin" replace />
+              ) : (
+                <Navigate to="/cardapio" replace />
               )
             }
           />
