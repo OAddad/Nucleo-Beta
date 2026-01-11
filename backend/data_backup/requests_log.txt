@@ -9200,3 +9200,4 @@
 2026-01-11T14:55:08.786191+00:00 | DB_CALL get_all_business_hours | P3 | 0.2ms | success
 2026-01-11T14:55:08.787192+00:00 | DB_CALL get_all_categories | P3 | 0.15ms | success
 2026-01-11T14:55:08.943128+00:00 | DB_CALL get_client_addresses | P3 | 0.28ms | success
+2026-01-11T14:55:18.081820+00:00 | DB_CALL get_client_addresses | P3 | 0.24ms | success
