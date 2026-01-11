@@ -2107,6 +2107,171 @@ def get_pedidos_by_entregador(entregador_id: str) -> List[Dict]:
         return pedidos
 
 
+# ==================== FUNCIONÁRIOS ====================
+def get_all_funcionarios() -> List[Dict]:
+    """Retorna todos os funcionários ativos com dados do cliente"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute('''
+            SELECT f.*, c.nome, c.telefone, c.email, c.foto
+            FROM funcionarios f
+            JOIN clientes c ON f.cliente_id = c.id
+            WHERE f.ativo = 1
+            ORDER BY c.nome
+        ''')
+        return [dict(row) for row in cursor.fetchall()]
+
+
+def get_funcionario_by_id(funcionario_id: str) -> Optional[Dict]:
+    """Retorna um funcionário pelo ID"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute('''
+            SELECT f.*, c.nome, c.telefone, c.email, c.foto
+            FROM funcionarios f
+            JOIN clientes c ON f.cliente_id = c.id
+            WHERE f.id = ?
+        ''', (funcionario_id,))
+        row = cursor.fetchone()
+        return dict(row) if row else None
+
+
+def get_funcionario_by_cliente_id(cliente_id: str) -> Optional[Dict]:
+    """Retorna um funcionário pelo ID do cliente"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute('''
+            SELECT f.*, c.nome, c.telefone, c.email, c.foto
+            FROM funcionarios f
+            JOIN clientes c ON f.cliente_id = c.id
+            WHERE f.cliente_id = ? AND f.ativo = 1
+        ''', (cliente_id,))
+        row = cursor.fetchone()
+        return dict(row) if row else None
+
+
+def create_funcionario(data: Dict) -> Dict:
+    """Cria um novo funcionário"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        funcionario_id = str(uuid.uuid4())
+        now = datetime.now(timezone.utc).isoformat()
+        
+        cursor.execute('''
+            INSERT INTO funcionarios (id, cliente_id, cargo, ativo, created_at, updated_at)
+            VALUES (?, ?, ?, 1, ?, ?)
+        ''', (funcionario_id, data['cliente_id'], data['cargo'], now, now))
+        conn.commit()
+        
+        # Se o cargo for Entregador, criar também na tabela de entregadores
+        if data['cargo'].lower() == 'entregador':
+            # Buscar dados do cliente
+            cursor.execute("SELECT nome, telefone FROM clientes WHERE id = ?", (data['cliente_id'],))
+            cliente = cursor.fetchone()
+            if cliente:
+                # Verificar se já existe um entregador com esse cliente_id
+                cursor.execute("SELECT id FROM entregadores WHERE id = ?", (data['cliente_id'],))
+                if not cursor.fetchone():
+                    # Criar entregador usando o cliente_id como ID para fácil referência
+                    cursor.execute('''
+                        INSERT INTO entregadores (id, nome, telefone, ativo, created_at, updated_at)
+                        VALUES (?, ?, ?, 1, ?, ?)
+                    ''', (data['cliente_id'], cliente['nome'], cliente['telefone'], now, now))
+                    conn.commit()
+                else:
+                    # Reativar entregador existente
+                    cursor.execute("UPDATE entregadores SET ativo = 1, updated_at = ? WHERE id = ?", (now, data['cliente_id']))
+                    conn.commit()
+        
+        return get_funcionario_by_id(funcionario_id)
+
+
+def update_funcionario(funcionario_id: str, data: Dict) -> Optional[Dict]:
+    """Atualiza um funcionário"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        now = datetime.now(timezone.utc).isoformat()
+        
+        # Buscar funcionário atual
+        funcionario = get_funcionario_by_id(funcionario_id)
+        if not funcionario:
+            return None
+        
+        cargo_antigo = funcionario['cargo']
+        novo_cargo = data.get('cargo', cargo_antigo)
+        
+        cursor.execute('''
+            UPDATE funcionarios SET cargo = ?, updated_at = ?
+            WHERE id = ?
+        ''', (novo_cargo, now, funcionario_id))
+        conn.commit()
+        
+        # Se mudou de/para Entregador, atualizar tabela de entregadores
+        cliente_id = funcionario['cliente_id']
+        
+        if cargo_antigo.lower() == 'entregador' and novo_cargo.lower() != 'entregador':
+            # Remover dos entregadores
+            cursor.execute("UPDATE entregadores SET ativo = 0, updated_at = ? WHERE id = ?", (now, cliente_id))
+            conn.commit()
+        elif cargo_antigo.lower() != 'entregador' and novo_cargo.lower() == 'entregador':
+            # Adicionar aos entregadores
+            cursor.execute("SELECT nome, telefone FROM clientes WHERE id = ?", (cliente_id,))
+            cliente = cursor.fetchone()
+            if cliente:
+                cursor.execute("SELECT id FROM entregadores WHERE id = ?", (cliente_id,))
+                if not cursor.fetchone():
+                    cursor.execute('''
+                        INSERT INTO entregadores (id, nome, telefone, ativo, created_at, updated_at)
+                        VALUES (?, ?, ?, 1, ?, ?)
+                    ''', (cliente_id, cliente['nome'], cliente['telefone'], now, now))
+                else:
+                    cursor.execute("UPDATE entregadores SET ativo = 1, updated_at = ? WHERE id = ?", (now, cliente_id))
+                conn.commit()
+        
+        return get_funcionario_by_id(funcionario_id)
+
+
+def delete_funcionario(funcionario_id: str) -> bool:
+    """Desativa um funcionário (soft delete)"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        now = datetime.now(timezone.utc).isoformat()
+        
+        # Buscar funcionário
+        funcionario = get_funcionario_by_id(funcionario_id)
+        if not funcionario:
+            return False
+        
+        # Se for entregador, desativar também na tabela de entregadores
+        if funcionario['cargo'].lower() == 'entregador':
+            cursor.execute("UPDATE entregadores SET ativo = 0, updated_at = ? WHERE id = ?", (now, funcionario['cliente_id']))
+        
+        cursor.execute("UPDATE funcionarios SET ativo = 0, updated_at = ? WHERE id = ?", (now, funcionario_id))
+        conn.commit()
+        return cursor.rowcount > 0
+
+
+def get_funcionarios_by_cargo(cargo: str) -> List[Dict]:
+    """Retorna todos os funcionários de um cargo específico"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute('''
+            SELECT f.*, c.nome, c.telefone, c.email, c.foto
+            FROM funcionarios f
+            JOIN clientes c ON f.cliente_id = c.id
+            WHERE f.cargo = ? AND f.ativo = 1
+            ORDER BY c.nome
+        ''', (cargo,))
+        return [dict(row) for row in cursor.fetchall()]
+
+
 # ==================== BUSINESS HOURS ====================
 def get_all_business_hours() -> List[Dict]:
     """Retorna todos os horários de funcionamento ordenados por dia da semana"""
