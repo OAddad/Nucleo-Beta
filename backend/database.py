@@ -608,6 +608,22 @@ def init_database():
         ''')
         conn.commit()
         
+        # Tabela para árvore de decisão do ChatBot WhatsApp
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS decision_tree (
+                id TEXT PRIMARY KEY,
+                trigger TEXT NOT NULL,
+                response TEXT NOT NULL,
+                parent_id TEXT,
+                "order" INTEGER DEFAULT 0,
+                is_active INTEGER DEFAULT 1,
+                created_at TEXT,
+                updated_at TEXT,
+                FOREIGN KEY (parent_id) REFERENCES decision_tree(id)
+            )
+        ''')
+        conn.commit()
+        
         # Verificar se precisa adicionar novas colunas (migração)
         try:
             cursor.execute("SELECT has_second_period FROM business_hours LIMIT 1")
