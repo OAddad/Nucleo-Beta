@@ -16773,3 +16773,6 @@
 2026-01-11T20:00:06.569763+00:00 | DB_CALL get_all_pedidos | P3 | 0.72ms | success
 2026-01-11T20:00:06.576084+00:00 | DB_CALL get_all_bairros | P3 | 0.33ms | success
 2026-01-11T20:00:13.889774+00:00 | DB_CALL get_all_pedidos | P3 | 0.72ms | success
+2026-01-11T20:00:28.532997+00:00 | DB_CALL get_user_by_username | P3 | 0.26ms | success
+2026-01-11T20:00:28.535324+00:00 | DB_CALL get_all_settings | P3 | 0.18ms | success
+2026-01-11T20:00:28.545110+00:00 | DB_CALL create_pedido | P3 | 9.64ms | success
