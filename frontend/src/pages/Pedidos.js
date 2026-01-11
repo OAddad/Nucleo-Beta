@@ -84,6 +84,7 @@ const modulosConfig = {
   Balcao: { label: "Balcão", icon: Store, color: "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400" },
   Mesas: { label: "Mesas", icon: UtensilsCrossed, color: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400" },
   ChatBot: { label: "ChatBot", icon: MessageCircle, color: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400" },
+  Cardapio: { label: "Cardápio Online", icon: ShoppingBag, color: "bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-400" },
 };
 
 export default function Pedidos() {
