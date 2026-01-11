@@ -739,6 +739,11 @@ export default function Dashboard({ setIsAuthenticated }) {
               {/* Rotas de Financeiro */}
               <Route path="/financeiro/extrato" element={<ExtratoFinanceiro />} />
               <Route path="/financeiro/despesas" element={<Despesas />} />
+              {/* Rotas de Impulsione suas Vendas */}
+              <Route path="/impulsione/relatorio-ofertas" element={<RelatorioOfertas />} />
+              <Route path="/impulsione/promocoes" element={<Promocoes />} />
+              <Route path="/impulsione/cupons" element={<CuponsDesconto />} />
+              <Route path="/impulsione/campanhas" element={<Campanhas />} />
               {/* Rotas de Configurações */}
               <Route path="/configuracoes/horarios" element={
                 <div className="p-8">
