@@ -374,6 +374,9 @@ class BusinessHourUpdate(BaseModel):
     is_open: bool = True
     opening_time: str = "08:00"
     closing_time: str = "22:00"
+    has_second_period: bool = False
+    opening_time_2: str = "18:00"
+    closing_time_2: str = "23:59"
 
 
 class BusinessHoursUpdateRequest(BaseModel):
@@ -388,6 +391,9 @@ class BusinessHour(BaseModel):
     is_open: bool = True
     opening_time: str = "08:00"
     closing_time: str = "22:00"
+    has_second_period: bool = False
+    opening_time_2: str = "18:00"
+    closing_time_2: str = "23:59"
     updated_at: Optional[str] = None
 
 

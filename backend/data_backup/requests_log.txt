@@ -9031,3 +9031,7 @@
 2026-01-11T14:09:33.642018+00:00 | DB_CALL count_ingredients | P3 | 0.42ms | success
 2026-01-11T14:09:33.642312+00:00 | DB_CALL count_products | P3 | 0.18ms | success
 2026-01-11T14:09:33.642519+00:00 | DB_CALL count_users | P3 | 0.12ms | success
+2026-01-11T14:09:46.779392+00:00 | DB_CALL init_database | P3 | 2.8ms | success
+2026-01-11T14:09:46.779999+00:00 | DB_CALL count_ingredients | P3 | 0.27ms | success
+2026-01-11T14:09:46.780195+00:00 | DB_CALL count_products | P3 | 0.13ms | success
+2026-01-11T14:09:46.780344+00:00 | DB_CALL count_users | P3 | 0.09ms | success
