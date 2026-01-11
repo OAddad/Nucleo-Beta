@@ -2475,9 +2475,10 @@ async def get_pedido_by_codigo(codigo: str):
 @api_router.post("/pedidos", response_model=PedidoResponse)
 async def create_pedido(data: PedidoCreate):
     """Cria um novo pedido (público para cardápio)"""
-    # Para pedidos do Delivery, começar com aguardando_aceite
-    # Para outros módulos, começar com producao
-    default_status = 'aguardando_aceite' if data.modulo == 'Delivery' else 'producao'
+    # Para pedidos do Delivery OU tipo_entrega delivery, começar com aguardando_aceite
+    # Para outros módulos/tipos, começar com producao
+    is_delivery = data.modulo == 'Delivery' or data.tipo_entrega == 'delivery'
+    default_status = 'aguardando_aceite' if is_delivery else 'producao'
     
     pedido_data = {
         'cliente_id': data.cliente_id,
