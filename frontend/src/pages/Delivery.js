@@ -331,8 +331,7 @@ export default function Delivery() {
 
   // Ir para cardápio para novo pedido
   const handleNovoPedido = () => {
-    window.dispatchEvent(new CustomEvent('setActiveTopMenu', { detail: 'cardapio' }));
-    toast.info("Selecione os produtos no cardápio para criar um novo pedido");
+    setNovoPedidoModalOpen(true);
   };
 
   // Filtrar pedidos por status
