@@ -1531,6 +1531,41 @@ function PalavrasTab({ toast }) {
             )}
           </div>
           
+          {/* Top 10 Frases */}
+          <div className="bg-card border rounded-xl p-6">
+            <h3 className="font-semibold mb-4 flex items-center gap-2">
+              <MessageCircle className="w-4 h-4 text-cyan-500" />
+              Top 10 Frases
+            </h3>
+            {summary?.top_phrases?.length > 0 ? (
+              <div className="space-y-3">
+                {summary.top_phrases.map((phrase, index) => (
+                  <div key={index} className="flex items-center gap-3">
+                    <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
+                      index < 3 ? "bg-cyan-500 text-white" : "bg-muted"
+                    }`}>
+                      {index + 1}
+                    </span>
+                    <div className="flex-1">
+                      <div className="flex items-center justify-between">
+                        <span className="font-medium text-sm">"{phrase.phrase}"</span>
+                        <span className="text-sm text-muted-foreground">{phrase.count}x</span>
+                      </div>
+                      <div className="h-2 bg-muted rounded-full overflow-hidden mt-1">
+                        <div 
+                          className="h-full bg-gradient-to-r from-cyan-500 to-cyan-400 rounded-full"
+                          style={{ width: `${(phrase.count / (summary.top_phrases[0]?.count || 1)) * 100}%` }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-center text-muted-foreground py-8">Nenhuma frase registrada ainda</p>
+            )}
+          </div>
+          
           {/* Mensagens por dia */}
           <div className="bg-card border rounded-xl p-6 md:col-span-2">
             <h3 className="font-semibold mb-4 flex items-center gap-2">
