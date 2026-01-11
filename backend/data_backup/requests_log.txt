@@ -16698,3 +16698,6 @@
 2026-01-11T19:53:56.906927+00:00 | DB_CALL count_ingredients | P3 | 0.25ms | success
 2026-01-11T19:53:56.907112+00:00 | DB_CALL count_products | P3 | 0.12ms | success
 2026-01-11T19:53:56.907254+00:00 | DB_CALL count_users | P3 | 0.09ms | success
+2026-01-11T19:54:39.446058+00:00 | DB_CALL get_all_settings | P3 | 0.53ms | success
+2026-01-11T19:54:39.447278+00:00 | DB_CALL get_all_entregadores | P3 | 0.22ms | success
+2026-01-11T19:54:39.448716+00:00 | DB_CALL get_all_pedidos | P3 | 0.75ms | success
