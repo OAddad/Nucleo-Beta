@@ -17267,3 +17267,13 @@
 2026-01-11T21:36:57.315490+00:00 | DB_CALL search_ruas | P3 | 0.35ms | success
 2026-01-11T21:36:57.525572+00:00 | DB_CALL search_ruas | P3 | 0.37ms | success
 2026-01-11T21:36:57.789507+00:00 | DB_CALL search_ruas | P3 | 0.38ms | success
+2026-01-11T21:37:03.024859+00:00 | DB_CALL search_ruas | P3 | 0.33ms | success
+2026-01-11T21:37:03.129201+00:00 | DB_CALL search_ruas | P3 | 0.36ms | success
+2026-01-11T21:37:03.321016+00:00 | DB_CALL search_ruas | P3 | 0.37ms | success
+2026-01-11T21:37:03.508813+00:00 | DB_CALL search_ruas | P3 | 0.36ms | success
+2026-01-11T21:37:03.785090+00:00 | DB_CALL search_ruas | P3 | 0.38ms | success
+2026-01-11T21:37:04.084424+00:00 | DB_CALL search_ruas | P3 | 0.37ms | success
+2026-01-11T21:37:04.531390+00:00 | DB_CALL search_ruas | P3 | 0.35ms | success
+2026-01-11T21:37:04.739582+00:00 | DB_CALL search_ruas | P3 | 0.35ms | success
+2026-01-11T21:37:05.017703+00:00 | DB_CALL search_ruas | P3 | 0.35ms | success
+2026-01-11T21:37:05.816229+00:00 | DB_CALL search_ruas | P3 | 0.4ms | success
