@@ -10036,3 +10036,4 @@
 2026-01-11T16:05:42.530020+00:00 | DB_CALL get_all_products | P3 | 0.31ms | success
 2026-01-11T16:05:44.808106+00:00 | DB_CALL get_all_pedidos | P3 | 0.41ms | success
 2026-01-11T16:05:49.800225+00:00 | DB_CALL get_all_pedidos | P3 | 0.44ms | success
+2026-01-11T16:05:52.821865+00:00 | DB_CALL get_all_pedidos | P3 | 0.39ms | success
