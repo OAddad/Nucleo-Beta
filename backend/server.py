@@ -3769,6 +3769,13 @@ async def update_company_settings(data: CompanySettingsUpdate, current_user: Use
         if value is not None:
             await db_call(sqlite_db.set_setting, setting_key, value)
     
+    # Limpar cache do chatbot para usar novas configurações
+    try:
+        import chatbot_ai
+        chatbot_ai.chat_instances.clear()
+    except:
+        pass
+    
     return await get_company_settings()
 
 @api_router.post("/company/logo")
