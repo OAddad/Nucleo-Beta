@@ -804,6 +804,10 @@ export default function Dashboard({ setIsAuthenticated }) {
               <Route path="/clientes-fornecedores/clientes" element={<Clientes />} />
               <Route path="/clientes-fornecedores/fornecedores" element={<Fornecedores />} />
               <Route path="/clientes-fornecedores/funcionarios" element={<Funcionarios />} />
+              {/* Rotas de Localização */}
+              <Route path="/localizacao/bairros" element={<Bairros />} />
+              <Route path="/localizacao/ruas" element={<Ruas />} />
+              <Route path="/localizacao/area-entrega" element={<AreaEntrega />} />
               {/* Rotas de Vendas */}
               <Route path="/vendas/relatorio" element={
                 <div className="p-8">
