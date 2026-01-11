@@ -11119,3 +11119,10 @@
 2026-01-11T17:19:15.842684+00:00 | DB_CALL get_all_pedidos | P3 | 1.68ms | success
 2026-01-11T17:19:15.844730+00:00 | DB_CALL get_all_entregadores | P3 | 0.16ms | success
 2026-01-11T17:19:15.845026+00:00 | DB_CALL get_all_settings | P3 | 0.78ms | success
+2026-01-11T17:19:20.832734+00:00 | DB_CALL get_all_pedidos | P3 | 0.46ms | success
+2026-01-11T17:19:20.834337+00:00 | DB_CALL get_all_pedidos | P3 | 0.37ms | success
+2026-01-11T17:19:20.835930+00:00 | DB_CALL get_all_entregadores | P3 | 0.18ms | success
+2026-01-11T17:19:20.839432+00:00 | DB_CALL get_all_settings | P3 | 0.14ms | success
+2026-01-11T17:19:21.851713+00:00 | DB_CALL get_all_settings | P3 | 0.68ms | success
+2026-01-11T17:19:21.852162+00:00 | DB_CALL get_all_pedidos | P3 | 1.56ms | success
+2026-01-11T17:19:21.854008+00:00 | DB_CALL get_all_entregadores | P3 | 0.17ms | success
