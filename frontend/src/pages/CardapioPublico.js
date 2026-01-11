@@ -1087,6 +1087,17 @@ export default function CardapioPublico({ onAdminLogin }) {
         onAddToCart={addToCart}
         darkMode={darkMode}
       />
+      
+      {/* Modal de Checkout */}
+      <CheckoutModal
+        open={checkoutOpen}
+        onClose={() => setCheckoutOpen(false)}
+        cart={cart}
+        cartTotal={cartTotal}
+        client={loggedClient}
+        darkMode={darkMode}
+        onOrderComplete={handleOrderComplete}
+      />
     </div>
   );
 }
