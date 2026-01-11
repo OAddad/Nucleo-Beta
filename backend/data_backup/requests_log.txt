@@ -8960,3 +8960,9 @@
 2026-01-11T14:01:52.592918+00:00 | DB_CALL count_products | P3 | 0.22ms | success
 2026-01-11T14:01:52.593246+00:00 | DB_CALL count_users | P3 | 0.24ms | success
 2026-01-11T14:02:01.590247+00:00 | DB_CALL get_all_business_hours | P3 | 0.36ms | success
+2026-01-11T14:03:16.104686+00:00 | DB_CALL get_all_categories | P3 | 0.36ms | success
+2026-01-11T14:03:16.106980+00:00 | DB_CALL get_all_products | P3 | 1.1ms | success
+2026-01-11T14:03:16.107822+00:00 | DB_CALL get_all_business_hours | P3 | 1.48ms | success
+2026-01-11T14:03:16.767472+00:00 | DB_CALL get_all_business_hours | P3 | 0.33ms | success
+2026-01-11T14:03:16.772813+00:00 | DB_CALL get_all_categories | P3 | 0.86ms | success
+2026-01-11T14:03:16.773461+00:00 | DB_CALL get_all_products | P3 | 0.9ms | success

@@ -264,8 +264,28 @@ export default function CardapioPublico({ onAdminLogin }) {
               </div>
               <p className="text-white/80 text-sm">O melhor da culinária</p>
               <div className="flex items-center gap-4 mt-2">
-                <div className="flex items-center gap-1 text-sm"><div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div><span className="text-white/90">Aberto agora</span></div>
-                <div className="flex items-center gap-1 text-sm text-white/80"><Clock className="w-3 h-3" /><span>Fecha às 23:00</span></div>
+                <div className="flex items-center gap-1 text-sm">
+                  <div className={`w-2 h-2 rounded-full ${isOpen ? 'bg-green-400 animate-pulse' : 'bg-red-400'}`}></div>
+                  <span className="text-white/90">{isOpen ? 'Aberto agora' : 'Fechado'}</span>
+                </div>
+                {isOpen && closingTime && (
+                  <div className="flex items-center gap-1 text-sm text-white/80">
+                    <Clock className="w-3 h-3" />
+                    <span>Fecha às {closingTime}</span>
+                  </div>
+                )}
+                {!isOpen && todayHours && todayHours.is_open && (
+                  <div className="flex items-center gap-1 text-sm text-white/80">
+                    <Clock className="w-3 h-3" />
+                    <span>Abre às {todayHours.opening_time}</span>
+                  </div>
+                )}
+                {!isOpen && (!todayHours || !todayHours.is_open) && (
+                  <div className="flex items-center gap-1 text-sm text-white/80">
+                    <Clock className="w-3 h-3" />
+                    <span>Fechado hoje</span>
+                  </div>
+                )}
               </div>
             </div>
           </div>
