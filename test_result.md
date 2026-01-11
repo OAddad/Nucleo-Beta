@@ -367,6 +367,21 @@ backend:
         agent: "testing"
         comment: "✅ NEW AUTHENTICATION ENDPOINTS TESTING COMPLETED (Jan 11, 2026): Testei exatamente conforme especificado na review request. RESULTADOS: ✅ TEST 1.1 PASSED: POST /api/auth/check-login com username válido 'Addad' retorna {found: true, type: 'user', needs_password: true, name: 'Addad'} conforme esperado. ✅ TEST 1.2 PASSED: POST /api/auth/check-login com telefone inválido '99999999' retorna {found: false, type: 'not_found', needs_password: false} conforme esperado. ✅ TEST 2 PASSED: POST /api/auth/client-login endpoint existe e responde corretamente - retorna {success: false, message: 'Cliente não encontrado'} para client_id inexistente. ✅ VALIDATION TEST PASSED: Endpoint valida campos obrigatórios corretamente (422 status para client_id ausente). Todos os 4 testes passaram com 100% de sucesso. Novos endpoints de autenticação funcionando perfeitamente conforme especificações."
 
+  - task: "Business Hours Multiple Periods Support"
+    implemented: true
+    working: true
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Endpoints de horários de funcionamento com suporte a múltiplos períodos implementados. Novos campos: has_second_period, opening_time_2, closing_time_2. Permite restaurantes com horários divididos (ex: almoço e jantar)."
+      - working: true
+        agent: "testing"
+        comment: "✅ BUSINESS HOURS MULTIPLE PERIODS TESTING COMPLETED (Jan 11, 2026): Testei os endpoints de horários de funcionamento com suporte a múltiplos períodos exatamente conforme especificado na review request. RESULTADOS: ✅ TEST 1 PASSED: GET /api/public/business-hours retorna lista de 7 dias (Segunda a Domingo) com todos os novos campos obrigatórios: has_second_period (bool), opening_time_2 (str), closing_time_2 (str). Tipos de dados corretos verificados. ✅ TEST 2 PASSED: PUT /api/business-hours (autenticado - Addad/Addad123) funciona perfeitamente - consegui atualizar Segunda-feira com dois períodos: primeiro período 10:00-15:00, segundo período 18:00-23:59, has_second_period=true. ✅ TEST 3 PASSED: Verificação GET novamente confirma que has_second_period=true persiste corretamente para segunda-feira. Todos os valores de tempo persistem corretamente. ✅ AUTHENTICATION: Credenciais Addad/Addad123 funcionando perfeitamente. Sistema de horários com múltiplos períodos 100% operacional conforme especificações da review request."
+
 frontend:
   - task: "Login Page"
     implemented: true
