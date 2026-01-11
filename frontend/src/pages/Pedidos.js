@@ -784,9 +784,8 @@ export default function Pedidos() {
                 
                 <div className="flex-1" />
                 
-                {/* Botão Cancelar */}
-                {getNormalizedStatus(selectedPedido.status) !== "cancelado" && 
-                 getNormalizedStatus(selectedPedido.status) !== "concluido" && (
+                {/* Botão Cancelar - permite cancelar mesmo pedidos concluídos */}
+                {getNormalizedStatus(selectedPedido.status) !== "cancelado" && (
                   <Button 
                     variant="destructive" 
                     onClick={() => setCancelDialogOpen(true)}
