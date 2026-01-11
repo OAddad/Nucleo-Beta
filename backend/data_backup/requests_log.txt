@@ -14956,3 +14956,7 @@
 2026-01-11T18:48:34.870601+00:00 | DB_CALL count_clientes | P3 | 0.17ms | success
 2026-01-11T18:48:34.871541+00:00 | DB_CALL get_all_clientes | P3 | 1.18ms | success
 2026-01-11T18:48:55.594655+00:00 | DB_CALL get_all_funcionarios | P3 | 0.28ms | success
+2026-01-11T18:48:58.143068+00:00 | DB_CALL get_all_entregadores | P3 | 1.55ms | success
+2026-01-11T18:48:58.143693+00:00 | DB_CALL get_all_settings | P3 | 1.36ms | success
+2026-01-11T18:48:58.144345+00:00 | DB_CALL get_all_pedidos | P3 | 1.87ms | success
+2026-01-11T18:48:58.145870+00:00 | DB_CALL get_all_funcionarios | P3 | 0.15ms | success
