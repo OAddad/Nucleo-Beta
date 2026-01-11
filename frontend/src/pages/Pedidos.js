@@ -163,30 +163,22 @@ export default function Pedidos() {
       }));
       
       setPedidos(pedidosFormatados);
-      localStorage.setItem("pedidos", JSON.stringify(migrated));
+    } catch (error) {
+      console.error("Erro ao buscar pedidos:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const savePedidos = (newPedidos) => {
-    setPedidos(newPedidos);
-    localStorage.setItem("pedidos", JSON.stringify(newPedidos));
-  };
-
-  // Gerar código único de 5 dígitos
-  const generateUniqueCode = (existingPedidos) => {
-    const existingCodes = new Set(existingPedidos.map(p => p.codigo));
-    let code;
-    let attempts = 0;
-    const maxAttempts = 100000; // 5 dígitos = 100000 combinações possíveis
-    
-    do {
-      // Gerar número de 0 a 99999 e formatar com zeros à esquerda
-      const num = Math.floor(Math.random() * 100000);
-      code = `#${num.toString().padStart(5, '0')}`;
-      attempts++;
-    } while (existingCodes.has(code) && attempts < maxAttempts);
-    
-    return code;
+  const updatePedidoStatus = async (pedidoId, newStatus) => {
+    try {
+      await axios.patch(`${API}/pedidos/${pedidoId}/status?status=${newStatus}`);
+      await fetchPedidos();
+      toast.success("Status atualizado!");
+    } catch (error) {
+      console.error("Erro ao atualizar status:", error);
+      toast.error("Erro ao atualizar status");
+    }
   };
 
   // Formatar data e hora
