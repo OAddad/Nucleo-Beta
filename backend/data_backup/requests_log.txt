@@ -14572,3 +14572,7 @@
 2026-01-11T18:34:48.351257+00:00 | DB_CALL update_pedido_status | P3 | 2.75ms | success
 2026-01-11T18:34:48.611769+00:00 | DB_CALL get_entregador_by_id | P3 | 0.49ms | success
 2026-01-11T18:34:48.613131+00:00 | DB_CALL get_pedidos_by_entregador | P3 | 0.25ms | success
+2026-01-11T18:34:57.079450+00:00 | DB_CALL get_entregador_by_id | P3 | 0.25ms | success
+2026-01-11T18:34:57.084590+00:00 | DB_CALL get_pedidos_by_entregador | P3 | 0.28ms | success
+2026-01-11T18:34:57.284955+00:00 | DB_CALL get_entregador_by_id | P3 | 0.31ms | success
+2026-01-11T18:34:57.287350+00:00 | DB_CALL get_pedidos_by_entregador | P3 | 0.43ms | success
