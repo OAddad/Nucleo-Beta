@@ -9538,3 +9538,9 @@
 2026-01-11T15:32:20.331764+00:00 | DB_CALL count_ingredients | P3 | 0.24ms | success
 2026-01-11T15:32:20.331962+00:00 | DB_CALL count_products | P3 | 0.13ms | success
 2026-01-11T15:32:20.332119+00:00 | DB_CALL count_users | P3 | 0.1ms | success
+2026-01-11T15:32:45.133673+00:00 | DB_CALL get_all_business_hours | P3 | 0.9ms | success
+2026-01-11T15:32:45.134491+00:00 | DB_CALL get_all_products | P3 | 1.64ms | success
+2026-01-11T15:32:45.135009+00:00 | DB_CALL get_all_categories | P3 | 2.06ms | success
+2026-01-11T15:32:50.142640+00:00 | DB_CALL get_user_by_username | P3 | 0.29ms | success
+2026-01-11T15:32:50.142923+00:00 | DB_CALL get_user_by_username | P3 | 0.14ms | success
+2026-01-11T15:32:50.143242+00:00 | DB_CALL get_all_clientes | P3 | 0.22ms | success
