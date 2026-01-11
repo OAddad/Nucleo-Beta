@@ -57,7 +57,8 @@ function OrderTrackingScreen({ pedido, onClose, darkMode }) {
         const statusMap = {
           'producao': 'producao',
           'pronto': 'pronto',
-          'concluido': 'pronto',
+          'retirado': 'retirado',
+          'concluido': 'retirado',
         };
         setCurrentStatus(statusMap[pedido.status] || 'enviado');
       } else {
