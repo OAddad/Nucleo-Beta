@@ -9113,3 +9113,9 @@
 2026-01-11T14:16:11.163456+00:00 | DB_CALL get_all_categories | P3 | 1.49ms | success
 2026-01-11T14:16:11.164267+00:00 | DB_CALL get_all_products | P3 | 1.69ms | success
 2026-01-11T14:16:11.164800+00:00 | DB_CALL get_all_business_hours | P3 | 1.48ms | success
+2026-01-11T14:16:49.791493+00:00 | DB_CALL get_all_business_hours | P3 | 0.35ms | success
+2026-01-11T14:16:49.794130+00:00 | DB_CALL get_user_by_username | P3 | 0.21ms | success
+2026-01-11T14:16:49.796357+00:00 | DB_CALL get_user_by_id | P3 | 0.14ms | success
+2026-01-11T14:16:49.798578+00:00 | DB_CALL update_business_hours | P3 | 2.05ms | success
+2026-01-11T14:16:49.800328+00:00 | DB_CALL create_audit_log | P3 | 1.65ms | success
+2026-01-11T14:16:49.802719+00:00 | DB_CALL get_all_business_hours | P3 | 0.2ms | success
