@@ -728,14 +728,14 @@ export default function Delivery() {
         </div>
 
         {/* Coluna 4: ENTREGADORES */}
-        <div className="flex-1 flex flex-col rounded-xl border-2 border-blue-400 bg-card overflow-hidden min-w-0">
-          <div className="p-3 bg-gradient-to-r from-blue-400 to-indigo-500 text-white">
+        <div className="flex-1 flex flex-col rounded-xl border bg-card overflow-hidden min-w-0">
+          <div className="p-3 bg-muted/50 border-b">
             <div className="flex items-center justify-between">
               <h3 className="font-bold text-sm">ENTREGADORES</h3>
               <Button 
                 size="sm" 
                 variant="outline" 
-                className="h-6 px-2 text-xs bg-white/20 border-white/30 text-white hover:bg-white/30"
+                className="h-6 px-2 text-xs"
                 onClick={() => setCriarEntregadorModalOpen(true)}
               >
                 <Plus className="w-3 h-3 mr-1" />
