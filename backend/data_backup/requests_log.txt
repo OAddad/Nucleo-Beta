@@ -12051,3 +12051,15 @@
 2026-01-11T17:37:06.842787+00:00 | DB_CALL get_all_pedidos | P3 | 0.54ms | success
 2026-01-11T17:37:06.844406+00:00 | DB_CALL get_all_settings | P3 | 0.18ms | success
 2026-01-11T17:37:06.848253+00:00 | DB_CALL get_all_entregadores | P3 | 0.18ms | success
+2026-01-11T17:37:09.850426+00:00 | DB_CALL get_all_pedidos | P3 | 0.57ms | success
+2026-01-11T17:37:09.852089+00:00 | DB_CALL get_all_entregadores | P3 | 0.22ms | success
+2026-01-11T17:37:09.856184+00:00 | DB_CALL get_all_settings | P3 | 0.24ms | success
+2026-01-11T17:37:10.856516+00:00 | DB_CALL get_all_pedidos | P3 | 2.32ms | success
+2026-01-11T17:37:15.856547+00:00 | DB_CALL get_all_pedidos | P3 | 0.68ms | success
+2026-01-11T17:37:15.858075+00:00 | DB_CALL get_all_entregadores | P3 | 0.19ms | success
+2026-01-11T17:37:15.867454+00:00 | DB_CALL get_all_settings | P3 | 0.33ms | success
+2026-01-11T17:37:16.849246+00:00 | DB_CALL get_all_pedidos | P3 | 2.0ms | success
+2026-01-11T17:37:19.861511+00:00 | DB_CALL get_all_pedidos | P3 | 1.94ms | success
+2026-01-11T17:37:19.863911+00:00 | DB_CALL get_all_entregadores | P3 | 3.89ms | success
+2026-01-11T17:37:19.865496+00:00 | DB_CALL get_all_settings | P3 | 1.63ms | success
+2026-01-11T17:37:20.856403+00:00 | DB_CALL get_all_pedidos | P3 | 0.55ms | success
