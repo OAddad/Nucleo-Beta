@@ -12285,3 +12285,10 @@
 2026-01-11T17:41:26.862376+00:00 | DB_CALL get_all_settings | P3 | 1.8ms | success
 2026-01-11T17:41:26.862815+00:00 | DB_CALL get_all_entregadores | P3 | 2.05ms | success
 2026-01-11T17:41:27.856537+00:00 | DB_CALL get_all_pedidos | P3 | 0.56ms | success
+2026-01-11T17:41:31.848987+00:00 | DB_CALL get_all_pedidos | P3 | 0.6ms | success
+2026-01-11T17:41:31.851954+00:00 | DB_CALL get_all_entregadores | P3 | 0.26ms | success
+2026-01-11T17:41:31.852416+00:00 | DB_CALL get_all_settings | P3 | 1.13ms | success
+2026-01-11T17:41:32.868100+00:00 | DB_CALL get_all_pedidos | P3 | 2.26ms | success
+2026-01-11T17:41:32.875813+00:00 | DB_CALL get_all_entregadores | P3 | 0.62ms | success
+2026-01-11T17:41:32.876362+00:00 | DB_CALL get_all_settings | P3 | 0.84ms | success
+2026-01-11T17:41:33.043899+00:00 | DB_CALL get_all_pedidos | P3 | 2.51ms | success
