@@ -17078,3 +17078,6 @@
 2026-01-11T21:24:36.738291+00:00 | DB_CALL get_all_clientes | P3 | 0.7ms | success
 2026-01-11T21:24:37.270774+00:00 | DB_CALL get_cliente_by_id | P3 | 0.42ms | success
 2026-01-11T21:24:38.110687+00:00 | DB_CALL get_client_addresses | P3 | 0.27ms | success
+2026-01-11T21:24:41.468259+00:00 | DB_CALL get_all_settings | P3 | 0.26ms | success
+2026-01-11T21:24:41.474657+00:00 | DB_CALL create_pedido | P3 | 6.23ms | success
+2026-01-11T21:24:41.480224+00:00 | DB_CALL update_cliente_pedido_stats | P3 | 5.46ms | success
