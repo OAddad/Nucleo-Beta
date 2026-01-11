@@ -14,6 +14,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
 } from "../components/ui/dialog";
 
 const API = '/api';
@@ -30,7 +31,10 @@ export default function Bairros() {
   // CEP único
   const [cepUnico, setCepUnico] = useState(false);
   const [cepUnicoValue, setCepUnicoValue] = useState("");
-  const [hasCepPreenchido, setHasCepPreenchido] = useState(false);
+  
+  // Modal de CEP único
+  const [cepUnicoModalOpen, setCepUnicoModalOpen] = useState(false);
+  const [novoCepUnico, setNovoCepUnico] = useState("");
   
   // Modal de cadastro/edição
   const [modalOpen, setModalOpen] = useState(false);
@@ -44,21 +48,23 @@ export default function Bairros() {
 
   const fetchData = useCallback(async () => {
     try {
-      const [bairrosRes, cepCheckRes] = await Promise.all([
+      const [bairrosRes, settingsRes] = await Promise.all([
         axios.get(`${API}/bairros`, getAuthHeader()),
-        axios.get(`${API}/bairros/check-cep`, getAuthHeader())
+        axios.get(`${API}/settings`, getAuthHeader())
       ]);
       setBairros(bairrosRes.data);
-      setHasCepPreenchido(cepCheckRes.data.has_cep);
       
-      // Verificar se todos os bairros têm o mesmo CEP (CEP único ativo)
-      if (bairrosRes.data.length > 0) {
-        const ceps = bairrosRes.data.map(b => b.cep).filter(c => c);
-        const uniqueCeps = [...new Set(ceps)];
-        if (uniqueCeps.length === 1 && ceps.length === bairrosRes.data.length) {
-          setCepUnico(true);
-          setCepUnicoValue(uniqueCeps[0]);
-        }
+      // Verificar configuração de CEP único
+      const settings = settingsRes.data;
+      const cepUnicoSetting = settings.find(s => s.key === 'cep_unico_ativo');
+      const cepUnicoValueSetting = settings.find(s => s.key === 'cep_unico_valor');
+      
+      if (cepUnicoSetting && cepUnicoSetting.value === 'true') {
+        setCepUnico(true);
+        setCepUnicoValue(cepUnicoValueSetting?.value || '');
+      } else {
+        setCepUnico(false);
+        setCepUnicoValue('');
       }
     } catch (error) {
       console.error("Erro ao carregar dados:", error);
@@ -98,7 +104,7 @@ export default function Bairros() {
       const data = {
         nome: formData.nome.trim(),
         valor_entrega: parseFloat(formData.valor_entrega) || 0,
-        cep: formData.cep.trim() || null
+        cep: cepUnico ? cepUnicoValue : (formData.cep.trim() || null)
       };
 
       if (editando) {
@@ -130,28 +136,57 @@ export default function Bairros() {
     }
   };
 
-  const handleAtivarCepUnico = async (ativo) => {
-    if (ativo && hasCepPreenchido) {
-      toast.error("Não é possível ativar CEP único pois existem bairros com CEP preenchido");
+  // Abrir modal de CEP único quando o switch é ativado
+  const handleSwitchCepUnico = (checked) => {
+    if (checked) {
+      // Abrir modal para informar o CEP
+      setNovoCepUnico(cepUnicoValue || "");
+      setCepUnicoModalOpen(true);
+    } else {
+      // Desativar CEP único
+      handleDesativarCepUnico();
+    }
+  };
+
+  // Ativar CEP único
+  const handleAtivarCepUnico = async () => {
+    if (!novoCepUnico.trim()) {
+      toast.error("Digite o CEP");
       return;
     }
-    
-    if (ativo) {
-      const cep = prompt("Digite o CEP único para todos os bairros:");
-      if (!cep) return;
+
+    setSaving(true);
+    try {
+      // Salvar configurações
+      await axios.put(`${API}/settings/cep_unico_ativo`, { value: 'true' }, getAuthHeader());
+      await axios.put(`${API}/settings/cep_unico_valor`, { value: novoCepUnico.trim() }, getAuthHeader());
       
-      try {
-        await axios.put(`${API}/bairros/cep/all?cep=${cep}`, {}, getAuthHeader());
-        setCepUnico(true);
-        setCepUnicoValue(cep);
-        toast.success("CEP único ativado!");
-        fetchData();
-      } catch (error) {
-        toast.error("Erro ao ativar CEP único");
+      // Atualizar CEP de todos os bairros existentes
+      if (bairros.length > 0) {
+        await axios.put(`${API}/bairros/cep/all?cep=${encodeURIComponent(novoCepUnico.trim())}`, {}, getAuthHeader());
       }
-    } else {
+      
+      setCepUnico(true);
+      setCepUnicoValue(novoCepUnico.trim());
+      setCepUnicoModalOpen(false);
+      toast.success("CEP único ativado! Todos os bairros usarão este CEP.");
+      fetchData();
+    } catch (error) {
+      toast.error("Erro ao ativar CEP único");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  // Desativar CEP único
+  const handleDesativarCepUnico = async () => {
+    try {
+      await axios.put(`${API}/settings/cep_unico_ativo`, { value: 'false' }, getAuthHeader());
       setCepUnico(false);
       setCepUnicoValue("");
+      toast.success("CEP único desativado. Cada bairro pode ter seu próprio CEP.");
+    } catch (error) {
+      toast.error("Erro ao desativar CEP único");
     }
   };
 
@@ -213,33 +248,37 @@ export default function Bairros() {
       </div>
 
       {/* CEP Único Switch */}
-      <div className="bg-card rounded-xl border p-4">
+      <div className={`rounded-xl border p-4 transition-colors ${cepUnico ? 'bg-primary/5 border-primary/30' : 'bg-card'}`}>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${cepUnico ? 'bg-primary/10 text-primary' : 'bg-muted text-muted-foreground'}`}>
+            <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${cepUnico ? 'bg-primary/20 text-primary' : 'bg-muted text-muted-foreground'}`}>
               <MapPin className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="font-semibold">CEP Único</h3>
+              <h3 className="font-semibold flex items-center gap-2">
+                CEP Único
+                {cepUnico && <Check className="w-4 h-4 text-green-500" />}
+              </h3>
               <p className="text-sm text-muted-foreground">
-                {cepUnico ? `Todos os bairros usam o CEP: ${cepUnicoValue}` : 'Cada bairro pode ter seu próprio CEP'}
+                {cepUnico 
+                  ? <span className="text-primary font-medium">Ativo: {cepUnicoValue}</span>
+                  : 'Cada bairro pode ter seu próprio CEP'
+                }
               </p>
             </div>
           </div>
-          <div className="flex items-center gap-3">
-            {hasCepPreenchido && !cepUnico && (
-              <span className="text-xs text-orange-500 flex items-center gap-1">
-                <AlertCircle className="w-3 h-3" />
-                Bairros com CEP
-              </span>
-            )}
-            <Switch
-              checked={cepUnico}
-              onCheckedChange={handleAtivarCepUnico}
-              disabled={hasCepPreenchido && !cepUnico}
-            />
-          </div>
+          <Switch
+            checked={cepUnico}
+            onCheckedChange={handleSwitchCepUnico}
+          />
         </div>
+        {cepUnico && (
+          <div className="mt-3 pt-3 border-t border-primary/20">
+            <p className="text-xs text-muted-foreground">
+              Todos os bairros cadastrados e futuros usarão o CEP: <strong>{cepUnicoValue}</strong>
+            </p>
+          </div>
+        )}
       </div>
 
       {/* Busca */}
@@ -318,6 +357,58 @@ export default function Bairros() {
         </div>
       )}
 
+      {/* Modal de CEP Único */}
+      <Dialog open={cepUnicoModalOpen} onOpenChange={setCepUnicoModalOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <MapPin className="w-5 h-5 text-primary" />
+              Ativar CEP Único
+            </DialogTitle>
+            <DialogDescription>
+              Todos os bairros cadastrados e futuros usarão o mesmo CEP.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4">
+            <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-3">
+              <p className="text-sm text-blue-700 dark:text-blue-300">
+                <strong>💡 Dica:</strong> Use esta opção se sua cidade/região usa um único CEP para todos os bairros.
+              </p>
+            </div>
+            
+            <div>
+              <Label>CEP para todos os bairros *</Label>
+              <Input
+                value={novoCepUnico}
+                onChange={(e) => setNovoCepUnico(e.target.value)}
+                placeholder="00000-000"
+                className="mt-1"
+                maxLength={9}
+              />
+            </div>
+            
+            {bairros.length > 0 && (
+              <div className="bg-orange-500/10 border border-orange-500/20 rounded-lg p-3">
+                <p className="text-sm text-orange-700 dark:text-orange-300">
+                  <AlertCircle className="w-4 h-4 inline mr-1" />
+                  O CEP será aplicado aos <strong>{bairros.length}</strong> bairro(s) já cadastrado(s).
+                </p>
+              </div>
+            )}
+            
+            <div className="flex gap-2 pt-4">
+              <Button variant="outline" className="flex-1" onClick={() => setCepUnicoModalOpen(false)}>
+                Cancelar
+              </Button>
+              <Button className="flex-1" onClick={handleAtivarCepUnico} disabled={saving || !novoCepUnico.trim()}>
+                {saving ? "Ativando..." : "Ativar CEP Único"}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
       {/* Modal de Cadastro/Edição */}
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent className="sm:max-w-md">
@@ -352,7 +443,14 @@ export default function Bairros() {
               />
             </div>
             
-            {!cepUnico && (
+            {cepUnico ? (
+              <div className="bg-muted/50 rounded-lg p-3">
+                <p className="text-sm text-muted-foreground">
+                  <MapPin className="w-4 h-4 inline mr-1" />
+                  CEP único ativo: <strong>{cepUnicoValue}</strong>
+                </p>
+              </div>
+            ) : (
               <div>
                 <Label>CEP</Label>
                 <Input
