@@ -166,23 +166,9 @@ export default function Delivery() {
     }
   };
 
-  // Abrir modal do entregador
-  const handleAbrirEntregador = async (entregador) => {
-    setSelectedEntregador(entregador);
-    
-    try {
-      const res = await axios.get(`${API}/entregadores/${entregador.id}/pedidos`);
-      const pedidosEntregador = res.data;
-      
-      setEntregadorPedidos({
-        na_bag: pedidosEntregador.filter(p => p.status === 'na_bag'),
-        em_rota: pedidosEntregador.filter(p => p.status === 'em_rota')
-      });
-      
-      setEntregadorModalOpen(true);
-    } catch (error) {
-      toast.error("Erro ao carregar pedidos do entregador");
-    }
+  // Abrir página do entregador
+  const handleAbrirEntregador = (entregador) => {
+    navigate(`/admin/entregador/${entregador.id}`);
   };
 
   // Enviar para rota
