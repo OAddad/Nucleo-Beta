@@ -10,7 +10,7 @@ import time
 
 def test_order_steps_readonly():
     """Test Order Steps functionality by examining existing products (read-only)"""
-    base_url = "https://stockflow-update-1.preview.emergentagent.com"
+    base_url = "https://promo-dashboard-5.preview.emergentagent.com"
     
     print("🚀 Order Steps Feature Test (Read-Only Analysis)")
     print("=" * 60)
