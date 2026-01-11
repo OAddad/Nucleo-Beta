@@ -1,6 +1,4 @@
-import { useState } from "react";
-import { Megaphone, Plus, Calendar, MessageCircle, Users, Edit2, Trash2, Power, Clock, Send } from "lucide-react";
-import { Button } from "../components/ui/button";
+import { Megaphone, MessageCircle, Calendar, Users, Send } from "lucide-react";
 
 // Ícone do WhatsApp customizado
 const WhatsAppIcon = ({ className }) => (
@@ -10,27 +8,86 @@ const WhatsAppIcon = ({ className }) => (
 );
 
 export default function Campanhas() {
-  const [campanhas] = useState([
-    // Exemplo de campanhas (dados mockados para visualização)
-  ]);
-
   return (
     <div className="p-8">
       <div className="max-w-7xl">
-        {/* Header */}
-        <div className="flex justify-between items-start mb-8">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">Campanhas</h1>
-            <p className="text-muted-foreground mt-1">Configure campanhas de ofertas para o ChatBot do WhatsApp</p>
-          </div>
-          <Button className="gap-2">
-            <Plus className="w-4 h-4" />
-            Nova Campanha
-          </Button>
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold tracking-tight">Campanhas</h1>
+          <p className="text-muted-foreground mt-1">Configure campanhas de ofertas para o ChatBot do WhatsApp</p>
         </div>
 
-        {/* Informativo sobre a funcionalidade */}
-        <div className="bg-gradient-to-br from-green-500/5 to-green-500/10 rounded-2xl border border-green-500/20 p-6 mb-8">
+        <div className="bg-gradient-to-br from-purple-500/5 to-purple-500/10 rounded-2xl border border-purple-500/20 p-8">
+          <div className="flex items-start gap-6">
+            <div className="flex-shrink-0">
+              <div className="w-16 h-16 bg-purple-500/10 rounded-xl flex items-center justify-center">
+                <Megaphone className="w-8 h-8 text-purple-500" strokeWidth={1.5} />
+              </div>
+            </div>
+            <div className="flex-1">
+              <div className="inline-flex items-center gap-2 px-3 py-1 bg-amber-500/20 text-amber-700 dark:text-amber-400 rounded-full text-xs font-medium mb-3">
+                Em Desenvolvimento
+              </div>
+              <h2 className="text-xl font-bold mb-2">Em breve...</h2>
+              <p className="text-muted-foreground mb-4">
+                Esta funcionalidade está em desenvolvimento. Em breve você poderá configurar campanhas de ofertas do ChatBot.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Cards informativos sobre como funcionarão as campanhas */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-8">
+          <div className="bg-card rounded-xl border p-5">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="w-10 h-10 bg-blue-500/10 rounded-lg flex items-center justify-center">
+                <Calendar className="w-5 h-5 text-blue-500" strokeWidth={1.5} />
+              </div>
+              <span className="font-medium">Período</span>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              Configure data de início e fim da campanha. A oferta será exibida automaticamente neste período.
+            </p>
+          </div>
+
+          <div className="bg-card rounded-xl border p-5">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="w-10 h-10 bg-green-500/10 rounded-lg flex items-center justify-center">
+                <MessageCircle className="w-5 h-5 text-green-500" strokeWidth={1.5} />
+              </div>
+              <span className="font-medium">Mensagem</span>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              Escreva a mensagem que será enviada junto com a oferta. Use emojis e destaque os benefícios.
+            </p>
+          </div>
+
+          <div className="bg-card rounded-xl border p-5">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="w-10 h-10 bg-purple-500/10 rounded-lg flex items-center justify-center">
+                <Users className="w-5 h-5 text-purple-500" strokeWidth={1.5} />
+              </div>
+              <span className="font-medium">Público</span>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              Escolha para quem a campanha será exibida: todos os clientes, novos clientes ou clientes recorrentes.
+            </p>
+          </div>
+
+          <div className="bg-card rounded-xl border p-5">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="w-10 h-10 bg-amber-500/10 rounded-lg flex items-center justify-center">
+                <Send className="w-5 h-5 text-amber-500" strokeWidth={1.5} />
+              </div>
+              <span className="font-medium">Ativação</span>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              Ative a campanha e acompanhe os resultados em tempo real no Relatório de Ofertas.
+            </p>
+          </div>
+        </div>
+
+        {/* Informativo WhatsApp */}
+        <div className="mt-8 bg-card rounded-xl border p-6">
           <div className="flex items-start gap-4">
             <div className="flex-shrink-0">
               <div className="w-12 h-12 bg-green-500/10 rounded-xl flex items-center justify-center">
@@ -38,85 +95,10 @@ export default function Campanhas() {
               </div>
             </div>
             <div className="flex-1">
-              <h2 className="text-lg font-bold mb-2">Campanhas de Ofertas via ChatBot</h2>
-              <p className="text-muted-foreground text-sm">
-                Configure campanhas de ofertas que serão exibidas automaticamente no ChatBot do WhatsApp. 
-                Defina período, mensagem, produtos em promoção e regras de ativação.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Lista de Campanhas (vazia por enquanto) */}
-        {campanhas.length === 0 ? (
-          <div className="bg-card rounded-xl border p-12 text-center">
-            <div className="w-20 h-20 bg-muted rounded-full flex items-center justify-center mx-auto mb-6">
-              <Megaphone className="w-10 h-10 text-muted-foreground" strokeWidth={1.5} />
-            </div>
-            <h3 className="text-xl font-semibold mb-2">Nenhuma campanha criada</h3>
-            <p className="text-muted-foreground mb-6 max-w-md mx-auto">
-              Comece criando sua primeira campanha de ofertas para o ChatBot. As campanhas ajudam a aumentar suas vendas automaticamente.
-            </p>
-            <Button className="gap-2">
-              <Plus className="w-4 h-4" />
-              Criar Primeira Campanha
-            </Button>
-          </div>
-        ) : (
-          <div className="space-y-4">
-            {/* Lista de campanhas aqui */}
-          </div>
-        )}
-
-        {/* Cards informativos sobre como funcionam as campanhas */}
-        <div className="mt-8">
-          <h3 className="text-lg font-semibold mb-4">Como funcionam as campanhas?</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="bg-card rounded-xl border p-5">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-10 h-10 bg-blue-500/10 rounded-lg flex items-center justify-center">
-                  <Calendar className="w-5 h-5 text-blue-500" strokeWidth={1.5} />
-                </div>
-                <span className="font-medium">1. Defina o Período</span>
-              </div>
+              <h3 className="font-semibold mb-2">Integração com ChatBot do WhatsApp</h3>
               <p className="text-sm text-muted-foreground">
-                Configure data de início e fim da campanha. A oferta será exibida automaticamente neste período.
-              </p>
-            </div>
-
-            <div className="bg-card rounded-xl border p-5">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-10 h-10 bg-green-500/10 rounded-lg flex items-center justify-center">
-                  <MessageCircle className="w-5 h-5 text-green-500" strokeWidth={1.5} />
-                </div>
-                <span className="font-medium">2. Crie a Mensagem</span>
-              </div>
-              <p className="text-sm text-muted-foreground">
-                Escreva a mensagem que será enviada junto com a oferta. Use emojis e destaque os benefícios.
-              </p>
-            </div>
-
-            <div className="bg-card rounded-xl border p-5">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-10 h-10 bg-purple-500/10 rounded-lg flex items-center justify-center">
-                  <Users className="w-5 h-5 text-purple-500" strokeWidth={1.5} />
-                </div>
-                <span className="font-medium">3. Selecione o Público</span>
-              </div>
-              <p className="text-sm text-muted-foreground">
-                Escolha para quem a campanha será exibida: todos os clientes, novos clientes ou clientes recorrentes.
-              </p>
-            </div>
-
-            <div className="bg-card rounded-xl border p-5">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-10 h-10 bg-amber-500/10 rounded-lg flex items-center justify-center">
-                  <Send className="w-5 h-5 text-amber-500" strokeWidth={1.5} />
-                </div>
-                <span className="font-medium">4. Ative e Acompanhe</span>
-              </div>
-              <p className="text-sm text-muted-foreground">
-                Ative a campanha e acompanhe os resultados em tempo real no Relatório de Ofertas.
+                As campanhas criadas aqui serão exibidas automaticamente no ChatBot do WhatsApp. 
+                O usuário vai conseguir configurar as campanhas de ofertas para aumentar suas vendas de forma automática.
               </p>
             </div>
           </div>
