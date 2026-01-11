@@ -3458,6 +3458,43 @@ async def chatbot_reset_conversation(phone: str, current_user: User = Depends(ge
         return {"success": False, "error": str(e)}
 
 
+# ==================== ANALYTICS DE PALAVRAS ====================
+
+@api_router.get("/chatbot/analytics/words")
+async def get_word_analytics(
+    limit: int = 100, 
+    order_by: str = "count",
+    current_user: User = Depends(get_current_user)
+):
+    """Retorna analytics de palavras"""
+    words = await db_call(sqlite_db.get_word_analytics, limit, order_by)
+    return {"success": True, "words": words}
+
+@api_router.get("/chatbot/analytics/summary")
+async def get_analytics_summary(current_user: User = Depends(get_current_user)):
+    """Retorna resumo geral das analytics"""
+    summary = await db_call(sqlite_db.get_word_analytics_summary)
+    return {"success": True, "summary": summary}
+
+@api_router.get("/chatbot/analytics/messages")
+async def get_recent_messages(
+    limit: int = 50,
+    current_user: User = Depends(get_current_user)
+):
+    """Retorna mensagens recentes"""
+    messages = await db_call(sqlite_db.get_recent_messages, limit)
+    return {"success": True, "messages": messages}
+
+@api_router.delete("/chatbot/analytics/clear")
+async def clear_analytics(current_user: User = Depends(get_current_user)):
+    """Limpa todos os dados de analytics"""
+    if current_user.role != "proprietario":
+        raise HTTPException(status_code=403, detail="Apenas proprietário pode limpar analytics")
+    
+    count = await db_call(sqlite_db.clear_word_analytics)
+    return {"success": True, "message": f"Analytics limpos: {count} palavras removidas"}
+
+
 # ==================== CHATBOT FLOW EDITOR ====================
 
 class FlowNodeCreate(BaseModel):
