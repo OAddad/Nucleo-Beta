@@ -3145,38 +3145,27 @@ class CMVMasterAPITester:
         return all_tests_passed
 
 def main():
-    print("🚀 Starting Business Hours Multiple Periods Testing")
+    print("🚀 Starting Delivery and Entregadores Endpoints Testing")
     print("=" * 80)
     print("🎯 Testing EXACTLY as specified in review request:")
-    print("   1. GET /api/public/business-hours")
-    print("      - Verificar se todos os novos campos existem: has_second_period, opening_time_2, closing_time_2")
+    print("   1. GET /api/entregadores - deve retornar lista (possivelmente vazia)")
+    print("   2. POST /api/entregadores - criar um novo entregador com nome 'João Motoboy' e telefone '(11) 99999-9999' (requer autenticação Addad/Addad123)")
+    print("   3. GET /api/system/settings - verificar se retorna o novo campo delivery_auto_accept (boolean)")
+    print("   4. PUT /api/system/settings - alterar delivery_auto_accept para true (requer autenticação Addad/Addad123)")
+    print("   5. GET /api/pedidos - verificar se pedidos existentes retornam os novos campos entregador_id e entregador_nome")
+    print("   6. PATCH /api/pedidos/{pedido_id}/status?status=aguardando_aceite - testar novos status válidos: aguardando_aceite, producao, pronto, na_bag, em_rota, concluido")
+    print("   7. PATCH /api/pedidos/{pedido_id}/entregador?entregador_id={id} - designar entregador a um pedido (requer autenticação)")
+    print("   8. GET /api/entregadores/{id}/pedidos - listar pedidos do entregador")
     print("")
-    print("   2. PUT /api/business-hours (autenticado - Addad/Addad123)")
-    print("      - Atualizar Segunda-feira com dois períodos:")
-    print("        {")
-    print("          \"hours\": [")
-    print("            {")
-    print("              \"day_of_week\": 0,")
-    print("              \"is_open\": true,")
-    print("              \"opening_time\": \"10:00\",")
-    print("              \"closing_time\": \"15:00\",")
-    print("              \"has_second_period\": true,")
-    print("              \"opening_time_2\": \"18:00\",")
-    print("              \"closing_time_2\": \"23:59\"")
-    print("            }")
-    print("          ]")
-    print("        }")
-    print("")
-    print("   3. Verificar GET novamente para confirmar que has_second_period=true para segunda-feira")
-    print("")
-    print("   Backend URL: http://localhost:8001")
+    print("   Credenciais: Addad/Addad123")
+    print("   Base URL: http://localhost:8001")
     print("=" * 80)
     
     tester = CMVMasterAPITester()
     
-    # Run the business hours multiple periods tests as specified in review request
+    # Run the delivery and entregadores tests as specified in review request
     tests = [
-        ("Business Hours Multiple Periods", tester.test_business_hours_multiple_periods),
+        ("Delivery and Entregadores Endpoints", tester.test_delivery_and_entregadores_endpoints),
     ]
     
     failed_tests = []
@@ -3204,35 +3193,40 @@ def main():
     print(f"Success rate: {(tester.tests_passed/tester.tests_run)*100:.1f}%" if tester.tests_run > 0 else "No tests run")
     
     # Analyze results
-    print(f"\n🔍 BUSINESS HOURS MULTIPLE PERIODS ANALYSIS:")
+    print(f"\n🔍 DELIVERY AND ENTREGADORES ANALYSIS:")
     if not failed_tests:
-        print(f"✅ BUSINESS HOURS MULTIPLE PERIODS WORKING:")
-        print(f"   - GET /api/public/business-hours returns new fields: has_second_period, opening_time_2, closing_time_2")
-        print(f"   - PUT /api/business-hours supports multiple periods update")
-        print(f"   - Monday updated with two periods: 10:00-15:00 and 18:00-23:59")
-        print(f"   - has_second_period=true persists correctly")
-        print(f"   - All new multiple periods fields functional")
-        print(f"   - Business hours with multiple periods support is fully operational")
+        print(f"✅ DELIVERY AND ENTREGADORES WORKING:")
+        print(f"   - GET /api/entregadores returns list (possibly empty)")
+        print(f"   - POST /api/entregadores creates new entregador 'João Motoboy'")
+        print(f"   - GET /api/system/settings returns delivery_auto_accept field (boolean)")
+        print(f"   - PUT /api/system/settings updates delivery_auto_accept to true")
+        print(f"   - GET /api/pedidos returns entregador_id and entregador_nome fields")
+        print(f"   - PATCH /api/pedidos/{{id}}/status supports all new statuses")
+        print(f"   - PATCH /api/pedidos/{{id}}/entregador assigns entregador to pedido")
+        print(f"   - GET /api/entregadores/{{id}}/pedidos lists entregador's pedidos")
+        print(f"   - Delivery and entregadores system is fully operational")
     else:
         print(f"❌ FAILED TESTS:")
         for failed in failed_tests:
             print(f"   - {failed}")
     
-    # Additional notes about Business Hours Multiple Periods functionality
+    # Additional notes about Delivery and Entregadores functionality
     print(f"\n📝 IMPORTANT NOTES:")
-    print(f"   ℹ️ Business hours multiple periods endpoints tested as specified in review request")
+    print(f"   ℹ️ Delivery and entregadores endpoints tested as specified in review request")
     print(f"   ℹ️ Backend running on http://localhost:8001")
     print(f"   ℹ️ Authentication with Addad/Addad123 credentials")
-    print(f"   ℹ️ New fields: has_second_period (bool), opening_time_2 (str), closing_time_2 (str)")
-    print(f"   ℹ️ Multiple periods support allows restaurants to have split operating hours")
-    print(f"   ℹ️ Example: Open 10:00-15:00 (lunch) and 18:00-23:59 (dinner)")
+    print(f"   ℹ️ New delivery system supports:")
+    print(f"      - Entregadores (delivery drivers) management")
+    print(f"      - Pedidos (orders) with entregador assignment")
+    print(f"      - New order statuses: aguardando_aceite, producao, pronto, na_bag, em_rota, concluido")
+    print(f"      - System setting delivery_auto_accept for automatic order acceptance")
     
     if failed_tests:
         return 1
     else:
-        print("\n✅ ALL BUSINESS HOURS MULTIPLE PERIODS TESTS PASSED!")
-        print("🎉 Business hours multiple periods endpoints working correctly!")
-        print("💾 Multiple periods functionality is fully operational!")
+        print("\n✅ ALL DELIVERY AND ENTREGADORES TESTS PASSED!")
+        print("🎉 Delivery and entregadores endpoints working correctly!")
+        print("💾 Delivery system functionality is fully operational!")
         return 0
 
 if __name__ == "__main__":
