@@ -10707,3 +10707,11 @@
 2026-01-11T17:05:10.829604+00:00 | DB_CALL get_all_pedidos | P3 | 1.12ms | success
 2026-01-11T17:05:10.831325+00:00 | DB_CALL get_all_settings | P3 | 0.16ms | success
 2026-01-11T17:05:11.451387+00:00 | DB_CALL get_all_pedidos | P3 | 0.4ms | success
+2026-01-11T17:05:15.835169+00:00 | DB_CALL get_all_settings | P3 | 1.26ms | success
+2026-01-11T17:05:15.835833+00:00 | DB_CALL get_all_entregadores | P3 | 1.43ms | success
+2026-01-11T17:05:15.836118+00:00 | DB_CALL get_all_pedidos | P3 | 1.43ms | success
+2026-01-11T17:05:16.451922+00:00 | DB_CALL get_all_pedidos | P3 | 0.4ms | success
+2026-01-11T17:05:20.828547+00:00 | DB_CALL get_all_pedidos | P3 | 0.42ms | success
+2026-01-11T17:05:20.831160+00:00 | DB_CALL get_all_settings | P3 | 0.24ms | success
+2026-01-11T17:05:20.831527+00:00 | DB_CALL get_all_entregadores | P3 | 0.84ms | success
+2026-01-11T17:05:21.450230+00:00 | DB_CALL get_all_pedidos | P3 | 0.41ms | success
