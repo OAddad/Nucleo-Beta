@@ -643,13 +643,53 @@ async def check_login(data: LoginCheckRequest):
     # Limpar telefone (remover caracteres não numéricos)
     phone_clean = ''.join(filter(str.isdigit, identifier))
     
+    if len(phone_clean) < 8:
+        # Muito curto para ser telefone, não encontrado
+        return LoginCheckResponse(found=False, type="not_found", needs_password=False)
+    
     clientes = await db_call(sqlite_db.get_all_clientes)
     for cliente in clientes:
         cliente_phone = cliente.get("telefone", "")
         if cliente_phone:
             cliente_phone_clean = ''.join(filter(str.isdigit, cliente_phone))
-            if cliente_phone_clean == phone_clean or cliente_phone == identifier:
-                # Cliente encontrado
+            
+            # Verificar múltiplas variações:
+            # 1. Match exato
+            # 2. Telefone do cliente termina com o número digitado (sem DDD)
+            # 3. Número digitado sem 9º dígito
+            # 4. Número do cliente sem 9º dígito
+            
+            match = False
+            
+            # Match exato
+            if cliente_phone_clean == phone_clean:
+                match = True
+            
+            # Telefone digitado sem DDD (8 ou 9 dígitos) - comparar final
+            elif len(phone_clean) <= 9 and cliente_phone_clean.endswith(phone_clean):
+                match = True
+            
+            # Telefone digitado sem 9º dígito (10 dígitos com DDD)
+            elif len(phone_clean) == 10 and len(cliente_phone_clean) == 11:
+                # Adicionar 9 após DDD e comparar
+                phone_with_nine = phone_clean[:2] + '9' + phone_clean[2:]
+                if cliente_phone_clean == phone_with_nine:
+                    match = True
+            
+            # Telefone digitado sem DDD e sem 9º dígito (8 dígitos)
+            elif len(phone_clean) == 8 and len(cliente_phone_clean) == 11:
+                # Comparar os últimos 8 dígitos (sem DDD e sem 9)
+                cliente_last_8 = cliente_phone_clean[3:]  # Remove DDD (2 dígitos) + 9
+                if cliente_last_8 == phone_clean:
+                    match = True
+            
+            # Telefone digitado com 9 mas sem DDD (9 dígitos)
+            elif len(phone_clean) == 9 and len(cliente_phone_clean) == 11:
+                # Comparar os últimos 9 dígitos
+                if cliente_phone_clean.endswith(phone_clean):
+                    match = True
+            
+            if match:
                 has_password = bool(cliente.get("senha"))
                 return LoginCheckResponse(
                     found=True,
