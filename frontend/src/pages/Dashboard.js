@@ -179,6 +179,7 @@ export default function Dashboard({ setIsAuthenticated }) {
     children: [
       { path: "/clientes-fornecedores/clientes", label: "Clientes", icon: UserRound },
       { path: "/clientes-fornecedores/fornecedores", label: "Fornecedores", icon: Building2 },
+      { path: "/clientes-fornecedores/funcionarios", label: "Funcionários", icon: Briefcase },
     ]
   };
 
