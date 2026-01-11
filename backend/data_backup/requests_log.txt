@@ -13111,3 +13111,7 @@
 2026-01-11T17:51:17.043628+00:00 | DB_CALL get_all_pedidos | P3 | 0.56ms | success
 2026-01-11T17:51:21.868317+00:00 | DB_CALL get_all_pedidos | P3 | 0.58ms | success
 2026-01-11T17:51:22.043332+00:00 | DB_CALL get_all_pedidos | P3 | 0.56ms | success
+2026-01-11T17:51:26.861572+00:00 | DB_CALL get_all_pedidos | P3 | 0.59ms | success
+2026-01-11T17:51:27.035997+00:00 | DB_CALL get_all_pedidos | P3 | 0.55ms | success
+2026-01-11T17:51:31.858169+00:00 | DB_CALL get_all_pedidos | P3 | 0.56ms | success
+2026-01-11T17:51:32.112469+00:00 | DB_CALL get_all_pedidos | P3 | 0.61ms | success
