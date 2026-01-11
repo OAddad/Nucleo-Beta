@@ -16675,3 +16675,4 @@
 2026-01-11T19:52:36.958958+00:00 | DB_CALL count_products | P3 | 0.26ms | success
 2026-01-11T19:52:36.959173+00:00 | DB_CALL count_users | P3 | 0.13ms | success
 2026-01-11T19:52:55.061956+00:00 | DB_CALL get_all_bairros | P3 | 1.27ms | success
+2026-01-11T19:53:00.876086+00:00 | DB_CALL get_all_pedidos | P3 | 4.01ms | success
