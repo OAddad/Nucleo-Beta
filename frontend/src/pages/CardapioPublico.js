@@ -318,7 +318,7 @@ export default function CardapioPublico({ onAdminLogin }) {
                   <div key={item.id} className={`${t.bgCartItem} rounded-lg p-3`}>
                     <div className="flex gap-3">
                       <div className={`w-16 h-16 ${t.bgMuted} rounded-lg flex-shrink-0 overflow-hidden`}>
-                        {item.photo_url ? <img src={item.photo_url} alt={item.name} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center"><span className="text-2xl">🍽️</span></div>}
+                        {item.photo_url ? <img src={getImageUrl(item.photo_url)} alt={item.name} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center"><span className="text-2xl">🍽️</span></div>}
                       </div>
                       <div className="flex-1 min-w-0">
                         <h4 className={`font-medium ${t.text} text-sm truncate`}>{item.name}</h4>
