@@ -428,6 +428,13 @@ def init_database():
             cursor.execute("ALTER TABLE pedidos ADD COLUMN entregador_nome TEXT")
             print("[DATABASE] Colunas de entregador adicionadas em pedidos")
         
+        # Migração: Adicionar coluna motivo_cancelamento na tabela pedidos
+        try:
+            cursor.execute("SELECT motivo_cancelamento FROM pedidos LIMIT 1")
+        except sqlite3.OperationalError:
+            cursor.execute("ALTER TABLE pedidos ADD COLUMN motivo_cancelamento TEXT")
+            print("[DATABASE] Coluna motivo_cancelamento adicionada em pedidos")
+        
         conn.commit()
         
         # Criar admin se não existir nenhum usuário
