@@ -42,7 +42,8 @@ function OrderTrackingScreen({ pedido, onClose, darkMode }) {
     { id: 'enviado', label: 'Pedido Enviado', icon: Send, description: 'Seu pedido foi enviado para o restaurante' },
     { id: 'aceito', label: 'Pedido Aceito', icon: Check, description: 'O restaurante aceitou seu pedido' },
     { id: 'producao', label: 'Pedido em Produção', icon: ChefHat, description: 'Seu pedido está sendo preparado' },
-    { id: 'pronto', label: 'Pedido Pronto', icon: CheckCircle, description: 'Seu pedido está pronto para retirada!', showAddress: true },
+    { id: 'pronto', label: 'Pedido Pronto', icon: Store, description: 'Seu pedido está pronto para retirada!', showAddress: true },
+    { id: 'retirado', label: 'Pedido Retirado', icon: CheckCircle, description: 'Pedido retirado com sucesso!' },
   ];
   
   // Selecionar etapas baseado no tipo de entrega
