@@ -9296,3 +9296,11 @@
 2026-01-11T15:11:54.791291+00:00 | DB_CALL get_all_pedidos | P3 | 0.25ms | success
 2026-01-11T15:11:59.790529+00:00 | DB_CALL get_all_pedidos | P3 | 0.24ms | success
 2026-01-11T15:12:02.149721+00:00 | DB_CALL get_all_pedidos | P3 | 0.24ms | success
+2026-01-11T15:12:04.400677+00:00 | DB_CALL get_all_categories | P3 | 1.0ms | success
+2026-01-11T15:12:04.401388+00:00 | DB_CALL get_all_products | P3 | 1.22ms | success
+2026-01-11T15:12:04.402325+00:00 | DB_CALL get_all_business_hours | P3 | 0.18ms | success
+2026-01-11T15:12:09.543376+00:00 | DB_CALL get_user_by_username | P3 | 0.34ms | success
+2026-01-11T15:12:09.543664+00:00 | DB_CALL get_user_by_username | P3 | 0.16ms | success
+2026-01-11T15:12:09.543892+00:00 | DB_CALL get_all_clientes | P3 | 0.17ms | success
+2026-01-11T15:12:09.711854+00:00 | DB_CALL get_cliente_by_id | P3 | 0.33ms | success
+2026-01-11T15:12:10.195396+00:00 | DB_CALL get_client_addresses | P3 | 0.38ms | success

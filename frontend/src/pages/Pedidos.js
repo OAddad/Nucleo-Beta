@@ -275,6 +275,15 @@ export default function Pedidos() {
           <h1 className="text-3xl font-bold">Pedidos</h1>
           <p className="text-muted-foreground mt-1">Gerencie todos os pedidos realizados</p>
         </div>
+        <Button 
+          variant="outline" 
+          onClick={fetchPedidos}
+          disabled={loading}
+          className="gap-2"
+        >
+          <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+          Atualizar
+        </Button>
       </div>
 
       {/* Estatísticas */}
