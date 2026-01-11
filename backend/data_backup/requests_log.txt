@@ -9364,3 +9364,9 @@
 2026-01-11T15:14:46.777505+00:00 | DB_CALL get_all_pedidos | P3 | 0.37ms | success
 2026-01-11T15:14:51.796487+00:00 | DB_CALL get_all_pedidos | P3 | 0.35ms | success
 2026-01-11T15:14:56.781172+00:00 | DB_CALL get_all_pedidos | P3 | 0.33ms | success
+2026-01-11T15:15:01.786114+00:00 | DB_CALL get_all_pedidos | P3 | 0.3ms | success
+2026-01-11T15:15:04.273078+00:00 | DB_CALL init_database | P3 | 2.85ms | success
+2026-01-11T15:15:04.273623+00:00 | DB_CALL count_ingredients | P3 | 0.24ms | success
+2026-01-11T15:15:04.273811+00:00 | DB_CALL count_products | P3 | 0.13ms | success
+2026-01-11T15:15:04.273954+00:00 | DB_CALL count_users | P3 | 0.09ms | success
+2026-01-11T15:15:06.790899+00:00 | DB_CALL get_all_pedidos | P3 | 0.43ms | success
