@@ -15980,3 +15980,11 @@
 2026-01-11T19:17:42.343158+00:00 | DB_CALL get_bairro_by_nome | P3 | 0.19ms | success
 2026-01-11T19:17:42.345373+00:00 | DB_CALL create_bairro | P3 | 2.11ms | success
 2026-01-11T19:17:42.510166+00:00 | DB_CALL get_all_bairros | P3 | 0.27ms | success
+2026-01-11T19:18:05.114192+00:00 | DB_CALL init_database | P3 | 2.9ms | success
+2026-01-11T19:18:05.114749+00:00 | DB_CALL count_ingredients | P3 | 0.25ms | success
+2026-01-11T19:18:05.114927+00:00 | DB_CALL count_products | P3 | 0.12ms | success
+2026-01-11T19:18:05.115087+00:00 | DB_CALL count_users | P3 | 0.11ms | success
+2026-01-11T19:18:12.540008+00:00 | DB_CALL init_database | P3 | 2.84ms | success
+2026-01-11T19:18:12.540539+00:00 | DB_CALL count_ingredients | P3 | 0.25ms | success
+2026-01-11T19:18:12.540727+00:00 | DB_CALL count_products | P3 | 0.12ms | success
+2026-01-11T19:18:12.540869+00:00 | DB_CALL count_users | P3 | 0.09ms | success
