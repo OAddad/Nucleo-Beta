@@ -15615,3 +15615,6 @@
 2026-01-11T19:01:25.535330+00:00 | DB_CALL delete_bairro | P3 | 5.22ms | error | ERROR: no such column: endereco_bairro
 2026-01-11T19:01:25.558917+00:00 | DB_CALL get_user_by_id | P3 | 0.25ms | success
 2026-01-11T19:01:25.559251+00:00 | DB_CALL delete_bairro | P3 | 0.18ms | error | ERROR: no such column: endereco_bairro
+2026-01-11T19:01:28.939903+00:00 | DB_CALL get_all_pedidos | P3 | 0.69ms | success
+2026-01-11T19:01:28.942622+00:00 | DB_CALL get_all_entregadores | P3 | 0.77ms | success
+2026-01-11T19:01:28.943015+00:00 | DB_CALL get_all_settings | P3 | 0.58ms | success
