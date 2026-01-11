@@ -8791,3 +8791,5 @@
 2026-01-11T13:19:03.948360+00:00 | DB_CALL get_user_by_username | P3 | 0.22ms | success
 2026-01-11T13:19:03.948740+00:00 | DB_CALL get_all_clientes | P3 | 0.19ms | success
 2026-01-11T13:19:04.118207+00:00 | DB_CALL get_cliente_by_id | P3 | 0.92ms | success
+2026-01-11T13:21:07.200920+00:00 | DB_CALL get_user_by_username | P3 | 0.26ms | success
+2026-01-11T13:21:09.807606+00:00 | DB_CALL get_user_by_username | P3 | 0.29ms | success
