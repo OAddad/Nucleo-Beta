@@ -766,11 +766,11 @@ export default function Delivery() {
                   <button
                     key={entregador.id}
                     onClick={() => handleAbrirEntregador(entregador)}
-                    className="w-full bg-white dark:bg-gray-800 rounded-lg border p-3 shadow-sm hover:border-blue-400 hover:shadow-md transition-all text-left"
+                    className="w-full bg-background rounded-lg border p-3 shadow-sm hover:border-primary/50 hover:shadow-md transition-all text-left"
                   >
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-indigo-500 flex items-center justify-center">
-                        <Bike className="w-5 h-5 text-white" />
+                      <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center">
+                        <Bike className="w-5 h-5 text-muted-foreground" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="font-semibold text-sm truncate">{entregador.nome}</p>
@@ -779,7 +779,7 @@ export default function Delivery() {
                         )}
                       </div>
                       {bagCount > 0 && (
-                        <div className="flex items-center gap-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 px-2 py-1 rounded-full">
+                        <div className="flex items-center gap-1 bg-primary/10 text-primary px-2 py-1 rounded-full">
                           <ShoppingBag className="w-3 h-3" />
                           <span className="text-xs font-bold">{bagCount}</span>
                         </div>
