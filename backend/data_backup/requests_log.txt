@@ -8821,3 +8821,9 @@
 2026-01-11T13:39:21.954459+00:00 | DB_CALL count_users | P3 | 0.11ms | success
 2026-01-11T13:39:25.996816+00:00 | DB_CALL get_all_products | P3 | 0.49ms | success
 2026-01-11T13:42:01.981261+00:00 | DB_CALL get_all_products | P3 | 0.39ms | success
+2026-01-11T13:42:17.934639+00:00 | DB_CALL get_all_categories | P3 | 0.53ms | success
+2026-01-11T13:42:17.937546+00:00 | DB_CALL get_all_products | P3 | 3.55ms | success
+2026-01-11T13:42:18.043799+00:00 | DB_CALL get_all_products | P3 | 0.4ms | success
+2026-01-11T13:42:18.045105+00:00 | DB_CALL get_all_categories | P3 | 0.18ms | success
+2026-01-11T13:42:18.207658+00:00 | DB_CALL get_all_products | P3 | 0.42ms | success
+2026-01-11T13:42:18.208993+00:00 | DB_CALL get_all_categories | P3 | 0.18ms | success
