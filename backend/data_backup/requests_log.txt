@@ -17057,3 +17057,7 @@
 2026-01-11T21:20:23.881074+00:00 | DB_CALL get_all_entregadores | P3 | 3.78ms | success
 2026-01-11T21:20:23.881569+00:00 | DB_CALL get_all_settings | P3 | 2.46ms | success
 2026-01-11T21:20:23.934586+00:00 | DB_CALL get_all_pedidos | P3 | 0.74ms | success
+2026-01-11T21:20:59.066705+00:00 | DB_CALL get_user_by_id | P3 | 0.43ms | success
+2026-01-11T21:20:59.066980+00:00 | DB_CALL get_all_flow_nodes | P3 | 0.14ms | success
+2026-01-11T21:20:59.067129+00:00 | DB_CALL get_all_flow_edges | P3 | 0.1ms | success
+2026-01-11T21:21:01.740557+00:00 | DB_CALL get_user_by_id | P3 | 0.25ms | success
