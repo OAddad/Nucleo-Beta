@@ -67,9 +67,14 @@ export default function RelatorioEntregas() {
     
     // Calcular valor total das entregas (soma dos valores de entrega dos bairros)
     const valorTotal = entregas.reduce((acc, p) => {
-      // Usar o valor de entrega do pedido ou um valor padrão
-      const valorEntrega = p.valor_entrega || 5; // R$ 5 padrão se não tiver
-      return acc + valorEntrega;
+      // Usar o valor de entrega do pedido ou buscar do bairro
+      let valorEntrega = p.valor_entrega;
+      if (!valorEntrega && valorEntrega !== 0) {
+        // Buscar valor do bairro se não tiver no pedido
+        const bairro = bairros.find(b => b.nome === p.endereco_bairro);
+        valorEntrega = bairro?.valor_entrega || 0;
+      }
+      return acc + (valorEntrega || 0);
     }, 0);
 
     return {
