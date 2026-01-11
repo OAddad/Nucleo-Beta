@@ -17214,3 +17214,12 @@
 2026-01-11T21:36:28.464670+00:00 | DB_CALL delete_entregador | P3 | 5.0ms | success
 2026-01-11T21:36:29.015214+00:00 | DB_CALL search_ruas | P3 | 0.44ms | success
 2026-01-11T21:36:29.463746+00:00 | DB_CALL search_ruas | P3 | 0.36ms | success
+2026-01-11T21:36:29.785639+00:00 | DB_CALL search_ruas | P3 | 0.35ms | success
+2026-01-11T21:36:30.770505+00:00 | DB_CALL search_ruas | P3 | 0.37ms | success
+2026-01-11T21:36:31.447058+00:00 | DB_CALL search_ruas | P3 | 0.37ms | success
+2026-01-11T21:36:31.619255+00:00 | DB_CALL search_ruas | P3 | 0.37ms | success
+2026-01-11T21:36:32.768086+00:00 | DB_CALL search_ruas | P3 | 0.38ms | success
+2026-01-11T21:36:33.582928+00:00 | DB_CALL search_ruas | P3 | 0.35ms | success
+2026-01-11T21:36:33.753784+00:00 | DB_CALL search_ruas | P3 | 0.35ms | success
+2026-01-11T21:36:33.883975+00:00 | DB_CALL search_ruas | P3 | 0.35ms | success
+2026-01-11T21:36:34.014605+00:00 | DB_CALL search_ruas | P3 | 0.38ms | success
