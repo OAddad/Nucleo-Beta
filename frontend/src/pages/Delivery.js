@@ -556,9 +556,9 @@ export default function Delivery() {
       <div className="flex-1 flex gap-3 p-4 pt-0 overflow-hidden">
         
         {/* Coluna 1: AGUARDANDO ACEITE */}
-        <div className={`flex flex-col rounded-xl border-2 border-orange-300 overflow-hidden min-w-0 transition-all ${
+        <div className={`flex flex-col rounded-xl border-2 border-orange-400 bg-card overflow-hidden min-w-0 transition-all ${
           autoAccept ? 'flex-[0.3]' : 'flex-1'
-        }`} style={{ backgroundColor: 'rgba(255, 237, 213, 0.5)' }}>
+        }`}>
           <div className={`p-3 bg-gradient-to-r from-orange-400 to-orange-500 text-white ${autoAccept ? 'py-2' : ''}`}>
             <div className="flex items-center justify-between mb-2">
               <h3 className={`font-bold ${autoAccept ? 'text-xs' : 'text-sm'}`}>AGUARDANDO ACEITE</h3>
@@ -589,8 +589,8 @@ export default function Delivery() {
           
           <div className={`flex-1 overflow-auto p-2 space-y-2 ${autoAccept ? 'hidden' : ''}`}>
             {getPedidosByStatus('aguardando_aceite').length === 0 ? (
-              <div className="flex flex-col items-center justify-center h-full text-orange-400 text-sm">
-                <Clock className="w-8 h-8 mb-2 opacity-50" />
+              <div className="flex flex-col items-center justify-center h-full text-muted-foreground text-sm">
+                <Clock className="w-8 h-8 mb-2 opacity-30" />
                 <p>Nenhum pedido aguardando</p>
               </div>
             ) : (
