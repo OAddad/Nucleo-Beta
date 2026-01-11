@@ -199,6 +199,15 @@ export default function CardapioPublico({ onAdminLogin }) {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [darkMode, setDarkMode] = useState(true);
   const [loggedClient, setLoggedClient] = useState(null);
+  // Estado do popup de produto
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [productPopupOpen, setProductPopupOpen] = useState(false);
+
+  // Abrir popup do produto
+  const openProductPopup = (product) => {
+    setSelectedProduct(product);
+    setProductPopupOpen(true);
+  };
 
   useEffect(() => {
     const client = localStorage.getItem("client");
