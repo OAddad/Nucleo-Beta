@@ -576,6 +576,23 @@ function CheckoutModal({ open, onClose, cart, cartTotal, client, darkMode, onOrd
     }
   };
 
+  // Deletar endereço
+  const handleDeleteAddress = async (e, addressId) => {
+    e.stopPropagation(); // Evita selecionar o endereço ao clicar no delete
+    if (!confirm("Deseja remover este endereço?")) return;
+    
+    try {
+      await axios.delete(`${API}/client-addresses/${addressId}`);
+      setAddresses(prev => prev.filter(a => a.id !== addressId));
+      if (selectedAddress === addressId) {
+        setSelectedAddress(null);
+      }
+      toast.success("Endereço removido!");
+    } catch (error) {
+      toast.error("Erro ao remover endereço");
+    }
+  };
+
   const handleSelectDeliveryType = (type) => {
     setDeliveryType(type);
     if (type === 'pickup') {
