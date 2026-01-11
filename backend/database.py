@@ -1649,6 +1649,232 @@ def delete_client_address(address_id: str) -> bool:
         return cursor.rowcount > 0
 
 
+# ==================== PEDIDOS ====================
+def get_all_pedidos() -> List[Dict]:
+    """Retorna todos os pedidos ordenados por data (mais recente primeiro)"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM pedidos ORDER BY created_at DESC")
+        pedidos = []
+        for row in cursor.fetchall():
+            p = dict(row)
+            # Converter items de JSON string para lista
+            if p.get('items'):
+                try:
+                    p['items'] = json.loads(p['items'])
+                except:
+                    p['items'] = []
+            p['troco_precisa'] = bool(p.get('troco_precisa', 0))
+            pedidos.append(p)
+        return pedidos
+
+
+def get_pedido_by_id(pedido_id: str) -> Optional[Dict]:
+    """Retorna um pedido pelo ID"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM pedidos WHERE id = ?", (pedido_id,))
+        row = cursor.fetchone()
+        if row:
+            p = dict(row)
+            if p.get('items'):
+                try:
+                    p['items'] = json.loads(p['items'])
+                except:
+                    p['items'] = []
+            p['troco_precisa'] = bool(p.get('troco_precisa', 0))
+            return p
+        return None
+
+
+def get_pedido_by_codigo(codigo: str) -> Optional[Dict]:
+    """Retorna um pedido pelo código"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM pedidos WHERE codigo = ?", (codigo,))
+        row = cursor.fetchone()
+        if row:
+            p = dict(row)
+            if p.get('items'):
+                try:
+                    p['items'] = json.loads(p['items'])
+                except:
+                    p['items'] = []
+            p['troco_precisa'] = bool(p.get('troco_precisa', 0))
+            return p
+        return None
+
+
+def generate_pedido_codigo() -> str:
+    """Gera um código único de 5 dígitos para o pedido"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        
+        for _ in range(1000):  # Máximo de tentativas
+            num = random.randint(0, 99999)
+            codigo = f"#{num:05d}"
+            cursor.execute("SELECT id FROM pedidos WHERE codigo = ?", (codigo,))
+            if not cursor.fetchone():
+                return codigo
+        
+        # Fallback com timestamp
+        return f"#T{int(datetime.now().timestamp()) % 100000:05d}"
+
+
+def create_pedido(data: Dict) -> Dict:
+    """Cria um novo pedido"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        
+        pedido_id = str(uuid.uuid4())
+        codigo = data.get('codigo') or generate_pedido_codigo()
+        created_at = datetime.now(timezone.utc).isoformat()
+        
+        # Converter items para JSON string
+        items_json = json.dumps(data.get('items', []))
+        
+        cursor.execute('''
+            INSERT INTO pedidos (
+                id, codigo, cliente_id, cliente_nome, cliente_telefone, cliente_email,
+                items, total, status, forma_pagamento,
+                troco_precisa, troco_valor, tipo_entrega,
+                endereco_label, endereco_rua, endereco_numero, endereco_complemento, endereco_bairro, endereco_cep,
+                modulo, observacao, created_at, updated_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ''', (
+            pedido_id,
+            codigo,
+            data.get('cliente_id'),
+            data.get('cliente_nome'),
+            data.get('cliente_telefone'),
+            data.get('cliente_email'),
+            items_json,
+            data.get('total', 0),
+            data.get('status', 'producao'),
+            data.get('forma_pagamento'),
+            1 if data.get('troco_precisa') else 0,
+            data.get('troco_valor'),
+            data.get('tipo_entrega'),
+            data.get('endereco_label'),
+            data.get('endereco_rua'),
+            data.get('endereco_numero'),
+            data.get('endereco_complemento'),
+            data.get('endereco_bairro'),
+            data.get('endereco_cep'),
+            data.get('modulo', 'Cardapio'),
+            data.get('observacao'),
+            created_at,
+            created_at
+        ))
+        conn.commit()
+        
+        return get_pedido_by_id(pedido_id)
+
+
+def update_pedido(pedido_id: str, data: Dict) -> Optional[Dict]:
+    """Atualiza um pedido existente"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        
+        current = get_pedido_by_id(pedido_id)
+        if not current:
+            return None
+        
+        updated_at = datetime.now(timezone.utc).isoformat()
+        
+        # Campos que podem ser atualizados
+        status = data.get('status', current.get('status'))
+        observacao = data.get('observacao', current.get('observacao'))
+        
+        cursor.execute('''
+            UPDATE pedidos SET status = ?, observacao = ?, updated_at = ?
+            WHERE id = ?
+        ''', (status, observacao, updated_at, pedido_id))
+        conn.commit()
+        
+        return get_pedido_by_id(pedido_id)
+
+
+def update_pedido_status(pedido_id: str, status: str) -> Optional[Dict]:
+    """Atualiza o status de um pedido"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        
+        updated_at = datetime.now(timezone.utc).isoformat()
+        
+        cursor.execute('''
+            UPDATE pedidos SET status = ?, updated_at = ?
+            WHERE id = ?
+        ''', (status, updated_at, pedido_id))
+        conn.commit()
+        
+        return get_pedido_by_id(pedido_id)
+
+
+def delete_pedido(pedido_id: str) -> bool:
+    """Deleta um pedido"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM pedidos WHERE id = ?", (pedido_id,))
+        conn.commit()
+        return cursor.rowcount > 0
+
+
+def count_pedidos() -> int:
+    """Conta o total de pedidos"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT COUNT(*) FROM pedidos")
+        return cursor.fetchone()[0]
+
+
+def get_pedidos_by_cliente(cliente_id: str) -> List[Dict]:
+    """Retorna todos os pedidos de um cliente"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM pedidos WHERE cliente_id = ? ORDER BY created_at DESC", (cliente_id,))
+        pedidos = []
+        for row in cursor.fetchall():
+            p = dict(row)
+            if p.get('items'):
+                try:
+                    p['items'] = json.loads(p['items'])
+                except:
+                    p['items'] = []
+            p['troco_precisa'] = bool(p.get('troco_precisa', 0))
+            pedidos.append(p)
+        return pedidos
+
+
+def get_pedidos_by_status(status: str) -> List[Dict]:
+    """Retorna pedidos por status"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM pedidos WHERE status = ? ORDER BY created_at DESC", (status,))
+        pedidos = []
+        for row in cursor.fetchall():
+            p = dict(row)
+            if p.get('items'):
+                try:
+                    p['items'] = json.loads(p['items'])
+                except:
+                    p['items'] = []
+            p['troco_precisa'] = bool(p.get('troco_precisa', 0))
+            pedidos.append(p)
+        return pedidos
+
+
 # ==================== BUSINESS HOURS ====================
 def get_all_business_hours() -> List[Dict]:
     """Retorna todos os horários de funcionamento ordenados por dia da semana"""

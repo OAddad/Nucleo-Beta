@@ -9256,3 +9256,4 @@
 2026-01-11T15:08:15.845492+00:00 | DB_CALL count_ingredients | P3 | 0.27ms | success
 2026-01-11T15:08:15.845695+00:00 | DB_CALL count_products | P3 | 0.13ms | success
 2026-01-11T15:08:15.845840+00:00 | DB_CALL count_users | P3 | 0.1ms | success
+2026-01-11T15:08:44.212352+00:00 | DB_CALL get_client_addresses | P3 | 0.43ms | success
