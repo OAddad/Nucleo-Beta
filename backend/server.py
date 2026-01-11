@@ -2509,7 +2509,8 @@ async def create_pedido(data: PedidoCreate):
         'endereco_bairro': data.endereco_bairro,
         'endereco_cep': data.endereco_cep,
         'modulo': data.modulo or 'Cardapio',
-        'observacao': data.observacao
+        'observacao': data.observacao,
+        'valor_entrega': data.valor_entrega or 0
     }
     
     pedido = await db_call(sqlite_db.create_pedido, pedido_data)
