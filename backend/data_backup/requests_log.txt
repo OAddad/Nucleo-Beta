@@ -16219,3 +16219,9 @@
 2026-01-11T19:29:07.285352+00:00 | DB_CALL get_all_categories | P3 | 5.0ms | success
 2026-01-11T19:29:07.286091+00:00 | DB_CALL get_all_business_hours | P3 | 5.56ms | success
 2026-01-11T19:29:07.440151+00:00 | DB_CALL get_client_addresses | P3 | 3.76ms | success
+2026-01-11T19:29:20.240862+00:00 | DB_CALL get_client_addresses | P3 | 250.2ms | success
+2026-01-11T19:29:20.274969+00:00 | DB_CALL get_all_bairros | P3 | 283.95ms | success
+2026-01-11T19:29:20.277941+00:00 | DB_CALL get_all_products | P3 | 283.03ms | success
+2026-01-11T19:29:20.299300+00:00 | DB_CALL get_all_business_hours | P3 | 298.06ms | success
+2026-01-11T19:29:20.300081+00:00 | DB_CALL get_all_categories | P3 | 142.38ms | success
+2026-01-11T19:29:20.432000+00:00 | DB_CALL get_client_addresses | P3 | 0.49ms | success
