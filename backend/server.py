@@ -579,6 +579,95 @@ async def login(user_data: UserLogin):
     return Token(access_token=access_token, token_type="bearer", user=user)
 
 
+# Verificar se login/telefone existe e se precisa de senha
+class LoginCheckRequest(BaseModel):
+    identifier: str  # Pode ser username ou telefone
+
+class LoginCheckResponse(BaseModel):
+    found: bool
+    type: str  # "user", "client", "not_found"
+    needs_password: bool
+    name: Optional[str] = None
+    photo: Optional[str] = None
+    client_id: Optional[str] = None
+
+@api_router.post("/auth/check-login", response_model=LoginCheckResponse)
+async def check_login(data: LoginCheckRequest):
+    """Verifica se o identificador (username ou telefone) existe e se precisa de senha"""
+    identifier = data.identifier.strip()
+    
+    # Primeiro, verificar se é um usuário do sistema
+    user_doc = await db_call(sqlite_db.get_user_by_username, identifier)
+    if not user_doc:
+        user_doc = await db_call(sqlite_db.get_user_by_username, identifier.capitalize())
+    
+    if user_doc:
+        return LoginCheckResponse(
+            found=True,
+            type="user",
+            needs_password=True,
+            name=user_doc.get("username"),
+            photo=None
+        )
+    
+    # Se não é usuário, verificar se é telefone de cliente
+    # Limpar telefone (remover caracteres não numéricos)
+    phone_clean = ''.join(filter(str.isdigit, identifier))
+    
+    clientes = await db_call(sqlite_db.get_all_clientes)
+    for cliente in clientes:
+        cliente_phone = cliente.get("telefone", "")
+        if cliente_phone:
+            cliente_phone_clean = ''.join(filter(str.isdigit, cliente_phone))
+            if cliente_phone_clean == phone_clean or cliente_phone == identifier:
+                # Cliente encontrado
+                has_password = bool(cliente.get("senha"))
+                return LoginCheckResponse(
+                    found=True,
+                    type="client",
+                    needs_password=has_password,
+                    name=cliente.get("nome"),
+                    photo=cliente.get("foto"),
+                    client_id=cliente.get("id")
+                )
+    
+    # Não encontrado
+    return LoginCheckResponse(
+        found=False,
+        type="not_found",
+        needs_password=False
+    )
+
+
+# Login de cliente (com ou sem senha)
+class ClientLoginRequest(BaseModel):
+    client_id: str
+    senha: Optional[str] = None
+
+class ClientLoginResponse(BaseModel):
+    success: bool
+    client: Optional[dict] = None
+    message: Optional[str] = None
+
+@api_router.post("/auth/client-login", response_model=ClientLoginResponse)
+async def client_login(data: ClientLoginRequest):
+    """Login de cliente - verifica senha se necessário"""
+    cliente = await db_call(sqlite_db.get_cliente_by_id, data.client_id)
+    
+    if not cliente:
+        return ClientLoginResponse(success=False, message="Cliente não encontrado")
+    
+    # Se cliente tem senha cadastrada, verificar
+    if cliente.get("senha"):
+        if not data.senha or data.senha != cliente.get("senha"):
+            return ClientLoginResponse(success=False, message="Senha incorreta")
+    
+    # Login bem-sucedido
+    # Remover senha do retorno
+    cliente_safe = {k: v for k, v in cliente.items() if k != "senha"}
+    return ClientLoginResponse(success=True, client=cliente_safe)
+
+
 # User Management endpoints
 @api_router.get("/users/management", response_model=List[UserWithPassword])
 async def get_users_management(current_user: User = Depends(get_current_user)):
