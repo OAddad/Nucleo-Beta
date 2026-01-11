@@ -9192,3 +9192,11 @@
 2026-01-11T14:54:52.783115+00:00 | DB_CALL get_all_business_hours | P3 | 0.32ms | success
 2026-01-11T14:54:52.783816+00:00 | DB_CALL get_all_categories | P3 | 1.38ms | success
 2026-01-11T14:54:52.784128+00:00 | DB_CALL get_all_products | P3 | 1.81ms | success
+2026-01-11T14:55:07.956386+00:00 | DB_CALL get_all_categories | P3 | 0.44ms | success
+2026-01-11T14:55:07.957638+00:00 | DB_CALL get_all_products | P3 | 0.29ms | success
+2026-01-11T14:55:07.958875+00:00 | DB_CALL get_all_business_hours | P3 | 0.25ms | success
+2026-01-11T14:55:08.783034+00:00 | DB_CALL get_client_addresses | P3 | 0.56ms | success
+2026-01-11T14:55:08.783888+00:00 | DB_CALL get_all_products | P3 | 0.27ms | success
+2026-01-11T14:55:08.786191+00:00 | DB_CALL get_all_business_hours | P3 | 0.2ms | success
+2026-01-11T14:55:08.787192+00:00 | DB_CALL get_all_categories | P3 | 0.15ms | success
+2026-01-11T14:55:08.943128+00:00 | DB_CALL get_client_addresses | P3 | 0.28ms | success
