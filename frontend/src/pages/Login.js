@@ -41,6 +41,15 @@ export default function Login({ setIsAuthenticated }) {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
+      {/* Botão Voltar ao Cardápio */}
+      <button
+        onClick={() => navigate("/cardapio")}
+        className="absolute top-4 left-4 flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
+      >
+        <ArrowLeft className="w-5 h-5" />
+        <span>Voltar ao Cardápio</span>
+      </button>
+
       <div className="w-full max-w-md">
         {/* Logo e Título no Topo */}
         <div className="text-center mb-8">
