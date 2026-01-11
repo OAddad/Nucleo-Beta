@@ -10814,3 +10814,5 @@
 2026-01-11T17:09:15.067509+00:00 | DB_CALL get_all_pedidos | P3 | 0.43ms | success
 2026-01-11T17:09:20.062342+00:00 | DB_CALL get_all_pedidos | P3 | 0.41ms | success
 2026-01-11T17:09:25.047973+00:00 | DB_CALL get_all_pedidos | P3 | 0.43ms | success
+2026-01-11T17:09:30.046358+00:00 | DB_CALL get_all_pedidos | P3 | 0.42ms | success
+2026-01-11T17:09:32.399747+00:00 | DB_CALL create_pedido | P3 | 4.24ms | success
