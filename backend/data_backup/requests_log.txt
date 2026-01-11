@@ -10221,3 +10221,6 @@
 2026-01-11T16:35:32.820681+00:00 | DB_CALL get_all_pedidos | P3 | 0.42ms | success
 2026-01-11T16:35:32.823597+00:00 | DB_CALL get_all_settings | P3 | 0.16ms | success
 2026-01-11T16:35:32.825620+00:00 | DB_CALL get_all_entregadores | P3 | 0.71ms | success
+2026-01-11T16:35:37.823657+00:00 | DB_CALL get_all_settings | P3 | 0.34ms | success
+2026-01-11T16:35:37.825167+00:00 | DB_CALL get_all_entregadores | P3 | 0.2ms | success
+2026-01-11T16:35:37.825979+00:00 | DB_CALL get_all_pedidos | P3 | 1.44ms | success
