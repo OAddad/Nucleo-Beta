@@ -28,6 +28,7 @@ import ExtratoFinanceiro from "./ExtratoFinanceiro";
 import RelatorioOfertas from "./RelatorioOfertas";
 import RelatorioEntregas from "./RelatorioEntregas";
 import Promocoes from "./Promocoes";
+import Sistema from "./Sistema";
 import CuponsDesconto from "./CuponsDesconto";
 import Campanhas from "./Campanhas";
 import CardapioPublico from "./CardapioPublico";
