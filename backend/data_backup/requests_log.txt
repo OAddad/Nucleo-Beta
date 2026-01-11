@@ -12265,3 +12265,12 @@
 2026-01-11T17:41:03.877341+00:00 | DB_CALL get_all_pedidos | P3 | 3.81ms | success
 2026-01-11T17:41:03.880902+00:00 | DB_CALL get_all_settings | P3 | 0.63ms | success
 2026-01-11T17:41:03.881718+00:00 | DB_CALL get_all_entregadores | P3 | 0.86ms | success
+2026-01-11T17:41:07.861224+00:00 | DB_CALL get_all_pedidos | P3 | 2.38ms | success
+2026-01-11T17:41:09.854394+00:00 | DB_CALL get_all_pedidos | P3 | 0.83ms | success
+2026-01-11T17:41:09.856166+00:00 | DB_CALL get_all_entregadores | P3 | 3.18ms | success
+2026-01-11T17:41:09.856694+00:00 | DB_CALL get_all_settings | P3 | 1.0ms | success
+2026-01-11T17:41:12.863603+00:00 | DB_CALL get_all_pedidos | P3 | 0.69ms | success
+2026-01-11T17:41:14.851889+00:00 | DB_CALL get_all_pedidos | P3 | 0.56ms | success
+2026-01-11T17:41:14.858215+00:00 | DB_CALL get_all_settings | P3 | 1.48ms | success
+2026-01-11T17:41:14.858682+00:00 | DB_CALL get_all_entregadores | P3 | 1.82ms | success
+2026-01-11T17:41:17.865972+00:00 | DB_CALL get_all_pedidos | P3 | 0.53ms | success

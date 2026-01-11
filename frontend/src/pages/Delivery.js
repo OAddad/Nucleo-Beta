@@ -677,14 +677,14 @@ export default function Delivery() {
                   <Button 
                     size="sm" 
                     variant="outline"
-                    className="flex-1 h-7 text-xs bg-white/20 border-white/30 text-white hover:bg-white/30"
+                    className="flex-1 h-7 text-xs"
                     onClick={toggleSelecionarTodos}
                   >
                     {pedidosSelecionados.length === getPedidosByStatus('pronto').filter(p => !isRetirada(p)).length ? 'Desmarcar' : 'Marcar'} Todos
                   </Button>
                   <Button 
                     size="sm" 
-                    className="flex-1 h-7 text-xs bg-blue-600 hover:bg-blue-700"
+                    className="flex-1 h-7 text-xs"
                     onClick={handleEnviarPedidosEmLote}
                     disabled={!entregadorProntoSelecionado || pedidosSelecionados.length === 0}
                   >
