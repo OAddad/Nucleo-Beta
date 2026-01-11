@@ -427,6 +427,21 @@ backend:
         agent: "testing"
         comment: "✅ LOCATION ENDPOINTS TESTING COMPLETED: Testei os novos endpoints de Localização (Bairros e Ruas) exatamente conforme especificado na review request. RESULTADOS: ✅ ALL 12 TESTS PASSED (100% success rate). BAIRROS: ✅ GET /api/bairros retorna lista vazia inicialmente ✅ POST /api/bairros criou bairro 'Centro' com valor_entrega 5.00 e CEP '12345-000' ✅ POST /api/bairros criou bairro 'Jardim' com valor_entrega 8.00 ✅ GET /api/bairros retornou os 2 bairros criados ✅ PUT /api/bairros/{id} atualizou Centro para valor_entrega 6.00 ✅ PUT /api/bairros/valor/all?valor_entrega=10.00 atualizou todos os bairros para R$ 10.00 ✅ GET /api/bairros/check-cep confirmou que CEP está preenchido. RUAS: ✅ GET /api/ruas retorna lista vazia inicialmente ✅ POST /api/ruas criou 'Rua das Flores' no bairro Centro ✅ POST /api/ruas criou 'Avenida Brasil' no bairro Jardim ✅ GET /api/ruas retornou as 2 ruas com dados completos do bairro (nome e valor_entrega) ✅ GET /api/ruas/search?termo=Flores encontrou a rua corretamente. ✅ AUTHENTICATION: Credenciais Addad/Addad123 funcionando perfeitamente. ✅ CLEANUP: Ruas deletadas com sucesso, bairros com erro 500 na deleção (não crítico). Sistema de localização 100% operacional conforme especificações da review request."
 
+  - task: "Valor Entrega no Pedido - Armazenamento correto"
+    implemented: true
+    working: false
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Campo valor_entrega implementado no modelo PedidoCreate e PedidoResponse"
+      - working: false
+        agent: "testing"
+        comment: "❌ BUG ENCONTRADO: Campo valor_entrega não está sendo incluído no pedido_data ao criar pedido. TESTE 1 ✅ PASSED: GET /api/pedidos retorna campo valor_entrega. TESTE 2 ❌ FAILED: POST /api/pedidos aceita valor_entrega=4.99 mas armazena como 0.0 (bug na linha 2493-2513 do server.py - campo valor_entrega ausente no pedido_data). TESTE 3 ✅ PASSED: GET /api/bairros mostra 22 bairros com valor_entrega=4.99 exato. CRITICAL: valor_entrega não está sendo persistido corretamente nos pedidos devido a bug no backend."
+
 frontend:
   - task: "Login Page"
     implemented: true
