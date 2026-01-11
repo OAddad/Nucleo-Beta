@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { User, Star, Settings, ShoppingBag, LogOut, Moon, Sun, X, Loader2, ImageOff, Award, Phone, Mail, MapPin, Calendar } from "lucide-react";
+import { User, Star, Settings, ShoppingBag, LogOut, Moon, Sun, X, Loader2, ImageOff, Award, Phone, Mail, MapPin, Calendar, Plus, Trash2, Home, Building, Edit2 } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
