@@ -17096,3 +17096,9 @@
 2026-01-11T21:30:38.374626+00:00 | DB_CALL count_ingredients | P3 | 0.24ms | success
 2026-01-11T21:30:38.374818+00:00 | DB_CALL count_products | P3 | 0.13ms | success
 2026-01-11T21:30:38.374968+00:00 | DB_CALL count_users | P3 | 0.1ms | success
+2026-01-11T21:31:07.004876+00:00 | DB_CALL init_database | P3 | 2.74ms | success
+2026-01-11T21:31:07.005540+00:00 | DB_CALL count_ingredients | P3 | 0.24ms | success
+2026-01-11T21:31:07.005730+00:00 | DB_CALL count_products | P3 | 0.12ms | success
+2026-01-11T21:31:07.005879+00:00 | DB_CALL count_users | P3 | 0.1ms | success
+2026-01-11T21:31:10.663928+00:00 | DB_CALL get_user_by_id | P3 | 0.33ms | success
+2026-01-11T21:31:10.664320+00:00 | DB_CALL get_all_business_hours | P3 | 0.22ms | success
