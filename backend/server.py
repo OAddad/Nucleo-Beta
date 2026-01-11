@@ -2212,6 +2212,85 @@ async def get_total_pontuacao(current_user: User = Depends(get_current_user)):
     return {"total_pontuacao": total, "total_clientes": count}
 
 
+# ========== CLIENT ADDRESSES ENDPOINTS ==========
+class ClientAddressCreate(BaseModel):
+    client_id: str
+    label: Optional[str] = "Casa"
+    endereco: str
+    numero: Optional[str] = None
+    complemento: Optional[str] = None
+    bairro: Optional[str] = None
+    cidade: Optional[str] = "São Paulo"
+    estado: Optional[str] = "SP"
+    cep: Optional[str] = None
+    is_default: Optional[bool] = False
+
+
+class ClientAddressUpdate(BaseModel):
+    label: Optional[str] = None
+    endereco: Optional[str] = None
+    numero: Optional[str] = None
+    complemento: Optional[str] = None
+    bairro: Optional[str] = None
+    cidade: Optional[str] = None
+    estado: Optional[str] = None
+    cep: Optional[str] = None
+    is_default: Optional[bool] = None
+
+
+class ClientAddress(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str
+    client_id: str
+    label: str = "Casa"
+    endereco: str
+    numero: Optional[str] = None
+    complemento: Optional[str] = None
+    bairro: Optional[str] = None
+    cidade: str = "São Paulo"
+    estado: str = "SP"
+    cep: Optional[str] = None
+    is_default: bool = False
+    created_at: Optional[str] = None
+
+
+@api_router.get("/client-addresses/{client_id}", response_model=List[ClientAddress])
+async def get_client_addresses(client_id: str):
+    """Retorna todos os endereços de um cliente (público)"""
+    addresses = await db_call(sqlite_db.get_client_addresses, client_id)
+    for addr in addresses:
+        addr['is_default'] = bool(addr.get('is_default', 0))
+    return addresses
+
+
+@api_router.post("/client-addresses", response_model=ClientAddress)
+async def create_client_address(data: ClientAddressCreate):
+    """Cria um novo endereço para o cliente (público)"""
+    address = await db_call(sqlite_db.create_client_address, data.model_dump())
+    if address:
+        address['is_default'] = bool(address.get('is_default', 0))
+    return address
+
+
+@api_router.put("/client-addresses/{address_id}", response_model=ClientAddress)
+async def update_client_address(address_id: str, data: ClientAddressUpdate):
+    """Atualiza um endereço existente (público)"""
+    address = await db_call(sqlite_db.update_client_address, address_id, data.model_dump(exclude_none=True))
+    if not address:
+        raise HTTPException(status_code=404, detail="Endereço não encontrado")
+    address['is_default'] = bool(address.get('is_default', 0))
+    return address
+
+
+@api_router.delete("/client-addresses/{address_id}")
+async def delete_client_address(address_id: str):
+    """Deleta um endereço (público)"""
+    deleted = await db_call(sqlite_db.delete_client_address, address_id)
+    if not deleted:
+        raise HTTPException(status_code=404, detail="Endereço não encontrado")
+    return {"message": "Endereço deletado com sucesso"}
+
+
 # Reports endpoints
 @api_router.get("/reports/price-history/{ingredient_id}", response_model=IngredientWithHistory)
 async def get_price_history(ingredient_id: str, current_user: User = Depends(get_current_user)):
