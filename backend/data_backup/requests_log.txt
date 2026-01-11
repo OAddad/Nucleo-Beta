@@ -16444,3 +16444,5 @@
 2026-01-11T19:37:41.295397+00:00 | DB_CALL get_all_clientes | P3 | 0.74ms | success
 2026-01-11T19:37:41.741850+00:00 | DB_CALL get_cliente_by_id | P3 | 0.47ms | success
 2026-01-11T19:37:42.904445+00:00 | DB_CALL get_client_addresses | P3 | 0.33ms | success
+2026-01-11T19:37:53.239261+00:00 | DB_CALL delete_client_address | P3 | 6.78ms | success
+2026-01-11T19:37:57.736518+00:00 | DB_CALL search_ruas | P3 | 1.51ms | success
