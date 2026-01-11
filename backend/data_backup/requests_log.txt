@@ -17241,3 +17241,12 @@
 2026-01-11T21:36:44.048025+00:00 | DB_CALL get_all_settings | P3 | 0.16ms | success
 2026-01-11T21:36:44.059737+00:00 | DB_CALL search_ruas | P3 | 0.31ms | success
 2026-01-11T21:36:44.263470+00:00 | DB_CALL search_ruas | P3 | 0.34ms | success
+2026-01-11T21:36:44.915597+00:00 | DB_CALL search_ruas | P3 | 0.37ms | success
+2026-01-11T21:36:45.415511+00:00 | DB_CALL search_ruas | P3 | 0.37ms | success
+2026-01-11T21:36:46.025690+00:00 | DB_CALL search_ruas | P3 | 0.39ms | success
+2026-01-11T21:36:46.991239+00:00 | DB_CALL search_ruas | P3 | 0.37ms | success
+2026-01-11T21:36:47.790326+00:00 | DB_CALL search_ruas | P3 | 0.4ms | success
+2026-01-11T21:36:47.982839+00:00 | DB_CALL search_ruas | P3 | 0.35ms | success
+2026-01-11T21:36:48.611805+00:00 | DB_CALL search_ruas | P3 | 0.36ms | success
+2026-01-11T21:36:49.390988+00:00 | DB_CALL search_ruas | P3 | 0.37ms | success
+2026-01-11T21:36:49.569875+00:00 | DB_CALL search_ruas | P3 | 0.35ms | success
