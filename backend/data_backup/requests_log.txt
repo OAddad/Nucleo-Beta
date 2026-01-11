@@ -15183,3 +15183,6 @@
 2026-01-11T18:51:19.900143+00:00 | DB_CALL get_all_pedidos | P3 | 8.49ms | success
 2026-01-11T18:51:19.903443+00:00 | DB_CALL get_all_settings | P3 | 11.43ms | success
 2026-01-11T18:51:19.904338+00:00 | DB_CALL get_all_entregadores | P3 | 12.55ms | success
+2026-01-11T18:51:24.884731+00:00 | DB_CALL get_all_settings | P3 | 0.3ms | success
+2026-01-11T18:51:24.886744+00:00 | DB_CALL get_all_pedidos | P3 | 2.79ms | success
+2026-01-11T18:51:24.887903+00:00 | DB_CALL get_all_entregadores | P3 | 2.09ms | success
