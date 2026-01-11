@@ -8927,3 +8927,7 @@
 2026-01-11T13:55:33.846601+00:00 | DB_CALL get_all_categories | P3 | 0.21ms | success
 2026-01-11T13:55:34.755921+00:00 | DB_CALL get_all_products | P3 | 0.51ms | success
 2026-01-11T13:55:34.757648+00:00 | DB_CALL get_all_categories | P3 | 2.34ms | success
+2026-01-11T13:55:58.096995+00:00 | DB_CALL get_all_products | P3 | 0.78ms | success
+2026-01-11T13:55:58.097638+00:00 | DB_CALL get_all_categories | P3 | 1.34ms | success
+2026-01-11T13:55:58.763452+00:00 | DB_CALL get_all_categories | P3 | 0.29ms | success
+2026-01-11T13:55:58.765108+00:00 | DB_CALL get_all_products | P3 | 0.26ms | success
