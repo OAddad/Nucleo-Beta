@@ -15660,3 +15660,9 @@
 2026-01-11T19:02:38.942393+00:00 | DB_CALL get_all_pedidos | P3 | 0.7ms | success
 2026-01-11T19:02:38.945053+00:00 | DB_CALL get_all_entregadores | P3 | 0.21ms | success
 2026-01-11T19:02:38.947203+00:00 | DB_CALL get_all_settings | P3 | 0.18ms | success
+2026-01-11T19:02:43.941375+00:00 | DB_CALL get_all_entregadores | P3 | 0.44ms | success
+2026-01-11T19:02:43.942406+00:00 | DB_CALL get_all_settings | P3 | 0.15ms | success
+2026-01-11T19:02:43.944235+00:00 | DB_CALL get_all_pedidos | P3 | 0.61ms | success
+2026-01-11T19:02:48.940923+00:00 | DB_CALL get_all_entregadores | P3 | 0.45ms | success
+2026-01-11T19:02:48.942542+00:00 | DB_CALL get_all_pedidos | P3 | 0.65ms | success
+2026-01-11T19:02:48.946328+00:00 | DB_CALL get_all_settings | P3 | 0.23ms | success
