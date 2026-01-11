@@ -16670,3 +16670,7 @@
 2026-01-11T19:47:46.975930+00:00 | DB_CALL get_all_pedidos | P3 | 2.06ms | success
 2026-01-11T19:47:46.977340+00:00 | DB_CALL get_all_entregadores | P3 | 2.88ms | success
 2026-01-11T19:47:46.977661+00:00 | DB_CALL get_all_settings | P3 | 2.7ms | success
+2026-01-11T19:52:36.955459+00:00 | DB_CALL init_database | P3 | 6.45ms | success
+2026-01-11T19:52:36.958568+00:00 | DB_CALL count_ingredients | P3 | 2.52ms | success
+2026-01-11T19:52:36.958958+00:00 | DB_CALL count_products | P3 | 0.26ms | success
+2026-01-11T19:52:36.959173+00:00 | DB_CALL count_users | P3 | 0.13ms | success
