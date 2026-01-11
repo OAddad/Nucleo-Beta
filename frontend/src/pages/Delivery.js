@@ -617,8 +617,7 @@ export default function Delivery() {
         </div>
 
         {/* Coluna 2: EM PRODUÇÃO */}
-        <div className="flex-1 flex flex-col rounded-xl border-2 border-yellow-300 overflow-hidden min-w-0" 
-             style={{ backgroundColor: 'rgba(254, 249, 195, 0.5)' }}>
+        <div className="flex-1 flex flex-col rounded-xl border-2 border-yellow-400 bg-card overflow-hidden min-w-0">
           <div className="p-3 bg-gradient-to-r from-yellow-400 to-amber-500 text-white">
             <div className="flex items-center justify-between">
               <h3 className="font-bold text-sm">EM PRODUÇÃO</h3>
@@ -630,8 +629,8 @@ export default function Delivery() {
           
           <div className="flex-1 overflow-auto p-2 space-y-2">
             {getPedidosByStatus('producao').length === 0 ? (
-              <div className="flex flex-col items-center justify-center h-full text-yellow-500 text-sm">
-                <ChefHat className="w-8 h-8 mb-2 opacity-50" />
+              <div className="flex flex-col items-center justify-center h-full text-muted-foreground text-sm">
+                <ChefHat className="w-8 h-8 mb-2 opacity-30" />
                 <p>Nenhum pedido em produção</p>
               </div>
             ) : (
@@ -649,8 +648,7 @@ export default function Delivery() {
         </div>
 
         {/* Coluna 3: PRONTO */}
-        <div className="flex-1 flex flex-col rounded-xl border-2 border-green-300 overflow-hidden min-w-0"
-             style={{ backgroundColor: 'rgba(220, 252, 231, 0.5)' }}>
+        <div className="flex-1 flex flex-col rounded-xl border-2 border-green-400 bg-card overflow-hidden min-w-0">
           <div className="p-3 bg-gradient-to-r from-green-400 to-emerald-500 text-white space-y-2">
             <div className="flex items-center justify-between">
               <h3 className="font-bold text-sm">PRONTO</h3>
