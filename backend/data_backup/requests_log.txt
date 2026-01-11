@@ -9740,3 +9740,9 @@
 2026-01-11T15:48:44.800019+00:00 | DB_CALL get_all_business_hours | P3 | 0.31ms | success
 2026-01-11T15:48:44.801321+00:00 | DB_CALL get_all_categories | P3 | 0.23ms | success
 2026-01-11T15:48:44.801857+00:00 | DB_CALL get_all_products | P3 | 0.85ms | success
+2026-01-11T15:49:01.962010+00:00 | DB_CALL get_all_products | P3 | 0.43ms | success
+2026-01-11T15:49:01.964611+00:00 | DB_CALL get_all_business_hours | P3 | 0.68ms | success
+2026-01-11T15:49:01.965067+00:00 | DB_CALL get_all_categories | P3 | 0.79ms | success
+2026-01-11T15:49:02.806452+00:00 | DB_CALL get_all_products | P3 | 0.41ms | success
+2026-01-11T15:49:02.807207+00:00 | DB_CALL get_all_categories | P3 | 1.55ms | success
+2026-01-11T15:49:02.814151+00:00 | DB_CALL get_all_business_hours | P3 | 0.25ms | success

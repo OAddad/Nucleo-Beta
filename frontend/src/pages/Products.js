@@ -2066,8 +2066,8 @@ export default function Products() {
                     className="flex items-center px-6 py-4 cursor-pointer hover:bg-muted/30 transition-colors"
                     onClick={() => toggleProduct(product.id)}
                   >
-                    {/* Foto do produto ou placeholder */}
-                    <div className="w-16 h-16 rounded-lg border overflow-hidden bg-muted mr-4 flex-shrink-0 flex items-center justify-center">
+                    {/* Foto do produto ou placeholder - sem fundo para suportar PNGs transparentes */}
+                    <div className="w-16 h-16 rounded-lg border overflow-hidden mr-4 flex-shrink-0 flex items-center justify-center">
                       <ProductThumbnail photoUrl={product.photo_url} name={product.name} />
                     </div>
                     
