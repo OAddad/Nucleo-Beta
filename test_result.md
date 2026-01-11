@@ -508,6 +508,21 @@ backend:
         agent: "testing"
         comment: "✅ CHATBOT SIMULADOR SPECIFIC TESTING COMPLETED (Jan 11, 2026): Testei especificamente o endpoint do ChatBot Inteligente para o Simulador de Conversas exatamente conforme especificado na review request. RESULTADOS: ✅ STEP 1 PASSED: Login com credenciais Addad/Addad123 funcionando perfeitamente (user role: proprietario). ✅ STEP 2 PASSED: POST /api/chatbot/process com mensagem 'Olá, qual o horário de funcionamento?' retornou success: true e resposta da IA (242 caracteres) sobre horários de funcionamento. ✅ STEP 3 PASSED: POST /api/chatbot/process com mensagem 'Quero ver o cardápio' retornou success: true e resposta da IA (542 caracteres) listando produtos do cardápio. ✅ STEP 4 PASSED: POST /api/chatbot/process com mensagem 'Qual o endereço?' retornou success: true e resposta da IA (184 caracteres) sobre endereço. ✅ ALL TESTS PASSED: Todos os endpoints respondendo com success: true e respostas da IA conforme especificado. ✅ SIMULADOR INTEGRATION: Backend está 100% pronto para a nova aba Simulador no frontend. Endpoint POST /api/chatbot/process totalmente operacional para o Simulador de Conversas."
 
+  - task: "Sistema Endpoints - Company Settings and Data Cleanup"
+    implemented: true
+    working: true
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Nova página Sistema (antiga Preferências) implementada com endpoints: GET/PUT /api/company/settings para configurações da empresa, POST /api/company/logo para upload de logo, DELETE /api/data/* para limpeza de dados com validação de confirmation_word 'LIMPAR'"
+      - working: true
+        agent: "testing"
+        comment: "✅ SISTEMA ENDPOINTS TESTING COMPLETED (Jan 11, 2026): Testei os NOVOS endpoints do Sistema exatamente conforme especificado na review request. RESULTADOS: ✅ TEST 1 PASSED: Login com credenciais Addad/Addad123 funcionando perfeitamente (user role: proprietario). ✅ TEST 2 PASSED: GET /api/company/settings retorna configurações da empresa com todos os campos esperados (company_name, slogan, cnpj, address, logo_url, fantasy_name, legal_name). ✅ TEST 3 PASSED: PUT /api/company/settings salva configurações corretamente - todos os valores testados foram persistidos e verificados. ✅ TEST 4 PASSED: DELETE /api/data/products exige confirmation_word 'LIMPAR' - rejeitou palavra incorreta com erro 400 'Palavra de confirmação incorreta'. ✅ TEST 5 PASSED: DELETE /api/data/sales rejeitou palavra incorreta 'INCORRETA' com erro 400. ✅ TEST 6 PASSED: DELETE /api/data/people rejeitou palavra incorreta 'INVALID' com erro 400. ✅ TEST 7 PASSED: DELETE /api/data/financial rejeitou palavra incorreta 'NOPE' com erro 400. ✅ TEST 8 PASSED: DELETE /api/data/locations rejeitou palavra incorreta 'CLEAR' com erro 400. ✅ VALIDATION: Todos os endpoints de limpeza validam corretamente a palavra de confirmação 'LIMPAR' e retornam erro apropriado para palavras incorretas. ✅ PERMISSIONS: Usuário Addad tem role proprietario necessário para acessar endpoints de limpeza. Sistema de configurações da empresa e limpeza de dados 100% operacional conforme especificações da review request."
+
 frontend:
   - task: "Login Page"
     implemented: true

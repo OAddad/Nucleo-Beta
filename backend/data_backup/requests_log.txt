@@ -17307,3 +17307,13 @@
 2026-01-11T21:38:36.901518+00:00 | DB_CALL get_cliente_by_id | P3 | 0.26ms | success
 2026-01-11T21:38:36.910339+00:00 | DB_CALL update_cliente | P3 | 8.65ms | success
 2026-01-11T21:38:39.124781+00:00 | DB_CALL get_pedidos_by_cliente | P3 | 0.39ms | success
+2026-01-11T21:38:43.958187+00:00 | DB_CALL get_all_pedidos | P3 | 0.78ms | success
+2026-01-11T21:38:43.959826+00:00 | DB_CALL get_all_entregadores | P3 | 0.16ms | success
+2026-01-11T21:38:44.008108+00:00 | DB_CALL get_all_settings | P3 | 0.28ms | success
+2026-01-11T21:38:44.206837+00:00 | DB_CALL update_pedido_status | P3 | 5.14ms | success
+2026-01-11T21:38:44.372840+00:00 | DB_CALL get_all_pedidos | P3 | 0.78ms | success
+2026-01-11T21:38:44.377487+00:00 | DB_CALL get_all_settings | P3 | 0.17ms | success
+2026-01-11T21:38:44.378568+00:00 | DB_CALL get_all_entregadores | P3 | 0.15ms | success
+2026-01-11T21:38:53.459708+00:00 | DB_CALL get_all_settings | P3 | 1.26ms | success
+2026-01-11T21:38:53.460668+00:00 | DB_CALL get_all_pedidos | P3 | 1.62ms | success
+2026-01-11T21:38:53.461666+00:00 | DB_CALL get_all_entregadores | P3 | 2.48ms | success
