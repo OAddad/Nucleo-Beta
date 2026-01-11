@@ -188,6 +188,19 @@ export default function Dashboard({ setIsAuthenticated }) {
     ]
   };
 
+  // Estrutura hierárquica de Localização
+  const localizacaoModule = {
+    label: "Localização",
+    icon: MapPin,
+    expanded: localizacaoExpanded,
+    toggle: () => setLocalizacaoExpanded(!localizacaoExpanded),
+    children: [
+      { path: "/localizacao/bairros", label: "Bairros", icon: MapPin },
+      { path: "/localizacao/ruas", label: "Ruas", icon: Route },
+      { path: "/localizacao/area-entrega", label: "Área de Entrega", icon: MapPinned },
+    ]
+  };
+
   // Estrutura hierárquica de Configurações
   const configModule = {
     label: "Configurações",
