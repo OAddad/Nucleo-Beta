@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import axios from "axios";
-import { Search, ShoppingBag, Plus, Minus, Trash2, X, Clock, Star, MapPin, ChevronLeft, ChevronRight } from "lucide-react";
+import { Search, ShoppingBag, Plus, Minus, Trash2, X, Clock, Star, ChevronLeft, ChevronRight, User } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { toast } from "sonner";
@@ -22,7 +22,29 @@ export default function CardapioPublico({ onLoginClick }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [cart, setCart] = useState([]);
-  const [cartOpen, setCartOpen] = useState(true);
+  const [cartOpen, setCartOpen] = useState(false);
+  
+  // Verificar se há usuário/cliente logado
+  const [loggedUser, setLoggedUser] = useState(null);
+  const [loggedClient, setLoggedClient] = useState(null);
+
+  // Carregar dados do usuário/cliente logado
+  useEffect(() => {
+    const user = localStorage.getItem("user");
+    const client = localStorage.getItem("client");
+    
+    if (user) {
+      try {
+        setLoggedUser(JSON.parse(user));
+      } catch (e) {}
+    }
+    
+    if (client) {
+      try {
+        setLoggedClient(JSON.parse(client));
+      } catch (e) {}
+    }
+  }, []);
 
   // Carregar produtos e categorias
   useEffect(() => {
@@ -108,6 +130,7 @@ export default function CardapioPublico({ onLoginClick }) {
       return [...prev, { ...product, quantity: 1 }];
     });
     toast.success(`${product.name} adicionado!`);
+    setCartOpen(true);
   };
 
   const removeFromCart = (productId) => {
@@ -147,6 +170,24 @@ export default function CardapioPublico({ onLoginClick }) {
     }
   };
 
+  // Verificar se está logado
+  const isLoggedIn = loggedUser || loggedClient;
+  const currentUserName = loggedClient?.nome || loggedUser?.username;
+  const currentUserPhoto = loggedClient?.foto || null;
+
+  // Handle do botão Entrar/Perfil
+  const handleUserButton = () => {
+    if (isLoggedIn) {
+      // Se logado como admin, ir para admin
+      if (loggedUser) {
+        window.location.href = "#/admin";
+      }
+      // Se logado como cliente, poderia abrir perfil
+    } else {
+      onLoginClick();
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-zinc-900 flex items-center justify-center">
@@ -159,323 +200,359 @@ export default function CardapioPublico({ onLoginClick }) {
   }
 
   return (
-    <div className="min-h-screen bg-zinc-900 text-white flex">
-      {/* Área Principal */}
-      <div className={`flex-1 flex flex-col transition-all duration-300 ${cartOpen ? 'mr-80' : ''}`}>
-        {/* Header */}
-        <header className="bg-zinc-900 border-b border-zinc-800 sticky top-0 z-30">
-          {/* Top Bar */}
-          <div className="flex items-center justify-between px-4 py-2 bg-zinc-950">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">N</span>
-              </div>
-              <span className="font-semibold text-lg">Cardápio</span>
+    <div className="min-h-screen bg-zinc-900 text-white">
+      {/* Header Fixo - Ocupa toda a largura */}
+      <header className="bg-zinc-900 border-b border-zinc-800 sticky top-0 z-40">
+        {/* Top Bar */}
+        <div className="flex items-center justify-between px-4 py-2 bg-zinc-950">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center">
+              <span className="text-white font-bold text-sm">N</span>
             </div>
+            <span className="font-semibold text-lg">Cardápio</span>
+          </div>
+          
+          {/* Botão Entrar ou Foto do Usuário */}
+          {isLoggedIn ? (
+            <button 
+              onClick={handleUserButton}
+              className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+            >
+              {currentUserPhoto ? (
+                <img 
+                  src={currentUserPhoto} 
+                  alt={currentUserName}
+                  className="w-10 h-10 rounded-full object-cover border-2 border-orange-500"
+                />
+              ) : (
+                <div className="w-10 h-10 rounded-full bg-zinc-700 flex items-center justify-center border-2 border-orange-500">
+                  <User className="w-5 h-5 text-zinc-400" />
+                </div>
+              )}
+              <span className="text-sm font-medium hidden sm:block">{currentUserName}</span>
+            </button>
+          ) : (
             <Button 
               onClick={onLoginClick}
               className="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-6"
             >
               ENTRAR
             </Button>
-          </div>
+          )}
+        </div>
 
-          {/* Restaurant Info */}
-          <div className="bg-gradient-to-r from-orange-600 to-orange-500 px-4 py-4">
-            <div className="flex items-start gap-4">
-              <div className="w-16 h-16 bg-white rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg">
-                <img 
-                  src="/logo-nucleo.png" 
-                  alt="Logo" 
-                  className="w-12 h-12 object-contain"
-                  onError={(e) => {
-                    e.target.style.display = 'none';
-                    e.target.parentElement.innerHTML = '<span class="text-orange-500 font-bold text-2xl">N</span>';
-                  }}
-                />
-              </div>
-              <div className="flex-1">
-                <div className="flex items-center gap-2">
-                  <h1 className="text-xl font-bold text-white">Núcleo Restaurante</h1>
-                  <div className="flex items-center gap-1 bg-white/20 px-2 py-0.5 rounded-full">
-                    <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
-                    <span className="text-xs font-medium">5.0</span>
-                  </div>
-                </div>
-                <p className="text-white/80 text-sm">O melhor da culinária</p>
-                <div className="flex items-center gap-4 mt-2">
-                  <div className="flex items-center gap-1 text-sm">
-                    <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                    <span className="text-white/90">Aberto agora</span>
-                  </div>
-                  <div className="flex items-center gap-1 text-sm text-white/80">
-                    <Clock className="w-3 h-3" />
-                    <span>Fecha às 23:00</span>
-                  </div>
-                </div>
-              </div>
-              <button className="text-white/80 hover:text-white text-sm underline">
-                Ver mais
-              </button>
-            </div>
-          </div>
-
-          {/* Search Bar */}
-          <div className="px-4 py-3 bg-zinc-900">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-500" />
-              <Input
-                type="text"
-                placeholder="Busque pelo nome do Produto"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 bg-zinc-800 border-zinc-700 text-white placeholder:text-zinc-500 h-11"
+        {/* Restaurant Info */}
+        <div className="bg-gradient-to-r from-orange-600 to-orange-500 px-4 py-4">
+          <div className="flex items-start gap-4 max-w-7xl mx-auto">
+            <div className="w-16 h-16 bg-white rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg">
+              <img 
+                src="/logo-nucleo.png" 
+                alt="Logo" 
+                className="w-12 h-12 object-contain"
+                onError={(e) => {
+                  e.target.style.display = 'none';
+                  e.target.parentElement.innerHTML = '<span class="text-orange-500 font-bold text-2xl">N</span>';
+                }}
               />
-              {searchTerm && (
-                <button 
-                  onClick={() => setSearchTerm("")}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-              )}
             </div>
-          </div>
-
-          {/* Categories */}
-          {categoriesWithProducts.length > 0 && (
-            <div className="relative px-4 py-2 bg-zinc-900 border-t border-zinc-800">
+            <div className="flex-1">
               <div className="flex items-center gap-2">
-                <button 
-                  onClick={() => scrollCategories('left')}
-                  className="flex-shrink-0 w-8 h-8 flex items-center justify-center bg-zinc-800 rounded-lg hover:bg-zinc-700"
+                <h1 className="text-xl font-bold text-white">Núcleo Restaurante</h1>
+                <div className="flex items-center gap-1 bg-white/20 px-2 py-0.5 rounded-full">
+                  <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
+                  <span className="text-xs font-medium">5.0</span>
+                </div>
+              </div>
+              <p className="text-white/80 text-sm">O melhor da culinária</p>
+              <div className="flex items-center gap-4 mt-2">
+                <div className="flex items-center gap-1 text-sm">
+                  <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                  <span className="text-white/90">Aberto agora</span>
+                </div>
+                <div className="flex items-center gap-1 text-sm text-white/80">
+                  <Clock className="w-3 h-3" />
+                  <span>Fecha às 23:00</span>
+                </div>
+              </div>
+            </div>
+            <button className="text-white/80 hover:text-white text-sm underline hidden sm:block">
+              Ver mais
+            </button>
+          </div>
+        </div>
+
+        {/* Search Bar */}
+        <div className="px-4 py-3 bg-zinc-900 max-w-7xl mx-auto">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-500" />
+            <Input
+              type="text"
+              placeholder="Busque pelo nome do Produto"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10 bg-zinc-800 border-zinc-700 text-white placeholder:text-zinc-500 h-11"
+            />
+            {searchTerm && (
+              <button 
+                onClick={() => setSearchTerm("")}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            )}
+          </div>
+        </div>
+
+        {/* Categories */}
+        {categoriesWithProducts.length > 0 && (
+          <div className="relative px-4 py-2 bg-zinc-900 border-t border-zinc-800">
+            <div className="flex items-center gap-2 max-w-7xl mx-auto">
+              <button 
+                onClick={() => scrollCategories('left')}
+                className="flex-shrink-0 w-8 h-8 flex items-center justify-center bg-zinc-800 rounded-lg hover:bg-zinc-700"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+              
+              <div 
+                id="categories-scroll"
+                className="flex-1 overflow-x-auto scrollbar-hide flex gap-2"
+                style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+              >
+                <button
+                  onClick={() => setSelectedCategory(null)}
+                  className={`flex-shrink-0 px-4 py-2 rounded-lg font-medium text-sm transition-all ${
+                    !selectedCategory
+                      ? 'bg-orange-500 text-white'
+                      : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700'
+                  }`}
                 >
-                  <ChevronLeft className="w-4 h-4" />
+                  TODOS
                 </button>
-                
-                <div 
-                  id="categories-scroll"
-                  className="flex-1 overflow-x-auto scrollbar-hide flex gap-2"
-                  style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-                >
+                {categoriesWithProducts.map(cat => (
                   <button
-                    onClick={() => setSelectedCategory(null)}
-                    className={`flex-shrink-0 px-4 py-2 rounded-lg font-medium text-sm transition-all ${
-                      !selectedCategory
+                    key={cat.id}
+                    onClick={() => setSelectedCategory(cat.name)}
+                    className={`flex-shrink-0 px-4 py-2 rounded-lg font-medium text-sm transition-all uppercase ${
+                      selectedCategory === cat.name
                         ? 'bg-orange-500 text-white'
                         : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700'
                     }`}
                   >
-                    TODOS
+                    {cat.name}
                   </button>
-                  {categoriesWithProducts.map(cat => (
-                    <button
-                      key={cat.id}
-                      onClick={() => setSelectedCategory(cat.name)}
-                      className={`flex-shrink-0 px-4 py-2 rounded-lg font-medium text-sm transition-all uppercase ${
-                        selectedCategory === cat.name
-                          ? 'bg-orange-500 text-white'
-                          : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700'
-                      }`}
-                    >
-                      {cat.name}
-                    </button>
-                  ))}
-                </div>
-
-                <button 
-                  onClick={() => scrollCategories('right')}
-                  className="flex-shrink-0 w-8 h-8 flex items-center justify-center bg-zinc-800 rounded-lg hover:bg-zinc-700"
-                >
-                  <ChevronRight className="w-4 h-4" />
-                </button>
+                ))}
               </div>
-            </div>
-          )}
-        </header>
 
+              <button 
+                onClick={() => scrollCategories('right')}
+                className="flex-shrink-0 w-8 h-8 flex items-center justify-center bg-zinc-800 rounded-lg hover:bg-zinc-700"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        )}
+      </header>
+
+      {/* Main Content */}
+      <div className="flex">
         {/* Products Grid */}
-        <main className="flex-1 overflow-y-auto p-4">
-          {Object.keys(productsByCategory).length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-20">
-              <div className="w-24 h-24 bg-zinc-800 rounded-full flex items-center justify-center mb-4">
-                <Search className="w-10 h-10 text-zinc-600" />
-              </div>
-              <h3 className="text-xl font-semibold text-zinc-400 mb-2">Nenhum produto encontrado</h3>
-              <p className="text-zinc-500 text-center max-w-md">
-                {searchTerm 
-                  ? `Não encontramos produtos com "${searchTerm}"`
-                  : "Ainda não há produtos cadastrados no cardápio"}
-              </p>
-            </div>
-          ) : (
-            Object.entries(productsByCategory).map(([category, categoryProducts]) => (
-              <div key={category} className="mb-8">
-                {/* Category Header */}
-                <div className="mb-4">
-                  <h2 className="text-2xl font-bold text-orange-500 uppercase">{category}</h2>
-                  <p className="text-zinc-500 text-sm">Confira nossos deliciosos produtos</p>
+        <main className={`flex-1 p-4 transition-all duration-300 ${cartOpen ? 'mr-80' : ''}`}>
+          <div className="max-w-7xl mx-auto">
+            {Object.keys(productsByCategory).length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-20">
+                <div className="w-24 h-24 bg-zinc-800 rounded-full flex items-center justify-center mb-4">
+                  <Search className="w-10 h-10 text-zinc-600" />
                 </div>
+                <h3 className="text-xl font-semibold text-zinc-400 mb-2">Nenhum produto encontrado</h3>
+                <p className="text-zinc-500 text-center max-w-md">
+                  {searchTerm 
+                    ? `Não encontramos produtos com "${searchTerm}"`
+                    : "Ainda não há produtos cadastrados no cardápio"}
+                </p>
+              </div>
+            ) : (
+              Object.entries(productsByCategory).map(([category, categoryProducts]) => (
+                <div key={category} className="mb-8">
+                  {/* Category Header */}
+                  <div className="mb-4">
+                    <h2 className="text-2xl font-bold text-orange-500 uppercase">{category}</h2>
+                    <p className="text-zinc-500 text-sm">Confira nossos deliciosos produtos</p>
+                  </div>
 
-                {/* Products Grid */}
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-                  {categoryProducts.map(product => (
-                    <div 
-                      key={product.id}
-                      className="bg-zinc-800 rounded-xl overflow-hidden hover:ring-2 hover:ring-orange-500/50 transition-all group"
-                    >
-                      {/* Product Image */}
-                      <div className="aspect-square bg-zinc-700 relative overflow-hidden">
-                        {product.photo_url ? (
-                          <img
-                            src={product.photo_url}
-                            alt={product.name}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                          />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center">
-                            <span className="text-4xl">🍽️</span>
-                          </div>
-                        )}
-                        
-                        {/* Add Button Overlay */}
-                        <button
-                          onClick={() => addToCart(product)}
-                          className="absolute bottom-2 right-2 w-10 h-10 bg-orange-500 hover:bg-orange-600 rounded-full flex items-center justify-center shadow-lg transition-all opacity-0 group-hover:opacity-100"
-                        >
-                          <Plus className="w-5 h-5 text-white" />
-                        </button>
-                      </div>
-
-                      {/* Product Info */}
-                      <div className="p-3">
-                        <h3 className="font-semibold text-white text-sm mb-1 line-clamp-2">
-                          {product.name}
-                        </h3>
-                        {product.description && (
-                          <p className="text-zinc-400 text-xs mb-2 line-clamp-2">
-                            {product.description}
-                          </p>
-                        )}
-                        <div className="flex items-center justify-between">
-                          <span className="text-orange-500 font-bold">
-                            R$ {product.sale_price?.toFixed(2).replace('.', ',')}
-                          </span>
+                  {/* Products Grid */}
+                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+                    {categoryProducts.map(product => (
+                      <div 
+                        key={product.id}
+                        className="bg-zinc-800 rounded-xl overflow-hidden hover:ring-2 hover:ring-orange-500/50 transition-all group"
+                      >
+                        {/* Product Image */}
+                        <div className="aspect-square bg-zinc-700 relative overflow-hidden">
+                          {product.photo_url ? (
+                            <img
+                              src={product.photo_url}
+                              alt={product.name}
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center">
+                              <span className="text-4xl">🍽️</span>
+                            </div>
+                          )}
+                          
+                          {/* Add Button Overlay */}
                           <button
                             onClick={() => addToCart(product)}
-                            className="text-xs bg-zinc-700 hover:bg-orange-500 px-3 py-1 rounded-full transition-colors"
+                            className="absolute bottom-2 right-2 w-10 h-10 bg-orange-500 hover:bg-orange-600 rounded-full flex items-center justify-center shadow-lg transition-all opacity-0 group-hover:opacity-100"
                           >
-                            Adicionar
+                            <Plus className="w-5 h-5 text-white" />
+                          </button>
+                        </div>
+
+                        {/* Product Info */}
+                        <div className="p-3">
+                          <h3 className="font-semibold text-white text-sm mb-1 line-clamp-2">
+                            {product.name}
+                          </h3>
+                          {product.description && (
+                            <p className="text-zinc-400 text-xs mb-2 line-clamp-2">
+                              {product.description}
+                            </p>
+                          )}
+                          <div className="flex items-center justify-between">
+                            <span className="text-orange-500 font-bold">
+                              R$ {product.sale_price?.toFixed(2).replace('.', ',')}
+                            </span>
+                            <button
+                              onClick={() => addToCart(product)}
+                              className="text-xs bg-zinc-700 hover:bg-orange-500 px-3 py-1 rounded-full transition-colors"
+                            >
+                              Adicionar
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </main>
+
+        {/* Cart Sidebar */}
+        <aside className={`fixed right-0 top-0 h-full w-80 bg-zinc-800 border-l border-zinc-700 flex flex-col transition-transform duration-300 z-50 ${cartOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+          {/* Cart Header */}
+          <div className="p-4 border-b border-zinc-700 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-orange-500 rounded-lg flex items-center justify-center">
+                <DeliveryIcon className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h3 className="font-bold text-white">BAG DO ENTREGADOR</h3>
+                <p className="text-xs text-zinc-400">{cartItemsCount} {cartItemsCount === 1 ? 'item' : 'itens'}</p>
+              </div>
+            </div>
+            <button 
+              onClick={() => setCartOpen(false)}
+              className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-zinc-700"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+
+          {/* Cart Items */}
+          <div className="flex-1 overflow-y-auto p-4">
+            {cart.length === 0 ? (
+              <div className="flex flex-col items-center justify-center h-full text-center">
+                <ShoppingBag className="w-16 h-16 text-zinc-600 mb-4" />
+                <p className="text-zinc-400 mb-2">Sua sacola está vazia</p>
+                <p className="text-zinc-500 text-sm">Adicione produtos para continuar</p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {cart.map(item => (
+                  <div key={item.id} className="bg-zinc-900 rounded-lg p-3">
+                    <div className="flex gap-3">
+                      {/* Item Image */}
+                      <div className="w-16 h-16 bg-zinc-700 rounded-lg flex-shrink-0 overflow-hidden">
+                        {item.photo_url ? (
+                          <img src={item.photo_url} alt={item.name} className="w-full h-full object-cover" />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center">
+                            <span className="text-2xl">🍽️</span>
+                          </div>
+                        )}
+                      </div>
+                      
+                      {/* Item Info */}
+                      <div className="flex-1 min-w-0">
+                        <h4 className="font-medium text-white text-sm truncate">{item.name}</h4>
+                        <p className="text-orange-500 font-semibold text-sm mt-1">
+                          R$ {(item.sale_price * item.quantity).toFixed(2).replace('.', ',')}
+                        </p>
+                        
+                        {/* Quantity Controls */}
+                        <div className="flex items-center gap-2 mt-2">
+                          <button
+                            onClick={() => updateQuantity(item.id, -1)}
+                            className="w-7 h-7 bg-zinc-700 hover:bg-zinc-600 rounded flex items-center justify-center"
+                          >
+                            <Minus className="w-3 h-3" />
+                          </button>
+                          <span className="text-white font-medium w-6 text-center">{item.quantity}</span>
+                          <button
+                            onClick={() => updateQuantity(item.id, 1)}
+                            className="w-7 h-7 bg-zinc-700 hover:bg-zinc-600 rounded flex items-center justify-center"
+                          >
+                            <Plus className="w-3 h-3" />
+                          </button>
+                          <button
+                            onClick={() => removeFromCart(item.id)}
+                            className="w-7 h-7 bg-red-500/20 hover:bg-red-500/30 rounded flex items-center justify-center ml-auto"
+                          >
+                            <Trash2 className="w-3 h-3 text-red-400" />
                           </button>
                         </div>
                       </div>
                     </div>
-                  ))}
-                </div>
+                  </div>
+                ))}
               </div>
-            ))
-          )}
-        </main>
+            )}
+          </div>
+
+          {/* Cart Footer */}
+          <div className="p-4 border-t border-zinc-700 bg-zinc-900">
+            <div className="flex items-center justify-between mb-4">
+              <span className="text-zinc-400">Total</span>
+              <span className="text-2xl font-bold text-orange-500">
+                R$ {cartTotal.toFixed(2).replace('.', ',')}
+              </span>
+            </div>
+            <Button 
+              onClick={() => {
+                if (!isLoggedIn) {
+                  onLoginClick();
+                } else {
+                  toast.success("Pedido em desenvolvimento!");
+                }
+              }}
+              disabled={cart.length === 0}
+              className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold h-12 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {cart.length === 0 ? 'Adicione itens para continuar' : 'Fazer Pedido'}
+            </Button>
+          </div>
+        </aside>
       </div>
 
-      {/* Cart Sidebar */}
-      <aside className={`fixed right-0 top-0 h-full w-80 bg-zinc-800 border-l border-zinc-700 flex flex-col transition-transform duration-300 z-40 ${cartOpen ? 'translate-x-0' : 'translate-x-full'}`}>
-        {/* Cart Header */}
-        <div className="p-4 border-b border-zinc-700">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-orange-500 rounded-lg flex items-center justify-center">
-              <DeliveryIcon className="w-6 h-6 text-white" />
-            </div>
-            <div>
-              <h3 className="font-bold text-white">BAG DO ENTREGADOR</h3>
-              <p className="text-xs text-zinc-400">{cartItemsCount} {cartItemsCount === 1 ? 'item' : 'itens'}</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Cart Items */}
-        <div className="flex-1 overflow-y-auto p-4">
-          {cart.length === 0 ? (
-            <div className="flex flex-col items-center justify-center h-full text-center">
-              <ShoppingBag className="w-16 h-16 text-zinc-600 mb-4" />
-              <p className="text-zinc-400 mb-2">Sua sacola está vazia</p>
-              <p className="text-zinc-500 text-sm">Adicione produtos para continuar</p>
-            </div>
-          ) : (
-            <div className="space-y-3">
-              {cart.map(item => (
-                <div key={item.id} className="bg-zinc-900 rounded-lg p-3">
-                  <div className="flex gap-3">
-                    {/* Item Image */}
-                    <div className="w-16 h-16 bg-zinc-700 rounded-lg flex-shrink-0 overflow-hidden">
-                      {item.photo_url ? (
-                        <img src={item.photo_url} alt={item.name} className="w-full h-full object-cover" />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center">
-                          <span className="text-2xl">🍽️</span>
-                        </div>
-                      )}
-                    </div>
-                    
-                    {/* Item Info */}
-                    <div className="flex-1 min-w-0">
-                      <h4 className="font-medium text-white text-sm truncate">{item.name}</h4>
-                      <p className="text-orange-500 font-semibold text-sm mt-1">
-                        R$ {(item.sale_price * item.quantity).toFixed(2).replace('.', ',')}
-                      </p>
-                      
-                      {/* Quantity Controls */}
-                      <div className="flex items-center gap-2 mt-2">
-                        <button
-                          onClick={() => updateQuantity(item.id, -1)}
-                          className="w-7 h-7 bg-zinc-700 hover:bg-zinc-600 rounded flex items-center justify-center"
-                        >
-                          <Minus className="w-3 h-3" />
-                        </button>
-                        <span className="text-white font-medium w-6 text-center">{item.quantity}</span>
-                        <button
-                          onClick={() => updateQuantity(item.id, 1)}
-                          className="w-7 h-7 bg-zinc-700 hover:bg-zinc-600 rounded flex items-center justify-center"
-                        >
-                          <Plus className="w-3 h-3" />
-                        </button>
-                        <button
-                          onClick={() => removeFromCart(item.id)}
-                          className="w-7 h-7 bg-red-500/20 hover:bg-red-500/30 rounded flex items-center justify-center ml-auto"
-                        >
-                          <Trash2 className="w-3 h-3 text-red-400" />
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* Cart Footer */}
-        <div className="p-4 border-t border-zinc-700 bg-zinc-900">
-          <div className="flex items-center justify-between mb-4">
-            <span className="text-zinc-400">Total</span>
-            <span className="text-2xl font-bold text-orange-500">
-              R$ {cartTotal.toFixed(2).replace('.', ',')}
-            </span>
-          </div>
-          <Button 
-            onClick={onLoginClick}
-            disabled={cart.length === 0}
-            className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold h-12 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {cart.length === 0 ? 'Adicione itens para continuar' : 'Fazer Pedido'}
-          </Button>
-        </div>
-      </aside>
-
-      {/* Cart Toggle Button (Mobile) */}
+      {/* Cart Toggle Button (Floating) */}
       <button
         onClick={() => setCartOpen(!cartOpen)}
-        className={`fixed bottom-4 right-4 w-14 h-14 bg-orange-500 rounded-full flex items-center justify-center shadow-lg z-50 lg:hidden ${cartOpen ? 'hidden' : ''}`}
+        className={`fixed bottom-4 right-4 w-14 h-14 bg-orange-500 rounded-full flex items-center justify-center shadow-lg z-50 hover:bg-orange-600 transition-colors ${cartOpen ? 'hidden' : ''}`}
       >
         <ShoppingBag className="w-6 h-6 text-white" />
         {cartItemsCount > 0 && (
