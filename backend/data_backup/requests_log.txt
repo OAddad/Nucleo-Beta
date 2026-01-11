@@ -16948,3 +16948,10 @@
 2026-01-11T20:21:14.150441+00:00 | DB_CALL get_user_by_id | P3 | 0.36ms | success
 2026-01-11T20:21:14.150758+00:00 | DB_CALL get_all_decision_nodes | P3 | 0.16ms | success
 2026-01-11T20:21:14.257002+00:00 | DB_CALL get_user_by_id | P3 | 0.3ms | success
+2026-01-11T20:21:24.770135+00:00 | DB_CALL get_user_by_id | P3 | 0.28ms | success
+2026-01-11T20:21:24.770459+00:00 | DB_CALL get_all_flow_nodes | P3 | 0.18ms | success
+2026-01-11T20:21:24.770609+00:00 | DB_CALL get_all_flow_edges | P3 | 0.1ms | success
+2026-01-11T20:21:30.322445+00:00 | DB_CALL init_database | P3 | 2.76ms | success
+2026-01-11T20:21:30.322930+00:00 | DB_CALL count_ingredients | P3 | 0.24ms | success
+2026-01-11T20:21:30.323119+00:00 | DB_CALL count_products | P3 | 0.13ms | success
+2026-01-11T20:21:30.323264+00:00 | DB_CALL count_users | P3 | 0.1ms | success
