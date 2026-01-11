@@ -833,8 +833,16 @@ export default function CardapioPublico({ onAdminLogin }) {
   };
 
   const handleLoginSuccess = (type, userData) => {
-    if (type === "admin" && onAdminLogin) onAdminLogin(userData);
-    else setLoggedClient(userData);
+    if (type === "admin" && onAdminLogin) {
+      onAdminLogin(userData);
+    } else {
+      setLoggedClient(userData);
+      // Se tem itens no carrinho, abrir checkout automaticamente
+      if (cart.length > 0) {
+        setShowLoginModal(false);
+        setTimeout(() => setCheckoutOpen(true), 300);
+      }
+    }
   };
 
   const handleLogout = () => setLoggedClient(null);
