@@ -1571,7 +1571,7 @@ export default function CardapioPublico({ onAdminLogin }) {
           <div className="flex items-start gap-4 max-w-7xl mx-auto">
             <div className="w-16 h-16 bg-white rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg overflow-hidden">
               <img 
-                src={companySettings.logo_url ? `/api${companySettings.logo_url}` : "/logo-nucleo.png"} 
+                src={companySettings.logo_url ? companySettings.logo_url : "/logo-nucleo.png"} 
                 alt="Logo" 
                 className="w-12 h-12 object-contain" 
                 onError={(e) => { e.target.style.display = 'none'; e.target.parentElement.innerHTML = `<span class="text-orange-500 font-bold text-2xl">${(companySettings.company_name || 'N').charAt(0)}</span>`; }} 
