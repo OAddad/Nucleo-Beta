@@ -78,15 +78,6 @@ if (config.enableVisualEdits && babelMetadataPlugin) {
 }
 
 webpackConfig.devServer = (devServerConfig) => {
-  // Configuração do Proxy
-  devServerConfig.proxy = {
-    '/api': {
-      target: 'http://localhost:8001',
-      changeOrigin: true,
-      secure: false,
-    },
-  };
-
   // Apply visual edits dev server setup only if enabled
   if (config.enableVisualEdits && setupDevServer) {
     devServerConfig = setupDevServer(devServerConfig);
@@ -108,6 +99,26 @@ webpackConfig.devServer = (devServerConfig) => {
       return middlewares;
     };
   }
+
+  // Adicionar proxy para API
+  const { createProxyMiddleware } = require('http-proxy-middleware');
+  const originalSetupMiddlewaresForProxy = devServerConfig.setupMiddlewares;
+  
+  devServerConfig.setupMiddlewares = (middlewares, devServer) => {
+    // Adicionar proxy PRIMEIRO
+    devServer.app.use('/api', createProxyMiddleware({
+      target: 'http://localhost:8001',
+      changeOrigin: true,
+      secure: false,
+    }));
+    
+    // Depois chamar os outros middlewares
+    if (originalSetupMiddlewaresForProxy) {
+      middlewares = originalSetupMiddlewaresForProxy(middlewares, devServer);
+    }
+    
+    return middlewares;
+  };
 
   return devServerConfig;
 };
