@@ -18260,3 +18260,9 @@
 2026-01-11T22:52:39.022364+00:00 | DB_CALL get_all_pedidos | P3 | 0.95ms | success
 2026-01-11T22:52:39.024636+00:00 | DB_CALL get_all_settings | P3 | 0.9ms | success
 2026-01-11T22:52:39.024967+00:00 | DB_CALL get_all_entregadores | P3 | 0.63ms | success
+2026-01-11T22:52:44.022406+00:00 | DB_CALL get_all_pedidos | P3 | 0.8ms | success
+2026-01-11T22:52:44.024137+00:00 | DB_CALL get_all_settings | P3 | 0.13ms | success
+2026-01-11T22:52:44.025384+00:00 | DB_CALL get_all_entregadores | P3 | 0.23ms | success
+2026-01-11T22:52:49.021793+00:00 | DB_CALL get_all_pedidos | P3 | 0.81ms | success
+2026-01-11T22:52:49.023483+00:00 | DB_CALL get_all_entregadores | P3 | 0.16ms | success
+2026-01-11T22:52:49.024332+00:00 | DB_CALL get_all_settings | P3 | 0.13ms | success
