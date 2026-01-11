@@ -18059,3 +18059,6 @@
 2026-01-11T22:44:41.069013+00:00 | DB_CALL recalculate_all_cliente_stats | P3 | 0.31ms | success
 2026-01-11T22:44:41.069250+00:00 | DB_CALL get_all_clientes | P3 | 0.19ms | success
 2026-01-11T22:44:41.074984+00:00 | DB_CALL get_all_bairros | P3 | 0.23ms | success
+2026-01-11T22:44:44.063274+00:00 | DB_CALL get_all_pedidos | P3 | 1.02ms | success
+2026-01-11T22:44:44.065512+00:00 | DB_CALL get_all_entregadores | P3 | 0.94ms | success
+2026-01-11T22:44:44.065937+00:00 | DB_CALL get_all_settings | P3 | 0.73ms | success
