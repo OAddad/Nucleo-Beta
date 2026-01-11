@@ -2885,6 +2885,7 @@ async def shutdown_db_client():
 class SystemSettingsUpdate(BaseModel):
     skip_login: Optional[bool] = None
     theme: Optional[str] = None
+    delivery_auto_accept: Optional[bool] = None
 
 @api_router.get("/health")
 async def health_check():
