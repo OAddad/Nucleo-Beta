@@ -624,6 +624,79 @@ def init_database():
         ''')
         conn.commit()
         
+        # Tabela para nós do fluxograma visual do ChatBot
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS chatbot_flow_nodes (
+                id TEXT PRIMARY KEY,
+                type TEXT NOT NULL,
+                title TEXT NOT NULL,
+                content TEXT,
+                position_x REAL DEFAULT 0,
+                position_y REAL DEFAULT 0,
+                config TEXT,
+                is_active INTEGER DEFAULT 1,
+                created_at TEXT,
+                updated_at TEXT
+            )
+        ''')
+        conn.commit()
+        
+        # Tabela para conexões entre nós do fluxograma
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS chatbot_flow_edges (
+                id TEXT PRIMARY KEY,
+                source_id TEXT NOT NULL,
+                target_id TEXT NOT NULL,
+                condition TEXT,
+                label TEXT,
+                created_at TEXT,
+                FOREIGN KEY (source_id) REFERENCES chatbot_flow_nodes(id),
+                FOREIGN KEY (target_id) REFERENCES chatbot_flow_nodes(id)
+            )
+        ''')
+        conn.commit()
+        
+        # Tabela para histórico de conversas do WhatsApp
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS chatbot_conversations (
+                id TEXT PRIMARY KEY,
+                phone TEXT NOT NULL,
+                client_name TEXT,
+                client_id TEXT,
+                status TEXT DEFAULT 'active',
+                current_node_id TEXT,
+                context TEXT,
+                created_at TEXT,
+                updated_at TEXT,
+                FOREIGN KEY (client_id) REFERENCES clientes(id)
+            )
+        ''')
+        conn.commit()
+        
+        # Tabela para mensagens das conversas
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS chatbot_messages (
+                id TEXT PRIMARY KEY,
+                conversation_id TEXT NOT NULL,
+                role TEXT NOT NULL,
+                content TEXT NOT NULL,
+                node_id TEXT,
+                created_at TEXT,
+                FOREIGN KEY (conversation_id) REFERENCES chatbot_conversations(id)
+            )
+        ''')
+        conn.commit()
+        
+        # Tabela para configurações do chatbot
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS chatbot_settings (
+                key TEXT PRIMARY KEY,
+                value TEXT,
+                updated_at TEXT
+            )
+        ''')
+        conn.commit()
+        
         # Verificar se precisa adicionar novas colunas (migração)
         try:
             cursor.execute("SELECT has_second_period FROM business_hours LIMIT 1")
