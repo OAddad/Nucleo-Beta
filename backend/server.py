@@ -2478,11 +2478,7 @@ async def create_pedido(data: PedidoCreate):
     """Cria um novo pedido (público para cardápio)"""
     # Verificar configuração de aceite automático
     settings = await db_call(sqlite_db.get_all_settings)
-    aceite_automatico = False
-    for s in settings:
-        if s.get('key') == 'aceite_automatico':
-            aceite_automatico = s.get('value', 'false').lower() == 'true'
-            break
+    aceite_automatico = settings.get('aceite_automatico', 'false').lower() == 'true'
     
     # Definir status inicial baseado no aceite automático
     # Se aceite automático desativado: sempre começa com aguardando_aceite
