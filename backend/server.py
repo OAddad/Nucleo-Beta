@@ -3699,6 +3699,247 @@ async def delete_decision_node(node_id: str, current_user: User = Depends(get_cu
     return {"success": True, "message": "Nó deletado com sucesso"}
 
 
+# ==================== EMPRESA / COMPANY SETTINGS ====================
+class CompanySettingsUpdate(BaseModel):
+    company_name: Optional[str] = None
+    slogan: Optional[str] = None
+    address: Optional[str] = None
+    cnpj: Optional[str] = None
+    fantasy_name: Optional[str] = None
+    legal_name: Optional[str] = None
+    founding_date: Optional[str] = None
+    state_registration: Optional[str] = None
+    city_registration: Optional[str] = None
+    instagram: Optional[str] = None
+    facebook: Optional[str] = None
+    email: Optional[str] = None
+    tiktok: Optional[str] = None
+    kwai: Optional[str] = None
+    phone: Optional[str] = None
+
+@api_router.get("/company/settings")
+async def get_company_settings():
+    """Buscar configurações da empresa"""
+    settings = await db_call(sqlite_db.get_all_settings)
+    return {
+        "company_name": settings.get("company_name", "Núcleo"),
+        "slogan": settings.get("slogan", "O Centro da sua Gestão"),
+        "logo_url": settings.get("logo_url", None),
+        "address": settings.get("company_address", ""),
+        "cnpj": settings.get("company_cnpj", ""),
+        "fantasy_name": settings.get("company_fantasy_name", ""),
+        "legal_name": settings.get("company_legal_name", ""),
+        "founding_date": settings.get("company_founding_date", ""),
+        "state_registration": settings.get("company_state_registration", ""),
+        "city_registration": settings.get("company_city_registration", ""),
+        "instagram": settings.get("company_instagram", ""),
+        "facebook": settings.get("company_facebook", ""),
+        "email": settings.get("company_email", ""),
+        "tiktok": settings.get("company_tiktok", ""),
+        "kwai": settings.get("company_kwai", ""),
+        "phone": settings.get("company_phone", "")
+    }
+
+@api_router.put("/company/settings")
+async def update_company_settings(data: CompanySettingsUpdate, current_user: User = Depends(get_current_user)):
+    """Atualizar configurações da empresa"""
+    if current_user.role not in ["proprietario", "administrador"]:
+        raise HTTPException(status_code=403, detail="Sem permissão")
+    
+    field_mapping = {
+        "company_name": "company_name",
+        "slogan": "slogan",
+        "address": "company_address",
+        "cnpj": "company_cnpj",
+        "fantasy_name": "company_fantasy_name",
+        "legal_name": "company_legal_name",
+        "founding_date": "company_founding_date",
+        "state_registration": "company_state_registration",
+        "city_registration": "company_city_registration",
+        "instagram": "company_instagram",
+        "facebook": "company_facebook",
+        "email": "company_email",
+        "tiktok": "company_tiktok",
+        "kwai": "company_kwai",
+        "phone": "company_phone"
+    }
+    
+    for field, setting_key in field_mapping.items():
+        value = getattr(data, field, None)
+        if value is not None:
+            await db_call(sqlite_db.set_setting, setting_key, value)
+    
+    return await get_company_settings()
+
+@api_router.post("/company/logo")
+async def upload_company_logo(file: UploadFile = File(...), current_user: User = Depends(get_current_user)):
+    """Upload da logo da empresa (1080x1080)"""
+    if current_user.role not in ["proprietario", "administrador"]:
+        raise HTTPException(status_code=403, detail="Sem permissão")
+    
+    # Validar tipo de arquivo
+    if not file.content_type.startswith("image/"):
+        raise HTTPException(status_code=400, detail="Arquivo deve ser uma imagem")
+    
+    # Criar diretório de uploads se não existir
+    uploads_dir = Path(__file__).parent / "uploads" / "company"
+    uploads_dir.mkdir(parents=True, exist_ok=True)
+    
+    # Gerar nome único para o arquivo
+    extension = file.filename.split(".")[-1] if "." in file.filename else "png"
+    filename = f"logo_{uuid.uuid4().hex[:8]}.{extension}"
+    filepath = uploads_dir / filename
+    
+    # Salvar arquivo temporariamente
+    temp_path = uploads_dir / f"temp_{filename}"
+    with open(temp_path, "wb") as f:
+        content = await file.read()
+        f.write(content)
+    
+    try:
+        # Redimensionar para 1080x1080 se necessário
+        with Image.open(temp_path) as img:
+            # Converter para RGB se necessário
+            if img.mode in ("RGBA", "P"):
+                img = img.convert("RGB")
+            
+            # Redimensionar mantendo proporção e cropando para quadrado
+            width, height = img.size
+            min_dim = min(width, height)
+            left = (width - min_dim) // 2
+            top = (height - min_dim) // 2
+            right = left + min_dim
+            bottom = top + min_dim
+            img = img.crop((left, top, right, bottom))
+            img = img.resize((1080, 1080), Image.LANCZOS)
+            img.save(filepath, "JPEG", quality=90)
+        
+        # Remover arquivo temporário
+        temp_path.unlink()
+        
+        # Remover logo antiga se existir
+        settings = await db_call(sqlite_db.get_all_settings)
+        old_logo = settings.get("logo_url")
+        if old_logo:
+            old_path = Path(__file__).parent / old_logo.lstrip("/")
+            if old_path.exists():
+                old_path.unlink()
+        
+        # Salvar URL da nova logo
+        logo_url = f"/uploads/company/{filename}"
+        await db_call(sqlite_db.set_setting, "logo_url", logo_url)
+        
+        return {"success": True, "logo_url": logo_url}
+    
+    except Exception as e:
+        if temp_path.exists():
+            temp_path.unlink()
+        raise HTTPException(status_code=500, detail=f"Erro ao processar imagem: {str(e)}")
+
+@api_router.delete("/company/logo")
+async def delete_company_logo(current_user: User = Depends(get_current_user)):
+    """Remover logo da empresa"""
+    if current_user.role not in ["proprietario", "administrador"]:
+        raise HTTPException(status_code=403, detail="Sem permissão")
+    
+    settings = await db_call(sqlite_db.get_all_settings)
+    logo_url = settings.get("logo_url")
+    
+    if logo_url:
+        logo_path = Path(__file__).parent / logo_url.lstrip("/")
+        if logo_path.exists():
+            logo_path.unlink()
+        await db_call(sqlite_db.set_setting, "logo_url", "")
+    
+    return {"success": True, "message": "Logo removida"}
+
+
+# ==================== LIMPAR DADOS ====================
+class ClearDataRequest(BaseModel):
+    confirmation_word: str
+
+@api_router.delete("/data/products")
+async def clear_products_data(data: ClearDataRequest, current_user: User = Depends(get_current_user)):
+    """Limpar dados de produtos e estoque"""
+    if current_user.role != "proprietario":
+        raise HTTPException(status_code=403, detail="Apenas proprietário pode limpar dados")
+    
+    if data.confirmation_word.upper() != "LIMPAR":
+        raise HTTPException(status_code=400, detail="Palavra de confirmação incorreta")
+    
+    try:
+        # Limpar produtos e ingredientes
+        deleted_count = await db_call(sqlite_db.clear_products_and_ingredients)
+        await db_call(sqlite_db.create_audit_log, current_user.id, "CLEAR_DATA", "products", None, f"Produtos e ingredientes limpos: {deleted_count} registros")
+        return {"success": True, "message": f"Dados de produtos limpos: {deleted_count} registros removidos"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.delete("/data/sales")
+async def clear_sales_data(data: ClearDataRequest, current_user: User = Depends(get_current_user)):
+    """Limpar dados de vendas/pedidos"""
+    if current_user.role != "proprietario":
+        raise HTTPException(status_code=403, detail="Apenas proprietário pode limpar dados")
+    
+    if data.confirmation_word.upper() != "LIMPAR":
+        raise HTTPException(status_code=400, detail="Palavra de confirmação incorreta")
+    
+    try:
+        deleted_count = await db_call(sqlite_db.clear_sales_data)
+        await db_call(sqlite_db.create_audit_log, current_user.id, "CLEAR_DATA", "sales", None, f"Vendas/pedidos limpos: {deleted_count} registros")
+        return {"success": True, "message": f"Dados de vendas limpos: {deleted_count} registros removidos"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.delete("/data/people")
+async def clear_people_data(data: ClearDataRequest, current_user: User = Depends(get_current_user)):
+    """Limpar dados de clientes e fornecedores"""
+    if current_user.role != "proprietario":
+        raise HTTPException(status_code=403, detail="Apenas proprietário pode limpar dados")
+    
+    if data.confirmation_word.upper() != "LIMPAR":
+        raise HTTPException(status_code=400, detail="Palavra de confirmação incorreta")
+    
+    try:
+        deleted_count = await db_call(sqlite_db.clear_people_data)
+        await db_call(sqlite_db.create_audit_log, current_user.id, "CLEAR_DATA", "people", None, f"Clientes e fornecedores limpos: {deleted_count} registros")
+        return {"success": True, "message": f"Dados de pessoas limpos: {deleted_count} registros removidos"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.delete("/data/financial")
+async def clear_financial_data(data: ClearDataRequest, current_user: User = Depends(get_current_user)):
+    """Limpar dados financeiros"""
+    if current_user.role != "proprietario":
+        raise HTTPException(status_code=403, detail="Apenas proprietário pode limpar dados")
+    
+    if data.confirmation_word.upper() != "LIMPAR":
+        raise HTTPException(status_code=400, detail="Palavra de confirmação incorreta")
+    
+    try:
+        deleted_count = await db_call(sqlite_db.clear_financial_data)
+        await db_call(sqlite_db.create_audit_log, current_user.id, "CLEAR_DATA", "financial", None, f"Dados financeiros limpos: {deleted_count} registros")
+        return {"success": True, "message": f"Dados financeiros limpos: {deleted_count} registros removidos"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.delete("/data/locations")
+async def clear_locations_data(data: ClearDataRequest, current_user: User = Depends(get_current_user)):
+    """Limpar dados de localizações (bairros e ruas)"""
+    if current_user.role != "proprietario":
+        raise HTTPException(status_code=403, detail="Apenas proprietário pode limpar dados")
+    
+    if data.confirmation_word.upper() != "LIMPAR":
+        raise HTTPException(status_code=400, detail="Palavra de confirmação incorreta")
+    
+    try:
+        deleted_count = await db_call(sqlite_db.clear_locations_data)
+        await db_call(sqlite_db.create_audit_log, current_user.id, "CLEAR_DATA", "locations", None, f"Localizações limpas: {deleted_count} registros")
+        return {"success": True, "message": f"Dados de localizações limpos: {deleted_count} registros removidos"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 # Include router APÓS definir todos os endpoints
 app.include_router(api_router)
 
