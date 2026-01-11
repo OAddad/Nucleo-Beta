@@ -1515,6 +1515,111 @@ def update_cliente_pedido_stats(cliente_id: str, order_value: float) -> Optional
         return get_cliente_by_id(cliente_id)
 
 
+# ==================== CLIENT ADDRESSES ====================
+def get_client_addresses(client_id: str) -> List[Dict]:
+    """Retorna todos os endereços de um cliente"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM client_addresses WHERE client_id = ? ORDER BY is_default DESC, created_at DESC", (client_id,))
+        return [dict(row) for row in cursor.fetchall()]
+
+
+def get_address_by_id(address_id: str) -> Optional[Dict]:
+    """Retorna um endereço pelo ID"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM client_addresses WHERE id = ?", (address_id,))
+        row = cursor.fetchone()
+        return dict(row) if row else None
+
+
+def create_client_address(data: Dict) -> Dict:
+    """Cria um novo endereço para o cliente"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        
+        address_id = str(uuid.uuid4())
+        created_at = datetime.now(timezone.utc).isoformat()
+        
+        # Se é o primeiro endereço ou marcado como padrão, atualizar outros
+        if data.get('is_default', False):
+            cursor.execute("UPDATE client_addresses SET is_default = 0 WHERE client_id = ?", (data['client_id'],))
+        
+        # Verificar se é o primeiro endereço do cliente
+        cursor.execute("SELECT COUNT(*) FROM client_addresses WHERE client_id = ?", (data['client_id'],))
+        is_first = cursor.fetchone()[0] == 0
+        
+        cursor.execute('''
+            INSERT INTO client_addresses (id, client_id, label, endereco, numero, complemento, bairro, cidade, estado, cep, is_default, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ''', (
+            address_id,
+            data['client_id'],
+            data.get('label', 'Casa'),
+            data['endereco'],
+            data.get('numero'),
+            data.get('complemento'),
+            data.get('bairro'),
+            data.get('cidade', 'São Paulo'),
+            data.get('estado', 'SP'),
+            data.get('cep'),
+            1 if (data.get('is_default') or is_first) else 0,
+            created_at
+        ))
+        conn.commit()
+        
+        return get_address_by_id(address_id)
+
+
+def update_client_address(address_id: str, data: Dict) -> Optional[Dict]:
+    """Atualiza um endereço existente"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        
+        current = get_address_by_id(address_id)
+        if not current:
+            return None
+        
+        # Se marcado como padrão, desmarcar outros
+        if data.get('is_default', False):
+            cursor.execute("UPDATE client_addresses SET is_default = 0 WHERE client_id = ?", (current['client_id'],))
+        
+        cursor.execute('''
+            UPDATE client_addresses SET
+                label = ?, endereco = ?, numero = ?, complemento = ?, 
+                bairro = ?, cidade = ?, estado = ?, cep = ?, is_default = ?
+            WHERE id = ?
+        ''', (
+            data.get('label', current.get('label')),
+            data.get('endereco', current.get('endereco')),
+            data.get('numero', current.get('numero')),
+            data.get('complemento', current.get('complemento')),
+            data.get('bairro', current.get('bairro')),
+            data.get('cidade', current.get('cidade')),
+            data.get('estado', current.get('estado')),
+            data.get('cep', current.get('cep')),
+            1 if data.get('is_default') else current.get('is_default', 0),
+            address_id
+        ))
+        conn.commit()
+        
+        return get_address_by_id(address_id)
+
+
+def delete_client_address(address_id: str) -> bool:
+    """Deleta um endereço"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM client_addresses WHERE id = ?", (address_id,))
+        conn.commit()
+        return cursor.rowcount > 0
+
+
 # ==================== BUSINESS HOURS ====================
 def get_all_business_hours() -> List[Dict]:
     """Retorna todos os horários de funcionamento ordenados por dia da semana"""
