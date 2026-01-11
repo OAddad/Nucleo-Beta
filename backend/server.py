@@ -2443,6 +2443,7 @@ class PedidoResponse(BaseModel):
     observacao: Optional[str] = None
     entregador_id: Optional[str] = None
     entregador_nome: Optional[str] = None
+    motivo_cancelamento: Optional[str] = None
     created_at: Optional[str] = None
     updated_at: Optional[str] = None
 
