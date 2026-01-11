@@ -521,8 +521,16 @@ function CheckoutModal({ open, onClose, cart, cartTotal, client, darkMode, onOrd
       cep: bairro.cep || prev.cep
     }));
     setBairrosSugestoes([]);
+    setShowBairroDropdown(false);
     setValorEntrega(bairro.valor_entrega || 0);
   };
+
+  // Estado para dropdown de bairros
+  const [showBairroDropdown, setShowBairroDropdown] = useState(false);
+  
+  // Verificar se CEP único está ativo (todos os bairros têm o mesmo CEP)
+  const cepUnicoAtivo = bairros.length > 0 && bairros.every(b => b.cep && b.cep === bairros[0].cep);
+  const cepUnicoValue = cepUnicoAtivo ? bairros[0].cep : '';
 
   // Reset quando abrir
   useEffect(() => {
