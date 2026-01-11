@@ -8972,3 +8972,7 @@
 2026-01-11T14:03:32.760337+00:00 | DB_CALL get_all_products | P3 | 0.42ms | success
 2026-01-11T14:03:32.764499+00:00 | DB_CALL get_all_categories | P3 | 3.11ms | success
 2026-01-11T14:03:32.765696+00:00 | DB_CALL get_all_business_hours | P3 | 0.27ms | success
+2026-01-11T14:03:42.077277+00:00 | DB_CALL get_user_by_username | P3 | 0.33ms | success
+2026-01-11T14:03:44.380174+00:00 | DB_CALL get_user_by_username | P3 | 0.49ms | success
+2026-01-11T14:03:46.793494+00:00 | DB_CALL get_user_by_id | P3 | 0.35ms | success
+2026-01-11T14:03:46.793777+00:00 | DB_CALL get_all_business_hours | P3 | 0.14ms | success
