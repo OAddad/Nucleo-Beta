@@ -17304,3 +17304,6 @@
 2026-01-11T21:38:01.877895+00:00 | DB_CALL create_pedido | P3 | 5.81ms | success
 2026-01-11T21:38:01.883714+00:00 | DB_CALL update_cliente_pedido_stats | P3 | 5.69ms | success
 2026-01-11T21:38:27.815815+00:00 | DB_CALL get_client_addresses | P3 | 0.26ms | success
+2026-01-11T21:38:36.901518+00:00 | DB_CALL get_cliente_by_id | P3 | 0.26ms | success
+2026-01-11T21:38:36.910339+00:00 | DB_CALL update_cliente | P3 | 8.65ms | success
+2026-01-11T21:38:39.124781+00:00 | DB_CALL get_pedidos_by_cliente | P3 | 0.39ms | success
