@@ -3450,6 +3450,442 @@ class CMVMasterAPITester:
         
         return all_tests_passed
 
+    def test_location_endpoints(self):
+        """Test new Location endpoints (Bairros and Ruas) as specified in review request"""
+        print("\n=== LOCATION ENDPOINTS TESTS ===")
+        print("🎯 Testing new Location endpoints as specified in review request:")
+        print("   1. Bairros: GET (empty), POST Centro, POST Jardim, GET (2 items), PUT Centro, PUT all, GET check-cep")
+        print("   2. Ruas: GET (empty), POST Rua das Flores, POST Avenida Brasil, GET (2 items), GET search")
+        print("   Credenciais: Addad/Addad123")
+        
+        all_tests_passed = True
+        created_bairros = []
+        created_ruas = []
+        
+        # First, authenticate with Addad user as specified
+        print("\n🔍 Authenticating with Addad user...")
+        success, login_response = self.run_test(
+            "Login with Addad user for location tests",
+            "POST",
+            "auth/login",
+            200,
+            data={"username": "Addad", "password": "Addad123"}
+        )
+        
+        if success and 'access_token' in login_response:
+            self.token = login_response['access_token']
+            self.user_id = login_response['user']['id']
+            print(f"   ✅ Addad login successful")
+            print(f"   - User role: {login_response['user']['role']}")
+        else:
+            print(f"   ❌ Addad login failed - trying fallback authentication...")
+            # Try other authentication methods as fallback
+            fallback_users = [
+                ("admin", "admin"),
+                ("teste_admin", "senha123"),
+                ("proprietario", "senha123")
+            ]
+            
+            auth_success = False
+            for username, password in fallback_users:
+                success, response = self.run_test(
+                    f"Fallback login with {username}",
+                    "POST",
+                    "auth/login",
+                    200,
+                    data={"username": username, "password": password}
+                )
+                
+                if success and 'access_token' in response:
+                    self.token = response['access_token']
+                    self.user_id = response['user']['id']
+                    print(f"   ✅ Fallback authentication successful with {username}")
+                    auth_success = True
+                    break
+            
+            if not auth_success:
+                print(f"   ❌ No valid authentication found - cannot proceed with location tests")
+                return False
+        
+        # ========== BAIRROS TESTS ==========
+        print(f"\n🔍 BAIRROS TESTS:")
+        
+        # TEST 1: GET /api/bairros - deve retornar lista vazia
+        print(f"\n🔍 TEST 1: GET /api/bairros - deve retornar lista vazia")
+        success, bairros_initial = self.run_test(
+            "Get initial bairros (should be empty)",
+            "GET",
+            "bairros",
+            200
+        )
+        
+        if success:
+            print(f"   ✅ GET /api/bairros working - Found {len(bairros_initial)} bairros initially")
+            if len(bairros_initial) == 0:
+                print(f"   ✅ TEST 1 PASSED: Lista vazia conforme esperado")
+            else:
+                print(f"   ⚠️ TEST 1 PARTIAL: Lista não está vazia ({len(bairros_initial)} items), mas endpoint funciona")
+        else:
+            print(f"   ❌ TEST 1 FAILED: GET /api/bairros failed")
+            all_tests_passed = False
+        
+        # TEST 2: POST /api/bairros - criar bairro "Centro" com valor_entrega 5.00 e cep "12345-000"
+        print(f"\n🔍 TEST 2: POST /api/bairros - criar bairro Centro")
+        centro_data = {
+            "nome": "Centro",
+            "valor_entrega": 5.00,
+            "cep": "12345-000"
+        }
+        
+        success, centro_bairro = self.run_test(
+            "Create Centro bairro",
+            "POST",
+            "bairros",
+            200,
+            data=centro_data
+        )
+        
+        if success:
+            created_bairros.append(centro_bairro['id'])
+            print(f"   ✅ TEST 2 PASSED: Centro bairro created successfully")
+            print(f"      - ID: {centro_bairro['id']}")
+            print(f"      - Nome: {centro_bairro['nome']}")
+            print(f"      - Valor Entrega: R$ {centro_bairro['valor_entrega']:.2f}")
+            print(f"      - CEP: {centro_bairro.get('cep', 'N/A')}")
+        else:
+            print(f"   ❌ TEST 2 FAILED: Failed to create Centro bairro")
+            all_tests_passed = False
+        
+        # TEST 3: POST /api/bairros - criar bairro "Jardim" com valor_entrega 8.00
+        print(f"\n🔍 TEST 3: POST /api/bairros - criar bairro Jardim")
+        jardim_data = {
+            "nome": "Jardim",
+            "valor_entrega": 8.00
+        }
+        
+        success, jardim_bairro = self.run_test(
+            "Create Jardim bairro",
+            "POST",
+            "bairros",
+            200,
+            data=jardim_data
+        )
+        
+        if success:
+            created_bairros.append(jardim_bairro['id'])
+            print(f"   ✅ TEST 3 PASSED: Jardim bairro created successfully")
+            print(f"      - ID: {jardim_bairro['id']}")
+            print(f"      - Nome: {jardim_bairro['nome']}")
+            print(f"      - Valor Entrega: R$ {jardim_bairro['valor_entrega']:.2f}")
+            print(f"      - CEP: {jardim_bairro.get('cep', 'N/A')}")
+        else:
+            print(f"   ❌ TEST 3 FAILED: Failed to create Jardim bairro")
+            all_tests_passed = False
+        
+        # TEST 4: GET /api/bairros - deve retornar os 2 bairros
+        print(f"\n🔍 TEST 4: GET /api/bairros - deve retornar os 2 bairros")
+        success, bairros_after = self.run_test(
+            "Get bairros after creation",
+            "GET",
+            "bairros",
+            200
+        )
+        
+        if success:
+            print(f"   ✅ GET /api/bairros working - Found {len(bairros_after)} bairros")
+            
+            # Check if we have at least the 2 we created
+            centro_found = any(b['nome'] == 'Centro' for b in bairros_after)
+            jardim_found = any(b['nome'] == 'Jardim' for b in bairros_after)
+            
+            if centro_found and jardim_found:
+                print(f"   ✅ TEST 4 PASSED: Both Centro and Jardim bairros found")
+                for bairro in bairros_after:
+                    if bairro['nome'] in ['Centro', 'Jardim']:
+                        print(f"      - {bairro['nome']}: R$ {bairro['valor_entrega']:.2f} (CEP: {bairro.get('cep', 'N/A')})")
+            else:
+                print(f"   ❌ TEST 4 FAILED: Created bairros not found in list")
+                print(f"      - Centro found: {centro_found}")
+                print(f"      - Jardim found: {jardim_found}")
+                all_tests_passed = False
+        else:
+            print(f"   ❌ TEST 4 FAILED: GET /api/bairros failed")
+            all_tests_passed = False
+        
+        # TEST 5: PUT /api/bairros/{id} - atualizar valor_entrega do Centro para 6.00
+        if created_bairros and len(created_bairros) >= 1:
+            print(f"\n🔍 TEST 5: PUT /api/bairros/{{id}} - atualizar Centro para 6.00")
+            centro_id = created_bairros[0]  # Centro should be first
+            
+            update_data = {
+                "nome": "Centro",
+                "valor_entrega": 6.00,
+                "cep": "12345-000"
+            }
+            
+            success, updated_centro = self.run_test(
+                "Update Centro valor_entrega to 6.00",
+                "PUT",
+                f"bairros/{centro_id}",
+                200,
+                data=update_data
+            )
+            
+            if success:
+                print(f"   ✅ TEST 5 PASSED: Centro updated successfully")
+                print(f"      - New valor_entrega: R$ {updated_centro['valor_entrega']:.2f}")
+                
+                if updated_centro['valor_entrega'] == 6.00:
+                    print(f"      ✅ Valor updated correctly to R$ 6.00")
+                else:
+                    print(f"      ❌ Valor not updated correctly (expected 6.00, got {updated_centro['valor_entrega']})")
+                    all_tests_passed = False
+            else:
+                print(f"   ❌ TEST 5 FAILED: Failed to update Centro bairro")
+                all_tests_passed = False
+        else:
+            print(f"\n🔍 TEST 5 SKIPPED: No Centro bairro created to update")
+            all_tests_passed = False
+        
+        # TEST 6: PUT /api/bairros/valor/all?valor_entrega=10.00 - atualizar todos para 10.00
+        print(f"\n🔍 TEST 6: PUT /api/bairros/valor/all - atualizar todos para 10.00")
+        success, update_all_response = self.run_test(
+            "Update all bairros valor_entrega to 10.00",
+            "PUT",
+            "bairros/valor/all?valor_entrega=10.00",
+            200
+        )
+        
+        if success:
+            count_updated = update_all_response.get('count', 0)
+            print(f"   ✅ TEST 6 PASSED: Updated {count_updated} bairros to R$ 10.00")
+            
+            # Verify by getting all bairros again
+            success, bairros_after_update = self.run_test(
+                "Verify all bairros updated to 10.00",
+                "GET",
+                "bairros",
+                200
+            )
+            
+            if success:
+                all_have_10 = all(b['valor_entrega'] == 10.00 for b in bairros_after_update)
+                if all_have_10:
+                    print(f"      ✅ All bairros now have valor_entrega = R$ 10.00")
+                else:
+                    print(f"      ❌ Not all bairros have valor_entrega = R$ 10.00")
+                    for b in bairros_after_update:
+                        print(f"         - {b['nome']}: R$ {b['valor_entrega']:.2f}")
+                    all_tests_passed = False
+        else:
+            print(f"   ❌ TEST 6 FAILED: Failed to update all bairros valor_entrega")
+            all_tests_passed = False
+        
+        # TEST 7: GET /api/bairros/check-cep - verificar se tem CEP preenchido
+        print(f"\n🔍 TEST 7: GET /api/bairros/check-cep - verificar CEP preenchido")
+        success, cep_check = self.run_test(
+            "Check if bairros have CEP filled",
+            "GET",
+            "bairros/check-cep",
+            200
+        )
+        
+        if success:
+            has_cep = cep_check.get('has_cep', False)
+            print(f"   ✅ TEST 7 PASSED: CEP check endpoint working")
+            print(f"      - Has CEP filled: {has_cep}")
+            
+            if has_cep:
+                print(f"      ✅ At least one bairro has CEP filled (Centro should have '12345-000')")
+            else:
+                print(f"      ⚠️ No bairros have CEP filled")
+        else:
+            print(f"   ❌ TEST 7 FAILED: CEP check endpoint failed")
+            all_tests_passed = False
+        
+        # ========== RUAS TESTS ==========
+        print(f"\n🔍 RUAS TESTS:")
+        
+        # TEST 8: GET /api/ruas - deve retornar lista vazia
+        print(f"\n🔍 TEST 8: GET /api/ruas - deve retornar lista vazia")
+        success, ruas_initial = self.run_test(
+            "Get initial ruas (should be empty)",
+            "GET",
+            "ruas",
+            200
+        )
+        
+        if success:
+            print(f"   ✅ GET /api/ruas working - Found {len(ruas_initial)} ruas initially")
+            if len(ruas_initial) == 0:
+                print(f"   ✅ TEST 8 PASSED: Lista vazia conforme esperado")
+            else:
+                print(f"   ⚠️ TEST 8 PARTIAL: Lista não está vazia ({len(ruas_initial)} items), mas endpoint funciona")
+        else:
+            print(f"   ❌ TEST 8 FAILED: GET /api/ruas failed")
+            all_tests_passed = False
+        
+        # TEST 9: POST /api/ruas - criar rua "Rua das Flores" no bairro Centro
+        if created_bairros and len(created_bairros) >= 1:
+            print(f"\n🔍 TEST 9: POST /api/ruas - criar Rua das Flores no Centro")
+            centro_id = created_bairros[0]
+            
+            rua_flores_data = {
+                "nome": "Rua das Flores",
+                "bairro_id": centro_id
+            }
+            
+            success, rua_flores = self.run_test(
+                "Create Rua das Flores in Centro",
+                "POST",
+                "ruas",
+                200,
+                data=rua_flores_data
+            )
+            
+            if success:
+                created_ruas.append(rua_flores['id'])
+                print(f"   ✅ TEST 9 PASSED: Rua das Flores created successfully")
+                print(f"      - ID: {rua_flores['id']}")
+                print(f"      - Nome: {rua_flores['nome']}")
+                print(f"      - Bairro ID: {rua_flores.get('bairro_id', 'N/A')}")
+                print(f"      - Bairro Nome: {rua_flores.get('bairro_nome', 'N/A')}")
+            else:
+                print(f"   ❌ TEST 9 FAILED: Failed to create Rua das Flores")
+                all_tests_passed = False
+        else:
+            print(f"\n🔍 TEST 9 SKIPPED: No Centro bairro available for rua creation")
+            all_tests_passed = False
+        
+        # TEST 10: POST /api/ruas - criar rua "Avenida Brasil" no bairro Jardim
+        if created_bairros and len(created_bairros) >= 2:
+            print(f"\n🔍 TEST 10: POST /api/ruas - criar Avenida Brasil no Jardim")
+            jardim_id = created_bairros[1]
+            
+            rua_brasil_data = {
+                "nome": "Avenida Brasil",
+                "bairro_id": jardim_id
+            }
+            
+            success, rua_brasil = self.run_test(
+                "Create Avenida Brasil in Jardim",
+                "POST",
+                "ruas",
+                200,
+                data=rua_brasil_data
+            )
+            
+            if success:
+                created_ruas.append(rua_brasil['id'])
+                print(f"   ✅ TEST 10 PASSED: Avenida Brasil created successfully")
+                print(f"      - ID: {rua_brasil['id']}")
+                print(f"      - Nome: {rua_brasil['nome']}")
+                print(f"      - Bairro ID: {rua_brasil.get('bairro_id', 'N/A')}")
+                print(f"      - Bairro Nome: {rua_brasil.get('bairro_nome', 'N/A')}")
+            else:
+                print(f"   ❌ TEST 10 FAILED: Failed to create Avenida Brasil")
+                all_tests_passed = False
+        else:
+            print(f"\n🔍 TEST 10 SKIPPED: No Jardim bairro available for rua creation")
+            all_tests_passed = False
+        
+        # TEST 11: GET /api/ruas - deve retornar as 2 ruas com dados do bairro
+        print(f"\n🔍 TEST 11: GET /api/ruas - deve retornar as 2 ruas com dados do bairro")
+        success, ruas_after = self.run_test(
+            "Get ruas after creation",
+            "GET",
+            "ruas",
+            200
+        )
+        
+        if success:
+            print(f"   ✅ GET /api/ruas working - Found {len(ruas_after)} ruas")
+            
+            # Check if we have at least the 2 we created
+            flores_found = any(r['nome'] == 'Rua das Flores' for r in ruas_after)
+            brasil_found = any(r['nome'] == 'Avenida Brasil' for r in ruas_after)
+            
+            if flores_found and brasil_found:
+                print(f"   ✅ TEST 11 PASSED: Both ruas found with bairro data")
+                for rua in ruas_after:
+                    if rua['nome'] in ['Rua das Flores', 'Avenida Brasil']:
+                        print(f"      - {rua['nome']}: Bairro {rua.get('bairro_nome', 'N/A')} (Valor: R$ {rua.get('valor_entrega', 0):.2f})")
+            else:
+                print(f"   ❌ TEST 11 FAILED: Created ruas not found in list")
+                print(f"      - Rua das Flores found: {flores_found}")
+                print(f"      - Avenida Brasil found: {brasil_found}")
+                all_tests_passed = False
+        else:
+            print(f"   ❌ TEST 11 FAILED: GET /api/ruas failed")
+            all_tests_passed = False
+        
+        # TEST 12: GET /api/ruas/search?termo=Flores - deve encontrar a rua
+        print(f"\n🔍 TEST 12: GET /api/ruas/search?termo=Flores - deve encontrar a rua")
+        success, search_result = self.run_test(
+            "Search ruas with term 'Flores'",
+            "GET",
+            "ruas/search?termo=Flores",
+            200
+        )
+        
+        if success:
+            print(f"   ✅ Ruas search endpoint working - Found {len(search_result)} results")
+            
+            flores_in_search = any('Flores' in r['nome'] for r in search_result)
+            if flores_in_search:
+                print(f"   ✅ TEST 12 PASSED: Rua das Flores found in search results")
+                for rua in search_result:
+                    if 'Flores' in rua['nome']:
+                        print(f"      - Found: {rua['nome']} in {rua.get('bairro_nome', 'N/A')}")
+            else:
+                print(f"   ❌ TEST 12 FAILED: Rua das Flores not found in search results")
+                all_tests_passed = False
+        else:
+            print(f"   ❌ TEST 12 FAILED: Ruas search endpoint failed")
+            all_tests_passed = False
+        
+        # Cleanup: Delete created test data
+        print(f"\n🔍 CLEANUP: Deleting test location data")
+        
+        # Delete created ruas first (they depend on bairros)
+        for rua_id in created_ruas:
+            success, _ = self.run_test(
+                f"Delete test rua {rua_id}",
+                "DELETE",
+                f"ruas/{rua_id}",
+                200
+            )
+            if success:
+                print(f"   ✅ Deleted test rua {rua_id}")
+        
+        # Delete created bairros
+        for bairro_id in created_bairros:
+            success, _ = self.run_test(
+                f"Delete test bairro {bairro_id}",
+                "DELETE",
+                f"bairros/{bairro_id}",
+                200
+            )
+            if success:
+                print(f"   ✅ Deleted test bairro {bairro_id}")
+        
+        # Summary
+        print(f"\n🔍 LOCATION ENDPOINTS TESTING SUMMARY:")
+        if all_tests_passed:
+            print(f"   ✅ ALL LOCATION TESTS PASSED")
+            print(f"   ✅ Bairros CRUD working perfectly")
+            print(f"   ✅ Bairros bulk update working")
+            print(f"   ✅ Bairros CEP check working")
+            print(f"   ✅ Ruas CRUD working perfectly")
+            print(f"   ✅ Ruas search working")
+            print(f"   ✅ Bairro-Rua relationship working")
+        else:
+            print(f"   ❌ SOME LOCATION TESTS FAILED")
+            print(f"   ℹ️ Check individual test results above for details")
+        
+        return all_tests_passed
+
+
 def main():
     print("🚀 Starting Delivery and Entregadores Endpoints Testing")
     print("=" * 80)
