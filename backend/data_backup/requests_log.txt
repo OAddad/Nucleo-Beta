@@ -10662,3 +10662,8 @@
 2026-01-11T17:04:25.841026+00:00 | DB_CALL get_all_settings | P3 | 0.16ms | success
 2026-01-11T17:04:26.452110+00:00 | DB_CALL get_all_pedidos | P3 | 0.41ms | success
 2026-01-11T17:04:26.572790+00:00 | DB_CALL get_all_pedidos | P3 | 0.38ms | success
+2026-01-11T17:04:30.827710+00:00 | DB_CALL get_all_entregadores | P3 | 0.26ms | success
+2026-01-11T17:04:30.830068+00:00 | DB_CALL get_all_settings | P3 | 0.17ms | success
+2026-01-11T17:04:30.833537+00:00 | DB_CALL get_all_pedidos | P3 | 0.28ms | success
+2026-01-11T17:04:31.454468+00:00 | DB_CALL get_all_pedidos | P3 | 0.38ms | success
+2026-01-11T17:04:35.177020+00:00 | DB_CALL update_pedido_status | P3 | 3.87ms | success
