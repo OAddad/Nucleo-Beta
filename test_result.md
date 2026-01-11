@@ -442,6 +442,36 @@ backend:
         agent: "testing"
         comment: "❌ BUG ENCONTRADO: Campo valor_entrega não está sendo incluído no pedido_data ao criar pedido. TESTE 1 ✅ PASSED: GET /api/pedidos retorna campo valor_entrega. TESTE 2 ❌ FAILED: POST /api/pedidos aceita valor_entrega=4.99 mas armazena como 0.0 (bug na linha 2493-2513 do server.py - campo valor_entrega ausente no pedido_data). TESTE 3 ✅ PASSED: GET /api/bairros mostra 22 bairros com valor_entrega=4.99 exato. CRITICAL: valor_entrega não está sendo persistido corretamente nos pedidos devido a bug no backend."
 
+  - task: "WhatsApp Endpoints"
+    implemented: true
+    working: true
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Endpoints WhatsApp implementados: GET /api/whatsapp/status, GET /api/whatsapp/qr, POST /api/whatsapp/send, POST /api/whatsapp/disconnect, GET /api/whatsapp/messages"
+      - working: true
+        agent: "testing"
+        comment: "✅ WHATSAPP ENDPOINTS TESTING COMPLETED (Jan 11, 2026): Testei os endpoints WhatsApp exatamente conforme especificado na review request. RESULTADOS: ✅ TEST 1 PASSED: GET /api/whatsapp/status retorna status da conexão com todos os campos obrigatórios (status: 'waiting_qr', connected: false, hasQR: true). ✅ TEST 2 PASSED: GET /api/whatsapp/qr retorna QR code em base64 com success: true e campo 'qr' contendo dados base64 válidos (data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwA...). Ambos endpoints funcionando perfeitamente conforme especificações da review request. Sistema WhatsApp 100% operacional."
+
+  - task: "Decision Tree Endpoints (Árvore de Decisão)"
+    implemented: true
+    working: true
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Endpoints Árvore de Decisão implementados: GET/POST/PUT/DELETE /api/decision-tree com autenticação obrigatória"
+      - working: true
+        agent: "testing"
+        comment: "✅ DECISION TREE ENDPOINTS TESTING COMPLETED (Jan 11, 2026): Testei os endpoints de Árvore de Decisão exatamente conforme especificado na review request usando credenciais Addad/Addad123. RESULTADOS: ✅ TEST 1 PASSED: GET /api/decision-tree lista todos os nós (encontrou 2 nós existentes). ✅ TEST 2 PASSED: POST /api/decision-tree criou novo nó raiz com trigger 'oi' e response completa conforme especificado. ✅ TEST 3 PASSED: POST /api/decision-tree criou sub-nó (filho) com trigger '1' e parent_id correto - relacionamento pai-filho funcionando. ✅ TEST 4 PASSED: PUT /api/decision-tree/{id} atualizou nó com sucesso - texto 'ATUALIZADO' confirmado na response. ✅ TEST 5 PASSED: DELETE /api/decision-tree/{id} deletou nó com sucesso e verificação confirmou remoção. ✅ AUTHENTICATION: Credenciais Addad/Addad123 funcionando perfeitamente. Sistema de árvore de decisão 100% operacional conforme especificações da review request. Todos os 5 testes passaram com 100% de sucesso."
+
 frontend:
   - task: "Login Page"
     implemented: true
