@@ -9495,3 +9495,6 @@
 2026-01-11T15:26:36.089682+00:00 | DB_CALL get_all_categories | P3 | 0.25ms | success
 2026-01-11T15:26:36.090874+00:00 | DB_CALL get_all_business_hours | P3 | 0.16ms | success
 2026-01-11T15:26:36.091951+00:00 | DB_CALL get_all_products | P3 | 0.24ms | success
+2026-01-11T15:26:53.920746+00:00 | DB_CALL get_all_categories | P3 | 0.99ms | success
+2026-01-11T15:26:53.921390+00:00 | DB_CALL get_all_business_hours | P3 | 1.14ms | success
+2026-01-11T15:26:53.948157+00:00 | DB_CALL get_all_products | P3 | 0.37ms | success
