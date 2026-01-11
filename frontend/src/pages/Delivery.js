@@ -561,8 +561,8 @@ export default function Delivery() {
               </span>
             </div>
             
-            {/* Seletor de entregador para envio em lote */}
-            {getPedidosByStatus('pronto').length > 0 && (
+            {/* Seletor de entregador para envio em lote (apenas para delivery) */}
+            {getPedidosByStatus('pronto').filter(p => !isRetirada(p)).length > 0 && (
               <div className="space-y-2">
                 <Select value={entregadorProntoSelecionado} onValueChange={setEntregadorProntoSelecionado}>
                   <SelectTrigger className="h-8 text-xs">
@@ -584,7 +584,7 @@ export default function Delivery() {
                     className="flex-1 h-7 text-xs"
                     onClick={toggleSelecionarTodos}
                   >
-                    {pedidosSelecionados.length === getPedidosByStatus('pronto').length ? 'Desmarcar' : 'Marcar'} Todos
+                    {pedidosSelecionados.length === getPedidosByStatus('pronto').filter(p => !isRetirada(p)).length ? 'Desmarcar' : 'Marcar'} Todos
                   </Button>
                   <Button 
                     size="sm" 
@@ -608,30 +608,62 @@ export default function Delivery() {
               </div>
             ) : (
               getPedidosByStatus('pronto').map(pedido => (
-                <div 
-                  key={pedido.id} 
-                  className={`bg-background rounded-lg border p-3 shadow-sm cursor-pointer transition-all ${
-                    pedidosSelecionados.includes(pedido.id) 
-                      ? 'border-blue-500 ring-2 ring-blue-200 dark:ring-blue-800' 
-                      : 'hover:border-muted-foreground/30'
-                  }`}
-                  onClick={() => togglePedidoSelecionado(pedido.id)}
-                >
-                  <div className="flex items-center gap-2 mb-2">
-                    <input
-                      type="checkbox"
-                      checked={pedidosSelecionados.includes(pedido.id)}
-                      onChange={() => togglePedidoSelecionado(pedido.id)}
-                      onClick={(e) => e.stopPropagation()}
-                      className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                    />
-                    <span className="font-mono text-xs text-muted-foreground">{pedido.codigo}</span>
-                    <span className="text-xs text-muted-foreground ml-auto">{formatTime(pedido.created_at)}</span>
+                isRetirada(pedido) ? (
+                  /* Card de RETIRADA - com botão de finalizar/pagamento */
+                  <div 
+                    key={pedido.id} 
+                    className="bg-amber-50 dark:bg-amber-950/20 rounded-lg border border-amber-400 p-3 shadow-sm"
+                  >
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-2">
+                        <span className="bg-amber-500 text-white text-[10px] px-1.5 py-0.5 rounded font-bold flex items-center gap-1">
+                          <Store className="w-3 h-3" />
+                          RETIRADA
+                        </span>
+                        <span className="font-mono text-xs text-muted-foreground">{pedido.codigo}</span>
+                      </div>
+                      <span className="text-xs text-muted-foreground">{formatTime(pedido.created_at)}</span>
+                    </div>
+                    <p className="font-semibold text-sm truncate">{pedido.cliente_nome || "Cliente"}</p>
+                    <p className="text-xs text-muted-foreground mb-2">Retirada no local</p>
+                    <p className="font-bold text-primary text-sm mb-2">R$ {(pedido.total || 0).toFixed(2)}</p>
+                    
+                    <Button 
+                      size="sm" 
+                      className="w-full bg-green-600 hover:bg-green-700"
+                      onClick={() => handleAbrirPagamento(pedido)}
+                    >
+                      <DollarSign className="w-4 h-4 mr-1" />
+                      Finalizar / Pagamento
+                    </Button>
                   </div>
-                  <p className="font-semibold text-sm truncate">{pedido.cliente_nome || "Cliente"}</p>
-                  <p className="text-xs text-muted-foreground truncate mb-2">{pedido.endereco_rua || "Sem endereço"}</p>
-                  <p className="font-bold text-primary text-sm">R$ {(pedido.total || 0).toFixed(2)}</p>
-                </div>
+                ) : (
+                  /* Card de DELIVERY - com checkbox para seleção */
+                  <div 
+                    key={pedido.id} 
+                    className={`bg-background rounded-lg border p-3 shadow-sm cursor-pointer transition-all ${
+                      pedidosSelecionados.includes(pedido.id) 
+                        ? 'border-blue-500 ring-2 ring-blue-200 dark:ring-blue-800' 
+                        : 'hover:border-muted-foreground/30'
+                    }`}
+                    onClick={() => togglePedidoSelecionado(pedido.id)}
+                  >
+                    <div className="flex items-center gap-2 mb-2">
+                      <input
+                        type="checkbox"
+                        checked={pedidosSelecionados.includes(pedido.id)}
+                        onChange={() => togglePedidoSelecionado(pedido.id)}
+                        onClick={(e) => e.stopPropagation()}
+                        className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                      />
+                      <span className="font-mono text-xs text-muted-foreground">{pedido.codigo}</span>
+                      <span className="text-xs text-muted-foreground ml-auto">{formatTime(pedido.created_at)}</span>
+                    </div>
+                    <p className="font-semibold text-sm truncate">{pedido.cliente_nome || "Cliente"}</p>
+                    <p className="text-xs text-muted-foreground truncate mb-2">{pedido.endereco_rua || "Sem endereço"}</p>
+                    <p className="font-bold text-primary text-sm">R$ {(pedido.total || 0).toFixed(2)}</p>
+                  </div>
+                )
               ))
             )}
           </div>
