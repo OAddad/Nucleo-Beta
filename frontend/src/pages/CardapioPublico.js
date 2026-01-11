@@ -46,6 +46,7 @@ const fetchWithFallback = async (endpoint) => {
 export default function CardapioPublico({ onAdminLogin }) {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
+  const [businessHours, setBusinessHours] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState(null);
@@ -73,6 +74,7 @@ export default function CardapioPublico({ onAdminLogin }) {
   useEffect(() => {
     fetchProducts();
     fetchCategories();
+    fetchBusinessHours();
   }, []);
 
   const fetchProducts = async () => {
@@ -94,6 +96,49 @@ export default function CardapioPublico({ onAdminLogin }) {
       console.error("Erro ao carregar categorias:", error);
     }
   };
+
+  const fetchBusinessHours = async () => {
+    try {
+      const data = await fetchWithFallback('/public/business-hours');
+      setBusinessHours(data);
+    } catch (error) {
+      console.error("Erro ao carregar horários:", error);
+    }
+  };
+
+  // Função para verificar se está aberto agora
+  const getOpenStatus = () => {
+    if (businessHours.length === 0) return { isOpen: true, closingTime: '23:00' };
+    
+    const now = new Date();
+    // JavaScript: 0=Domingo, 1=Segunda... precisamos converter para nosso formato (0=Segunda, 6=Domingo)
+    let dayOfWeek = now.getDay() - 1;
+    if (dayOfWeek < 0) dayOfWeek = 6; // Domingo
+    
+    const todayHours = businessHours.find(h => h.day_of_week === dayOfWeek);
+    
+    if (!todayHours || !todayHours.is_open) {
+      return { isOpen: false, closingTime: null, todayHours };
+    }
+    
+    const currentTime = now.getHours() * 60 + now.getMinutes();
+    const [openHour, openMin] = todayHours.opening_time.split(':').map(Number);
+    const [closeHour, closeMin] = todayHours.closing_time.split(':').map(Number);
+    const openTime = openHour * 60 + openMin;
+    const closeTime = closeHour * 60 + closeMin;
+    
+    // Caso especial: fechamento após meia-noite (ex: 18:00 - 02:00)
+    if (closeTime < openTime) {
+      // Se está entre abertura e meia-noite, ou entre meia-noite e fechamento
+      const isOpen = currentTime >= openTime || currentTime < closeTime;
+      return { isOpen, closingTime: todayHours.closing_time, todayHours };
+    }
+    
+    const isOpen = currentTime >= openTime && currentTime < closeTime;
+    return { isOpen, closingTime: todayHours.closing_time, todayHours };
+  };
+
+  const { isOpen, closingTime, todayHours } = getOpenStatus();
 
   const categoriesWithProducts = useMemo(() => {
     const categorySet = new Set(products.map(p => p.category).filter(Boolean));
