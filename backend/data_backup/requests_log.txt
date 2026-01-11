@@ -14168,3 +14168,6 @@
 2026-01-11T18:25:46.118233+00:00 | DB_CALL get_all_entregadores | P3 | 0.33ms | success
 2026-01-11T18:25:46.119705+00:00 | DB_CALL get_all_settings | P3 | 0.55ms | success
 2026-01-11T18:25:46.120545+00:00 | DB_CALL get_all_pedidos | P3 | 1.13ms | success
+2026-01-11T18:25:51.107577+00:00 | DB_CALL get_all_pedidos | P3 | 0.7ms | success
+2026-01-11T18:25:51.109815+00:00 | DB_CALL get_all_settings | P3 | 0.2ms | success
+2026-01-11T18:25:51.110193+00:00 | DB_CALL get_all_entregadores | P3 | 1.01ms | success
