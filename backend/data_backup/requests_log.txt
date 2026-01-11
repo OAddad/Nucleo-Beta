@@ -8827,3 +8827,4 @@
 2026-01-11T13:42:18.045105+00:00 | DB_CALL get_all_categories | P3 | 0.18ms | success
 2026-01-11T13:42:18.207658+00:00 | DB_CALL get_all_products | P3 | 0.42ms | success
 2026-01-11T13:42:18.208993+00:00 | DB_CALL get_all_categories | P3 | 0.18ms | success
+2026-01-11T13:43:36.741905+00:00 | DB_CALL get_all_products | P3 | 0.41ms | success
