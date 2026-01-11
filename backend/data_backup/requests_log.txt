@@ -8691,3 +8691,5 @@
 2026-01-11T12:07:36.734123+00:00 | DB_CALL count_ingredients | P3 | 0.24ms | success
 2026-01-11T12:07:36.734405+00:00 | DB_CALL count_products | P3 | 0.22ms | success
 2026-01-11T12:07:36.734566+00:00 | DB_CALL count_users | P3 | 0.1ms | success
+2026-01-11T12:12:13.485856+00:00 | DB_CALL get_user_by_username | P3 | 0.34ms | success
+2026-01-11T12:12:24.785674+00:00 | DB_CALL get_user_by_username | P3 | 0.29ms | success
