@@ -1258,3 +1258,373 @@ function MessagesTab({ toast }) {
     </div>
   );
 }
+
+// ==================== ABA PALAVRAS (ANALYTICS) ====================
+function PalavrasTab({ toast }) {
+  const [loading, setLoading] = useState(true);
+  const [summary, setSummary] = useState(null);
+  const [words, setWords] = useState([]);
+  const [messages, setMessages] = useState([]);
+  const [activeView, setActiveView] = useState("overview"); // overview, words, messages
+  const [orderBy, setOrderBy] = useState("count");
+
+  const fetchData = useCallback(async () => {
+    setLoading(true);
+    try {
+      const token = localStorage.getItem("token");
+      const headers = token ? { Authorization: `Bearer ${token}` } : {};
+      
+      // Buscar resumo
+      const summaryRes = await fetch(`${API_URL}/api/chatbot/analytics/summary`, { headers });
+      const summaryData = await summaryRes.json();
+      if (summaryData.success) {
+        setSummary(summaryData.summary);
+      }
+      
+      // Buscar palavras
+      const wordsRes = await fetch(`${API_URL}/api/chatbot/analytics/words?limit=100&order_by=${orderBy}`, { headers });
+      const wordsData = await wordsRes.json();
+      if (wordsData.success) {
+        setWords(wordsData.words);
+      }
+      
+      // Buscar mensagens recentes
+      const messagesRes = await fetch(`${API_URL}/api/chatbot/analytics/messages?limit=50`, { headers });
+      const messagesData = await messagesRes.json();
+      if (messagesData.success) {
+        setMessages(messagesData.messages);
+      }
+    } catch (error) {
+      console.error("Erro ao carregar analytics:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, [orderBy]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  // Calcular tamanho da fonte baseado na contagem (para word cloud)
+  const getWordSize = (count, maxCount) => {
+    const minSize = 12;
+    const maxSize = 48;
+    if (maxCount === 0) return minSize;
+    return Math.max(minSize, Math.min(maxSize, (count / maxCount) * maxSize));
+  };
+
+  // Cores para as palavras
+  const wordColors = [
+    "text-orange-500", "text-blue-500", "text-green-500", "text-purple-500",
+    "text-pink-500", "text-yellow-500", "text-red-500", "text-cyan-500",
+    "text-emerald-500", "text-indigo-500"
+  ];
+
+  const maxCount = words.length > 0 ? Math.max(...words.map(w => w.count)) : 1;
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <Loader2 className="w-8 h-8 animate-spin text-orange-500" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="p-6 space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-bold flex items-center gap-2">
+            <BarChart3 className="w-6 h-6 text-orange-500" />
+            Analytics de Palavras
+          </h2>
+          <p className="text-muted-foreground">Entenda o comportamento dos seus clientes através das palavras que eles usam</p>
+        </div>
+        <Button variant="outline" onClick={fetchData}>
+          <RefreshCw className="w-4 h-4 mr-2" />
+          Atualizar
+        </Button>
+      </div>
+
+      {/* Cards de resumo */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="bg-card border rounded-xl p-4">
+          <div className="flex items-center gap-3">
+            <div className="p-2 rounded-lg bg-orange-500/10">
+              <Hash className="w-5 h-5 text-orange-500" />
+            </div>
+            <div>
+              <p className="text-2xl font-bold">{summary?.total_unique_words || 0}</p>
+              <p className="text-sm text-muted-foreground">Palavras únicas</p>
+            </div>
+          </div>
+        </div>
+        
+        <div className="bg-card border rounded-xl p-4">
+          <div className="flex items-center gap-3">
+            <div className="p-2 rounded-lg bg-blue-500/10">
+              <TrendingUp className="w-5 h-5 text-blue-500" />
+            </div>
+            <div>
+              <p className="text-2xl font-bold">{summary?.total_word_occurrences || 0}</p>
+              <p className="text-sm text-muted-foreground">Total de ocorrências</p>
+            </div>
+          </div>
+        </div>
+        
+        <div className="bg-card border rounded-xl p-4">
+          <div className="flex items-center gap-3">
+            <div className="p-2 rounded-lg bg-green-500/10">
+              <MessageCircleMore className="w-5 h-5 text-green-500" />
+            </div>
+            <div>
+              <p className="text-2xl font-bold">{summary?.total_messages || 0}</p>
+              <p className="text-sm text-muted-foreground">Mensagens recebidas</p>
+            </div>
+          </div>
+        </div>
+        
+        <div className="bg-card border rounded-xl p-4">
+          <div className="flex items-center gap-3">
+            <div className="p-2 rounded-lg bg-purple-500/10">
+              <Users className="w-5 h-5 text-purple-500" />
+            </div>
+            <div>
+              <p className="text-2xl font-bold">{summary?.unique_senders || 0}</p>
+              <p className="text-sm text-muted-foreground">Clientes únicos</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Navegação de views */}
+      <div className="flex gap-2 border-b pb-2">
+        <button
+          onClick={() => setActiveView("overview")}
+          className={`px-4 py-2 rounded-lg font-medium text-sm transition-colors ${
+            activeView === "overview" 
+              ? "bg-orange-500 text-white" 
+              : "bg-muted hover:bg-muted/80"
+          }`}
+        >
+          Visão Geral
+        </button>
+        <button
+          onClick={() => setActiveView("words")}
+          className={`px-4 py-2 rounded-lg font-medium text-sm transition-colors ${
+            activeView === "words" 
+              ? "bg-orange-500 text-white" 
+              : "bg-muted hover:bg-muted/80"
+          }`}
+        >
+          Todas as Palavras
+        </button>
+        <button
+          onClick={() => setActiveView("messages")}
+          className={`px-4 py-2 rounded-lg font-medium text-sm transition-colors ${
+            activeView === "messages" 
+              ? "bg-orange-500 text-white" 
+              : "bg-muted hover:bg-muted/80"
+          }`}
+        >
+          Mensagens Recentes
+        </button>
+      </div>
+
+      {/* Conteúdo baseado na view ativa */}
+      {activeView === "overview" && (
+        <div className="grid md:grid-cols-2 gap-6">
+          {/* Word Cloud */}
+          <div className="bg-card border rounded-xl p-6">
+            <h3 className="font-semibold mb-4 flex items-center gap-2">
+              <Hash className="w-4 h-4 text-orange-500" />
+              Nuvem de Palavras
+            </h3>
+            {words.length === 0 ? (
+              <div className="text-center py-12 text-muted-foreground">
+                <MessageCircleMore className="w-12 h-12 mx-auto mb-2 opacity-50" />
+                <p>Nenhuma palavra registrada ainda</p>
+                <p className="text-sm">As palavras aparecerão aqui quando os clientes enviarem mensagens</p>
+              </div>
+            ) : (
+              <div className="flex flex-wrap gap-2 justify-center items-center min-h-[200px]">
+                {words.slice(0, 50).map((word, index) => (
+                  <span
+                    key={word.id}
+                    className={`${wordColors[index % wordColors.length]} font-medium cursor-default hover:opacity-80 transition-opacity`}
+                    style={{ fontSize: `${getWordSize(word.count, maxCount)}px` }}
+                    title={`${word.word}: ${word.count} vezes`}
+                  >
+                    {word.word}
+                  </span>
+                ))}
+              </div>
+            )}
+          </div>
+          
+          {/* Top 10 Palavras */}
+          <div className="bg-card border rounded-xl p-6">
+            <h3 className="font-semibold mb-4 flex items-center gap-2">
+              <TrendingUp className="w-4 h-4 text-blue-500" />
+              Top 10 Palavras
+            </h3>
+            {summary?.top_words?.length > 0 ? (
+              <div className="space-y-3">
+                {summary.top_words.map((word, index) => (
+                  <div key={index} className="flex items-center gap-3">
+                    <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
+                      index < 3 ? "bg-orange-500 text-white" : "bg-muted"
+                    }`}>
+                      {index + 1}
+                    </span>
+                    <div className="flex-1">
+                      <div className="flex items-center justify-between">
+                        <span className="font-medium">{word.word}</span>
+                        <span className="text-sm text-muted-foreground">{word.count}x</span>
+                      </div>
+                      <div className="h-2 bg-muted rounded-full overflow-hidden mt-1">
+                        <div 
+                          className="h-full bg-gradient-to-r from-orange-500 to-orange-400 rounded-full"
+                          style={{ width: `${(word.count / (summary.top_words[0]?.count || 1)) * 100}%` }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-center text-muted-foreground py-8">Nenhum dado disponível</p>
+            )}
+          </div>
+          
+          {/* Mensagens por dia */}
+          <div className="bg-card border rounded-xl p-6 md:col-span-2">
+            <h3 className="font-semibold mb-4 flex items-center gap-2">
+              <Calendar className="w-4 h-4 text-green-500" />
+              Mensagens nos Últimos 7 Dias
+            </h3>
+            {summary?.messages_by_day?.length > 0 ? (
+              <div className="flex items-end gap-2 h-32">
+                {summary.messages_by_day.reverse().map((day, index) => {
+                  const maxDayCount = Math.max(...summary.messages_by_day.map(d => d.count));
+                  const height = maxDayCount > 0 ? (day.count / maxDayCount) * 100 : 0;
+                  return (
+                    <div key={index} className="flex-1 flex flex-col items-center gap-1">
+                      <span className="text-xs text-muted-foreground">{day.count}</span>
+                      <div 
+                        className="w-full bg-gradient-to-t from-green-500 to-green-400 rounded-t"
+                        style={{ height: `${Math.max(height, 5)}%` }}
+                      />
+                      <span className="text-xs text-muted-foreground">
+                        {new Date(day.day).toLocaleDateString('pt-BR', { weekday: 'short' })}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <p className="text-center text-muted-foreground py-8">Nenhum dado disponível</p>
+            )}
+          </div>
+        </div>
+      )}
+
+      {activeView === "words" && (
+        <div className="bg-card border rounded-xl p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="font-semibold">Todas as Palavras ({words.length})</h3>
+            <Select value={orderBy} onValueChange={setOrderBy}>
+              <SelectTrigger className="w-40">
+                <SelectValue placeholder="Ordenar por" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="count">Mais usadas</SelectItem>
+                <SelectItem value="word">Alfabética</SelectItem>
+                <SelectItem value="last_used">Mais recentes</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          
+          {words.length === 0 ? (
+            <p className="text-center text-muted-foreground py-12">Nenhuma palavra registrada</p>
+          ) : (
+            <div className="overflow-auto max-h-[500px]">
+              <table className="w-full">
+                <thead className="sticky top-0 bg-card">
+                  <tr className="border-b">
+                    <th className="text-left py-2 px-3">Palavra</th>
+                    <th className="text-center py-2 px-3">Contagem</th>
+                    <th className="text-center py-2 px-3">Clientes</th>
+                    <th className="text-right py-2 px-3">Última vez</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {words.map((word) => (
+                    <tr key={word.id} className="border-b hover:bg-muted/50">
+                      <td className="py-2 px-3 font-medium">{word.word}</td>
+                      <td className="py-2 px-3 text-center">
+                        <span className="px-2 py-1 bg-orange-500/10 text-orange-600 rounded-full text-sm">
+                          {word.count}x
+                        </span>
+                      </td>
+                      <td className="py-2 px-3 text-center text-muted-foreground">
+                        {word.unique_senders}
+                      </td>
+                      <td className="py-2 px-3 text-right text-sm text-muted-foreground">
+                        {word.last_used ? new Date(word.last_used).toLocaleDateString('pt-BR') : '-'}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      )}
+
+      {activeView === "messages" && (
+        <div className="bg-card border rounded-xl p-6">
+          <h3 className="font-semibold mb-4">Mensagens Recentes ({messages.length})</h3>
+          
+          {messages.length === 0 ? (
+            <p className="text-center text-muted-foreground py-12">Nenhuma mensagem registrada</p>
+          ) : (
+            <div className="space-y-3 max-h-[500px] overflow-auto">
+              {messages.map((msg) => (
+                <div key={msg.id} className="p-3 bg-muted/50 rounded-lg">
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="font-medium text-sm">
+                      {msg.sender_name || msg.sender_phone}
+                    </span>
+                    <span className="text-xs text-muted-foreground">
+                      {new Date(msg.created_at).toLocaleString('pt-BR')}
+                    </span>
+                  </div>
+                  <p className="text-sm">{msg.message}</p>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Dica */}
+      <div className="bg-gradient-to-r from-orange-50 to-yellow-50 dark:from-orange-950/30 dark:to-yellow-950/30 rounded-xl border p-4">
+        <div className="flex items-start gap-3">
+          <div className="p-2 rounded-lg bg-orange-500 text-white">
+            <HelpCircle className="w-4 h-4" />
+          </div>
+          <div>
+            <h4 className="font-medium">Como funciona?</h4>
+            <p className="text-sm text-muted-foreground mt-1">
+              O sistema analisa automaticamente todas as mensagens recebidas pelo WhatsApp, 
+              extraindo as palavras mais relevantes (ignorando artigos, preposições e palavras comuns).
+              Use esses dados para entender o que seus clientes mais perguntam e melhorar seu atendimento!
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
