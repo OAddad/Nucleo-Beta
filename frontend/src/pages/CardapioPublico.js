@@ -315,19 +315,6 @@ function CheckoutModal({ open, onClose, cart, cartTotal, client, darkMode, onOrd
     finalizeOrder();
   };
 
-  // Gerar código único de 5 dígitos
-  const generateUniqueCode = (existingPedidos) => {
-    const existingCodes = new Set(existingPedidos.map(p => p.codigo));
-    let code;
-    let attempts = 0;
-    do {
-      const num = Math.floor(Math.random() * 100000);
-      code = `#${num.toString().padStart(5, '0')}`;
-      attempts++;
-    } while (existingCodes.has(code) && attempts < 100000);
-    return code;
-  };
-
   const finalizeOrder = async () => {
     const selectedAddr = addresses.find(a => a.id === selectedAddress);
     
