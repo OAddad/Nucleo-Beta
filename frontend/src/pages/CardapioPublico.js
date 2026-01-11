@@ -443,6 +443,9 @@ function CheckoutModal({ open, onClose, cart, cartTotal, client, darkMode, onOrd
   const [needsChange, setNeedsChange] = useState(null); // null = não respondeu, true = precisa, false = não precisa
   const [changeAmount, setChangeAmount] = useState('');
   
+  // Estado para popup de confirmação de deletar endereço
+  const [deleteAddressDialog, setDeleteAddressDialog] = useState({ open: false, addressId: null, addressLabel: '' });
+  
   // Estados para autocomplete de bairros e ruas
   const [bairros, setBairros] = useState([]);
   const [ruasSugestoes, setRuasSugestoes] = useState([]);
