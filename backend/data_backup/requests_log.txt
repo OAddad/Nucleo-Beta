@@ -16776,3 +16776,12 @@
 2026-01-11T20:00:28.532997+00:00 | DB_CALL get_user_by_username | P3 | 0.26ms | success
 2026-01-11T20:00:28.535324+00:00 | DB_CALL get_all_settings | P3 | 0.18ms | success
 2026-01-11T20:00:28.545110+00:00 | DB_CALL create_pedido | P3 | 9.64ms | success
+2026-01-11T20:02:01.383691+00:00 | DB_CALL init_database | P3 | 5.91ms | success
+2026-01-11T20:02:01.384266+00:00 | DB_CALL count_ingredients | P3 | 0.28ms | success
+2026-01-11T20:02:01.384474+00:00 | DB_CALL count_products | P3 | 0.14ms | success
+2026-01-11T20:02:01.384622+00:00 | DB_CALL count_users | P3 | 0.1ms | success
+2026-01-11T20:02:08.361405+00:00 | DB_CALL init_database | P3 | 2.8ms | success
+2026-01-11T20:02:08.361889+00:00 | DB_CALL count_ingredients | P3 | 0.23ms | success
+2026-01-11T20:02:08.362077+00:00 | DB_CALL count_products | P3 | 0.13ms | success
+2026-01-11T20:02:08.362234+00:00 | DB_CALL count_users | P3 | 0.11ms | success
+2026-01-11T20:02:11.408379+00:00 | DB_CALL get_database_info | P3 | 0.47ms | success
