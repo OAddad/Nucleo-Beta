@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { HashRouter, Routes, Route, Navigate, useNavigate } from "react-router-dom";
-import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import CardapioPublico from "./pages/CardapioPublico";
 import { Toaster } from "./components/ui/sonner";
@@ -10,14 +9,15 @@ import "./App.css";
 // Componente wrapper para o Cardápio com navegação
 function CardapioWrapper({ setIsAuthenticated }) {
   const navigate = useNavigate();
-  const [showLoginModal, setShowLoginModal] = useState(false);
 
-  const handleLoginClick = () => {
-    navigate("/login");
+  const handleAdminLogin = (userData) => {
+    setIsAuthenticated(true);
+    // Redirecionar para o dashboard admin
+    navigate("/admin/");
   };
 
   return (
-    <CardapioPublico onLoginClick={handleLoginClick} />
+    <CardapioPublico onAdminLogin={handleAdminLogin} />
   );
 }
 
@@ -28,7 +28,7 @@ function App() {
 
   useEffect(() => {
     const init = async () => {
-      // Inicializar configuração da API (detecta ambiente desktop/web)
+      // Inicializar configuração da API
       await initApiConfig();
       
       // Verificar modo sem login
@@ -37,6 +37,7 @@ function App() {
         setSkipLogin(true);
         setIsAuthenticated(true);
       } else {
+        // Verificar se há token de admin
         const token = localStorage.getItem("token");
         setIsAuthenticated(!!token);
       }
@@ -68,18 +69,6 @@ function App() {
             element={<CardapioWrapper setIsAuthenticated={setIsAuthenticated} />}
           />
           
-          {/* Login */}
-          <Route
-            path="/login"
-            element={
-              isAuthenticated ? (
-                <Navigate to="/admin" replace />
-              ) : (
-                <Login setIsAuthenticated={setIsAuthenticated} />
-              )
-            }
-          />
-          
           {/* Dashboard Admin - Requer autenticação */}
           <Route
             path="/admin/*"
@@ -87,7 +76,7 @@ function App() {
               isAuthenticated || skipLogin ? (
                 <Dashboard setIsAuthenticated={setIsAuthenticated} />
               ) : (
-                <Navigate to="/login" replace />
+                <Navigate to="/cardapio" replace />
               )
             }
           />
@@ -98,12 +87,12 @@ function App() {
             element={<Navigate to="/cardapio" replace />}
           />
           
-          {/* Rotas antigas do dashboard - redireciona para /admin */}
+          {/* Qualquer outra rota */}
           <Route
             path="/*"
             element={
               isAuthenticated || skipLogin ? (
-                <Navigate to="/admin" replace />
+                <Navigate to="/admin/" replace />
               ) : (
                 <Navigate to="/cardapio" replace />
               )
