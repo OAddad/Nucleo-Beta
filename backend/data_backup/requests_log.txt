@@ -8753,3 +8753,4 @@
 2026-01-11T12:26:07.535297+00:00 | DB_CALL get_user_by_id | P3 | 0.27ms | success
 2026-01-11T12:26:07.535616+00:00 | DB_CALL get_all_categories | P3 | 0.17ms | success
 2026-01-11T12:27:37.716543+00:00 | DB_CALL get_user_by_username | P3 | 0.49ms | success
+2026-01-11T12:28:58.222004+00:00 | DB_CALL get_user_by_username | P3 | 0.25ms | success
