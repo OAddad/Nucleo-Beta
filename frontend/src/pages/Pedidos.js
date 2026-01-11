@@ -429,17 +429,24 @@ export default function Pedidos() {
             const pagamento = formasPagamento[pedido.formaPagamento];
             const modulo = modulosConfig[pedido.modulo];
             const ModuloIcon = modulo?.icon || Package;
+            const isCancelado = getNormalizedStatus(pedido.status) === "cancelado";
             
             return (
               <div 
                 key={pedido.id}
                 onClick={() => handleOpenDetails(pedido)}
-                className="bg-card rounded-xl border shadow-sm hover:shadow-md transition-all cursor-pointer overflow-hidden"
+                className={`rounded-xl border shadow-sm hover:shadow-md transition-all cursor-pointer overflow-hidden ${
+                  isCancelado 
+                    ? 'bg-red-50 dark:bg-red-950/30 border-red-200 dark:border-red-800' 
+                    : 'bg-card'
+                }`}
               >
                 {/* Header com código e status */}
-                <div className="p-4 border-b flex items-center justify-between">
+                <div className={`p-4 border-b flex items-center justify-between ${
+                  isCancelado ? 'border-red-200 dark:border-red-800' : ''
+                }`}>
                   <div className="flex items-center gap-2">
-                    <span className="font-mono font-bold text-lg">{pedido.codigo || "#-----"}</span>
+                    <span className={`font-mono font-bold text-lg ${isCancelado ? 'text-red-600 dark:text-red-400' : ''}`}>{pedido.codigo || "#-----"}</span>
                     {modulo && (
                       <span className={`px-2 py-0.5 rounded text-xs font-medium flex items-center gap-1 ${modulo.color}`}>
                         <ModuloIcon className="w-3 h-3" />
