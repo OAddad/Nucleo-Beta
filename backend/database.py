@@ -2695,5 +2695,148 @@ def get_database_info() -> Dict:
         return info
 
 
+# ==================== DECISION TREE (ÁRVORE DE DECISÃO) ====================
+def get_all_decision_nodes() -> List[Dict]:
+    """Retorna todos os nós da árvore de decisão"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute('SELECT * FROM decision_tree ORDER BY parent_id NULLS FIRST, "order" ASC')
+        return [dict(row) for row in cursor.fetchall()]
+
+
+def get_decision_node(node_id: str) -> Optional[Dict]:
+    """Retorna um nó específico"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM decision_tree WHERE id = ?", (node_id,))
+        row = cursor.fetchone()
+        return dict(row) if row else None
+
+
+def get_decision_nodes_by_parent(parent_id: Optional[str]) -> List[Dict]:
+    """Retorna nós filhos de um nó pai"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        if parent_id is None:
+            cursor.execute('SELECT * FROM decision_tree WHERE parent_id IS NULL ORDER BY "order" ASC')
+        else:
+            cursor.execute('SELECT * FROM decision_tree WHERE parent_id = ? ORDER BY "order" ASC', (parent_id,))
+        return [dict(row) for row in cursor.fetchall()]
+
+
+def create_decision_node(data: Dict) -> Dict:
+    """Cria um novo nó na árvore de decisão"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute('''
+            INSERT INTO decision_tree (id, trigger, response, parent_id, "order", is_active, created_at, updated_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        ''', (
+            data['id'],
+            data['trigger'],
+            data['response'],
+            data.get('parent_id'),
+            data.get('order', 0),
+            1 if data.get('is_active', True) else 0,
+            data.get('created_at'),
+            data.get('updated_at')
+        ))
+        conn.commit()
+        return get_decision_node(data['id'])
+
+
+def update_decision_node(node_id: str, data: Dict) -> Optional[Dict]:
+    """Atualiza um nó existente"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        
+        set_parts = []
+        values = []
+        
+        if 'trigger' in data:
+            set_parts.append('trigger = ?')
+            values.append(data['trigger'])
+        if 'response' in data:
+            set_parts.append('response = ?')
+            values.append(data['response'])
+        if 'parent_id' in data:
+            set_parts.append('parent_id = ?')
+            values.append(data['parent_id'])
+        if 'order' in data:
+            set_parts.append('"order" = ?')
+            values.append(data['order'])
+        if 'is_active' in data:
+            set_parts.append('is_active = ?')
+            values.append(1 if data['is_active'] else 0)
+        if 'updated_at' in data:
+            set_parts.append('updated_at = ?')
+            values.append(data['updated_at'])
+        
+        if not set_parts:
+            return get_decision_node(node_id)
+        
+        values.append(node_id)
+        cursor.execute(f"UPDATE decision_tree SET {', '.join(set_parts)} WHERE id = ?", values)
+        conn.commit()
+        return get_decision_node(node_id)
+
+
+def delete_decision_node(node_id: str) -> bool:
+    """Deleta um nó (sem filhos)"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM decision_tree WHERE id = ?", (node_id,))
+        conn.commit()
+        return cursor.rowcount > 0
+
+
+def delete_decision_node_and_children(node_id: str) -> bool:
+    """Deleta um nó e todos os seus filhos recursivamente"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        
+        # Função recursiva para coletar IDs de filhos
+        def get_all_children_ids(parent_id):
+            cursor.execute("SELECT id FROM decision_tree WHERE parent_id = ?", (parent_id,))
+            children = [row[0] for row in cursor.fetchall()]
+            all_ids = list(children)
+            for child_id in children:
+                all_ids.extend(get_all_children_ids(child_id))
+            return all_ids
+        
+        # Coletar todos os IDs a serem deletados
+        ids_to_delete = [node_id] + get_all_children_ids(node_id)
+        
+        # Deletar todos
+        for id_to_delete in ids_to_delete:
+            cursor.execute("DELETE FROM decision_tree WHERE id = ?", (id_to_delete,))
+        
+        conn.commit()
+        return True
+
+
+def find_decision_node_by_trigger(trigger: str) -> Optional[Dict]:
+    """Encontra um nó pelo gatilho (trigger) - para uso no chatbot"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        # Busca case-insensitive
+        cursor.execute("""
+            SELECT * FROM decision_tree 
+            WHERE LOWER(trigger) = LOWER(?) AND is_active = 1
+            ORDER BY parent_id NULLS FIRST, "order" ASC
+            LIMIT 1
+        """, (trigger,))
+        row = cursor.fetchone()
+        return dict(row) if row else None
+
+
 # Inicializar banco ao importar o módulo
 init_database()
