@@ -9,7 +9,7 @@ import sys
 import json
 
 class StockControlTester:
-    def __init__(self, base_url="https://transparent-bg-fix.preview.emergentagent.com"):
+    def __init__(self, base_url="https://delivery-flow-11.preview.emergentagent.com"):
         self.base_url = base_url
         self.token = None
         self.user_role = None
