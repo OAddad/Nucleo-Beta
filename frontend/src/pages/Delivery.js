@@ -271,13 +271,13 @@ export default function Delivery() {
     });
   };
 
-  // Selecionar/deselecionar todos os pedidos prontos
+  // Selecionar/deselecionar todos os pedidos prontos (apenas delivery, não retirada)
   const toggleSelecionarTodos = () => {
-    const pedidosProntos = getPedidosByStatus('pronto');
-    if (pedidosSelecionados.length === pedidosProntos.length) {
+    const pedidosProntosDelivery = getPedidosByStatus('pronto').filter(p => !isRetirada(p));
+    if (pedidosSelecionados.length === pedidosProntosDelivery.length) {
       setPedidosSelecionados([]);
     } else {
-      setPedidosSelecionados(pedidosProntos.map(p => p.id));
+      setPedidosSelecionados(pedidosProntosDelivery.map(p => p.id));
     }
   };
 
