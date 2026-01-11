@@ -17770,3 +17770,9 @@
 2026-01-11T22:30:42.189895+00:00 | DB_CALL get_all_bairros | P3 | 3.4ms | success
 2026-01-11T22:30:42.190460+00:00 | DB_CALL get_all_clientes | P3 | 0.82ms | success
 2026-01-11T22:30:42.194368+00:00 | DB_CALL get_all_entregadores | P3 | 0.16ms | success
+2026-01-11T22:30:47.985846+00:00 | DB_CALL get_all_pedidos | P3 | 1.64ms | success
+2026-01-11T22:30:47.987018+00:00 | DB_CALL get_all_entregadores | P3 | 2.29ms | success
+2026-01-11T22:30:47.987302+00:00 | DB_CALL get_all_settings | P3 | 2.22ms | success
+2026-01-11T22:30:52.991382+00:00 | DB_CALL get_all_settings | P3 | 0.33ms | success
+2026-01-11T22:30:52.992901+00:00 | DB_CALL get_all_entregadores | P3 | 0.15ms | success
+2026-01-11T22:30:52.994181+00:00 | DB_CALL get_all_pedidos | P3 | 0.64ms | success
