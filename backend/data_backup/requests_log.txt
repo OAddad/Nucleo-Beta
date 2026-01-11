@@ -10172,3 +10172,6 @@
 2026-01-11T16:29:47.218614+00:00 | DB_CALL count_ingredients | P3 | 0.32ms | success
 2026-01-11T16:29:47.218901+00:00 | DB_CALL count_products | P3 | 0.21ms | success
 2026-01-11T16:29:47.220042+00:00 | DB_CALL count_users | P3 | 1.06ms | success
+2026-01-11T16:31:22.800595+00:00 | DB_CALL get_all_business_hours | P3 | 1.55ms | success
+2026-01-11T16:31:22.804567+00:00 | DB_CALL get_all_products | P3 | 4.69ms | success
+2026-01-11T16:31:22.809291+00:00 | DB_CALL get_all_categories | P3 | 9.31ms | success
