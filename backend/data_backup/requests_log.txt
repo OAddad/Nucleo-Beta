@@ -14106,3 +14106,13 @@
 2026-01-11T18:24:46.120414+00:00 | DB_CALL get_all_entregadores | P3 | 0.56ms | success
 2026-01-11T18:24:46.121271+00:00 | DB_CALL get_all_pedidos | P3 | 1.17ms | success
 2026-01-11T18:24:46.123655+00:00 | DB_CALL get_all_settings | P3 | 0.17ms | success
+2026-01-11T18:24:50.925414+00:00 | DB_CALL get_user_by_username | P3 | 0.25ms | success
+2026-01-11T18:24:50.930835+00:00 | DB_CALL get_user_by_id | P3 | 0.22ms | success
+2026-01-11T18:24:50.933055+00:00 | DB_CALL create_entregador | P3 | 2.04ms | success
+2026-01-11T18:24:50.935502+00:00 | DB_CALL get_user_by_id | P3 | 0.2ms | success
+2026-01-11T18:24:50.935945+00:00 | DB_CALL get_all_products | P3 | 0.33ms | success
+2026-01-11T18:24:50.941661+00:00 | DB_CALL get_user_by_id | P3 | 0.2ms | success
+2026-01-11T18:24:50.943119+00:00 | DB_CALL delete_entregador | P3 | 1.32ms | success
+2026-01-11T18:24:51.157154+00:00 | DB_CALL get_all_entregadores | P3 | 0.29ms | success
+2026-01-11T18:24:51.162035+00:00 | DB_CALL get_all_pedidos | P3 | 0.63ms | success
+2026-01-11T18:24:51.163660+00:00 | DB_CALL get_all_settings | P3 | 0.2ms | success
