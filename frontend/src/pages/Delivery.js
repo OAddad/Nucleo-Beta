@@ -1053,11 +1053,11 @@ export default function Delivery() {
 
             {/* Seção NA BAG */}
             <div className="border rounded-lg">
-              <div className="p-3 bg-blue-50 dark:bg-blue-900/20 border-b">
-                <h4 className="font-bold text-blue-700 dark:text-blue-400 flex items-center gap-2">
+              <div className="p-3 bg-muted/30 border-b">
+                <h4 className="font-bold flex items-center gap-2">
                   <ShoppingBag className="w-4 h-4" />
                   NA BAG
-                  <span className="ml-auto bg-blue-200 dark:bg-blue-800 text-blue-800 dark:text-blue-200 px-2 py-0.5 rounded-full text-xs">
+                  <span className="ml-auto bg-muted text-muted-foreground px-2 py-0.5 rounded-full text-xs">
                     {entregadorPedidos.na_bag.length}
                   </span>
                 </h4>
@@ -1075,7 +1075,6 @@ export default function Delivery() {
                       </div>
                       <Button 
                         size="sm" 
-                        className="bg-purple-600 hover:bg-purple-700"
                         onClick={() => handleEnviarParaRota(pedido.id)}
                       >
                         <Truck className="w-4 h-4 mr-1" />
