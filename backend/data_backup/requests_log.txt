@@ -15543,3 +15543,6 @@
 2026-01-11T19:00:13.948230+00:00 | DB_CALL get_all_entregadores | P3 | 0.29ms | success
 2026-01-11T19:00:13.950720+00:00 | DB_CALL get_all_settings | P3 | 0.22ms | success
 2026-01-11T19:00:13.951610+00:00 | DB_CALL get_all_pedidos | P3 | 1.62ms | success
+2026-01-11T19:00:18.940155+00:00 | DB_CALL get_all_pedidos | P3 | 1.91ms | success
+2026-01-11T19:00:18.941400+00:00 | DB_CALL get_all_entregadores | P3 | 2.69ms | success
+2026-01-11T19:00:18.941709+00:00 | DB_CALL get_all_settings | P3 | 2.42ms | success
