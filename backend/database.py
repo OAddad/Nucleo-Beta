@@ -346,6 +346,25 @@ def init_database():
             )
         ''')
         
+        # Tabela de endereços do cliente (múltiplos endereços)
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS client_addresses (
+                id TEXT PRIMARY KEY,
+                client_id TEXT NOT NULL,
+                label TEXT DEFAULT 'Casa',
+                endereco TEXT NOT NULL,
+                numero TEXT,
+                complemento TEXT,
+                bairro TEXT,
+                cidade TEXT DEFAULT 'São Paulo',
+                estado TEXT DEFAULT 'SP',
+                cep TEXT,
+                is_default INTEGER DEFAULT 0,
+                created_at TEXT,
+                FOREIGN KEY (client_id) REFERENCES clientes(id)
+            )
+        ''')
+        
         # Migrações
         try:
             cursor.execute("SELECT code FROM ingredients LIMIT 1")

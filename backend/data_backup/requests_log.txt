@@ -9152,3 +9152,7 @@
 2026-01-11T14:49:32.750236+00:00 | DB_CALL get_user_by_username | P3 | 0.12ms | success
 2026-01-11T14:49:32.750412+00:00 | DB_CALL get_all_clientes | P3 | 0.11ms | success
 2026-01-11T14:49:32.921957+00:00 | DB_CALL get_cliente_by_id | P3 | 0.25ms | success
+2026-01-11T14:51:54.334983+00:00 | DB_CALL init_database | P3 | 4.55ms | success
+2026-01-11T14:51:54.335499+00:00 | DB_CALL count_ingredients | P3 | 0.22ms | success
+2026-01-11T14:51:54.335677+00:00 | DB_CALL count_products | P3 | 0.11ms | success
+2026-01-11T14:51:54.335885+00:00 | DB_CALL count_users | P3 | 0.16ms | success
