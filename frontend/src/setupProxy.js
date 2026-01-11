@@ -16,4 +16,14 @@ module.exports = function(app) {
       }
     })
   );
+  
+  // Proxy para arquivos de upload (imagens de produtos, logos, etc.)
+  app.use(
+    '/uploads',
+    createProxyMiddleware({
+      target: 'http://localhost:8001',
+      changeOrigin: true,
+      secure: false
+    })
+  );
 };
