@@ -9678,3 +9678,10 @@
 2026-01-11T15:41:33.806120+00:00 | DB_CALL get_all_categories | P3 | 3.03ms | success
 2026-01-11T15:41:33.806411+00:00 | DB_CALL get_all_business_hours | P3 | 3.13ms | success
 2026-01-11T15:41:33.806838+00:00 | DB_CALL get_all_business_hours | P3 | 0.8ms | success
+2026-01-11T15:41:45.798611+00:00 | DB_CALL get_user_by_id | P3 | 0.46ms | success
+2026-01-11T15:41:45.799000+00:00 | DB_CALL get_next_product_code | P3 | 0.19ms | success
+2026-01-11T15:41:45.799178+00:00 | DB_CALL get_ingredient_by_id | P3 | 0.12ms | success
+2026-01-11T15:41:45.801367+00:00 | DB_CALL create_product | P3 | 2.11ms | success
+2026-01-11T15:41:45.803366+00:00 | DB_CALL create_audit_log | P3 | 1.93ms | success
+2026-01-11T15:41:45.970070+00:00 | DB_CALL get_user_by_id | P3 | 0.27ms | success
+2026-01-11T15:41:45.970562+00:00 | DB_CALL get_all_products | P3 | 0.32ms | success
