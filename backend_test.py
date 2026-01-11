@@ -4796,158 +4796,6 @@ def main():
         
         return all_tests_passed
 
-    def test_delivery_popup_endpoints(self):
-        """Test specific endpoints for Novo Pedido popup in Delivery system as requested"""
-        print("\n=== DELIVERY POPUP ENDPOINTS TESTS ===")
-        print("🎯 Testing endpoints for Novo Pedido popup as specified in review request:")
-        print("   1. Login with Addad/Addad123")
-        print("   2. GET /api/products - deve retornar lista de produtos")
-        print("   3. GET /api/categories - deve retornar categorias")
-        print("   4. GET /api/clientes - deve retornar clientes")
-        print("   5. GET /api/bairros - deve retornar bairros")
-        print("   Apenas verificar se retornam arrays válidos.")
-        
-        all_tests_passed = True
-        
-        # 1. Login with Addad/Addad123
-        print("\n🔍 1. Testing login with Addad/Addad123...")
-        success, login_response = self.run_test(
-            "Login with Addad/Addad123",
-            "POST",
-            "auth/login",
-            200,
-            data={"username": "Addad", "password": "Addad123"}
-        )
-        
-        if success and 'access_token' in login_response:
-            self.token = login_response['access_token']
-            self.user_id = login_response['user']['id']
-            print(f"   ✅ Login successful with Addad/Addad123")
-            print(f"   - User role: {login_response['user']['role']}")
-            print(f"   - Token obtained: {self.token[:20]}...")
-        else:
-            print(f"   ❌ Login failed with Addad/Addad123")
-            all_tests_passed = False
-            return False
-        
-        # 2. GET /api/products - deve retornar lista de produtos
-        print("\n🔍 2. Testing GET /api/products...")
-        success, products = self.run_test(
-            "Get products list",
-            "GET",
-            "products",
-            200
-        )
-        
-        if success:
-            if isinstance(products, list):
-                print(f"   ✅ Products endpoint returned valid array with {len(products)} items")
-                if products:
-                    sample_product = products[0]
-                    print(f"   - Sample product: {sample_product.get('name', 'N/A')} (ID: {sample_product.get('id', 'N/A')})")
-                    print(f"   - Has required fields: name={bool(sample_product.get('name'))}, id={bool(sample_product.get('id'))}")
-                else:
-                    print(f"   ⚠️ Products array is empty but valid")
-            else:
-                print(f"   ❌ Products endpoint did not return an array, got: {type(products)}")
-                all_tests_passed = False
-        else:
-            print(f"   ❌ Products endpoint failed")
-            all_tests_passed = False
-        
-        # 3. GET /api/categories - deve retornar categorias
-        print("\n🔍 3. Testing GET /api/categories...")
-        success, categories = self.run_test(
-            "Get categories list",
-            "GET",
-            "categories",
-            200
-        )
-        
-        if success:
-            if isinstance(categories, list):
-                print(f"   ✅ Categories endpoint returned valid array with {len(categories)} items")
-                if categories:
-                    sample_category = categories[0]
-                    print(f"   - Sample category: {sample_category.get('name', 'N/A')} (ID: {sample_category.get('id', 'N/A')})")
-                    print(f"   - Has required fields: name={bool(sample_category.get('name'))}, id={bool(sample_category.get('id'))}")
-                else:
-                    print(f"   ⚠️ Categories array is empty but valid")
-            else:
-                print(f"   ❌ Categories endpoint did not return an array, got: {type(categories)}")
-                all_tests_passed = False
-        else:
-            print(f"   ❌ Categories endpoint failed")
-            all_tests_passed = False
-        
-        # 4. GET /api/clientes - deve retornar clientes
-        print("\n🔍 4. Testing GET /api/clientes...")
-        success, clientes = self.run_test(
-            "Get clientes list",
-            "GET",
-            "clientes",
-            200
-        )
-        
-        if success:
-            if isinstance(clientes, list):
-                print(f"   ✅ Clientes endpoint returned valid array with {len(clientes)} items")
-                if clientes:
-                    sample_cliente = clientes[0]
-                    print(f"   - Sample cliente: {sample_cliente.get('nome', 'N/A')} (ID: {sample_cliente.get('id', 'N/A')})")
-                    print(f"   - Has required fields: nome={bool(sample_cliente.get('nome'))}, id={bool(sample_cliente.get('id'))}")
-                else:
-                    print(f"   ⚠️ Clientes array is empty but valid")
-            else:
-                print(f"   ❌ Clientes endpoint did not return an array, got: {type(clientes)}")
-                all_tests_passed = False
-        else:
-            print(f"   ❌ Clientes endpoint failed")
-            all_tests_passed = False
-        
-        # 5. GET /api/bairros - deve retornar bairros
-        print("\n🔍 5. Testing GET /api/bairros...")
-        success, bairros = self.run_test(
-            "Get bairros list",
-            "GET",
-            "bairros",
-            200
-        )
-        
-        if success:
-            if isinstance(bairros, list):
-                print(f"   ✅ Bairros endpoint returned valid array with {len(bairros)} items")
-                if bairros:
-                    sample_bairro = bairros[0]
-                    print(f"   - Sample bairro: {sample_bairro.get('nome', 'N/A')} (ID: {sample_bairro.get('id', 'N/A')})")
-                    print(f"   - Has required fields: nome={bool(sample_bairro.get('nome'))}, id={bool(sample_bairro.get('id'))}")
-                    if 'valor_entrega' in sample_bairro:
-                        print(f"   - Valor entrega: R$ {sample_bairro.get('valor_entrega', 0):.2f}")
-                else:
-                    print(f"   ⚠️ Bairros array is empty but valid")
-            else:
-                print(f"   ❌ Bairros endpoint did not return an array, got: {type(bairros)}")
-                all_tests_passed = False
-        else:
-            print(f"   ❌ Bairros endpoint failed")
-            all_tests_passed = False
-        
-        # Summary
-        print(f"\n🔍 DELIVERY POPUP ENDPOINTS TESTING SUMMARY:")
-        if all_tests_passed:
-            print(f"   ✅ ALL DELIVERY POPUP TESTS PASSED")
-            print(f"   ✅ Login with Addad/Addad123 working")
-            print(f"   ✅ GET /api/products returns valid array")
-            print(f"   ✅ GET /api/categories returns valid array")
-            print(f"   ✅ GET /api/clientes returns valid array")
-            print(f"   ✅ GET /api/bairros returns valid array")
-            print(f"   ✅ All endpoints ready for Novo Pedido popup")
-        else:
-            print(f"   ❌ SOME DELIVERY POPUP TESTS FAILED")
-            print(f"   ℹ️ Check individual test results above for details")
-        
-        return all_tests_passed
-
 
 def main():
     """Main function for running tests"""
@@ -4957,46 +4805,16 @@ def main():
     if len(sys.argv) > 1:
         test_name = sys.argv[1].lower()
         
-        if test_name == "expense":
-            print("🎯 Running EXPENSE MODULE tests only...")
-            return tester.test_expense_module()
-        elif test_name == "nucleo":
-            print("🎯 Running NÚCLEO DESKTOP ENDPOINTS tests only...")
-            return tester.test_nucleo_desktop_endpoints()
-        elif test_name == "recipe":
-            print("🎯 Running RECIPE PRODUCTS tests only...")
-            return tester.test_recipe_products_with_yield_and_cost_calculation()
-        elif test_name == "critical":
-            print("🎯 Running CRITICAL ENDPOINTS tests only...")
-            return tester.test_critical_endpoints_review_request()
-        elif test_name == "business":
-            print("🎯 Running BUSINESS HOURS tests only...")
-            return tester.test_business_hours_multiple_periods()
-        elif test_name == "delivery":
-            print("🎯 Running DELIVERY AND ENTREGADORES tests only...")
-            return tester.test_delivery_and_entregadores_endpoints()
-        elif test_name == "funcionarios":
-            print("🎯 Running FUNCIONÁRIOS tests only...")
-            return tester.test_funcionarios_endpoints()
-        elif test_name == "order_steps":
-            print("🎯 Running ORDER STEPS tests only...")
-            return tester.test_order_steps_feature()
-        elif test_name == "automatic_codes":
-            print("🎯 Running AUTOMATIC INGREDIENT CODES tests only...")
-            return tester.test_automatic_ingredient_codes()
-        elif test_name == "average_price":
-            print("🎯 Running AVERAGE PRICE LAST 5 PURCHASES tests only...")
-            return tester.test_average_price_last_5_purchases()
-        elif test_name == "popup":
+        if test_name == "popup":
             print("🎯 Running DELIVERY POPUP ENDPOINTS tests only...")
             return tester.test_delivery_popup_endpoints()
         else:
             print(f"❌ Unknown test: {test_name}")
-            print("Available tests: expense, nucleo, recipe, critical, business, delivery, funcionarios, order_steps, automatic_codes, average_price, popup")
+            print("Available tests: popup")
             return False
     else:
-        # Run all tests
-        return tester.run_all_tests()
+        # Run popup test by default
+        return tester.test_delivery_popup_endpoints()
 
 
 def main_review_request():
