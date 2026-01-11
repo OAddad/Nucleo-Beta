@@ -457,9 +457,10 @@ function CheckoutModal({ open, onClose, cart, cartTotal, client, darkMode, onOrd
     const fetchBairros = async () => {
       try {
         const res = await axios.get(`${API}/bairros`);
-        setBairros(res.data);
+        setBairros(Array.isArray(res.data) ? res.data : []);
       } catch (error) {
         console.error("Erro ao carregar bairros:", error);
+        setBairros([]);
       }
     };
     fetchBairros();
