@@ -9370,3 +9370,6 @@
 2026-01-11T15:15:04.273811+00:00 | DB_CALL count_products | P3 | 0.13ms | success
 2026-01-11T15:15:04.273954+00:00 | DB_CALL count_users | P3 | 0.09ms | success
 2026-01-11T15:15:06.790899+00:00 | DB_CALL get_all_pedidos | P3 | 0.43ms | success
+2026-01-11T15:15:11.783115+00:00 | DB_CALL get_all_pedidos | P3 | 0.32ms | success
+2026-01-11T15:15:15.048142+00:00 | DB_CALL get_cliente_by_telefone | P3 | 0.38ms | success
+2026-01-11T15:15:15.051837+00:00 | DB_CALL create_cliente | P3 | 3.54ms | success
