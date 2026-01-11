@@ -450,13 +450,30 @@ export default function Delivery() {
               </div>
             ) : (
               getPedidosByStatus('aguardando_aceite').map(pedido => (
-                <div key={pedido.id} className="bg-background rounded-lg border p-3 shadow-sm">
+                <div 
+                  key={pedido.id} 
+                  className={`bg-background rounded-lg border p-3 shadow-sm ${
+                    isRetirada(pedido) 
+                      ? 'border-amber-400 bg-amber-50 dark:bg-amber-950/20' 
+                      : ''
+                  }`}
+                >
                   <div className="flex items-center justify-between mb-2">
-                    <span className="font-mono text-xs text-muted-foreground">{pedido.codigo}</span>
+                    <div className="flex items-center gap-2">
+                      {isRetirada(pedido) && (
+                        <span className="bg-amber-500 text-white text-[10px] px-1.5 py-0.5 rounded font-bold flex items-center gap-1">
+                          <Store className="w-3 h-3" />
+                          RETIRADA
+                        </span>
+                      )}
+                      <span className="font-mono text-xs text-muted-foreground">{pedido.codigo}</span>
+                    </div>
                     <span className="text-xs text-muted-foreground">{formatTime(pedido.created_at)}</span>
                   </div>
                   <p className="font-semibold text-sm truncate">{pedido.cliente_nome || "Cliente"}</p>
-                  <p className="text-xs text-muted-foreground truncate mb-2">{pedido.endereco_rua || "Sem endereço"}</p>
+                  <p className="text-xs text-muted-foreground truncate mb-2">
+                    {isRetirada(pedido) ? "Retirada no local" : (pedido.endereco_rua || "Sem endereço")}
+                  </p>
                   <p className="font-bold text-primary text-sm mb-2">R$ {(pedido.total || 0).toFixed(2)}</p>
                   
                   {!autoAccept && (
