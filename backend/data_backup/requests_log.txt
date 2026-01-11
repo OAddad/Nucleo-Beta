@@ -13670,3 +13670,9 @@
 2026-01-11T18:18:52.865027+00:00 | DB_CALL get_all_entregadores | P3 | 0.3ms | success
 2026-01-11T18:18:52.867090+00:00 | DB_CALL get_all_pedidos | P3 | 1.0ms | success
 2026-01-11T18:18:52.868008+00:00 | DB_CALL get_all_settings | P3 | 1.44ms | success
+2026-01-11T18:18:55.940818+00:00 | DB_CALL get_all_pedidos | P3 | 0.85ms | success
+2026-01-11T18:18:55.943006+00:00 | DB_CALL get_all_entregadores | P3 | 0.91ms | success
+2026-01-11T18:18:55.944001+00:00 | DB_CALL get_all_settings | P3 | 1.09ms | success
+2026-01-11T18:18:57.860787+00:00 | DB_CALL get_all_settings | P3 | 0.35ms | success
+2026-01-11T18:18:57.863065+00:00 | DB_CALL get_all_pedidos | P3 | 1.1ms | success
+2026-01-11T18:18:57.864047+00:00 | DB_CALL get_all_entregadores | P3 | 1.56ms | success
