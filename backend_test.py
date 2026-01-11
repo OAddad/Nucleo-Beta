@@ -4796,7 +4796,6 @@ def main():
         
         return all_tests_passed
 
-
     def test_delivery_popup_endpoints(self):
         """Test specific endpoints for Novo Pedido popup in Delivery system as requested"""
         print("\n=== DELIVERY POPUP ENDPOINTS TESTS ===")
