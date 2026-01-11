@@ -60,6 +60,17 @@ export default function Dashboard({ setIsAuthenticated }) {
     }
   }, []);
 
+  // Limpar activeTopMenu quando navegar para rotas que não são do top menu
+  useEffect(() => {
+    const path = location.pathname;
+    // Se a URL contém rotas específicas que não são do top menu, limpar activeTopMenu
+    const nonTopMenuPaths = ['/entregador/', '/financeiro/', '/configuracoes/', '/impulsione/', '/clientes-fornecedores/', '/vendas/', '/estoque/', '/ingredientes', '/produtos', '/compras', '/moderacao'];
+    const shouldClearTopMenu = nonTopMenuPaths.some(p => path.includes(p));
+    if (shouldClearTopMenu && activeTopMenu) {
+      setActiveTopMenu(null);
+    }
+  }, [location.pathname, activeTopMenu]);
+
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
