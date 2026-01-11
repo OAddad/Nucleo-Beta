@@ -49,6 +49,13 @@ export default function Dashboard({ setIsAuthenticated }) {
   const [activeTopMenu, setActiveTopMenu] = useState(null); // null = nenhuma aba superior ativa
   const [stockControlExpanded, setStockControlExpanded] = useState(false);
   const [salesExpanded, setSalesExpanded] = useState(false);
+  
+  // Configurações da empresa
+  const [companySettings, setCompanySettings] = useState({
+    company_name: "Núcleo",
+    slogan: "O Centro da sua Gestão",
+    logo_url: null
+  });
 
   // Configuração das abas superiores com ícones
   const topMenuItems = [
@@ -58,6 +65,27 @@ export default function Dashboard({ setIsAuthenticated }) {
     { id: 'delivery', label: 'Delivery', icon: Bike },
     { id: 'chatbot', label: 'ChatBot', icon: WhatsAppIcon },
   ];
+
+  // Buscar configurações da empresa
+  useEffect(() => {
+    const fetchCompanySettings = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const res = await fetch(`${process.env.REACT_APP_BACKEND_URL || ""}/api/company/settings`, {
+          headers: token ? { Authorization: `Bearer ${token}` } : {}
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setCompanySettings(data);
+          // Atualizar título do documento
+          document.title = data.company_name || "Núcleo";
+        }
+      } catch (error) {
+        console.error("Erro ao buscar configurações da empresa:", error);
+      }
+    };
+    fetchCompanySettings();
+  }, []);
 
   useEffect(() => {
     const user = localStorage.getItem("user");
