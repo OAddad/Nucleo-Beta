@@ -360,20 +360,32 @@ export default function CardapioPublico({ onAdminLogin }) {
   }, [filteredProducts]);
 
   const addToCart = (product) => {
+    const qty = product.quantity || 1;
     setCart(prev => {
-      const existing = prev.find(item => item.id === product.id);
-      if (existing) return prev.map(item => item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item);
-      return [...prev, { ...product, quantity: 1 }];
+      // Se tem observação, sempre adiciona como novo item
+      if (product.observation) {
+        return [...prev, { ...product, quantity: qty, cartItemId: Date.now() }];
+      }
+      // Sem observação, agrupa por id
+      const existing = prev.find(item => item.id === product.id && !item.observation);
+      if (existing) {
+        return prev.map(item => 
+          item.id === product.id && !item.observation 
+            ? { ...item, quantity: item.quantity + qty } 
+            : item
+        );
+      }
+      return [...prev, { ...product, quantity: qty, cartItemId: Date.now() }];
     });
     toast.success(`${product.name} adicionado!`);
     setCartOpen(true);
   };
 
-  const removeFromCart = (productId) => setCart(prev => prev.filter(item => item.id !== productId));
+  const removeFromCart = (cartItemId) => setCart(prev => prev.filter(item => (item.cartItemId || item.id) !== cartItemId));
 
-  const updateQuantity = (productId, delta) => {
+  const updateQuantity = (cartItemId, delta) => {
     setCart(prev => prev.map(item => {
-      if (item.id === productId) {
+      if ((item.cartItemId || item.id) === cartItemId) {
         const newQty = item.quantity + delta;
         return newQty <= 0 ? null : { ...item, quantity: newQty };
       }
