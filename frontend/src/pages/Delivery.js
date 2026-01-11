@@ -254,6 +254,57 @@ export default function Delivery() {
     }
   };
 
+  // Toggle seleção de pedido na coluna PRONTO
+  const togglePedidoSelecionado = (pedidoId) => {
+    setPedidosSelecionados(prev => {
+      if (prev.includes(pedidoId)) {
+        return prev.filter(id => id !== pedidoId);
+      } else {
+        return [...prev, pedidoId];
+      }
+    });
+  };
+
+  // Selecionar/deselecionar todos os pedidos prontos
+  const toggleSelecionarTodos = () => {
+    const pedidosProntos = getPedidosByStatus('pronto');
+    if (pedidosSelecionados.length === pedidosProntos.length) {
+      setPedidosSelecionados([]);
+    } else {
+      setPedidosSelecionados(pedidosProntos.map(p => p.id));
+    }
+  };
+
+  // Enviar pedidos selecionados para o entregador
+  const handleEnviarPedidosEmLote = async () => {
+    if (!entregadorProntoSelecionado) {
+      toast.error("Selecione um entregador");
+      return;
+    }
+    if (pedidosSelecionados.length === 0) {
+      toast.error("Selecione pelo menos um pedido");
+      return;
+    }
+
+    try {
+      // Enviar cada pedido para o entregador
+      await Promise.all(pedidosSelecionados.map(pedidoId =>
+        axios.patch(
+          `${API}/pedidos/${pedidoId}/entregador?entregador_id=${entregadorProntoSelecionado}`,
+          {},
+          getAuthHeader()
+        )
+      ));
+      
+      toast.success(`${pedidosSelecionados.length} pedido(s) enviado(s) para a BAG!`);
+      setPedidosSelecionados([]);
+      setEntregadorProntoSelecionado("");
+      fetchData();
+    } catch (error) {
+      toast.error("Erro ao enviar pedidos");
+    }
+  };
+
   // Ir para cardápio para novo pedido
   const handleNovoPedido = () => {
     // Navegar para a aba do cardápio
