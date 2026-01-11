@@ -1280,7 +1280,7 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
   };
 
   // Calcular totais
-  const subtotal = cart.reduce((acc, item) => acc + (item.selling_price || 0) * item.quantity, 0);
+  const subtotal = cart.reduce((acc, item) => acc + (item.sale_price || 0) * item.quantity, 0);
   const total = subtotal + (tipoEntrega === "delivery" ? taxaEntrega : 0);
 
   // Buscar taxa de entrega pelo bairro
