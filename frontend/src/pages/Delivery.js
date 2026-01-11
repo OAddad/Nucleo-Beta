@@ -337,11 +337,37 @@ export default function Delivery() {
   // Verificar se é pedido de retirada
   const isRetirada = (pedido) => pedido.tipo_entrega === 'pickup';
 
-  // Finalizar pedido de retirada (marcar como concluído)
-  const handleFinalizarRetirada = async (pedidoId) => {
+  // Abrir modal de pagamento para retirada
+  const handleAbrirPagamento = (pedido) => {
+    setPedidoParaPagamento(pedido);
+    setFormaPagamentoSelecionada(pedido.forma_pagamento || "");
+    setPagamentoModalOpen(true);
+  };
+
+  // Finalizar pedido de retirada com pagamento
+  const handleFinalizarRetirada = async () => {
+    if (!pedidoParaPagamento) return;
+    
+    if (!formaPagamentoSelecionada) {
+      toast.error("Selecione a forma de pagamento");
+      return;
+    }
+    
     try {
-      await axios.patch(`${API}/pedidos/${pedidoId}/status?status=concluido`);
+      // Atualizar forma de pagamento se necessário
+      if (formaPagamentoSelecionada !== pedidoParaPagamento.forma_pagamento) {
+        await axios.put(`${API}/pedidos/${pedidoParaPagamento.id}`, {
+          forma_pagamento: formaPagamentoSelecionada
+        }, getAuthHeader());
+      }
+      
+      // Marcar como concluído
+      await axios.patch(`${API}/pedidos/${pedidoParaPagamento.id}/status?status=concluido`);
+      
       toast.success("Pedido finalizado com sucesso!");
+      setPagamentoModalOpen(false);
+      setPedidoParaPagamento(null);
+      setFormaPagamentoSelecionada("");
       fetchData();
     } catch (error) {
       toast.error("Erro ao finalizar pedido");
