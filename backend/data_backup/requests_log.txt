@@ -18251,3 +18251,9 @@
 2026-01-11T22:52:24.995604+00:00 | DB_CALL get_all_entregadores | P3 | 0.28ms | success
 2026-01-11T22:52:24.997656+00:00 | DB_CALL get_all_pedidos | P3 | 1.18ms | success
 2026-01-11T22:52:24.998763+00:00 | DB_CALL get_all_settings | P3 | 1.79ms | success
+2026-01-11T22:52:29.991675+00:00 | DB_CALL get_all_pedidos | P3 | 1.2ms | success
+2026-01-11T22:52:29.992844+00:00 | DB_CALL get_all_entregadores | P3 | 1.75ms | success
+2026-01-11T22:52:29.993705+00:00 | DB_CALL get_all_settings | P3 | 0.14ms | success
+2026-01-11T22:52:34.021610+00:00 | DB_CALL get_all_settings | P3 | 0.92ms | success
+2026-01-11T22:52:34.022062+00:00 | DB_CALL get_all_entregadores | P3 | 0.72ms | success
+2026-01-11T22:52:34.023388+00:00 | DB_CALL get_all_pedidos | P3 | 0.67ms | success
