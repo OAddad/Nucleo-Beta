@@ -11222,3 +11222,13 @@
 2026-01-11T17:21:42.111304+00:00 | DB_CALL get_all_categories | P3 | 6.08ms | success
 2026-01-11T17:21:42.111632+00:00 | DB_CALL get_all_business_hours | P3 | 5.17ms | success
 2026-01-11T17:21:42.123573+00:00 | DB_CALL get_all_pedidos | P3 | 0.43ms | success
+2026-01-11T17:21:42.288798+00:00 | DB_CALL get_all_pedidos | P3 | 0.45ms | success
+2026-01-11T17:21:42.451399+00:00 | DB_CALL get_all_pedidos | P3 | 0.44ms | success
+2026-01-11T17:21:44.838110+00:00 | DB_CALL get_all_pedidos | P3 | 0.47ms | success
+2026-01-11T17:21:44.853097+00:00 | DB_CALL get_all_entregadores | P3 | 0.27ms | success
+2026-01-11T17:21:44.853937+00:00 | DB_CALL get_all_settings | P3 | 0.12ms | success
+2026-01-11T17:21:45.002694+00:00 | DB_CALL get_all_pedidos | P3 | 0.82ms | success
+2026-01-11T17:21:48.210827+00:00 | DB_CALL get_all_entregadores | P3 | 0.24ms | success
+2026-01-11T17:21:48.450554+00:00 | DB_CALL get_all_products | P3 | 0.41ms | success
+2026-01-11T17:21:48.451932+00:00 | DB_CALL get_all_categories | P3 | 0.29ms | success
+2026-01-11T17:21:48.452753+00:00 | DB_CALL get_all_business_hours | P3 | 0.16ms | success
