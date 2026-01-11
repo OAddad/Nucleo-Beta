@@ -17256,3 +17256,13 @@
 2026-01-11T21:36:50.984103+00:00 | DB_CALL search_ruas | P3 | 0.36ms | success
 2026-01-11T21:36:51.821801+00:00 | DB_CALL search_ruas | P3 | 0.35ms | success
 2026-01-11T21:36:52.987373+00:00 | DB_CALL search_ruas | P3 | 0.37ms | success
+2026-01-11T21:36:54.444418+00:00 | DB_CALL search_ruas | P3 | 0.43ms | success
+2026-01-11T21:36:55.215797+00:00 | DB_CALL search_ruas | P3 | 0.35ms | success
+2026-01-11T21:36:55.387426+00:00 | DB_CALL search_ruas | P3 | 0.36ms | success
+2026-01-11T21:36:55.713188+00:00 | DB_CALL search_ruas | P3 | 0.37ms | success
+2026-01-11T21:36:55.881434+00:00 | DB_CALL search_ruas | P3 | 0.34ms | success
+2026-01-11T21:36:56.681838+00:00 | DB_CALL search_ruas | P3 | 0.37ms | success
+2026-01-11T21:36:56.836352+00:00 | DB_CALL search_ruas | P3 | 0.34ms | success
+2026-01-11T21:36:57.195032+00:00 | DB_CALL search_ruas | P3 | 0.34ms | success
+2026-01-11T21:36:57.315490+00:00 | DB_CALL search_ruas | P3 | 0.35ms | success
+2026-01-11T21:36:57.525572+00:00 | DB_CALL search_ruas | P3 | 0.37ms | success
