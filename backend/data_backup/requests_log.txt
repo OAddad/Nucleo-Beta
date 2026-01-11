@@ -18006,3 +18006,8 @@
 2026-01-11T22:35:46.003408+00:00 | DB_CALL get_all_business_hours | P3 | 2.82ms | success
 2026-01-11T22:35:46.003913+00:00 | DB_CALL get_all_bairros | P3 | 0.54ms | success
 2026-01-11T22:35:46.004787+00:00 | DB_CALL get_all_settings | P3 | 0.13ms | success
+2026-01-11T22:35:58.000150+00:00 | DB_CALL get_all_products | P3 | 2.95ms | success
+2026-01-11T22:35:58.001903+00:00 | DB_CALL get_all_bairros | P3 | 4.25ms | success
+2026-01-11T22:35:58.002627+00:00 | DB_CALL get_all_categories | P3 | 4.25ms | success
+2026-01-11T22:35:58.003030+00:00 | DB_CALL get_all_settings | P3 | 4.21ms | success
+2026-01-11T22:35:58.003332+00:00 | DB_CALL get_all_business_hours | P3 | 3.82ms | success
