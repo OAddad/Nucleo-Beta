@@ -142,20 +142,20 @@ class EntregadorNavigationTester:
             pedido_data = {
                 "cliente_nome": "Cliente Teste Entregador",
                 "cliente_telefone": "(11) 99999-8888",
-                "endereco": "Rua Teste, 123 - Bairro Teste",
+                "endereco_rua": "Rua Teste, 123",
+                "endereco_bairro": "Bairro Teste",
                 "items": [
                     {
-                        "product_id": test_product['id'],
-                        "product_name": test_product['name'],
-                        "quantity": 2,
-                        "unit_price": test_product.get('sale_price', 25.00),
-                        "total_price": (test_product.get('sale_price', 25.00) * 2)
+                        "nome": test_product['name'],
+                        "quantidade": 2,
+                        "preco": test_product.get('sale_price', 25.00),
+                        "observacao": "Item de teste"
                     }
                 ],
                 "total": (test_product.get('sale_price', 25.00) * 2),
-                "payment_method": "dinheiro",
+                "forma_pagamento": "dinheiro",
                 "status": "aguardando_aceite",
-                "delivery_type": "delivery"
+                "tipo_entrega": "delivery"
             }
             
             success, pedido = self.run_test(
