@@ -16286,3 +16286,11 @@
 2026-01-11T19:33:06.062308+00:00 | DB_CALL get_all_categories | P3 | 2.62ms | success
 2026-01-11T19:33:06.242226+00:00 | DB_CALL get_all_bairros | P3 | 0.4ms | success
 2026-01-11T19:33:08.147792+00:00 | DB_CALL get_client_addresses | P3 | 0.29ms | success
+2026-01-11T19:33:44.018193+00:00 | DB_CALL get_all_categories | P3 | 1.53ms | success
+2026-01-11T19:33:44.019062+00:00 | DB_CALL get_all_bairros | P3 | 2.19ms | success
+2026-01-11T19:33:44.019942+00:00 | DB_CALL get_all_products | P3 | 2.14ms | success
+2026-01-11T19:33:44.021271+00:00 | DB_CALL get_all_business_hours | P3 | 0.22ms | success
+2026-01-11T19:33:44.918987+00:00 | DB_CALL get_all_products | P3 | 1.01ms | success
+2026-01-11T19:33:44.920365+00:00 | DB_CALL get_all_business_hours | P3 | 1.81ms | success
+2026-01-11T19:33:44.922823+00:00 | DB_CALL get_all_categories | P3 | 0.28ms | success
+2026-01-11T19:33:45.100735+00:00 | DB_CALL get_all_bairros | P3 | 0.32ms | success
