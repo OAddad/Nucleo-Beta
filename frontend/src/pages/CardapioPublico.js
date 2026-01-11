@@ -1155,6 +1155,39 @@ function CheckoutModal({ open, onClose, cart, cartTotal, client, darkMode, onOrd
             </div>
           </div>
         )}
+
+        {/* Dialog de Confirmação de Deletar Endereço */}
+        {deleteAddressDialog.open && (
+          <div className="absolute inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
+            <div className={`${t.bg} rounded-2xl p-6 max-w-sm w-full shadow-xl`}>
+              <div className="text-center mb-6">
+                <div className="w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Trash2 className="w-8 h-8 text-red-500" />
+                </div>
+                <h3 className={`text-xl font-bold ${t.text}`}>Remover endereço?</h3>
+                <p className={`${t.textMuted} text-sm mt-2`}>
+                  Deseja remover o endereço <span className="font-bold">"{deleteAddressDialog.addressLabel}"</span>?
+                </p>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <Button
+                  onClick={() => setDeleteAddressDialog({ open: false, addressId: null, addressLabel: '' })}
+                  variant="outline"
+                  className={`h-12 ${t.border}`}
+                >
+                  Cancelar
+                </Button>
+                <Button
+                  onClick={handleConfirmDeleteAddress}
+                  className="h-12 bg-red-500 hover:bg-red-600 text-white"
+                >
+                  Remover
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
       </DialogContent>
     </Dialog>
   );
