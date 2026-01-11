@@ -24,7 +24,7 @@ const getImageUrl = (url) => {
   if (url.startsWith('http://') || url.startsWith('https://')) {
     return url;
   }
-  // Se é uma URL de uploads, adiciona /api na frente para passar pelo proxy
+  // Se é uma URL de uploads (/uploads/products/xxx), converte para /api/uploads/products/xxx
   if (url.startsWith('/uploads/')) {
     return `/api${url}`;
   }
