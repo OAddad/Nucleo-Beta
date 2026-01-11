@@ -1438,6 +1438,15 @@ export default function CardapioPublico({ onAdminLogin }) {
         darkMode={darkMode}
         onOrderComplete={handleOrderComplete}
       />
+      
+      {/* Tela de Acompanhamento do Pedido */}
+      {trackingOpen && currentOrder && (
+        <OrderTrackingScreen
+          pedido={currentOrder}
+          onClose={() => setTrackingOpen(false)}
+          darkMode={darkMode}
+        />
+      )}
     </div>
   );
 }
