@@ -16378,3 +16378,10 @@
 2026-01-11T19:35:48.624803+00:00 | DB_CALL get_pedidos_by_entregador | P3 | 0.36ms | success
 2026-01-11T19:35:50.119059+00:00 | DB_CALL get_all_entregadores | P3 | 0.9ms | success
 2026-01-11T19:35:50.120376+00:00 | DB_CALL get_all_pedidos | P3 | 1.8ms | success
+2026-01-11T19:35:58.903304+00:00 | DB_CALL get_user_by_id | P3 | 0.26ms | success
+2026-01-11T19:35:58.906457+00:00 | DB_CALL get_all_purchases | P3 | 2.98ms | success
+2026-01-11T19:36:00.465006+00:00 | DB_CALL get_all_pedidos | P3 | 0.96ms | success
+2026-01-11T19:36:00.466816+00:00 | DB_CALL get_all_entregadores | P3 | 0.19ms | success
+2026-01-11T19:36:07.687840+00:00 | DB_CALL get_all_settings | P3 | 0.72ms | success
+2026-01-11T19:36:07.689023+00:00 | DB_CALL get_all_entregadores | P3 | 1.51ms | success
+2026-01-11T19:36:07.690109+00:00 | DB_CALL get_all_pedidos | P3 | 1.34ms | success

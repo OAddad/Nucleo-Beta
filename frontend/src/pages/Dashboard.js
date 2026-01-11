@@ -69,13 +69,17 @@ export default function Dashboard({ setIsAuthenticated }) {
   useEffect(() => {
     const path = location.pathname;
     
-    // Se a URL contém rotas específicas que não são do top menu, limpar activeTopMenu
-    const nonTopMenuPaths = ['/entregador/', '/financeiro/', '/configuracoes/', '/impulsione/', '/clientes-fornecedores/', '/vendas/', '/estoque/', '/ingredientes', '/produtos', '/compras', '/moderacao', '/localizacao/'];
-    const shouldClearTopMenu = nonTopMenuPaths.some(p => path.includes(p));
-    if (shouldClearTopMenu && activeTopMenu) {
-      setActiveTopMenu(null);
+    // Se não estamos em uma das abas do top menu, limpar activeTopMenu
+    // Top menu items são: cardapio, balcao, mesas, chatbot, delivery
+    // Qualquer outra rota deve limpar o activeTopMenu
+    if (activeTopMenu) {
+      // Se a URL mudou para qualquer rota do menu lateral, limpar activeTopMenu
+      const isTopMenuRoute = false; // Top menu não usa rotas de URL, só estado
+      if (!isTopMenuRoute) {
+        setActiveTopMenu(null);
+      }
     }
-  }, [location.pathname, activeTopMenu]);
+  }, [location.pathname]);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -86,7 +90,7 @@ export default function Dashboard({ setIsAuthenticated }) {
 
   const handleNavigate = (path) => {
     setActiveTopMenu(null); // Desativa aba superior ao navegar pelo menu lateral
-    navigate(path);
+    navigate(`/admin${path}`);
     if (window.innerWidth < 1024) {
       setSidebarOpen(false);
     }
