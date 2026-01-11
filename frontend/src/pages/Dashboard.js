@@ -163,6 +163,20 @@ export default function Dashboard({ setIsAuthenticated }) {
     ]
   };
 
+  // Estrutura hierárquica de Impulsione suas Vendas
+  const impulsioneVendasModule = {
+    label: "Impulsione suas Vendas",
+    icon: Megaphone,
+    expanded: impulsioneVendasExpanded,
+    toggle: () => setImpulsioneVendasExpanded(!impulsioneVendasExpanded),
+    children: [
+      { path: "/impulsione/relatorio-ofertas", label: "Relatório de Ofertas", icon: BarChart3 },
+      { path: "/impulsione/promocoes", label: "Promoções", icon: Gift },
+      { path: "/impulsione/cupons", label: "Cupons de Desconto", icon: Ticket },
+      { path: "/impulsione/campanhas", label: "Campanhas", icon: Megaphone },
+    ]
+  };
+
 
   const isActive = (path) => {
     if (path === "/") return location.pathname === "/";
