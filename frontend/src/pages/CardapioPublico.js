@@ -259,9 +259,9 @@ export default function CardapioPublico({ onAdminLogin }) {
     }
   };
 
-  // Função para verificar se está aberto agora
+  // Função para verificar se está aberto agora (com suporte a múltiplos períodos)
   const getOpenStatus = () => {
-    if (businessHours.length === 0) return { isOpen: true, closingTime: '23:00' };
+    if (businessHours.length === 0) return { isOpen: true, closingTime: '23:59', nextOpenTime: null };
     
     const now = new Date();
     // JavaScript: 0=Domingo, 1=Segunda... precisamos converter para nosso formato (0=Segunda, 6=Domingo)
@@ -271,27 +271,68 @@ export default function CardapioPublico({ onAdminLogin }) {
     const todayHours = businessHours.find(h => h.day_of_week === dayOfWeek);
     
     if (!todayHours || !todayHours.is_open) {
-      return { isOpen: false, closingTime: null, todayHours };
+      return { isOpen: false, closingTime: null, nextOpenTime: null, todayHours };
     }
     
     const currentTime = now.getHours() * 60 + now.getMinutes();
-    const [openHour, openMin] = todayHours.opening_time.split(':').map(Number);
-    const [closeHour, closeMin] = todayHours.closing_time.split(':').map(Number);
-    const openTime = openHour * 60 + openMin;
-    const closeTime = closeHour * 60 + closeMin;
     
-    // Caso especial: fechamento após meia-noite (ex: 18:00 - 02:00)
-    if (closeTime < openTime) {
-      // Se está entre abertura e meia-noite, ou entre meia-noite e fechamento
-      const isOpen = currentTime >= openTime || currentTime < closeTime;
-      return { isOpen, closingTime: todayHours.closing_time, todayHours };
+    // Converter horários para minutos
+    const parseTime = (timeStr) => {
+      const [h, m] = timeStr.split(':').map(Number);
+      return h * 60 + m;
+    };
+    
+    const openTime1 = parseTime(todayHours.opening_time);
+    const closeTime1 = parseTime(todayHours.closing_time);
+    
+    // Verificar primeiro período
+    let inFirstPeriod = currentTime >= openTime1 && currentTime < closeTime1;
+    
+    // Se tem segundo período
+    if (todayHours.has_second_period) {
+      const openTime2 = parseTime(todayHours.opening_time_2);
+      const closeTime2 = parseTime(todayHours.closing_time_2);
+      
+      // Verificar segundo período
+      const inSecondPeriod = currentTime >= openTime2 && currentTime < closeTime2;
+      
+      if (inFirstPeriod) {
+        return { isOpen: true, closingTime: todayHours.closing_time, nextOpenTime: todayHours.opening_time_2, todayHours };
+      }
+      
+      if (inSecondPeriod) {
+        return { isOpen: true, closingTime: todayHours.closing_time_2, nextOpenTime: null, todayHours };
+      }
+      
+      // Está no intervalo entre os dois períodos
+      if (currentTime >= closeTime1 && currentTime < openTime2) {
+        return { isOpen: false, closingTime: null, nextOpenTime: todayHours.opening_time_2, todayHours };
+      }
+      
+      // Ainda não abriu hoje
+      if (currentTime < openTime1) {
+        return { isOpen: false, closingTime: null, nextOpenTime: todayHours.opening_time, todayHours };
+      }
+      
+      // Já fechou
+      return { isOpen: false, closingTime: null, nextOpenTime: null, todayHours };
     }
     
-    const isOpen = currentTime >= openTime && currentTime < closeTime;
-    return { isOpen, closingTime: todayHours.closing_time, todayHours };
+    // Só tem um período
+    if (inFirstPeriod) {
+      return { isOpen: true, closingTime: todayHours.closing_time, nextOpenTime: null, todayHours };
+    }
+    
+    // Ainda não abriu
+    if (currentTime < openTime1) {
+      return { isOpen: false, closingTime: null, nextOpenTime: todayHours.opening_time, todayHours };
+    }
+    
+    // Já fechou
+    return { isOpen: false, closingTime: null, nextOpenTime: null, todayHours };
   };
 
-  const { isOpen, closingTime, todayHours } = getOpenStatus();
+  const { isOpen, closingTime, nextOpenTime, todayHours } = getOpenStatus();
 
   const categoriesWithProducts = useMemo(() => {
     const categorySet = new Set(products.map(p => p.category).filter(Boolean));
