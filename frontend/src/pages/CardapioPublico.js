@@ -658,7 +658,7 @@ function CheckoutModal({ open, onClose, cart, cartTotal, client, darkMode, onOrd
               {paymentMethods.map(method => (
                 <button
                   key={method.id}
-                  onClick={() => setPaymentMethod(method.id)}
+                  onClick={() => handleSelectPayment(method.id)}
                   className={`w-full p-4 rounded-xl border-2 transition-all flex items-center gap-4
                     ${paymentMethod === method.id 
                       ? 'border-orange-500 bg-orange-500/10' 
@@ -673,6 +673,17 @@ function CheckoutModal({ open, onClose, cart, cartTotal, client, darkMode, onOrd
               ))}
             </div>
 
+            {/* Info troco se selecionou dinheiro */}
+            {paymentMethod === 'cash' && needsChange !== null && (
+              <div className={`p-3 rounded-lg ${t.bgCard} border ${t.border}`}>
+                <p className={`text-sm ${t.textMuted}`}>
+                  💵 {needsChange 
+                    ? `Troco para R$ ${parseFloat(changeAmount).toFixed(2).replace('.', ',')}` 
+                    : 'Não precisa de troco'}
+                </p>
+              </div>
+            )}
+
             {/* Total e Finalizar */}
             <div className={`p-4 rounded-xl ${t.bgCard} mt-6`}>
               <div className="flex justify-between items-center mb-4">
@@ -681,11 +692,91 @@ function CheckoutModal({ open, onClose, cart, cartTotal, client, darkMode, onOrd
               </div>
               <Button
                 onClick={handleFinishOrder}
-                disabled={!paymentMethod}
+                disabled={!paymentMethod || (paymentMethod === 'cash' && needsChange === null)}
                 className="w-full h-14 bg-orange-500 hover:bg-orange-600 text-white font-bold text-lg disabled:opacity-50"
               >
                 Finalizar Pedido
               </Button>
+            </div>
+          </div>
+        )}
+
+        {/* Dialog de Troco */}
+        {showChangeDialog && (
+          <div className="absolute inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
+            <div className={`${t.bg} rounded-2xl p-6 max-w-sm w-full shadow-xl`}>
+              <div className="text-center mb-6">
+                <div className="w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Banknote className="w-8 h-8 text-green-600" />
+                </div>
+                <h3 className={`text-xl font-bold ${t.text}`}>Vai precisar de troco?</h3>
+                <p className={`${t.textMuted} text-sm mt-2`}>
+                  Total do pedido: <span className="font-bold text-orange-500">R$ {cartTotal.toFixed(2).replace('.', ',')}</span>
+                </p>
+              </div>
+
+              {needsChange === null ? (
+                <div className="grid grid-cols-2 gap-3">
+                  <Button
+                    onClick={() => setNeedsChange(false)}
+                    variant="outline"
+                    className={`h-12 ${t.border}`}
+                  >
+                    Não preciso
+                  </Button>
+                  <Button
+                    onClick={() => setNeedsChange(true)}
+                    className="h-12 bg-orange-500 hover:bg-orange-600 text-white"
+                  >
+                    Sim, preciso
+                  </Button>
+                </div>
+              ) : needsChange ? (
+                <div className="space-y-4">
+                  <div>
+                    <Label className={`text-sm ${t.textMuted}`}>Troco para quanto?</Label>
+                    <div className="relative mt-1">
+                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-lg font-bold text-green-600">R$</span>
+                      <Input
+                        type="number"
+                        value={changeAmount}
+                        onChange={(e) => setChangeAmount(e.target.value)}
+                        placeholder="0,00"
+                        className={`pl-12 h-14 text-xl font-bold ${t.input}`}
+                        autoFocus
+                      />
+                    </div>
+                    {changeAmount && parseFloat(changeAmount) > cartTotal && (
+                      <p className={`text-sm text-green-600 mt-2`}>
+                        Troco: R$ {(parseFloat(changeAmount) - cartTotal).toFixed(2).replace('.', ',')}
+                      </p>
+                    )}
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <Button
+                      onClick={() => { setNeedsChange(null); setChangeAmount(''); }}
+                      variant="outline"
+                      className={t.border}
+                    >
+                      Voltar
+                    </Button>
+                    <Button
+                      onClick={handleConfirmChange}
+                      disabled={!changeAmount || parseFloat(changeAmount) <= cartTotal}
+                      className="bg-orange-500 hover:bg-orange-600 text-white"
+                    >
+                      Confirmar
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <Button
+                  onClick={handleConfirmChange}
+                  className="w-full h-12 bg-orange-500 hover:bg-orange-600 text-white"
+                >
+                  Continuar
+                </Button>
+              )}
             </div>
           </div>
         )}
