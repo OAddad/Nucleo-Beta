@@ -15314,3 +15314,8 @@
 2026-01-11T18:56:34.887121+00:00 | DB_CALL get_all_pedidos | P3 | 2.8ms | success
 2026-01-11T18:56:34.888199+00:00 | DB_CALL get_all_settings | P3 | 2.76ms | success
 2026-01-11T18:56:37.074813+00:00 | DB_CALL get_all_ruas | P3 | 1.15ms | success
+2026-01-11T18:56:39.891827+00:00 | DB_CALL get_all_pedidos | P3 | 1.03ms | success
+2026-01-11T18:56:39.892964+00:00 | DB_CALL get_all_entregadores | P3 | 1.88ms | success
+2026-01-11T18:56:39.896937+00:00 | DB_CALL get_all_settings | P3 | 0.32ms | success
+2026-01-11T18:56:44.246536+00:00 | DB_CALL get_all_bairros | P3 | 0.27ms | success
+2026-01-11T18:56:44.247032+00:00 | DB_CALL check_bairros_have_cep | P3 | 0.96ms | success
