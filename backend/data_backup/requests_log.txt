@@ -9976,3 +9976,12 @@
 2026-01-11T16:04:27.968985+00:00 | DB_CALL get_all_categories | P3 | 0.13ms | success
 2026-01-11T16:04:27.970352+00:00 | DB_CALL get_user_by_id | P3 | 0.14ms | success
 2026-01-11T16:04:27.970712+00:00 | DB_CALL get_all_products | P3 | 0.25ms | success
+2026-01-11T16:04:34.806650+00:00 | DB_CALL get_all_pedidos | P3 | 0.44ms | success
+2026-01-11T16:04:38.662685+00:00 | DB_CALL get_user_by_id | P3 | 0.25ms | success
+2026-01-11T16:04:38.663772+00:00 | DB_CALL get_next_product_code | P3 | 0.16ms | success
+2026-01-11T16:04:38.663966+00:00 | DB_CALL get_ingredient_by_id | P3 | 0.1ms | success
+2026-01-11T16:04:38.665718+00:00 | DB_CALL create_product | P3 | 1.68ms | success
+2026-01-11T16:04:38.667578+00:00 | DB_CALL create_audit_log | P3 | 1.8ms | success
+2026-01-11T16:04:38.827928+00:00 | DB_CALL get_user_by_id | P3 | 0.29ms | success
+2026-01-11T16:04:38.828327+00:00 | DB_CALL get_all_products | P3 | 0.26ms | success
+2026-01-11T16:04:40.804597+00:00 | DB_CALL get_all_pedidos | P3 | 0.41ms | success

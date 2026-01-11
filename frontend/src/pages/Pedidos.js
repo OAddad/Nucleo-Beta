@@ -246,11 +246,55 @@ export default function Pedidos() {
     }
   };
 
-  // Cancelar pedido
+  // Cancelar pedido com validação de senha admin
   const handleCancelPedido = async () => {
-    if (selectedPedido) {
-      await handleChangeStatus(selectedPedido.id, "cancelado");
-      setCancelDialogOpen(false);
+    if (!selectedPedido) return;
+    
+    setCancelError("");
+    
+    // Validar senha do admin
+    try {
+      const response = await axios.post(`${API}/auth/login`, {
+        username: "admin",
+        password: adminPassword
+      });
+      
+      if (response.data.access_token) {
+        // Senha válida, cancelar pedido
+        await handleChangeStatus(selectedPedido.id, "cancelado");
+        setCancelDialogOpen(false);
+        setAdminPassword("");
+        toast.success("Pedido cancelado com sucesso!");
+      }
+    } catch (error) {
+      // Tentar com outro usuário proprietario
+      try {
+        const token = localStorage.getItem("token");
+        if (token) {
+          // Verificar se usuário logado é admin/proprietario
+          const userStr = localStorage.getItem("user");
+          const user = userStr ? JSON.parse(userStr) : null;
+          
+          if (user && (user.role === "proprietario" || user.role === "administrador")) {
+            // Validar a senha do usuário logado
+            const loginResp = await axios.post(`${API}/auth/login`, {
+              username: user.username,
+              password: adminPassword
+            });
+            
+            if (loginResp.data.access_token) {
+              await handleChangeStatus(selectedPedido.id, "cancelado");
+              setCancelDialogOpen(false);
+              setAdminPassword("");
+              toast.success("Pedido cancelado com sucesso!");
+              return;
+            }
+          }
+        }
+        setCancelError("Senha incorreta. Digite a senha do administrador.");
+      } catch (e) {
+        setCancelError("Senha incorreta. Digite a senha do administrador.");
+      }
     }
   };
 
