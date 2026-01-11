@@ -11126,3 +11126,7 @@
 2026-01-11T17:19:21.851713+00:00 | DB_CALL get_all_settings | P3 | 0.68ms | success
 2026-01-11T17:19:21.852162+00:00 | DB_CALL get_all_pedidos | P3 | 1.56ms | success
 2026-01-11T17:19:21.854008+00:00 | DB_CALL get_all_entregadores | P3 | 0.17ms | success
+2026-01-11T17:19:25.844930+00:00 | DB_CALL get_all_pedidos | P3 | 0.42ms | success
+2026-01-11T17:19:27.845210+00:00 | DB_CALL get_all_pedidos | P3 | 0.42ms | success
+2026-01-11T17:19:27.849602+00:00 | DB_CALL get_all_entregadores | P3 | 0.59ms | success
+2026-01-11T17:19:27.849965+00:00 | DB_CALL get_all_settings | P3 | 0.56ms | success
