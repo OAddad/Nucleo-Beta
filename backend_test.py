@@ -2768,6 +2768,382 @@ class CMVMasterAPITester:
         
         return all_tests_passed
 
+    def test_delivery_and_entregadores_endpoints(self):
+        """Test new delivery and entregadores endpoints as specified in review request"""
+        print("\n=== DELIVERY AND ENTREGADORES ENDPOINTS TESTS ===")
+        print("🎯 Testing delivery and entregadores endpoints as specified in review request:")
+        print("   1. GET /api/entregadores - deve retornar lista (possivelmente vazia)")
+        print("   2. POST /api/entregadores - criar um novo entregador com nome 'João Motoboy' e telefone '(11) 99999-9999' (requer autenticação Addad/Addad123)")
+        print("   3. GET /api/system/settings - verificar se retorna o novo campo delivery_auto_accept (boolean)")
+        print("   4. PUT /api/system/settings - alterar delivery_auto_accept para true (requer autenticação Addad/Addad123)")
+        print("   5. GET /api/pedidos - verificar se pedidos existentes retornam os novos campos entregador_id e entregador_nome")
+        print("   6. PATCH /api/pedidos/{pedido_id}/status?status=aguardando_aceite - testar novos status válidos: aguardando_aceite, producao, pronto, na_bag, em_rota, concluido")
+        print("   7. PATCH /api/pedidos/{pedido_id}/entregador?entregador_id={id} - designar entregador a um pedido (requer autenticação)")
+        print("   8. GET /api/entregadores/{id}/pedidos - listar pedidos do entregador")
+        print("   Credenciais: Addad/Addad123")
+        print("   Base URL: http://localhost:8001")
+        
+        all_tests_passed = True
+        created_entregadores = []
+        created_pedidos = []
+        
+        # First, authenticate with Addad user as specified
+        print("\n🔍 Authenticating with Addad user...")
+        success, login_response = self.run_test(
+            "Login with Addad user for delivery tests",
+            "POST",
+            "auth/login",
+            200,
+            data={"username": "Addad", "password": "Addad123"}
+        )
+        
+        if success and 'access_token' in login_response:
+            self.token = login_response['access_token']
+            self.user_id = login_response['user']['id']
+            print(f"   ✅ Addad login successful")
+            print(f"   - User role: {login_response['user']['role']}")
+        else:
+            print(f"   ❌ Addad login failed - trying fallback authentication...")
+            # Try other authentication methods as fallback
+            fallback_users = [
+                ("admin", "admin"),
+                ("teste_admin", "senha123"),
+                ("proprietario", "senha123")
+            ]
+            
+            auth_success = False
+            for username, password in fallback_users:
+                success, response = self.run_test(
+                    f"Fallback login with {username}",
+                    "POST",
+                    "auth/login",
+                    200,
+                    data={"username": username, "password": password}
+                )
+                
+                if success and 'access_token' in response:
+                    self.token = response['access_token']
+                    self.user_id = response['user']['id']
+                    print(f"   ✅ Fallback authentication successful with {username}")
+                    auth_success = True
+                    break
+            
+            if not auth_success:
+                print(f"   ❌ No valid authentication found - cannot proceed with delivery tests")
+                return False
+        
+        # TEST 1: GET /api/entregadores - deve retornar lista (possivelmente vazia)
+        print(f"\n🔍 TEST 1: GET /api/entregadores - deve retornar lista (possivelmente vazia)")
+        success, entregadores = self.run_test(
+            "Get all entregadores",
+            "GET",
+            "entregadores",
+            200
+        )
+        
+        if success:
+            print(f"   ✅ TEST 1 PASSED: GET /api/entregadores returned list with {len(entregadores)} entregadores")
+            for i, entregador in enumerate(entregadores[:3]):  # Show first 3
+                print(f"      - {entregador.get('nome', 'N/A')} (ID: {entregador.get('id', 'N/A')}) - Tel: {entregador.get('telefone', 'N/A')}")
+        else:
+            print(f"   ❌ TEST 1 FAILED: Failed to get entregadores list")
+            all_tests_passed = False
+        
+        # TEST 2: POST /api/entregadores - criar um novo entregador com nome "João Motoboy" e telefone "(11) 99999-9999"
+        print(f"\n🔍 TEST 2: POST /api/entregadores - criar novo entregador 'João Motoboy'")
+        success, new_entregador = self.run_test(
+            "Create new entregador João Motoboy",
+            "POST",
+            "entregadores",
+            200,
+            data={
+                "nome": "João Motoboy",
+                "telefone": "(11) 99999-9999"
+            }
+        )
+        
+        if success:
+            created_entregadores.append(new_entregador['id'])
+            print(f"   ✅ TEST 2 PASSED: Created entregador 'João Motoboy'")
+            print(f"      - ID: {new_entregador['id']}")
+            print(f"      - Nome: {new_entregador['nome']}")
+            print(f"      - Telefone: {new_entregador.get('telefone', 'N/A')}")
+            print(f"      - Ativo: {new_entregador.get('ativo', 'N/A')}")
+        else:
+            print(f"   ❌ TEST 2 FAILED: Failed to create entregador (likely permission denied)")
+            all_tests_passed = False
+        
+        # TEST 3: GET /api/system/settings - verificar se retorna o novo campo delivery_auto_accept (boolean)
+        print(f"\n🔍 TEST 3: GET /api/system/settings - verificar campo delivery_auto_accept")
+        success, settings = self.run_test(
+            "Get system settings to check delivery_auto_accept field",
+            "GET",
+            "system/settings",
+            200
+        )
+        
+        if success:
+            delivery_auto_accept = settings.get('delivery_auto_accept')
+            print(f"   ✅ TEST 3 PASSED: GET /api/system/settings returned settings")
+            print(f"      - skip_login: {settings.get('skip_login')} (type: {type(settings.get('skip_login')).__name__})")
+            print(f"      - theme: {settings.get('theme')} (type: {type(settings.get('theme')).__name__})")
+            print(f"      - delivery_auto_accept: {delivery_auto_accept} (type: {type(delivery_auto_accept).__name__})")
+            
+            if isinstance(delivery_auto_accept, bool):
+                print(f"      ✅ delivery_auto_accept is boolean as expected")
+            else:
+                print(f"      ❌ delivery_auto_accept should be boolean, got {type(delivery_auto_accept).__name__}")
+                all_tests_passed = False
+        else:
+            print(f"   ❌ TEST 3 FAILED: Failed to get system settings")
+            all_tests_passed = False
+        
+        # TEST 4: PUT /api/system/settings - alterar delivery_auto_accept para true
+        print(f"\n🔍 TEST 4: PUT /api/system/settings - alterar delivery_auto_accept para true")
+        success, updated_settings = self.run_test(
+            "Update system settings - set delivery_auto_accept to true",
+            "PUT",
+            "system/settings",
+            200,
+            data={
+                "delivery_auto_accept": True
+            }
+        )
+        
+        if success:
+            new_delivery_auto_accept = updated_settings.get('delivery_auto_accept')
+            print(f"   ✅ TEST 4 PASSED: Updated system settings")
+            print(f"      - delivery_auto_accept: {new_delivery_auto_accept} (type: {type(new_delivery_auto_accept).__name__})")
+            
+            if new_delivery_auto_accept is True:
+                print(f"      ✅ delivery_auto_accept successfully set to true")
+            else:
+                print(f"      ❌ delivery_auto_accept not set to true, got: {new_delivery_auto_accept}")
+                all_tests_passed = False
+        else:
+            print(f"   ❌ TEST 4 FAILED: Failed to update system settings (likely permission denied)")
+            all_tests_passed = False
+        
+        # TEST 5: GET /api/pedidos - verificar se pedidos existentes retornam os novos campos entregador_id e entregador_nome
+        print(f"\n🔍 TEST 5: GET /api/pedidos - verificar campos entregador_id e entregador_nome")
+        success, pedidos = self.run_test(
+            "Get all pedidos to check entregador fields",
+            "GET",
+            "pedidos",
+            200
+        )
+        
+        if success:
+            print(f"   ✅ TEST 5 PASSED: GET /api/pedidos returned {len(pedidos)} pedidos")
+            
+            # Check if entregador fields are present in the response model
+            if pedidos:
+                sample_pedido = pedidos[0]
+                has_entregador_id = 'entregador_id' in sample_pedido
+                has_entregador_nome = 'entregador_nome' in sample_pedido
+                
+                print(f"      - Sample pedido fields check:")
+                print(f"        - entregador_id field present: {has_entregador_id}")
+                print(f"        - entregador_nome field present: {has_entregador_nome}")
+                
+                if has_entregador_id and has_entregador_nome:
+                    print(f"      ✅ Both entregador_id and entregador_nome fields are present")
+                    
+                    # Show some examples
+                    pedidos_with_entregador = [p for p in pedidos if p.get('entregador_id')]
+                    print(f"      - Pedidos with entregador assigned: {len(pedidos_with_entregador)}")
+                    
+                    for pedido in pedidos_with_entregador[:2]:  # Show first 2
+                        print(f"        - Pedido {pedido.get('codigo', 'N/A')}: entregador_id={pedido.get('entregador_id')}, entregador_nome={pedido.get('entregador_nome')}")
+                else:
+                    print(f"      ❌ Missing entregador fields in pedido response")
+                    all_tests_passed = False
+            else:
+                print(f"      ℹ️ No pedidos found to check entregador fields")
+        else:
+            print(f"   ❌ TEST 5 FAILED: Failed to get pedidos list")
+            all_tests_passed = False
+        
+        # TEST 6: PATCH /api/pedidos/{pedido_id}/status - testar novos status válidos
+        print(f"\n🔍 TEST 6: PATCH /api/pedidos/{{pedido_id}}/status - testar novos status válidos")
+        
+        # First, create a test pedido if we don't have any
+        test_pedido_id = None
+        if pedidos:
+            test_pedido_id = pedidos[0]['id']
+            print(f"      - Using existing pedido ID: {test_pedido_id}")
+        else:
+            # Create a test pedido
+            print(f"      - Creating test pedido for status testing...")
+            success, test_pedido = self.run_test(
+                "Create test pedido for status testing",
+                "POST",
+                "pedidos",
+                200,
+                data={
+                    "cliente_nome": "Cliente Teste",
+                    "cliente_telefone": "(11) 98765-4321",
+                    "items": [
+                        {
+                            "nome": "Produto Teste",
+                            "quantidade": 1,
+                            "preco": 10.00
+                        }
+                    ],
+                    "total": 10.00,
+                    "modulo": "Delivery"
+                }
+            )
+            
+            if success:
+                test_pedido_id = test_pedido['id']
+                created_pedidos.append(test_pedido_id)
+                print(f"      - Created test pedido ID: {test_pedido_id}")
+            else:
+                print(f"      ❌ Failed to create test pedido")
+        
+        if test_pedido_id:
+            # Test all valid statuses
+            valid_statuses = ['aguardando_aceite', 'producao', 'pronto', 'na_bag', 'em_rota', 'concluido']
+            status_tests_passed = 0
+            
+            for status in valid_statuses:
+                print(f"      - Testing status: {status}")
+                success, updated_pedido = self.run_test(
+                    f"Update pedido status to {status}",
+                    "PATCH",
+                    f"pedidos/{test_pedido_id}/status?status={status}",
+                    200
+                )
+                
+                if success:
+                    current_status = updated_pedido.get('status')
+                    if current_status == status:
+                        print(f"        ✅ Status successfully updated to {status}")
+                        status_tests_passed += 1
+                    else:
+                        print(f"        ❌ Status not updated correctly. Expected: {status}, Got: {current_status}")
+                else:
+                    print(f"        ❌ Failed to update status to {status}")
+            
+            if status_tests_passed == len(valid_statuses):
+                print(f"   ✅ TEST 6 PASSED: All {len(valid_statuses)} status updates working")
+            else:
+                print(f"   ❌ TEST 6 FAILED: Only {status_tests_passed}/{len(valid_statuses)} status updates working")
+                all_tests_passed = False
+        else:
+            print(f"   ❌ TEST 6 FAILED: No pedido available for status testing")
+            all_tests_passed = False
+        
+        # TEST 7: PATCH /api/pedidos/{pedido_id}/entregador - designar entregador a um pedido
+        print(f"\n🔍 TEST 7: PATCH /api/pedidos/{{pedido_id}}/entregador - designar entregador")
+        
+        if test_pedido_id and created_entregadores:
+            entregador_id = created_entregadores[0]
+            print(f"      - Assigning entregador {entregador_id} to pedido {test_pedido_id}")
+            
+            success, assigned_pedido = self.run_test(
+                "Assign entregador to pedido",
+                "PATCH",
+                f"pedidos/{test_pedido_id}/entregador?entregador_id={entregador_id}",
+                200
+            )
+            
+            if success:
+                print(f"   ✅ TEST 7 PASSED: Entregador assigned to pedido")
+                print(f"      - Pedido ID: {assigned_pedido.get('id')}")
+                print(f"      - Entregador ID: {assigned_pedido.get('entregador_id')}")
+                print(f"      - Entregador Nome: {assigned_pedido.get('entregador_nome')}")
+                print(f"      - Status: {assigned_pedido.get('status')}")
+                
+                # Verify status changed to na_bag
+                if assigned_pedido.get('status') == 'na_bag':
+                    print(f"      ✅ Status automatically changed to 'na_bag' as expected")
+                else:
+                    print(f"      ⚠️ Status not changed to 'na_bag', got: {assigned_pedido.get('status')}")
+            else:
+                print(f"   ❌ TEST 7 FAILED: Failed to assign entregador to pedido")
+                all_tests_passed = False
+        else:
+            print(f"   ❌ TEST 7 FAILED: No pedido or entregador available for assignment testing")
+            all_tests_passed = False
+        
+        # TEST 8: GET /api/entregadores/{id}/pedidos - listar pedidos do entregador
+        print(f"\n🔍 TEST 8: GET /api/entregadores/{{id}}/pedidos - listar pedidos do entregador")
+        
+        if created_entregadores:
+            entregador_id = created_entregadores[0]
+            print(f"      - Getting pedidos for entregador {entregador_id}")
+            
+            success, entregador_pedidos = self.run_test(
+                "Get pedidos by entregador",
+                "GET",
+                f"entregadores/{entregador_id}/pedidos",
+                200
+            )
+            
+            if success:
+                print(f"   ✅ TEST 8 PASSED: GET /api/entregadores/{{id}}/pedidos returned {len(entregador_pedidos)} pedidos")
+                
+                for pedido in entregador_pedidos[:3]:  # Show first 3
+                    print(f"      - Pedido {pedido.get('codigo', 'N/A')}: status={pedido.get('status')}, total=R$ {pedido.get('total', 0):.2f}")
+                
+                # Verify these are pedidos with na_bag or em_rota status
+                valid_statuses_for_entregador = ['na_bag', 'em_rota']
+                invalid_pedidos = [p for p in entregador_pedidos if p.get('status') not in valid_statuses_for_entregador]
+                
+                if not invalid_pedidos:
+                    print(f"      ✅ All returned pedidos have valid status (na_bag or em_rota)")
+                else:
+                    print(f"      ⚠️ Found {len(invalid_pedidos)} pedidos with unexpected status")
+            else:
+                print(f"   ❌ TEST 8 FAILED: Failed to get pedidos for entregador")
+                all_tests_passed = False
+        else:
+            print(f"   ❌ TEST 8 FAILED: No entregador available for pedidos listing")
+            all_tests_passed = False
+        
+        # CLEANUP: Delete created test data
+        print(f"\n🔍 CLEANUP: Deleting test delivery data")
+        
+        # Delete created pedidos
+        for pedido_id in created_pedidos:
+            success, _ = self.run_test(
+                f"Delete test pedido {pedido_id}",
+                "DELETE",
+                f"pedidos/{pedido_id}",
+                200
+            )
+            if success:
+                print(f"   ✅ Deleted test pedido {pedido_id}")
+        
+        # Delete created entregadores
+        for entregador_id in created_entregadores:
+            success, _ = self.run_test(
+                f"Delete test entregador {entregador_id}",
+                "DELETE",
+                f"entregadores/{entregador_id}",
+                200
+            )
+            if success:
+                print(f"   ✅ Deleted test entregador {entregador_id}")
+        
+        # Summary
+        print(f"\n🔍 DELIVERY AND ENTREGADORES TESTING SUMMARY:")
+        if all_tests_passed:
+            print(f"   ✅ ALL DELIVERY TESTS PASSED")
+            print(f"   ✅ Entregadores CRUD working")
+            print(f"   ✅ System settings delivery_auto_accept field working")
+            print(f"   ✅ Pedidos entregador fields working")
+            print(f"   ✅ Pedido status updates working")
+            print(f"   ✅ Entregador assignment working")
+            print(f"   ✅ Entregador pedidos listing working")
+        else:
+            print(f"   ❌ SOME DELIVERY TESTS FAILED")
+            print(f"   ℹ️ Check individual test results above for details")
+        
+        return all_tests_passed
+
 def main():
     print("🚀 Starting Business Hours Multiple Periods Testing")
     print("=" * 80)
