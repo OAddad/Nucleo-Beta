@@ -14144,3 +14144,6 @@
 2026-01-11T18:25:11.116218+00:00 | DB_CALL get_all_entregadores | P3 | 0.54ms | success
 2026-01-11T18:25:11.119791+00:00 | DB_CALL get_all_pedidos | P3 | 0.95ms | success
 2026-01-11T18:25:11.121500+00:00 | DB_CALL get_all_settings | P3 | 2.83ms | success
+2026-01-11T18:25:16.116099+00:00 | DB_CALL get_all_entregadores | P3 | 0.27ms | success
+2026-01-11T18:25:16.119377+00:00 | DB_CALL get_all_pedidos | P3 | 1.35ms | success
+2026-01-11T18:25:16.120372+00:00 | DB_CALL get_all_settings | P3 | 1.75ms | success
