@@ -368,6 +368,29 @@ class Product(BaseModel):
     unit_cost: Optional[float] = None  # Custo por unidade/kg (CMV / rendimento)
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
+# ========== BUSINESS HOURS MODELS ==========
+class BusinessHourUpdate(BaseModel):
+    day_of_week: int
+    is_open: bool = True
+    opening_time: str = "08:00"
+    closing_time: str = "22:00"
+
+
+class BusinessHoursUpdateRequest(BaseModel):
+    hours: List[BusinessHourUpdate]
+
+
+class BusinessHour(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str
+    day_of_week: int
+    day_name: str
+    is_open: bool = True
+    opening_time: str = "08:00"
+    closing_time: str = "22:00"
+    updated_at: Optional[str] = None
+
+
 class PriceHistory(BaseModel):
     date: str
     price: float

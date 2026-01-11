@@ -8943,3 +8943,7 @@
 2026-01-11T14:01:05.832489+00:00 | DB_CALL get_all_categories | P3 | 13.96ms | success
 2026-01-11T14:01:06.357470+00:00 | DB_CALL get_all_categories | P3 | 0.29ms | success
 2026-01-11T14:01:06.358620+00:00 | DB_CALL get_all_products | P3 | 0.27ms | success
+2026-01-11T14:01:11.747422+00:00 | DB_CALL init_database | P3 | 2.92ms | success
+2026-01-11T14:01:11.747973+00:00 | DB_CALL count_ingredients | P3 | 0.28ms | success
+2026-01-11T14:01:11.748184+00:00 | DB_CALL count_products | P3 | 0.14ms | success
+2026-01-11T14:01:11.748352+00:00 | DB_CALL count_users | P3 | 0.11ms | success
