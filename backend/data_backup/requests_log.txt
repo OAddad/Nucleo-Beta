@@ -12159,3 +12159,7 @@
 2026-01-11T17:38:57.847643+00:00 | DB_CALL get_all_pedidos | P3 | 0.58ms | success
 2026-01-11T17:38:57.851308+00:00 | DB_CALL get_all_entregadores | P3 | 0.2ms | success
 2026-01-11T17:38:57.851709+00:00 | DB_CALL get_all_settings | P3 | 1.05ms | success
+2026-01-11T17:39:00.848897+00:00 | DB_CALL get_all_pedidos | P3 | 0.54ms | success
+2026-01-11T17:39:01.099546+00:00 | DB_CALL get_all_pedidos | P3 | 0.56ms | success
+2026-01-11T17:39:01.102240+00:00 | DB_CALL get_all_settings | P3 | 0.53ms | success
+2026-01-11T17:39:01.102765+00:00 | DB_CALL get_all_entregadores | P3 | 0.73ms | success
