@@ -1,8 +1,11 @@
 import { useState, useEffect, useMemo } from "react";
 import axios from "axios";
-import { Search, ShoppingBag, Plus, Minus, Trash2, X, Clock, Star, ChevronLeft, ChevronRight, User } from "lucide-react";
+import { Search, ShoppingBag, Plus, Minus, Trash2, X, Clock, Star, ChevronLeft, ChevronRight, User, ImageOff } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
+import { Textarea } from "../components/ui/textarea";
+import { Label } from "../components/ui/label";
+import { Dialog, DialogContent } from "../components/ui/dialog";
 import { toast } from "sonner";
 import LoginModal from "../components/LoginModal";
 import ProfileMenu from "../components/ProfileMenu";
