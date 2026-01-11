@@ -9492,3 +9492,6 @@
 2026-01-11T15:26:31.754126+00:00 | DB_CALL get_user_by_username | P3 | 0.45ms | success
 2026-01-11T15:26:31.757239+00:00 | DB_CALL get_user_by_username | P3 | 0.48ms | success
 2026-01-11T15:26:31.758128+00:00 | DB_CALL get_all_clientes | P3 | 0.8ms | success
+2026-01-11T15:26:36.089682+00:00 | DB_CALL get_all_categories | P3 | 0.25ms | success
+2026-01-11T15:26:36.090874+00:00 | DB_CALL get_all_business_hours | P3 | 0.16ms | success
+2026-01-11T15:26:36.091951+00:00 | DB_CALL get_all_products | P3 | 0.24ms | success
