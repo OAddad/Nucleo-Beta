@@ -470,6 +470,33 @@ export default function Pedidos() {
                     </div>
                   </div>
                   
+                  {/* Tipo de Entrega */}
+                  <div className="flex items-center gap-2">
+                    {pedido.tipoEntrega === 'pickup' ? (
+                      <span className="text-xs bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400 px-2 py-1 rounded-full flex items-center gap-1">
+                        <Store className="w-3 h-3" />
+                        Retirada
+                      </span>
+                    ) : (
+                      <span className="text-xs bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 px-2 py-1 rounded-full flex items-center gap-1">
+                        <Truck className="w-3 h-3" />
+                        Entrega
+                      </span>
+                    )}
+                  </div>
+                  
+                  {/* Endereço (se for entrega) */}
+                  {pedido.tipoEntrega === 'delivery' && pedido.endereco && (
+                    <div className="text-xs text-muted-foreground flex items-start gap-1">
+                      <MapPin className="w-3 h-3 mt-0.5 flex-shrink-0" />
+                      <span className="truncate">
+                        {pedido.endereco.endereco}
+                        {pedido.endereco.numero && `, ${pedido.endereco.numero}`}
+                        {pedido.endereco.bairro && ` - ${pedido.endereco.bairro}`}
+                      </span>
+                    </div>
+                  )}
+                  
                   {/* Itens */}
                   <div className="text-sm text-muted-foreground">
                     <Package className="w-3 h-3 inline mr-1" />
