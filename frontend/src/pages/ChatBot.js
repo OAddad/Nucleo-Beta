@@ -1651,6 +1651,79 @@ function PalavrasTab({ toast }) {
         </div>
       )}
 
+      {activeView === "phrases" && (
+        <div className="bg-card border rounded-xl p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="font-semibold">Frases Capturadas ({words.length})</h3>
+            <div className="flex gap-2">
+              <Select value={textType} onValueChange={setTextType}>
+                <SelectTrigger className="w-40">
+                  <SelectValue placeholder="Tipo" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="bigram">2 palavras</SelectItem>
+                  <SelectItem value="trigram">3 palavras</SelectItem>
+                </SelectContent>
+              </Select>
+              <Select value={orderBy} onValueChange={setOrderBy}>
+                <SelectTrigger className="w-40">
+                  <SelectValue placeholder="Ordenar por" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="count">Mais usadas</SelectItem>
+                  <SelectItem value="word">Alfabética</SelectItem>
+                  <SelectItem value="last_used">Mais recentes</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          
+          {words.length === 0 ? (
+            <div className="text-center py-12 text-muted-foreground">
+              <MessageCircle className="w-12 h-12 mx-auto mb-2 opacity-50" />
+              <p>Nenhuma frase registrada ainda</p>
+              <p className="text-sm">As frases aparecerão aqui quando os clientes enviarem mensagens</p>
+            </div>
+          ) : (
+            <div className="overflow-auto max-h-[500px]">
+              <table className="w-full">
+                <thead className="sticky top-0 bg-card">
+                  <tr className="border-b">
+                    <th className="text-left py-2 px-3">Frase</th>
+                    <th className="text-center py-2 px-3">Contagem</th>
+                    <th className="text-center py-2 px-3">Clientes</th>
+                    <th className="text-right py-2 px-3">Última vez</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {words.map((item) => (
+                    <tr key={item.id} className="border-b hover:bg-muted/50">
+                      <td className="py-2 px-3">
+                        <span className="font-medium">"{item.word}"</span>
+                        <span className="ml-2 text-xs text-muted-foreground">
+                          ({item.type === 'bigram' ? '2 palavras' : '3 palavras'})
+                        </span>
+                      </td>
+                      <td className="py-2 px-3 text-center">
+                        <span className="px-2 py-1 bg-cyan-500/10 text-cyan-600 rounded-full text-sm">
+                          {item.count}x
+                        </span>
+                      </td>
+                      <td className="py-2 px-3 text-center text-muted-foreground">
+                        {item.unique_senders}
+                      </td>
+                      <td className="py-2 px-3 text-right text-sm text-muted-foreground">
+                        {item.last_used ? new Date(item.last_used).toLocaleDateString('pt-BR') : '-'}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      )}
+
       {activeView === "messages" && (
         <div className="bg-card border rounded-xl p-6">
           <h3 className="font-semibold mb-4">Mensagens Recentes ({messages.length})</h3>
