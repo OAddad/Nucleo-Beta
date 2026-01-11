@@ -15470,3 +15470,6 @@
 2026-01-11T18:58:53.937738+00:00 | DB_CALL get_all_pedidos | P3 | 1.06ms | success
 2026-01-11T18:58:53.940784+00:00 | DB_CALL get_all_settings | P3 | 0.32ms | success
 2026-01-11T18:58:53.941465+00:00 | DB_CALL get_all_entregadores | P3 | 1.91ms | success
+2026-01-11T18:58:58.938358+00:00 | DB_CALL get_all_entregadores | P3 | 1.35ms | success
+2026-01-11T18:58:58.938925+00:00 | DB_CALL get_all_settings | P3 | 1.51ms | success
+2026-01-11T18:58:58.939837+00:00 | DB_CALL get_all_pedidos | P3 | 1.77ms | success
