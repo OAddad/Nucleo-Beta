@@ -10175,3 +10175,5 @@
 2026-01-11T16:31:22.800595+00:00 | DB_CALL get_all_business_hours | P3 | 1.55ms | success
 2026-01-11T16:31:22.804567+00:00 | DB_CALL get_all_products | P3 | 4.69ms | success
 2026-01-11T16:31:22.809291+00:00 | DB_CALL get_all_categories | P3 | 9.31ms | success
+2026-01-11T16:31:26.425506+00:00 | DB_CALL get_user_by_username | P3 | 0.3ms | success
+2026-01-11T16:31:28.934343+00:00 | DB_CALL get_user_by_username | P3 | 0.25ms | success

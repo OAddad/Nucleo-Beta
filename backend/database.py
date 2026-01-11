@@ -377,7 +377,7 @@ def init_database():
                 cliente_email TEXT,
                 items TEXT,
                 total REAL DEFAULT 0,
-                status TEXT DEFAULT 'producao',
+                status TEXT DEFAULT 'aguardando_aceite',
                 forma_pagamento TEXT,
                 troco_precisa INTEGER DEFAULT 0,
                 troco_valor REAL,
@@ -390,6 +390,20 @@ def init_database():
                 endereco_cep TEXT,
                 modulo TEXT DEFAULT 'Cardapio',
                 observacao TEXT,
+                entregador_id TEXT,
+                entregador_nome TEXT,
+                created_at TEXT,
+                updated_at TEXT
+            )
+        ''')
+        
+        # Criar tabela de entregadores
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS entregadores (
+                id TEXT PRIMARY KEY,
+                nome TEXT NOT NULL,
+                telefone TEXT,
+                ativo INTEGER DEFAULT 1,
                 created_at TEXT,
                 updated_at TEXT
             )
