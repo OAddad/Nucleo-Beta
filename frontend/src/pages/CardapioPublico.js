@@ -1066,7 +1066,7 @@ export default function CardapioPublico({ onAdminLogin }) {
           </div>
           <div className={`p-4 border-t ${t.border} ${t.bgCartItem}`}>
             <div className="flex items-center justify-between mb-4"><span className={t.textMuted}>Total</span><span className="text-2xl font-bold text-orange-500">R$ {cartTotal.toFixed(2).replace('.', ',')}</span></div>
-            <Button onClick={() => { if (!loggedClient) setShowLoginModal(true); else toast.success("Pedido em desenvolvimento!"); }} disabled={cart.length === 0} className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold h-12 disabled:opacity-50">{cart.length === 0 ? 'Adicione itens para continuar' : 'Fazer Pedido'}</Button>
+            <Button onClick={handleMakeOrder} disabled={cart.length === 0} className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold h-12 disabled:opacity-50">{cart.length === 0 ? 'Adicione itens para continuar' : 'Fazer Pedido'}</Button>
           </div>
         </aside>
       </div>

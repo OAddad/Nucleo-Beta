@@ -9180,3 +9180,9 @@
 2026-01-11T14:54:14.784910+00:00 | DB_CALL get_all_business_hours | P3 | 2.07ms | success
 2026-01-11T14:54:14.785353+00:00 | DB_CALL get_all_categories | P3 | 2.43ms | success
 2026-01-11T14:54:14.785690+00:00 | DB_CALL get_all_business_hours | P3 | 2.62ms | success
+2026-01-11T14:54:46.552762+00:00 | DB_CALL get_all_categories | P3 | 1.67ms | success
+2026-01-11T14:54:46.553484+00:00 | DB_CALL get_all_products | P3 | 2.06ms | success
+2026-01-11T14:54:46.553924+00:00 | DB_CALL get_all_business_hours | P3 | 1.5ms | success
+2026-01-11T14:54:47.790854+00:00 | DB_CALL get_all_categories | P3 | 0.35ms | success
+2026-01-11T14:54:47.791994+00:00 | DB_CALL get_all_products | P3 | 0.27ms | success
+2026-01-11T14:54:47.793513+00:00 | DB_CALL get_all_business_hours | P3 | 0.27ms | success
