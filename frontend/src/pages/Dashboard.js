@@ -15,6 +15,7 @@ import BalcaoVendas from "./BalcaoVendas";
 import Mesas from "./Mesas";
 import ChatBot from "./ChatBot";
 import Delivery from "./Delivery";
+import EntregadorDetalhe from "./EntregadorDetalhe";
 import Clientes from "./Clientes";
 import Fornecedores from "./Fornecedores";
 import Pedidos from "./Pedidos";
