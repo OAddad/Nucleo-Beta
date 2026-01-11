@@ -16056,3 +16056,5 @@
 2026-01-11T19:20:07.913352+00:00 | DB_CALL get_all_bairros | P3 | 2.46ms | success
 2026-01-11T19:20:07.913746+00:00 | DB_CALL get_all_products | P3 | 2.23ms | success
 2026-01-11T19:20:07.914388+00:00 | DB_CALL get_all_categories | P3 | 2.41ms | success
+2026-01-11T19:20:24.451117+00:00 | DB_CALL get_all_settings | P3 | 0.96ms | success
+2026-01-11T19:20:24.457323+00:00 | DB_CALL create_pedido | P3 | 5.99ms | success
