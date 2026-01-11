@@ -16892,3 +16892,8 @@
 2026-01-11T20:11:25.819384+00:00 | DB_CALL get_pedidos_by_entregador | P3 | 0.27ms | success
 2026-01-11T20:11:25.821070+00:00 | DB_CALL get_user_by_id | P3 | 0.14ms | success
 2026-01-11T20:11:25.826301+00:00 | DB_CALL delete_entregador | P3 | 5.11ms | success
+2026-01-11T20:12:09.631380+00:00 | DB_CALL get_user_by_username | P3 | 0.27ms | success
+2026-01-11T20:12:09.633660+00:00 | DB_CALL get_user_by_id | P3 | 0.18ms | success
+2026-01-11T20:12:09.633877+00:00 | DB_CALL get_all_decision_nodes | P3 | 0.1ms | success
+2026-01-11T20:12:09.635878+00:00 | DB_CALL get_user_by_id | P3 | 0.15ms | success
+2026-01-11T20:12:09.641473+00:00 | DB_CALL create_decision_node | P3 | 5.41ms | success
