@@ -532,7 +532,8 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Delivery Tab - New Kanban Layout"
+    - "Valor Entrega no Pedido - Armazenamento correto"
+    - "Meus Pedidos Modal - Detalhes do pedido"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
