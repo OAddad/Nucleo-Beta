@@ -17754,3 +17754,8 @@
 2026-01-11T22:29:57.978865+00:00 | DB_CALL get_all_settings | P3 | 0.28ms | success
 2026-01-11T22:29:57.980227+00:00 | DB_CALL get_all_entregadores | P3 | 0.64ms | success
 2026-01-11T22:29:57.981119+00:00 | DB_CALL get_all_pedidos | P3 | 1.06ms | success
+2026-01-11T22:30:22.009369+00:00 | DB_CALL get_all_settings | P3 | 2.49ms | success
+2026-01-11T22:30:22.010138+00:00 | DB_CALL get_all_business_hours | P3 | 2.14ms | success
+2026-01-11T22:30:22.010733+00:00 | DB_CALL get_all_products | P3 | 2.82ms | success
+2026-01-11T22:30:22.011490+00:00 | DB_CALL get_all_bairros | P3 | 2.91ms | success
+2026-01-11T22:30:22.011873+00:00 | DB_CALL get_all_categories | P3 | 3.09ms | success
