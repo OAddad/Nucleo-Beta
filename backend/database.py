@@ -365,6 +365,35 @@ def init_database():
             )
         ''')
         
+        # Criar tabela de pedidos
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS pedidos (
+                id TEXT PRIMARY KEY,
+                codigo TEXT UNIQUE NOT NULL,
+                cliente_id TEXT,
+                cliente_nome TEXT,
+                cliente_telefone TEXT,
+                cliente_email TEXT,
+                items TEXT,
+                total REAL DEFAULT 0,
+                status TEXT DEFAULT 'producao',
+                forma_pagamento TEXT,
+                troco_precisa INTEGER DEFAULT 0,
+                troco_valor REAL,
+                tipo_entrega TEXT,
+                endereco_label TEXT,
+                endereco_rua TEXT,
+                endereco_numero TEXT,
+                endereco_complemento TEXT,
+                endereco_bairro TEXT,
+                endereco_cep TEXT,
+                modulo TEXT DEFAULT 'Cardapio',
+                observacao TEXT,
+                created_at TEXT,
+                updated_at TEXT
+            )
+        ''')
+        
         # Migrações
         try:
             cursor.execute("SELECT code FROM ingredients LIMIT 1")
