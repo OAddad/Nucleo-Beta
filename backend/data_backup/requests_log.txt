@@ -15938,3 +15938,6 @@
 2026-01-11T19:13:06.522035+00:00 | DB_CALL get_user_by_id | P3 | 0.29ms | success
 2026-01-11T19:13:06.524753+00:00 | DB_CALL update_rua | P3 | 2.47ms | success
 2026-01-11T19:13:06.687267+00:00 | DB_CALL get_all_ruas | P3 | 0.31ms | success
+2026-01-11T19:13:10.071238+00:00 | DB_CALL get_user_by_id | P3 | 0.28ms | success
+2026-01-11T19:13:10.073950+00:00 | DB_CALL update_rua | P3 | 2.48ms | success
+2026-01-11T19:13:10.237651+00:00 | DB_CALL get_all_ruas | P3 | 0.31ms | success
