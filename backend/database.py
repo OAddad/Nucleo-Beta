@@ -420,6 +420,14 @@ def init_database():
         except sqlite3.OperationalError:
             cursor.execute("ALTER TABLE users ADD COLUMN must_change_password INTEGER DEFAULT 0")
         
+        # Migração: Adicionar colunas de entregador na tabela pedidos
+        try:
+            cursor.execute("SELECT entregador_id FROM pedidos LIMIT 1")
+        except sqlite3.OperationalError:
+            cursor.execute("ALTER TABLE pedidos ADD COLUMN entregador_id TEXT")
+            cursor.execute("ALTER TABLE pedidos ADD COLUMN entregador_nome TEXT")
+            print("[DATABASE] Colunas de entregador adicionadas em pedidos")
+        
         conn.commit()
         
         # Criar admin se não existir nenhum usuário
