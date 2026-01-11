@@ -2911,5 +2911,260 @@ def find_decision_node_by_trigger(trigger: str) -> Optional[Dict]:
         return dict(row) if row else None
 
 
+# ==================== CHATBOT FLOW NODES ====================
+def get_all_flow_nodes() -> List[Dict]:
+    """Retorna todos os nós do fluxograma"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM chatbot_flow_nodes ORDER BY created_at ASC")
+        return [dict(row) for row in cursor.fetchall()]
+
+
+def get_flow_node(node_id: str) -> Optional[Dict]:
+    """Retorna um nó específico"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM chatbot_flow_nodes WHERE id = ?", (node_id,))
+        row = cursor.fetchone()
+        return dict(row) if row else None
+
+
+def create_flow_node(data: Dict) -> Dict:
+    """Cria um novo nó no fluxograma"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute('''
+            INSERT INTO chatbot_flow_nodes (id, type, title, content, position_x, position_y, config, is_active, created_at, updated_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ''', (
+            data['id'],
+            data['type'],
+            data['title'],
+            data.get('content', ''),
+            data.get('position_x', 0),
+            data.get('position_y', 0),
+            data.get('config', '{}'),
+            1 if data.get('is_active', True) else 0,
+            data.get('created_at'),
+            data.get('updated_at')
+        ))
+        conn.commit()
+        return get_flow_node(data['id'])
+
+
+def update_flow_node(node_id: str, data: Dict) -> Optional[Dict]:
+    """Atualiza um nó existente"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        
+        set_parts = []
+        values = []
+        
+        for key in ['type', 'title', 'content', 'position_x', 'position_y', 'config', 'updated_at']:
+            if key in data:
+                set_parts.append(f'{key} = ?')
+                values.append(data[key])
+        
+        if 'is_active' in data:
+            set_parts.append('is_active = ?')
+            values.append(1 if data['is_active'] else 0)
+        
+        if not set_parts:
+            return get_flow_node(node_id)
+        
+        values.append(node_id)
+        cursor.execute(f"UPDATE chatbot_flow_nodes SET {', '.join(set_parts)} WHERE id = ?", values)
+        conn.commit()
+        return get_flow_node(node_id)
+
+
+def delete_flow_node(node_id: str) -> bool:
+    """Deleta um nó e suas conexões"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        # Deletar conexões relacionadas
+        cursor.execute("DELETE FROM chatbot_flow_edges WHERE source_id = ? OR target_id = ?", (node_id, node_id))
+        cursor.execute("DELETE FROM chatbot_flow_nodes WHERE id = ?", (node_id,))
+        conn.commit()
+        return cursor.rowcount > 0
+
+
+# ==================== CHATBOT FLOW EDGES ====================
+def get_all_flow_edges() -> List[Dict]:
+    """Retorna todas as conexões do fluxograma"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM chatbot_flow_edges")
+        return [dict(row) for row in cursor.fetchall()]
+
+
+def create_flow_edge(data: Dict) -> Dict:
+    """Cria uma nova conexão"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute('''
+            INSERT INTO chatbot_flow_edges (id, source_id, target_id, condition, label, created_at)
+            VALUES (?, ?, ?, ?, ?, ?)
+        ''', (
+            data['id'],
+            data['source_id'],
+            data['target_id'],
+            data.get('condition', ''),
+            data.get('label', ''),
+            data.get('created_at')
+        ))
+        conn.commit()
+        return data
+
+
+def delete_flow_edge(edge_id: str) -> bool:
+    """Deleta uma conexão"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM chatbot_flow_edges WHERE id = ?", (edge_id,))
+        conn.commit()
+        return cursor.rowcount > 0
+
+
+# ==================== CHATBOT CONVERSATIONS ====================
+def get_conversation_by_phone(phone: str) -> Optional[Dict]:
+    """Busca conversa ativa por telefone"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("""
+            SELECT * FROM chatbot_conversations 
+            WHERE phone = ? AND status = 'active'
+            ORDER BY updated_at DESC LIMIT 1
+        """, (phone,))
+        row = cursor.fetchone()
+        return dict(row) if row else None
+
+
+def create_conversation(data: Dict) -> Dict:
+    """Cria uma nova conversa"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute('''
+            INSERT INTO chatbot_conversations (id, phone, client_name, client_id, status, current_node_id, context, created_at, updated_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ''', (
+            data['id'],
+            data['phone'],
+            data.get('client_name', ''),
+            data.get('client_id'),
+            data.get('status', 'active'),
+            data.get('current_node_id'),
+            data.get('context', '{}'),
+            data.get('created_at'),
+            data.get('updated_at')
+        ))
+        conn.commit()
+        return data
+
+
+def update_conversation(conv_id: str, data: Dict) -> Optional[Dict]:
+    """Atualiza uma conversa"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        
+        set_parts = []
+        values = []
+        
+        for key in ['client_name', 'client_id', 'status', 'current_node_id', 'context', 'updated_at']:
+            if key in data:
+                set_parts.append(f'{key} = ?')
+                values.append(data[key])
+        
+        if not set_parts:
+            return None
+        
+        values.append(conv_id)
+        cursor.execute(f"UPDATE chatbot_conversations SET {', '.join(set_parts)} WHERE id = ?", values)
+        conn.commit()
+        
+        cursor.execute("SELECT * FROM chatbot_conversations WHERE id = ?", (conv_id,))
+        row = cursor.fetchone()
+        return dict(row) if row else None
+
+
+def get_conversation_messages(conv_id: str, limit: int = 20) -> List[Dict]:
+    """Retorna mensagens de uma conversa"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("""
+            SELECT * FROM chatbot_messages 
+            WHERE conversation_id = ?
+            ORDER BY created_at DESC LIMIT ?
+        """, (conv_id, limit))
+        messages = [dict(row) for row in cursor.fetchall()]
+        messages.reverse()  # Ordenar do mais antigo para o mais recente
+        return messages
+
+
+def add_conversation_message(data: Dict) -> Dict:
+    """Adiciona mensagem a uma conversa"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute('''
+            INSERT INTO chatbot_messages (id, conversation_id, role, content, node_id, created_at)
+            VALUES (?, ?, ?, ?, ?, ?)
+        ''', (
+            data['id'],
+            data['conversation_id'],
+            data['role'],
+            data['content'],
+            data.get('node_id'),
+            data.get('created_at')
+        ))
+        conn.commit()
+        return data
+
+
+# ==================== CHATBOT SETTINGS ====================
+def get_chatbot_setting(key: str) -> Optional[str]:
+    """Retorna uma configuração do chatbot"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT value FROM chatbot_settings WHERE key = ?", (key,))
+        row = cursor.fetchone()
+        return row[0] if row else None
+
+
+def set_chatbot_setting(key: str, value: str) -> bool:
+    """Define uma configuração do chatbot"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute('''
+            INSERT OR REPLACE INTO chatbot_settings (key, value, updated_at)
+            VALUES (?, ?, ?)
+        ''', (key, value, datetime.now(timezone.utc).isoformat()))
+        conn.commit()
+        return True
+
+
+def get_all_chatbot_settings() -> Dict[str, str]:
+    """Retorna todas as configurações do chatbot"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT key, value FROM chatbot_settings")
+        return {row[0]: row[1] for row in cursor.fetchall()}
+
+
 # Inicializar banco ao importar o módulo
 init_database()
