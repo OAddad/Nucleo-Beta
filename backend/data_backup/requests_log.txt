@@ -9230,3 +9230,6 @@
 2026-01-11T14:59:23.793489+00:00 | DB_CALL get_all_products | P3 | 1.34ms | success
 2026-01-11T14:59:23.794021+00:00 | DB_CALL get_all_categories | P3 | 1.57ms | success
 2026-01-11T14:59:47.933434+00:00 | DB_CALL get_client_addresses | P3 | 0.48ms | success
+2026-01-11T15:00:02.205484+00:00 | DB_CALL get_user_by_username | P3 | 0.31ms | success
+2026-01-11T15:00:02.205781+00:00 | DB_CALL get_user_by_username | P3 | 0.15ms | success
+2026-01-11T15:00:02.206004+00:00 | DB_CALL get_all_clientes | P3 | 0.17ms | success

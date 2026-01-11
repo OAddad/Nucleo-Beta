@@ -641,10 +641,23 @@ export default function Pedidos() {
                       )}
                       {formasPagamento[selectedPedido.formaPagamento]?.label || selectedPedido.formaPagamento}
                     </p>
+                    {/* Info de Troco */}
+                    {selectedPedido.troco && (
+                      <p className="text-sm text-green-600 dark:text-green-400 mt-1">
+                        {selectedPedido.troco.precisa 
+                          ? `💵 Troco para R$ ${selectedPedido.troco.valor?.toFixed(2) || '0.00'}` 
+                          : '✓ Não precisa de troco'}
+                      </p>
+                    )}
                   </div>
                   <div className="text-right">
                     <p className="text-sm text-muted-foreground">Total do Pedido</p>
                     <p className="text-3xl font-bold text-primary">R$ {(selectedPedido.total || 0).toFixed(2)}</p>
+                    {selectedPedido.troco?.precisa && selectedPedido.troco.valor && (
+                      <p className="text-sm text-green-600 dark:text-green-400">
+                        Troco: R$ {(selectedPedido.troco.valor - (selectedPedido.total || 0)).toFixed(2)}
+                      </p>
+                    )}
                   </div>
                 </div>
               </div>
