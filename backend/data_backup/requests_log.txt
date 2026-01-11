@@ -9660,3 +9660,9 @@
 2026-01-11T15:40:29.502693+00:00 | DB_CALL get_all_products | P3 | 0.72ms | success
 2026-01-11T15:40:29.503343+00:00 | DB_CALL get_user_by_id | P3 | 1.19ms | success
 2026-01-11T15:40:29.503595+00:00 | DB_CALL get_all_categories | P3 | 0.17ms | success
+2026-01-11T15:40:52.628748+00:00 | DB_CALL get_all_categories | P3 | 1.29ms | success
+2026-01-11T15:40:52.629534+00:00 | DB_CALL get_all_business_hours | P3 | 1.88ms | success
+2026-01-11T15:40:52.630290+00:00 | DB_CALL get_all_products | P3 | 2.56ms | success
+2026-01-11T15:40:52.807280+00:00 | DB_CALL get_all_categories | P3 | 1.18ms | success
+2026-01-11T15:40:52.808079+00:00 | DB_CALL get_all_products | P3 | 1.08ms | success
+2026-01-11T15:40:52.808556+00:00 | DB_CALL get_all_business_hours | P3 | 1.75ms | success
