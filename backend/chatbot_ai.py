@@ -35,6 +35,16 @@ def get_system_prompt() -> str:
     settings = db.get_all_settings()
     business_hours = db.get_all_business_hours()
     
+    # Buscar dados da empresa configurados pelo usuário
+    nome_empresa = settings.get('company_name', 'Núcleo')
+    slogan = settings.get('slogan', 'O Centro da sua Gestão')
+    nome_fantasia = settings.get('company_fantasy_name', nome_empresa)
+    endereco = settings.get('company_address', 'Endereço não configurado')
+    telefone = settings.get('company_phone', 'Telefone não configurado')
+    email = settings.get('company_email', '')
+    instagram = settings.get('company_instagram', '')
+    facebook = settings.get('company_facebook', '')
+    
     # Formatar horários
     horarios_formatados = []
     for h in business_hours:
@@ -59,11 +69,23 @@ def get_system_prompt() -> str:
                 preco = p.get('selling_price', 0)
                 cardapio.append(f"  - {p['name']}: R$ {preco:.2f}")
     
-    nome_restaurante = settings.get('restaurant_name', 'Nosso Restaurante')
-    endereco = settings.get('address', 'Endereço não configurado')
-    telefone = settings.get('phone', 'Telefone não configurado')
+    # Construir informações de contato
+    contatos = []
+    if endereco and endereco != 'Endereço não configurado':
+        contatos.append(f"📍 Endereço: {endereco}")
+    if telefone and telefone != 'Telefone não configurado':
+        contatos.append(f"📞 Telefone: {telefone}")
+    if email:
+        contatos.append(f"📧 Email: {email}")
+    if instagram:
+        contatos.append(f"📸 Instagram: {instagram}")
+    if facebook:
+        contatos.append(f"👤 Facebook: {facebook}")
     
-    return f"""Você é um atendente virtual simpático e profissional do {nome_restaurante}.
+    contatos_texto = "\n".join(contatos) if contatos else "Informações de contato não configuradas"
+    
+    return f"""Você é um atendente virtual simpático e profissional do {nome_fantasia if nome_fantasia else nome_empresa}.
+{f'Nosso slogan é: "{slogan}"' if slogan else ''}
 Seu nome é Ana e você deve ser sempre cordial, prestativa e humanizada.
 
 IMPORTANTE:
@@ -73,13 +95,14 @@ IMPORTANTE:
 - Use emojis com moderação para parecer mais amigável
 - Responda de forma concisa mas completa
 - Se não souber algo, diga honestamente e ofereça alternativas
+- Sempre mencione o nome da empresa "{nome_fantasia if nome_fantasia else nome_empresa}" quando relevante
 
-INFORMAÇÕES DO RESTAURANTE:
-📍 Endereço: {endereco}
-📞 Telefone: {telefone}
+INFORMAÇÕES DA EMPRESA:
+🏢 Nome: {nome_fantasia if nome_fantasia else nome_empresa}
+{contatos_texto}
 
 ⏰ HORÁRIOS DE FUNCIONAMENTO:
-{chr(10).join(horarios_formatados)}
+{chr(10).join(horarios_formatados) if horarios_formatados else "Horários não configurados"}
 
 📋 CARDÁPIO:
 {chr(10).join(cardapio) if cardapio else "Cardápio em atualização"}
@@ -92,14 +115,14 @@ CAPACIDADES:
 - Você pode registrar reclamações e sugestões
 
 FLUXO DE CONVERSA:
-1. Sempre cumprimente de forma calorosa
+1. Sempre cumprimente de forma calorosa mencionando a empresa
 2. Identifique a necessidade do cliente
 3. Ajude de forma objetiva
 4. Ofereça ajuda adicional antes de encerrar
 
 Se o cliente quiser fazer um pedido, oriente-o a usar nosso app ou site, ou pergunte se deseja que transfira para um atendente humano.
 
-Lembre-se: você representa o restaurante, então seja sempre profissional e acolhedora!"""
+Lembre-se: você representa a empresa {nome_fantasia if nome_fantasia else nome_empresa}, então seja sempre profissional e acolhedora!"""
 
 
 async def get_client_context(phone: str) -> Dict[str, Any]:
