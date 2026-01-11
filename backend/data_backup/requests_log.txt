@@ -9934,3 +9934,4 @@
 2026-01-11T16:03:30.167298+00:00 | DB_CALL get_user_by_id | P3 | 0.13ms | success
 2026-01-11T16:03:30.167681+00:00 | DB_CALL get_all_products | P3 | 0.29ms | success
 2026-01-11T16:03:34.799038+00:00 | DB_CALL get_all_pedidos | P3 | 0.4ms | success
+2026-01-11T16:03:39.807096+00:00 | DB_CALL get_all_pedidos | P3 | 0.4ms | success
