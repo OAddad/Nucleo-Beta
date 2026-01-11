@@ -9104,3 +9104,12 @@
 2026-01-11T14:13:41.904081+00:00 | DB_CALL count_products | P3 | 0.12ms | success
 2026-01-11T14:13:41.904244+00:00 | DB_CALL count_users | P3 | 0.11ms | success
 2026-01-11T14:13:54.589153+00:00 | DB_CALL get_all_business_hours | P3 | 0.41ms | success
+2026-01-11T14:15:56.383483+00:00 | DB_CALL get_user_by_id | P3 | 0.37ms | success
+2026-01-11T14:15:56.387734+00:00 | DB_CALL update_business_hours | P3 | 3.99ms | success
+2026-01-11T14:15:56.389912+00:00 | DB_CALL create_audit_log | P3 | 2.04ms | success
+2026-01-11T14:16:03.893677+00:00 | DB_CALL get_user_by_id | P3 | 0.25ms | success
+2026-01-11T14:16:03.896372+00:00 | DB_CALL update_business_hours | P3 | 2.45ms | success
+2026-01-11T14:16:03.898461+00:00 | DB_CALL create_audit_log | P3 | 1.97ms | success
+2026-01-11T14:16:11.163456+00:00 | DB_CALL get_all_categories | P3 | 1.49ms | success
+2026-01-11T14:16:11.164267+00:00 | DB_CALL get_all_products | P3 | 1.69ms | success
+2026-01-11T14:16:11.164800+00:00 | DB_CALL get_all_business_hours | P3 | 1.48ms | success

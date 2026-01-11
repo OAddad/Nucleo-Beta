@@ -2526,6 +2526,248 @@ class CMVMasterAPITester:
         
         return all_tests_passed
 
+    def test_business_hours_multiple_periods(self):
+        """Test business hours endpoints with multiple periods support as specified in review request"""
+        print("\n=== BUSINESS HOURS MULTIPLE PERIODS TESTS ===")
+        print("🎯 Testing business hours endpoints with multiple periods support:")
+        print("   1. GET /api/public/business-hours - verificar novos campos: has_second_period, opening_time_2, closing_time_2")
+        print("   2. PUT /api/business-hours (autenticado - Addad/Addad123) - atualizar Segunda-feira com dois períodos")
+        print("   3. Verificar GET novamente para confirmar has_second_period=true para segunda-feira")
+        print("   Backend URL: http://localhost:8001")
+        
+        all_tests_passed = True
+        
+        # TEST 1: GET /api/public/business-hours (público)
+        print(f"\n🔍 TEST 1: GET /api/public/business-hours (público)")
+        print(f"   Verificar se todos os novos campos existem: has_second_period, opening_time_2, closing_time_2")
+        
+        success, public_hours = self.run_test(
+            "Get public business hours",
+            "GET",
+            "public/business-hours",
+            200
+        )
+        
+        if success:
+            print(f"   ✅ Public business hours retrieved: {len(public_hours)} days")
+            
+            # Verify structure and new fields
+            required_fields = ['id', 'day_of_week', 'day_name', 'is_open', 'opening_time', 'closing_time', 
+                             'has_second_period', 'opening_time_2', 'closing_time_2']
+            
+            for i, day in enumerate(public_hours):
+                day_name = day.get('day_name', f'Day {i}')
+                print(f"      📅 {day_name} (day_of_week: {day.get('day_of_week')})")
+                print(f"         - is_open: {day.get('is_open')} (type: {type(day.get('is_open')).__name__})")
+                print(f"         - opening_time: {day.get('opening_time')}")
+                print(f"         - closing_time: {day.get('closing_time')}")
+                print(f"         - has_second_period: {day.get('has_second_period')} (type: {type(day.get('has_second_period')).__name__})")
+                print(f"         - opening_time_2: {day.get('opening_time_2')}")
+                print(f"         - closing_time_2: {day.get('closing_time_2')}")
+                
+                # Check if all required fields are present
+                missing_fields = [field for field in required_fields if field not in day]
+                if missing_fields:
+                    print(f"         ❌ Missing fields: {missing_fields}")
+                    all_tests_passed = False
+                else:
+                    print(f"         ✅ All required fields present")
+                
+                # Verify data types
+                if not isinstance(day.get('day_of_week'), int):
+                    print(f"         ❌ day_of_week should be int, got {type(day.get('day_of_week')).__name__}")
+                    all_tests_passed = False
+                
+                if not isinstance(day.get('is_open'), bool):
+                    print(f"         ❌ is_open should be bool, got {type(day.get('is_open')).__name__}")
+                    all_tests_passed = False
+                
+                if not isinstance(day.get('day_name'), str):
+                    print(f"         ❌ day_name should be str, got {type(day.get('day_name')).__name__}")
+                    all_tests_passed = False
+                
+                if not isinstance(day.get('has_second_period'), bool):
+                    print(f"         ❌ has_second_period should be bool, got {type(day.get('has_second_period')).__name__}")
+                    all_tests_passed = False
+            
+            if len(public_hours) == 7:
+                print(f"      ✅ TEST 1 PASSED: All 7 days returned with correct structure and new fields")
+            else:
+                print(f"      ❌ TEST 1 FAILED: Expected 7 days, got {len(public_hours)}")
+                all_tests_passed = False
+        else:
+            print(f"   ❌ TEST 1 FAILED: Public business hours endpoint failed")
+            all_tests_passed = False
+        
+        # Authenticate with Addad user as specified
+        print(f"\n🔍 Authenticating with Addad user for business hours update...")
+        success, login_response = self.run_test(
+            "Login with Addad user for business hours tests",
+            "POST",
+            "auth/login",
+            200,
+            data={"username": "Addad", "password": "Addad123"}
+        )
+        
+        if success and 'access_token' in login_response:
+            self.token = login_response['access_token']
+            self.user_id = login_response['user']['id']
+            print(f"   ✅ Addad login successful")
+            print(f"   - User role: {login_response['user']['role']}")
+        else:
+            print(f"   ❌ Addad login failed - trying fallback authentication...")
+            # Try other authentication methods as fallback
+            fallback_users = [
+                ("admin", "admin"),
+                ("teste_admin", "senha123"),
+                ("proprietario", "senha123")
+            ]
+            
+            auth_success = False
+            for username, password in fallback_users:
+                success, response = self.run_test(
+                    f"Fallback login with {username}",
+                    "POST",
+                    "auth/login",
+                    200,
+                    data={"username": username, "password": password}
+                )
+                
+                if success and 'access_token' in response:
+                    self.token = response['access_token']
+                    self.user_id = response['user']['id']
+                    print(f"   ✅ Fallback authentication successful with {username}")
+                    auth_success = True
+                    break
+            
+            if not auth_success:
+                print(f"   ❌ No valid authentication found - cannot proceed with business hours update tests")
+                return False
+        
+        # TEST 2: PUT /api/business-hours - Update Monday with two periods
+        print(f"\n🔍 TEST 2: PUT /api/business-hours - Atualizar Segunda-feira com dois períodos")
+        
+        # Prepare update data for Monday with two periods as specified in review request
+        update_data = {
+            "hours": [
+                {
+                    "day_of_week": 0,  # Monday
+                    "is_open": True,
+                    "opening_time": "10:00",
+                    "closing_time": "15:00",
+                    "has_second_period": True,
+                    "opening_time_2": "18:00",
+                    "closing_time_2": "23:59"
+                }
+            ]
+        }
+        
+        print(f"   Updating Monday with:")
+        print(f"      - First period: 10:00 - 15:00")
+        print(f"      - Second period: 18:00 - 23:59")
+        print(f"      - has_second_period: true")
+        
+        success, updated_hours = self.run_test(
+            "Update Monday with two periods",
+            "PUT",
+            "business-hours",
+            200,
+            data=update_data
+        )
+        
+        if success:
+            print(f"   ✅ Business hours update successful")
+            
+            # Find updated Monday
+            updated_monday = next((day for day in updated_hours if day.get('day_of_week') == 0), None)
+            if updated_monday:
+                print(f"      📅 Updated Monday:")
+                print(f"         - is_open: {updated_monday.get('is_open')}")
+                print(f"         - opening_time: {updated_monday.get('opening_time')}")
+                print(f"         - closing_time: {updated_monday.get('closing_time')}")
+                print(f"         - has_second_period: {updated_monday.get('has_second_period')}")
+                print(f"         - opening_time_2: {updated_monday.get('opening_time_2')}")
+                print(f"         - closing_time_2: {updated_monday.get('closing_time_2')}")
+                
+                # Verify the update was applied correctly
+                if (updated_monday.get('is_open') == True and
+                    updated_monday.get('opening_time') == "10:00" and
+                    updated_monday.get('closing_time') == "15:00" and
+                    updated_monday.get('has_second_period') == True and
+                    updated_monday.get('opening_time_2') == "18:00" and
+                    updated_monday.get('closing_time_2') == "23:59"):
+                    print(f"      ✅ TEST 2 PASSED: Monday updated correctly with two periods")
+                else:
+                    print(f"      ❌ TEST 2 FAILED: Monday update values don't match expected")
+                    all_tests_passed = False
+            else:
+                print(f"      ❌ TEST 2 FAILED: Updated Monday not found in response")
+                all_tests_passed = False
+        else:
+            print(f"   ❌ TEST 2 FAILED: Business hours update failed")
+            all_tests_passed = False
+        
+        # TEST 3: Verify GET again to confirm has_second_period=true for Monday
+        print(f"\n🔍 TEST 3: Verificar GET novamente para confirmar has_second_period=true para segunda-feira")
+        
+        success, final_hours = self.run_test(
+            "Get business hours after update to verify persistence",
+            "GET",
+            "public/business-hours",
+            200
+        )
+        
+        if success:
+            print(f"   ✅ Final business hours retrieved: {len(final_hours)} days")
+            
+            # Find Monday again
+            final_monday = next((day for day in final_hours if day.get('day_of_week') == 0), None)
+            if final_monday:
+                print(f"      📅 Final Monday state:")
+                print(f"         - is_open: {final_monday.get('is_open')}")
+                print(f"         - opening_time: {final_monday.get('opening_time')}")
+                print(f"         - closing_time: {final_monday.get('closing_time')}")
+                print(f"         - has_second_period: {final_monday.get('has_second_period')}")
+                print(f"         - opening_time_2: {final_monday.get('opening_time_2')}")
+                print(f"         - closing_time_2: {final_monday.get('closing_time_2')}")
+                
+                # Verify persistence
+                if final_monday.get('has_second_period') == True:
+                    print(f"      ✅ TEST 3 PASSED: has_second_period=true persisted for Monday")
+                else:
+                    print(f"      ❌ TEST 3 FAILED: has_second_period not true for Monday after update")
+                    all_tests_passed = False
+                
+                # Verify all values persisted
+                if (final_monday.get('opening_time') == "10:00" and
+                    final_monday.get('closing_time') == "15:00" and
+                    final_monday.get('opening_time_2') == "18:00" and
+                    final_monday.get('closing_time_2') == "23:59"):
+                    print(f"      ✅ All time values persisted correctly")
+                else:
+                    print(f"      ❌ Some time values did not persist correctly")
+                    all_tests_passed = False
+            else:
+                print(f"      ❌ TEST 3 FAILED: Monday not found in final business hours")
+                all_tests_passed = False
+        else:
+            print(f"   ❌ TEST 3 FAILED: Final business hours retrieval failed")
+            all_tests_passed = False
+        
+        # Summary
+        print(f"\n🔍 BUSINESS HOURS MULTIPLE PERIODS TESTING SUMMARY:")
+        if all_tests_passed:
+            print(f"   ✅ ALL BUSINESS HOURS TESTS PASSED")
+            print(f"   ✅ GET /api/public/business-hours working with new fields")
+            print(f"   ✅ PUT /api/business-hours working with multiple periods")
+            print(f"   ✅ Multiple periods persistence working")
+            print(f"   ✅ All new fields (has_second_period, opening_time_2, closing_time_2) present and functional")
+        else:
+            print(f"   ❌ SOME BUSINESS HOURS TESTS FAILED")
+            print(f"   ℹ️ Check individual test results above for details")
+        
+        return all_tests_passed
+
 def main():
     print("🚀 Starting Business Hours Endpoints Testing")
     print("=" * 80)
