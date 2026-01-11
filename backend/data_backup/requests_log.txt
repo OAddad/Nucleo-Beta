@@ -13103,3 +13103,7 @@
 2026-01-11T17:51:01.855915+00:00 | DB_CALL get_all_pedidos | P3 | 0.58ms | success
 2026-01-11T17:51:02.027949+00:00 | DB_CALL get_all_pedidos | P3 | 0.56ms | success
 2026-01-11T17:51:04.264462+00:00 | DB_CALL create_pedido | P3 | 4.55ms | success
+2026-01-11T17:51:06.856734+00:00 | DB_CALL get_all_pedidos | P3 | 0.57ms | success
+2026-01-11T17:51:07.027285+00:00 | DB_CALL get_all_pedidos | P3 | 0.61ms | success
+2026-01-11T17:51:11.859245+00:00 | DB_CALL get_all_pedidos | P3 | 0.56ms | success
+2026-01-11T17:51:12.030091+00:00 | DB_CALL get_all_pedidos | P3 | 0.57ms | success
