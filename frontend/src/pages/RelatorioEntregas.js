@@ -68,11 +68,11 @@ export default function RelatorioEntregas() {
     const entregas = pedidosFiltrados.filter(p => p.entregador_id === entregador.id);
     const totalEntregas = entregas.length;
     
-    // Calcular valor total das entregas (soma dos valores de entrega dos bairros)
+    // Calcular valor total das entregas (soma dos valores de entrega dos pedidos ou bairros)
     const valorTotal = entregas.reduce((acc, p) => {
-      // Usar o valor de entrega do pedido ou buscar do bairro
+      // Primeiro tentar usar o valor de entrega salvo no pedido
       let valorEntrega = p.valor_entrega;
-      if (!valorEntrega && valorEntrega !== 0) {
+      if (valorEntrega === undefined || valorEntrega === null) {
         // Buscar valor do bairro se não tiver no pedido
         const bairro = bairros.find(b => b.nome === p.endereco_bairro);
         valorEntrega = bairro?.valor_entrega || 0;
