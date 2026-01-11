@@ -12332,3 +12332,11 @@
 2026-01-11T17:42:21.879708+00:00 | DB_CALL get_all_pedidos | P3 | 2.26ms | success
 2026-01-11T17:42:21.880431+00:00 | DB_CALL get_all_entregadores | P3 | 2.13ms | success
 2026-01-11T17:42:22.867231+00:00 | DB_CALL get_all_pedidos | P3 | 1.94ms | success
+2026-01-11T17:42:23.715905+00:00 | DB_CALL update_pedido_status | P3 | 7.18ms | success
+2026-01-11T17:42:23.893363+00:00 | DB_CALL get_all_pedidos | P3 | 2.59ms | success
+2026-01-11T17:42:23.894836+00:00 | DB_CALL get_all_settings | P3 | 1.6ms | success
+2026-01-11T17:42:23.895365+00:00 | DB_CALL get_all_entregadores | P3 | 0.72ms | success
+2026-01-11T17:42:25.257336+00:00 | DB_CALL get_all_pedidos | P3 | 0.53ms | success
+2026-01-11T17:42:25.259421+00:00 | DB_CALL get_all_entregadores | P3 | 0.16ms | success
+2026-01-11T17:42:25.260193+00:00 | DB_CALL get_all_settings | P3 | 0.13ms | success
+2026-01-11T17:42:27.856248+00:00 | DB_CALL get_all_pedidos | P3 | 0.59ms | success
