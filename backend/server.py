@@ -2154,6 +2154,34 @@ async def create_cliente(cliente_data: ClienteCreate, current_user: User = Depen
     return Cliente(**created)
 
 
+# Modelo simplificado para cadastro público
+class ClientePublicCreate(BaseModel):
+    nome: str
+    telefone: str
+    email: Optional[str] = None
+
+
+@api_router.post("/public/clientes", response_model=Cliente)
+async def create_cliente_public(cliente_data: ClientePublicCreate):
+    """Cria um novo cliente (público - para cadastro pelo cardápio)"""
+    # Verificar se telefone já existe
+    existing = await db_call(sqlite_db.get_cliente_by_telefone, cliente_data.telefone)
+    if existing:
+        raise HTTPException(status_code=400, detail="Telefone já cadastrado")
+    
+    cliente_dict = {
+        "nome": cliente_data.nome,
+        "telefone": cliente_data.telefone,
+        "email": cliente_data.email
+    }
+    created = await db_call(sqlite_db.create_cliente, cliente_dict)
+    
+    if isinstance(created.get("created_at"), str):
+        created["created_at"] = datetime.fromisoformat(created["created_at"].replace('Z', '+00:00'))
+    
+    return Cliente(**created)
+
+
 @api_router.put("/clientes/{cliente_id}", response_model=Cliente)
 async def update_cliente(cliente_id: str, cliente_data: ClienteCreate, current_user: User = Depends(get_current_user)):
     """Atualiza um cliente existente"""
