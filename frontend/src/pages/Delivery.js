@@ -170,6 +170,7 @@ export default function Delivery() {
   const handleAbrirEntregador = (entregador) => {
     // Navegar para página de detalhes do entregador (melhor para mobile)
     // Caminho absoluto para garantir que funcione de qualquer lugar
+    console.log("Navegando para entregador:", entregador.id);
     navigate(`/admin/entregador/${entregador.id}`);
   };
 
