@@ -9006,3 +9006,4 @@
 2026-01-11T14:07:10.744180+00:00 | DB_CALL get_user_by_username | P3 | 0.26ms | success
 2026-01-11T14:07:10.744484+00:00 | DB_CALL get_user_by_username | P3 | 0.17ms | success
 2026-01-11T14:07:10.744722+00:00 | DB_CALL get_all_clientes | P3 | 0.18ms | success
+2026-01-11T14:07:10.912405+00:00 | DB_CALL get_cliente_by_id | P3 | 0.37ms | success
