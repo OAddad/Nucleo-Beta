@@ -2291,6 +2291,167 @@ async def delete_client_address(address_id: str):
     return {"message": "Endereço deletado com sucesso"}
 
 
+# ========== PEDIDOS ENDPOINTS ==========
+class PedidoItemCreate(BaseModel):
+    id: Optional[str] = None
+    nome: str
+    quantidade: int = 1
+    preco: float = 0
+    observacao: Optional[str] = None
+
+
+class PedidoCreate(BaseModel):
+    cliente_id: Optional[str] = None
+    cliente_nome: Optional[str] = None
+    cliente_telefone: Optional[str] = None
+    cliente_email: Optional[str] = None
+    items: List[PedidoItemCreate]
+    total: float = 0
+    status: Optional[str] = "producao"
+    forma_pagamento: Optional[str] = None
+    troco_precisa: Optional[bool] = False
+    troco_valor: Optional[float] = None
+    tipo_entrega: Optional[str] = None  # 'pickup' ou 'delivery'
+    endereco_label: Optional[str] = None
+    endereco_rua: Optional[str] = None
+    endereco_numero: Optional[str] = None
+    endereco_complemento: Optional[str] = None
+    endereco_bairro: Optional[str] = None
+    endereco_cep: Optional[str] = None
+    modulo: Optional[str] = "Cardapio"
+    observacao: Optional[str] = None
+
+
+class PedidoUpdate(BaseModel):
+    status: Optional[str] = None
+    observacao: Optional[str] = None
+
+
+class PedidoResponse(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str
+    codigo: str
+    cliente_id: Optional[str] = None
+    cliente_nome: Optional[str] = None
+    cliente_telefone: Optional[str] = None
+    cliente_email: Optional[str] = None
+    items: List[dict] = []
+    total: float = 0
+    status: str = "producao"
+    forma_pagamento: Optional[str] = None
+    troco_precisa: bool = False
+    troco_valor: Optional[float] = None
+    tipo_entrega: Optional[str] = None
+    endereco_label: Optional[str] = None
+    endereco_rua: Optional[str] = None
+    endereco_numero: Optional[str] = None
+    endereco_complemento: Optional[str] = None
+    endereco_bairro: Optional[str] = None
+    endereco_cep: Optional[str] = None
+    modulo: Optional[str] = None
+    observacao: Optional[str] = None
+    created_at: Optional[str] = None
+    updated_at: Optional[str] = None
+
+
+@api_router.get("/pedidos", response_model=List[PedidoResponse])
+async def get_all_pedidos():
+    """Retorna todos os pedidos (público para sincronização)"""
+    pedidos = await db_call(sqlite_db.get_all_pedidos)
+    return pedidos
+
+
+@api_router.get("/pedidos/{pedido_id}", response_model=PedidoResponse)
+async def get_pedido(pedido_id: str):
+    """Retorna um pedido pelo ID"""
+    pedido = await db_call(sqlite_db.get_pedido_by_id, pedido_id)
+    if not pedido:
+        raise HTTPException(status_code=404, detail="Pedido não encontrado")
+    return pedido
+
+
+@api_router.get("/pedidos/codigo/{codigo}")
+async def get_pedido_by_codigo(codigo: str):
+    """Retorna um pedido pelo código"""
+    pedido = await db_call(sqlite_db.get_pedido_by_codigo, codigo)
+    if not pedido:
+        raise HTTPException(status_code=404, detail="Pedido não encontrado")
+    return pedido
+
+
+@api_router.post("/pedidos", response_model=PedidoResponse)
+async def create_pedido(data: PedidoCreate):
+    """Cria um novo pedido (público para cardápio)"""
+    pedido_data = {
+        'cliente_id': data.cliente_id,
+        'cliente_nome': data.cliente_nome,
+        'cliente_telefone': data.cliente_telefone,
+        'cliente_email': data.cliente_email,
+        'items': [item.model_dump() for item in data.items],
+        'total': data.total,
+        'status': data.status or 'producao',
+        'forma_pagamento': data.forma_pagamento,
+        'troco_precisa': data.troco_precisa,
+        'troco_valor': data.troco_valor,
+        'tipo_entrega': data.tipo_entrega,
+        'endereco_label': data.endereco_label,
+        'endereco_rua': data.endereco_rua,
+        'endereco_numero': data.endereco_numero,
+        'endereco_complemento': data.endereco_complemento,
+        'endereco_bairro': data.endereco_bairro,
+        'endereco_cep': data.endereco_cep,
+        'modulo': data.modulo or 'Cardapio',
+        'observacao': data.observacao
+    }
+    
+    pedido = await db_call(sqlite_db.create_pedido, pedido_data)
+    
+    # Atualizar estatísticas do cliente se tiver cliente_id
+    if data.cliente_id:
+        await db_call(sqlite_db.update_cliente_pedido_stats, data.cliente_id, data.total)
+    
+    return pedido
+
+
+@api_router.put("/pedidos/{pedido_id}", response_model=PedidoResponse)
+async def update_pedido(pedido_id: str, data: PedidoUpdate):
+    """Atualiza um pedido"""
+    pedido = await db_call(sqlite_db.update_pedido, pedido_id, data.model_dump(exclude_none=True))
+    if not pedido:
+        raise HTTPException(status_code=404, detail="Pedido não encontrado")
+    return pedido
+
+
+@api_router.patch("/pedidos/{pedido_id}/status")
+async def update_pedido_status(pedido_id: str, status: str):
+    """Atualiza o status de um pedido"""
+    valid_statuses = ['producao', 'transito', 'concluido', 'cancelado']
+    if status not in valid_statuses:
+        raise HTTPException(status_code=400, detail=f"Status inválido. Use: {valid_statuses}")
+    
+    pedido = await db_call(sqlite_db.update_pedido_status, pedido_id, status)
+    if not pedido:
+        raise HTTPException(status_code=404, detail="Pedido não encontrado")
+    return pedido
+
+
+@api_router.delete("/pedidos/{pedido_id}")
+async def delete_pedido(pedido_id: str, current_user: User = Depends(get_current_user)):
+    """Deleta um pedido (requer autenticação)"""
+    check_role(current_user, ["proprietario", "administrador"])
+    deleted = await db_call(sqlite_db.delete_pedido, pedido_id)
+    if not deleted:
+        raise HTTPException(status_code=404, detail="Pedido não encontrado")
+    return {"message": "Pedido deletado com sucesso"}
+
+
+@api_router.get("/pedidos/cliente/{cliente_id}", response_model=List[PedidoResponse])
+async def get_pedidos_by_cliente(cliente_id: str):
+    """Retorna todos os pedidos de um cliente"""
+    pedidos = await db_call(sqlite_db.get_pedidos_by_cliente, cliente_id)
+    return pedidos
+
+
 # Reports endpoints
 @api_router.get("/reports/price-history/{ingredient_id}", response_model=IngredientWithHistory)
 async def get_price_history(ingredient_id: str, current_user: User = Depends(get_current_user)):
