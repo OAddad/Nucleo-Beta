@@ -14955,3 +14955,4 @@
 2026-01-11T18:48:34.870364+00:00 | DB_CALL get_total_pontuacao | P3 | 0.48ms | success
 2026-01-11T18:48:34.870601+00:00 | DB_CALL count_clientes | P3 | 0.17ms | success
 2026-01-11T18:48:34.871541+00:00 | DB_CALL get_all_clientes | P3 | 1.18ms | success
+2026-01-11T18:48:55.594655+00:00 | DB_CALL get_all_funcionarios | P3 | 0.28ms | success
