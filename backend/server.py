@@ -2576,6 +2576,14 @@ async def serve_spa(full_path: str):
     if full_path.startswith("api"):
         raise HTTPException(status_code=404, detail="Endpoint não encontrado")
     
+    # Verificar se é rota de uploads (servir diretamente)
+    if full_path.startswith("uploads/"):
+        uploads_dir = Path(__file__).parent / "uploads"
+        file_path = uploads_dir / full_path.replace("uploads/", "", 1)
+        if file_path.exists() and file_path.is_file():
+            return FileResponse(str(file_path))
+        raise HTTPException(status_code=404, detail="Arquivo não encontrado")
+    
     # Se frontend não configurado
     if not FRONTEND_PATH:
         raise HTTPException(status_code=404, detail="Frontend não disponível")
