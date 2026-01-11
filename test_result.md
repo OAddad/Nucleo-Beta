@@ -352,6 +352,21 @@ backend:
         agent: "testing"
         comment: "✅ EXPENSE MODULE COMPREHENSIVE TESTING COMPLETED: Testado exatamente conforme especificado na review request. RESULTADOS: ✅ TEST 1 PASSED: Tabelas expense_classifications e expenses existem no SQLite (verificado via /api/health). ✅ TEST 2 PASSED: CRUD completo de classificações funcionando - GET/POST/PUT/DELETE /api/expense-classifications, inicialização de classificações padrão. ✅ TEST 3 PASSED: Criação de despesa simples funcionando perfeitamente. ✅ TEST 4 PASSED: Despesas parceladas com geração automática de 4 parcelas funcionando. ✅ TEST 5 PASSED: Despesas recorrentes com geração automática de 12 meses funcionando. ✅ TEST 6 PASSED: Toggle de status pago/pendente via PATCH /api/expenses/{id}/toggle-paid funcionando. ✅ TEST 7 PASSED: Estatísticas /api/expenses/stats retornando total, pending_count, pending_value, paid_count, paid_value. ✅ TEST 8 PASSED: Exclusão de despesas com controle de filhos (parcelas) funcionando - comportamento correto de não deletar filhos automaticamente por segurança. ✅ ADDITIONAL TESTS: Endpoints mensais (/api/expenses/month/{year}/{month}) e pendentes (/api/expenses/pending) funcionando. Autenticação com Addad/Addad123 funcionando perfeitamente. Sistema de despesas 100% operacional conforme especificações."
 
+  - task: "New Authentication Endpoints - Check Login and Client Login"
+    implemented: true
+    working: true
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Novos endpoints de autenticação implementados: POST /api/auth/check-login para verificar se login/telefone existe, POST /api/auth/client-login para login de cliente. Endpoints suportam verificação de usuários do sistema e clientes por telefone."
+      - working: true
+        agent: "testing"
+        comment: "✅ NEW AUTHENTICATION ENDPOINTS TESTING COMPLETED (Jan 11, 2026): Testei exatamente conforme especificado na review request. RESULTADOS: ✅ TEST 1.1 PASSED: POST /api/auth/check-login com username válido 'Addad' retorna {found: true, type: 'user', needs_password: true, name: 'Addad'} conforme esperado. ✅ TEST 1.2 PASSED: POST /api/auth/check-login com telefone inválido '99999999' retorna {found: false, type: 'not_found', needs_password: false} conforme esperado. ✅ TEST 2 PASSED: POST /api/auth/client-login endpoint existe e responde corretamente - retorna {success: false, message: 'Cliente não encontrado'} para client_id inexistente. ✅ VALIDATION TEST PASSED: Endpoint valida campos obrigatórios corretamente (422 status para client_id ausente). Todos os 4 testes passaram com 100% de sucesso. Novos endpoints de autenticação funcionando perfeitamente conforme especificações."
+
 frontend:
   - task: "Login Page"
     implemented: true
