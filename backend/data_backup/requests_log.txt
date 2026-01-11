@@ -9238,3 +9238,9 @@
 2026-01-11T15:01:56.211717+00:00 | DB_CALL get_all_clientes | P3 | 0.41ms | success
 2026-01-11T15:01:56.383418+00:00 | DB_CALL get_cliente_by_id | P3 | 1.32ms | success
 2026-01-11T15:01:56.860840+00:00 | DB_CALL get_client_addresses | P3 | 0.29ms | success
+2026-01-11T15:04:56.534528+00:00 | DB_CALL get_all_products | P3 | 1.13ms | success
+2026-01-11T15:04:56.535361+00:00 | DB_CALL get_all_business_hours | P3 | 1.41ms | success
+2026-01-11T15:04:56.536282+00:00 | DB_CALL get_all_categories | P3 | 0.21ms | success
+2026-01-11T15:04:56.802238+00:00 | DB_CALL get_all_products | P3 | 0.39ms | success
+2026-01-11T15:04:56.803431+00:00 | DB_CALL get_all_categories | P3 | 0.16ms | success
+2026-01-11T15:04:56.806655+00:00 | DB_CALL get_all_business_hours | P3 | 0.18ms | success
