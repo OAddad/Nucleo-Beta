@@ -17543,3 +17543,7 @@
 2026-01-11T22:05:36.958139+00:00 | DB_CALL count_ingredients | P3 | 0.27ms | success
 2026-01-11T22:05:36.958333+00:00 | DB_CALL count_products | P3 | 0.12ms | success
 2026-01-11T22:05:36.958481+00:00 | DB_CALL count_users | P3 | 0.09ms | success
+2026-01-11T22:05:48.759603+00:00 | DB_CALL init_database | P3 | 3.28ms | success
+2026-01-11T22:05:48.760287+00:00 | DB_CALL count_ingredients | P3 | 0.25ms | success
+2026-01-11T22:05:48.760472+00:00 | DB_CALL count_products | P3 | 0.12ms | success
+2026-01-11T22:05:48.760620+00:00 | DB_CALL count_users | P3 | 0.09ms | success
