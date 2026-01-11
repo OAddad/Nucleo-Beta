@@ -576,14 +576,19 @@ export default function Pedidos() {
                 const pagamento = formasPagamento[pedido.formaPagamento];
                 const modulo = modulosConfig[pedido.modulo];
                 const ModuloIcon = modulo?.icon || Package;
+                const isCancelado = getNormalizedStatus(pedido.status) === "cancelado";
                 
                 return (
                   <TableRow 
                     key={pedido.id}
                     onClick={() => handleOpenDetails(pedido)}
-                    className="cursor-pointer hover:bg-muted/50"
+                    className={`cursor-pointer ${
+                      isCancelado 
+                        ? 'bg-red-50 dark:bg-red-950/30 hover:bg-red-100 dark:hover:bg-red-900/40' 
+                        : 'hover:bg-muted/50'
+                    }`}
                   >
-                    <TableCell className="font-mono font-bold">{pedido.codigo || "#-----"}</TableCell>
+                    <TableCell className={`font-mono font-bold ${isCancelado ? 'text-red-600 dark:text-red-400' : ''}`}>{pedido.codigo || "#-----"}</TableCell>
                     <TableCell>
                       {modulo ? (
                         <span className={`px-2 py-0.5 rounded text-xs font-medium flex items-center gap-1 w-fit ${modulo.color}`}>
