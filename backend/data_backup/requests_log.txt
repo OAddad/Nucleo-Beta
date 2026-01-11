@@ -10209,3 +10209,6 @@
 2026-01-11T16:33:51.529685+00:00 | DB_CALL count_ingredients | P3 | 0.46ms | success
 2026-01-11T16:33:51.529964+00:00 | DB_CALL count_products | P3 | 0.21ms | success
 2026-01-11T16:33:51.530124+00:00 | DB_CALL count_users | P3 | 0.11ms | success
+2026-01-11T16:35:16.846111+00:00 | DB_CALL get_all_pedidos | P3 | 7.1ms | success
+2026-01-11T16:35:16.847139+00:00 | DB_CALL get_all_entregadores | P3 | 7.7ms | success
+2026-01-11T16:35:16.848263+00:00 | DB_CALL get_all_settings | P3 | 5.81ms | success
