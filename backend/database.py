@@ -1967,6 +1967,112 @@ def get_pedidos_by_status(status: str) -> List[Dict]:
         return pedidos
 
 
+def update_pedido_entregador(pedido_id: str, entregador_id: str, entregador_nome: str) -> Optional[Dict]:
+    """Atribui um entregador a um pedido"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        now = datetime.now(timezone.utc).isoformat()
+        cursor.execute('''
+            UPDATE pedidos SET entregador_id = ?, entregador_nome = ?, updated_at = ?
+            WHERE id = ?
+        ''', (entregador_id, entregador_nome, now, pedido_id))
+        conn.commit()
+        return get_pedido_by_id(pedido_id)
+
+
+# ==================== ENTREGADORES ====================
+def get_all_entregadores() -> List[Dict]:
+    """Retorna todos os entregadores ativos"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM entregadores WHERE ativo = 1 ORDER BY nome")
+        return [dict(row) for row in cursor.fetchall()]
+
+
+def get_entregador_by_id(entregador_id: str) -> Optional[Dict]:
+    """Retorna um entregador pelo ID"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM entregadores WHERE id = ?", (entregador_id,))
+        row = cursor.fetchone()
+        return dict(row) if row else None
+
+
+def create_entregador(data: Dict) -> Dict:
+    """Cria um novo entregador"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        entregador_id = str(uuid.uuid4())
+        created_at = datetime.now(timezone.utc).isoformat()
+        
+        cursor.execute('''
+            INSERT INTO entregadores (id, nome, telefone, ativo, created_at, updated_at)
+            VALUES (?, ?, ?, ?, ?, ?)
+        ''', (
+            entregador_id,
+            data.get('nome'),
+            data.get('telefone'),
+            1,
+            created_at,
+            created_at
+        ))
+        conn.commit()
+        return get_entregador_by_id(entregador_id)
+
+
+def update_entregador(entregador_id: str, data: Dict) -> Optional[Dict]:
+    """Atualiza um entregador"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        now = datetime.now(timezone.utc).isoformat()
+        
+        cursor.execute('''
+            UPDATE entregadores SET nome = ?, telefone = ?, updated_at = ?
+            WHERE id = ?
+        ''', (data.get('nome'), data.get('telefone'), now, entregador_id))
+        conn.commit()
+        return get_entregador_by_id(entregador_id)
+
+
+def delete_entregador(entregador_id: str) -> bool:
+    """Desativa um entregador (soft delete)"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        now = datetime.now(timezone.utc).isoformat()
+        cursor.execute("UPDATE entregadores SET ativo = 0, updated_at = ? WHERE id = ?", (now, entregador_id,))
+        conn.commit()
+        return cursor.rowcount > 0
+
+
+def get_pedidos_by_entregador(entregador_id: str) -> List[Dict]:
+    """Retorna todos os pedidos de um entregador"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("""
+            SELECT * FROM pedidos 
+            WHERE entregador_id = ? AND status IN ('na_bag', 'em_rota')
+            ORDER BY created_at DESC
+        """, (entregador_id,))
+        pedidos = []
+        for row in cursor.fetchall():
+            p = dict(row)
+            if p.get('items'):
+                try:
+                    p['items'] = json.loads(p['items'])
+                except:
+                    p['items'] = []
+            p['troco_precisa'] = bool(p.get('troco_precisa', 0))
+            pedidos.append(p)
+        return pedidos
+
+
 # ==================== BUSINESS HOURS ====================
 def get_all_business_hours() -> List[Dict]:
     """Retorna todos os horários de funcionamento ordenados por dia da semana"""
