@@ -2655,6 +2655,83 @@ async def assign_entregador_to_pedido(pedido_id: str, entregador_id: str, curren
     return pedido
 
 
+# ========== FUNCIONÁRIOS ENDPOINTS ==========
+class FuncionarioCreate(BaseModel):
+    cliente_id: str
+    cargo: str
+
+class FuncionarioUpdate(BaseModel):
+    cargo: Optional[str] = None
+
+class FuncionarioResponse(BaseModel):
+    id: str
+    cliente_id: str
+    cargo: str
+    ativo: Optional[int] = 1
+    created_at: Optional[str] = None
+    updated_at: Optional[str] = None
+    # Dados do cliente
+    nome: Optional[str] = None
+    telefone: Optional[str] = None
+    email: Optional[str] = None
+    foto: Optional[str] = None
+
+    class Config:
+        from_attributes = True
+
+@api_router.get("/funcionarios", response_model=List[FuncionarioResponse])
+async def get_all_funcionarios():
+    """Retorna todos os funcionários ativos"""
+    funcionarios = await db_call(sqlite_db.get_all_funcionarios)
+    return funcionarios
+
+@api_router.get("/funcionarios/{funcionario_id}", response_model=FuncionarioResponse)
+async def get_funcionario(funcionario_id: str):
+    """Retorna um funcionário pelo ID"""
+    funcionario = await db_call(sqlite_db.get_funcionario_by_id, funcionario_id)
+    if not funcionario:
+        raise HTTPException(status_code=404, detail="Funcionário não encontrado")
+    return funcionario
+
+@api_router.get("/funcionarios/cargo/{cargo}", response_model=List[FuncionarioResponse])
+async def get_funcionarios_by_cargo(cargo: str):
+    """Retorna todos os funcionários de um cargo específico"""
+    funcionarios = await db_call(sqlite_db.get_funcionarios_by_cargo, cargo)
+    return funcionarios
+
+@api_router.post("/funcionarios", response_model=FuncionarioResponse)
+async def create_funcionario(data: FuncionarioCreate, current_user: User = Depends(get_current_user)):
+    """Cria um novo funcionário"""
+    # Verificar se o cliente existe
+    cliente = await db_call(sqlite_db.get_cliente_by_id, data.cliente_id)
+    if not cliente:
+        raise HTTPException(status_code=404, detail="Cliente não encontrado")
+    
+    # Verificar se já existe um funcionário ativo para este cliente
+    existing = await db_call(sqlite_db.get_funcionario_by_cliente_id, data.cliente_id)
+    if existing:
+        raise HTTPException(status_code=400, detail="Este cliente já é um funcionário")
+    
+    funcionario = await db_call(sqlite_db.create_funcionario, data.model_dump())
+    return funcionario
+
+@api_router.put("/funcionarios/{funcionario_id}", response_model=FuncionarioResponse)
+async def update_funcionario(funcionario_id: str, data: FuncionarioUpdate, current_user: User = Depends(get_current_user)):
+    """Atualiza um funcionário"""
+    funcionario = await db_call(sqlite_db.update_funcionario, funcionario_id, data.model_dump(exclude_none=True))
+    if not funcionario:
+        raise HTTPException(status_code=404, detail="Funcionário não encontrado")
+    return funcionario
+
+@api_router.delete("/funcionarios/{funcionario_id}")
+async def delete_funcionario(funcionario_id: str, current_user: User = Depends(get_current_user)):
+    """Remove um funcionário"""
+    success = await db_call(sqlite_db.delete_funcionario, funcionario_id)
+    if not success:
+        raise HTTPException(status_code=404, detail="Funcionário não encontrado")
+    return {"message": "Funcionário removido com sucesso"}
+
+
 # Reports endpoints
 @api_router.get("/reports/price-history/{ingredient_id}", response_model=IngredientWithHistory)
 async def get_price_history(ingredient_id: str, current_user: User = Depends(get_current_user)):
