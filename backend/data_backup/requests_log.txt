@@ -8832,3 +8832,12 @@
 2026-01-11T13:47:37.273628+00:00 | DB_CALL get_all_categories | P3 | 0.19ms | success
 2026-01-11T13:47:56.444146+00:00 | DB_CALL get_all_categories | P3 | 1.98ms | success
 2026-01-11T13:47:56.444884+00:00 | DB_CALL get_all_products | P3 | 1.28ms | success
+2026-01-11T13:48:48.476541+00:00 | DB_CALL get_user_by_username | P3 | 0.44ms | success
+2026-01-11T13:48:50.593362+00:00 | DB_CALL get_user_by_username | P3 | 0.27ms | success
+2026-01-11T13:48:56.145047+00:00 | DB_CALL get_user_by_username | P3 | 0.26ms | success
+2026-01-11T13:49:11.360774+00:00 | DB_CALL get_user_by_id | P3 | 0.32ms | success
+2026-01-11T13:49:11.361229+00:00 | DB_CALL get_total_pontuacao | P3 | 0.31ms | success
+2026-01-11T13:49:11.362262+00:00 | DB_CALL count_clientes | P3 | 0.93ms | success
+2026-01-11T13:49:11.362684+00:00 | DB_CALL get_user_by_id | P3 | 0.8ms | success
+2026-01-11T13:49:11.362986+00:00 | DB_CALL get_all_clientes | P3 | 0.18ms | success
+2026-01-11T13:50:21.245141+00:00 | DB_CALL get_all_products | P3 | 0.39ms | success
