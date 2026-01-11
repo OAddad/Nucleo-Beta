@@ -1401,6 +1401,18 @@ async def get_products(current_user: User = Depends(get_current_user)):
             p["created_at"] = datetime.fromisoformat(p["created_at"].replace('Z', '+00:00'))
     return products
 
+# Endpoint PÚBLICO para o cardápio - não requer autenticação
+@api_router.get("/public/products", response_model=List[Product])
+async def get_public_products():
+    """Retorna produtos para venda no cardápio público (não requer autenticação)"""
+    products = await db_call(sqlite_db.get_all_products)
+    # Filtra apenas produtos com preço de venda e que não são insumos
+    products = [p for p in products if p.get("sale_price") and p.get("sale_price") > 0 and not p.get("is_insumo")]
+    for p in products:
+        if isinstance(p.get("created_at"), str):
+            p["created_at"] = datetime.fromisoformat(p["created_at"].replace('Z', '+00:00'))
+    return products
+
 @api_router.get("/products/for-sale", response_model=List[Product])
 async def get_products_for_sale(current_user: User = Depends(get_current_user)):
     """Retorna apenas produtos para venda (não insumos)"""
