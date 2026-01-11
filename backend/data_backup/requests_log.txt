@@ -18295,3 +18295,6 @@
 2026-01-11T22:57:43.243324+00:00 | DB_CALL get_user_by_id | P3 | 0.27ms | success
 2026-01-11T22:57:43.243563+00:00 | DB_CALL get_all_flow_nodes | P3 | 0.11ms | success
 2026-01-11T22:57:43.243693+00:00 | DB_CALL get_all_flow_edges | P3 | 0.08ms | success
+2026-01-11T23:12:07.140680+00:00 | DB_CALL get_all_pedidos | P3 | 0.83ms | success
+2026-01-11T23:12:07.142306+00:00 | DB_CALL get_all_entregadores | P3 | 0.14ms | success
+2026-01-11T23:12:07.148263+00:00 | DB_CALL get_all_settings | P3 | 0.18ms | success
