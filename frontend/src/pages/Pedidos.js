@@ -92,6 +92,7 @@ const modulosConfig = {
 
 export default function Pedidos() {
   const [pedidos, setPedidos] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [viewMode, setViewMode] = useState("grade"); // "grade" ou "lista"
   const [filterStatus, setFilterStatus] = useState("todos");
@@ -106,43 +107,62 @@ export default function Pedidos() {
   useEffect(() => {
     fetchPedidos();
     
-    // Listener para atualizar quando localStorage mudar (de outra aba ou componente)
-    const handleStorageChange = (e) => {
-      if (e.key === 'pedidos') {
-        fetchPedidos();
-      }
-    };
-    
     // Listener custom para mesma aba
     const handlePedidosUpdate = () => {
       fetchPedidos();
     };
     
-    window.addEventListener('storage', handleStorageChange);
     window.addEventListener('pedidosUpdated', handlePedidosUpdate);
     
-    // Verificar a cada 2 segundos se há novos pedidos (fallback)
-    const interval = setInterval(fetchPedidos, 2000);
+    // Verificar a cada 5 segundos se há novos pedidos
+    const interval = setInterval(fetchPedidos, 5000);
     
     return () => {
-      window.removeEventListener('storage', handleStorageChange);
       window.removeEventListener('pedidosUpdated', handlePedidosUpdate);
       clearInterval(interval);
     };
   }, []);
 
-  const fetchPedidos = () => {
-    const savedPedidos = localStorage.getItem("pedidos");
-    if (savedPedidos) {
-      const parsed = JSON.parse(savedPedidos);
-      // Migrar pedidos antigos sem código
-      const migrated = parsed.map(p => {
-        if (!p.codigo) {
-          return { ...p, codigo: generateUniqueCode(parsed) };
-        }
-        return p;
+  const fetchPedidos = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.get(`${API}/pedidos`, {
+        headers: token ? { Authorization: `Bearer ${token}` } : {}
       });
-      setPedidos(migrated);
+      
+      // Transformar dados do backend para o formato esperado pelo frontend
+      const pedidosFormatados = response.data.map(p => ({
+        id: p.id,
+        codigo: p.codigo,
+        cliente: {
+          id: p.cliente_id,
+          nome: p.cliente_nome,
+          telefone: p.cliente_telefone,
+          email: p.cliente_email
+        },
+        items: p.items || [],
+        total: p.total,
+        status: p.status,
+        formaPagamento: p.forma_pagamento,
+        troco: p.troco_precisa ? {
+          precisa: p.troco_precisa,
+          valor: p.troco_valor
+        } : null,
+        tipoEntrega: p.tipo_entrega,
+        endereco: p.endereco_rua ? {
+          label: p.endereco_label,
+          endereco: p.endereco_rua,
+          numero: p.endereco_numero,
+          complemento: p.endereco_complemento,
+          bairro: p.endereco_bairro,
+          cep: p.endereco_cep
+        } : null,
+        modulo: p.modulo,
+        observacao: p.observacao,
+        created_at: p.created_at
+      }));
+      
+      setPedidos(pedidosFormatados);
       localStorage.setItem("pedidos", JSON.stringify(migrated));
     }
   };
