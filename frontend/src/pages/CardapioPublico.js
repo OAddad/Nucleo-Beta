@@ -190,26 +190,40 @@ export default function CardapioPublico({ onAdminLogin }) {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-zinc-900 flex items-center justify-center">
+      <div className={`min-h-screen flex items-center justify-center ${darkMode ? 'bg-zinc-900' : 'bg-gray-50'}`}>
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mx-auto mb-4"></div>
-          <p className="text-zinc-400">Carregando cardápio...</p>
+          <p className={darkMode ? 'text-zinc-400' : 'text-gray-500'}>Carregando cardápio...</p>
         </div>
       </div>
     );
   }
 
+  // Classes condicionais baseadas no tema
+  const theme = {
+    bg: darkMode ? 'bg-zinc-900' : 'bg-gray-50',
+    bgCard: darkMode ? 'bg-zinc-800' : 'bg-white',
+    bgHeader: darkMode ? 'bg-zinc-950' : 'bg-white',
+    bgInput: darkMode ? 'bg-zinc-800' : 'bg-white',
+    bgMuted: darkMode ? 'bg-zinc-700' : 'bg-gray-100',
+    border: darkMode ? 'border-zinc-700' : 'border-gray-200',
+    borderHeader: darkMode ? 'border-zinc-800' : 'border-gray-200',
+    text: darkMode ? 'text-white' : 'text-gray-900',
+    textMuted: darkMode ? 'text-zinc-400' : 'text-gray-500',
+    textSecondary: darkMode ? 'text-zinc-300' : 'text-gray-700',
+  };
+
   return (
-    <div className="min-h-screen bg-zinc-900 text-white">
+    <div className={`min-h-screen ${theme.bg} ${theme.text}`}>
       {/* Header Fixo */}
-      <header className="bg-zinc-900 border-b border-zinc-800 sticky top-0 z-40">
+      <header className={`${theme.bg} border-b ${theme.borderHeader} sticky top-0 z-40`}>
         {/* Top Bar */}
-        <div className="flex items-center justify-between px-4 py-2 bg-zinc-950">
+        <div className={`flex items-center justify-between px-4 py-2 ${theme.bgHeader} ${!darkMode ? 'border-b border-gray-100' : ''}`}>
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-sm">N</span>
             </div>
-            <span className="font-semibold text-lg">Cardápio</span>
+            <span className={`font-semibold text-lg ${theme.text}`}>Cardápio</span>
           </div>
           
           {/* Botão Entrar ou Menu de Perfil */}
