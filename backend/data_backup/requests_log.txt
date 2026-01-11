@@ -8803,3 +8803,7 @@
 2026-01-11T13:38:17.629915+00:00 | DB_CALL count_ingredients | P3 | 0.24ms | success
 2026-01-11T13:38:17.630102+00:00 | DB_CALL count_products | P3 | 0.12ms | success
 2026-01-11T13:38:17.630245+00:00 | DB_CALL count_users | P3 | 0.09ms | success
+2026-01-11T13:38:39.560522+00:00 | DB_CALL init_database | P3 | 2.79ms | success
+2026-01-11T13:38:39.560992+00:00 | DB_CALL count_ingredients | P3 | 0.22ms | success
+2026-01-11T13:38:39.561318+00:00 | DB_CALL count_products | P3 | 0.24ms | success
+2026-01-11T13:38:39.561630+00:00 | DB_CALL count_users | P3 | 0.2ms | success
