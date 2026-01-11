@@ -18035,3 +18035,6 @@
 2026-01-11T22:39:08.630448+00:00 | DB_CALL get_user_by_username | P3 | 0.43ms | success
 2026-01-11T22:39:08.651164+00:00 | DB_CALL get_user_by_id | P3 | 0.24ms | success
 2026-01-11T22:39:08.651598+00:00 | DB_CALL get_all_products | P3 | 0.3ms | success
+2026-01-11T22:39:44.030514+00:00 | DB_CALL get_all_entregadores | P3 | 1.11ms | success
+2026-01-11T22:39:44.031093+00:00 | DB_CALL get_all_settings | P3 | 1.47ms | success
+2026-01-11T22:39:44.031828+00:00 | DB_CALL get_all_pedidos | P3 | 1.65ms | success
