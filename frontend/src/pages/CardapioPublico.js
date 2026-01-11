@@ -579,11 +579,15 @@ function CheckoutModal({ open, onClose, cart, cartTotal, client, darkMode, onOrd
     }
   };
 
-  // Deletar endereço
-  const handleDeleteAddress = async (e, addressId) => {
+  // Abrir popup de confirmação para deletar endereço
+  const handleDeleteAddressClick = (e, addr) => {
     e.stopPropagation(); // Evita selecionar o endereço ao clicar no delete
-    if (!confirm("Deseja remover este endereço?")) return;
-    
+    setDeleteAddressDialog({ open: true, addressId: addr.id, addressLabel: addr.label });
+  };
+
+  // Confirmar deleção do endereço
+  const handleConfirmDeleteAddress = async () => {
+    const { addressId } = deleteAddressDialog;
     try {
       await axios.delete(`${API}/client-addresses/${addressId}`);
       setAddresses(prev => prev.filter(a => a.id !== addressId));
@@ -593,6 +597,8 @@ function CheckoutModal({ open, onClose, cart, cartTotal, client, darkMode, onOrd
       toast.success("Endereço removido!");
     } catch (error) {
       toast.error("Erro ao remover endereço");
+    } finally {
+      setDeleteAddressDialog({ open: false, addressId: null, addressLabel: '' });
     }
   };
 
