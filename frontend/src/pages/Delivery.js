@@ -1513,11 +1513,11 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
                     onFocus={() => setShowClienteDropdown(true)}
                   />
                   {showClienteDropdown && clienteSearch && filteredClientes.length > 0 && (
-                    <div className="absolute z-10 w-full mt-1 bg-white border rounded-lg shadow-lg max-h-48 overflow-auto">
+                    <div className="absolute z-10 w-full mt-1 bg-card border rounded-lg shadow-lg max-h-48 overflow-auto">
                       {filteredClientes.map(cliente => (
                         <div
                           key={cliente.id}
-                          className="p-3 hover:bg-gray-100 cursor-pointer flex justify-between"
+                          className="p-3 hover:bg-muted cursor-pointer flex justify-between"
                           onClick={() => {
                             setSelectedCliente(cliente);
                             setClienteSearch("");
@@ -1525,7 +1525,7 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
                           }}
                         >
                           <span className="font-medium">{cliente.nome}</span>
-                          <span className="text-gray-500">{cliente.telefone}</span>
+                          <span className="text-muted-foreground">{cliente.telefone}</span>
                         </div>
                       ))}
                     </div>
@@ -1534,11 +1534,11 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
                 
                 {/* Cliente selecionado */}
                 {selectedCliente && (
-                  <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
+                  <div className="p-4 bg-green-500/10 border border-green-500/30 rounded-lg">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="font-semibold text-green-800">{selectedCliente.nome}</p>
-                        <p className="text-green-600">{selectedCliente.telefone}</p>
+                        <p className="font-semibold text-green-600">{selectedCliente.nome}</p>
+                        <p className="text-green-500">{selectedCliente.telefone}</p>
                       </div>
                       <Button variant="ghost" size="sm" onClick={() => setSelectedCliente(null)}>
                         <X className="w-4 h-4" />
