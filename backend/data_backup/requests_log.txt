@@ -17073,3 +17073,8 @@
 2026-01-11T21:24:06.126721+00:00 | DB_CALL get_user_by_id | P3 | 0.29ms | success
 2026-01-11T21:24:06.127044+00:00 | DB_CALL get_all_flow_nodes | P3 | 0.18ms | success
 2026-01-11T21:24:06.127247+00:00 | DB_CALL get_all_flow_edges | P3 | 0.12ms | success
+2026-01-11T21:24:36.737317+00:00 | DB_CALL get_user_by_username | P3 | 0.24ms | success
+2026-01-11T21:24:36.737531+00:00 | DB_CALL get_user_by_username | P3 | 0.09ms | success
+2026-01-11T21:24:36.738291+00:00 | DB_CALL get_all_clientes | P3 | 0.7ms | success
+2026-01-11T21:24:37.270774+00:00 | DB_CALL get_cliente_by_id | P3 | 0.42ms | success
+2026-01-11T21:24:38.110687+00:00 | DB_CALL get_client_addresses | P3 | 0.27ms | success
