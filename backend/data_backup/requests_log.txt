@@ -11923,3 +11923,7 @@
 2026-01-11T17:34:31.273528+00:00 | DB_CALL get_all_pedidos | P3 | 0.52ms | success
 2026-01-11T17:34:31.274393+00:00 | DB_CALL get_all_entregadores | P3 | 1.79ms | success
 2026-01-11T17:34:31.276845+00:00 | DB_CALL get_all_settings | P3 | 0.18ms | success
+2026-01-11T17:34:36.272519+00:00 | DB_CALL get_all_pedidos | P3 | 0.98ms | success
+2026-01-11T17:34:36.273435+00:00 | DB_CALL get_all_settings | P3 | 1.47ms | success
+2026-01-11T17:34:36.274579+00:00 | DB_CALL get_all_entregadores | P3 | 0.43ms | success
+2026-01-11T17:34:36.856168+00:00 | DB_CALL get_all_pedidos | P3 | 0.55ms | success
