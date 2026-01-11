@@ -10719,3 +10719,11 @@
 2026-01-11T17:05:25.839306+00:00 | DB_CALL get_all_pedidos | P3 | 0.4ms | success
 2026-01-11T17:05:25.840570+00:00 | DB_CALL get_all_settings | P3 | 0.18ms | success
 2026-01-11T17:05:26.447909+00:00 | DB_CALL get_all_pedidos | P3 | 0.44ms | success
+2026-01-11T17:05:30.835304+00:00 | DB_CALL get_all_settings | P3 | 0.29ms | success
+2026-01-11T17:05:30.837096+00:00 | DB_CALL get_all_pedidos | P3 | 0.84ms | success
+2026-01-11T17:05:30.837692+00:00 | DB_CALL get_all_entregadores | P3 | 1.13ms | success
+2026-01-11T17:05:31.447071+00:00 | DB_CALL get_all_pedidos | P3 | 0.41ms | success
+2026-01-11T17:05:35.830953+00:00 | DB_CALL get_all_entregadores | P3 | 0.26ms | success
+2026-01-11T17:05:35.832545+00:00 | DB_CALL get_all_pedidos | P3 | 0.73ms | success
+2026-01-11T17:05:35.833070+00:00 | DB_CALL get_all_settings | P3 | 0.89ms | success
+2026-01-11T17:05:36.447778+00:00 | DB_CALL get_all_pedidos | P3 | 0.41ms | success
