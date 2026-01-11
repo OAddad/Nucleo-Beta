@@ -9515,3 +9515,7 @@
 2026-01-11T15:27:32.881366+00:00 | DB_CALL get_all_products | P3 | 0.81ms | success
 2026-01-11T15:27:32.882084+00:00 | DB_CALL get_all_business_hours | P3 | 1.0ms | success
 2026-01-11T15:27:32.886082+00:00 | DB_CALL get_all_categories | P3 | 0.24ms | success
+2026-01-11T15:31:29.952440+00:00 | DB_CALL get_user_by_username | P3 | 0.41ms | success
+2026-01-11T15:31:32.244233+00:00 | DB_CALL get_user_by_username | P3 | 0.27ms | success
+2026-01-11T15:31:34.072134+00:00 | DB_CALL get_user_by_id | P3 | 0.37ms | success
+2026-01-11T15:31:34.072635+00:00 | DB_CALL get_all_purchases | P3 | 0.35ms | success
