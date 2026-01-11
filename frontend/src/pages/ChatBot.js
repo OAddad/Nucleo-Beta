@@ -98,6 +98,19 @@ export default function ChatBot() {
             </div>
           </button>
           <button
+            onClick={() => setActiveTab("simulator")}
+            className={`px-4 py-3 font-medium text-sm border-b-2 transition-colors ${
+              activeTab === "simulator"
+                ? "border-emerald-500 text-emerald-600"
+                : "border-transparent text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            <div className="flex items-center gap-2">
+              <Smartphone className="w-4 h-4" />
+              Simulador
+            </div>
+          </button>
+          <button
             onClick={() => setActiveTab("flow-editor")}
             className={`px-4 py-3 font-medium text-sm border-b-2 transition-colors ${
               activeTab === "flow-editor"
@@ -130,6 +143,8 @@ export default function ChatBot() {
       <div className="flex-1 overflow-auto">
         {activeTab === "whatsapp" ? (
           <WhatsAppTab toast={toast} />
+        ) : activeTab === "simulator" ? (
+          <SimulatorTab toast={toast} />
         ) : activeTab === "flow-editor" ? (
           <FlowEditorTab toast={toast} />
         ) : (
