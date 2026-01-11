@@ -18374,3 +18374,5 @@
 2026-01-11T23:39:33.214028+00:00 | DB_CALL count_ingredients | P3 | 0.24ms | success
 2026-01-11T23:39:33.214212+00:00 | DB_CALL count_products | P3 | 0.12ms | success
 2026-01-11T23:39:33.214359+00:00 | DB_CALL count_users | P3 | 0.09ms | success
+2026-01-11T23:39:54.032166+00:00 | DB_CALL get_user_by_id | P3 | 0.35ms | success
+2026-01-11T23:39:54.032469+00:00 | DB_CALL get_word_analytics_summary | P3 | 0.14ms | error | ERROR: no such column: type
