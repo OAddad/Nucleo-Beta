@@ -8,51 +8,32 @@ import { Label } from "./ui/label";
 
 const API = '/api';
 
-// Função para formatar e validar telefone com 9º dígito
-const formatPhone = (value) => {
-  // Remove tudo que não é número
-  let numbers = value.replace(/\D/g, '');
-  
-  // Limita a 11 dígitos
-  numbers = numbers.slice(0, 11);
-  
-  // Formata
-  if (numbers.length <= 2) {
-    return numbers;
-  } else if (numbers.length <= 7) {
-    return `(${numbers.slice(0, 2)}) ${numbers.slice(2)}`;
-  } else {
-    return `(${numbers.slice(0, 2)}) ${numbers.slice(2, 7)}-${numbers.slice(7)}`;
-  }
+// Função para formatar telefone para exibição
+const formatPhoneDisplay = (value) => {
+  const numbers = value.replace(/\D/g, '');
+  if (numbers.length <= 2) return numbers;
+  if (numbers.length <= 7) return `(${numbers.slice(0, 2)}) ${numbers.slice(2)}`;
+  return `(${numbers.slice(0, 2)}) ${numbers.slice(2, 7)}-${numbers.slice(7, 11)}`;
 };
 
-// Adiciona 9º dígito se necessário
+// Adiciona 9º dígito se necessário (para cadastro)
 const ensureNinthDigit = (phone) => {
   const numbers = phone.replace(/\D/g, '');
-  
-  // Se tem 10 dígitos (sem o 9), adiciona
   if (numbers.length === 10) {
     return numbers.slice(0, 2) + '9' + numbers.slice(2);
   }
-  
   return numbers;
 };
 
 export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
-  // Estados
   const [step, setStep] = useState(1); // 1 = identificador, 2 = senha, 3 = cadastro
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  
-  // Dados do usuário/cliente encontrado
   const [loginInfo, setLoginInfo] = useState(null);
-  
-  // Dados para cadastro de novo cliente
   const [newClientName, setNewClientName] = useState("");
   const [newClientPhone, setNewClientPhone] = useState("");
 
-  // Reset ao fechar
   const handleClose = () => {
     setStep(1);
     setIdentifier("");
@@ -63,13 +44,7 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
     onClose();
   };
 
-  // Handler para input de telefone com formatação
-  const handlePhoneChange = (e, setter) => {
-    const formatted = formatPhone(e.target.value);
-    setter(formatted);
-  };
-
-  // Passo 1: Verificar identificador (login ou telefone)
+  // Passo 1: Verificar identificador (login de admin OU telefone de cliente)
   const handleCheckIdentifier = async (e) => {
     e.preventDefault();
     
@@ -81,26 +56,24 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
     setLoading(true);
     
     try {
-      // Garantir 9º dígito antes de verificar
-      let phoneToCheck = identifier.trim();
-      const numbers = phoneToCheck.replace(/\D/g, '');
-      
-      // Se parece ser um telefone (só números ou formatado)
-      if (numbers.length >= 10) {
-        phoneToCheck = ensureNinthDigit(phoneToCheck);
-      }
-      
+      // Enviar o identificador como está - backend faz a busca flexível
       const response = await axios.post(`${API}/auth/check-login`, {
-        identifier: phoneToCheck
+        identifier: identifier.trim()
       });
       
       const data = response.data;
       
       if (!data.found) {
-        // Telefone não encontrado - oferecer cadastro
-        const formattedPhone = formatPhone(ensureNinthDigit(identifier));
-        setNewClientPhone(formattedPhone);
-        setStep(3); // Vai para tela de cadastro
+        // Não encontrado - verificar se parece telefone para oferecer cadastro
+        const numbers = identifier.replace(/\D/g, '');
+        if (numbers.length >= 8) {
+          // Parece telefone - oferecer cadastro
+          const phoneWithNinth = ensureNinthDigit(numbers.length >= 10 ? numbers : '00' + numbers);
+          setNewClientPhone(formatPhoneDisplay(phoneWithNinth));
+          setStep(3);
+        } else {
+          toast.error("Usuário não encontrado");
+        }
         setLoading(false);
         return;
       }
@@ -111,16 +84,15 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
       if (!data.needs_password && data.type === "client") {
         await loginClient(data.client_id, null);
       } else {
-        // Precisa de senha - mostrar passo 2
         setStep(2);
       }
       
     } catch (error) {
       console.error("Erro ao verificar login:", error);
-      // Se for erro 404, também oferecer cadastro
-      if (error.response?.status === 404) {
-        const formattedPhone = formatPhone(ensureNinthDigit(identifier));
-        setNewClientPhone(formattedPhone);
+      const numbers = identifier.replace(/\D/g, '');
+      if (numbers.length >= 8) {
+        const phoneWithNinth = ensureNinthDigit(numbers.length >= 10 ? numbers : '00' + numbers);
+        setNewClientPhone(formatPhoneDisplay(phoneWithNinth));
         setStep(3);
       } else {
         toast.error("Erro ao verificar. Tente novamente.");
@@ -144,25 +116,22 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
       return;
     }
     
-    // Garantir 9º dígito
-    const phoneNumbers = ensureNinthDigit(newClientPhone);
-    if (phoneNumbers.length !== 11) {
-      toast.error("Telefone deve ter 11 dígitos (com DDD e 9º dígito)");
+    // Garantir formato correto
+    const phoneNumbers = ensureNinthDigit(newClientPhone.replace(/\D/g, ''));
+    if (phoneNumbers.length < 10 || phoneNumbers.length > 11) {
+      toast.error("Telefone inválido. Use DDD + número");
       return;
     }
     
     setLoading(true);
     
     try {
-      // Criar cliente via API pública
       const response = await axios.post(`${API}/public/clientes`, {
         nome: newClientName.trim(),
         telefone: phoneNumbers
       });
       
       const newClient = response.data;
-      
-      // Salvar no localStorage e logar
       localStorage.setItem("client", JSON.stringify(newClient));
       localStorage.removeItem("token");
       localStorage.removeItem("user");
@@ -172,8 +141,8 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
       handleClose();
       
     } catch (error) {
-      console.error("Erro ao cadastrar cliente:", error);
-      if (error.response?.data?.detail?.includes("já existe")) {
+      console.error("Erro ao cadastrar:", error);
+      if (error.response?.data?.detail?.includes("já")) {
         toast.error("Este telefone já está cadastrado");
       } else {
         toast.error("Erro ao cadastrar. Tente novamente.");
@@ -183,10 +152,9 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
     }
   };
 
-  // Login de usuário do sistema (admin)
+  // Login de usuário admin
   const loginUser = async () => {
     setLoading(true);
-    
     try {
       const response = await axios.post(`${API}/auth/login`, {
         username: identifier,
@@ -200,7 +168,6 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
       toast.success("Login realizado!");
       onLoginSuccess("admin", response.data.user);
       handleClose();
-      
     } catch (error) {
       toast.error(error.response?.data?.detail || "Credenciais inválidas");
     } finally {
@@ -211,7 +178,6 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
   // Login de cliente
   const loginClient = async (clientId, senha) => {
     setLoading(true);
-    
     try {
       const response = await axios.post(`${API}/auth/client-login`, {
         client_id: clientId,
@@ -229,10 +195,9 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
       } else {
         toast.error(response.data.message || "Erro ao fazer login");
       }
-      
     } catch (error) {
-      console.error("Erro no login do cliente:", error);
-      toast.error("Erro ao fazer login. Tente novamente.");
+      console.error("Erro no login:", error);
+      toast.error("Erro ao fazer login");
     } finally {
       setLoading(false);
     }
@@ -241,7 +206,6 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
   // Passo 2: Enviar senha
   const handleSubmitPassword = async (e) => {
     e.preventDefault();
-    
     if (!password) {
       toast.error("Digite sua senha");
       return;
@@ -254,7 +218,6 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
     }
   };
 
-  // Voltar ao passo 1
   const handleBack = () => {
     setStep(1);
     setPassword("");
@@ -267,13 +230,8 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center">
-      {/* Backdrop */}
-      <div 
-        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
-        onClick={handleClose}
-      />
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={handleClose} />
       
-      {/* Modal */}
       <div className="relative bg-zinc-900 rounded-2xl shadow-2xl w-full max-w-md mx-4 border border-zinc-700 overflow-hidden">
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-zinc-800">
@@ -286,21 +244,17 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
               <p className="text-xs text-zinc-400">o centro da sua gestão</p>
             </div>
           </div>
-          <button
-            onClick={handleClose}
-            className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-zinc-800 text-zinc-400 hover:text-white transition-colors"
-          >
+          <button onClick={handleClose} className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-zinc-800 text-zinc-400 hover:text-white">
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        {/* Content */}
         <div className="p-6">
           {step === 1 ? (
             <>
               <h3 className="text-xl font-bold text-white mb-1 text-center">Entrar</h3>
               <p className="text-zinc-400 text-center mb-6 text-sm">
-                Digite seu telefone ou login para continuar
+                Digite seu telefone ou login de administrador
               </p>
               
               <form onSubmit={handleCheckIdentifier} className="space-y-4">
@@ -308,56 +262,41 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
                   <Label htmlFor="identifier" className="text-zinc-300">Telefone ou Login</Label>
                   <div className="relative mt-1">
                     <div className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500">
-                      <Phone className="w-5 h-5" />
+                      <User className="w-5 h-5" />
                     </div>
                     <Input
                       id="identifier"
                       type="text"
                       value={identifier}
-                      onChange={(e) => handlePhoneChange(e, setIdentifier)}
-                      placeholder="(00) 00000-0000 ou seu login"
+                      onChange={(e) => setIdentifier(e.target.value)}
+                      placeholder="999658914, admin, etc..."
                       required
                       className="pl-10 h-12 bg-zinc-800 border-zinc-700 text-white placeholder:text-zinc-500"
                       autoFocus
                     />
                   </div>
+                  <p className="text-xs text-zinc-500 mt-1">
+                    Telefone: com ou sem DDD, com ou sem o 9
+                  </p>
                 </div>
 
-                <Button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full h-12 text-base bg-orange-500 hover:bg-orange-600"
-                >
-                  {loading ? (
-                    <>
-                      <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                      Verificando...
-                    </>
-                  ) : (
-                    "Continuar"
-                  )}
+                <Button type="submit" disabled={loading} className="w-full h-12 text-base bg-orange-500 hover:bg-orange-600">
+                  {loading ? <><Loader2 className="w-5 h-5 mr-2 animate-spin" />Verificando...</> : "Continuar"}
                 </Button>
               </form>
             </>
           ) : step === 2 ? (
             <>
-              {/* Passo 2 - Senha */}
               <div className="text-center mb-6">
                 {loginInfo?.photo ? (
-                  <img 
-                    src={loginInfo.photo} 
-                    alt={loginInfo.name}
-                    className="w-20 h-20 rounded-full mx-auto mb-3 object-cover border-4 border-orange-500/30"
-                  />
+                  <img src={loginInfo.photo} alt={loginInfo.name} className="w-20 h-20 rounded-full mx-auto mb-3 object-cover border-4 border-orange-500/30" />
                 ) : (
                   <div className="w-20 h-20 rounded-full mx-auto mb-3 bg-zinc-800 flex items-center justify-center border-4 border-orange-500/30">
                     <User className="w-10 h-10 text-zinc-500" />
                   </div>
                 )}
                 <h3 className="text-xl font-bold text-white">{loginInfo?.name || "Usuário"}</h3>
-                <p className="text-zinc-400 text-sm">
-                  {loginInfo?.type === "user" ? "Administrador" : "Cliente"}
-                </p>
+                <p className="text-zinc-400 text-sm">{loginInfo?.type === "user" ? "Administrador" : "Cliente"}</p>
               </div>
               
               <form onSubmit={handleSubmitPassword} className="space-y-4">
@@ -380,47 +319,28 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
                   </div>
                 </div>
 
-                <Button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full h-12 text-base bg-orange-500 hover:bg-orange-600"
-                >
-                  {loading ? (
-                    <>
-                      <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                      Entrando...
-                    </>
-                  ) : (
-                    "Entrar"
-                  )}
+                <Button type="submit" disabled={loading} className="w-full h-12 text-base bg-orange-500 hover:bg-orange-600">
+                  {loading ? <><Loader2 className="w-5 h-5 mr-2 animate-spin" />Entrando...</> : "Entrar"}
                 </Button>
                 
-                <Button
-                  type="button"
-                  variant="ghost"
-                  onClick={handleBack}
-                  className="w-full text-zinc-400 hover:text-white hover:bg-zinc-800"
-                >
+                <Button type="button" variant="ghost" onClick={handleBack} className="w-full text-zinc-400 hover:text-white hover:bg-zinc-800">
                   ← Voltar
                 </Button>
               </form>
             </>
           ) : (
             <>
-              {/* Passo 3 - Cadastro de novo cliente */}
               <div className="text-center mb-6">
                 <div className="w-20 h-20 rounded-full mx-auto mb-3 bg-orange-500/20 flex items-center justify-center border-4 border-orange-500/30">
                   <UserPlus className="w-10 h-10 text-orange-500" />
                 </div>
                 <h3 className="text-xl font-bold text-white">Criar Conta</h3>
-                <p className="text-zinc-400 text-sm">
-                  Telefone não cadastrado. Complete seu cadastro:
-                </p>
+                <p className="text-zinc-400 text-sm">Complete seu cadastro para continuar</p>
               </div>
               
               <form onSubmit={handleRegisterClient} className="space-y-4">
                 <div>
-                  <Label htmlFor="newPhone" className="text-zinc-300">Telefone</Label>
+                  <Label htmlFor="newPhone" className="text-zinc-300">Telefone com DDD</Label>
                   <div className="relative mt-1">
                     <div className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500">
                       <Phone className="w-5 h-5" />
@@ -429,15 +349,12 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
                       id="newPhone"
                       type="text"
                       value={newClientPhone}
-                      onChange={(e) => handlePhoneChange(e, setNewClientPhone)}
+                      onChange={(e) => setNewClientPhone(formatPhoneDisplay(e.target.value))}
                       placeholder="(00) 00000-0000"
                       required
                       className="pl-10 h-12 bg-zinc-800 border-zinc-700 text-white placeholder:text-zinc-500"
                     />
                   </div>
-                  <p className="text-xs text-zinc-500 mt-1">
-                    O 9º dígito será adicionado automaticamente se necessário
-                  </p>
                 </div>
 
                 <div>
@@ -451,7 +368,7 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
                       type="text"
                       value={newClientName}
                       onChange={(e) => setNewClientName(e.target.value)}
-                      placeholder="Digite seu nome completo"
+                      placeholder="Digite seu nome"
                       required
                       className="pl-10 h-12 bg-zinc-800 border-zinc-700 text-white placeholder:text-zinc-500"
                       autoFocus
@@ -459,27 +376,11 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
                   </div>
                 </div>
 
-                <Button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full h-12 text-base bg-orange-500 hover:bg-orange-600"
-                >
-                  {loading ? (
-                    <>
-                      <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                      Cadastrando...
-                    </>
-                  ) : (
-                    "Criar Conta e Entrar"
-                  )}
+                <Button type="submit" disabled={loading} className="w-full h-12 text-base bg-orange-500 hover:bg-orange-600">
+                  {loading ? <><Loader2 className="w-5 h-5 mr-2 animate-spin" />Cadastrando...</> : "Criar Conta e Entrar"}
                 </Button>
                 
-                <Button
-                  type="button"
-                  variant="ghost"
-                  onClick={handleBack}
-                  className="w-full text-zinc-400 hover:text-white hover:bg-zinc-800"
-                >
+                <Button type="button" variant="ghost" onClick={handleBack} className="w-full text-zinc-400 hover:text-white hover:bg-zinc-800">
                   ← Voltar
                 </Button>
               </form>
