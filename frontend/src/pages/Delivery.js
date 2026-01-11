@@ -1002,8 +1002,8 @@ export default function Delivery() {
         <DialogContent className="sm:max-w-2xl max-h-[80vh]">
           <DialogHeader>
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-400 to-indigo-500 flex items-center justify-center">
-                <Bike className="w-6 h-6 text-white" />
+              <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center">
+                <Bike className="w-6 h-6 text-muted-foreground" />
               </div>
               <div>
                 <DialogTitle className="text-xl">{selectedEntregador?.nome}</DialogTitle>
@@ -1017,11 +1017,11 @@ export default function Delivery() {
           <div className="space-y-4 overflow-auto">
             {/* Seção EM ROTA DE ENTREGA */}
             <div className="border rounded-lg">
-              <div className="p-3 bg-purple-50 dark:bg-purple-900/20 border-b">
-                <h4 className="font-bold text-purple-700 dark:text-purple-400 flex items-center gap-2">
+              <div className="p-3 bg-muted/30 border-b">
+                <h4 className="font-bold flex items-center gap-2">
                   <Truck className="w-4 h-4" />
                   EM ROTA DE ENTREGA
-                  <span className="ml-auto bg-purple-200 dark:bg-purple-800 text-purple-800 dark:text-purple-200 px-2 py-0.5 rounded-full text-xs">
+                  <span className="ml-auto bg-muted text-muted-foreground px-2 py-0.5 rounded-full text-xs">
                     {entregadorPedidos.em_rota.length}
                   </span>
                 </h4>
