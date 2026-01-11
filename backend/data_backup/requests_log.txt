@@ -14711,3 +14711,13 @@
 2026-01-11T18:38:55.873704+00:00 | DB_CALL get_all_settings | P3 | 0.13ms | success
 2026-01-11T18:38:57.326537+00:00 | DB_CALL get_entregador_by_id | P3 | 0.54ms | success
 2026-01-11T18:38:57.328902+00:00 | DB_CALL get_pedidos_by_entregador | P3 | 0.25ms | success
+2026-01-11T18:39:00.153310+00:00 | DB_CALL init_database | P3 | 3.21ms | success
+2026-01-11T18:39:00.153859+00:00 | DB_CALL count_ingredients | P3 | 0.24ms | success
+2026-01-11T18:39:00.154057+00:00 | DB_CALL count_products | P3 | 0.14ms | success
+2026-01-11T18:39:00.154209+00:00 | DB_CALL count_users | P3 | 0.1ms | success
+2026-01-11T18:39:07.293156+00:00 | DB_CALL get_entregador_by_id | P3 | 1.27ms | success
+2026-01-11T18:39:07.293881+00:00 | DB_CALL get_pedidos_by_entregador | P3 | 1.17ms | success
+2026-01-11T18:39:09.058624+00:00 | DB_CALL init_database | P3 | 2.95ms | success
+2026-01-11T18:39:09.059204+00:00 | DB_CALL count_ingredients | P3 | 0.28ms | success
+2026-01-11T18:39:09.059404+00:00 | DB_CALL count_products | P3 | 0.13ms | success
+2026-01-11T18:39:09.059552+00:00 | DB_CALL count_users | P3 | 0.09ms | success
