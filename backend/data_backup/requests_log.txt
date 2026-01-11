@@ -18248,3 +18248,6 @@
 2026-01-11T22:52:20.017175+00:00 | DB_CALL get_all_settings | P3 | 9.26ms | success
 2026-01-11T22:52:20.017651+00:00 | DB_CALL get_all_entregadores | P3 | 1.22ms | success
 2026-01-11T22:52:20.018682+00:00 | DB_CALL get_all_pedidos | P3 | 18.88ms | success
+2026-01-11T22:52:24.995604+00:00 | DB_CALL get_all_entregadores | P3 | 0.28ms | success
+2026-01-11T22:52:24.997656+00:00 | DB_CALL get_all_pedidos | P3 | 1.18ms | success
+2026-01-11T22:52:24.998763+00:00 | DB_CALL get_all_settings | P3 | 1.79ms | success
