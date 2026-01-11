@@ -9797,3 +9797,11 @@
 2026-01-11T15:57:21.622640+00:00 | DB_CALL count_users | P3 | 0.09ms | success
 2026-01-11T15:57:33.312110+00:00 | DB_CALL get_user_by_username | P3 | 0.37ms | success
 2026-01-11T15:57:33.566877+00:00 | DB_CALL get_user_by_username | P3 | 0.28ms | success
+2026-01-11T15:57:35.869924+00:00 | DB_CALL get_user_by_username | P3 | 0.29ms | success
+2026-01-11T15:57:38.750987+00:00 | DB_CALL get_user_by_id | P3 | 1.2ms | success
+2026-01-11T15:57:38.761632+00:00 | DB_CALL recalculate_all_cliente_stats | P3 | 10.46ms | success
+2026-01-11T15:57:38.761754+00:00 | DB_CALL get_user_by_id | P3 | 4.96ms | success
+2026-01-11T15:57:38.763088+00:00 | DB_CALL get_all_clientes | P3 | 1.34ms | success
+2026-01-11T15:57:38.764506+00:00 | DB_CALL get_total_pontuacao | P3 | 2.65ms | success
+2026-01-11T15:57:38.764864+00:00 | DB_CALL count_clientes | P3 | 0.21ms | success
+2026-01-11T15:57:38.769617+00:00 | DB_CALL get_user_by_username | P3 | 0.2ms | success
