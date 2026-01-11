@@ -14774,3 +14774,10 @@
 2026-01-11T18:41:39.885582+00:00 | DB_CALL get_all_pedidos | P3 | 0.74ms | success
 2026-01-11T18:41:39.888742+00:00 | DB_CALL get_all_entregadores | P3 | 0.21ms | success
 2026-01-11T18:41:39.890097+00:00 | DB_CALL get_all_settings | P3 | 0.16ms | success
+2026-01-11T18:41:44.886255+00:00 | DB_CALL get_all_entregadores | P3 | 3.02ms | success
+2026-01-11T18:41:44.889300+00:00 | DB_CALL get_all_pedidos | P3 | 5.66ms | success
+2026-01-11T18:41:44.895180+00:00 | DB_CALL get_all_settings | P3 | 0.34ms | success
+2026-01-11T18:41:49.881140+00:00 | DB_CALL get_all_pedidos | P3 | 0.78ms | success
+2026-01-11T18:41:49.882656+00:00 | DB_CALL get_all_entregadores | P3 | 0.17ms | success
+2026-01-11T18:41:49.884924+00:00 | DB_CALL get_all_settings | P3 | 0.17ms | success
+2026-01-11T18:41:51.598331+00:00 | DB_CALL get_all_funcionarios | P3 | 0.36ms | success
