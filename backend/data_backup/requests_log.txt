@@ -16033,3 +16033,13 @@
 2026-01-11T19:19:32.242143+00:00 | DB_CALL get_all_clientes | P3 | 1.2ms | success
 2026-01-11T19:19:32.760079+00:00 | DB_CALL get_cliente_by_id | P3 | 0.57ms | success
 2026-01-11T19:19:33.602348+00:00 | DB_CALL get_client_addresses | P3 | 0.33ms | success
+2026-01-11T19:19:49.903148+00:00 | DB_CALL get_all_bairros | P3 | 0.62ms | success
+2026-01-11T19:19:49.908185+00:00 | DB_CALL get_all_products | P3 | 3.45ms | success
+2026-01-11T19:19:49.909390+00:00 | DB_CALL get_all_categories | P3 | 4.07ms | success
+2026-01-11T19:19:49.909878+00:00 | DB_CALL get_client_addresses | P3 | 4.39ms | success
+2026-01-11T19:19:49.910213+00:00 | DB_CALL get_all_bairros | P3 | 3.63ms | success
+2026-01-11T19:19:49.910634+00:00 | DB_CALL get_all_business_hours | P3 | 3.84ms | success
+2026-01-11T19:19:49.910917+00:00 | DB_CALL get_all_categories | P3 | 3.87ms | success
+2026-01-11T19:19:49.912005+00:00 | DB_CALL get_all_products | P3 | 4.85ms | success
+2026-01-11T19:19:49.912619+00:00 | DB_CALL get_all_business_hours | P3 | 1.07ms | success
+2026-01-11T19:19:50.066614+00:00 | DB_CALL get_client_addresses | P3 | 0.31ms | success
