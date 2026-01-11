@@ -10240,3 +10240,4 @@
 2026-01-11T16:36:21.670022+00:00 | DB_CALL count_products | P3 | 0.13ms | success
 2026-01-11T16:36:21.670175+00:00 | DB_CALL count_users | P3 | 0.1ms | success
 2026-01-11T16:36:49.270658+00:00 | DB_CALL get_all_settings | P3 | 0.3ms | success
+2026-01-11T16:36:54.786873+00:00 | DB_CALL get_all_entregadores | P3 | 0.3ms | success
