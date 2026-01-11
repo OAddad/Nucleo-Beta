@@ -10600,3 +10600,11 @@
 2026-01-11T17:03:18.828512+00:00 | DB_CALL get_all_settings | P3 | 1.95ms | success
 2026-01-11T17:03:18.828784+00:00 | DB_CALL get_all_entregadores | P3 | 1.86ms | success
 2026-01-11T17:03:20.668002+00:00 | DB_CALL get_all_pedidos | P3 | 0.39ms | success
+2026-01-11T17:03:21.446327+00:00 | DB_CALL get_all_pedidos | P3 | 0.42ms | success
+2026-01-11T17:03:23.826501+00:00 | DB_CALL get_all_pedidos | P3 | 0.42ms | success
+2026-01-11T17:03:23.828220+00:00 | DB_CALL get_all_entregadores | P3 | 0.31ms | success
+2026-01-11T17:03:23.829081+00:00 | DB_CALL get_all_settings | P3 | 0.2ms | success
+2026-01-11T17:03:26.445637+00:00 | DB_CALL get_all_pedidos | P3 | 0.4ms | success
+2026-01-11T17:03:28.833634+00:00 | DB_CALL get_all_entregadores | P3 | 1.46ms | success
+2026-01-11T17:03:28.834336+00:00 | DB_CALL get_all_pedidos | P3 | 1.72ms | success
+2026-01-11T17:03:28.834898+00:00 | DB_CALL get_all_settings | P3 | 1.53ms | success
