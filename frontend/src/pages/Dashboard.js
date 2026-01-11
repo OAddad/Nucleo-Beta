@@ -207,7 +207,7 @@ export default function Dashboard({ setIsAuthenticated }) {
     toggle: () => setConfigExpanded(!configExpanded),
     children: [
       { path: "/configuracoes/horarios", label: "Horários", icon: ClipboardList },
-      { path: "/configuracoes/preferencias", label: "Preferências", icon: Settings },
+      { path: "/configuracoes/sistema", label: "Sistema", icon: Settings },
       { path: "/configuracoes/auditoria", label: "Auditoria", icon: Shield },
       { path: "/configuracoes/bugs", label: "Bugs & Sistema", icon: AlertTriangle },
     ]
