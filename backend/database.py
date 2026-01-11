@@ -1927,6 +1927,20 @@ def delete_pedido(pedido_id: str) -> bool:
         return cursor.rowcount > 0
 
 
+def cancel_pedido(pedido_id: str, motivo: str) -> Optional[Dict]:
+    """Cancela um pedido com motivo obrigatório"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        now = datetime.now(timezone.utc).isoformat()
+        cursor.execute('''
+            UPDATE pedidos SET status = 'cancelado', motivo_cancelamento = ?, updated_at = ?
+            WHERE id = ?
+        ''', (motivo, now, pedido_id))
+        conn.commit()
+        return get_pedido_by_id(pedido_id)
+
+
 def count_pedidos() -> int:
     """Conta o total de pedidos"""
     with db_lock:
