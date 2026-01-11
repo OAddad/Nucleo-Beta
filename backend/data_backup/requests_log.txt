@@ -15282,3 +15282,6 @@
 2026-01-11T18:54:19.882656+00:00 | DB_CALL get_all_entregadores | P3 | 0.53ms | success
 2026-01-11T18:54:19.885301+00:00 | DB_CALL get_all_pedidos | P3 | 1.25ms | success
 2026-01-11T18:54:19.886544+00:00 | DB_CALL get_all_settings | P3 | 1.95ms | success
+2026-01-11T18:54:43.892303+00:00 | DB_CALL get_all_settings | P3 | 0.55ms | success
+2026-01-11T18:54:43.893632+00:00 | DB_CALL get_all_pedidos | P3 | 0.57ms | success
+2026-01-11T18:54:43.899233+00:00 | DB_CALL get_all_entregadores | P3 | 0.26ms | success

@@ -121,6 +121,7 @@ export default function Dashboard({ setIsAuthenticated }) {
   const [clientesFornecedoresExpanded, setClientesFornecedoresExpanded] = useState(false);
   const [financeiroExpanded, setFinanceiroExpanded] = useState(false);
   const [impulsioneVendasExpanded, setImpulsioneVendasExpanded] = useState(false);
+  const [localizacaoExpanded, setLocalizacaoExpanded] = useState(false);
 
   // Função para recolher todas as abas do menu
   const collapseAllMenus = () => {
@@ -130,6 +131,7 @@ export default function Dashboard({ setIsAuthenticated }) {
     setFinanceiroExpanded(false);
     setImpulsioneVendasExpanded(false);
     setConfigExpanded(false);
+    setLocalizacaoExpanded(false);
   };
 
   // Função para alternar o sidebar e recolher menus quando minimizar
