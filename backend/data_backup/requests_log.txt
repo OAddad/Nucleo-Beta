@@ -16448,3 +16448,13 @@
 2026-01-11T19:37:57.736518+00:00 | DB_CALL search_ruas | P3 | 1.51ms | success
 2026-01-11T19:38:13.246365+00:00 | DB_CALL get_client_addresses | P3 | 0.24ms | success
 2026-01-11T19:41:30.607119+00:00 | DB_CALL get_client_addresses | P3 | 0.27ms | success
+2026-01-11T19:41:56.930354+00:00 | DB_CALL get_all_bairros | P3 | 0.55ms | success
+2026-01-11T19:41:56.932401+00:00 | DB_CALL get_all_products | P3 | 0.85ms | success
+2026-01-11T19:41:56.933622+00:00 | DB_CALL get_all_categories | P3 | 1.94ms | success
+2026-01-11T19:41:56.937829+00:00 | DB_CALL get_all_bairros | P3 | 3.21ms | success
+2026-01-11T19:41:56.938786+00:00 | DB_CALL get_all_business_hours | P3 | 3.25ms | success
+2026-01-11T19:41:56.939225+00:00 | DB_CALL get_all_products | P3 | 3.58ms | success
+2026-01-11T19:41:56.939780+00:00 | DB_CALL get_client_addresses | P3 | 3.95ms | success
+2026-01-11T19:41:56.940038+00:00 | DB_CALL get_all_business_hours | P3 | 3.16ms | success
+2026-01-11T19:41:56.940330+00:00 | DB_CALL get_all_categories | P3 | 2.92ms | success
+2026-01-11T19:41:57.102997+00:00 | DB_CALL get_client_addresses | P3 | 0.3ms | success
