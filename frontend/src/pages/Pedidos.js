@@ -46,10 +46,30 @@ const API = '/api';
 
 // Status dos pedidos com suas cores e ícones
 const statusConfig = {
+  aguardando_aceite: { 
+    label: "Aguardando Aceite", 
+    color: "bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400",
+    icon: Clock 
+  },
   producao: { 
     label: "Em Produção", 
     color: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400",
     icon: Clock 
+  },
+  pronto: { 
+    label: "Pronto", 
+    color: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400",
+    icon: Package 
+  },
+  na_bag: { 
+    label: "Na Bag", 
+    color: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400",
+    icon: Package 
+  },
+  em_rota: { 
+    label: "Em Rota", 
+    color: "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400",
+    icon: Truck 
   },
   transito: { 
     label: "Em Trânsito", 
