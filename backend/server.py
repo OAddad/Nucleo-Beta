@@ -2732,6 +2732,151 @@ async def delete_funcionario(funcionario_id: str, current_user: User = Depends(g
     return {"message": "Funcionário removido com sucesso"}
 
 
+# ========== BAIRROS ENDPOINTS ==========
+class BairroCreate(BaseModel):
+    nome: str
+    valor_entrega: Optional[float] = 0
+    cep: Optional[str] = None
+
+class BairroUpdate(BaseModel):
+    nome: Optional[str] = None
+    valor_entrega: Optional[float] = None
+    cep: Optional[str] = None
+
+class BairroResponse(BaseModel):
+    id: str
+    nome: str
+    valor_entrega: Optional[float] = 0
+    cep: Optional[str] = None
+    ativo: Optional[int] = 1
+    created_at: Optional[str] = None
+    updated_at: Optional[str] = None
+
+    class Config:
+        from_attributes = True
+
+@api_router.get("/bairros", response_model=List[BairroResponse])
+async def get_all_bairros():
+    """Retorna todos os bairros ativos"""
+    return await db_call(sqlite_db.get_all_bairros)
+
+@api_router.get("/bairros/check-cep")
+async def check_bairros_cep():
+    """Verifica se algum bairro tem CEP preenchido"""
+    has_cep = await db_call(sqlite_db.check_bairros_have_cep)
+    return {"has_cep": has_cep}
+
+@api_router.get("/bairros/{bairro_id}", response_model=BairroResponse)
+async def get_bairro(bairro_id: str):
+    """Retorna um bairro pelo ID"""
+    bairro = await db_call(sqlite_db.get_bairro_by_id, bairro_id)
+    if not bairro:
+        raise HTTPException(status_code=404, detail="Bairro não encontrado")
+    return bairro
+
+@api_router.post("/bairros", response_model=BairroResponse)
+async def create_bairro(data: BairroCreate, current_user: User = Depends(get_current_user)):
+    """Cria um novo bairro"""
+    # Verificar se já existe
+    existing = await db_call(sqlite_db.get_bairro_by_nome, data.nome)
+    if existing:
+        raise HTTPException(status_code=400, detail="Já existe um bairro com este nome")
+    return await db_call(sqlite_db.create_bairro, data.model_dump())
+
+@api_router.put("/bairros/{bairro_id}", response_model=BairroResponse)
+async def update_bairro(bairro_id: str, data: BairroUpdate, current_user: User = Depends(get_current_user)):
+    """Atualiza um bairro"""
+    bairro = await db_call(sqlite_db.update_bairro, bairro_id, data.model_dump(exclude_none=True))
+    if not bairro:
+        raise HTTPException(status_code=404, detail="Bairro não encontrado")
+    return bairro
+
+@api_router.put("/bairros/valor/all")
+async def update_all_bairros_valor(valor_entrega: float, current_user: User = Depends(get_current_user)):
+    """Atualiza o valor de entrega de todos os bairros"""
+    count = await db_call(sqlite_db.update_all_bairros_valor, valor_entrega)
+    return {"message": f"Valor atualizado em {count} bairros", "count": count}
+
+@api_router.put("/bairros/cep/all")
+async def update_all_bairros_cep(cep: str, current_user: User = Depends(get_current_user)):
+    """Atualiza o CEP de todos os bairros (CEP único)"""
+    count = await db_call(sqlite_db.update_all_bairros_cep, cep)
+    return {"message": f"CEP atualizado em {count} bairros", "count": count}
+
+@api_router.delete("/bairros/{bairro_id}")
+async def delete_bairro(bairro_id: str, current_user: User = Depends(get_current_user)):
+    """Remove um bairro"""
+    success = await db_call(sqlite_db.delete_bairro, bairro_id)
+    if not success:
+        raise HTTPException(status_code=400, detail="Bairro não pode ser removido pois está em uso")
+    return {"message": "Bairro removido com sucesso"}
+
+
+# ========== RUAS ENDPOINTS ==========
+class RuaCreate(BaseModel):
+    nome: str
+    bairro_id: Optional[str] = None
+    cep: Optional[str] = None
+
+class RuaUpdate(BaseModel):
+    nome: Optional[str] = None
+    bairro_id: Optional[str] = None
+    cep: Optional[str] = None
+
+class RuaResponse(BaseModel):
+    id: str
+    nome: str
+    bairro_id: Optional[str] = None
+    cep: Optional[str] = None
+    bairro_nome: Optional[str] = None
+    valor_entrega: Optional[float] = None
+    bairro_cep: Optional[str] = None
+    created_at: Optional[str] = None
+    updated_at: Optional[str] = None
+
+    class Config:
+        from_attributes = True
+
+@api_router.get("/ruas", response_model=List[RuaResponse])
+async def get_all_ruas():
+    """Retorna todas as ruas"""
+    return await db_call(sqlite_db.get_all_ruas)
+
+@api_router.get("/ruas/search")
+async def search_ruas(termo: str):
+    """Busca ruas pelo nome"""
+    return await db_call(sqlite_db.search_ruas, termo)
+
+@api_router.get("/ruas/{rua_id}", response_model=RuaResponse)
+async def get_rua(rua_id: str):
+    """Retorna uma rua pelo ID"""
+    rua = await db_call(sqlite_db.get_rua_by_id, rua_id)
+    if not rua:
+        raise HTTPException(status_code=404, detail="Rua não encontrada")
+    return rua
+
+@api_router.post("/ruas", response_model=RuaResponse)
+async def create_rua(data: RuaCreate, current_user: User = Depends(get_current_user)):
+    """Cria uma nova rua"""
+    return await db_call(sqlite_db.create_rua, data.model_dump())
+
+@api_router.put("/ruas/{rua_id}", response_model=RuaResponse)
+async def update_rua(rua_id: str, data: RuaUpdate, current_user: User = Depends(get_current_user)):
+    """Atualiza uma rua"""
+    rua = await db_call(sqlite_db.update_rua, rua_id, data.model_dump(exclude_none=True))
+    if not rua:
+        raise HTTPException(status_code=404, detail="Rua não encontrada")
+    return rua
+
+@api_router.delete("/ruas/{rua_id}")
+async def delete_rua(rua_id: str, current_user: User = Depends(get_current_user)):
+    """Remove uma rua"""
+    success = await db_call(sqlite_db.delete_rua, rua_id)
+    if not success:
+        raise HTTPException(status_code=404, detail="Rua não encontrada")
+    return {"message": "Rua removida com sucesso"}
+
+
 # Reports endpoints
 @api_router.get("/reports/price-history/{ingredient_id}", response_model=IngredientWithHistory)
 async def get_price_history(ingredient_id: str, current_user: User = Depends(get_current_user)):
