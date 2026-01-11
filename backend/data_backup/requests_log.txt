@@ -16106,3 +16106,14 @@
 2026-01-11T19:23:23.934235+00:00 | DB_CALL get_all_bairros | P3 | 1.25ms | success
 2026-01-11T19:23:29.031649+00:00 | DB_CALL get_user_by_username | P3 | 0.25ms | success
 2026-01-11T19:23:31.417179+00:00 | DB_CALL get_user_by_username | P3 | 0.29ms | success
+2026-01-11T19:23:38.295015+00:00 | DB_CALL get_all_bairros | P3 | 0.62ms | success
+2026-01-11T19:23:40.910494+00:00 | DB_CALL get_all_products | P3 | 0.47ms | success
+2026-01-11T19:23:40.913297+00:00 | DB_CALL get_all_business_hours | P3 | 0.81ms | success
+2026-01-11T19:23:40.914042+00:00 | DB_CALL get_client_addresses | P3 | 1.93ms | success
+2026-01-11T19:23:40.914587+00:00 | DB_CALL get_all_bairros | P3 | 1.85ms | success
+2026-01-11T19:23:40.915079+00:00 | DB_CALL get_all_categories | P3 | 2.63ms | success
+2026-01-11T19:23:41.072576+00:00 | DB_CALL get_client_addresses | P3 | 0.32ms | success
+2026-01-11T19:23:45.618351+00:00 | DB_CALL get_user_by_id | P3 | 0.85ms | success
+2026-01-11T19:23:45.618704+00:00 | DB_CALL get_bairro_by_nome | P3 | 0.16ms | success
+2026-01-11T19:23:45.621461+00:00 | DB_CALL create_bairro | P3 | 2.65ms | success
+2026-01-11T19:23:45.787378+00:00 | DB_CALL get_all_bairros | P3 | 0.3ms | success
