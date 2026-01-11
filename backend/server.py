@@ -2160,6 +2160,9 @@ async def delete_expense(expense_id: str, delete_children: bool = False, current
 @api_router.get("/clientes", response_model=List[Cliente])
 async def get_clientes(current_user: User = Depends(get_current_user)):
     """Lista todos os clientes"""
+    # Recalcular estatísticas baseado nos pedidos reais
+    await db_call(sqlite_db.recalculate_all_cliente_stats)
+    
     clientes = await db_call(sqlite_db.get_all_clientes)
     result = []
     for c in clientes:
