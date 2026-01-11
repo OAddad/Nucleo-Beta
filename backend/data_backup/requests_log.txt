@@ -14240,3 +14240,12 @@
 2026-01-11T18:26:51.873565+00:00 | DB_CALL get_all_pedidos | P3 | 1.64ms | success
 2026-01-11T18:26:51.874571+00:00 | DB_CALL get_all_entregadores | P3 | 2.24ms | success
 2026-01-11T18:26:51.874852+00:00 | DB_CALL get_all_settings | P3 | 2.05ms | success
+2026-01-11T18:26:56.142248+00:00 | DB_CALL get_all_settings | P3 | 0.84ms | success
+2026-01-11T18:26:56.143093+00:00 | DB_CALL get_all_pedidos | P3 | 1.18ms | success
+2026-01-11T18:26:56.146343+00:00 | DB_CALL get_all_entregadores | P3 | 0.18ms | success
+2026-01-11T18:26:56.882824+00:00 | DB_CALL get_all_pedidos | P3 | 1.11ms | success
+2026-01-11T18:26:56.883860+00:00 | DB_CALL get_all_entregadores | P3 | 1.66ms | success
+2026-01-11T18:26:56.885417+00:00 | DB_CALL get_all_settings | P3 | 0.16ms | success
+2026-01-11T18:26:57.047417+00:00 | DB_CALL get_all_entregadores | P3 | 0.27ms | success
+2026-01-11T18:26:57.051773+00:00 | DB_CALL get_all_pedidos | P3 | 0.58ms | success
+2026-01-11T18:26:57.073220+00:00 | DB_CALL get_all_settings | P3 | 0.28ms | success
