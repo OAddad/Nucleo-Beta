@@ -17277,3 +17277,7 @@
 2026-01-11T21:37:04.739582+00:00 | DB_CALL search_ruas | P3 | 0.35ms | success
 2026-01-11T21:37:05.017703+00:00 | DB_CALL search_ruas | P3 | 0.35ms | success
 2026-01-11T21:37:05.816229+00:00 | DB_CALL search_ruas | P3 | 0.4ms | success
+2026-01-11T21:37:44.022558+00:00 | DB_CALL get_all_entregadores | P3 | 0.76ms | success
+2026-01-11T21:37:44.023098+00:00 | DB_CALL get_all_settings | P3 | 1.08ms | success
+2026-01-11T21:37:44.024272+00:00 | DB_CALL get_all_pedidos | P3 | 0.65ms | success
+2026-01-11T21:37:49.426780+00:00 | DB_CALL create_client_address | P3 | 6.24ms | success
