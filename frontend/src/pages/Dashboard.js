@@ -251,7 +251,10 @@ export default function Dashboard({ setIsAuthenticated }) {
         <div className={`${sidebarOpen ? 'block' : 'hidden lg:block'} w-64 lg:w-full h-full flex flex-col`}>
           <div className="p-6 border-b flex items-center justify-between flex-shrink-0">
             <button 
-              onClick={() => handleSidebarClick("/")}
+              onClick={() => {
+                setActiveTopMenu(null);
+                handleSidebarClick("/");
+              }}
               className={`flex items-center gap-3 hover:opacity-80 transition-opacity ${sidebarOpen ? '' : 'lg:justify-center lg:w-full'}`}
             >
               <div className="flex-shrink-0">
