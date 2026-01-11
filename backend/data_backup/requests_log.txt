@@ -9208,3 +9208,10 @@
 2026-01-11T14:55:45.114339+00:00 | DB_CALL get_client_addresses | P3 | 0.34ms | success
 2026-01-11T14:56:14.903590+00:00 | DB_CALL create_client_address | P3 | 2.5ms | success
 2026-01-11T14:57:29.997560+00:00 | DB_CALL get_client_addresses | P3 | 0.28ms | success
+2026-01-11T14:58:27.093467+00:00 | DB_CALL get_all_products | P3 | 0.9ms | success
+2026-01-11T14:58:27.094235+00:00 | DB_CALL get_all_business_hours | P3 | 1.49ms | success
+2026-01-11T14:58:27.095098+00:00 | DB_CALL get_all_categories | P3 | 0.17ms | success
+2026-01-11T14:58:27.545782+00:00 | DB_CALL get_client_addresses | P3 | 0.3ms | success
+2026-01-11T14:58:27.786054+00:00 | DB_CALL get_all_business_hours | P3 | 0.28ms | success
+2026-01-11T14:58:27.789345+00:00 | DB_CALL get_all_categories | P3 | 0.33ms | success
+2026-01-11T14:58:27.790081+00:00 | DB_CALL get_all_products | P3 | 1.21ms | success

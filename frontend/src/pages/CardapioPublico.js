@@ -282,22 +282,109 @@ function CheckoutModal({ open, onClose, cart, cartTotal, client, darkMode, onOrd
     setStep(3);
   };
 
+  // Quando seleciona forma de pagamento
+  const handleSelectPayment = (method) => {
+    setPaymentMethod(method);
+    if (method === 'cash') {
+      setShowChangeDialog(true);
+    }
+  };
+
+  // Confirmar troco e finalizar
+  const handleConfirmChange = () => {
+    if (needsChange && (!changeAmount || parseFloat(changeAmount) <= cartTotal)) {
+      toast.error("Informe um valor maior que o total do pedido");
+      return;
+    }
+    setShowChangeDialog(false);
+    finalizeOrder();
+  };
+
   const handleFinishOrder = () => {
     if (!paymentMethod) {
       toast.error("Selecione uma forma de pagamento");
       return;
     }
     
-    const orderData = {
-      deliveryType,
-      address: deliveryType === 'delivery' ? addresses.find(a => a.id === selectedAddress) : null,
-      paymentMethod,
-      items: cart,
-      total: cartTotal
-    };
+    // Se for dinheiro e ainda não respondeu sobre troco
+    if (paymentMethod === 'cash' && needsChange === null) {
+      setShowChangeDialog(true);
+      return;
+    }
     
-    toast.success("Pedido realizado com sucesso! 🎉");
-    onOrderComplete(orderData);
+    finalizeOrder();
+  };
+
+  // Gerar código único de 5 dígitos
+  const generateUniqueCode = (existingPedidos) => {
+    const existingCodes = new Set(existingPedidos.map(p => p.codigo));
+    let code;
+    let attempts = 0;
+    do {
+      const num = Math.floor(Math.random() * 100000);
+      code = `#${num.toString().padStart(5, '0')}`;
+      attempts++;
+    } while (existingCodes.has(code) && attempts < 100000);
+    return code;
+  };
+
+  const finalizeOrder = () => {
+    const selectedAddr = addresses.find(a => a.id === selectedAddress);
+    
+    // Mapear forma de pagamento para o formato esperado pelo Pedidos.js
+    const paymentMap = {
+      'pix': 'pix',
+      'credit': 'cartao',
+      'debit': 'cartao',
+      'cash': 'dinheiro'
+    };
+
+    // Buscar pedidos existentes
+    const existingPedidos = JSON.parse(localStorage.getItem("pedidos") || "[]");
+    
+    // Criar novo pedido no formato esperado
+    const newPedido = {
+      id: Date.now().toString(),
+      codigo: generateUniqueCode(existingPedidos),
+      cliente: {
+        id: client.id,
+        nome: client.nome,
+        telefone: client.telefone,
+        email: client.email
+      },
+      items: cart.map(item => ({
+        id: item.id,
+        nome: item.name,
+        quantidade: item.quantity,
+        preco: item.sale_price,
+        observacao: item.observation || null
+      })),
+      total: cartTotal,
+      status: "producao",
+      formaPagamento: paymentMap[paymentMethod],
+      troco: paymentMethod === 'cash' ? {
+        precisa: needsChange,
+        valor: needsChange ? parseFloat(changeAmount) : null
+      } : null,
+      tipoEntrega: deliveryType, // 'pickup' ou 'delivery'
+      endereco: deliveryType === 'delivery' && selectedAddr ? {
+        label: selectedAddr.label,
+        endereco: selectedAddr.endereco,
+        numero: selectedAddr.numero,
+        complemento: selectedAddr.complemento,
+        bairro: selectedAddr.bairro,
+        cep: selectedAddr.cep
+      } : null,
+      modulo: "Cardapio", // Origem do pedido
+      created_at: new Date().toISOString()
+    };
+
+    // Salvar no localStorage
+    const updatedPedidos = [newPedido, ...existingPedidos];
+    localStorage.setItem("pedidos", JSON.stringify(updatedPedidos));
+
+    toast.success(`Pedido ${newPedido.codigo} realizado com sucesso! 🎉`);
+    onOrderComplete(newPedido);
     onClose();
   };
 
