@@ -3166,5 +3166,122 @@ def get_all_chatbot_settings() -> Dict[str, str]:
         return {row[0]: row[1] for row in cursor.fetchall()}
 
 
+# ==================== FUNÇÕES DE LIMPEZA DE DADOS ====================
+def clear_products_and_ingredients() -> int:
+    """Limpa produtos, ingredientes e dados relacionados"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        total = 0
+        
+        # Contar antes de deletar
+        cursor.execute("SELECT COUNT(*) FROM products")
+        total += cursor.fetchone()[0]
+        cursor.execute("SELECT COUNT(*) FROM ingredients")
+        total += cursor.fetchone()[0]
+        
+        # Deletar em ordem correta (dependências primeiro)
+        cursor.execute("DELETE FROM purchase_items")
+        cursor.execute("DELETE FROM purchases")
+        cursor.execute("DELETE FROM price_history")
+        cursor.execute("DELETE FROM ingredient_history")
+        cursor.execute("DELETE FROM product_ingredients")
+        cursor.execute("DELETE FROM products")
+        cursor.execute("DELETE FROM ingredients")
+        cursor.execute("DELETE FROM categories")
+        
+        conn.commit()
+        return total
+
+
+def clear_sales_data() -> int:
+    """Limpa vendas e pedidos"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        total = 0
+        
+        # Contar antes de deletar
+        cursor.execute("SELECT COUNT(*) FROM pedidos")
+        total += cursor.fetchone()[0]
+        cursor.execute("SELECT COUNT(*) FROM pedido_items")
+        total += cursor.fetchone()[0]
+        
+        # Deletar
+        cursor.execute("DELETE FROM pedido_items")
+        cursor.execute("DELETE FROM pedidos")
+        
+        conn.commit()
+        return total
+
+
+def clear_people_data() -> int:
+    """Limpa clientes, fornecedores e entregadores"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        total = 0
+        
+        # Contar antes de deletar
+        cursor.execute("SELECT COUNT(*) FROM clientes")
+        total += cursor.fetchone()[0]
+        cursor.execute("SELECT COUNT(*) FROM fornecedores")
+        total += cursor.fetchone()[0]
+        cursor.execute("SELECT COUNT(*) FROM entregadores")
+        total += cursor.fetchone()[0]
+        cursor.execute("SELECT COUNT(*) FROM funcionarios")
+        total += cursor.fetchone()[0]
+        
+        # Deletar (manter apenas usuários do sistema)
+        cursor.execute("DELETE FROM client_addresses")
+        cursor.execute("DELETE FROM clientes")
+        cursor.execute("DELETE FROM fornecedores")
+        cursor.execute("DELETE FROM entregadores")
+        cursor.execute("DELETE FROM funcionarios")
+        
+        conn.commit()
+        return total
+
+
+def clear_financial_data() -> int:
+    """Limpa dados financeiros (despesas, classificações)"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        total = 0
+        
+        # Contar antes de deletar
+        cursor.execute("SELECT COUNT(*) FROM expenses")
+        total += cursor.fetchone()[0]
+        
+        # Deletar
+        cursor.execute("DELETE FROM expenses")
+        # Manter classificações de despesas como estrutura base
+        
+        conn.commit()
+        return total
+
+
+def clear_locations_data() -> int:
+    """Limpa bairros e ruas"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        total = 0
+        
+        # Contar antes de deletar
+        cursor.execute("SELECT COUNT(*) FROM bairros")
+        total += cursor.fetchone()[0]
+        cursor.execute("SELECT COUNT(*) FROM ruas")
+        total += cursor.fetchone()[0]
+        
+        # Deletar
+        cursor.execute("DELETE FROM ruas")
+        cursor.execute("DELETE FROM bairros")
+        
+        conn.commit()
+        return total
+
+
 # Inicializar banco ao importar o módulo
 init_database()
