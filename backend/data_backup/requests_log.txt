@@ -16100,3 +16100,9 @@
 2026-01-11T19:23:17.908747+00:00 | DB_CALL get_all_categories | P3 | 3.71ms | success
 2026-01-11T19:23:17.909598+00:00 | DB_CALL get_all_bairros | P3 | 0.17ms | success
 2026-01-11T19:23:18.063665+00:00 | DB_CALL get_client_addresses | P3 | 0.32ms | success
+2026-01-11T19:23:23.743427+00:00 | DB_CALL get_all_products | P3 | 0.46ms | success
+2026-01-11T19:23:23.745666+00:00 | DB_CALL get_all_categories | P3 | 0.2ms | success
+2026-01-11T19:23:23.747538+00:00 | DB_CALL get_all_business_hours | P3 | 0.21ms | success
+2026-01-11T19:23:23.934235+00:00 | DB_CALL get_all_bairros | P3 | 1.25ms | success
+2026-01-11T19:23:29.031649+00:00 | DB_CALL get_user_by_username | P3 | 0.25ms | success
+2026-01-11T19:23:31.417179+00:00 | DB_CALL get_user_by_username | P3 | 0.29ms | success

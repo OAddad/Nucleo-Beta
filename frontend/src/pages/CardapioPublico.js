@@ -810,17 +810,26 @@ function CheckoutModal({ open, onClose, cart, cartTotal, client, darkMode, onOrd
                   <div className="space-y-3">
                     <p className={`${t.textMuted} text-sm`}>Selecione um endereço:</p>
                     {addresses.map(addr => (
-                      <button
+                      <div
                         key={addr.id}
-                        onClick={() => setSelectedAddress(addr.id)}
-                        className={`w-full p-4 rounded-xl border-2 transition-all text-left
+                        className={`relative w-full p-4 rounded-xl border-2 transition-all text-left cursor-pointer
                           ${selectedAddress === addr.id 
                             ? 'border-orange-500 bg-orange-500/10' 
                             : `${t.border} hover:border-orange-300`
                           }
                         `}
+                        onClick={() => setSelectedAddress(addr.id)}
                       >
-                        <div className="flex items-start gap-3">
+                        {/* Botão de deletar */}
+                        <button
+                          onClick={(e) => handleDeleteAddress(e, addr.id)}
+                          className="absolute top-2 right-2 w-7 h-7 rounded-full bg-red-500/10 hover:bg-red-500/20 flex items-center justify-center transition-colors z-10"
+                          title="Remover endereço"
+                        >
+                          <Trash2 className="w-4 h-4 text-red-500" />
+                        </button>
+
+                        <div className="flex items-start gap-3 pr-8">
                           <div className={`w-10 h-10 rounded-full flex items-center justify-center ${selectedAddress === addr.id ? 'bg-orange-500' : t.bgMuted}`}>
                             {addr.label === 'Casa' ? <Home className={`w-5 h-5 ${selectedAddress === addr.id ? 'text-white' : t.textMuted}`} /> 
                             : <Building className={`w-5 h-5 ${selectedAddress === addr.id ? 'text-white' : t.textMuted}`} />}
@@ -839,7 +848,7 @@ function CheckoutModal({ open, onClose, cart, cartTotal, client, darkMode, onOrd
                             <Check className="w-6 h-6 text-orange-500" />
                           )}
                         </div>
-                      </button>
+                      </div>
                     ))}
                   </div>
                 )}
