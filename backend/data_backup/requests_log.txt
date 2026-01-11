@@ -9775,3 +9775,7 @@
 2026-01-11T15:51:19.721447+00:00 | DB_CALL get_user_by_id | P3 | 1.14ms | success
 2026-01-11T15:51:19.721716+00:00 | DB_CALL get_total_pontuacao | P3 | 0.16ms | success
 2026-01-11T15:51:19.721921+00:00 | DB_CALL count_clientes | P3 | 0.13ms | success
+2026-01-11T15:56:35.006525+00:00 | DB_CALL init_database | P3 | 12.99ms | success
+2026-01-11T15:56:35.007364+00:00 | DB_CALL count_ingredients | P3 | 0.47ms | success
+2026-01-11T15:56:35.007754+00:00 | DB_CALL count_products | P3 | 0.29ms | success
+2026-01-11T15:56:35.008015+00:00 | DB_CALL count_users | P3 | 0.15ms | success
