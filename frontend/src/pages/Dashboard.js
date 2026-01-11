@@ -340,15 +340,16 @@ export default function Dashboard({ setIsAuthenticated }) {
             >
               <div className="flex-shrink-0">
                 <img 
-                  src="/logo-nucleo.png" 
-                  alt="Núcleo" 
-                  className="w-10 h-10 object-contain"
+                  src={companySettings.logo_url ? `${process.env.REACT_APP_BACKEND_URL || ""}${companySettings.logo_url}` : "/logo-nucleo.png"} 
+                  alt={companySettings.company_name || "Núcleo"} 
+                  className="w-10 h-10 object-contain rounded-lg"
+                  onError={(e) => { e.target.src = "/logo-nucleo.png"; }}
                 />
               </div>
               {sidebarOpen && (
                 <div className="text-left">
-                  <h1 className="text-sidebar-foreground font-bold text-lg tracking-tight">Núcleo</h1>
-                  <p className="text-xs text-muted-foreground">o centro da sua gestão</p>
+                  <h1 className="text-sidebar-foreground font-bold text-lg tracking-tight">{companySettings.company_name || "Núcleo"}</h1>
+                  <p className="text-xs text-muted-foreground">{companySettings.slogan || "o centro da sua gestão"}</p>
                 </div>
               )}
             </button>
