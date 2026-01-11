@@ -1571,6 +1571,49 @@ def update_cliente_pedido_stats(cliente_id: str, order_value: float) -> Optional
         return get_cliente_by_id(cliente_id)
 
 
+
+def recalculate_all_cliente_stats() -> int:
+    """Recalcula estatísticas de todos os clientes baseado nos pedidos reais"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        
+        now = datetime.now(timezone.utc)
+        thirty_days_ago = (now - timedelta(days=30)).isoformat()
+        
+        # Buscar todos os clientes
+        cursor.execute("SELECT id FROM clientes")
+        clientes = cursor.fetchall()
+        
+        updated_count = 0
+        for (cliente_id,) in clientes:
+            # Contar pedidos totais
+            cursor.execute("SELECT COUNT(*), COALESCE(SUM(total), 0) FROM pedidos WHERE cliente_id = ?", (cliente_id,))
+            total_row = cursor.fetchone()
+            pedidos_count = total_row[0] or 0
+            total_gasto = total_row[1] or 0
+            
+            # Último pedido
+            cursor.execute("SELECT created_at FROM pedidos WHERE cliente_id = ? ORDER BY created_at DESC LIMIT 1", (cliente_id,))
+            last_order_row = cursor.fetchone()
+            last_order_date = last_order_row[0] if last_order_row else None
+            
+            # Pedidos nos últimos 30 dias
+            cursor.execute("SELECT COUNT(*) FROM pedidos WHERE cliente_id = ? AND created_at >= ?", (cliente_id, thirty_days_ago))
+            orders_last_30 = cursor.fetchone()[0] or 0
+            
+            # Atualizar cliente
+            cursor.execute('''
+                UPDATE clientes 
+                SET pedidos_count = ?, total_gasto = ?, last_order_date = ?, orders_last_30_days = ?
+                WHERE id = ?
+            ''', (pedidos_count, total_gasto, last_order_date, orders_last_30, cliente_id))
+            updated_count += 1
+        
+        conn.commit()
+        return updated_count
+
+
 # ==================== CLIENT ADDRESSES ====================
 def get_client_addresses(client_id: str) -> List[Dict]:
     """Retorna todos os endereços de um cliente"""
