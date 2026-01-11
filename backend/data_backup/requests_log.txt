@@ -18038,3 +18038,6 @@
 2026-01-11T22:39:44.030514+00:00 | DB_CALL get_all_entregadores | P3 | 1.11ms | success
 2026-01-11T22:39:44.031093+00:00 | DB_CALL get_all_settings | P3 | 1.47ms | success
 2026-01-11T22:39:44.031828+00:00 | DB_CALL get_all_pedidos | P3 | 1.65ms | success
+2026-01-11T22:40:43.990381+00:00 | DB_CALL get_all_pedidos | P3 | 0.88ms | success
+2026-01-11T22:40:43.992316+00:00 | DB_CALL get_all_entregadores | P3 | 0.15ms | success
+2026-01-11T22:40:43.994225+00:00 | DB_CALL get_all_settings | P3 | 0.14ms | success
