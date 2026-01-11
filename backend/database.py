@@ -453,6 +453,7 @@ def init_database():
             CREATE TABLE IF NOT EXISTS word_analytics (
                 id TEXT PRIMARY KEY,
                 word TEXT NOT NULL,
+                type TEXT DEFAULT 'word',
                 count INTEGER DEFAULT 1,
                 last_used TEXT,
                 first_used TEXT,
