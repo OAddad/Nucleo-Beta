@@ -1592,23 +1592,23 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
                 <div className="grid grid-cols-2 gap-4">
                   <button
                     className={`p-4 border-2 rounded-xl flex flex-col items-center gap-2 transition-all ${
-                      tipoEntrega === "delivery" ? "border-orange-500 bg-orange-50" : "border-gray-200"
+                      tipoEntrega === "delivery" ? "border-orange-500 bg-orange-500/10" : "border-border"
                     }`}
                     onClick={() => setTipoEntrega("delivery")}
                   >
                     <Bike className="w-8 h-8 text-orange-500" />
                     <span className="font-medium">Delivery</span>
-                    <span className="text-xs text-gray-500">Entrega no endereço</span>
+                    <span className="text-xs text-muted-foreground">Entrega no endereço</span>
                   </button>
                   <button
                     className={`p-4 border-2 rounded-xl flex flex-col items-center gap-2 transition-all ${
-                      tipoEntrega === "pickup" ? "border-orange-500 bg-orange-50" : "border-gray-200"
+                      tipoEntrega === "pickup" ? "border-orange-500 bg-orange-500/10" : "border-border"
                     }`}
                     onClick={() => setTipoEntrega("pickup")}
                   >
                     <Store className="w-8 h-8 text-orange-500" />
                     <span className="font-medium">Retirada</span>
-                    <span className="text-xs text-gray-500">Cliente retira no local</span>
+                    <span className="text-xs text-muted-foreground">Cliente retira no local</span>
                   </button>
                 </div>
                 
