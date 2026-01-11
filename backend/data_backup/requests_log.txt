@@ -8709,3 +8709,7 @@
 2026-01-11T12:18:57.248000+00:00 | DB_CALL get_user_by_id | P3 | 0.44ms | success
 2026-01-11T12:18:57.248247+00:00 | DB_CALL get_all_expenses | P3 | 0.29ms | success
 2026-01-11T12:18:57.248801+00:00 | DB_CALL get_all_expense_classifications | P3 | 0.73ms | success
+2026-01-11T12:25:41.137215+00:00 | DB_CALL get_user_by_id | P3 | 0.39ms | success
+2026-01-11T12:25:41.137483+00:00 | DB_CALL get_all_expense_classifications | P3 | 0.14ms | success
+2026-01-11T12:25:41.138736+00:00 | DB_CALL get_user_by_id | P3 | 3.35ms | success
+2026-01-11T12:25:41.139275+00:00 | DB_CALL get_all_expenses | P3 | 0.31ms | success
