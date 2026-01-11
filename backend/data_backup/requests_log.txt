@@ -17090,3 +17090,5 @@
 2026-01-11T21:27:39.166162+00:00 | DB_CALL get_all_categories | P3 | 0.18ms | success
 2026-01-11T21:27:39.167729+00:00 | DB_CALL get_all_business_hours | P3 | 0.17ms | success
 2026-01-11T21:27:39.356553+00:00 | DB_CALL get_all_bairros | P3 | 1.84ms | success
+2026-01-11T21:28:26.398034+00:00 | DB_CALL get_user_by_id | P3 | 0.59ms | success
+2026-01-11T21:28:26.398319+00:00 | DB_CALL get_all_business_hours | P3 | 0.15ms | success
