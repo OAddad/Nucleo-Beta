@@ -14797,3 +14797,6 @@
 2026-01-11T18:42:11.871424+00:00 | DB_CALL get_user_by_id | P3 | 0.28ms | success
 2026-01-11T18:42:11.871913+00:00 | DB_CALL get_all_purchases | P3 | 0.34ms | success
 2026-01-11T18:42:20.840201+00:00 | DB_CALL get_all_funcionarios | P3 | 0.82ms | success
+2026-01-11T18:42:31.007337+00:00 | DB_CALL get_user_by_id | P3 | 0.32ms | success
+2026-01-11T18:42:31.007754+00:00 | DB_CALL get_all_purchases | P3 | 0.27ms | success
+2026-01-11T18:42:31.789465+00:00 | DB_CALL get_all_funcionarios | P3 | 0.8ms | success
