@@ -10625,3 +10625,11 @@
 2026-01-11T17:03:44.852565+00:00 | DB_CALL get_all_entregadores | P3 | 0.14ms | success
 2026-01-11T17:03:46.454032+00:00 | DB_CALL get_all_pedidos | P3 | 0.98ms | success
 2026-01-11T17:03:48.599436+00:00 | DB_CALL get_all_pedidos | P3 | 0.39ms | success
+2026-01-11T17:03:50.833025+00:00 | DB_CALL get_all_settings | P3 | 0.29ms | success
+2026-01-11T17:03:50.835276+00:00 | DB_CALL get_all_pedidos | P3 | 0.37ms | success
+2026-01-11T17:03:50.835836+00:00 | DB_CALL get_all_entregadores | P3 | 1.22ms | success
+2026-01-11T17:03:51.450224+00:00 | DB_CALL get_all_pedidos | P3 | 0.41ms | success
+2026-01-11T17:03:55.828252+00:00 | DB_CALL get_all_settings | P3 | 0.3ms | success
+2026-01-11T17:03:55.829062+00:00 | DB_CALL get_all_entregadores | P3 | 1.6ms | success
+2026-01-11T17:03:55.830079+00:00 | DB_CALL get_all_pedidos | P3 | 0.37ms | success
+2026-01-11T17:03:56.446254+00:00 | DB_CALL get_all_pedidos | P3 | 0.44ms | success
