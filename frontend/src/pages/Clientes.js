@@ -198,11 +198,20 @@ export default function Clientes() {
   const fetchClientes = async () => {
     try {
       setLoading(true);
+      const token = localStorage.getItem("token");
+      if (!token) {
+        toast.error("Você precisa estar logado como administrador");
+        return;
+      }
       const response = await axios.get(`${API}/clientes`, getAuthHeader());
       setClientes(response.data);
     } catch (error) {
       console.error("Erro ao carregar clientes:", error);
-      toast.error("Erro ao carregar clientes");
+      if (error.response?.status === 401) {
+        toast.error("Sessão expirada. Faça login novamente.");
+      } else {
+        toast.error("Erro ao carregar clientes");
+      }
     } finally {
       setLoading(false);
     }
