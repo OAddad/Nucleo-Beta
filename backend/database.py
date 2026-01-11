@@ -467,6 +467,43 @@ def init_database():
         except:
             pass  # Coluna já existe
         
+        # Criar tabela de horários de funcionamento
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS business_hours (
+                id TEXT PRIMARY KEY,
+                day_of_week INTEGER NOT NULL,
+                day_name TEXT NOT NULL,
+                is_open INTEGER DEFAULT 1,
+                opening_time TEXT DEFAULT '08:00',
+                closing_time TEXT DEFAULT '22:00',
+                updated_at TEXT
+            )
+        ''')
+        conn.commit()
+        
+        # Inicializar horários padrão se tabela vazia
+        cursor.execute("SELECT COUNT(*) FROM business_hours")
+        if cursor.fetchone()[0] == 0:
+            days = [
+                (0, "Segunda-feira"),
+                (1, "Terça-feira"),
+                (2, "Quarta-feira"),
+                (3, "Quinta-feira"),
+                (4, "Sexta-feira"),
+                (5, "Sábado"),
+                (6, "Domingo")
+            ]
+            now = datetime.now(timezone.utc).isoformat()
+            for day_num, day_name in days:
+                # Domingo fechado por padrão
+                is_open = 0 if day_num == 6 else 1
+                cursor.execute('''
+                    INSERT INTO business_hours (id, day_of_week, day_name, is_open, opening_time, closing_time, updated_at)
+                    VALUES (?, ?, ?, ?, ?, ?, ?)
+                ''', (str(uuid.uuid4()), day_num, day_name, is_open, '08:00', '22:00', now))
+            conn.commit()
+            print("[DATABASE] Horários de funcionamento padrão criados")
+        
         _initialized = True
         print(f"[DATABASE] Inicializado em: {DB_PATH}")
 
