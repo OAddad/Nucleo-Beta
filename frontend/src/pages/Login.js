@@ -33,7 +33,7 @@ export default function Login({ setIsAuthenticated }) {
     setLoading(true);
     
     try {
-      const response = await axios.post(`${API}/auth/check-login`, {
+      const response = await axios.post(`${API_BASE}/auth/check-login`, {
         identifier: identifier.trim()
       });
       
