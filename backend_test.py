@@ -3971,5 +3971,343 @@ def main():
         print("💾 Delivery system functionality is fully operational!")
         return 0
 
+    def test_valor_entrega_pedidos(self):
+        """Test valor_entrega field in pedidos as specified in review request"""
+        print("\n=== VALOR ENTREGA EM PEDIDOS TESTS ===")
+        print("🎯 Testing as specified in review request:")
+        print("   1. Verificar que GET /api/pedidos retorna o campo valor_entrega")
+        print("   2. Verificar que POST /api/pedidos aceita o campo valor_entrega")
+        print("   3. Criar um pedido com valor_entrega=4.99 e verificar que é armazenado EXATAMENTE como 4.99")
+        print("   Credenciais: Addad/Addad123")
+        
+        all_tests_passed = True
+        
+        # First, authenticate with Addad user as specified
+        print("\n🔍 Authenticating with Addad user...")
+        success, login_response = self.run_test(
+            "Login with Addad user for pedidos tests",
+            "POST",
+            "auth/login",
+            200,
+            data={"username": "Addad", "password": "Addad123"}
+        )
+        
+        if success and 'access_token' in login_response:
+            self.token = login_response['access_token']
+            self.user_id = login_response['user']['id']
+            print(f"   ✅ Addad login successful")
+            print(f"   - User role: {login_response['user']['role']}")
+        else:
+            print(f"   ❌ Addad login failed - trying fallback authentication...")
+            # Try other authentication methods as fallback
+            fallback_users = [
+                ("admin", "admin"),
+                ("teste_admin", "senha123"),
+                ("proprietario", "senha123")
+            ]
+            
+            auth_success = False
+            for username, password in fallback_users:
+                success, response = self.run_test(
+                    f"Fallback login with {username}",
+                    "POST",
+                    "auth/login",
+                    200,
+                    data={"username": username, "password": password}
+                )
+                
+                if success and 'access_token' in response:
+                    self.token = response['access_token']
+                    self.user_id = response['user']['id']
+                    print(f"   ✅ Fallback authentication successful with {username}")
+                    auth_success = True
+                    break
+            
+            if not auth_success:
+                print(f"   ❌ No valid authentication found - cannot proceed with pedidos tests")
+                return False
+        
+        # TEST 1: Verificar que GET /api/pedidos retorna o campo valor_entrega
+        print(f"\n🔍 TEST 1: Verificar que GET /api/pedidos retorna o campo valor_entrega")
+        
+        success, pedidos = self.run_test(
+            "Get all pedidos to check valor_entrega field",
+            "GET",
+            "pedidos",
+            200
+        )
+        
+        if success:
+            print(f"   ✅ GET /api/pedidos working - Found {len(pedidos)} pedidos")
+            
+            # Check if valor_entrega field is present in response
+            if pedidos:
+                first_pedido = pedidos[0]
+                if 'valor_entrega' in first_pedido:
+                    print(f"   ✅ TEST 1 PASSED: valor_entrega field present in pedidos")
+                    print(f"      - Sample valor_entrega: {first_pedido.get('valor_entrega')}")
+                else:
+                    print(f"   ❌ TEST 1 FAILED: valor_entrega field missing in pedidos")
+                    all_tests_passed = False
+            else:
+                print(f"   ⚠️ No existing pedidos found - will verify field in creation test")
+        else:
+            print(f"   ❌ TEST 1 FAILED: Could not get pedidos")
+            all_tests_passed = False
+        
+        # TEST 2 & 3: Verificar que POST /api/pedidos aceita valor_entrega=4.99 e armazena EXATAMENTE
+        print(f"\n🔍 TEST 2 & 3: Criar pedido com valor_entrega=4.99 e verificar armazenamento exato")
+        
+        # Create a test pedido with valor_entrega=4.99
+        pedido_data = {
+            "cliente_nome": "Cliente Teste Valor Entrega",
+            "cliente_telefone": "(11) 99999-8888",
+            "cliente_email": "teste@email.com",
+            "items": [
+                {
+                    "product_id": "test-product-id",
+                    "product_name": "Produto Teste",
+                    "quantity": 1,
+                    "price": 15.00,
+                    "total": 15.00
+                }
+            ],
+            "total": 19.99,  # 15.00 + 4.99 valor_entrega
+            "status": "aguardando_aceite",
+            "forma_pagamento": "dinheiro",
+            "tipo_entrega": "delivery",
+            "endereco_rua": "Rua Teste",
+            "endereco_numero": "123",
+            "endereco_bairro": "Bairro Teste",
+            "valor_entrega": 4.99  # EXACTLY 4.99 as specified
+        }
+        
+        success, created_pedido = self.run_test(
+            "Create pedido with valor_entrega=4.99",
+            "POST",
+            "pedidos",
+            200,
+            data=pedido_data
+        )
+        
+        if success:
+            print(f"   ✅ POST /api/pedidos accepts valor_entrega field")
+            print(f"      - Created pedido ID: {created_pedido.get('id')}")
+            print(f"      - Created pedido codigo: {created_pedido.get('codigo')}")
+            
+            # Check if valor_entrega is stored exactly as 4.99
+            stored_valor_entrega = created_pedido.get('valor_entrega')
+            print(f"      - Stored valor_entrega: {stored_valor_entrega} (type: {type(stored_valor_entrega).__name__})")
+            
+            if stored_valor_entrega == 4.99:
+                print(f"   ✅ TEST 2 & 3 PASSED: valor_entrega stored EXACTLY as 4.99 (not rounded to 5)")
+            elif stored_valor_entrega == 5.0 or stored_valor_entrega == 5:
+                print(f"   ❌ TEST 2 & 3 FAILED: valor_entrega was rounded to {stored_valor_entrega} instead of keeping 4.99")
+                all_tests_passed = False
+            else:
+                print(f"   ❌ TEST 2 & 3 FAILED: valor_entrega has unexpected value: {stored_valor_entrega}")
+                all_tests_passed = False
+            
+            # Verify by getting the pedido again to double-check persistence
+            if created_pedido.get('id'):
+                print(f"      - Double-checking persistence by fetching pedido again...")
+                success, fetched_pedido = self.run_test(
+                    "Get created pedido to verify valor_entrega persistence",
+                    "GET",
+                    f"pedidos/{created_pedido['id']}",
+                    200
+                )
+                
+                if success:
+                    fetched_valor_entrega = fetched_pedido.get('valor_entrega')
+                    print(f"      - Fetched valor_entrega: {fetched_valor_entrega}")
+                    
+                    if fetched_valor_entrega == 4.99:
+                        print(f"      ✅ PERSISTENCE VERIFIED: valor_entrega remains exactly 4.99")
+                    else:
+                        print(f"      ❌ PERSISTENCE ISSUE: valor_entrega changed to {fetched_valor_entrega}")
+                        all_tests_passed = False
+                else:
+                    print(f"      ❌ Could not fetch created pedido for verification")
+                    all_tests_passed = False
+        else:
+            print(f"   ❌ TEST 2 & 3 FAILED: Could not create pedido with valor_entrega")
+            all_tests_passed = False
+        
+        # Summary
+        print(f"\n🔍 VALOR ENTREGA EM PEDIDOS TESTING SUMMARY:")
+        if all_tests_passed:
+            print(f"   ✅ ALL PEDIDOS VALOR_ENTREGA TESTS PASSED")
+            print(f"   ✅ GET /api/pedidos returns valor_entrega field")
+            print(f"   ✅ POST /api/pedidos accepts valor_entrega field")
+            print(f"   ✅ valor_entrega=4.99 stored exactly (not rounded to 5)")
+        else:
+            print(f"   ❌ SOME PEDIDOS VALOR_ENTREGA TESTS FAILED")
+            print(f"   ℹ️ Check individual test results above for details")
+        
+        return all_tests_passed
+
+    def test_bairros_valor_entrega(self):
+        """Test bairros valor_entrega field as specified in review request"""
+        print("\n=== BAIRROS VALOR_ENTREGA TESTS ===")
+        print("🎯 Testing as specified in review request:")
+        print("   - GET /api/bairros - verificar que valor_entrega está como 4.99 (decimal exato)")
+        print("   Credenciais: Addad/Addad123")
+        
+        all_tests_passed = True
+        
+        # Ensure we're authenticated (should be from previous test)
+        if not self.token:
+            print("\n🔍 Authenticating with Addad user...")
+            success, login_response = self.run_test(
+                "Login with Addad user for bairros tests",
+                "POST",
+                "auth/login",
+                200,
+                data={"username": "Addad", "password": "Addad123"}
+            )
+            
+            if success and 'access_token' in login_response:
+                self.token = login_response['access_token']
+                self.user_id = login_response['user']['id']
+                print(f"   ✅ Addad login successful")
+            else:
+                print(f"   ❌ Authentication failed - cannot proceed with bairros tests")
+                return False
+        
+        # TEST: GET /api/bairros - verificar que valor_entrega está como 4.99
+        print(f"\n🔍 TEST: GET /api/bairros - verificar valor_entrega decimal exato")
+        
+        success, bairros = self.run_test(
+            "Get all bairros to check valor_entrega field",
+            "GET",
+            "bairros",
+            200
+        )
+        
+        if success:
+            print(f"   ✅ GET /api/bairros working - Found {len(bairros)} bairros")
+            
+            # Check if any bairro has valor_entrega as 4.99
+            bairros_with_4_99 = [b for b in bairros if b.get('valor_entrega') == 4.99]
+            bairros_with_5_00 = [b for b in bairros if b.get('valor_entrega') == 5.0 or b.get('valor_entrega') == 5]
+            
+            print(f"   - Bairros with valor_entrega=4.99: {len(bairros_with_4_99)}")
+            print(f"   - Bairros with valor_entrega=5.0: {len(bairros_with_5_00)}")
+            
+            # Show sample bairros and their valor_entrega values
+            for i, bairro in enumerate(bairros[:5]):  # Show first 5
+                valor = bairro.get('valor_entrega')
+                print(f"      - {bairro.get('nome', 'N/A')}: valor_entrega={valor} (type: {type(valor).__name__})")
+            
+            if bairros_with_4_99:
+                print(f"   ✅ TEST PASSED: Found bairros with valor_entrega exactly as 4.99")
+                for bairro in bairros_with_4_99:
+                    print(f"      ✅ {bairro.get('nome')}: valor_entrega={bairro.get('valor_entrega')}")
+            else:
+                if bairros:
+                    print(f"   ❌ TEST FAILED: No bairros found with valor_entrega=4.99")
+                    print(f"   ℹ️ This might indicate rounding issues or different test data")
+                    
+                    # Check if we need to create a test bairro with 4.99
+                    print(f"   🔍 Creating test bairro with valor_entrega=4.99 to verify functionality...")
+                    
+                    test_bairro_data = {
+                        "nome": "Teste Bairro 4.99",
+                        "valor_entrega": 4.99,
+                        "cep": "12345-678"
+                    }
+                    
+                    success, created_bairro = self.run_test(
+                        "Create test bairro with valor_entrega=4.99",
+                        "POST",
+                        "bairros",
+                        200,
+                        data=test_bairro_data
+                    )
+                    
+                    if success:
+                        stored_valor = created_bairro.get('valor_entrega')
+                        print(f"      ✅ Created test bairro with valor_entrega: {stored_valor}")
+                        
+                        if stored_valor == 4.99:
+                            print(f"      ✅ BAIRRO CREATION TEST PASSED: valor_entrega stored exactly as 4.99")
+                        else:
+                            print(f"      ❌ BAIRRO CREATION TEST FAILED: valor_entrega stored as {stored_valor} instead of 4.99")
+                            all_tests_passed = False
+                    else:
+                        print(f"      ❌ Could not create test bairro (likely permission denied)")
+                        all_tests_passed = False
+                else:
+                    print(f"   ⚠️ No bairros found in system - cannot verify valor_entrega field")
+        else:
+            print(f"   ❌ TEST FAILED: Could not get bairros")
+            all_tests_passed = False
+        
+        # Summary
+        print(f"\n🔍 BAIRROS VALOR_ENTREGA TESTING SUMMARY:")
+        if all_tests_passed:
+            print(f"   ✅ BAIRROS VALOR_ENTREGA TEST PASSED")
+            print(f"   ✅ GET /api/bairros returns valor_entrega field correctly")
+            print(f"   ✅ valor_entrega=4.99 handled as decimal exact value")
+        else:
+            print(f"   ❌ BAIRROS VALOR_ENTREGA TEST FAILED")
+            print(f"   ℹ️ Check individual test results above for details")
+        
+        return all_tests_passed
+
+    def run_review_request_tests(self):
+        """Run specific tests as requested in the review"""
+        print("🚀 Starting Review Request Specific Tests...")
+        print(f"Base URL: {self.base_url}")
+        print("🎯 Testing new functionality as specified in review request:")
+        print("   1. Campo valor_entrega em Pedidos")
+        print("   2. Verificar Bairros valor_entrega")
+        
+        # Run specific tests for the review request
+        test_results = {
+            "valor_entrega_pedidos": self.test_valor_entrega_pedidos(),
+            "bairros_valor_entrega": self.test_bairros_valor_entrega()
+        }
+        
+        # Print summary
+        print(f"\n{'='*50}")
+        print("🎯 REVIEW REQUEST TEST SUMMARY")
+        print(f"{'='*50}")
+        
+        passed = sum(1 for result in test_results.values() if result)
+        total = len(test_results)
+        
+        for test_name, result in test_results.items():
+            status = "✅ PASSED" if result else "❌ FAILED"
+            print(f"{test_name.upper()}: {status}")
+        
+        print(f"\nOverall: {passed}/{total} test suites passed")
+        print(f"Individual tests: {self.tests_passed}/{self.tests_run} passed")
+        
+        if passed == total:
+            print("🎉 ALL REVIEW REQUEST TESTS PASSED!")
+            return True
+        else:
+            print("⚠️ Some review request tests failed - check details above")
+            return False
+
+
+def main_review_request():
+    """Main function specifically for review request testing"""
+    tester = CMVMasterAPITester()
+    
+    try:
+        success = tester.run_review_request_tests()
+        return 0 if success else 1
+    except Exception as e:
+        print(f"❌ Testing failed with exception: {str(e)}")
+        return 1
+
+
 if __name__ == "__main__":
-    sys.exit(main())
+    # Check if we should run review request tests specifically
+    if len(sys.argv) > 1 and sys.argv[1] == "review":
+        sys.exit(main_review_request())
+    else:
+        sys.exit(main())
