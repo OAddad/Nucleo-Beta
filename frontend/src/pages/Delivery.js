@@ -1219,7 +1219,7 @@ export default function Delivery() {
               <Button 
                 onClick={handleFinalizarRetirada} 
                 disabled={!formaPagamentoSelecionada}
-                className="flex-1 bg-green-600 hover:bg-green-700"
+                className="flex-1"
               >
                 <Check className="w-4 h-4 mr-1" />
                 Finalizar Pedido

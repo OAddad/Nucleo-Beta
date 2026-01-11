@@ -12573,3 +12573,11 @@
 2026-01-11T17:44:44.857111+00:00 | DB_CALL get_all_pedidos | P3 | 0.55ms | success
 2026-01-11T17:44:44.858511+00:00 | DB_CALL get_all_entregadores | P3 | 0.14ms | success
 2026-01-11T17:44:44.859693+00:00 | DB_CALL get_all_settings | P3 | 0.12ms | success
+2026-01-11T17:44:47.853629+00:00 | DB_CALL get_all_pedidos | P3 | 0.65ms | success
+2026-01-11T17:44:49.628311+00:00 | DB_CALL get_all_entregadores | P3 | 0.32ms | success
+2026-01-11T17:44:49.657235+00:00 | DB_CALL get_all_settings | P3 | 1.12ms | success
+2026-01-11T17:44:49.658088+00:00 | DB_CALL get_all_pedidos | P3 | 1.33ms | success
+2026-01-11T17:44:49.858269+00:00 | DB_CALL get_all_entregadores | P3 | 0.53ms | success
+2026-01-11T17:44:49.859195+00:00 | DB_CALL get_all_pedidos | P3 | 1.32ms | success
+2026-01-11T17:44:49.860573+00:00 | DB_CALL get_all_settings | P3 | 0.2ms | success
+2026-01-11T17:44:52.854093+00:00 | DB_CALL get_all_pedidos | P3 | 0.73ms | success
