@@ -347,57 +347,142 @@ function EditAccountModal({ isOpen, onClose, client, onUpdate }) {
             </div>
           </div>
 
-          {/* Terceira Linha: Endereços */}
+          {/* Terceira Linha: Endereços Salvos */}
           <div className="border-t pt-4">
-            <Label className="text-base font-semibold">Endereço de Entrega</Label>
-            <div className="grid grid-cols-12 gap-3 mt-3">
-              <div className="col-span-6">
-                <Label className="text-sm">Rua/Logradouro</Label>
-                <Input
-                  value={endereco}
-                  onChange={(e) => setEndereco(e.target.value)}
-                  placeholder="Ex: Rua das Flores"
-                  className="mt-1"
-                />
-              </div>
-              <div className="col-span-2">
-                <Label className="text-sm">Número</Label>
-                <Input
-                  value={numero}
-                  onChange={(e) => setNumero(e.target.value)}
-                  placeholder="123"
-                  className="mt-1"
-                />
-              </div>
-              <div className="col-span-4">
-                <Label className="text-sm">Complemento</Label>
-                <Input
-                  value={complemento}
-                  onChange={(e) => setComplemento(e.target.value)}
-                  placeholder="Apt 101, Bloco A..."
-                  className="mt-1"
-                />
-              </div>
-              <div className="col-span-5">
-                <Label className="text-sm">Bairro</Label>
-                <Input
-                  value={bairro}
-                  onChange={(e) => setBairro(e.target.value)}
-                  placeholder="Ex: Centro"
-                  className="mt-1"
-                />
-              </div>
-              <div className="col-span-3">
-                <Label className="text-sm">CEP</Label>
-                <Input
-                  value={cep}
-                  onChange={(e) => setCep(formatCEP(e.target.value))}
-                  placeholder="XXXXX-XXX"
-                  className="mt-1"
-                  maxLength={9}
-                />
-              </div>
+            <div className="flex items-center justify-between mb-3">
+              <Label className="text-base font-semibold">Meus Endereços de Entrega</Label>
+              <Button 
+                size="sm" 
+                variant="outline"
+                onClick={() => setShowNewAddress(true)}
+                className="gap-1"
+              >
+                <Plus className="w-4 h-4" />
+                Novo Endereço
+              </Button>
             </div>
+            
+            {/* Lista de Endereços */}
+            {loadingAddresses ? (
+              <div className="text-center py-4 text-muted-foreground">Carregando endereços...</div>
+            ) : addresses.length === 0 && !showNewAddress ? (
+              <div className="text-center py-6 text-muted-foreground border rounded-lg">
+                <MapPin className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                <p>Nenhum endereço cadastrado</p>
+                <Button 
+                  size="sm" 
+                  variant="link"
+                  onClick={() => setShowNewAddress(true)}
+                  className="mt-2"
+                >
+                  Adicionar primeiro endereço
+                </Button>
+              </div>
+            ) : (
+              <div className="space-y-2 max-h-48 overflow-y-auto">
+                {addresses.map(addr => (
+                  <div 
+                    key={addr.id} 
+                    className={`p-3 rounded-lg border flex items-start gap-3 ${addr.is_default ? 'border-primary bg-primary/5' : ''}`}
+                  >
+                    <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${addr.is_default ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}>
+                      {addr.label === 'Casa' ? <Home className="w-5 h-5" /> : <Building className="w-5 h-5" />}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <span className="font-medium">{addr.label}</span>
+                        {addr.is_default && <span className="text-xs bg-primary text-primary-foreground px-2 py-0.5 rounded-full">Padrão</span>}
+                      </div>
+                      <p className="text-sm text-muted-foreground truncate">
+                        {addr.endereco}, {addr.numero} {addr.complemento && `- ${addr.complemento}`}
+                      </p>
+                      <p className="text-sm text-muted-foreground">{addr.bairro} - {addr.cep}</p>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      {!addr.is_default && (
+                        <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => handleSetDefault(addr.id)} title="Definir como padrão">
+                          <Star className="w-4 h-4" />
+                        </Button>
+                      )}
+                      <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => setEditingAddress(addr)} title="Editar">
+                        <Edit2 className="w-4 h-4" />
+                      </Button>
+                      <Button size="icon" variant="ghost" className="h-8 w-8 text-destructive" onClick={() => handleDeleteAddress(addr.id)} title="Excluir">
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+            
+            {/* Form de Novo Endereço */}
+            {showNewAddress && (
+              <div className="mt-3 p-4 border rounded-lg bg-muted/30">
+                <div className="flex items-center justify-between mb-3">
+                  <h4 className="font-medium">Novo Endereço</h4>
+                  <Button size="icon" variant="ghost" className="h-6 w-6" onClick={() => setShowNewAddress(false)}>
+                    <X className="w-4 h-4" />
+                  </Button>
+                </div>
+                <div className="grid grid-cols-4 gap-2 mb-2">
+                  <button
+                    onClick={() => setNewAddr(prev => ({ ...prev, label: 'Casa' }))}
+                    className={`p-2 rounded border text-sm ${newAddr.label === 'Casa' ? 'border-primary bg-primary/10' : ''}`}
+                  >
+                    🏠 Casa
+                  </button>
+                  <button
+                    onClick={() => setNewAddr(prev => ({ ...prev, label: 'Trabalho' }))}
+                    className={`p-2 rounded border text-sm ${newAddr.label === 'Trabalho' ? 'border-primary bg-primary/10' : ''}`}
+                  >
+                    🏢 Trabalho
+                  </button>
+                </div>
+                <div className="grid grid-cols-12 gap-2">
+                  <Input className="col-span-6" placeholder="Rua/Logradouro" value={newAddr.endereco} onChange={e => setNewAddr(prev => ({...prev, endereco: e.target.value}))} />
+                  <Input className="col-span-2" placeholder="Nº" value={newAddr.numero} onChange={e => setNewAddr(prev => ({...prev, numero: e.target.value}))} />
+                  <Input className="col-span-4" placeholder="Complemento" value={newAddr.complemento} onChange={e => setNewAddr(prev => ({...prev, complemento: e.target.value}))} />
+                  <Input className="col-span-6" placeholder="Bairro" value={newAddr.bairro} onChange={e => setNewAddr(prev => ({...prev, bairro: e.target.value}))} />
+                  <Input className="col-span-3" placeholder="CEP" value={newAddr.cep} onChange={e => setNewAddr(prev => ({...prev, cep: formatCEP(e.target.value)}))} maxLength={9} />
+                  <Button className="col-span-3" onClick={handleSaveNewAddress}>Salvar</Button>
+                </div>
+              </div>
+            )}
+            
+            {/* Form de Edição de Endereço */}
+            {editingAddress && (
+              <div className="mt-3 p-4 border rounded-lg bg-muted/30">
+                <div className="flex items-center justify-between mb-3">
+                  <h4 className="font-medium">Editar Endereço</h4>
+                  <Button size="icon" variant="ghost" className="h-6 w-6" onClick={() => setEditingAddress(null)}>
+                    <X className="w-4 h-4" />
+                  </Button>
+                </div>
+                <div className="grid grid-cols-4 gap-2 mb-2">
+                  <button
+                    onClick={() => setEditingAddress(prev => ({ ...prev, label: 'Casa' }))}
+                    className={`p-2 rounded border text-sm ${editingAddress.label === 'Casa' ? 'border-primary bg-primary/10' : ''}`}
+                  >
+                    🏠 Casa
+                  </button>
+                  <button
+                    onClick={() => setEditingAddress(prev => ({ ...prev, label: 'Trabalho' }))}
+                    className={`p-2 rounded border text-sm ${editingAddress.label === 'Trabalho' ? 'border-primary bg-primary/10' : ''}`}
+                  >
+                    🏢 Trabalho
+                  </button>
+                </div>
+                <div className="grid grid-cols-12 gap-2">
+                  <Input className="col-span-6" placeholder="Rua/Logradouro" value={editingAddress.endereco} onChange={e => setEditingAddress(prev => ({...prev, endereco: e.target.value}))} />
+                  <Input className="col-span-2" placeholder="Nº" value={editingAddress.numero || ''} onChange={e => setEditingAddress(prev => ({...prev, numero: e.target.value}))} />
+                  <Input className="col-span-4" placeholder="Complemento" value={editingAddress.complemento || ''} onChange={e => setEditingAddress(prev => ({...prev, complemento: e.target.value}))} />
+                  <Input className="col-span-6" placeholder="Bairro" value={editingAddress.bairro || ''} onChange={e => setEditingAddress(prev => ({...prev, bairro: e.target.value}))} />
+                  <Input className="col-span-3" placeholder="CEP" value={editingAddress.cep || ''} onChange={e => setEditingAddress(prev => ({...prev, cep: formatCEP(e.target.value)}))} maxLength={9} />
+                  <Button className="col-span-3" onClick={handleUpdateAddress}>Atualizar</Button>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Botão Salvar */}
