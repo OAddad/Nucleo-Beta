@@ -16028,3 +16028,8 @@
 2026-01-11T19:19:26.192680+00:00 | DB_CALL get_all_business_hours | P3 | 0.23ms | success
 2026-01-11T19:19:26.194203+00:00 | DB_CALL get_all_categories | P3 | 0.69ms | success
 2026-01-11T19:19:26.361023+00:00 | DB_CALL get_all_bairros | P3 | 0.31ms | success
+2026-01-11T19:19:32.240582+00:00 | DB_CALL get_user_by_username | P3 | 0.29ms | success
+2026-01-11T19:19:32.240875+00:00 | DB_CALL get_user_by_username | P3 | 0.17ms | success
+2026-01-11T19:19:32.242143+00:00 | DB_CALL get_all_clientes | P3 | 1.2ms | success
+2026-01-11T19:19:32.760079+00:00 | DB_CALL get_cliente_by_id | P3 | 0.57ms | success
+2026-01-11T19:19:33.602348+00:00 | DB_CALL get_client_addresses | P3 | 0.33ms | success

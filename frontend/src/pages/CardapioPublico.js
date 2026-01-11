@@ -867,12 +867,30 @@ function CheckoutModal({ open, onClose, cart, cartTotal, client, darkMode, onOrd
                       </button>
                     </div>
 
-                    <Input
-                      placeholder="Rua, Avenida..."
-                      value={newAddress.endereco}
-                      onChange={e => setNewAddress(prev => ({ ...prev, endereco: e.target.value }))}
-                      className={t.input}
-                    />
+                    {/* Campo Rua com autocomplete */}
+                    <div className="relative">
+                      <Input
+                        placeholder="Rua, Avenida..."
+                        value={newAddress.endereco}
+                        onChange={e => handleRuaChange(e.target.value)}
+                        className={t.input}
+                      />
+                      {ruasSugestoes.length > 0 && (
+                        <div className={`absolute z-50 w-full mt-1 max-h-48 overflow-auto rounded-lg border shadow-lg ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
+                          {ruasSugestoes.map(rua => (
+                            <button
+                              key={rua.id}
+                              onClick={() => handleSelectRua(rua)}
+                              className={`w-full px-3 py-2 text-left text-sm hover:bg-orange-500/10 transition-colors ${darkMode ? 'text-white' : 'text-gray-900'}`}
+                            >
+                              <span className="font-medium">{rua.nome}</span>
+                              {rua.bairro_nome && <span className="text-gray-500 ml-2">- {rua.bairro_nome}</span>}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+
                     <div className="grid grid-cols-2 gap-3">
                       <Input
                         placeholder="Número"
@@ -887,18 +905,39 @@ function CheckoutModal({ open, onClose, cart, cartTotal, client, darkMode, onOrd
                         className={t.input}
                       />
                     </div>
+
+                    {/* Campo Bairro com autocomplete */}
                     <div className="grid grid-cols-2 gap-3">
-                      <Input
-                        placeholder="Bairro"
-                        value={newAddress.bairro}
-                        onChange={e => setNewAddress(prev => ({ ...prev, bairro: e.target.value }))}
-                        className={t.input}
-                      />
+                      <div className="relative">
+                        <Input
+                          placeholder="Bairro *"
+                          value={newAddress.bairro}
+                          onChange={e => handleBairroChange(e.target.value)}
+                          className={t.input}
+                        />
+                        {bairrosSugestoes.length > 0 && (
+                          <div className={`absolute z-50 w-full mt-1 max-h-48 overflow-auto rounded-lg border shadow-lg ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
+                            {bairrosSugestoes.map(bairro => (
+                              <button
+                                key={bairro.id}
+                                onClick={() => handleSelectBairro(bairro)}
+                                className={`w-full px-3 py-2 text-left text-sm hover:bg-orange-500/10 transition-colors ${darkMode ? 'text-white' : 'text-gray-900'}`}
+                              >
+                                <span className="font-medium">{bairro.nome}</span>
+                                {bairro.valor_entrega > 0 && (
+                                  <span className="text-green-500 ml-2">+R$ {bairro.valor_entrega.toFixed(2)}</span>
+                                )}
+                              </button>
+                            ))}
+                          </div>
+                        )}
+                      </div>
                       <Input
                         placeholder="CEP"
                         value={newAddress.cep}
                         onChange={e => setNewAddress(prev => ({ ...prev, cep: e.target.value }))}
                         className={t.input}
+                      />
                       />
                     </div>
 
