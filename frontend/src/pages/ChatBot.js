@@ -137,6 +137,19 @@ export default function ChatBot() {
               Conversas
             </div>
           </button>
+          <button
+            onClick={() => setActiveTab("palavras")}
+            className={`px-4 py-3 font-medium text-sm border-b-2 transition-colors ${
+              activeTab === "palavras"
+                ? "border-orange-500 text-orange-600"
+                : "border-transparent text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            <div className="flex items-center gap-2">
+              <BarChart3 className="w-4 h-4" />
+              Palavras
+            </div>
+          </button>
         </div>
       </div>
 
@@ -148,6 +161,8 @@ export default function ChatBot() {
           <SimulatorTab toast={toast} />
         ) : activeTab === "flow-editor" ? (
           <FlowEditorTab toast={toast} />
+        ) : activeTab === "palavras" ? (
+          <PalavrasTab toast={toast} />
         ) : (
           <MessagesTab toast={toast} />
         )}
