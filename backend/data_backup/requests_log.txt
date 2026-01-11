@@ -9043,3 +9043,5 @@
 2026-01-11T14:10:15.852666+00:00 | DB_CALL count_ingredients | P3 | 0.24ms | success
 2026-01-11T14:10:15.852860+00:00 | DB_CALL count_products | P3 | 0.13ms | success
 2026-01-11T14:10:15.853006+00:00 | DB_CALL count_users | P3 | 0.1ms | success
+2026-01-11T14:10:54.824862+00:00 | DB_CALL get_user_by_id | P3 | 0.45ms | success
+2026-01-11T14:10:54.825509+00:00 | DB_CALL get_all_business_hours | P3 | 0.26ms | success
