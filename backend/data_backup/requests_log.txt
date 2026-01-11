@@ -12316,3 +12316,7 @@
 2026-01-11T17:42:02.862453+00:00 | DB_CALL get_all_entregadores | P3 | 0.87ms | success
 2026-01-11T17:42:02.863104+00:00 | DB_CALL get_all_settings | P3 | 0.91ms | success
 2026-01-11T17:42:03.032768+00:00 | DB_CALL get_all_pedidos | P3 | 0.56ms | success
+2026-01-11T17:42:07.854388+00:00 | DB_CALL get_all_pedidos | P3 | 0.96ms | success
+2026-01-11T17:42:07.867046+00:00 | DB_CALL get_all_entregadores | P3 | 0.91ms | success
+2026-01-11T17:42:07.867907+00:00 | DB_CALL get_all_settings | P3 | 0.94ms | success
+2026-01-11T17:42:08.041118+00:00 | DB_CALL get_all_pedidos | P3 | 9.08ms | success
