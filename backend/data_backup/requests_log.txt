@@ -13556,3 +13556,10 @@
 2026-01-11T18:16:08.250890+00:00 | DB_CALL get_all_entregadores | P3 | 0.27ms | success
 2026-01-11T18:16:16.166002+00:00 | DB_CALL get_user_by_username | P3 | 0.26ms | success
 2026-01-11T18:16:18.881131+00:00 | DB_CALL get_user_by_username | P3 | 26.33ms | success
+2026-01-11T18:16:31.719074+00:00 | DB_CALL get_all_pedidos | P3 | 0.59ms | success
+2026-01-11T18:16:35.471740+00:00 | DB_CALL get_user_by_id | P3 | 0.31ms | success
+2026-01-11T18:16:35.474726+00:00 | DB_CALL recalculate_all_cliente_stats | P3 | 2.75ms | success
+2026-01-11T18:16:35.476958+00:00 | DB_CALL get_all_clientes | P3 | 2.02ms | success
+2026-01-11T18:16:35.481419+00:00 | DB_CALL get_user_by_id | P3 | 5.56ms | success
+2026-01-11T18:16:35.482163+00:00 | DB_CALL get_total_pontuacao | P3 | 0.55ms | success
+2026-01-11T18:16:35.482408+00:00 | DB_CALL count_clientes | P3 | 0.12ms | success
