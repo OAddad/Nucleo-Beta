@@ -13415,3 +13415,7 @@
 2026-01-11T18:09:24.550682+00:00 | DB_CALL get_all_settings | P3 | 2.13ms | success
 2026-01-11T18:09:24.550949+00:00 | DB_CALL get_all_entregadores | P3 | 2.25ms | success
 2026-01-11T18:09:26.867165+00:00 | DB_CALL get_all_pedidos | P3 | 0.6ms | success
+2026-01-11T18:11:28.198465+00:00 | DB_CALL init_database | P3 | 5.44ms | success
+2026-01-11T18:11:28.199087+00:00 | DB_CALL count_ingredients | P3 | 0.27ms | success
+2026-01-11T18:11:28.199357+00:00 | DB_CALL count_products | P3 | 0.2ms | success
+2026-01-11T18:11:28.199512+00:00 | DB_CALL count_users | P3 | 0.1ms | success

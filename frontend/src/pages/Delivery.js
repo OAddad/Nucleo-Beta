@@ -173,7 +173,14 @@ export default function Delivery() {
 
   // Abrir página do entregador
   const handleAbrirEntregador = (entregador) => {
-    navigate(`/admin/entregador/${entregador.id}`);
+    // Filtrar pedidos deste entregador
+    const pedidosDoEntregador = pedidos.filter(p => p.entregador_id === entregador.id);
+    const naBag = pedidosDoEntregador.filter(p => p.status === 'na_bag');
+    const emRota = pedidosDoEntregador.filter(p => p.status === 'em_rota');
+    
+    setSelectedEntregador(entregador);
+    setEntregadorPedidos({ na_bag: naBag, em_rota: emRota });
+    setEntregadorModalOpen(true);
   };
 
   // Criar novo entregador
