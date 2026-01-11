@@ -2527,29 +2527,37 @@ class CMVMasterAPITester:
         return all_tests_passed
 
 def main():
-    print("🚀 Starting Expense Module Testing")
+    print("🚀 Starting Business Hours Endpoints Testing")
     print("=" * 80)
     print("🎯 Testing EXACTLY as specified in review request:")
-    print("   1. Verificar se as tabelas expense_classifications e expenses existem no SQLite")
-    print("   2. Testar CRUD completo de classificações")
-    print("   3. Testar criação de despesa simples")
-    print("   4. Testar criação de despesa parcelada (verificar se parcelas são geradas automaticamente)")
-    print("   5. Testar criação de despesa recorrente (verificar se próximos meses são gerados)")
-    print("   6. Testar toggle de status pago/pendente")
-    print("   7. Testar estatísticas (/api/expenses/stats)")
-    print("   8. Testar exclusão de despesa com filhos (parcelas)")
+    print("   1. GET /api/public/business-hours (público)")
+    print("      - Deve retornar lista de 7 dias (Segunda a Domingo)")
+    print("      - Cada dia deve ter: id, day_of_week, day_name, is_open, opening_time, closing_time")
     print("")
-    print("   Credenciais de Login:")
-    print("   - Username: Addad")
-    print("   - Password: Addad123")
-    print("   - URL Backend: http://localhost:8001")
+    print("   2. GET /api/business-hours (autenticado)")
+    print("      - Usar credenciais: Addad/Addad123 ou admin/admin")
+    print("      - Deve retornar os mesmos dados do público")
+    print("")
+    print("   3. PUT /api/business-hours (autenticado - admin)")
+    print("      - Atualizar horários, testando:")
+    print("        - Mudar is_open de um dia")
+    print("        - Mudar opening_time e closing_time")
+    print("      - Formato do payload:")
+    print("        {")
+    print("          \"hours\": [")
+    print("            {\"day_of_week\": 0, \"is_open\": true, \"opening_time\": \"09:00\", \"closing_time\": \"23:00\"},")
+    print("            ...")
+    print("          ]")
+    print("        }")
+    print("")
+    print("   Backend URL: http://localhost:8001")
     print("=" * 80)
     
     tester = CMVMasterAPITester()
     
-    # Run the expense tests as specified in review request
+    # Run the business hours tests as specified in review request
     tests = [
-        ("Expense Module", tester.test_expense_module),
+        ("Business Hours Endpoints", tester.test_business_hours_endpoints),
     ]
     
     failed_tests = []
@@ -2577,40 +2585,40 @@ def main():
     print(f"Success rate: {(tester.tests_passed/tester.tests_run)*100:.1f}%" if tester.tests_run > 0 else "No tests run")
     
     # Analyze results
-    print(f"\n🔍 EXPENSE MODULE ANALYSIS:")
+    print(f"\n🔍 BUSINESS HOURS ENDPOINTS ANALYSIS:")
     if not failed_tests:
-        print(f"✅ EXPENSE MODULE WORKING:")
-        print(f"   - Database tables (expense_classifications, expenses) exist")
-        print(f"   - Expense classifications CRUD working")
-        print(f"   - Simple expense creation working")
-        print(f"   - Installment expenses with automatic parcela generation working")
-        print(f"   - Recurring expenses with automatic monthly generation working")
-        print(f"   - Status toggle (paid/pending) working")
-        print(f"   - Statistics endpoint working")
-        print(f"   - Parent-child deletion working")
-        print(f"   - All expense backend APIs are functional")
+        print(f"✅ BUSINESS HOURS ENDPOINTS WORKING:")
+        print(f"   - GET /api/public/business-hours (público) working")
+        print(f"   - Returns 7 days (Segunda a Domingo) with correct structure")
+        print(f"   - Each day has: id, day_of_week, day_name, is_open, opening_time, closing_time")
+        print(f"   - GET /api/business-hours (autenticado) working")
+        print(f"   - Returns same data as public endpoint")
+        print(f"   - PUT /api/business-hours (autenticado - admin) working")
+        print(f"   - Can update is_open, opening_time, closing_time")
+        print(f"   - Changes persist correctly")
+        print(f"   - All business hours backend APIs are functional")
     else:
         print(f"❌ FAILED TESTS:")
         for failed in failed_tests:
             print(f"   - {failed}")
     
-    # Additional notes about Expense functionality
+    # Additional notes about Business Hours functionality
     print(f"\n📝 IMPORTANT NOTES:")
-    print(f"   ℹ️ Expense module functionality tested comprehensively")
+    print(f"   ℹ️ Business hours endpoints tested comprehensively")
     print(f"   ℹ️ Backend running on http://localhost:8001")
-    print(f"   ℹ️ Authentication with Addad/Addad123 credentials")
-    print(f"   ℹ️ Expense classifications: CRUD operations")
-    print(f"   ℹ️ Expenses: Simple, installment, and recurring types")
-    print(f"   ℹ️ Automatic generation: Parcelas and recurring months")
-    print(f"   ℹ️ Status management: Toggle paid/pending")
-    print(f"   ℹ️ Statistics: Total, pending, and paid counts/values")
+    print(f"   ℹ️ Authentication with Addad/Addad123 or admin/admin credentials")
+    print(f"   ℹ️ Public endpoint: No authentication required")
+    print(f"   ℹ️ Authenticated endpoint: Same data as public")
+    print(f"   ℹ️ Update endpoint: Requires admin privileges")
+    print(f"   ℹ️ Data structure: 7 days with all required fields")
+    print(f"   ℹ️ Data types: day_of_week (int), is_open (bool), day_name (str)")
     
     if failed_tests:
         return 1
     else:
-        print("\n✅ ALL EXPENSE TESTS PASSED!")
-        print("🎉 Expense module working correctly!")
-        print("💾 New expense functionality is fully operational!")
+        print("\n✅ ALL BUSINESS HOURS TESTS PASSED!")
+        print("🎉 Business hours endpoints working correctly!")
+        print("💾 Business hours functionality is fully operational!")
         return 0
 
 if __name__ == "__main__":
