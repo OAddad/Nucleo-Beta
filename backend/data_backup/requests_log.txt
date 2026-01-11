@@ -17085,3 +17085,4 @@
 2026-01-11T21:25:15.732387+00:00 | DB_CALL get_all_flow_nodes | P3 | 0.11ms | success
 2026-01-11T21:25:15.732519+00:00 | DB_CALL get_all_flow_edges | P3 | 0.08ms | success
 2026-01-11T21:25:16.670959+00:00 | DB_CALL get_user_by_id | P3 | 0.25ms | success
+2026-01-11T21:26:12.998955+00:00 | DB_CALL get_user_by_username | P3 | 0.25ms | success
