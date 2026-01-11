@@ -786,7 +786,7 @@ export default function ProfileMenu({ client, onLogout, onClientUpdate, darkMode
       {/* Modais */}
       <PontuacaoModal isOpen={showPontuacao} onClose={() => setShowPontuacao(false)} client={client} />
       <EditAccountModal isOpen={showEditAccount} onClose={() => setShowEditAccount(false)} client={client} onUpdate={onClientUpdate} />
-      <MeusPedidosModal isOpen={showPedidos} onClose={() => setShowPedidos(false)} client={client} />
+      <MeusPedidosModal isOpen={showPedidos} onClose={() => setShowPedidos(false)} client={client} darkMode={darkMode} />
     </div>
   );
 }
