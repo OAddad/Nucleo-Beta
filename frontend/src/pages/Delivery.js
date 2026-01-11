@@ -257,9 +257,12 @@ export default function Delivery() {
     toast.info("Selecione os produtos no cardápio para criar um novo pedido");
   };
 
-  // Filtrar pedidos por status
+  // Filtrar pedidos por status - inclui pedidos do módulo Delivery OU com tipo_entrega delivery
   const getPedidosByStatus = (status) => {
-    return pedidos.filter(p => p.status === status && p.modulo === 'Delivery');
+    return pedidos.filter(p => 
+      p.status === status && 
+      (p.modulo === 'Delivery' || p.tipo_entrega === 'delivery')
+    );
   };
 
   // Calcular pedidos na bag por entregador

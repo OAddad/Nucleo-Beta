@@ -10608,3 +10608,12 @@
 2026-01-11T17:03:28.833634+00:00 | DB_CALL get_all_entregadores | P3 | 1.46ms | success
 2026-01-11T17:03:28.834336+00:00 | DB_CALL get_all_pedidos | P3 | 1.72ms | success
 2026-01-11T17:03:28.834898+00:00 | DB_CALL get_all_settings | P3 | 1.53ms | success
+2026-01-11T17:03:31.455796+00:00 | DB_CALL get_all_pedidos | P3 | 0.4ms | success
+2026-01-11T17:03:33.832379+00:00 | DB_CALL get_all_settings | P3 | 0.24ms | success
+2026-01-11T17:03:33.834646+00:00 | DB_CALL get_all_entregadores | P3 | 0.44ms | success
+2026-01-11T17:03:33.835664+00:00 | DB_CALL get_all_pedidos | P3 | 0.49ms | success
+2026-01-11T17:03:36.449236+00:00 | DB_CALL get_all_pedidos | P3 | 0.43ms | success
+2026-01-11T17:03:38.838317+00:00 | DB_CALL get_all_settings | P3 | 1.38ms | success
+2026-01-11T17:03:38.838979+00:00 | DB_CALL get_all_pedidos | P3 | 1.37ms | success
+2026-01-11T17:03:38.839508+00:00 | DB_CALL get_all_entregadores | P3 | 1.3ms | success
+2026-01-11T17:03:41.451249+00:00 | DB_CALL get_all_pedidos | P3 | 0.43ms | success
