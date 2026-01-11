@@ -171,46 +171,6 @@ export default function Delivery() {
     navigate(`/admin/entregador/${entregador.id}`);
   };
 
-  // Enviar para rota
-  const handleEnviarParaRota = async (pedidoId) => {
-    try {
-      await axios.patch(`${API}/pedidos/${pedidoId}/status?status=em_rota`);
-      toast.success("Pedido enviado para rota de entrega!");
-      
-      if (selectedEntregador) {
-        const res = await axios.get(`${API}/entregadores/${selectedEntregador.id}/pedidos`);
-        setEntregadorPedidos({
-          na_bag: res.data.filter(p => p.status === 'na_bag'),
-          em_rota: res.data.filter(p => p.status === 'em_rota')
-        });
-      }
-      
-      fetchData();
-    } catch (error) {
-      toast.error("Erro ao enviar para rota");
-    }
-  };
-
-  // Marcar entrega concluída
-  const handleConcluirEntrega = async (pedidoId) => {
-    try {
-      await axios.patch(`${API}/pedidos/${pedidoId}/status?status=concluido`);
-      toast.success("Entrega concluída!");
-      
-      if (selectedEntregador) {
-        const res = await axios.get(`${API}/entregadores/${selectedEntregador.id}/pedidos`);
-        setEntregadorPedidos({
-          na_bag: res.data.filter(p => p.status === 'na_bag'),
-          em_rota: res.data.filter(p => p.status === 'em_rota')
-        });
-      }
-      
-      fetchData();
-    } catch (error) {
-      toast.error("Erro ao concluir entrega");
-    }
-  };
-
   // Criar novo entregador
   const handleCriarEntregador = async () => {
     if (!novoEntregadorNome.trim()) {
