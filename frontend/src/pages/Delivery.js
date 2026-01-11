@@ -1753,7 +1753,7 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
                       <div className="flex items-center gap-2">
                         <button 
                           onClick={() => removeFromCart(item.id)}
-                          className="w-6 h-6 rounded bg-gray-200 hover:bg-gray-300 flex items-center justify-center"
+                          className="w-6 h-6 rounded bg-muted hover:bg-muted/80 flex items-center justify-center"
                         >
                           <span className="text-lg leading-none">-</span>
                         </button>
@@ -1772,10 +1772,10 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
             </div>
             
             {/* Resumo e navegação */}
-            <div className="p-3 border-t bg-white space-y-3">
+            <div className="p-3 border-t bg-card space-y-3">
               {selectedCliente && (
                 <div className="text-sm">
-                  <span className="text-gray-500">Cliente:</span> {selectedCliente.nome}
+                  <span className="text-muted-foreground">Cliente:</span> {selectedCliente.nome}
                 </div>
               )}
               
@@ -1785,7 +1785,7 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
                   <span>R$ {subtotal.toFixed(2)}</span>
                 </div>
                 {tipoEntrega === "delivery" && taxaEntrega > 0 && (
-                  <div className="flex justify-between text-gray-600">
+                  <div className="flex justify-between text-muted-foreground">
                     <span>Taxa entrega:</span>
                     <span>R$ {taxaEntrega.toFixed(2)}</span>
                   </div>
