@@ -9362,3 +9362,5 @@
 2026-01-11T15:14:42.162807+00:00 | DB_CALL count_users | P3 | 0.09ms | success
 2026-01-11T15:14:42.164157+00:00 | DB_CALL get_all_pedidos | P3 | 0.24ms | success
 2026-01-11T15:14:46.777505+00:00 | DB_CALL get_all_pedidos | P3 | 0.37ms | success
+2026-01-11T15:14:51.796487+00:00 | DB_CALL get_all_pedidos | P3 | 0.35ms | success
+2026-01-11T15:14:56.781172+00:00 | DB_CALL get_all_pedidos | P3 | 0.33ms | success

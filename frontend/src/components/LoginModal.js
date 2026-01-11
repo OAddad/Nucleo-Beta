@@ -154,8 +154,8 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
     setLoading(true);
     
     try {
-      // Criar cliente via API
-      const response = await axios.post(`${API}/clientes`, {
+      // Criar cliente via API pública
+      const response = await axios.post(`${API}/public/clientes`, {
         nome: newClientName.trim(),
         telefone: phoneNumbers
       });
