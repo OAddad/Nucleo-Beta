@@ -90,8 +90,27 @@ export default function Dashboard({ setIsAuthenticated }) {
 
   const [configExpanded, setConfigExpanded] = useState(false);
   const [clientesFornecedoresExpanded, setClientesFornecedoresExpanded] = useState(false);
-  const [financeiroExpanded, setFinanceiroExpanded] = useState(true);
+  const [financeiroExpanded, setFinanceiroExpanded] = useState(false);
   const [impulsioneVendasExpanded, setImpulsioneVendasExpanded] = useState(false);
+
+  // Função para recolher todas as abas do menu
+  const collapseAllMenus = () => {
+    setStockControlExpanded(false);
+    setSalesExpanded(false);
+    setClientesFornecedoresExpanded(false);
+    setFinanceiroExpanded(false);
+    setImpulsioneVendasExpanded(false);
+    setConfigExpanded(false);
+  };
+
+  // Função para alternar o sidebar e recolher menus quando minimizar
+  const toggleSidebar = () => {
+    if (sidebarOpen) {
+      // Ao minimizar, recolher todas as abas
+      collapseAllMenus();
+    }
+    setSidebarOpen(!sidebarOpen);
+  };
 
   // Estrutura de navegação principal
   const mainTabs = [
