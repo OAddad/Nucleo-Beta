@@ -8959,3 +8959,4 @@
 2026-01-11T14:01:52.592601+00:00 | DB_CALL count_ingredients | P3 | 0.7ms | success
 2026-01-11T14:01:52.592918+00:00 | DB_CALL count_products | P3 | 0.22ms | success
 2026-01-11T14:01:52.593246+00:00 | DB_CALL count_users | P3 | 0.24ms | success
+2026-01-11T14:02:01.590247+00:00 | DB_CALL get_all_business_hours | P3 | 0.36ms | success
