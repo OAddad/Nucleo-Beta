@@ -10790,3 +10790,5 @@
 2026-01-11T17:08:07.799372+00:00 | DB_CALL count_products | P3 | 0.2ms | success
 2026-01-11T17:08:07.799522+00:00 | DB_CALL count_users | P3 | 0.1ms | success
 2026-01-11T17:08:10.047582+00:00 | DB_CALL get_all_pedidos | P3 | 0.54ms | success
+2026-01-11T17:08:15.050456+00:00 | DB_CALL get_all_pedidos | P3 | 0.44ms | success
+2026-01-11T17:08:17.916226+00:00 | DB_CALL create_pedido | P3 | 3.61ms | success
