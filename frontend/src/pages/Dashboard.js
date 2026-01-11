@@ -534,6 +534,54 @@ export default function Dashboard({ setIsAuthenticated }) {
             )}
           </div>
 
+          {/* Localização (Hierárquico) */}
+          <div>
+            <button
+              onClick={() => handleModuleClick(() => setLocalizacaoExpanded(!localizacaoExpanded))}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 ${
+                location.pathname.includes('/localizacao') && !activeTopMenu
+                  ? "bg-primary/10 text-primary font-medium"
+                  : "text-sidebar-foreground hover:bg-muted"
+              } ${!sidebarOpen ? 'lg:justify-center lg:px-2' : ''}`}
+              title={!sidebarOpen ? localizacaoModule.label : ''}
+            >
+              <MapPin className="w-5 h-5 flex-shrink-0" strokeWidth={1.5} />
+              {sidebarOpen && (
+                <>
+                  <span className="text-sm flex-1 text-left">{localizacaoModule.label}</span>
+                  {localizacaoExpanded ? (
+                    <ChevronDown className="w-4 h-4" strokeWidth={1.5} />
+                  ) : (
+                    <ChevronRight className="w-4 h-4" strokeWidth={1.5} />
+                  )}
+                </>
+              )}
+            </button>
+
+            {sidebarOpen && localizacaoExpanded && (
+              <div className="ml-4 mt-1 space-y-1 border-l-2 border-border pl-4">
+                {localizacaoModule.children.map((child) => {
+                  const ChildIcon = child.icon;
+                  const active = isActive(child.path) && !activeTopMenu;
+                  return (
+                    <button
+                      key={child.path}
+                      onClick={() => handleSidebarClick(child.path)}
+                      className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 text-sm ${
+                        active
+                          ? "bg-primary text-primary-foreground font-medium"
+                          : "text-sidebar-foreground hover:bg-muted"
+                      }`}
+                    >
+                      <ChildIcon className="w-4 h-4 flex-shrink-0" strokeWidth={1.5} />
+                      <span>{child.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
           {/* Impulsione suas Vendas (Hierárquico) */}
           <div>
             <button
