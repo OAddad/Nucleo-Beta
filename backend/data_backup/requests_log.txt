@@ -18278,3 +18278,10 @@
 2026-01-11T22:53:26.039719+00:00 | DB_CALL get_all_products | P3 | 0.34ms | success
 2026-01-11T22:53:26.040721+00:00 | DB_CALL get_all_categories | P3 | 0.13ms | success
 2026-01-11T22:53:26.450001+00:00 | DB_CALL get_all_settings | P3 | 0.29ms | success
+2026-01-11T22:54:04.955682+00:00 | DB_CALL get_user_by_username | P3 | 0.25ms | success
+2026-01-11T22:54:04.978361+00:00 | DB_CALL get_user_by_id | P3 | 0.24ms | success
+2026-01-11T22:54:04.978778+00:00 | DB_CALL get_all_products | P3 | 0.29ms | success
+2026-01-11T22:54:05.018959+00:00 | DB_CALL get_user_by_id | P3 | 0.37ms | success
+2026-01-11T22:54:05.020335+00:00 | DB_CALL get_all_products | P3 | 1.23ms | success
+2026-01-11T22:54:05.032416+00:00 | DB_CALL get_user_by_id | P3 | 0.24ms | success
+2026-01-11T22:54:05.032820+00:00 | DB_CALL get_all_products | P3 | 0.28ms | success
