@@ -26,11 +26,12 @@ export default function CardapioPublico({ onAdminLogin }) {
   const [cart, setCart] = useState([]);
   const [cartOpen, setCartOpen] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
+  const [darkMode, setDarkMode] = useState(true);
   
   // Verificar se há cliente logado
   const [loggedClient, setLoggedClient] = useState(null);
 
-  // Carregar dados do cliente logado
+  // Carregar dados do cliente logado e preferência de tema
   useEffect(() => {
     const client = localStorage.getItem("client");
     if (client) {
@@ -38,7 +39,20 @@ export default function CardapioPublico({ onAdminLogin }) {
         setLoggedClient(JSON.parse(client));
       } catch (e) {}
     }
+    
+    // Carregar preferência de tema
+    const savedTheme = localStorage.getItem("cardapio_theme");
+    if (savedTheme) {
+      setDarkMode(savedTheme === "dark");
+    }
   }, []);
+
+  // Função para alternar tema
+  const toggleTheme = () => {
+    const newMode = !darkMode;
+    setDarkMode(newMode);
+    localStorage.setItem("cardapio_theme", newMode ? "dark" : "light");
+  };
 
   // Carregar produtos e categorias
   useEffect(() => {
