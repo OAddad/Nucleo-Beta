@@ -1352,9 +1352,10 @@ export default function CardapioPublico({ onAdminLogin }) {
   const fetchBusinessHours = async () => {
     try {
       const data = await fetchWithFallback('/public/business-hours');
-      setBusinessHours(data);
+      setBusinessHours(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error("Erro ao carregar horários:", error);
+      setBusinessHours([]);
     }
   };
 
