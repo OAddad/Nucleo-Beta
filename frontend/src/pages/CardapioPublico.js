@@ -23,8 +23,11 @@ const MotoIcon = ({ className }) => (
 function OrderTrackingScreen({ pedido, onClose, darkMode }) {
   const [currentStatus, setCurrentStatus] = useState('enviado');
   
-  // Etapas do pedido
-  const steps = [
+  // Verificar se é retirada no local
+  const isPickup = pedido?.tipo_entrega === 'pickup';
+  
+  // Etapas do pedido para ENTREGA (delivery)
+  const deliverySteps = [
     { id: 'enviado', label: 'Pedido Enviado', icon: Send, description: 'Seu pedido foi enviado para o restaurante' },
     { id: 'aceito', label: 'Pedido Aceito', icon: Check, description: 'O restaurante aceitou seu pedido' },
     { id: 'producao', label: 'Em Produção', icon: ChefHat, description: 'Seu pedido está sendo preparado' },
@@ -33,19 +36,41 @@ function OrderTrackingScreen({ pedido, onClose, darkMode }) {
     { id: 'em_rota', label: 'Em Rota de Entrega', icon: Bike, description: 'O entregador está a caminho' },
     { id: 'entregue', label: 'Pedido Entregue', icon: CheckCircle, description: 'Seu pedido foi entregue!' },
   ];
+  
+  // Etapas do pedido para RETIRADA (pickup)
+  const pickupSteps = [
+    { id: 'enviado', label: 'Pedido Enviado', icon: Send, description: 'Seu pedido foi enviado para o restaurante' },
+    { id: 'aceito', label: 'Pedido Aceito', icon: Check, description: 'O restaurante aceitou seu pedido' },
+    { id: 'producao', label: 'Pedido em Produção', icon: ChefHat, description: 'Seu pedido está sendo preparado' },
+    { id: 'pronto', label: 'Pedido Pronto', icon: CheckCircle, description: 'Seu pedido está pronto para retirada!', showAddress: true },
+  ];
+  
+  // Selecionar etapas baseado no tipo de entrega
+  const steps = isPickup ? pickupSteps : deliverySteps;
 
   // Mapear status do pedido para as etapas
   useEffect(() => {
     if (pedido?.status) {
-      const statusMap = {
-        'producao': 'producao',
-        'aguardando': 'aguardando_entregador',
-        'transito': 'em_rota',
-        'concluido': 'entregue',
-      };
-      setCurrentStatus(statusMap[pedido.status] || 'enviado');
+      if (isPickup) {
+        // Mapeamento para retirada
+        const statusMap = {
+          'producao': 'producao',
+          'pronto': 'pronto',
+          'concluido': 'pronto',
+        };
+        setCurrentStatus(statusMap[pedido.status] || 'enviado');
+      } else {
+        // Mapeamento para entrega
+        const statusMap = {
+          'producao': 'producao',
+          'aguardando': 'aguardando_entregador',
+          'transito': 'em_rota',
+          'concluido': 'entregue',
+        };
+        setCurrentStatus(statusMap[pedido.status] || 'enviado');
+      }
     }
-  }, [pedido]);
+  }, [pedido, isPickup]);
 
   const getCurrentStepIndex = () => {
     return steps.findIndex(s => s.id === currentStatus);
@@ -59,6 +84,21 @@ function OrderTrackingScreen({ pedido, onClose, darkMode }) {
     border: darkMode ? 'border-zinc-700' : 'border-gray-200',
   };
 
+  // Endereço do estabelecimento (futuro: buscar do backend)
+  const establishmentAddress = {
+    name: "Nosso Restaurante",
+    address: "Rua Principal, 123 - Centro",
+    city: "Sua Cidade - UF",
+    // Coordenadas para o Google Maps (exemplo)
+    lat: -23.5505199,
+    lng: -46.6333094,
+  };
+
+  const openMapsLink = () => {
+    const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${establishmentAddress.lat},${establishmentAddress.lng}`;
+    window.open(mapsUrl, '_blank');
+  };
+
   return (
     <div className={`fixed inset-0 z-[100] ${t.bg} overflow-y-auto`}>
       {/* Header */}
@@ -69,7 +109,7 @@ function OrderTrackingScreen({ pedido, onClose, darkMode }) {
           </button>
           <div className="text-center">
             <h1 className="font-bold text-lg">Acompanhar Pedido</h1>
-            <p className="text-white/80 text-sm">{pedido?.codigo}</p>
+            <p className="text-white font-bold text-xl mt-1">{pedido?.codigo}</p>
           </div>
           <div className="w-10" /> {/* Spacer */}
         </div>
@@ -80,10 +120,16 @@ function OrderTrackingScreen({ pedido, onClose, darkMode }) {
         <div className={`${t.bgCard} rounded-xl p-4 mb-6 border ${t.border}`}>
           <div className="flex items-center justify-between">
             <div>
-              <p className={`font-bold ${t.text}`}>{pedido?.codigo}</p>
+              <p className={`font-bold text-2xl ${t.text}`}>{pedido?.codigo}</p>
               <p className={`text-sm ${t.textMuted}`}>
                 {pedido?.created_at ? new Date(pedido.created_at).toLocaleString('pt-BR') : 'Agora'}
               </p>
+              {isPickup && (
+                <span className="inline-flex items-center gap-1 mt-2 text-sm bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 px-2 py-1 rounded-full">
+                  <Store className="w-4 h-4" />
+                  Retirada no Local
+                </span>
+              )}
             </div>
             <div className="text-right">
               <p className={`text-sm ${t.textMuted}`}>Total</p>
