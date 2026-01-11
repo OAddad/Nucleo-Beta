@@ -15954,3 +15954,6 @@
 2026-01-11T19:14:03.915990+00:00 | DB_CALL create_rua | P3 | 2.05ms | success
 2026-01-11T19:14:04.081207+00:00 | DB_CALL get_all_ruas | P3 | 0.36ms | success
 2026-01-11T19:14:06.026279+00:00 | DB_CALL get_all_bairros | P3 | 0.29ms | success
+2026-01-11T19:14:13.033644+00:00 | DB_CALL get_user_by_id | P3 | 0.25ms | success
+2026-01-11T19:14:13.036323+00:00 | DB_CALL update_all_bairros_cep | P3 | 2.46ms | success
+2026-01-11T19:14:13.197394+00:00 | DB_CALL get_all_bairros | P3 | 0.38ms | success
