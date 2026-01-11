@@ -16766,3 +16766,6 @@
 2026-01-11T19:56:34.316672+00:00 | DB_CALL get_entregador_by_id | P3 | 0.24ms | success
 2026-01-11T19:56:34.317638+00:00 | DB_CALL get_pedidos_by_entregador | P3 | 0.16ms | success
 2026-01-11T19:56:34.337212+00:00 | DB_CALL get_all_pedidos | P3 | 0.73ms | success
+2026-01-11T19:56:36.340506+00:00 | DB_CALL get_all_entregadores | P3 | 4.36ms | success
+2026-01-11T19:56:36.341904+00:00 | DB_CALL get_all_pedidos | P3 | 3.97ms | success
+2026-01-11T19:56:36.343177+00:00 | DB_CALL get_all_bairros | P3 | 6.89ms | success
