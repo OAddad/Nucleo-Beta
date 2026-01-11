@@ -17574,3 +17574,4 @@
 2026-01-11T22:08:45.766989+00:00 | DB_CALL set_setting | P3 | 1.63ms | success
 2026-01-11T22:08:45.768424+00:00 | DB_CALL set_setting | P3 | 1.39ms | success
 2026-01-11T22:08:45.768611+00:00 | DB_CALL get_all_settings | P3 | 0.14ms | success
+2026-01-11T22:08:55.570307+00:00 | DB_CALL get_user_by_username | P3 | 0.27ms | success
