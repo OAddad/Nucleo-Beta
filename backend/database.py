@@ -3192,9 +3192,9 @@ def get_all_chatbot_settings() -> Dict[str, str]:
         return {row[0]: row[1] for row in cursor.fetchall()}
 
 
-# ==================== ANALYTICS DE PALAVRAS ====================
+# ==================== ANALYTICS DE PALAVRAS E FRASES ====================
 def process_message_words(message: str, sender_phone: str, sender_name: str = None) -> None:
-    """Processa uma mensagem e contabiliza as palavras"""
+    """Processa uma mensagem e contabiliza palavras e frases"""
     import re
     from datetime import datetime
     import uuid
@@ -3213,11 +3213,30 @@ def process_message_words(message: str, sender_phone: str, sender_name: str = No
         'mas', 'como', 'qual', 'quais', 'onde', 'porque', 'pq', 'tb', 'tbm', 'vc',
         'ai', 'aí', 'la', 'lá', 'aqui', 'ali', 'sim', 'nao', 'ok', 'ta', 'tá',
         'oi', 'ola', 'olá', 'bom', 'boa', 'dia', 'tarde', 'noite', 'obrigado', 'obrigada',
-        'por', 'favor', 'pfv', 'pf', 'blz', 'beleza'
+        'por', 'favor', 'pfv', 'pf', 'blz', 'beleza', 'né', 'ne', 'então', 'entao'
     }
     
     # Filtrar palavras curtas e stop words
-    words = [w for w in words if len(w) > 2 and w not in stop_words]
+    filtered_words = [w for w in words if len(w) > 2 and w not in stop_words]
+    
+    # Gerar bigramas (2 palavras) e trigramas (3 palavras)
+    bigrams = []
+    trigrams = []
+    
+    # Para frases, usar todas as palavras (não filtradas) para manter contexto
+    all_words = [w for w in words if len(w) > 1]
+    
+    for i in range(len(all_words) - 1):
+        bigram = f"{all_words[i]} {all_words[i+1]}"
+        # Só adicionar se pelo menos uma palavra não for stop word
+        if all_words[i] not in stop_words or all_words[i+1] not in stop_words:
+            bigrams.append(bigram)
+    
+    for i in range(len(all_words) - 2):
+        trigram = f"{all_words[i]} {all_words[i+1]} {all_words[i+2]}"
+        # Só adicionar se pelo menos uma palavra não for stop word
+        if any(w not in stop_words for w in [all_words[i], all_words[i+1], all_words[i+2]]):
+            trigrams.append(trigram)
     
     now = datetime.utcnow().isoformat() + "Z"
     
@@ -3232,38 +3251,53 @@ def process_message_words(message: str, sender_phone: str, sender_name: str = No
             VALUES (?, ?, ?, ?, ?)
         ''', (msg_id, sender_phone, sender_name, message, now))
         
-        # Processar cada palavra
-        for word in words:
-            # Verificar se a palavra já existe
-            cursor.execute("SELECT id, count, sender_phones FROM word_analytics WHERE word = ?", (word,))
-            row = cursor.fetchone()
-            
-            if row:
-                # Atualizar contagem
-                word_id = row[0]
-                new_count = row[1] + 1
-                phones = row[2] or ""
-                if sender_phone not in phones:
-                    phones = f"{phones},{sender_phone}" if phones else sender_phone
-                
-                cursor.execute('''
-                    UPDATE word_analytics 
-                    SET count = ?, last_used = ?, sender_phones = ?, updated_at = ?
-                    WHERE id = ?
-                ''', (new_count, now, phones, now, word_id))
-            else:
-                # Inserir nova palavra
-                word_id = str(uuid.uuid4())
-                cursor.execute('''
-                    INSERT INTO word_analytics (id, word, count, first_used, last_used, sender_phones, created_at, updated_at)
-                    VALUES (?, ?, 1, ?, ?, ?, ?, ?)
-                ''', (word_id, word, now, now, sender_phone, now, now))
+        # Processar palavras individuais
+        for word in filtered_words:
+            _update_word_count(cursor, word, "word", sender_phone, now)
+        
+        # Processar bigramas
+        for bigram in bigrams:
+            _update_word_count(cursor, bigram, "bigram", sender_phone, now)
+        
+        # Processar trigramas
+        for trigram in trigrams:
+            _update_word_count(cursor, trigram, "trigram", sender_phone, now)
         
         conn.commit()
 
 
-def get_word_analytics(limit: int = 100, order_by: str = "count") -> List[Dict]:
-    """Retorna analytics de palavras ordenadas"""
+def _update_word_count(cursor, text: str, text_type: str, sender_phone: str, now: str):
+    """Atualiza contagem de uma palavra/frase"""
+    import uuid
+    
+    cursor.execute(
+        "SELECT id, count, sender_phones FROM word_analytics WHERE word = ? AND type = ?", 
+        (text, text_type)
+    )
+    row = cursor.fetchone()
+    
+    if row:
+        word_id = row[0]
+        new_count = row[1] + 1
+        phones = row[2] or ""
+        if sender_phone not in phones:
+            phones = f"{phones},{sender_phone}" if phones else sender_phone
+        
+        cursor.execute('''
+            UPDATE word_analytics 
+            SET count = ?, last_used = ?, sender_phones = ?, updated_at = ?
+            WHERE id = ?
+        ''', (new_count, now, phones, now, word_id))
+    else:
+        word_id = str(uuid.uuid4())
+        cursor.execute('''
+            INSERT INTO word_analytics (id, word, type, count, first_used, last_used, sender_phones, created_at, updated_at)
+            VALUES (?, ?, ?, 1, ?, ?, ?, ?, ?)
+        ''', (word_id, text, text_type, now, now, sender_phone, now, now))
+
+
+def get_word_analytics(limit: int = 100, order_by: str = "count", text_type: str = "all") -> List[Dict]:
+    """Retorna analytics de palavras/frases ordenadas"""
     with db_lock:
         conn = get_connection()
         cursor = conn.cursor()
@@ -3271,24 +3305,34 @@ def get_word_analytics(limit: int = 100, order_by: str = "count") -> List[Dict]:
         valid_orders = {"count": "count DESC", "word": "word ASC", "last_used": "last_used DESC"}
         order = valid_orders.get(order_by, "count DESC")
         
-        cursor.execute(f'''
-            SELECT id, word, count, first_used, last_used, sender_phones, created_at
-            FROM word_analytics
-            ORDER BY {order}
-            LIMIT ?
-        ''', (limit,))
+        if text_type == "all":
+            cursor.execute(f'''
+                SELECT id, word, COALESCE(type, 'word') as type, count, first_used, last_used, sender_phones, created_at
+                FROM word_analytics
+                ORDER BY {order}
+                LIMIT ?
+            ''', (limit,))
+        else:
+            cursor.execute(f'''
+                SELECT id, word, COALESCE(type, 'word') as type, count, first_used, last_used, sender_phones, created_at
+                FROM word_analytics
+                WHERE type = ?
+                ORDER BY {order}
+                LIMIT ?
+            ''', (text_type, limit))
         
         results = []
         for row in cursor.fetchall():
-            phones = row[5].split(",") if row[5] else []
+            phones = row[6].split(",") if row[6] else []
             results.append({
                 "id": row[0],
                 "word": row[1],
-                "count": row[2],
-                "first_used": row[3],
-                "last_used": row[4],
+                "type": row[2],
+                "count": row[3],
+                "first_used": row[4],
+                "last_used": row[5],
                 "unique_senders": len(set(phones)),
-                "created_at": row[6]
+                "created_at": row[7]
             })
         return results
 
@@ -3300,8 +3344,12 @@ def get_word_analytics_summary() -> Dict:
         cursor = conn.cursor()
         
         # Total de palavras únicas
-        cursor.execute("SELECT COUNT(*) FROM word_analytics")
+        cursor.execute("SELECT COUNT(*) FROM word_analytics WHERE type = 'word' OR type IS NULL")
         total_words = cursor.fetchone()[0]
+        
+        # Total de frases únicas (bigramas + trigramas)
+        cursor.execute("SELECT COUNT(*) FROM word_analytics WHERE type IN ('bigram', 'trigram')")
+        total_phrases = cursor.fetchone()[0]
         
         # Total de ocorrências
         cursor.execute("SELECT SUM(count) FROM word_analytics")
@@ -3318,10 +3366,20 @@ def get_word_analytics_summary() -> Dict:
         # Top 10 palavras
         cursor.execute('''
             SELECT word, count FROM word_analytics
+            WHERE type = 'word' OR type IS NULL
             ORDER BY count DESC
             LIMIT 10
         ''')
         top_words = [{"word": row[0], "count": row[1]} for row in cursor.fetchall()]
+        
+        # Top 10 frases (bigramas e trigramas)
+        cursor.execute('''
+            SELECT word, count, type FROM word_analytics
+            WHERE type IN ('bigram', 'trigram')
+            ORDER BY count DESC
+            LIMIT 10
+        ''')
+        top_phrases = [{"phrase": row[0], "count": row[1], "type": row[2]} for row in cursor.fetchall()]
         
         # Palavras por dia (últimos 7 dias)
         cursor.execute('''
@@ -3335,10 +3393,12 @@ def get_word_analytics_summary() -> Dict:
         
         return {
             "total_unique_words": total_words,
+            "total_unique_phrases": total_phrases,
             "total_word_occurrences": total_occurrences,
             "total_messages": total_messages,
             "unique_senders": unique_senders,
             "top_words": top_words,
+            "top_phrases": top_phrases,
             "messages_by_day": messages_by_day
         }
 
