@@ -14740,3 +14740,5 @@
 2026-01-11T18:40:17.284446+00:00 | DB_CALL get_entregador_by_id | P3 | 0.22ms | success
 2026-01-11T18:40:27.354233+00:00 | DB_CALL get_entregador_by_id | P3 | 64.38ms | success
 2026-01-11T18:40:27.355030+00:00 | DB_CALL get_pedidos_by_entregador | P3 | 64.6ms | success
+2026-01-11T18:40:37.291387+00:00 | DB_CALL get_entregador_by_id | P3 | 0.94ms | success
+2026-01-11T18:40:37.291924+00:00 | DB_CALL get_pedidos_by_entregador | P3 | 0.82ms | success

@@ -18,6 +18,7 @@ import Delivery from "./Delivery";
 import EntregadorDetalhe from "./EntregadorDetalhe";
 import Clientes from "./Clientes";
 import Fornecedores from "./Fornecedores";
+import Funcionarios from "./Funcionarios";
 import Pedidos from "./Pedidos";
 import Despesas from "./Despesas";
 import ExtratoFinanceiro from "./ExtratoFinanceiro";
