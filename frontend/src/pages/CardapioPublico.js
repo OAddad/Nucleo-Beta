@@ -548,17 +548,31 @@ export default function CardapioPublico({ onAdminLogin }) {
                   </div>
                   <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
                     {categoryProducts.map(product => (
-                      <div key={product.id} className={`${t.bgCard} rounded-xl overflow-hidden hover:ring-2 hover:ring-orange-500/50 transition-all group border ${t.border}`}>
+                      <div 
+                        key={product.id} 
+                        className={`${t.bgCard} rounded-xl overflow-hidden hover:ring-2 hover:ring-orange-500/50 transition-all group border ${t.border} cursor-pointer`}
+                        onClick={() => openProductPopup(product)}
+                      >
                         <div className={`aspect-square ${t.bgMuted} relative overflow-hidden`}>
                           {product.photo_url ? <img src={getImageUrl(product.photo_url)} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" /> : <div className="w-full h-full flex items-center justify-center"><span className="text-4xl">🍽️</span></div>}
-                          <button onClick={() => addToCart(product)} className="absolute bottom-2 right-2 w-10 h-10 bg-orange-500 hover:bg-orange-600 rounded-full flex items-center justify-center shadow-lg transition-all opacity-0 group-hover:opacity-100"><Plus className="w-5 h-5 text-white" /></button>
+                          <button 
+                            onClick={(e) => { e.stopPropagation(); addToCart(product); }} 
+                            className="absolute bottom-2 right-2 w-10 h-10 bg-orange-500 hover:bg-orange-600 rounded-full flex items-center justify-center shadow-lg transition-all opacity-0 group-hover:opacity-100"
+                          >
+                            <Plus className="w-5 h-5 text-white" />
+                          </button>
                         </div>
                         <div className="p-3">
                           <h3 className={`font-semibold ${t.text} text-sm mb-1 line-clamp-2`}>{product.name}</h3>
                           {product.description && <p className={`${t.textMuted} text-xs mb-2 line-clamp-2`}>{product.description}</p>}
                           <div className="flex items-center justify-between">
                             <span className="text-orange-500 font-bold">R$ {product.sale_price?.toFixed(2).replace('.', ',')}</span>
-                            <button onClick={() => addToCart(product)} className={`text-xs ${t.bgMuted} hover:bg-orange-500 hover:text-white px-3 py-1 rounded-full transition-colors`}>Adicionar</button>
+                            <button 
+                              onClick={(e) => { e.stopPropagation(); addToCart(product); }} 
+                              className={`text-xs ${t.bgMuted} hover:bg-orange-500 hover:text-white px-3 py-1 rounded-full transition-colors`}
+                            >
+                              Adicionar
+                            </button>
                           </div>
                         </div>
                       </div>
