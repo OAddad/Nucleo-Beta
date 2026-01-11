@@ -187,6 +187,419 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode }) {
   );
 }
 
+// Componente de Checkout (Endereço + Pagamento)
+function CheckoutModal({ open, onClose, cart, cartTotal, client, darkMode, onOrderComplete }) {
+  const [step, setStep] = useState(1); // 1 = Tipo entrega, 2 = Endereço (se delivery), 3 = Pagamento
+  const [deliveryType, setDeliveryType] = useState(null); // 'pickup' ou 'delivery'
+  const [addresses, setAddresses] = useState([]);
+  const [selectedAddress, setSelectedAddress] = useState(null);
+  const [showNewAddressForm, setShowNewAddressForm] = useState(false);
+  const [newAddress, setNewAddress] = useState({
+    label: 'Casa',
+    endereco: '',
+    numero: '',
+    complemento: '',
+    bairro: '',
+    cep: ''
+  });
+  const [paymentMethod, setPaymentMethod] = useState(null);
+  const [loadingAddresses, setLoadingAddresses] = useState(false);
+  const [savingAddress, setSavingAddress] = useState(false);
+
+  // Reset quando abrir
+  useEffect(() => {
+    if (open && client) {
+      setStep(1);
+      setDeliveryType(null);
+      setSelectedAddress(null);
+      setPaymentMethod(null);
+      setShowNewAddressForm(false);
+      fetchAddresses();
+    }
+  }, [open, client]);
+
+  const fetchAddresses = async () => {
+    if (!client?.id) return;
+    setLoadingAddresses(true);
+    try {
+      const response = await axios.get(`${API}/client-addresses/${client.id}`);
+      setAddresses(response.data);
+      // Selecionar o endereço padrão
+      const defaultAddr = response.data.find(a => a.is_default);
+      if (defaultAddr) setSelectedAddress(defaultAddr.id);
+    } catch (error) {
+      console.error("Erro ao carregar endereços:", error);
+    } finally {
+      setLoadingAddresses(false);
+    }
+  };
+
+  const handleSaveNewAddress = async () => {
+    if (!newAddress.endereco || !newAddress.bairro) {
+      toast.error("Preencha o endereço e bairro");
+      return;
+    }
+    setSavingAddress(true);
+    try {
+      const response = await axios.post(`${API}/client-addresses`, {
+        client_id: client.id,
+        ...newAddress,
+        is_default: addresses.length === 0
+      });
+      setAddresses(prev => [response.data, ...prev]);
+      setSelectedAddress(response.data.id);
+      setShowNewAddressForm(false);
+      setNewAddress({ label: 'Casa', endereco: '', numero: '', complemento: '', bairro: '', cep: '' });
+      toast.success("Endereço salvo!");
+    } catch (error) {
+      toast.error("Erro ao salvar endereço");
+    } finally {
+      setSavingAddress(false);
+    }
+  };
+
+  const handleSelectDeliveryType = (type) => {
+    setDeliveryType(type);
+    if (type === 'pickup') {
+      setStep(3); // Pula direto para pagamento
+    } else {
+      setStep(2); // Vai para seleção de endereço
+    }
+  };
+
+  const handleConfirmAddress = () => {
+    if (!selectedAddress && !showNewAddressForm) {
+      toast.error("Selecione um endereço ou cadastre um novo");
+      return;
+    }
+    setStep(3);
+  };
+
+  const handleFinishOrder = () => {
+    if (!paymentMethod) {
+      toast.error("Selecione uma forma de pagamento");
+      return;
+    }
+    
+    const orderData = {
+      deliveryType,
+      address: deliveryType === 'delivery' ? addresses.find(a => a.id === selectedAddress) : null,
+      paymentMethod,
+      items: cart,
+      total: cartTotal
+    };
+    
+    toast.success("Pedido realizado com sucesso! 🎉");
+    onOrderComplete(orderData);
+    onClose();
+  };
+
+  const t = {
+    bg: darkMode ? 'bg-zinc-900' : 'bg-white',
+    bgCard: darkMode ? 'bg-zinc-800' : 'bg-gray-50',
+    bgMuted: darkMode ? 'bg-zinc-800' : 'bg-gray-100',
+    text: darkMode ? 'text-white' : 'text-gray-900',
+    textMuted: darkMode ? 'text-zinc-400' : 'text-gray-500',
+    border: darkMode ? 'border-zinc-700' : 'border-gray-200',
+    input: darkMode ? 'bg-zinc-800 border-zinc-700 text-white' : 'bg-white border-gray-300 text-gray-900',
+  };
+
+  const paymentMethods = [
+    { id: 'pix', label: 'PIX', icon: QrCode, color: 'text-teal-500' },
+    { id: 'credit', label: 'Cartão de Crédito', icon: CreditCard, color: 'text-blue-500' },
+    { id: 'debit', label: 'Cartão de Débito', icon: CreditCard, color: 'text-purple-500' },
+    { id: 'cash', label: 'Dinheiro', icon: Banknote, color: 'text-green-500' },
+  ];
+
+  return (
+    <Dialog open={open} onOpenChange={onClose}>
+      <DialogContent className={`sm:max-w-lg p-0 gap-0 overflow-hidden ${t.bg} ${t.text} border-0 max-h-[90vh] overflow-y-auto`}>
+        {/* Header */}
+        <div className="sticky top-0 z-10 bg-orange-500 p-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            {step > 1 && (
+              <button 
+                onClick={() => setStep(step === 3 && deliveryType === 'pickup' ? 1 : step - 1)} 
+                className="text-white hover:bg-white/20 p-1 rounded-full"
+              >
+                <ChevronLeft className="w-6 h-6" />
+              </button>
+            )}
+            <h2 className="text-xl font-bold text-white">
+              {step === 1 && "Tipo de Entrega"}
+              {step === 2 && "Endereço de Entrega"}
+              {step === 3 && "Forma de Pagamento"}
+            </h2>
+          </div>
+          <button onClick={onClose} className="text-white hover:bg-white/20 p-2 rounded-full">
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        {/* Steps Indicator */}
+        <div className="flex items-center justify-center gap-2 p-4 border-b border-orange-200/20">
+          {[1, 2, 3].map(s => (
+            <div key={s} className="flex items-center">
+              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold
+                ${step >= s ? 'bg-orange-500 text-white' : `${t.bgMuted} ${t.textMuted}`}
+              `}>
+                {step > s ? <Check className="w-4 h-4" /> : s}
+              </div>
+              {s < 3 && <div className={`w-8 h-0.5 ${step > s ? 'bg-orange-500' : t.bgMuted}`} />}
+            </div>
+          ))}
+        </div>
+
+        {/* Step 1: Tipo de Entrega */}
+        {step === 1 && (
+          <div className="p-6 space-y-4">
+            <p className={`${t.textMuted} text-center mb-6`}>Como você prefere receber seu pedido?</p>
+            
+            <button
+              onClick={() => handleSelectDeliveryType('pickup')}
+              className={`w-full p-4 rounded-xl border-2 transition-all flex items-center gap-4
+                ${deliveryType === 'pickup' 
+                  ? 'border-orange-500 bg-orange-500/10' 
+                  : `${t.border} hover:border-orange-300`
+                }
+              `}
+            >
+              <div className="w-14 h-14 rounded-full bg-orange-500/20 flex items-center justify-center">
+                <Store className="w-7 h-7 text-orange-500" />
+              </div>
+              <div className="text-left flex-1">
+                <h3 className={`font-bold text-lg ${t.text}`}>Retirar no Local</h3>
+                <p className={`text-sm ${t.textMuted}`}>Retire seu pedido no estabelecimento</p>
+              </div>
+            </button>
+
+            <button
+              onClick={() => handleSelectDeliveryType('delivery')}
+              className={`w-full p-4 rounded-xl border-2 transition-all flex items-center gap-4
+                ${deliveryType === 'delivery' 
+                  ? 'border-orange-500 bg-orange-500/10' 
+                  : `${t.border} hover:border-orange-300`
+                }
+              `}
+            >
+              <div className="w-14 h-14 rounded-full bg-orange-500/20 flex items-center justify-center">
+                <Truck className="w-7 h-7 text-orange-500" />
+              </div>
+              <div className="text-left flex-1">
+                <h3 className={`font-bold text-lg ${t.text}`}>Entrega</h3>
+                <p className={`text-sm ${t.textMuted}`}>Receba no conforto da sua casa</p>
+              </div>
+            </button>
+          </div>
+        )}
+
+        {/* Step 2: Endereço */}
+        {step === 2 && (
+          <div className="p-6 space-y-4">
+            {loadingAddresses ? (
+              <div className="flex justify-center py-8">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500"></div>
+              </div>
+            ) : (
+              <>
+                {/* Endereços existentes */}
+                {addresses.length > 0 && !showNewAddressForm && (
+                  <div className="space-y-3">
+                    <p className={`${t.textMuted} text-sm`}>Selecione um endereço:</p>
+                    {addresses.map(addr => (
+                      <button
+                        key={addr.id}
+                        onClick={() => setSelectedAddress(addr.id)}
+                        className={`w-full p-4 rounded-xl border-2 transition-all text-left
+                          ${selectedAddress === addr.id 
+                            ? 'border-orange-500 bg-orange-500/10' 
+                            : `${t.border} hover:border-orange-300`
+                          }
+                        `}
+                      >
+                        <div className="flex items-start gap-3">
+                          <div className={`w-10 h-10 rounded-full flex items-center justify-center ${selectedAddress === addr.id ? 'bg-orange-500' : t.bgMuted}`}>
+                            {addr.label === 'Casa' ? <Home className={`w-5 h-5 ${selectedAddress === addr.id ? 'text-white' : t.textMuted}`} /> 
+                            : <Building className={`w-5 h-5 ${selectedAddress === addr.id ? 'text-white' : t.textMuted}`} />}
+                          </div>
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2">
+                              <span className="font-semibold">{addr.label}</span>
+                              {addr.is_default && <span className="text-xs bg-orange-500 text-white px-2 py-0.5 rounded-full">Padrão</span>}
+                            </div>
+                            <p className={`text-sm ${t.textMuted} mt-1`}>
+                              {addr.endereco}, {addr.numero} {addr.complemento && `- ${addr.complemento}`}
+                            </p>
+                            <p className={`text-sm ${t.textMuted}`}>{addr.bairro} - {addr.cep}</p>
+                          </div>
+                          {selectedAddress === addr.id && (
+                            <Check className="w-6 h-6 text-orange-500" />
+                          )}
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                )}
+
+                {/* Botão para novo endereço */}
+                {!showNewAddressForm && (
+                  <button
+                    onClick={() => setShowNewAddressForm(true)}
+                    className={`w-full p-4 rounded-xl border-2 border-dashed ${t.border} hover:border-orange-500 transition-all flex items-center justify-center gap-2 ${t.textMuted}`}
+                  >
+                    <Plus className="w-5 h-5" />
+                    Cadastrar novo endereço
+                  </button>
+                )}
+
+                {/* Form de novo endereço */}
+                {showNewAddressForm && (
+                  <div className={`p-4 rounded-xl ${t.bgCard} space-y-4`}>
+                    <div className="flex items-center justify-between">
+                      <h3 className="font-semibold">Novo Endereço</h3>
+                      <button onClick={() => setShowNewAddressForm(false)} className={t.textMuted}>
+                        <X className="w-5 h-5" />
+                      </button>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-3">
+                      <button
+                        onClick={() => setNewAddress(prev => ({ ...prev, label: 'Casa' }))}
+                        className={`p-2 rounded-lg border text-sm font-medium transition-all
+                          ${newAddress.label === 'Casa' ? 'border-orange-500 bg-orange-500/10 text-orange-500' : `${t.border}`}
+                        `}
+                      >
+                        🏠 Casa
+                      </button>
+                      <button
+                        onClick={() => setNewAddress(prev => ({ ...prev, label: 'Trabalho' }))}
+                        className={`p-2 rounded-lg border text-sm font-medium transition-all
+                          ${newAddress.label === 'Trabalho' ? 'border-orange-500 bg-orange-500/10 text-orange-500' : `${t.border}`}
+                        `}
+                      >
+                        🏢 Trabalho
+                      </button>
+                    </div>
+
+                    <Input
+                      placeholder="Rua, Avenida..."
+                      value={newAddress.endereco}
+                      onChange={e => setNewAddress(prev => ({ ...prev, endereco: e.target.value }))}
+                      className={t.input}
+                    />
+                    <div className="grid grid-cols-2 gap-3">
+                      <Input
+                        placeholder="Número"
+                        value={newAddress.numero}
+                        onChange={e => setNewAddress(prev => ({ ...prev, numero: e.target.value }))}
+                        className={t.input}
+                      />
+                      <Input
+                        placeholder="Complemento"
+                        value={newAddress.complemento}
+                        onChange={e => setNewAddress(prev => ({ ...prev, complemento: e.target.value }))}
+                        className={t.input}
+                      />
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <Input
+                        placeholder="Bairro"
+                        value={newAddress.bairro}
+                        onChange={e => setNewAddress(prev => ({ ...prev, bairro: e.target.value }))}
+                        className={t.input}
+                      />
+                      <Input
+                        placeholder="CEP"
+                        value={newAddress.cep}
+                        onChange={e => setNewAddress(prev => ({ ...prev, cep: e.target.value }))}
+                        className={t.input}
+                      />
+                    </div>
+
+                    <Button
+                      onClick={handleSaveNewAddress}
+                      disabled={savingAddress}
+                      className="w-full bg-orange-500 hover:bg-orange-600 text-white"
+                    >
+                      {savingAddress ? "Salvando..." : "Salvar Endereço"}
+                    </Button>
+                  </div>
+                )}
+
+                {/* Botão continuar */}
+                {!showNewAddressForm && selectedAddress && (
+                  <Button
+                    onClick={handleConfirmAddress}
+                    className="w-full h-12 bg-orange-500 hover:bg-orange-600 text-white font-bold mt-4"
+                  >
+                    Continuar para Pagamento
+                  </Button>
+                )}
+              </>
+            )}
+          </div>
+        )}
+
+        {/* Step 3: Pagamento */}
+        {step === 3 && (
+          <div className="p-6 space-y-4">
+            {/* Resumo */}
+            <div className={`p-4 rounded-xl ${t.bgCard}`}>
+              <div className="flex items-center gap-2 mb-2">
+                {deliveryType === 'pickup' ? <Store className="w-5 h-5 text-orange-500" /> : <Truck className="w-5 h-5 text-orange-500" />}
+                <span className="font-semibold">{deliveryType === 'pickup' ? 'Retirada no Local' : 'Entrega'}</span>
+              </div>
+              {deliveryType === 'delivery' && selectedAddress && (
+                <p className={`text-sm ${t.textMuted}`}>
+                  <MapPin className="w-4 h-4 inline mr-1" />
+                  {addresses.find(a => a.id === selectedAddress)?.endereco}, {addresses.find(a => a.id === selectedAddress)?.numero}
+                </p>
+              )}
+            </div>
+
+            <p className={`${t.textMuted} text-sm`}>Selecione a forma de pagamento:</p>
+
+            {/* Métodos de pagamento */}
+            <div className="space-y-3">
+              {paymentMethods.map(method => (
+                <button
+                  key={method.id}
+                  onClick={() => setPaymentMethod(method.id)}
+                  className={`w-full p-4 rounded-xl border-2 transition-all flex items-center gap-4
+                    ${paymentMethod === method.id 
+                      ? 'border-orange-500 bg-orange-500/10' 
+                      : `${t.border} hover:border-orange-300`
+                    }
+                  `}
+                >
+                  <method.icon className={`w-6 h-6 ${method.color}`} />
+                  <span className="font-medium flex-1 text-left">{method.label}</span>
+                  {paymentMethod === method.id && <Check className="w-5 h-5 text-orange-500" />}
+                </button>
+              ))}
+            </div>
+
+            {/* Total e Finalizar */}
+            <div className={`p-4 rounded-xl ${t.bgCard} mt-6`}>
+              <div className="flex justify-between items-center mb-4">
+                <span className={t.textMuted}>Total do Pedido</span>
+                <span className="text-2xl font-bold text-orange-500">R$ {cartTotal.toFixed(2).replace('.', ',')}</span>
+              </div>
+              <Button
+                onClick={handleFinishOrder}
+                disabled={!paymentMethod}
+                className="w-full h-14 bg-orange-500 hover:bg-orange-600 text-white font-bold text-lg disabled:opacity-50"
+              >
+                Finalizar Pedido
+              </Button>
+            </div>
+          </div>
+        )}
+      </DialogContent>
+    </Dialog>
+  );
+}
+
 export default function CardapioPublico({ onAdminLogin }) {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -202,11 +615,29 @@ export default function CardapioPublico({ onAdminLogin }) {
   // Estado do popup de produto
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [productPopupOpen, setProductPopupOpen] = useState(false);
+  // Estado do checkout
+  const [checkoutOpen, setCheckoutOpen] = useState(false);
 
   // Abrir popup do produto
   const openProductPopup = (product) => {
     setSelectedProduct(product);
     setProductPopupOpen(true);
+  };
+  
+  // Handler para fazer pedido
+  const handleMakeOrder = () => {
+    if (!loggedClient) {
+      setShowLoginModal(true);
+    } else {
+      setCheckoutOpen(true);
+    }
+  };
+
+  // Callback quando o pedido é completado
+  const handleOrderComplete = (orderData) => {
+    console.log("Pedido realizado:", orderData);
+    setCart([]);
+    setCartOpen(false);
   };
 
   useEffect(() => {
