@@ -8923,3 +8923,7 @@
 2026-01-11T13:55:18.886758+00:00 | DB_CALL get_all_expenses | P3 | 0.91ms | success
 2026-01-11T13:55:26.011783+00:00 | DB_CALL get_all_products | P3 | 0.42ms | success
 2026-01-11T13:55:26.012466+00:00 | DB_CALL get_all_categories | P3 | 1.24ms | success
+2026-01-11T13:55:33.845277+00:00 | DB_CALL get_all_products | P3 | 0.42ms | success
+2026-01-11T13:55:33.846601+00:00 | DB_CALL get_all_categories | P3 | 0.21ms | success
+2026-01-11T13:55:34.755921+00:00 | DB_CALL get_all_products | P3 | 0.51ms | success
+2026-01-11T13:55:34.757648+00:00 | DB_CALL get_all_categories | P3 | 2.34ms | success
