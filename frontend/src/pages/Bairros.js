@@ -178,14 +178,9 @@ export default function Bairros() {
 
   // Desativar CEP único
   const handleDesativarCepUnico = async () => {
-    try {
-      await axios.put(`${API}/settings/cep_unico_ativo`, { value: 'false' }, getAuthHeader());
-      setCepUnico(false);
-      setCepUnicoValue("");
-      toast.success("CEP único desativado. Cada bairro pode ter seu próprio CEP.");
-    } catch (error) {
-      toast.error("Erro ao desativar CEP único");
-    }
+    setCepUnico(false);
+    setCepUnicoValue("");
+    toast.success("CEP único desativado. Cada bairro pode ter seu próprio CEP.");
   };
 
   const handleAlterarValorMassa = async () => {
