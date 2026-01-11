@@ -17165,3 +17165,6 @@
 2026-01-11T21:35:41.959260+00:00 | DB_CALL get_all_settings | P3 | 1.06ms | success
 2026-01-11T21:35:41.959805+00:00 | DB_CALL get_all_entregadores | P3 | 0.87ms | success
 2026-01-11T21:35:41.960566+00:00 | DB_CALL get_all_pedidos | P3 | 1.8ms | success
+2026-01-11T21:35:46.968747+00:00 | DB_CALL get_all_entregadores | P3 | 1.11ms | success
+2026-01-11T21:35:46.969301+00:00 | DB_CALL get_all_settings | P3 | 1.08ms | success
+2026-01-11T21:35:46.970036+00:00 | DB_CALL get_all_pedidos | P3 | 1.56ms | success
