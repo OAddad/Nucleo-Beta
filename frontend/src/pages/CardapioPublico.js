@@ -950,6 +950,9 @@ export default function CardapioPublico({ onAdminLogin }) {
   const [productPopupOpen, setProductPopupOpen] = useState(false);
   // Estado do checkout
   const [checkoutOpen, setCheckoutOpen] = useState(false);
+  // Estado da tela de acompanhamento
+  const [trackingOpen, setTrackingOpen] = useState(false);
+  const [currentOrder, setCurrentOrder] = useState(null);
 
   // Abrir popup do produto
   const openProductPopup = (product) => {
@@ -971,6 +974,10 @@ export default function CardapioPublico({ onAdminLogin }) {
     console.log("Pedido realizado:", orderData);
     setCart([]);
     setCartOpen(false);
+    setCheckoutOpen(false);
+    // Abrir tela de acompanhamento
+    setCurrentOrder(orderData);
+    setTrackingOpen(true);
   };
 
   useEffect(() => {
