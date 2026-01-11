@@ -8841,3 +8841,5 @@
 2026-01-11T13:49:11.362684+00:00 | DB_CALL get_user_by_id | P3 | 0.8ms | success
 2026-01-11T13:49:11.362986+00:00 | DB_CALL get_all_clientes | P3 | 0.18ms | success
 2026-01-11T13:50:21.245141+00:00 | DB_CALL get_all_products | P3 | 0.39ms | success
+2026-01-11T13:51:18.652097+00:00 | DB_CALL get_all_products | P3 | 0.88ms | success
+2026-01-11T13:51:18.664458+00:00 | DB_CALL get_all_categories | P3 | 12.99ms | success
