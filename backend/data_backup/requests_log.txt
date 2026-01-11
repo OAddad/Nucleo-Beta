@@ -16945,3 +16945,6 @@
 2026-01-11T20:19:36.831933+00:00 | DB_CALL count_ingredients | P3 | 0.3ms | success
 2026-01-11T20:19:36.832151+00:00 | DB_CALL count_products | P3 | 0.14ms | success
 2026-01-11T20:19:36.832347+00:00 | DB_CALL count_users | P3 | 0.14ms | success
+2026-01-11T20:21:14.150441+00:00 | DB_CALL get_user_by_id | P3 | 0.36ms | success
+2026-01-11T20:21:14.150758+00:00 | DB_CALL get_all_decision_nodes | P3 | 0.16ms | success
+2026-01-11T20:21:14.257002+00:00 | DB_CALL get_user_by_id | P3 | 0.3ms | success
