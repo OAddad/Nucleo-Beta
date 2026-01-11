@@ -15897,3 +15897,7 @@
 2026-01-11T19:11:44.975126+00:00 | DB_CALL get_user_by_id | P3 | 3.66ms | success
 2026-01-11T19:11:44.978496+00:00 | DB_CALL create_rua | P3 | 3.11ms | success
 2026-01-11T19:11:45.138542+00:00 | DB_CALL get_all_ruas | P3 | 0.28ms | success
+2026-01-11T19:11:50.900157+00:00 | DB_CALL get_user_by_id | P3 | 0.29ms | success
+2026-01-11T19:11:50.903519+00:00 | DB_CALL create_rua | P3 | 3.11ms | success
+2026-01-11T19:11:51.066096+00:00 | DB_CALL get_all_ruas | P3 | 0.28ms | success
+2026-01-11T19:11:51.899058+00:00 | DB_CALL get_all_bairros | P3 | 0.28ms | success
