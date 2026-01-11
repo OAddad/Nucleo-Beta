@@ -1257,6 +1257,13 @@ export default function CardapioPublico({ onAdminLogin }) {
   // Estado da tela de acompanhamento
   const [trackingOpen, setTrackingOpen] = useState(false);
   const [currentOrder, setCurrentOrder] = useState(null);
+  // Configurações da empresa
+  const [companySettings, setCompanySettings] = useState({
+    company_name: "Núcleo",
+    slogan: "O Centro da sua Gestão",
+    logo_url: null,
+    fantasy_name: ""
+  });
 
   // Abrir popup do produto
   const openProductPopup = (product) => {
@@ -1298,6 +1305,23 @@ export default function CardapioPublico({ onAdminLogin }) {
     setDarkMode(newMode);
     localStorage.setItem("cardapio_theme", newMode ? "dark" : "light");
   };
+
+  // Buscar configurações da empresa
+  useEffect(() => {
+    const fetchCompanySettings = async () => {
+      try {
+        const res = await axios.get(`${API}/company/settings`);
+        if (res.data) {
+          setCompanySettings(res.data);
+          // Atualizar título do documento
+          document.title = res.data.fantasy_name || res.data.company_name || "Núcleo";
+        }
+      } catch (error) {
+        console.error("Erro ao buscar configurações da empresa:", error);
+      }
+    };
+    fetchCompanySettings();
+  }, []);
 
   useEffect(() => {
     fetchProducts();
