@@ -15270,3 +15270,9 @@
 2026-01-11T18:53:59.886696+00:00 | DB_CALL get_all_settings | P3 | 0.44ms | success
 2026-01-11T18:53:59.891666+00:00 | DB_CALL get_all_entregadores | P3 | 0.87ms | success
 2026-01-11T18:53:59.892589+00:00 | DB_CALL get_all_pedidos | P3 | 1.34ms | success
+2026-01-11T18:54:04.884799+00:00 | DB_CALL get_all_pedidos | P3 | 1.71ms | success
+2026-01-11T18:54:04.888327+00:00 | DB_CALL get_all_settings | P3 | 4.78ms | success
+2026-01-11T18:54:04.888795+00:00 | DB_CALL get_all_entregadores | P3 | 4.91ms | success
+2026-01-11T18:54:09.881627+00:00 | DB_CALL get_all_entregadores | P3 | 0.33ms | success
+2026-01-11T18:54:09.883892+00:00 | DB_CALL get_all_settings | P3 | 0.3ms | success
+2026-01-11T18:54:09.885298+00:00 | DB_CALL get_all_pedidos | P3 | 0.59ms | success
