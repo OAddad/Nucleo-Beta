@@ -12667,3 +12667,11 @@
 2026-01-11T17:46:20.861017+00:00 | DB_CALL get_all_entregadores | P3 | 1.33ms | success
 2026-01-11T17:46:20.864880+00:00 | DB_CALL get_all_settings | P3 | 0.18ms | success
 2026-01-11T17:46:22.858172+00:00 | DB_CALL get_all_pedidos | P3 | 0.58ms | success
+2026-01-11T17:46:25.855952+00:00 | DB_CALL get_all_pedidos | P3 | 0.57ms | success
+2026-01-11T17:46:25.857336+00:00 | DB_CALL get_all_settings | P3 | 0.13ms | success
+2026-01-11T17:46:25.858326+00:00 | DB_CALL get_all_entregadores | P3 | 0.13ms | success
+2026-01-11T17:46:27.855930+00:00 | DB_CALL get_all_pedidos | P3 | 0.59ms | success
+2026-01-11T17:46:30.857257+00:00 | DB_CALL get_all_pedidos | P3 | 0.63ms | success
+2026-01-11T17:46:30.862830+00:00 | DB_CALL get_all_entregadores | P3 | 0.88ms | success
+2026-01-11T17:46:30.863290+00:00 | DB_CALL get_all_settings | P3 | 0.78ms | success
+2026-01-11T17:46:32.864156+00:00 | DB_CALL get_all_pedidos | P3 | 0.6ms | success

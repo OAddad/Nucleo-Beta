@@ -573,7 +573,6 @@ function CheckoutModal({ open, onClose, cart, cartTotal, client, darkMode, onOrd
         observacao: item.observation || null
       })),
       total: cartTotal,
-      status: "producao",
       forma_pagamento: paymentMap[paymentMethod],
       troco_precisa: paymentMethod === 'cash' ? needsChange : false,
       troco_valor: paymentMethod === 'cash' && needsChange ? parseFloat(changeAmount) : null,
