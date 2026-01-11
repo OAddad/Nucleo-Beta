@@ -38,8 +38,8 @@ export default function Dashboard({ setIsAuthenticated }) {
   const [currentUser, setCurrentUser] = useState(null);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [activeTopMenu, setActiveTopMenu] = useState(null); // null = nenhuma aba superior ativa
-  const [stockControlExpanded, setStockControlExpanded] = useState(true);
-  const [salesExpanded, setSalesExpanded] = useState(true);
+  const [stockControlExpanded, setStockControlExpanded] = useState(false);
+  const [salesExpanded, setSalesExpanded] = useState(false);
 
   // Configuração das abas superiores com ícones
   const topMenuItems = [
