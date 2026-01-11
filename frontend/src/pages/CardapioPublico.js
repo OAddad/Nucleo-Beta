@@ -480,16 +480,22 @@ export default function CardapioPublico({ onAdminLogin }) {
                     <span>Fecha às {closingTime}</span>
                   </div>
                 )}
-                {!isOpen && todayHours && todayHours.is_open && (
+                {!isOpen && nextOpenTime && (
                   <div className="flex items-center gap-1 text-sm text-white/80">
                     <Clock className="w-3 h-3" />
-                    <span>Abre às {todayHours.opening_time}</span>
+                    <span>Abre às {nextOpenTime}</span>
                   </div>
                 )}
-                {!isOpen && (!todayHours || !todayHours.is_open) && (
+                {!isOpen && !nextOpenTime && todayHours && !todayHours.is_open && (
                   <div className="flex items-center gap-1 text-sm text-white/80">
                     <Clock className="w-3 h-3" />
                     <span>Fechado hoje</span>
+                  </div>
+                )}
+                {!isOpen && !nextOpenTime && todayHours && todayHours.is_open && (
+                  <div className="flex items-center gap-1 text-sm text-white/80">
+                    <Clock className="w-3 h-3" />
+                    <span>Encerrado por hoje</span>
                   </div>
                 )}
               </div>
