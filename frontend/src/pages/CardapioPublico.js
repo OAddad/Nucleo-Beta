@@ -1332,9 +1332,10 @@ export default function CardapioPublico({ onAdminLogin }) {
   const fetchProducts = async () => {
     try {
       const data = await fetchWithFallback('/public/products');
-      setProducts(data);
+      setProducts(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error("Erro ao carregar produtos:", error);
+      setProducts([]);
     } finally {
       setLoading(false);
     }
@@ -1343,6 +1344,7 @@ export default function CardapioPublico({ onAdminLogin }) {
   const fetchCategories = async () => {
     try {
       const data = await fetchWithFallback('/public/categories');
+      setCategories(Array.isArray(data) ? data : []);
       setCategories(data);
     } catch (error) {
       console.error("Erro ao carregar categorias:", error);
