@@ -2932,7 +2932,8 @@ async def get_system_settings():
     settings = await db_call(sqlite_db.get_all_settings)
     return {
         "skip_login": settings.get("skip_login", "false") == "true",
-        "theme": settings.get("theme", "light")
+        "theme": settings.get("theme", "light"),
+        "delivery_auto_accept": settings.get("delivery_auto_accept", "false") == "true"
     }
 
 @api_router.put("/system/settings")
@@ -2946,10 +2947,14 @@ async def update_system_settings(settings_data: SystemSettingsUpdate, current_us
     if settings_data.theme is not None:
         await db_call(sqlite_db.set_setting, "theme", settings_data.theme)
     
+    if settings_data.delivery_auto_accept is not None:
+        await db_call(sqlite_db.set_setting, "delivery_auto_accept", "true" if settings_data.delivery_auto_accept else "false")
+    
     # Registrar auditoria
     await log_audit("UPDATE", "system", "Configurações do Sistema", current_user, "alta", {
         "skip_login": settings_data.skip_login,
-        "theme": settings_data.theme
+        "theme": settings_data.theme,
+        "delivery_auto_accept": settings_data.delivery_auto_accept
     })
     
     return await get_system_settings()
