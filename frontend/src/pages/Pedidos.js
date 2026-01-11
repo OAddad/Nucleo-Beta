@@ -1,9 +1,10 @@
 import { useState, useEffect, useMemo } from "react";
 import { toast } from "sonner";
+import axios from "axios";
 import { 
   Search, Grid3X3, List, Clock, Truck, CheckCircle, XCircle, 
   Package, User, Phone, MapPin, CreditCard, Banknote, QrCode,
-  Calendar, X, ChevronRight, ShoppingBag, UtensilsCrossed, MessageCircle, Bike, Store
+  Calendar, X, ChevronRight, ShoppingBag, UtensilsCrossed, MessageCircle, Bike, Store, RefreshCw
 } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
@@ -40,6 +41,8 @@ import {
   TableHeader,
   TableRow,
 } from "../components/ui/table";
+
+const API = '/api';
 
 // Status dos pedidos com suas cores e ícones
 const statusConfig = {
