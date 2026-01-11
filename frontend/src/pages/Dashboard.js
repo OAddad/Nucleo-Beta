@@ -43,6 +43,7 @@ export default function Dashboard({ setIsAuthenticated }) {
 
   // Configuração das abas superiores com ícones
   const topMenuItems = [
+    { id: 'cardapio', label: 'Cardápio', icon: Store },
     { id: 'mesas', label: 'Mesas', icon: UtensilsCrossed },
     { id: 'balcao', label: 'Balcão', icon: UserRound },
     { id: 'delivery', label: 'Delivery', icon: Bike },
