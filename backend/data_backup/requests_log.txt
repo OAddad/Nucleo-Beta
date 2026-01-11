@@ -18380,3 +18380,5 @@
 2026-01-11T23:40:20.023932+00:00 | DB_CALL get_word_analytics_summary | P3 | 0.17ms | error | ERROR: no such column: type
 2026-01-11T23:40:45.022963+00:00 | DB_CALL get_user_by_id | P3 | 0.26ms | success
 2026-01-11T23:40:45.023243+00:00 | DB_CALL get_word_analytics_summary | P3 | 0.14ms | error | ERROR: no such column: type
+2026-01-11T23:41:06.033025+00:00 | DB_CALL get_user_by_id | P3 | 0.27ms | success
+2026-01-11T23:41:06.033327+00:00 | DB_CALL get_word_analytics_summary | P3 | 0.15ms | error | ERROR: no such column: type
