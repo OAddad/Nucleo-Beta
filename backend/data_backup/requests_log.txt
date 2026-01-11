@@ -18020,3 +18020,8 @@
 2026-01-11T22:37:12.008674+00:00 | DB_CALL get_all_bairros | P3 | 0.53ms | success
 2026-01-11T22:37:12.009384+00:00 | DB_CALL get_all_products | P3 | 0.91ms | success
 2026-01-11T22:37:12.010625+00:00 | DB_CALL get_all_business_hours | P3 | 0.16ms | success
+2026-01-11T22:37:19.005906+00:00 | DB_CALL get_all_bairros | P3 | 0.31ms | success
+2026-01-11T22:37:19.007477+00:00 | DB_CALL get_all_settings | P3 | 0.33ms | success
+2026-01-11T22:37:19.007863+00:00 | DB_CALL get_all_categories | P3 | 0.64ms | success
+2026-01-11T22:37:19.009048+00:00 | DB_CALL get_all_business_hours | P3 | 0.52ms | success
+2026-01-11T22:37:19.009573+00:00 | DB_CALL get_all_products | P3 | 0.7ms | success
