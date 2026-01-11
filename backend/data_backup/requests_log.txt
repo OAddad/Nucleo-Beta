@@ -14940,3 +14940,7 @@
 2026-01-11T18:46:17.113387+00:00 | DB_CALL get_user_by_id | P3 | 0.22ms | success
 2026-01-11T18:46:17.115356+00:00 | DB_CALL delete_funcionario | P3 | 1.81ms | success
 2026-01-11T18:46:17.117480+00:00 | DB_CALL get_all_funcionarios | P3 | 0.2ms | success
+2026-01-11T18:46:18.859999+00:00 | DB_CALL get_all_categories | P3 | 0.26ms | success
+2026-01-11T18:46:18.861330+00:00 | DB_CALL get_all_products | P3 | 0.43ms | success
+2026-01-11T18:46:18.862716+00:00 | DB_CALL get_all_business_hours | P3 | 0.19ms | success
+2026-01-11T18:46:22.941538+00:00 | DB_CALL get_user_by_username | P3 | 0.25ms | success
