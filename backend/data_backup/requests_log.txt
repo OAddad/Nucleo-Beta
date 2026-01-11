@@ -12474,3 +12474,16 @@
 2026-01-11T17:43:46.886830+00:00 | DB_CALL get_all_entregadores | P3 | 0.19ms | success
 2026-01-11T17:43:46.894193+00:00 | DB_CALL get_all_settings | P3 | 0.19ms | success
 2026-01-11T17:43:47.856419+00:00 | DB_CALL get_all_pedidos | P3 | 0.56ms | success
+2026-01-11T17:43:50.107375+00:00 | DB_CALL get_all_products | P3 | 0.46ms | success
+2026-01-11T17:43:50.112506+00:00 | DB_CALL get_all_categories | P3 | 0.68ms | success
+2026-01-11T17:43:50.113695+00:00 | DB_CALL get_all_business_hours | P3 | 0.3ms | success
+2026-01-11T17:43:51.131506+00:00 | DB_CALL get_all_settings | P3 | 0.25ms | success
+2026-01-11T17:43:51.133993+00:00 | DB_CALL get_all_pedidos | P3 | 0.44ms | success
+2026-01-11T17:43:51.136690+00:00 | DB_CALL get_all_entregadores | P3 | 0.13ms | success
+2026-01-11T17:43:51.214536+00:00 | DB_CALL get_all_pedidos | P3 | 0.56ms | success
+2026-01-11T17:43:51.215766+00:00 | DB_CALL get_all_entregadores | P3 | 0.13ms | success
+2026-01-11T17:43:51.229973+00:00 | DB_CALL get_all_settings | P3 | 0.21ms | success
+2026-01-11T17:43:52.853589+00:00 | DB_CALL get_all_pedidos | P3 | 0.78ms | success
+2026-01-11T17:43:53.870666+00:00 | DB_CALL get_client_addresses | P3 | 0.25ms | success
+2026-01-11T17:43:55.381600+00:00 | DB_CALL create_pedido | P3 | 2.5ms | success
+2026-01-11T17:43:55.385507+00:00 | DB_CALL update_cliente_pedido_stats | P3 | 3.8ms | success
