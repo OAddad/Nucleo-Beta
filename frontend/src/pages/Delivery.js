@@ -467,13 +467,51 @@ export default function Delivery() {
 
         {/* Coluna 3: PRONTO */}
         <div className="flex-1 flex flex-col bg-card rounded-xl border overflow-hidden min-w-0">
-          <div className="p-3 border-b bg-muted/30">
+          <div className="p-3 border-b bg-muted/30 space-y-2">
             <div className="flex items-center justify-between">
               <h3 className="font-bold text-sm">PRONTO</h3>
               <span className="bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 px-2 py-0.5 rounded-full text-xs font-bold">
                 {getPedidosByStatus('pronto').length}
               </span>
             </div>
+            
+            {/* Seletor de entregador para envio em lote */}
+            {getPedidosByStatus('pronto').length > 0 && (
+              <div className="space-y-2">
+                <Select value={entregadorProntoSelecionado} onValueChange={setEntregadorProntoSelecionado}>
+                  <SelectTrigger className="h-8 text-xs">
+                    <SelectValue placeholder="Selecionar entregador..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {entregadores.map(e => (
+                      <SelectItem key={e.id} value={e.id}>
+                        {e.nome}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                
+                <div className="flex gap-1">
+                  <Button 
+                    size="sm" 
+                    variant="outline"
+                    className="flex-1 h-7 text-xs"
+                    onClick={toggleSelecionarTodos}
+                  >
+                    {pedidosSelecionados.length === getPedidosByStatus('pronto').length ? 'Desmarcar' : 'Marcar'} Todos
+                  </Button>
+                  <Button 
+                    size="sm" 
+                    className="flex-1 h-7 text-xs bg-blue-600 hover:bg-blue-700"
+                    onClick={handleEnviarPedidosEmLote}
+                    disabled={!entregadorProntoSelecionado || pedidosSelecionados.length === 0}
+                  >
+                    <ShoppingBag className="w-3 h-3 mr-1" />
+                    Enviar ({pedidosSelecionados.length})
+                  </Button>
+                </div>
+              </div>
+            )}
           </div>
           
           <div className="flex-1 overflow-auto p-2 space-y-2">
@@ -484,23 +522,29 @@ export default function Delivery() {
               </div>
             ) : (
               getPedidosByStatus('pronto').map(pedido => (
-                <div key={pedido.id} className="bg-background rounded-lg border p-3 shadow-sm">
-                  <div className="flex items-center justify-between mb-2">
+                <div 
+                  key={pedido.id} 
+                  className={`bg-background rounded-lg border p-3 shadow-sm cursor-pointer transition-all ${
+                    pedidosSelecionados.includes(pedido.id) 
+                      ? 'border-blue-500 ring-2 ring-blue-200 dark:ring-blue-800' 
+                      : 'hover:border-muted-foreground/30'
+                  }`}
+                  onClick={() => togglePedidoSelecionado(pedido.id)}
+                >
+                  <div className="flex items-center gap-2 mb-2">
+                    <input
+                      type="checkbox"
+                      checked={pedidosSelecionados.includes(pedido.id)}
+                      onChange={() => togglePedidoSelecionado(pedido.id)}
+                      onClick={(e) => e.stopPropagation()}
+                      className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                    />
                     <span className="font-mono text-xs text-muted-foreground">{pedido.codigo}</span>
-                    <span className="text-xs text-muted-foreground">{formatTime(pedido.created_at)}</span>
+                    <span className="text-xs text-muted-foreground ml-auto">{formatTime(pedido.created_at)}</span>
                   </div>
                   <p className="font-semibold text-sm truncate">{pedido.cliente_nome || "Cliente"}</p>
                   <p className="text-xs text-muted-foreground truncate mb-2">{pedido.endereco_rua || "Sem endereço"}</p>
-                  <p className="font-bold text-primary text-sm mb-2">R$ {(pedido.total || 0).toFixed(2)}</p>
-                  
-                  <Button 
-                    size="sm" 
-                    className="w-full bg-blue-600 hover:bg-blue-700"
-                    onClick={() => handleAbrirDesignar(pedido)}
-                  >
-                    <Truck className="w-4 h-4 mr-1" />
-                    Designar Entregador
-                  </Button>
+                  <p className="font-bold text-primary text-sm">R$ {(pedido.total || 0).toFixed(2)}</p>
                 </div>
               ))
             )}
