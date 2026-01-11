@@ -48,20 +48,22 @@ export default function Bairros() {
 
   const fetchData = useCallback(async () => {
     try {
-      const [bairrosRes, settingsRes] = await Promise.all([
-        axios.get(`${API}/bairros`, getAuthHeader()),
-        axios.get(`${API}/settings`, getAuthHeader())
-      ]);
+      const bairrosRes = await axios.get(`${API}/bairros`, getAuthHeader());
       setBairros(bairrosRes.data);
       
-      // Verificar configuração de CEP único
-      const settings = settingsRes.data;
-      const cepUnicoSetting = settings.find(s => s.key === 'cep_unico_ativo');
-      const cepUnicoValueSetting = settings.find(s => s.key === 'cep_unico_valor');
-      
-      if (cepUnicoSetting && cepUnicoSetting.value === 'true') {
-        setCepUnico(true);
-        setCepUnicoValue(cepUnicoValueSetting?.value || '');
+      // Verificar se todos os bairros têm o mesmo CEP (indica CEP único)
+      const bairrosComCep = bairrosRes.data.filter(b => b.cep && b.cep.trim() !== '');
+      if (bairrosComCep.length > 0 && bairrosRes.data.length > 0) {
+        const ceps = bairrosComCep.map(b => b.cep);
+        const uniqueCeps = [...new Set(ceps)];
+        // Se todos os bairros têm CEP e é o mesmo, CEP único está ativo
+        if (uniqueCeps.length === 1 && bairrosComCep.length === bairrosRes.data.length) {
+          setCepUnico(true);
+          setCepUnicoValue(uniqueCeps[0]);
+        } else {
+          setCepUnico(false);
+          setCepUnicoValue('');
+        }
       } else {
         setCepUnico(false);
         setCepUnicoValue('');
