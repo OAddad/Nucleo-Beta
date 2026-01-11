@@ -63,6 +63,13 @@ function EditAccountModal({ isOpen, onClose, client, onUpdate }) {
   const [complemento, setComplemento] = useState("");
   const [bairro, setBairro] = useState("");
   const [cep, setCep] = useState("");
+  
+  // Estados para múltiplos endereços
+  const [addresses, setAddresses] = useState([]);
+  const [loadingAddresses, setLoadingAddresses] = useState(false);
+  const [showNewAddress, setShowNewAddress] = useState(false);
+  const [editingAddress, setEditingAddress] = useState(null);
+  const [newAddr, setNewAddr] = useState({ label: 'Casa', endereco: '', numero: '', complemento: '', bairro: '', cep: '' });
 
   useEffect(() => {
     if (client && isOpen) {
@@ -78,8 +85,75 @@ function EditAccountModal({ isOpen, onClose, client, onUpdate }) {
       setComplemento(client.complemento || "");
       setBairro(client.bairro || "");
       setCep(client.cep || "");
+      fetchAddresses();
     }
   }, [client, isOpen]);
+  
+  const fetchAddresses = async () => {
+    if (!client?.id) return;
+    setLoadingAddresses(true);
+    try {
+      const response = await axios.get(`${API}/client-addresses/${client.id}`);
+      setAddresses(response.data);
+    } catch (error) {
+      console.error("Erro ao carregar endereços:", error);
+    } finally {
+      setLoadingAddresses(false);
+    }
+  };
+  
+  const handleSaveNewAddress = async () => {
+    if (!newAddr.endereco || !newAddr.bairro) {
+      toast.error("Preencha o endereço e bairro");
+      return;
+    }
+    try {
+      const response = await axios.post(`${API}/client-addresses`, {
+        client_id: client.id,
+        ...newAddr,
+        is_default: addresses.length === 0
+      });
+      setAddresses(prev => [response.data, ...prev]);
+      setShowNewAddress(false);
+      setNewAddr({ label: 'Casa', endereco: '', numero: '', complemento: '', bairro: '', cep: '' });
+      toast.success("Endereço adicionado!");
+    } catch (error) {
+      toast.error("Erro ao salvar endereço");
+    }
+  };
+  
+  const handleUpdateAddress = async () => {
+    if (!editingAddress) return;
+    try {
+      const response = await axios.put(`${API}/client-addresses/${editingAddress.id}`, editingAddress);
+      setAddresses(prev => prev.map(a => a.id === editingAddress.id ? response.data : a));
+      setEditingAddress(null);
+      toast.success("Endereço atualizado!");
+    } catch (error) {
+      toast.error("Erro ao atualizar endereço");
+    }
+  };
+  
+  const handleDeleteAddress = async (addressId) => {
+    if (!window.confirm("Deseja excluir este endereço?")) return;
+    try {
+      await axios.delete(`${API}/client-addresses/${addressId}`);
+      setAddresses(prev => prev.filter(a => a.id !== addressId));
+      toast.success("Endereço excluído!");
+    } catch (error) {
+      toast.error("Erro ao excluir endereço");
+    }
+  };
+  
+  const handleSetDefault = async (addressId) => {
+    try {
+      await axios.put(`${API}/client-addresses/${addressId}`, { is_default: true });
+      setAddresses(prev => prev.map(a => ({ ...a, is_default: a.id === addressId })));
+      toast.success("Endereço padrão definido!");
+    } catch (error) {
+      toast.error("Erro ao definir endereço padrão");
+    }
+  };
 
   const handleFotoChange = (e) => {
     const file = e.target.files[0];
