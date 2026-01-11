@@ -212,6 +212,10 @@ export default function Dashboard({ setIsAuthenticated }) {
     return location.pathname.startsWith("/financeiro");
   };
 
+  const isImpulsioneVendasActive = () => {
+    return location.pathname.startsWith("/impulsione");
+  };
+
   return (
     <div className="flex h-screen bg-background overflow-hidden">
       {/* Sidebar - Fixo com scroll próprio */}
