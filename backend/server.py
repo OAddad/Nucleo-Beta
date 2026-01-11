@@ -1579,6 +1579,16 @@ async def get_categories(current_user: User = Depends(get_current_user)):
             cat["created_at"] = datetime.fromisoformat(cat["created_at"].replace('Z', '+00:00'))
     return categories
 
+# Endpoint PÚBLICO para categorias do cardápio
+@api_router.get("/public/categories", response_model=List[Category])
+async def get_public_categories():
+    """Retorna categorias para o cardápio público (não requer autenticação)"""
+    categories = await db_call(sqlite_db.get_all_categories)
+    for cat in categories:
+        if isinstance(cat.get("created_at"), str):
+            cat["created_at"] = datetime.fromisoformat(cat["created_at"].replace('Z', '+00:00'))
+    return categories
+
 @api_router.post("/categories", response_model=Category)
 async def create_category(category_data: CategoryCreate, current_user: User = Depends(get_current_user)):
     """Cria uma nova categoria"""
