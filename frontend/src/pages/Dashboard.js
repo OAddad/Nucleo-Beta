@@ -240,41 +240,53 @@ export default function Dashboard({ setIsAuthenticated }) {
 
 
   const isActive = (path) => {
-    if (path === "/") return location.pathname === "/";
+    const currentPath = location.pathname.replace('/admin', '');
+    if (path === "/") return currentPath === "/" || currentPath === "";
     // Para /estoque, verificar se é exatamente /estoque (não /estoque/relatorio)
     if (path === "/estoque") {
-      return location.pathname === "/estoque";
+      return currentPath === "/estoque";
     }
-    return location.pathname.startsWith(path);
+    return currentPath.startsWith(path);
   };
 
   const isStockControlActive = () => {
+    const currentPath = location.pathname.replace('/admin', '');
     return ["/produtos", "/estoque", "/compras", "/estoque/relatorio"].some(path => {
       if (path === "/estoque") {
-        return location.pathname === "/estoque";
+        return currentPath === "/estoque";
       }
-      return location.pathname.startsWith(path);
+      return currentPath.startsWith(path);
     });
   };
 
   const isSalesActive = () => {
-    return location.pathname.startsWith("/vendas");
+    const currentPath = location.pathname.replace('/admin', '');
+    return currentPath.startsWith("/vendas");
   };
 
   const isClientesFornecedoresActive = () => {
-    return location.pathname.startsWith("/clientes-fornecedores");
+    const currentPath = location.pathname.replace('/admin', '');
+    return currentPath.startsWith("/clientes-fornecedores");
   };
 
   const isConfigActive = () => {
-    return location.pathname.startsWith("/configuracoes");
+    const currentPath = location.pathname.replace('/admin', '');
+    return currentPath.startsWith("/configuracoes");
   };
 
   const isFinanceiroActive = () => {
-    return location.pathname.startsWith("/financeiro");
+    const currentPath = location.pathname.replace('/admin', '');
+    return currentPath.startsWith("/financeiro");
   };
 
   const isImpulsioneVendasActive = () => {
-    return location.pathname.startsWith("/impulsione");
+    const currentPath = location.pathname.replace('/admin', '');
+    return currentPath.startsWith("/impulsione");
+  };
+
+  const isLocalizacaoActive = () => {
+    const currentPath = location.pathname.replace('/admin', '');
+    return currentPath.startsWith("/localizacao");
   };
 
   return (
