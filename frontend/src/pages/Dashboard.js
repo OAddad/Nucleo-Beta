@@ -615,7 +615,7 @@ export default function Dashboard({ setIsAuthenticated }) {
           {/* Área do botão hamburguer - mesmo tamanho da logo */}
           <div className={`flex items-center justify-center border-r transition-all duration-300 ${sidebarOpen ? 'w-64' : 'w-16'}`}>
             <Button
-              onClick={() => setSidebarOpen(!sidebarOpen)}
+              onClick={toggleSidebar}
               size="icon"
               variant="ghost"
               className="flex-shrink-0"
