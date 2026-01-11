@@ -3435,6 +3435,9 @@ class ChatbotProcessMessage(BaseModel):
 async def chatbot_process_message(data: ChatbotProcessMessage):
     """Processa mensagem do WhatsApp com IA"""
     try:
+        # Processar analytics de palavras
+        await db_call(sqlite_db.process_message_words, data.message, data.phone, data.push_name or "")
+        
         response = await chatbot_ai.process_message(
             phone=data.phone,
             message=data.message,
