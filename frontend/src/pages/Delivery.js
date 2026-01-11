@@ -1131,16 +1131,16 @@ export default function Delivery() {
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <DollarSign className="w-5 h-5 text-green-600" />
+              <DollarSign className="w-5 h-5" />
               Finalizar Pedido - Retirada
             </DialogTitle>
           </DialogHeader>
           
           <div className="space-y-4">
             {pedidoParaPagamento && (
-              <div className="p-3 bg-gradient-to-br from-amber-100 to-orange-100 dark:from-amber-950/40 dark:to-orange-950/40 rounded-lg border-2 border-amber-400">
+              <div className="p-3 bg-amber-50 dark:bg-amber-950/20 rounded-lg border-2 border-dashed border-amber-400">
                 <div className="flex items-center gap-2 mb-2">
-                  <span className="bg-gradient-to-r from-amber-500 to-orange-500 text-white text-[10px] px-2 py-1 rounded-full font-bold flex items-center gap-1">
+                  <span className="bg-amber-500 text-white text-[10px] px-2 py-1 rounded font-bold flex items-center gap-1">
                     <Store className="w-3 h-3" />
                     RETIRADA
                   </span>
