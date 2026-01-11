@@ -9555,3 +9555,12 @@
 2026-01-11T15:32:59.182018+00:00 | DB_CALL get_all_products | P3 | 0.43ms | success
 2026-01-11T15:32:59.183586+00:00 | DB_CALL get_all_categories | P3 | 0.19ms | success
 2026-01-11T15:32:59.184427+00:00 | DB_CALL get_all_business_hours | P3 | 0.16ms | success
+2026-01-11T15:33:07.896625+00:00 | DB_CALL get_user_by_id | P3 | 0.63ms | success
+2026-01-11T15:33:07.896786+00:00 | DB_CALL get_user_by_id | P3 | 0.58ms | success
+2026-01-11T15:33:07.897233+00:00 | DB_CALL get_total_pontuacao | P3 | 0.37ms | success
+2026-01-11T15:33:07.897384+00:00 | DB_CALL get_all_clientes | P3 | 0.62ms | success
+2026-01-11T15:33:07.898128+00:00 | DB_CALL count_clientes | P3 | 0.8ms | success
+2026-01-11T15:33:10.518667+00:00 | DB_CALL init_database | P3 | 2.67ms | success
+2026-01-11T15:33:10.519168+00:00 | DB_CALL count_ingredients | P3 | 0.26ms | success
+2026-01-11T15:33:10.519419+00:00 | DB_CALL count_products | P3 | 0.19ms | success
+2026-01-11T15:33:10.519579+00:00 | DB_CALL count_users | P3 | 0.11ms | success
