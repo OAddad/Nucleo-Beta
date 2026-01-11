@@ -10617,3 +10617,11 @@
 2026-01-11T17:03:38.838979+00:00 | DB_CALL get_all_pedidos | P3 | 1.37ms | success
 2026-01-11T17:03:38.839508+00:00 | DB_CALL get_all_entregadores | P3 | 1.3ms | success
 2026-01-11T17:03:41.451249+00:00 | DB_CALL get_all_pedidos | P3 | 0.43ms | success
+2026-01-11T17:03:43.857401+00:00 | DB_CALL get_all_settings | P3 | 2.59ms | success
+2026-01-11T17:03:43.859390+00:00 | DB_CALL get_all_pedidos | P3 | 4.87ms | success
+2026-01-11T17:03:43.864948+00:00 | DB_CALL get_all_entregadores | P3 | 10.33ms | success
+2026-01-11T17:03:44.850547+00:00 | DB_CALL get_all_pedidos | P3 | 0.4ms | success
+2026-01-11T17:03:44.851885+00:00 | DB_CALL get_all_settings | P3 | 0.22ms | success
+2026-01-11T17:03:44.852565+00:00 | DB_CALL get_all_entregadores | P3 | 0.14ms | success
+2026-01-11T17:03:46.454032+00:00 | DB_CALL get_all_pedidos | P3 | 0.98ms | success
+2026-01-11T17:03:48.599436+00:00 | DB_CALL get_all_pedidos | P3 | 0.39ms | success
