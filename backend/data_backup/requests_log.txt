@@ -16923,3 +16923,5 @@
 2026-01-11T20:12:47.126318+00:00 | DB_CALL delete_decision_node_and_children | P3 | 4.99ms | success
 2026-01-11T20:12:47.128647+00:00 | DB_CALL get_user_by_id | P3 | 0.19ms | success
 2026-01-11T20:12:47.128872+00:00 | DB_CALL get_decision_node | P3 | 0.09ms | success
+2026-01-11T20:14:37.333794+00:00 | DB_CALL get_user_by_id | P3 | 0.29ms | success
+2026-01-11T20:14:37.334112+00:00 | DB_CALL get_all_decision_nodes | P3 | 0.14ms | success
