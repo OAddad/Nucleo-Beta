@@ -145,7 +145,7 @@ export default function Bairros() {
       setNovoCepUnico(cepUnicoValue || "");
       setCepUnicoModalOpen(true);
     } else {
-      // Desativar CEP único
+      // Desativar CEP único - limpar CEP de todos os bairros
       handleDesativarCepUnico();
     }
   };
@@ -159,10 +159,6 @@ export default function Bairros() {
 
     setSaving(true);
     try {
-      // Salvar configurações
-      await axios.put(`${API}/settings/cep_unico_ativo`, { value: 'true' }, getAuthHeader());
-      await axios.put(`${API}/settings/cep_unico_valor`, { value: novoCepUnico.trim() }, getAuthHeader());
-      
       // Atualizar CEP de todos os bairros existentes
       if (bairros.length > 0) {
         await axios.put(`${API}/bairros/cep/all?cep=${encodeURIComponent(novoCepUnico.trim())}`, {}, getAuthHeader());

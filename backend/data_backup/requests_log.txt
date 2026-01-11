@@ -15888,3 +15888,12 @@
 2026-01-11T19:11:29.245077+00:00 | DB_CALL create_rua | P3 | 3.2ms | success
 2026-01-11T19:11:29.480824+00:00 | DB_CALL get_all_ruas | P3 | 35.49ms | success
 2026-01-11T19:11:30.893923+00:00 | DB_CALL get_all_bairros | P3 | 0.29ms | success
+2026-01-11T19:11:36.598336+00:00 | DB_CALL get_user_by_id | P3 | 0.31ms | success
+2026-01-11T19:11:36.603055+00:00 | DB_CALL create_rua | P3 | 4.43ms | success
+2026-01-11T19:11:36.765936+00:00 | DB_CALL get_all_ruas | P3 | 0.29ms | success
+2026-01-11T19:11:41.349945+00:00 | DB_CALL get_user_by_id | P3 | 0.27ms | success
+2026-01-11T19:11:41.352445+00:00 | DB_CALL create_rua | P3 | 2.22ms | success
+2026-01-11T19:11:41.513594+00:00 | DB_CALL get_all_ruas | P3 | 0.81ms | success
+2026-01-11T19:11:44.975126+00:00 | DB_CALL get_user_by_id | P3 | 3.66ms | success
+2026-01-11T19:11:44.978496+00:00 | DB_CALL create_rua | P3 | 3.11ms | success
+2026-01-11T19:11:45.138542+00:00 | DB_CALL get_all_ruas | P3 | 0.28ms | success
