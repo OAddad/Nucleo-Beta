@@ -12139,3 +12139,8 @@
 2026-01-11T17:38:32.279230+00:00 | DB_CALL get_all_settings | P3 | 0.93ms | success
 2026-01-11T17:38:32.279911+00:00 | DB_CALL get_all_entregadores | P3 | 1.47ms | success
 2026-01-11T17:38:32.280737+00:00 | DB_CALL get_all_pedidos | P3 | 0.9ms | success
+2026-01-11T17:38:35.847038+00:00 | DB_CALL get_all_pedidos | P3 | 0.57ms | success
+2026-01-11T17:38:37.855835+00:00 | DB_CALL get_all_pedidos | P3 | 0.99ms | success
+2026-01-11T17:38:37.857365+00:00 | DB_CALL get_all_entregadores | P3 | 1.59ms | success
+2026-01-11T17:38:37.859033+00:00 | DB_CALL get_all_settings | P3 | 0.26ms | success
+2026-01-11T17:38:40.851034+00:00 | DB_CALL get_all_pedidos | P3 | 0.54ms | success
