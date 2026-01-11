@@ -14763,3 +14763,11 @@
 2026-01-11T18:41:24.886025+00:00 | DB_CALL get_all_settings | P3 | 1.59ms | success
 2026-01-11T18:41:24.887477+00:00 | DB_CALL get_all_pedidos | P3 | 2.55ms | success
 2026-01-11T18:41:24.888469+00:00 | DB_CALL get_all_entregadores | P3 | 2.88ms | success
+2026-01-11T18:41:29.118031+00:00 | DB_CALL get_entregador_by_id | P3 | 0.27ms | success
+2026-01-11T18:41:29.118557+00:00 | DB_CALL get_pedidos_by_entregador | P3 | 1.28ms | success
+2026-01-11T18:41:29.881694+00:00 | DB_CALL get_all_pedidos | P3 | 0.71ms | success
+2026-01-11T18:41:29.883020+00:00 | DB_CALL get_all_entregadores | P3 | 2.17ms | success
+2026-01-11T18:41:29.884869+00:00 | DB_CALL get_all_settings | P3 | 0.22ms | success
+2026-01-11T18:41:34.881215+00:00 | DB_CALL get_all_pedidos | P3 | 0.84ms | success
+2026-01-11T18:41:34.882557+00:00 | DB_CALL get_all_entregadores | P3 | 2.41ms | success
+2026-01-11T18:41:34.883092+00:00 | DB_CALL get_all_settings | P3 | 0.64ms | success
