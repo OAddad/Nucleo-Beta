@@ -617,11 +617,11 @@ export default function Delivery() {
         </div>
 
         {/* Coluna 2: EM PRODUÇÃO */}
-        <div className="flex-1 flex flex-col rounded-xl border-2 border-yellow-400 bg-card overflow-hidden min-w-0">
-          <div className="p-3 bg-gradient-to-r from-yellow-400 to-amber-500 text-white">
+        <div className="flex-1 flex flex-col rounded-xl border bg-card overflow-hidden min-w-0">
+          <div className="p-3 bg-muted/50 border-b">
             <div className="flex items-center justify-between">
               <h3 className="font-bold text-sm">EM PRODUÇÃO</h3>
-              <span className="bg-white/20 px-2 py-0.5 rounded-full text-xs font-bold">
+              <span className="bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400 px-2 py-0.5 rounded-full text-xs font-bold">
                 {getPedidosByStatus('producao').length}
               </span>
             </div>
@@ -648,11 +648,11 @@ export default function Delivery() {
         </div>
 
         {/* Coluna 3: PRONTO */}
-        <div className="flex-1 flex flex-col rounded-xl border-2 border-green-400 bg-card overflow-hidden min-w-0">
-          <div className="p-3 bg-gradient-to-r from-green-400 to-emerald-500 text-white space-y-2">
+        <div className="flex-1 flex flex-col rounded-xl border bg-card overflow-hidden min-w-0">
+          <div className="p-3 bg-muted/50 border-b space-y-2">
             <div className="flex items-center justify-between">
               <h3 className="font-bold text-sm">PRONTO</h3>
-              <span className="bg-white/20 px-2 py-0.5 rounded-full text-xs font-bold">
+              <span className="bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 px-2 py-0.5 rounded-full text-xs font-bold">
                 {getPedidosByStatus('pronto').length}
               </span>
             </div>
@@ -661,7 +661,7 @@ export default function Delivery() {
             {getPedidosByStatus('pronto').filter(p => !isRetirada(p)).length > 0 && (
               <div className="space-y-2">
                 <Select value={entregadorProntoSelecionado} onValueChange={setEntregadorProntoSelecionado}>
-                  <SelectTrigger className="h-8 text-xs bg-white/20 border-white/30 text-white">
+                  <SelectTrigger className="h-8 text-xs">
                     <SelectValue placeholder="Selecionar entregador..." />
                   </SelectTrigger>
                   <SelectContent>
