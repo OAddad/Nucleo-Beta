@@ -2428,7 +2428,7 @@ class PedidoResponse(BaseModel):
     cliente_email: Optional[str] = None
     items: List[dict] = []
     total: float = 0
-    status: str = "producao"
+    status: str = "aguardando_aceite"
     forma_pagamento: Optional[str] = None
     troco_precisa: bool = False
     troco_valor: Optional[float] = None
@@ -2441,6 +2441,8 @@ class PedidoResponse(BaseModel):
     endereco_cep: Optional[str] = None
     modulo: Optional[str] = None
     observacao: Optional[str] = None
+    entregador_id: Optional[str] = None
+    entregador_nome: Optional[str] = None
     created_at: Optional[str] = None
     updated_at: Optional[str] = None
 
