@@ -445,8 +445,8 @@ function SimulatorTab({ toast }) {
         },
         body: JSON.stringify({
           message: text,
-          sender_phone: "simulador",
-          sender_name: "Simulador de Teste",
+          phone: "simulador",
+          push_name: "Simulador de Teste",
           session_id: sessionId
         })
       });
