@@ -4,7 +4,8 @@ import {
   GitBranch, Plus, Edit2, Trash2, Save, X, AlertCircle, CheckCircle, 
   Loader2, Bot, MessageCircle, HelpCircle, Zap, Play, Square,
   Move, Link2, Settings, Eye, EyeOff, ChevronDown, ChevronRight,
-  Send, User, Clock, MapPin, ShoppingBag, Smartphone, RotateCcw
+  Send, User, Clock, MapPin, ShoppingBag, Smartphone, RotateCcw,
+  BarChart3, TrendingUp, Hash, Calendar, Users, MessageCircleMore
 } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
