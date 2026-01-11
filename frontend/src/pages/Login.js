@@ -6,8 +6,7 @@ import { ArrowLeft, Phone, User, Lock, Loader2 } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
-
-const API = '/api';
+import API_BASE from "../config/api";
 
 export default function Login({ setIsAuthenticated }) {
   const navigate = useNavigate();
