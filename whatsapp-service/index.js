@@ -12,12 +12,14 @@ app.use(express.json());
 
 const PORT = 3002;
 const AUTH_SESSION_PATH = path.join(__dirname, 'auth_session');
+const BACKEND_URL = 'http://localhost:8001';
 
 let sock = null;
 let currentQR = null;
 let connectionStatus = 'disconnected';
 let lastError = null;
 let reconnecting = false;
+let autoReplyEnabled = true;
 
 // Logger silencioso para Baileys
 const logger = pino({ level: 'silent' });
@@ -25,6 +27,64 @@ const logger = pino({ level: 'silent' });
 // Armazenar mensagens recebidas (últimas 100)
 let receivedMessages = [];
 const MAX_MESSAGES = 100;
+
+// Função para chamar a API de IA do backend
+async function getAIResponse(phone, message, pushName) {
+  try {
+    const response = await fetch(`${BACKEND_URL}/api/chatbot/process`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        phone: phone,
+        message: message,
+        push_name: pushName || ''
+      })
+    });
+    
+    if (!response.ok) {
+      console.log('[WhatsApp] Erro na API de IA:', response.status);
+      return null;
+    }
+    
+    const data = await response.json();
+    return data.response || null;
+  } catch (error) {
+    console.log('[WhatsApp] Erro ao chamar API de IA:', error.message);
+    return null;
+  }
+}
+
+// Função para enviar mensagem com efeito de digitação
+async function sendMessageWithTyping(jid, message) {
+  try {
+    if (!sock || connectionStatus !== 'connected') {
+      console.log('[WhatsApp] Não conectado, não pode enviar mensagem');
+      return false;
+    }
+    
+    // Mostrar "digitando..."
+    await sock.presenceSubscribe(jid);
+    await sock.sendPresenceUpdate('composing', jid);
+    
+    // Calcular tempo de digitação baseado no tamanho da mensagem (mais natural)
+    const typingTime = Math.min(Math.max(message.length * 30, 1000), 4000);
+    await new Promise(resolve => setTimeout(resolve, typingTime));
+    
+    // Enviar mensagem
+    await sock.sendMessage(jid, { text: message });
+    
+    // Parar de "digitar"
+    await sock.sendPresenceUpdate('paused', jid);
+    
+    console.log(`[WhatsApp] Mensagem enviada para ${jid}`);
+    return true;
+  } catch (error) {
+    console.log('[WhatsApp] Erro ao enviar mensagem:', error.message);
+    return false;
+  }
+}
 
 // Função para iniciar conexão WhatsApp
 async function connectToWhatsApp() {
@@ -43,7 +103,7 @@ async function connectToWhatsApp() {
       },
       printQRInTerminal: true,
       logger,
-      browser: ['Nucleo System', 'Chrome', '1.0.0'],
+      browser: ['Nucleo ChatBot', 'Chrome', '1.0.0'],
       generateHighQualityLinkPreview: true,
       markOnlineOnConnect: true,
     });
@@ -105,18 +165,31 @@ async function connectToWhatsApp() {
             const messageContent = msg.message.conversation || 
                                   msg.message.extendedTextMessage?.text || 
                                   msg.message.imageMessage?.caption ||
-                                  '[Mídia]';
+                                  null;
+            
+            // Ignorar mensagens de grupo e status
+            if (from.endsWith('@g.us') || from === 'status@broadcast') {
+              continue;
+            }
+            
+            // Ignorar mensagens sem texto
+            if (!messageContent) {
+              console.log(`[WhatsApp] Mensagem sem texto de ${from} (mídia)`);
+              continue;
+            }
             
             console.log(`[WhatsApp] Mensagem de ${from}: ${messageContent}`);
             
             // Armazenar mensagem
-            receivedMessages.unshift({
+            const msgData = {
               id: msg.key.id,
               from: from,
               message: messageContent,
               timestamp: new Date().toISOString(),
               pushName: msg.pushName || 'Desconhecido'
-            });
+            };
+            
+            receivedMessages.unshift(msgData);
             
             // Limitar a 100 mensagens
             if (receivedMessages.length > MAX_MESSAGES) {
@@ -128,6 +201,16 @@ async function connectToWhatsApp() {
               await sock.readMessages([msg.key]);
             } catch (e) {
               console.log('[WhatsApp] Erro ao marcar como lida:', e.message);
+            }
+            
+            // Resposta automática com IA
+            if (autoReplyEnabled) {
+              console.log('[WhatsApp] Processando resposta da IA...');
+              const aiResponse = await getAIResponse(from, messageContent, msg.pushName);
+              
+              if (aiResponse) {
+                await sendMessageWithTyping(from, aiResponse);
+              }
             }
           }
         }
@@ -149,7 +232,8 @@ app.get('/status', (req, res) => {
     connected: connectionStatus === 'connected',
     hasQR: currentQR !== null,
     error: lastError,
-    messagesCount: receivedMessages.length
+    messagesCount: receivedMessages.length,
+    autoReplyEnabled: autoReplyEnabled
   });
 });
 
@@ -219,24 +303,19 @@ app.post('/send', async (req, res) => {
       jid = jid + '@s.whatsapp.net';
     }
     
-    // Mostrar "digitando..."
-    await sock.presenceSubscribe(jid);
-    await sock.sendPresenceUpdate('composing', jid);
+    const success = await sendMessageWithTyping(jid, message);
     
-    // Esperar 1-2 segundos para parecer mais natural
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    // Enviar mensagem
-    const result = await sock.sendMessage(jid, { text: message });
-    
-    // Parar de "digitar"
-    await sock.sendPresenceUpdate('paused', jid);
-    
-    res.json({ 
-      success: true, 
-      message: 'Mensagem enviada com sucesso',
-      messageId: result.key.id
-    });
+    if (success) {
+      res.json({ 
+        success: true, 
+        message: 'Mensagem enviada com sucesso'
+      });
+    } else {
+      res.status(500).json({ 
+        success: false, 
+        message: 'Erro ao enviar mensagem' 
+      });
+    }
   } catch (error) {
     console.error('[WhatsApp] Erro ao enviar:', error.message);
     res.status(500).json({ 
@@ -290,12 +369,32 @@ app.get('/messages', (req, res) => {
   });
 });
 
+// Endpoint: Toggle auto-reply
+app.post('/toggle-auto-reply', (req, res) => {
+  autoReplyEnabled = !autoReplyEnabled;
+  res.json({
+    success: true,
+    autoReplyEnabled: autoReplyEnabled
+  });
+});
+
+// Endpoint: Definir auto-reply
+app.post('/set-auto-reply', (req, res) => {
+  const { enabled } = req.body;
+  autoReplyEnabled = enabled === true;
+  res.json({
+    success: true,
+    autoReplyEnabled: autoReplyEnabled
+  });
+});
+
 // Endpoint: Health check
 app.get('/health', (req, res) => {
   res.json({ 
     status: 'ok', 
     service: 'whatsapp-service',
     connectionStatus,
+    autoReplyEnabled,
     uptime: process.uptime()
   });
 });
