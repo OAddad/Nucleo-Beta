@@ -10265,3 +10265,4 @@
 2026-01-11T16:40:48.402072+00:00 | DB_CALL get_pedidos_by_entregador | P3 | 0.28ms | success
 2026-01-11T16:40:48.403973+00:00 | DB_CALL get_user_by_id | P3 | 0.15ms | success
 2026-01-11T16:40:48.405835+00:00 | DB_CALL delete_entregador | P3 | 1.75ms | success
+2026-01-11T16:43:54.198896+00:00 | DB_CALL get_user_by_username | P3 | 3.43ms | success
