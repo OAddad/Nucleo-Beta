@@ -382,6 +382,9 @@ function CheckoutModal({ open, onClose, cart, cartTotal, client, darkMode, onOrd
     // Salvar no localStorage
     const updatedPedidos = [newPedido, ...existingPedidos];
     localStorage.setItem("pedidos", JSON.stringify(updatedPedidos));
+    
+    // Disparar evento para atualizar outras abas/componentes
+    window.dispatchEvent(new Event('pedidosUpdated'));
 
     toast.success(`Pedido ${newPedido.codigo} realizado com sucesso! 🎉`);
     onOrderComplete(newPedido);
