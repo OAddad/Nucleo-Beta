@@ -9591,3 +9591,8 @@
 2026-01-11T15:33:36.628707+00:00 | DB_CALL get_cliente_by_id | P3 | 0.19ms | success
 2026-01-11T15:33:36.635213+00:00 | DB_CALL update_cliente | P3 | 6.41ms | success
 2026-01-11T15:33:36.637328+00:00 | DB_CALL create_audit_log | P3 | 2.0ms | success
+2026-01-11T15:33:36.803420+00:00 | DB_CALL get_user_by_id | P3 | 0.28ms | success
+2026-01-11T15:33:36.803717+00:00 | DB_CALL get_all_clientes | P3 | 0.14ms | success
+2026-01-11T15:33:36.806642+00:00 | DB_CALL get_user_by_id | P3 | 0.15ms | success
+2026-01-11T15:33:36.806814+00:00 | DB_CALL get_total_pontuacao | P3 | 0.08ms | success
+2026-01-11T15:33:36.806926+00:00 | DB_CALL count_clientes | P3 | 0.07ms | success
