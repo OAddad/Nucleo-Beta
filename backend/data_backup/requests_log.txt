@@ -15813,3 +15813,7 @@
 2026-01-11T19:08:35.361466+00:00 | DB_CALL get_all_bairros | P3 | 1.05ms | success
 2026-01-11T19:08:35.362007+00:00 | DB_CALL get_all_ruas | P3 | 0.91ms | success
 2026-01-11T19:08:35.833727+00:00 | DB_CALL get_all_bairros | P3 | 0.29ms | success
+2026-01-11T19:08:47.528658+00:00 | DB_CALL init_database | P3 | 5.29ms | success
+2026-01-11T19:08:47.529265+00:00 | DB_CALL count_ingredients | P3 | 0.3ms | success
+2026-01-11T19:08:47.529462+00:00 | DB_CALL count_products | P3 | 0.13ms | success
+2026-01-11T19:08:47.529612+00:00 | DB_CALL count_users | P3 | 0.1ms | success
