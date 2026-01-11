@@ -1,133 +1,344 @@
 import { useState, useRef, useEffect } from "react";
-import { User, Star, Settings, ShoppingBag, LogOut, Moon, Sun, X, Loader2 } from "lucide-react";
+import { User, Star, Settings, ShoppingBag, LogOut, Moon, Sun, X, Loader2, ImageOff, Award, Phone, Mail, MapPin, Calendar } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import { toast } from "sonner";
 import axios from "axios";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "../components/ui/dialog";
 
 const API = '/api';
 
-// Modal de Edição de Conta
+// Formatar telefone (XX) 9.XXXX-XXXX
+const formatTelefone = (value) => {
+  const numbers = value.replace(/\D/g, "");
+  if (numbers.length <= 2) return `(${numbers}`;
+  if (numbers.length <= 3) return `(${numbers.slice(0, 2)}) ${numbers.slice(2)}`;
+  if (numbers.length <= 7) return `(${numbers.slice(0, 2)}) ${numbers.slice(2, 3)}.${numbers.slice(3)}`;
+  if (numbers.length <= 11) return `(${numbers.slice(0, 2)}) ${numbers.slice(2, 3)}.${numbers.slice(3, 7)}-${numbers.slice(7, 11)}`;
+  return `(${numbers.slice(0, 2)}) ${numbers.slice(2, 3)}.${numbers.slice(3, 7)}-${numbers.slice(7, 11)}`;
+};
+
+// Formatar CPF XXX.XXX.XXX-XX
+const formatCPF = (value) => {
+  const numbers = value.replace(/\D/g, "");
+  if (numbers.length <= 3) return numbers;
+  if (numbers.length <= 6) return `${numbers.slice(0, 3)}.${numbers.slice(3)}`;
+  if (numbers.length <= 9) return `${numbers.slice(0, 3)}.${numbers.slice(3, 6)}.${numbers.slice(6)}`;
+  return `${numbers.slice(0, 3)}.${numbers.slice(3, 6)}.${numbers.slice(6, 9)}-${numbers.slice(9, 11)}`;
+};
+
+// Formatar Data XX/XX/XXXX
+const formatData = (value) => {
+  const numbers = value.replace(/\D/g, "");
+  if (numbers.length <= 2) return numbers;
+  if (numbers.length <= 4) return `${numbers.slice(0, 2)}/${numbers.slice(2)}`;
+  return `${numbers.slice(0, 2)}/${numbers.slice(2, 4)}/${numbers.slice(4, 8)}`;
+};
+
+// Formatar CEP XXXXX-XXX
+const formatCEP = (value) => {
+  const numbers = value.replace(/\D/g, "");
+  if (numbers.length <= 5) return numbers;
+  return `${numbers.slice(0, 5)}-${numbers.slice(5, 8)}`;
+};
+
+// Modal de Edição de Conta (Réplica do popup de Clientes)
 function EditAccountModal({ isOpen, onClose, client, onUpdate }) {
   const [loading, setLoading] = useState(false);
-  const [formData, setFormData] = useState({
-    nome: client?.nome || "",
-    telefone: client?.telefone || "",
-    email: client?.email || "",
-    endereco: client?.endereco || "",
-    bairro: client?.bairro || "",
-    cep: client?.cep || "",
-  });
+  const [nome, setNome] = useState("");
+  const [telefone, setTelefone] = useState("");
+  const [email, setEmail] = useState("");
+  const [cpf, setCpf] = useState("");
+  const [dataNascimento, setDataNascimento] = useState("");
+  const [genero, setGenero] = useState("");
+  const [fotoPreview, setFotoPreview] = useState("");
+  const [endereco, setEndereco] = useState("");
+  const [numero, setNumero] = useState("");
+  const [complemento, setComplemento] = useState("");
+  const [bairro, setBairro] = useState("");
+  const [cep, setCep] = useState("");
 
   useEffect(() => {
-    if (client) {
-      setFormData({
-        nome: client.nome || "",
-        telefone: client.telefone || "",
-        email: client.email || "",
-        endereco: client.endereco || "",
-        bairro: client.bairro || "",
-        cep: client.cep || "",
-      });
+    if (client && isOpen) {
+      setNome(client.nome || "");
+      setTelefone(client.telefone || "");
+      setEmail(client.email || "");
+      setCpf(client.cpf || "");
+      setDataNascimento(client.data_nascimento || "");
+      setGenero(client.genero || "");
+      setFotoPreview(client.foto || "");
+      setEndereco(client.endereco || "");
+      setNumero(client.numero || "");
+      setComplemento(client.complemento || "");
+      setBairro(client.bairro || "");
+      setCep(client.cep || "");
     }
-  }, [client]);
+  }, [client, isOpen]);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleFotoChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFotoPreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleSubmit = async () => {
+    if (!nome.trim()) {
+      toast.error("Informe seu nome");
+      return;
+    }
+    if (!telefone.trim()) {
+      toast.error("Informe seu telefone");
+      return;
+    }
+
     setLoading(true);
     
     try {
-      const response = await axios.put(`${API}/clientes/${client.id}`, formData);
+      const clienteData = {
+        nome,
+        telefone,
+        email,
+        cpf,
+        data_nascimento: dataNascimento,
+        genero,
+        foto: fotoPreview,
+        endereco,
+        numero,
+        complemento,
+        bairro,
+        cep,
+        // Manter pontuação original - não pode editar
+        pontuacao: client?.pontuacao || 0,
+      };
+
+      const response = await axios.put(`${API}/clientes/${client.id}`, clienteData);
       localStorage.setItem("client", JSON.stringify(response.data));
       onUpdate(response.data);
       toast.success("Conta atualizada com sucesso!");
       onClose();
     } catch (error) {
+      console.error("Erro ao atualizar conta:", error);
       toast.error("Erro ao atualizar conta");
     } finally {
       setLoading(false);
     }
   };
 
-  if (!isOpen) return null;
-
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center">
-      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative bg-zinc-900 rounded-2xl shadow-2xl w-full max-w-md mx-4 border border-zinc-700 max-h-[90vh] overflow-hidden">
-        <div className="flex items-center justify-between p-4 border-b border-zinc-800">
-          <h2 className="font-bold text-white text-lg">Minha Conta</h2>
-          <button onClick={onClose} className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-zinc-800 text-zinc-400">
-            <X className="w-5 h-5" />
-          </button>
-        </div>
-        
-        <form onSubmit={handleSubmit} className="p-4 space-y-4 overflow-y-auto max-h-[calc(90vh-120px)]">
-          <div>
-            <Label className="text-zinc-300">Nome</Label>
-            <Input
-              value={formData.nome}
-              onChange={(e) => setFormData({...formData, nome: e.target.value})}
-              className="mt-1 bg-zinc-800 border-zinc-700 text-white"
-              required
-            />
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="sm:max-w-3xl max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle>Minha Conta</DialogTitle>
+        </DialogHeader>
+        <div className="space-y-6 mt-4">
+          {/* Primeira Linha: Foto, Nome e Gênero */}
+          <div className="flex gap-6">
+            {/* Foto do Cliente */}
+            <div className="flex-shrink-0">
+              <Label className="text-sm text-muted-foreground">Minha Foto</Label>
+              <div className="mt-2">
+                <label className="cursor-pointer">
+                  <div className="w-28 h-28 rounded-xl border-2 border-dashed overflow-hidden bg-muted flex flex-col items-center justify-center hover:border-primary/50 transition-colors">
+                    {fotoPreview ? (
+                      <img
+                        src={fotoPreview}
+                        alt="Preview"
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <>
+                        <ImageOff className="w-8 h-8 text-muted-foreground mb-1" />
+                        <span className="text-xs text-muted-foreground text-center px-2">Clique para adicionar</span>
+                      </>
+                    )}
+                  </div>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFotoChange}
+                    className="hidden"
+                  />
+                </label>
+                <p className="text-xs text-muted-foreground mt-1 text-center">1080x1080px</p>
+              </div>
+            </div>
+
+            {/* Nome e Email */}
+            <div className="flex-1 space-y-4">
+              <div className="flex gap-4">
+                <div className="flex-1">
+                  <Label>Nome *</Label>
+                  <Input
+                    value={nome}
+                    onChange={(e) => setNome(e.target.value)}
+                    placeholder="Seu nome completo"
+                    className="mt-1"
+                  />
+                </div>
+                
+                {/* Gênero */}
+                <div className="w-48">
+                  <Label>Gênero</Label>
+                  <div className="mt-1 flex rounded-lg border overflow-hidden h-10">
+                    <button
+                      type="button"
+                      onClick={() => setGenero("masculino")}
+                      className={`flex-1 text-sm font-medium transition-colors ${
+                        genero === "masculino" 
+                          ? "bg-primary text-primary-foreground" 
+                          : "bg-background hover:bg-muted"
+                      }`}
+                    >
+                      Masculino
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setGenero("feminino")}
+                      className={`flex-1 text-sm font-medium transition-colors border-l ${
+                        genero === "feminino" 
+                          ? "bg-primary text-primary-foreground" 
+                          : "bg-background hover:bg-muted"
+                      }`}
+                    >
+                      Feminino
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <Label>Email</Label>
+                <Input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="seu.email@exemplo.com"
+                  className="mt-1"
+                />
+              </div>
+            </div>
           </div>
-          <div>
-            <Label className="text-zinc-300">Telefone</Label>
-            <Input
-              value={formData.telefone}
-              onChange={(e) => setFormData({...formData, telefone: e.target.value})}
-              className="mt-1 bg-zinc-800 border-zinc-700 text-white"
-            />
-          </div>
-          <div>
-            <Label className="text-zinc-300">Email</Label>
-            <Input
-              type="email"
-              value={formData.email}
-              onChange={(e) => setFormData({...formData, email: e.target.value})}
-              className="mt-1 bg-zinc-800 border-zinc-700 text-white"
-            />
-          </div>
-          <div>
-            <Label className="text-zinc-300">Endereço</Label>
-            <Input
-              value={formData.endereco}
-              onChange={(e) => setFormData({...formData, endereco: e.target.value})}
-              className="mt-1 bg-zinc-800 border-zinc-700 text-white"
-            />
-          </div>
-          <div className="grid grid-cols-2 gap-4">
+
+          {/* Segunda Linha: Telefone, CPF, Data de Nascimento e Pontuação (somente visualização) */}
+          <div className="grid grid-cols-4 gap-4">
             <div>
-              <Label className="text-zinc-300">Bairro</Label>
+              <Label>Telefone *</Label>
               <Input
-                value={formData.bairro}
-                onChange={(e) => setFormData({...formData, bairro: e.target.value})}
-                className="mt-1 bg-zinc-800 border-zinc-700 text-white"
+                value={telefone}
+                onChange={(e) => setTelefone(formatTelefone(e.target.value))}
+                placeholder="(XX) 9.XXXX-XXXX"
+                className="mt-1"
+                maxLength={16}
               />
             </div>
             <div>
-              <Label className="text-zinc-300">CEP</Label>
+              <Label>CPF</Label>
               <Input
-                value={formData.cep}
-                onChange={(e) => setFormData({...formData, cep: e.target.value})}
-                className="mt-1 bg-zinc-800 border-zinc-700 text-white"
+                value={cpf}
+                onChange={(e) => setCpf(formatCPF(e.target.value))}
+                placeholder="XXX.XXX.XXX-XX"
+                className="mt-1"
+                maxLength={14}
               />
             </div>
+            <div>
+              <Label>Data de Nascimento</Label>
+              <Input
+                value={dataNascimento}
+                onChange={(e) => setDataNascimento(formatData(e.target.value))}
+                placeholder="DD/MM/AAAA"
+                className="mt-1"
+                maxLength={10}
+              />
+            </div>
+            <div>
+              <Label className="flex items-center gap-1">
+                <Award className="w-3 h-3 text-purple-500" />
+                Minha Pontuação
+              </Label>
+              <div className="mt-1 h-10 flex items-center px-3 bg-muted rounded-md border">
+                <span className="font-semibold text-purple-600">{(client?.pontuacao || 0).toLocaleString('pt-BR')} pontos</span>
+              </div>
+            </div>
           </div>
-          
-          <div className="pt-4 flex gap-2">
-            <Button type="button" variant="outline" onClick={onClose} className="flex-1 border-zinc-700 text-zinc-300 hover:bg-zinc-800">
+
+          {/* Terceira Linha: Endereços */}
+          <div className="border-t pt-4">
+            <Label className="text-base font-semibold">Endereço de Entrega</Label>
+            <div className="grid grid-cols-12 gap-3 mt-3">
+              <div className="col-span-6">
+                <Label className="text-sm">Rua/Logradouro</Label>
+                <Input
+                  value={endereco}
+                  onChange={(e) => setEndereco(e.target.value)}
+                  placeholder="Ex: Rua das Flores"
+                  className="mt-1"
+                />
+              </div>
+              <div className="col-span-2">
+                <Label className="text-sm">Número</Label>
+                <Input
+                  value={numero}
+                  onChange={(e) => setNumero(e.target.value)}
+                  placeholder="123"
+                  className="mt-1"
+                />
+              </div>
+              <div className="col-span-4">
+                <Label className="text-sm">Complemento</Label>
+                <Input
+                  value={complemento}
+                  onChange={(e) => setComplemento(e.target.value)}
+                  placeholder="Apt 101, Bloco A..."
+                  className="mt-1"
+                />
+              </div>
+              <div className="col-span-5">
+                <Label className="text-sm">Bairro</Label>
+                <Input
+                  value={bairro}
+                  onChange={(e) => setBairro(e.target.value)}
+                  placeholder="Ex: Centro"
+                  className="mt-1"
+                />
+              </div>
+              <div className="col-span-3">
+                <Label className="text-sm">CEP</Label>
+                <Input
+                  value={cep}
+                  onChange={(e) => setCep(formatCEP(e.target.value))}
+                  placeholder="XXXXX-XXX"
+                  className="mt-1"
+                  maxLength={9}
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Botão Salvar */}
+          <div className="flex justify-end gap-3 pt-2">
+            <Button variant="outline" onClick={onClose}>
               Cancelar
             </Button>
-            <Button type="submit" disabled={loading} className="flex-1 bg-orange-500 hover:bg-orange-600">
-              {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Salvar"}
+            <Button onClick={handleSubmit} disabled={loading}>
+              {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
+              Salvar Alterações
             </Button>
           </div>
-        </form>
-      </div>
-    </div>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 }
 
@@ -140,13 +351,13 @@ function PontuacaoModal({ isOpen, onClose, client }) {
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center">
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative bg-zinc-900 rounded-2xl shadow-2xl w-full max-w-sm mx-4 border border-zinc-700">
-        <div className="flex items-center justify-between p-4 border-b border-zinc-800">
-          <h2 className="font-bold text-white text-lg flex items-center gap-2">
+      <div className="relative bg-card rounded-2xl shadow-2xl w-full max-w-sm mx-4 border">
+        <div className="flex items-center justify-between p-4 border-b">
+          <h2 className="font-bold text-lg flex items-center gap-2">
             <Star className="w-5 h-5 text-yellow-500" />
             Minha Pontuação
           </h2>
-          <button onClick={onClose} className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-zinc-800 text-zinc-400">
+          <button onClick={onClose} className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-muted">
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -155,13 +366,13 @@ function PontuacaoModal({ isOpen, onClose, client }) {
           <div className="w-24 h-24 bg-gradient-to-br from-yellow-500 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
             <Star className="w-12 h-12 text-white" />
           </div>
-          <p className="text-zinc-400 mb-2">Você tem</p>
-          <p className="text-5xl font-bold text-orange-500 mb-2">{pontos}</p>
-          <p className="text-zinc-400">pontos acumulados</p>
+          <p className="text-muted-foreground mb-2">Você tem</p>
+          <p className="text-5xl font-bold text-primary mb-2">{pontos.toLocaleString('pt-BR')}</p>
+          <p className="text-muted-foreground">pontos acumulados</p>
           
-          <div className="mt-6 p-4 bg-zinc-800 rounded-lg text-left">
-            <p className="text-sm text-zinc-400">
-              <strong className="text-white">Como ganhar pontos?</strong><br />
+          <div className="mt-6 p-4 bg-muted rounded-lg text-left">
+            <p className="text-sm text-muted-foreground">
+              <strong className="text-foreground">Como ganhar pontos?</strong><br />
               A cada compra você acumula pontos que podem ser trocados por descontos e benefícios exclusivos.
             </p>
           </div>
@@ -182,13 +393,18 @@ function MeusPedidosModal({ isOpen, onClose, client }) {
     if (isOpen && client) {
       fetchPedidos();
     }
-  }, [isOpen, client, dataInicio, dataFim]);
+  }, [isOpen, client]);
+
+  useEffect(() => {
+    if (isOpen && client) {
+      fetchPedidos();
+    }
+  }, [dataInicio, dataFim]);
 
   const fetchPedidos = async () => {
     setLoading(true);
     try {
-      // Buscar pedidos do cliente (filtrado pelo telefone ou ID)
-      let url = `${API}/orders?cliente_telefone=${encodeURIComponent(client.telefone || "")}`;
+      let url = `${API}/orders?cliente_telefone=${encodeURIComponent(client?.telefone || "")}`;
       if (dataInicio) url += `&data_inicio=${dataInicio}`;
       if (dataFim) url += `&data_fim=${dataFim}`;
       
@@ -207,35 +423,35 @@ function MeusPedidosModal({ isOpen, onClose, client }) {
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center">
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative bg-zinc-900 rounded-2xl shadow-2xl w-full max-w-2xl mx-4 border border-zinc-700 max-h-[90vh] overflow-hidden">
-        <div className="flex items-center justify-between p-4 border-b border-zinc-800">
-          <h2 className="font-bold text-white text-lg flex items-center gap-2">
-            <ShoppingBag className="w-5 h-5 text-orange-500" />
+      <div className="relative bg-card rounded-2xl shadow-2xl w-full max-w-2xl mx-4 border max-h-[90vh] overflow-hidden">
+        <div className="flex items-center justify-between p-4 border-b">
+          <h2 className="font-bold text-lg flex items-center gap-2">
+            <ShoppingBag className="w-5 h-5 text-primary" />
             Meus Pedidos
           </h2>
-          <button onClick={onClose} className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-zinc-800 text-zinc-400">
+          <button onClick={onClose} className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-muted">
             <X className="w-5 h-5" />
           </button>
         </div>
         
         {/* Filtros de Data */}
-        <div className="p-4 border-b border-zinc-800 flex gap-4">
+        <div className="p-4 border-b flex gap-4">
           <div className="flex-1">
-            <Label className="text-zinc-400 text-xs">Data Início</Label>
+            <Label className="text-xs">Data Início</Label>
             <Input
               type="date"
               value={dataInicio}
               onChange={(e) => setDataInicio(e.target.value)}
-              className="mt-1 bg-zinc-800 border-zinc-700 text-white text-sm"
+              className="mt-1 text-sm"
             />
           </div>
           <div className="flex-1">
-            <Label className="text-zinc-400 text-xs">Data Fim</Label>
+            <Label className="text-xs">Data Fim</Label>
             <Input
               type="date"
               value={dataFim}
               onChange={(e) => setDataFim(e.target.value)}
-              className="mt-1 bg-zinc-800 border-zinc-700 text-white text-sm"
+              className="mt-1 text-sm"
             />
           </div>
         </div>
@@ -244,42 +460,42 @@ function MeusPedidosModal({ isOpen, onClose, client }) {
         <div className="p-4 overflow-y-auto max-h-[calc(90vh-200px)]">
           {loading ? (
             <div className="text-center py-8">
-              <Loader2 className="w-8 h-8 animate-spin mx-auto text-orange-500" />
-              <p className="text-zinc-400 mt-2">Carregando pedidos...</p>
+              <Loader2 className="w-8 h-8 animate-spin mx-auto text-primary" />
+              <p className="text-muted-foreground mt-2">Carregando pedidos...</p>
             </div>
           ) : pedidos.length === 0 ? (
             <div className="text-center py-8">
-              <ShoppingBag className="w-16 h-16 text-zinc-700 mx-auto mb-4" />
-              <p className="text-zinc-400">Nenhum pedido encontrado</p>
-              <p className="text-zinc-500 text-sm">Faça seu primeiro pedido!</p>
+              <ShoppingBag className="w-16 h-16 text-muted-foreground/30 mx-auto mb-4" />
+              <p className="text-muted-foreground">Nenhum pedido encontrado</p>
+              <p className="text-muted-foreground text-sm">Faça seu primeiro pedido!</p>
             </div>
           ) : (
             <div className="space-y-3">
               {pedidos.map((pedido) => (
-                <div key={pedido.id} className="bg-zinc-800 rounded-lg p-4">
+                <div key={pedido.id} className="bg-muted rounded-lg p-4">
                   <div className="flex justify-between items-start mb-2">
                     <div>
-                      <p className="text-white font-medium">Pedido #{pedido.numero || pedido.id?.slice(-6)}</p>
-                      <p className="text-zinc-400 text-sm">
+                      <p className="font-medium">Pedido #{pedido.numero || pedido.id?.slice(-6)}</p>
+                      <p className="text-muted-foreground text-sm">
                         {new Date(pedido.created_at).toLocaleDateString('pt-BR')} às {new Date(pedido.created_at).toLocaleTimeString('pt-BR', {hour: '2-digit', minute: '2-digit'})}
                       </p>
                     </div>
                     <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                      pedido.status === 'entregue' ? 'bg-green-500/20 text-green-400' :
-                      pedido.status === 'cancelado' ? 'bg-red-500/20 text-red-400' :
-                      'bg-yellow-500/20 text-yellow-400'
+                      pedido.status === 'entregue' ? 'bg-green-500/20 text-green-600' :
+                      pedido.status === 'cancelado' ? 'bg-red-500/20 text-red-600' :
+                      'bg-yellow-500/20 text-yellow-600'
                     }`}>
                       {pedido.status || 'Em andamento'}
                     </span>
                   </div>
-                  <div className="text-sm text-zinc-400 mb-2">
+                  <div className="text-sm text-muted-foreground mb-2">
                     {pedido.items?.map((item, i) => (
                       <span key={i}>{item.quantity}x {item.name}{i < pedido.items.length - 1 ? ', ' : ''}</span>
                     ))}
                   </div>
-                  <div className="flex justify-between items-center pt-2 border-t border-zinc-700">
-                    <span className="text-zinc-400 text-sm">Total</span>
-                    <span className="text-orange-500 font-bold">
+                  <div className="flex justify-between items-center pt-2 border-t">
+                    <span className="text-muted-foreground text-sm">Total</span>
+                    <span className="text-primary font-bold">
                       R$ {(pedido.total || 0).toFixed(2).replace('.', ',')}
                     </span>
                   </div>
@@ -294,12 +510,11 @@ function MeusPedidosModal({ isOpen, onClose, client }) {
 }
 
 // Componente Principal - Menu de Perfil
-export default function ProfileMenu({ client, onLogout, onClientUpdate }) {
+export default function ProfileMenu({ client, onLogout, onClientUpdate, darkMode, onToggleTheme }) {
   const [isOpen, setIsOpen] = useState(false);
   const [showPontuacao, setShowPontuacao] = useState(false);
   const [showEditAccount, setShowEditAccount] = useState(false);
   const [showPedidos, setShowPedidos] = useState(false);
-  const [darkMode, setDarkMode] = useState(true); // Cardápio sempre inicia escuro
   const menuRef = useRef(null);
 
   // Fechar menu ao clicar fora
@@ -312,12 +527,6 @@ export default function ProfileMenu({ client, onLogout, onClientUpdate }) {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
-
-  const toggleTheme = () => {
-    setDarkMode(!darkMode);
-    // Aqui poderia implementar a troca de tema real
-    toast.info(darkMode ? "Modo claro ativado" : "Modo escuro ativado");
-  };
 
   const handleLogout = () => {
     localStorage.removeItem("client");
@@ -378,7 +587,7 @@ export default function ProfileMenu({ client, onLogout, onClientUpdate }) {
               <Star className="w-5 h-5 text-yellow-500" />
               <div>
                 <span className="text-white">Pontuação</span>
-                <p className="text-xs text-zinc-400">{client?.pontuacao || 0} pontos</p>
+                <p className="text-xs text-zinc-400">{(client?.pontuacao || 0).toLocaleString('pt-BR')} pontos</p>
               </div>
             </button>
 
@@ -407,7 +616,7 @@ export default function ProfileMenu({ client, onLogout, onClientUpdate }) {
                 <span className="text-white text-sm">Modo {darkMode ? 'Escuro' : 'Claro'}</span>
               </div>
               <button
-                onClick={toggleTheme}
+                onClick={onToggleTheme}
                 className={`w-12 h-6 rounded-full transition-colors relative ${darkMode ? 'bg-orange-500' : 'bg-zinc-600'}`}
               >
                 <div className={`w-5 h-5 bg-white rounded-full absolute top-0.5 transition-transform ${darkMode ? 'translate-x-6' : 'translate-x-0.5'}`} />
