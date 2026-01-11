@@ -1483,6 +1483,73 @@ def update_cliente_pedido_stats(cliente_id: str, order_value: float) -> Optional
         return get_cliente_by_id(cliente_id)
 
 
+# ==================== BUSINESS HOURS ====================
+def get_all_business_hours() -> List[Dict]:
+    """Retorna todos os horários de funcionamento ordenados por dia da semana"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM business_hours ORDER BY day_of_week")
+        return [dict(row) for row in cursor.fetchall()]
+
+
+def get_business_hours_by_day(day_of_week: int) -> Optional[Dict]:
+    """Retorna horário de funcionamento de um dia específico (0=Segunda, 6=Domingo)"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM business_hours WHERE day_of_week = ?", (day_of_week,))
+        row = cursor.fetchone()
+        return dict(row) if row else None
+
+
+def update_business_hours(hours_list: List[Dict]) -> List[Dict]:
+    """Atualiza todos os horários de funcionamento"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        now = datetime.now(timezone.utc).isoformat()
+        
+        for hour in hours_list:
+            cursor.execute('''
+                UPDATE business_hours 
+                SET is_open = ?, opening_time = ?, closing_time = ?, updated_at = ?
+                WHERE day_of_week = ?
+            ''', (
+                1 if hour.get('is_open', True) else 0,
+                hour.get('opening_time', '08:00'),
+                hour.get('closing_time', '22:00'),
+                now,
+                hour.get('day_of_week')
+            ))
+        
+        conn.commit()
+        return get_all_business_hours()
+
+
+def update_single_business_hour(day_of_week: int, data: Dict) -> Optional[Dict]:
+    """Atualiza horário de funcionamento de um único dia"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        now = datetime.now(timezone.utc).isoformat()
+        
+        cursor.execute('''
+            UPDATE business_hours 
+            SET is_open = ?, opening_time = ?, closing_time = ?, updated_at = ?
+            WHERE day_of_week = ?
+        ''', (
+            1 if data.get('is_open', True) else 0,
+            data.get('opening_time', '08:00'),
+            data.get('closing_time', '22:00'),
+            now,
+            day_of_week
+        ))
+        
+        conn.commit()
+        return get_business_hours_by_day(day_of_week)
+
+
 # ==================== UTILITY ====================
 def get_database_info() -> Dict:
     """Retorna informações do banco de dados"""

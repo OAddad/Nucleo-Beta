@@ -8935,3 +8935,11 @@
 2026-01-11T14:00:24.526176+00:00 | DB_CALL count_ingredients | P3 | 0.26ms | success
 2026-01-11T14:00:24.526487+00:00 | DB_CALL count_products | P3 | 0.22ms | success
 2026-01-11T14:00:24.526678+00:00 | DB_CALL count_users | P3 | 0.12ms | success
+2026-01-11T14:01:00.549958+00:00 | DB_CALL init_database | P3 | 2.82ms | success
+2026-01-11T14:01:00.550501+00:00 | DB_CALL count_ingredients | P3 | 0.25ms | success
+2026-01-11T14:01:00.550683+00:00 | DB_CALL count_products | P3 | 0.12ms | success
+2026-01-11T14:01:00.550870+00:00 | DB_CALL count_users | P3 | 0.14ms | success
+2026-01-11T14:01:05.820622+00:00 | DB_CALL get_all_products | P3 | 3.91ms | success
+2026-01-11T14:01:05.832489+00:00 | DB_CALL get_all_categories | P3 | 13.96ms | success
+2026-01-11T14:01:06.357470+00:00 | DB_CALL get_all_categories | P3 | 0.29ms | success
+2026-01-11T14:01:06.358620+00:00 | DB_CALL get_all_products | P3 | 0.27ms | success
