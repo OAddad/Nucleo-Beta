@@ -9787,3 +9787,11 @@
 2026-01-11T15:57:01.182478+00:00 | DB_CALL count_ingredients | P3 | 0.27ms | success
 2026-01-11T15:57:01.182776+00:00 | DB_CALL count_products | P3 | 0.21ms | success
 2026-01-11T15:57:01.182960+00:00 | DB_CALL count_users | P3 | 0.11ms | success
+2026-01-11T15:57:14.556769+00:00 | DB_CALL init_database | P3 | 4.02ms | success
+2026-01-11T15:57:14.557561+00:00 | DB_CALL count_ingredients | P3 | 0.29ms | success
+2026-01-11T15:57:14.557865+00:00 | DB_CALL count_products | P3 | 0.23ms | success
+2026-01-11T15:57:14.558048+00:00 | DB_CALL count_users | P3 | 0.13ms | success
+2026-01-11T15:57:21.621781+00:00 | DB_CALL init_database | P3 | 2.68ms | success
+2026-01-11T15:57:21.622318+00:00 | DB_CALL count_ingredients | P3 | 0.25ms | success
+2026-01-11T15:57:21.622501+00:00 | DB_CALL count_products | P3 | 0.13ms | success
+2026-01-11T15:57:21.622640+00:00 | DB_CALL count_users | P3 | 0.09ms | success
