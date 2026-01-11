@@ -1349,7 +1349,7 @@ function PalavrasTab({ toast }) {
       </div>
 
       {/* Cards de resumo */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
         <div className="bg-card border rounded-xl p-4">
           <div className="flex items-center gap-3">
             <div className="p-2 rounded-lg bg-orange-500/10">
@@ -1364,12 +1364,24 @@ function PalavrasTab({ toast }) {
         
         <div className="bg-card border rounded-xl p-4">
           <div className="flex items-center gap-3">
+            <div className="p-2 rounded-lg bg-cyan-500/10">
+              <MessageCircle className="w-5 h-5 text-cyan-500" />
+            </div>
+            <div>
+              <p className="text-2xl font-bold">{summary?.total_unique_phrases || 0}</p>
+              <p className="text-sm text-muted-foreground">Frases únicas</p>
+            </div>
+          </div>
+        </div>
+        
+        <div className="bg-card border rounded-xl p-4">
+          <div className="flex items-center gap-3">
             <div className="p-2 rounded-lg bg-blue-500/10">
               <TrendingUp className="w-5 h-5 text-blue-500" />
             </div>
             <div>
               <p className="text-2xl font-bold">{summary?.total_word_occurrences || 0}</p>
-              <p className="text-sm text-muted-foreground">Total de ocorrências</p>
+              <p className="text-sm text-muted-foreground">Ocorrências</p>
             </div>
           </div>
         </div>
@@ -1381,7 +1393,7 @@ function PalavrasTab({ toast }) {
             </div>
             <div>
               <p className="text-2xl font-bold">{summary?.total_messages || 0}</p>
-              <p className="text-sm text-muted-foreground">Mensagens recebidas</p>
+              <p className="text-sm text-muted-foreground">Mensagens</p>
             </div>
           </div>
         </div>
@@ -1393,7 +1405,7 @@ function PalavrasTab({ toast }) {
             </div>
             <div>
               <p className="text-2xl font-bold">{summary?.unique_senders || 0}</p>
-              <p className="text-sm text-muted-foreground">Clientes únicos</p>
+              <p className="text-sm text-muted-foreground">Clientes</p>
             </div>
           </div>
         </div>
@@ -1412,9 +1424,29 @@ function PalavrasTab({ toast }) {
           Visão Geral
         </button>
         <button
-          onClick={() => setActiveView("words")}
+          onClick={() => { setActiveView("words"); setTextType("word"); }}
           className={`px-4 py-2 rounded-lg font-medium text-sm transition-colors ${
             activeView === "words" 
+              ? "bg-orange-500 text-white" 
+              : "bg-muted hover:bg-muted/80"
+          }`}
+        >
+          Palavras
+        </button>
+        <button
+          onClick={() => { setActiveView("phrases"); setTextType("bigram"); }}
+          className={`px-4 py-2 rounded-lg font-medium text-sm transition-colors ${
+            activeView === "phrases" 
+              ? "bg-orange-500 text-white" 
+              : "bg-muted hover:bg-muted/80"
+          }`}
+        >
+          Frases
+        </button>
+        <button
+          onClick={() => setActiveView("messages")}
+          className={`px-4 py-2 rounded-lg font-medium text-sm transition-colors ${
+            activeView === "messages" 
               ? "bg-orange-500 text-white" 
               : "bg-muted hover:bg-muted/80"
           }`}
