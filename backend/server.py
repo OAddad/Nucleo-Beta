@@ -3340,6 +3340,171 @@ async def check_must_change_password(current_user: User = Depends(get_current_us
     return {"must_change_password": must_change}
 
 
+# ==================== WHATSAPP INTEGRATION ====================
+WHATSAPP_SERVICE_URL = "http://localhost:3002"
+
+@api_router.get("/whatsapp/status")
+async def whatsapp_status():
+    """Retorna status da conexão WhatsApp"""
+    try:
+        async with httpx.AsyncClient(timeout=10.0) as client:
+            response = await client.get(f"{WHATSAPP_SERVICE_URL}/status")
+            return response.json()
+    except httpx.ConnectError:
+        return {"status": "service_offline", "connected": False, "error": "Serviço WhatsApp não está rodando"}
+    except Exception as e:
+        return {"status": "error", "connected": False, "error": str(e)}
+
+@api_router.get("/whatsapp/qr")
+async def whatsapp_qr():
+    """Retorna QR Code para conexão WhatsApp"""
+    try:
+        async with httpx.AsyncClient(timeout=10.0) as client:
+            response = await client.get(f"{WHATSAPP_SERVICE_URL}/qr")
+            return response.json()
+    except httpx.ConnectError:
+        return {"success": False, "message": "Serviço WhatsApp não está rodando", "status": "service_offline"}
+    except Exception as e:
+        return {"success": False, "message": str(e)}
+
+class WhatsAppSendMessage(BaseModel):
+    phone: str
+    message: str
+
+@api_router.post("/whatsapp/send")
+async def whatsapp_send(data: WhatsAppSendMessage, current_user: User = Depends(get_current_user)):
+    """Envia mensagem via WhatsApp"""
+    try:
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            response = await client.post(
+                f"{WHATSAPP_SERVICE_URL}/send",
+                json={"phone": data.phone, "message": data.message}
+            )
+            return response.json()
+    except httpx.ConnectError:
+        return {"success": False, "message": "Serviço WhatsApp não está rodando"}
+    except Exception as e:
+        return {"success": False, "message": str(e)}
+
+@api_router.post("/whatsapp/disconnect")
+async def whatsapp_disconnect(current_user: User = Depends(get_current_user)):
+    """Desconecta do WhatsApp"""
+    try:
+        async with httpx.AsyncClient(timeout=10.0) as client:
+            response = await client.post(f"{WHATSAPP_SERVICE_URL}/disconnect")
+            return response.json()
+    except httpx.ConnectError:
+        return {"success": False, "message": "Serviço WhatsApp não está rodando"}
+    except Exception as e:
+        return {"success": False, "message": str(e)}
+
+@api_router.get("/whatsapp/messages")
+async def whatsapp_messages(limit: int = 20, current_user: User = Depends(get_current_user)):
+    """Retorna mensagens recebidas"""
+    try:
+        async with httpx.AsyncClient(timeout=10.0) as client:
+            response = await client.get(f"{WHATSAPP_SERVICE_URL}/messages", params={"limit": limit})
+            return response.json()
+    except httpx.ConnectError:
+        return {"success": False, "messages": [], "error": "Serviço WhatsApp não está rodando"}
+    except Exception as e:
+        return {"success": False, "messages": [], "error": str(e)}
+
+
+# ==================== DECISION TREE (ÁRVORE DE DECISÃO) ====================
+
+class DecisionNodeCreate(BaseModel):
+    trigger: str  # Palavra/frase que dispara este nó (ex: "oi", "cardápio", "horário")
+    response: str  # Resposta do bot
+    parent_id: Optional[str] = None  # ID do nó pai (para sub-opções)
+    order: int = 0  # Ordem de exibição
+    is_active: bool = True
+
+class DecisionNodeUpdate(BaseModel):
+    trigger: Optional[str] = None
+    response: Optional[str] = None
+    parent_id: Optional[str] = None
+    order: Optional[int] = None
+    is_active: Optional[bool] = None
+
+class DecisionNode(BaseModel):
+    id: str
+    trigger: str
+    response: str
+    parent_id: Optional[str] = None
+    order: int = 0
+    is_active: bool = True
+    created_at: str
+    updated_at: str
+
+@api_router.get("/decision-tree")
+async def get_decision_tree(current_user: User = Depends(get_current_user)):
+    """Retorna todos os nós da árvore de decisão"""
+    nodes = await db_call(sqlite_db.get_all_decision_nodes)
+    return {"success": True, "nodes": nodes}
+
+@api_router.get("/decision-tree/{node_id}")
+async def get_decision_node(node_id: str, current_user: User = Depends(get_current_user)):
+    """Retorna um nó específico"""
+    node = await db_call(sqlite_db.get_decision_node, node_id)
+    if not node:
+        raise HTTPException(status_code=404, detail="Nó não encontrado")
+    return {"success": True, "node": node}
+
+@api_router.post("/decision-tree")
+async def create_decision_node(data: DecisionNodeCreate, current_user: User = Depends(get_current_user)):
+    """Cria um novo nó na árvore de decisão"""
+    if current_user.role not in ["proprietario", "administrador"]:
+        raise HTTPException(status_code=403, detail="Sem permissão")
+    
+    node_data = {
+        "id": str(uuid.uuid4()),
+        "trigger": data.trigger,
+        "response": data.response,
+        "parent_id": data.parent_id,
+        "order": data.order,
+        "is_active": data.is_active,
+        "created_at": datetime.now(timezone.utc).isoformat(),
+        "updated_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db_call(sqlite_db.create_decision_node, node_data)
+    return {"success": True, "node": node_data}
+
+@api_router.put("/decision-tree/{node_id}")
+async def update_decision_node(node_id: str, data: DecisionNodeUpdate, current_user: User = Depends(get_current_user)):
+    """Atualiza um nó existente"""
+    if current_user.role not in ["proprietario", "administrador"]:
+        raise HTTPException(status_code=403, detail="Sem permissão")
+    
+    node = await db_call(sqlite_db.get_decision_node, node_id)
+    if not node:
+        raise HTTPException(status_code=404, detail="Nó não encontrado")
+    
+    update_data = {k: v for k, v in data.model_dump().items() if v is not None}
+    update_data["updated_at"] = datetime.now(timezone.utc).isoformat()
+    
+    await db_call(sqlite_db.update_decision_node, node_id, update_data)
+    
+    updated_node = await db_call(sqlite_db.get_decision_node, node_id)
+    return {"success": True, "node": updated_node}
+
+@api_router.delete("/decision-tree/{node_id}")
+async def delete_decision_node(node_id: str, current_user: User = Depends(get_current_user)):
+    """Deleta um nó da árvore"""
+    if current_user.role not in ["proprietario", "administrador"]:
+        raise HTTPException(status_code=403, detail="Sem permissão")
+    
+    node = await db_call(sqlite_db.get_decision_node, node_id)
+    if not node:
+        raise HTTPException(status_code=404, detail="Nó não encontrado")
+    
+    # Deletar nós filhos também
+    await db_call(sqlite_db.delete_decision_node_and_children, node_id)
+    
+    return {"success": True, "message": "Nó deletado com sucesso"}
+
+
 # Include router APÓS definir todos os endpoints
 app.include_router(api_router)
 
