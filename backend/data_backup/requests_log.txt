@@ -24149,3 +24149,6 @@
 2026-01-12T23:54:14.503289+00:00 | DB_CALL get_all_pedidos | P3 | 0.98ms | success
 2026-01-12T23:54:14.508172+00:00 | DB_CALL get_all_entregadores | P3 | 2.85ms | success
 2026-01-12T23:54:14.508682+00:00 | DB_CALL get_all_settings | P3 | 0.78ms | success
+2026-01-12T23:54:19.756859+00:00 | DB_CALL get_all_pedidos | P3 | 1.38ms | success
+2026-01-12T23:54:19.760259+00:00 | DB_CALL get_all_entregadores | P3 | 0.25ms | success
+2026-01-12T23:54:20.530712+00:00 | DB_CALL get_all_settings | P3 | 1.21ms | success
