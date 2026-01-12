@@ -18717,3 +18717,9 @@
 2026-01-12T16:52:20.266082+00:00 | DB_CALL get_user_by_id | P3 | 19.96ms | success
 2026-01-12T16:52:29.275379+00:00 | DB_CALL get_user_by_id | P3 | 0.44ms | success
 2026-01-12T16:52:39.274757+00:00 | DB_CALL get_user_by_id | P3 | 19.69ms | success
+2026-01-12T16:52:49.285456+00:00 | DB_CALL get_user_by_id | P3 | 19.5ms | success
+2026-01-12T16:53:00.270316+00:00 | DB_CALL get_user_by_id | P3 | 19.47ms | success
+2026-01-12T16:53:09.166425+00:00 | DB_CALL get_user_by_id | P3 | 0.26ms | success
+2026-01-12T16:53:09.166734+00:00 | DB_CALL get_word_analytics_summary | P3 | 0.16ms | error | ERROR: no such column: type
+2026-01-12T16:53:10.437799+00:00 | DB_CALL get_user_by_id | P3 | 0.3ms | success
+2026-01-12T16:53:12.128688+00:00 | DB_CALL get_user_by_id | P3 | 0.24ms | success
