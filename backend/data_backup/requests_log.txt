@@ -22584,3 +22584,11 @@
 2026-01-12T23:11:35.964130+00:00 | DB_CALL get_all_entregadores | P3 | 1.06ms | success
 2026-01-12T23:11:35.964753+00:00 | DB_CALL get_all_settings | P3 | 2.08ms | success
 2026-01-12T23:11:35.965746+00:00 | DB_CALL get_all_pedidos | P3 | 2.11ms | success
+2026-01-12T23:11:40.426789+00:00 | DB_CALL get_all_pedidos | P3 | 2.48ms | success
+2026-01-12T23:11:40.428405+00:00 | DB_CALL get_all_entregadores | P3 | 3.69ms | success
+2026-01-12T23:11:40.428695+00:00 | DB_CALL get_pedido_by_id | P3 | 3.33ms | success
+2026-01-12T23:11:40.429000+00:00 | DB_CALL get_all_settings | P3 | 3.39ms | success
+2026-01-12T23:11:45.055701+00:00 | DB_CALL get_pedido_by_id | P3 | 0.3ms | success
+2026-01-12T23:11:45.418726+00:00 | DB_CALL get_all_pedidos | P3 | 0.99ms | success
+2026-01-12T23:11:45.420599+00:00 | DB_CALL get_all_entregadores | P3 | 0.16ms | success
+2026-01-12T23:11:45.421698+00:00 | DB_CALL get_all_settings | P3 | 0.14ms | success
