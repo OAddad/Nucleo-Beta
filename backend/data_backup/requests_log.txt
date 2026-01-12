@@ -19231,3 +19231,23 @@
 2026-01-12T20:05:11.546431+00:00 | DB_CALL count_users | P3 | 0.1ms | success
 2026-01-12T20:05:12.912426+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.34ms | success
 2026-01-12T20:05:19.145595+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.26ms | success
+2026-01-12T20:05:33.362633+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.24ms | success
+2026-01-12T20:05:33.547586+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.24ms | success
+2026-01-12T20:06:12.709879+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.21ms | success
+2026-01-12T20:06:12.901394+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.25ms | success
+2026-01-12T20:06:13.371088+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.23ms | success
+2026-01-12T20:06:13.870156+00:00 | DB_CALL get_user_by_id | P3 | 0.34ms | success
+2026-01-12T20:06:13.870536+00:00 | DB_CALL get_word_analytics_summary | P3 | 0.21ms | error | ERROR: no such column: type
+2026-01-12T20:06:18.370381+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.25ms | success
+2026-01-12T20:06:23.379136+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.23ms | success
+2026-01-12T20:06:29.365764+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.24ms | success
+2026-01-12T20:06:34.361330+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.24ms | success
+2026-01-12T20:06:38.370039+00:00 | DB_CALL get_whatsapp_stats | P3 | 2.78ms | success
+2026-01-12T20:06:44.364670+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.22ms | success
+2026-01-12T20:06:49.360352+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.22ms | success
+2026-01-12T20:06:53.363689+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.21ms | success
+2026-01-12T20:06:58.382803+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.22ms | success
+2026-01-12T20:07:04.357422+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.24ms | success
+2026-01-12T20:07:07.830860+00:00 | DB_CALL get_user_by_username | P3 | 0.29ms | success
+2026-01-12T20:07:07.850574+00:00 | DB_CALL get_user_by_id | P3 | 0.22ms | success
+2026-01-12T20:07:07.850888+00:00 | DB_CALL get_word_analytics | P3 | 0.15ms | error | ERROR: no such column: type
