@@ -23607,3 +23607,5 @@
 2026-01-12T23:39:36.634812+00:00 | DB_CALL count_ingredients | P3 | 0.23ms | success
 2026-01-12T23:39:36.634993+00:00 | DB_CALL count_products | P3 | 0.12ms | success
 2026-01-12T23:39:36.635135+00:00 | DB_CALL count_users | P3 | 0.09ms | success
+2026-01-12T23:39:40.016774+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.32ms | success
+2026-01-12T23:39:45.024509+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.24ms | success
