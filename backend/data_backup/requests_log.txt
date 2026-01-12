@@ -22644,3 +22644,8 @@
 2026-01-12T23:12:30.156644+00:00 | DB_CALL get_all_settings | P3 | 1.41ms | success
 2026-01-12T23:12:30.157257+00:00 | DB_CALL get_all_entregadores | P3 | 1.59ms | success
 2026-01-12T23:12:30.158302+00:00 | DB_CALL get_all_pedidos | P3 | 1.86ms | success
+2026-01-12T23:12:31.516952+00:00 | DB_CALL get_pedido_by_id | P3 | 0.39ms | success
+2026-01-12T23:12:35.417024+00:00 | DB_CALL get_all_entregadores | P3 | 0.68ms | success
+2026-01-12T23:12:35.417682+00:00 | DB_CALL get_all_settings | P3 | 0.96ms | success
+2026-01-12T23:12:35.418996+00:00 | DB_CALL get_all_pedidos | P3 | 0.88ms | success
+2026-01-12T23:12:36.521706+00:00 | DB_CALL get_pedido_by_id | P3 | 0.29ms | success
