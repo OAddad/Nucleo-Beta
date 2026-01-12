@@ -80,6 +80,8 @@ function OrderTrackingScreen({ pedido: pedidoInicial, onClose, darkMode }) {
       if (isPickup) {
         // Mapeamento para retirada
         const statusMap = {
+          'aguardando_aceite': 'enviado',
+          'aceito': 'aceito',
           'producao': 'producao',
           'pronto': 'pronto',
           'retirado': 'retirado',
@@ -89,10 +91,14 @@ function OrderTrackingScreen({ pedido: pedidoInicial, onClose, darkMode }) {
       } else {
         // Mapeamento para entrega
         const statusMap = {
+          'aguardando_aceite': 'enviado',
+          'aceito': 'aceito',
           'producao': 'producao',
-          'aguardando': 'aguardando_entregador',
-          'transito': 'em_rota',
+          'pronto': 'aguardando_entregador',
+          'na_bag': 'bag_entregador',
+          'em_rota': 'em_rota',
           'concluido': 'entregue',
+          'entregue': 'entregue',
         };
         setCurrentStatus(statusMap[pedido.status] || 'enviado');
       }
