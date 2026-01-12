@@ -1882,6 +1882,7 @@ function PalavrasTab({ toast }) {
 const ORDER_NOTIFICATION_VARIABLES = [
   { key: "{codigo}", label: "Código do Pedido", description: "Número único do pedido" },
   { key: "{endereco}", label: "Endereço da Empresa", description: "Endereço para retirada" },
+  { key: "{nome_entregador}", label: "Nome do Entregador", description: "Nome do entregador do pedido" },
   { key: "{motivo}", label: "Motivo do Cancelamento", description: "Razão do cancelamento (se aplicável)" },
 ];
 
