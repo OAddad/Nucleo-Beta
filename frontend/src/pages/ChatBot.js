@@ -1876,7 +1876,8 @@ function PalavrasTab({ toast }) {
 }
 
 
-// ==================== ABA RESPOSTAS AUTOMÁTICAS ====================
+
+// ==================== ABA CONFIGURAÇÕES BOT (Unificada) ====================
 // Variáveis disponíveis para usar nas notificações de status de pedidos
 const ORDER_NOTIFICATION_VARIABLES = [
   { key: "{codigo}", label: "Código do Pedido", description: "Número único do pedido" },
@@ -1897,14 +1898,132 @@ const STATUS_LABELS = {
   cancelado: { label: "Cancelado", icon: X, color: "bg-red-500" },
 };
 
-function OrderStatusNotificationsSection({ toast }) {
-  const [templates, setTemplates] = useState([]);
+// Variáveis disponíveis para usar nas respostas
+const AVAILABLE_VARIABLES = [
+  { key: "{nome}", label: "Nome do Cliente", description: "Nome do cliente que está conversando" },
+  { key: "{hora}", label: "Hora Atual", description: "Hora atual (ex: 14:30)" },
+  { key: "{saudacao}", label: "Saudação", description: "Saudação automática (Bom dia/Boa tarde/Boa noite)" },
+];
+
+// Componente de Preview do Celular
+function PhonePreview({ message, type = "bot" }) {
+  const currentTime = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+  
+  // Substituir variáveis de exemplo
+  const formatMessage = (msg) => {
+    if (!msg) return "Selecione uma mensagem para visualizar";
+    return msg
+      .replace(/{codigo}/g, "12345")
+      .replace(/{endereco}/g, "Rua das Flores, 123")
+      .replace(/{motivo}/g, "Cliente solicitou cancelamento")
+      .replace(/{nome}/g, "João")
+      .replace(/{hora}/g, currentTime)
+      .replace(/{saudacao}/g, "Boa tarde");
+  };
+
+  return (
+    <div className="bg-gradient-to-b from-gray-900 to-gray-800 rounded-[3rem] p-2 shadow-2xl w-[280px] h-[520px] flex flex-col">
+      {/* Notch */}
+      <div className="bg-black rounded-t-[2.5rem] h-6 flex items-center justify-center">
+        <div className="w-20 h-4 bg-gray-800 rounded-full" />
+      </div>
+      
+      {/* Header WhatsApp */}
+      <div className="bg-[#075E54] px-3 py-2 flex items-center gap-2">
+        <div className="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center">
+          <User className="w-5 h-5 text-gray-600" />
+        </div>
+        <div className="flex-1">
+          <p className="text-white text-sm font-medium">Cliente</p>
+          <p className="text-green-200 text-xs">online</p>
+        </div>
+      </div>
+      
+      {/* Chat Area */}
+      <div className="flex-1 bg-[#ECE5DD] p-3 overflow-y-auto" style={{ 
+        backgroundImage: 'url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAKklEQVQYV2NkIBIwEqmOgXCF/xkY/jOQqhBkHMgEklUIdS5JJpDkbLJdCAB2vASfRm6zgQAAAABJRU5ErkJggg==")',
+        backgroundRepeat: 'repeat'
+      }}>
+        <div className="flex flex-col gap-2">
+          {/* Mensagem do Bot */}
+          <div className="flex justify-start">
+            <div className="bg-white rounded-lg rounded-tl-none px-3 py-2 max-w-[200px] shadow-sm">
+              <pre className="text-sm text-gray-800 whitespace-pre-wrap font-sans m-0">
+                {formatMessage(message)}
+              </pre>
+              <p className="text-[10px] text-gray-500 text-right mt-1">{currentTime}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      {/* Input Area */}
+      <div className="bg-[#F0F0F0] px-2 py-2 flex items-center gap-2 rounded-b-[2.5rem]">
+        <div className="flex-1 bg-white rounded-full px-3 py-1.5">
+          <p className="text-xs text-gray-400">Mensagem</p>
+        </div>
+        <div className="w-8 h-8 rounded-full bg-[#075E54] flex items-center justify-center">
+          <Send className="w-4 h-4 text-white" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function RespostasAutomaticasTab({ toast }) {
+  // States para Respostas Automáticas
+  const [responses, setResponses] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showModal, setShowModal] = useState(false);
+  const [editingResponse, setEditingResponse] = useState(null);
+  const [formData, setFormData] = useState({
+    keywords: "",
+    response: "",
+    is_active: true,
+    priority: 0,
+    match_type: "contains"
+  });
+  const [deleteConfirm, setDeleteConfirm] = useState(null);
+  
+  // States para Notificações de Pedidos
+  const [templates, setTemplates] = useState([]);
+  const [templatesLoading, setTemplatesLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [activeTab, setActiveTab] = useState("delivery"); // delivery ou pickup
+  const [deliveryTab, setDeliveryTab] = useState("delivery");
   const [editingTemplate, setEditingTemplate] = useState(null);
   const [editForm, setEditForm] = useState({ template: "", delay_seconds: 0, is_active: true });
+  
+  // States para Configurações do Bot
+  const [botSettings, setBotSettings] = useState({
+    bot_pause_message: "",
+    bot_pause_duration: 15,
+    chatbot_name: "Ana"
+  });
+  const [savingSettings, setSavingSettings] = useState(false);
+  
+  // State para controle de visualização
+  const [activeSection, setActiveSection] = useState("respostas"); // respostas, notificacoes ou configuracoes
+  const [previewMessage, setPreviewMessage] = useState("");
 
+  // Fetch Respostas
+  const fetchResponses = useCallback(async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`${API_URL}/api/keyword-responses`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (data.success) {
+        setResponses(data.responses || []);
+      }
+    } catch (error) {
+      console.error("Erro ao buscar respostas:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  // Fetch Templates
   const fetchTemplates = useCallback(async () => {
     try {
       const token = localStorage.getItem("token");
@@ -1918,21 +2037,126 @@ function OrderStatusNotificationsSection({ toast }) {
     } catch (error) {
       console.error("Erro ao buscar templates:", error);
     } finally {
-      setLoading(false);
+      setTemplatesLoading(false);
+    }
+  }, []);
+
+  // Fetch Bot Settings
+  const fetchBotSettings = useCallback(async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`${API_URL}/api/chatbot/bot-settings`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (data.success) {
+        setBotSettings({
+          bot_pause_message: data.bot_pause_message || "",
+          bot_pause_duration: data.bot_pause_duration || 15,
+          chatbot_name: data.chatbot_name || "Ana"
+        });
+      }
+    } catch (error) {
+      console.error("Erro ao buscar configurações:", error);
     }
   }, []);
 
   useEffect(() => {
+    fetchResponses();
     fetchTemplates();
-  }, [fetchTemplates]);
+    fetchBotSettings();
+  }, [fetchResponses, fetchTemplates, fetchBotSettings]);
 
-  const openEditModal = (template) => {
+  // Handlers para Respostas
+  const openCreateModal = () => {
+    setEditingResponse(null);
+    setFormData({
+      keywords: "",
+      response: "",
+      is_active: true,
+      priority: 0,
+      match_type: "contains"
+    });
+    setShowModal(true);
+  };
+
+  const openEditModal = (resp) => {
+    setEditingResponse(resp);
+    setFormData({
+      keywords: resp.keywords || "",
+      response: resp.response || "",
+      is_active: resp.is_active === 1 || resp.is_active === true,
+      priority: resp.priority || 0,
+      match_type: resp.match_type || "contains"
+    });
+    setPreviewMessage(resp.response || "");
+    setShowModal(true);
+  };
+
+  const handleSubmit = async () => {
+    if (!formData.keywords.trim() || !formData.response.trim()) {
+      toast({ title: "Erro", description: "Preencha as palavras-chave e a resposta", variant: "destructive" });
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem("token");
+      const url = editingResponse 
+        ? `${API_URL}/api/keyword-responses/${editingResponse.id}`
+        : `${API_URL}/api/keyword-responses`;
+      
+      const res = await fetch(url, {
+        method: editingResponse ? "PUT" : "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(formData)
+      });
+
+      const data = await res.json();
+      if (data.success) {
+        toast({ title: "Sucesso", description: editingResponse ? "Resposta atualizada!" : "Resposta criada!" });
+        await fetchResponses();
+        setShowModal(false);
+      } else {
+        toast({ title: "Erro", description: data.detail || "Erro ao salvar", variant: "destructive" });
+      }
+    } catch (error) {
+      toast({ title: "Erro", description: "Erro ao salvar resposta", variant: "destructive" });
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!deleteConfirm) return;
+    
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`${API_URL}/api/keyword-responses/${deleteConfirm.id}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      if (res.ok) {
+        toast({ title: "Sucesso", description: "Resposta excluída!" });
+        await fetchResponses();
+      }
+    } catch (error) {
+      toast({ title: "Erro", description: "Erro ao excluir", variant: "destructive" });
+    } finally {
+      setDeleteConfirm(null);
+    }
+  };
+
+  // Handlers para Templates
+  const openTemplateEdit = (template) => {
     setEditingTemplate(template);
     setEditForm({
       template: template.template || "",
       delay_seconds: template.delay_seconds || 0,
       is_active: template.is_active === 1 || template.is_active === true
     });
+    setPreviewMessage(template.template || "");
   };
 
   const saveTemplate = async () => {
@@ -1963,364 +2187,7 @@ function OrderStatusNotificationsSection({ toast }) {
     }
   };
 
-  const filteredTemplates = templates.filter(t => t.tipo_entrega === activeTab);
-
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center h-64">
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
-      </div>
-    );
-  }
-
-  return (
-    <div className="space-y-6">
-      {/* Info Card */}
-      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30 rounded-xl border p-4">
-        <div className="flex items-start gap-3">
-          <div className="p-2 rounded-lg bg-blue-500 text-white">
-            <Bell className="w-4 h-4" />
-          </div>
-          <div className="flex-1">
-            <h4 className="font-medium">Notificações Automáticas de Pedidos</h4>
-            <p className="text-sm text-muted-foreground mt-1 mb-3">
-              Configure as mensagens que serão enviadas automaticamente ao cliente em cada etapa do pedido.
-            </p>
-            <div className="flex flex-wrap gap-2">
-              {ORDER_NOTIFICATION_VARIABLES.map((v) => (
-                <span 
-                  key={v.key}
-                  className="px-2 py-1 bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 rounded text-xs font-mono cursor-help"
-                  title={v.description}
-                >
-                  {v.key}
-                </span>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Tabs Entrega / Retirada */}
-      <div className="flex gap-2">
-        <Button 
-          variant={activeTab === "delivery" ? "default" : "outline"}
-          onClick={() => setActiveTab("delivery")}
-        >
-          <Truck className="w-4 h-4 mr-2" />
-          Entrega (Delivery)
-        </Button>
-        <Button 
-          variant={activeTab === "pickup" ? "default" : "outline"}
-          onClick={() => setActiveTab("pickup")}
-        >
-          <Package className="w-4 h-4 mr-2" />
-          Retirada (Pickup)
-        </Button>
-      </div>
-
-      {/* Lista de Templates */}
-      <div className="space-y-3">
-        {filteredTemplates.map((template) => {
-          const statusConfig = STATUS_LABELS[template.status] || { label: template.status, icon: MessageCircle, color: "bg-gray-500" };
-          const StatusIcon = statusConfig.icon;
-          return (
-            <div 
-              key={template.id} 
-              className={`bg-card border rounded-xl p-4 ${!template.is_active ? 'opacity-60' : ''}`}
-            >
-              <div className="flex items-start justify-between gap-4">
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-2">
-                    <span className={`p-1.5 rounded-lg ${statusConfig.color} text-white`}>
-                      <StatusIcon className="w-4 h-4" />
-                    </span>
-                    <span className="font-medium">{statusConfig.label}</span>
-                    {template.delay_seconds > 0 && (
-                      <span className="px-2 py-0.5 bg-amber-100 dark:bg-amber-900/50 text-amber-700 dark:text-amber-300 rounded text-xs">
-                        ⏱️ {template.delay_seconds}s de delay
-                      </span>
-                    )}
-                    <span className={`px-2 py-0.5 rounded text-xs font-medium ${
-                      template.is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'
-                    }`}>
-                      {template.is_active ? 'Ativo' : 'Inativo'}
-                    </span>
-                  </div>
-                  <div className="bg-muted/50 rounded-lg p-3">
-                    <pre className="text-sm text-muted-foreground whitespace-pre-wrap font-sans">
-                      {template.template}
-                    </pre>
-                  </div>
-                </div>
-                <Button variant="outline" size="sm" onClick={() => openEditModal(template)}>
-                  <Edit2 className="w-4 h-4" />
-                </Button>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-
-      {/* Modal de Edição */}
-      <Dialog open={!!editingTemplate} onOpenChange={(open) => !open && setEditingTemplate(null)}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>
-              Editar Notificação - {editingTemplate && STATUS_LABELS[editingTemplate.status]?.label}
-            </DialogTitle>
-          </DialogHeader>
-          
-          <div className="space-y-4 py-4">
-            <div>
-              <div className="flex items-center justify-between mb-1">
-                <Label>Mensagem da Notificação</Label>
-                <span className="text-xs text-muted-foreground">Variáveis disponíveis:</span>
-              </div>
-              <div className="flex flex-wrap gap-1 mb-2">
-                {ORDER_NOTIFICATION_VARIABLES.map((v) => (
-                  <button
-                    key={v.key}
-                    type="button"
-                    className="px-2 py-1 bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 rounded text-xs font-mono hover:bg-blue-200 transition-colors"
-                    onClick={() => setEditForm(prev => ({...prev, template: prev.template + v.key}))}
-                    title={v.description}
-                  >
-                    {v.key}
-                  </button>
-                ))}
-              </div>
-              <Textarea 
-                placeholder="Digite a mensagem de notificação..."
-                rows={4}
-                value={editForm.template}
-                onChange={(e) => setEditForm(prev => ({...prev, template: e.target.value}))}
-              />
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label>Delay (segundos)</Label>
-                <Input 
-                  type="number"
-                  min={0}
-                  max={300}
-                  value={editForm.delay_seconds}
-                  onChange={(e) => setEditForm(prev => ({...prev, delay_seconds: parseInt(e.target.value) || 0}))}
-                />
-                <p className="text-xs text-muted-foreground mt-1">
-                  Tempo de espera antes de enviar a notificação
-                </p>
-              </div>
-              <div>
-                <Label>Status</Label>
-                <div className="flex items-center gap-2 mt-2">
-                  <Switch 
-                    checked={editForm.is_active}
-                    onCheckedChange={(checked) => setEditForm(prev => ({...prev, is_active: checked}))}
-                  />
-                  <span className="text-sm">{editForm.is_active ? "Ativo" : "Inativo"}</span>
-                </div>
-                <p className="text-xs text-muted-foreground mt-1">
-                  Se inativo, a notificação não será enviada
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setEditingTemplate(null)}>
-              Cancelar
-            </Button>
-            <Button onClick={saveTemplate} disabled={saving}>
-              {saving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
-              Salvar
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    </div>
-  );
-}
-
-// Variáveis disponíveis para usar nas respostas
-const AVAILABLE_VARIABLES = [
-  { key: "[NOME-DO-CLIENTE]", label: "Nome do Cliente", description: "Nome do cliente identificado pelo telefone" },
-  { key: "[DELIVERY-URL]", label: "URL do Delivery/Cardápio", description: "Link do cardápio digital" },
-  { key: "[ENDERECO]", label: "Endereço da Empresa", description: "Endereço configurado nas configurações" },
-  { key: "[HORARIOS]", label: "Horários de Funcionamento", description: "Todos os horários de funcionamento" },
-  { key: "[CODIGO-PEDIDO]", label: "Código do Último Pedido", description: "Número do último pedido do cliente" },
-  { key: "[TELEFONE-EMPRESA]", label: "Telefone da Empresa", description: "Telefone de contato" },
-  { key: "[NOME-EMPRESA]", label: "Nome da Empresa", description: "Nome fantasia da empresa" },
-  { key: "[INSTAGRAM]", label: "Instagram", description: "@ do Instagram da empresa" },
-];
-
-function RespostasAutomaticasTab({ toast }) {
-  const [responses, setResponses] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [showModal, setShowModal] = useState(false);
-  const [editingResponse, setEditingResponse] = useState(null);
-  const [formData, setFormData] = useState({
-    keywords: "",
-    response: "",
-    is_active: true,
-    priority: 0,
-    match_type: "contains"
-  });
-  const [deleteConfirm, setDeleteConfirm] = useState(null);
-  const [activeSection, setActiveSection] = useState("respostas"); // respostas, notificacoes ou configuracoes
-  const [botSettings, setBotSettings] = useState({
-    bot_pause_message: "",
-    bot_pause_duration: 15,
-    chatbot_name: "Ana"
-  });
-  const [savingSettings, setSavingSettings] = useState(false);
-
-  const fetchResponses = useCallback(async () => {
-    try {
-      const token = localStorage.getItem("token");
-      const res = await fetch(`${API_URL}/api/keyword-responses`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      const data = await res.json();
-      if (data.success) {
-        setResponses(data.responses || []);
-      }
-    } catch (error) {
-      console.error("Erro ao buscar respostas:", error);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  const fetchBotSettings = useCallback(async () => {
-    try {
-      const token = localStorage.getItem("token");
-      const res = await fetch(`${API_URL}/api/chatbot/bot-settings`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      const data = await res.json();
-      if (data.success) {
-        setBotSettings({
-          bot_pause_message: data.bot_pause_message || "",
-          bot_pause_duration: data.bot_pause_duration || 15,
-          chatbot_name: data.chatbot_name || "Ana"
-        });
-      }
-    } catch (error) {
-      console.error("Erro ao buscar configurações:", error);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchResponses();
-    fetchBotSettings();
-  }, [fetchResponses, fetchBotSettings]);
-
-  const openCreateModal = () => {
-    setEditingResponse(null);
-    setFormData({
-      keywords: "",
-      response: "",
-      is_active: true,
-      priority: 0,
-      match_type: "contains"
-    });
-    setShowModal(true);
-  };
-
-  const openEditModal = (resp) => {
-    setEditingResponse(resp);
-    setFormData({
-      keywords: resp.keywords || "",
-      response: resp.response || "",
-      is_active: resp.is_active === 1 || resp.is_active === true,
-      priority: resp.priority || 0,
-      match_type: resp.match_type || "contains"
-    });
-    setShowModal(true);
-  };
-
-  const handleSubmit = async () => {
-    if (!formData.keywords.trim() || !formData.response.trim()) {
-      toast({ title: "Erro", description: "Preencha as palavras-chave e a resposta", variant: "destructive" });
-      return;
-    }
-
-    try {
-      const token = localStorage.getItem("token");
-      const url = editingResponse 
-        ? `${API_URL}/api/keyword-responses/${editingResponse.id}`
-        : `${API_URL}/api/keyword-responses`;
-      
-      const res = await fetch(url, {
-        method: editingResponse ? "PUT" : "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify(formData)
-      });
-
-      const data = await res.json();
-      if (data.success) {
-        toast({ 
-          title: editingResponse ? "Atualizado" : "Criado", 
-          description: editingResponse ? "Resposta atualizada com sucesso" : "Resposta criada com sucesso" 
-        });
-        setShowModal(false);
-        fetchResponses();
-      } else {
-        throw new Error(data.detail || "Erro ao salvar");
-      }
-    } catch (error) {
-      toast({ title: "Erro", description: error.message, variant: "destructive" });
-    }
-  };
-
-  const handleDelete = async (id) => {
-    try {
-      const token = localStorage.getItem("token");
-      const res = await fetch(`${API_URL}/api/keyword-responses/${id}`, {
-        method: "DELETE",
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      
-      const data = await res.json();
-      if (data.success) {
-        toast({ title: "Deletado", description: "Resposta removida com sucesso" });
-        fetchResponses();
-      }
-    } catch (error) {
-      toast({ title: "Erro", description: "Erro ao deletar", variant: "destructive" });
-    }
-    setDeleteConfirm(null);
-  };
-
-  const toggleActive = async (resp) => {
-    try {
-      const token = localStorage.getItem("token");
-      await fetch(`${API_URL}/api/keyword-responses/${resp.id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify({ is_active: !resp.is_active })
-      });
-      fetchResponses();
-    } catch (error) {
-      toast({ title: "Erro", description: "Erro ao atualizar", variant: "destructive" });
-    }
-  };
-
-  const insertVariable = (variable) => {
-    setFormData(prev => ({
-      ...prev,
-      response: prev.response + variable
-    }));
-  };
-
+  // Handler para Configurações do Bot
   const saveBotSettings = async () => {
     setSavingSettings(true);
     try {
@@ -2333,9 +2200,12 @@ function RespostasAutomaticasTab({ toast }) {
         },
         body: JSON.stringify(botSettings)
       });
+
       const data = await res.json();
       if (data.success) {
-        toast({ title: "Salvo", description: "Configurações salvas com sucesso" });
+        toast({ title: "Sucesso", description: "Configurações salvas!" });
+      } else {
+        toast({ title: "Erro", description: data.detail || "Erro ao salvar", variant: "destructive" });
       }
     } catch (error) {
       toast({ title: "Erro", description: "Erro ao salvar configurações", variant: "destructive" });
@@ -2344,7 +2214,9 @@ function RespostasAutomaticasTab({ toast }) {
     }
   };
 
-  if (loading) {
+  const filteredTemplates = templates.filter(t => t.tipo_entrega === deliveryTab);
+
+  if (loading || templatesLoading) {
     return (
       <div className="flex items-center justify-center h-64">
         <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
@@ -2353,238 +2225,302 @@ function RespostasAutomaticasTab({ toast }) {
   }
 
   return (
-    <div className="p-6 space-y-6">
-      {/* Header com abas */}
-      <div className="flex items-center justify-between">
-        <div className="flex gap-2">
-          <Button 
-            variant={activeSection === "respostas" ? "default" : "outline"}
-            onClick={() => setActiveSection("respostas")}
-          >
-            <MessageCircle className="w-4 h-4 mr-2" />
-            Respostas Automáticas
-          </Button>
-          <Button 
-            variant={activeSection === "notificacoes" ? "default" : "outline"}
-            onClick={() => setActiveSection("notificacoes")}
-          >
-            <Bell className="w-4 h-4 mr-2" />
-            Notificações de Pedidos
-          </Button>
-          <Button 
-            variant={activeSection === "configuracoes" ? "default" : "outline"}
-            onClick={() => setActiveSection("configuracoes")}
-          >
-            <Settings className="w-4 h-4 mr-2" />
-            Configurações do Bot
-          </Button>
-        </div>
-        {activeSection === "respostas" && (
-          <Button onClick={openCreateModal}>
-            <Plus className="w-4 h-4 mr-2" />
-            Nova Resposta
-          </Button>
-        )}
-      </div>
-
-      {activeSection === "respostas" ? (
-        <>
-          {/* Card de Variáveis Disponíveis */}
-          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30 rounded-xl border p-4">
-            <div className="flex items-start gap-3">
-              <div className="p-2 rounded-lg bg-blue-500 text-white">
-                <Zap className="w-4 h-4" />
-              </div>
-              <div className="flex-1">
-                <h4 className="font-medium">Variáveis Disponíveis</h4>
-                <p className="text-sm text-muted-foreground mt-1 mb-3">
-                  Use estas variáveis nas suas respostas para personalizar automaticamente:
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  {AVAILABLE_VARIABLES.map((v) => (
-                    <span 
-                      key={v.key}
-                      className="px-2 py-1 bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 rounded text-xs font-mono cursor-help"
-                      title={v.description}
-                    >
-                      {v.key}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Info Card */}
-          <div className="bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/30 dark:to-orange-950/30 rounded-xl border p-4">
-            <div className="flex items-start gap-3">
-              <div className="p-2 rounded-lg bg-amber-500 text-white">
-                <HelpCircle className="w-4 h-4" />
-              </div>
-              <div>
-                <h4 className="font-medium">Como funciona?</h4>
-                <p className="text-sm text-muted-foreground mt-1">
-                  Quando o cliente enviar uma mensagem contendo uma das palavras-chave configuradas, 
-                  o BOT responderá automaticamente com a mensagem definida, <strong>sem usar a IA</strong>.
-                  Separe múltiplas palavras-chave por vírgula (ex: "oi, olá, bom dia").
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Lista de Respostas */}
-          {responses.length === 0 ? (
-            <div className="bg-card border rounded-xl p-12 text-center">
-              <MessageCircle className="w-12 h-12 mx-auto mb-4 text-muted-foreground opacity-50" />
-              <h3 className="font-medium mb-2">Nenhuma resposta configurada</h3>
-              <p className="text-sm text-muted-foreground mb-4">
-                Crie respostas automáticas para agilizar o atendimento do seu BOT
-              </p>
-              <Button onClick={openCreateModal}>
-                <Plus className="w-4 h-4 mr-2" />
-                Criar Primeira Resposta
+    <div className="p-6">
+      <div className="flex gap-6">
+        {/* Coluna Principal */}
+        <div className="flex-1 space-y-6">
+          {/* Header com abas */}
+          <div className="flex items-center justify-between">
+            <div className="flex gap-2">
+              <Button 
+                variant={activeSection === "respostas" ? "default" : "outline"}
+                onClick={() => { setActiveSection("respostas"); setPreviewMessage(""); }}
+                size="sm"
+              >
+                <MessageCircle className="w-4 h-4 mr-2" />
+                Respostas Automáticas
+              </Button>
+              <Button 
+                variant={activeSection === "notificacoes" ? "default" : "outline"}
+                onClick={() => { setActiveSection("notificacoes"); setPreviewMessage(""); setEditingTemplate(null); }}
+                size="sm"
+              >
+                <Bell className="w-4 h-4 mr-2" />
+                Notificações de Pedidos
+              </Button>
+              <Button 
+                variant={activeSection === "configuracoes" ? "default" : "outline"}
+                onClick={() => { setActiveSection("configuracoes"); setPreviewMessage(""); }}
+                size="sm"
+              >
+                <Settings className="w-4 h-4 mr-2" />
+                Configurações
               </Button>
             </div>
-          ) : (
-            <div className="space-y-3">
-              {responses.map((resp) => (
-                <div 
-                  key={resp.id} 
-                  className={`bg-card border rounded-xl p-4 ${!resp.is_active ? 'opacity-60' : ''}`}
-                >
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-2">
-                        <span className={`px-2 py-0.5 rounded text-xs font-medium ${
-                          resp.is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'
-                        }`}>
-                          {resp.is_active ? 'Ativo' : 'Inativo'}
+            {activeSection === "respostas" && (
+              <Button onClick={openCreateModal} size="sm">
+                <Plus className="w-4 h-4 mr-2" />
+                Nova Resposta
+              </Button>
+            )}
+          </div>
+
+          {/* Conteúdo das Seções */}
+          {activeSection === "respostas" ? (
+            <div className="space-y-4">
+              {/* Info Card */}
+              <div className="bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/30 dark:to-orange-950/30 rounded-xl border p-4">
+                <div className="flex items-start gap-3">
+                  <div className="p-2 rounded-lg bg-amber-500 text-white">
+                    <HelpCircle className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <h4 className="font-medium">Como funciona?</h4>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      Quando o cliente enviar uma mensagem contendo uma das palavras-chave, 
+                      o BOT responderá automaticamente <strong>sem usar IA</strong>.
+                    </p>
+                    <div className="flex flex-wrap gap-1 mt-2">
+                      {AVAILABLE_VARIABLES.map((v) => (
+                        <span key={v.key} className="px-2 py-0.5 bg-amber-100 dark:bg-amber-900/50 text-amber-700 dark:text-amber-300 rounded text-xs font-mono" title={v.description}>
+                          {v.key}
                         </span>
-                        <span className="px-2 py-0.5 rounded text-xs bg-muted">
-                          {resp.match_type === 'exact' ? 'Correspondência Exata' : 
-                           resp.match_type === 'word' ? 'Palavra Inteira' : 'Contém'}
-                        </span>
-                        {resp.priority > 0 && (
-                          <span className="px-2 py-0.5 rounded text-xs bg-amber-100 text-amber-700">
-                            Prioridade: {resp.priority}
-                          </span>
-                        )}
-                      </div>
-                      
-                      <div className="mb-2">
-                        <span className="text-sm font-medium text-muted-foreground">Palavras-chave:</span>
-                        <div className="flex flex-wrap gap-1 mt-1">
-                          {resp.keywords.split(',').map((kw, i) => (
-                            <span key={i} className="px-2 py-0.5 bg-amber-500/10 text-amber-700 rounded text-sm">
-                              {kw.trim()}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                      
-                      <div>
-                        <span className="text-sm font-medium text-muted-foreground">Resposta:</span>
-                        <p className="text-sm mt-1 bg-muted/50 rounded p-2 whitespace-pre-wrap">{resp.response}</p>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-center gap-2">
-                      <Switch 
-                        checked={resp.is_active === 1 || resp.is_active === true}
-                        onCheckedChange={() => toggleActive(resp)}
-                      />
-                      <Button variant="outline" size="sm" onClick={() => openEditModal(resp)}>
-                        <Edit2 className="w-4 h-4" />
-                      </Button>
-                      <Button variant="outline" size="sm" onClick={() => setDeleteConfirm(resp)}>
-                        <Trash2 className="w-4 h-4 text-red-500" />
-                      </Button>
+                      ))}
                     </div>
                   </div>
                 </div>
-              ))}
-            </div>
-          )}
-        </>
-      ) : activeSection === "notificacoes" ? (
-        /* Seção de Notificações de Pedidos */
-        <OrderStatusNotificationsSection toast={toast} />
-      ) : (
-        /* Seção de Configurações do Bot */
-        <div className="space-y-6">
-          {/* Card de Nome do Chatbot */}
-          <div className="bg-card border rounded-xl p-6">
-            <div className="flex items-start gap-4 mb-6">
-              <div className="p-3 rounded-xl bg-green-100 dark:bg-green-900/30">
-                <Bot className="w-6 h-6 text-green-600" />
               </div>
-              <div>
-                <h3 className="font-semibold text-lg">Identidade do Chatbot</h3>
-                <p className="text-sm text-muted-foreground mt-1">
-                  Defina o nome que o chatbot usará ao se apresentar para os clientes.
-                </p>
-              </div>
-            </div>
 
+              {/* Lista de Respostas */}
+              {responses.length === 0 ? (
+                <div className="text-center py-12 text-muted-foreground">
+                  <MessageCircle className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                  <p>Nenhuma resposta automática configurada</p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {responses.map((resp) => (
+                    <div 
+                      key={resp.id} 
+                      className={`bg-card border rounded-xl p-4 cursor-pointer hover:border-primary/50 transition-colors ${!resp.is_active ? 'opacity-60' : ''}`}
+                      onClick={() => setPreviewMessage(resp.response)}
+                    >
+                      <div className="flex items-start justify-between gap-4">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-2">
+                            <span className={`px-2 py-0.5 rounded text-xs font-medium ${resp.is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
+                              {resp.is_active ? 'Ativo' : 'Inativo'}
+                            </span>
+                            <span className="text-xs text-muted-foreground">
+                              Prioridade: {resp.priority || 0}
+                            </span>
+                          </div>
+                          <div className="flex flex-wrap gap-1 mb-2">
+                            {(resp.keywords || "").split(",").map((kw, i) => (
+                              <span key={i} className="px-2 py-0.5 bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 rounded text-xs">
+                                {kw.trim()}
+                              </span>
+                            ))}
+                          </div>
+                          <p className="text-sm text-muted-foreground line-clamp-2">{resp.response}</p>
+                        </div>
+                        <div className="flex gap-1">
+                          <Button variant="outline" size="sm" onClick={(e) => { e.stopPropagation(); openEditModal(resp); }}>
+                            <Edit2 className="w-4 h-4" />
+                          </Button>
+                          <Button variant="outline" size="sm" onClick={(e) => { e.stopPropagation(); setDeleteConfirm(resp); }}>
+                            <Trash2 className="w-4 h-4 text-red-500" />
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          ) : activeSection === "notificacoes" ? (
             <div className="space-y-4">
-              <div className="max-w-xs">
-                <Label>Nome do Chatbot</Label>
-                <Input 
-                  placeholder="Ex: Ana, Maria, João..."
-                  value={botSettings.chatbot_name}
-                  onChange={(e) => setBotSettings(prev => ({...prev, chatbot_name: e.target.value}))}
-                  className="mt-1"
-                />
-                <p className="text-xs text-muted-foreground mt-1">
-                  Quando perguntarem o nome, o bot responderá com este nome.
-                </p>
+              {/* Info Card */}
+              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30 rounded-xl border p-4">
+                <div className="flex items-start gap-3">
+                  <div className="p-2 rounded-lg bg-blue-500 text-white">
+                    <Bell className="w-4 h-4" />
+                  </div>
+                  <div className="flex-1">
+                    <h4 className="font-medium">Notificações Automáticas de Pedidos</h4>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      Mensagens enviadas automaticamente ao cliente em cada etapa do pedido.
+                    </p>
+                    <div className="flex flex-wrap gap-1 mt-2">
+                      {ORDER_NOTIFICATION_VARIABLES.map((v) => (
+                        <span key={v.key} className="px-2 py-0.5 bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 rounded text-xs font-mono" title={v.description}>
+                          {v.key}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
 
-          {/* Card de Pausa do Bot */}
-          <div className="bg-card border rounded-xl p-6">
-            <div className="flex items-start gap-4 mb-6">
-              <div className="p-3 rounded-xl bg-purple-100 dark:bg-purple-900/30">
-                <User className="w-6 h-6 text-purple-600" />
+              {/* Tabs Entrega / Retirada */}
+              <div className="flex gap-2">
+                <Button variant={deliveryTab === "delivery" ? "default" : "outline"} onClick={() => setDeliveryTab("delivery")} size="sm">
+                  <Truck className="w-4 h-4 mr-2" />
+                  Entrega
+                </Button>
+                <Button variant={deliveryTab === "pickup" ? "default" : "outline"} onClick={() => setDeliveryTab("pickup")} size="sm">
+                  <Package className="w-4 h-4 mr-2" />
+                  Retirada
+                </Button>
               </div>
-              <div>
-                <h3 className="font-semibold text-lg">Pausa por Intervenção Humana</h3>
-                <p className="text-sm text-muted-foreground mt-1">
-                  Quando um atendente humano enviar mensagem, o bot será pausado automaticamente 
-                  e enviará a mensagem abaixo para o cliente.
-                </p>
-              </div>
-            </div>
 
+              {/* Lista de Templates */}
+              <div className="space-y-3">
+                {filteredTemplates.map((template) => {
+                  const statusConfig = STATUS_LABELS[template.status] || { label: template.status, icon: MessageCircle, color: "bg-gray-500" };
+                  const StatusIcon = statusConfig.icon;
+                  const isEditing = editingTemplate?.id === template.id;
+                  
+                  return (
+                    <div 
+                      key={template.id} 
+                      className={`bg-card border rounded-xl p-4 cursor-pointer hover:border-primary/50 transition-colors ${!template.is_active ? 'opacity-60' : ''} ${isEditing ? 'ring-2 ring-primary' : ''}`}
+                      onClick={() => { openTemplateEdit(template); }}
+                    >
+                      <div className="flex items-start justify-between gap-4">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-2">
+                            <span className={`p-1.5 rounded-lg ${statusConfig.color} text-white`}>
+                              <StatusIcon className="w-4 h-4" />
+                            </span>
+                            <span className="font-medium">{statusConfig.label}</span>
+                            {template.delay_seconds > 0 && (
+                              <span className="px-2 py-0.5 bg-amber-100 dark:bg-amber-900/50 text-amber-700 dark:text-amber-300 rounded text-xs">
+                                ⏱️ {template.delay_seconds}s
+                              </span>
+                            )}
+                            <span className={`px-2 py-0.5 rounded text-xs font-medium ${template.is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
+                              {template.is_active ? 'Ativo' : 'Inativo'}
+                            </span>
+                          </div>
+                          <p className="text-sm text-muted-foreground line-clamp-2">{template.template}</p>
+                        </div>
+                        <Button variant="outline" size="sm" onClick={(e) => { e.stopPropagation(); openTemplateEdit(template); }}>
+                          <Edit2 className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Editor de Template (inline) */}
+              {editingTemplate && (
+                <div className="bg-card border rounded-xl p-4 space-y-4">
+                  <div className="flex items-center justify-between">
+                    <h4 className="font-medium">Editando: {STATUS_LABELS[editingTemplate.status]?.label || editingTemplate.status}</h4>
+                    <Button variant="ghost" size="sm" onClick={() => setEditingTemplate(null)}>
+                      <X className="w-4 h-4" />
+                    </Button>
+                  </div>
+                  <div>
+                    <Label>Mensagem</Label>
+                    <Textarea 
+                      rows={3}
+                      value={editForm.template}
+                      onChange={(e) => { setEditForm(prev => ({...prev, template: e.target.value})); setPreviewMessage(e.target.value); }}
+                      className="mt-1"
+                    />
+                  </div>
+                  <div className="flex gap-4">
+                    <div className="w-32">
+                      <Label>Delay (segundos)</Label>
+                      <Input 
+                        type="number"
+                        min={0}
+                        max={300}
+                        value={editForm.delay_seconds}
+                        onChange={(e) => setEditForm(prev => ({...prev, delay_seconds: parseInt(e.target.value) || 0}))}
+                        className="mt-1"
+                      />
+                    </div>
+                    <div>
+                      <Label>Status</Label>
+                      <div className="flex items-center gap-2 mt-2">
+                        <Switch 
+                          checked={editForm.is_active}
+                          onCheckedChange={(checked) => setEditForm(prev => ({...prev, is_active: checked}))}
+                        />
+                        <span className="text-sm">{editForm.is_active ? "Ativo" : "Inativo"}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <Button onClick={saveTemplate} disabled={saving}>
+                    {saving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
+                    Salvar
+                  </Button>
+                </div>
+              )}
+            </div>
+          ) : (
+            /* Seção de Configurações do Bot */
             <div className="space-y-4">
-              <div>
-                <Label>Mensagem de Pausa do Bot</Label>
-                <Textarea 
-                  placeholder="Ex: Opa, vi que um atendente humano começou o atendimento! Núcleo-Vox pausado por 15 minutos."
-                  rows={3}
-                  value={botSettings.bot_pause_message}
-                  onChange={(e) => setBotSettings(prev => ({...prev, bot_pause_message: e.target.value}))}
-                  className="mt-1"
-                />
-                <p className="text-xs text-muted-foreground mt-1">
-                  Esta mensagem será enviada quando o bot detectar intervenção de um atendente humano. Use [TEMPO] para mostrar a duração.
-                </p>
+              {/* Card de Nome do Chatbot */}
+              <div className="bg-card border rounded-xl p-4">
+                <div className="flex items-start gap-3 mb-4">
+                  <div className="p-2 rounded-lg bg-green-100 dark:bg-green-900/30">
+                    <Bot className="w-5 h-5 text-green-600" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold">Identidade do Chatbot</h3>
+                    <p className="text-sm text-muted-foreground">Nome usado nas apresentações</p>
+                  </div>
+                </div>
+                <div className="max-w-xs">
+                  <Label>Nome do Chatbot</Label>
+                  <Input 
+                    placeholder="Ex: Ana, Maria, João..."
+                    value={botSettings.chatbot_name}
+                    onChange={(e) => setBotSettings(prev => ({...prev, chatbot_name: e.target.value}))}
+                    className="mt-1"
+                  />
+                </div>
               </div>
 
-              <div className="w-48">
-                <Label>Duração da Pausa (minutos)</Label>
-                <Input 
-                  type="number"
-                  min={1}
-                  max={120}
-                  value={botSettings.bot_pause_duration}
-                  onChange={(e) => setBotSettings(prev => ({...prev, bot_pause_duration: parseInt(e.target.value) || 15}))}
-                  className="mt-1"
-                />
-                <p className="text-xs text-muted-foreground mt-1">
-                  O bot ficará pausado por este tempo após intervenção humana.
-                </p>
+              {/* Card de Pausa do Bot */}
+              <div className="bg-card border rounded-xl p-4">
+                <div className="flex items-start gap-3 mb-4">
+                  <div className="p-2 rounded-lg bg-purple-100 dark:bg-purple-900/30">
+                    <User className="w-5 h-5 text-purple-600" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold">Pausa por Intervenção Humana</h3>
+                    <p className="text-sm text-muted-foreground">Quando um atendente enviar mensagem</p>
+                  </div>
+                </div>
+                <div className="space-y-4">
+                  <div>
+                    <Label>Mensagem de Pausa</Label>
+                    <Textarea 
+                      placeholder="Ex: Um atendente humano está cuidando de você..."
+                      rows={2}
+                      value={botSettings.bot_pause_message}
+                      onChange={(e) => { setBotSettings(prev => ({...prev, bot_pause_message: e.target.value})); setPreviewMessage(e.target.value); }}
+                      className="mt-1"
+                    />
+                  </div>
+                  <div className="w-48">
+                    <Label>Duração da Pausa (min)</Label>
+                    <Input 
+                      type="number"
+                      min={1}
+                      max={120}
+                      value={botSettings.bot_pause_duration}
+                      onChange={(e) => setBotSettings(prev => ({...prev, bot_pause_duration: parseInt(e.target.value) || 15}))}
+                      className="mt-1"
+                    />
+                  </div>
+                </div>
               </div>
 
               <Button onClick={saveBotSettings} disabled={savingSettings}>
@@ -2592,156 +2528,99 @@ function RespostasAutomaticasTab({ toast }) {
                 Salvar Configurações
               </Button>
             </div>
-          </div>
+          )}
+        </div>
 
-          {/* Card de Variáveis */}
-          <div className="bg-card border rounded-xl p-6">
-            <div className="flex items-start gap-4 mb-4">
-              <div className="p-3 rounded-xl bg-blue-100 dark:bg-blue-900/30">
-                <Zap className="w-6 h-6 text-blue-600" />
-              </div>
-              <div>
-                <h3 className="font-semibold text-lg">Variáveis Disponíveis</h3>
-                <p className="text-sm text-muted-foreground mt-1">
-                  Use estas variáveis nas respostas automáticas para personalizar as mensagens.
-                </p>
-              </div>
-            </div>
-
-            <div className="grid gap-2">
-              {AVAILABLE_VARIABLES.map((v) => (
-                <div key={v.key} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
-                  <div className="flex items-center gap-3">
-                    <code className="px-2 py-1 bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 rounded text-sm font-mono">
-                      {v.key}
-                    </code>
-                    <div>
-                      <p className="font-medium text-sm">{v.label}</p>
-                      <p className="text-xs text-muted-foreground">{v.description}</p>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
+        {/* Coluna de Preview - Celular */}
+        <div className="hidden lg:block">
+          <div className="sticky top-6">
+            <p className="text-sm font-medium text-muted-foreground mb-3 text-center">Preview da Mensagem</p>
+            <PhonePreview message={previewMessage} />
           </div>
         </div>
-      )}
+      </div>
 
-      {/* Modal de Criar/Editar */}
+      {/* Modal de Criar/Editar Resposta */}
       <Dialog open={showModal} onOpenChange={setShowModal}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>
-              {editingResponse ? 'Editar Resposta Automática' : 'Nova Resposta Automática'}
-            </DialogTitle>
+            <DialogTitle>{editingResponse ? 'Editar Resposta' : 'Nova Resposta Automática'}</DialogTitle>
           </DialogHeader>
-          
           <div className="space-y-4 py-4">
             <div>
-              <Label>Palavras-chave *</Label>
+              <Label>Palavras-chave (separadas por vírgula)</Label>
               <Input 
-                placeholder="oi, olá, bom dia, boa tarde"
+                placeholder="Ex: oi, olá, bom dia"
                 value={formData.keywords}
-                onChange={(e) => setFormData({...formData, keywords: e.target.value})}
+                onChange={(e) => setFormData(prev => ({...prev, keywords: e.target.value}))}
+                className="mt-1"
               />
-              <p className="text-xs text-muted-foreground mt-1">
-                Separe múltiplas palavras por vírgula
-              </p>
             </div>
-            
             <div>
               <div className="flex items-center justify-between mb-1">
-                <Label>Resposta do BOT *</Label>
-                <span className="text-xs text-muted-foreground">Clique nas variáveis para inserir:</span>
-              </div>
-              <div className="flex flex-wrap gap-1 mb-2">
-                {AVAILABLE_VARIABLES.map((v) => (
-                  <button
-                    key={v.key}
-                    type="button"
-                    onClick={() => insertVariable(v.key)}
-                    className="px-2 py-0.5 bg-blue-100 hover:bg-blue-200 dark:bg-blue-900/50 dark:hover:bg-blue-800/50 text-blue-700 dark:text-blue-300 rounded text-xs font-mono transition-colors"
-                    title={v.description}
-                  >
-                    {v.key}
-                  </button>
-                ))}
+                <Label>Resposta</Label>
+                <div className="flex gap-1">
+                  {AVAILABLE_VARIABLES.map((v) => (
+                    <button
+                      key={v.key}
+                      type="button"
+                      className="px-2 py-0.5 bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 rounded text-xs font-mono hover:bg-blue-200"
+                      onClick={() => { setFormData(prev => ({...prev, response: prev.response + v.key})); setPreviewMessage(formData.response + v.key); }}
+                    >
+                      {v.key}
+                    </button>
+                  ))}
+                </div>
               </div>
               <Textarea 
-                placeholder="Olá [NOME-DO-CLIENTE]! Seja bem-vindo ao [NOME-EMPRESA]. Como posso ajudar?"
+                placeholder="Digite a resposta..."
                 rows={4}
                 value={formData.response}
-                onChange={(e) => setFormData({...formData, response: e.target.value})}
+                onChange={(e) => { setFormData(prev => ({...prev, response: e.target.value})); setPreviewMessage(e.target.value); }}
               />
             </div>
-            
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label>Tipo de Correspondência</Label>
-                <Select 
-                  value={formData.match_type} 
-                  onValueChange={(v) => setFormData({...formData, match_type: v})}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="contains">Contém a palavra</SelectItem>
-                    <SelectItem value="word">Palavra inteira</SelectItem>
-                    <SelectItem value="exact">Mensagem exata</SelectItem>
-                  </SelectContent>
-                </Select>
+            <div className="flex gap-4">
+              <div className="flex items-center gap-2">
+                <Switch 
+                  checked={formData.is_active}
+                  onCheckedChange={(checked) => setFormData(prev => ({...prev, is_active: checked}))}
+                />
+                <Label>Ativo</Label>
               </div>
-              
-              <div>
+              <div className="w-24">
                 <Label>Prioridade</Label>
                 <Input 
                   type="number"
                   min={0}
                   value={formData.priority}
-                  onChange={(e) => setFormData({...formData, priority: parseInt(e.target.value) || 0})}
+                  onChange={(e) => setFormData(prev => ({...prev, priority: parseInt(e.target.value) || 0}))}
+                  className="mt-1"
                 />
-                <p className="text-xs text-muted-foreground mt-1">
-                  Maior = mais prioridade
-                </p>
               </div>
             </div>
-            
-            <div className="flex items-center gap-2">
-              <Switch 
-                checked={formData.is_active}
-                onCheckedChange={(v) => setFormData({...formData, is_active: v})}
-              />
-              <Label>Ativo</Label>
-            </div>
           </div>
-          
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowModal(false)}>
-              Cancelar
-            </Button>
+            <Button variant="outline" onClick={() => setShowModal(false)}>Cancelar</Button>
             <Button onClick={handleSubmit}>
+              <Save className="w-4 h-4 mr-2" />
               {editingResponse ? 'Salvar Alterações' : 'Criar Resposta'}
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
-      {/* Confirmação de Exclusão */}
-      <AlertDialog open={!!deleteConfirm} onOpenChange={() => setDeleteConfirm(null)}>
+      {/* Dialog de Confirmação de Exclusão */}
+      <AlertDialog open={!!deleteConfirm} onOpenChange={(open) => !open && setDeleteConfirm(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Confirmar Exclusão</AlertDialogTitle>
+            <AlertDialogTitle>Excluir Resposta</AlertDialogTitle>
             <AlertDialogDescription>
               Tem certeza que deseja excluir esta resposta automática? Esta ação não pode ser desfeita.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction 
-              className="bg-red-500 hover:bg-red-600"
-              onClick={() => handleDelete(deleteConfirm?.id)}
-            >
+            <AlertDialogAction onClick={handleDelete} className="bg-red-500 hover:bg-red-600">
               Excluir
             </AlertDialogAction>
           </AlertDialogFooter>
