@@ -3625,40 +3625,23 @@ def process_message_words(message: str, sender_phone: str, sender_name: str = No
     # Remove pontuação e converte para minúsculas
     words = re.findall(r'\b[a-záàâãéèêíïóôõöúçñ]+\b', message.lower())
     
-    # Palavras comuns a ignorar (stop words em português)
-    stop_words = {
-        'a', 'o', 'e', 'de', 'da', 'do', 'em', 'um', 'uma', 'para', 'com', 'não', 'nao',
-        'que', 'os', 'as', 'dos', 'das', 'no', 'na', 'por', 'mais', 'se', 'já', 'ja',
-        'ou', 'quando', 'muito', 'nos', 'nas', 'esse', 'essa', 'isso', 'este', 'esta',
-        'isto', 'aquele', 'aquela', 'aquilo', 'ele', 'ela', 'eles', 'elas', 'você', 'voce',
-        'eu', 'meu', 'minha', 'seu', 'sua', 'nosso', 'nossa', 'me', 'te', 'lhe', 'nos',
-        'mas', 'como', 'qual', 'quais', 'onde', 'porque', 'pq', 'tb', 'tbm', 'vc',
-        'ai', 'aí', 'la', 'lá', 'aqui', 'ali', 'sim', 'nao', 'ok', 'ta', 'tá',
-        'oi', 'ola', 'olá', 'bom', 'boa', 'dia', 'tarde', 'noite', 'obrigado', 'obrigada',
-        'por', 'favor', 'pfv', 'pf', 'blz', 'beleza', 'né', 'ne', 'então', 'entao'
-    }
-    
-    # Filtrar palavras curtas e stop words
-    filtered_words = [w for w in words if len(w) > 2 and w not in stop_words]
+    # Filtrar apenas palavras muito curtas (1-2 caracteres)
+    filtered_words = [w for w in words if len(w) > 2]
     
     # Gerar bigramas (2 palavras) e trigramas (3 palavras)
     bigrams = []
     trigrams = []
     
-    # Para frases, usar todas as palavras (não filtradas) para manter contexto
+    # Para frases, usar todas as palavras para manter contexto
     all_words = [w for w in words if len(w) > 1]
     
     for i in range(len(all_words) - 1):
         bigram = f"{all_words[i]} {all_words[i+1]}"
-        # Só adicionar se pelo menos uma palavra não for stop word
-        if all_words[i] not in stop_words or all_words[i+1] not in stop_words:
-            bigrams.append(bigram)
+        bigrams.append(bigram)
     
     for i in range(len(all_words) - 2):
         trigram = f"{all_words[i]} {all_words[i+1]} {all_words[i+2]}"
-        # Só adicionar se pelo menos uma palavra não for stop word
-        if any(w not in stop_words for w in [all_words[i], all_words[i+1], all_words[i+2]]):
-            trigrams.append(trigram)
+        trigrams.append(trigram)
     
     now = datetime.utcnow().isoformat() + "Z"
     
