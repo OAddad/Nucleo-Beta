@@ -2379,12 +2379,11 @@ function RespostasAutomaticasTab({ toast }) {
                 {filteredTemplates.map((template) => {
                   const statusConfig = STATUS_LABELS[template.status] || { label: template.status, icon: MessageCircle, color: "bg-gray-500" };
                   const StatusIcon = statusConfig.icon;
-                  const isEditing = editingTemplate?.id === template.id;
                   
                   return (
                     <div 
                       key={template.id} 
-                      className={`bg-card border rounded-xl p-4 cursor-pointer hover:border-primary/50 transition-colors ${!template.is_active ? 'opacity-60' : ''} ${isEditing ? 'ring-2 ring-primary' : ''}`}
+                      className={`bg-card border rounded-xl p-4 cursor-pointer hover:border-primary/50 transition-colors ${!template.is_active ? 'opacity-60' : ''}`}
                       onClick={() => { openTemplateEdit(template); }}
                     >
                       <div className="flex items-start justify-between gap-4">
@@ -2413,51 +2412,8 @@ function RespostasAutomaticasTab({ toast }) {
                   );
                 })}
               </div>
-
-              {/* Editor de Template (inline) */}
-              {editingTemplate && (
-                <div className="bg-card border rounded-xl p-4 space-y-4">
-                  <div className="flex items-center justify-between">
-                    <h4 className="font-medium">Editando: {STATUS_LABELS[editingTemplate.status]?.label || editingTemplate.status}</h4>
-                    <Button variant="ghost" size="sm" onClick={() => setEditingTemplate(null)}>
-                      <X className="w-4 h-4" />
-                    </Button>
-                  </div>
-                  <div>
-                    <Label>Mensagem</Label>
-                    <Textarea 
-                      rows={3}
-                      value={editForm.template}
-                      onChange={(e) => { setEditForm(prev => ({...prev, template: e.target.value})); setPreviewMessage(e.target.value); }}
-                      className="mt-1"
-                    />
-                  </div>
-                  <div className="flex gap-4">
-                    <div className="w-32">
-                      <Label>Delay (segundos)</Label>
-                      <Input 
-                        type="number"
-                        min={0}
-                        max={300}
-                        value={editForm.delay_seconds}
-                        onChange={(e) => setEditForm(prev => ({...prev, delay_seconds: parseInt(e.target.value) || 0}))}
-                        className="mt-1"
-                      />
-                    </div>
-                    <div>
-                      <Label>Status</Label>
-                      <div className="flex items-center gap-2 mt-2">
-                        <Switch 
-                          checked={editForm.is_active}
-                          onCheckedChange={(checked) => setEditForm(prev => ({...prev, is_active: checked}))}
-                        />
-                        <span className="text-sm">{editForm.is_active ? "Ativo" : "Inativo"}</span>
-                      </div>
-                    </div>
-                  </div>
-                  <Button onClick={saveTemplate} disabled={saving}>
-                    {saving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
-                    Salvar
+            </div>
+          ) : (
                   </Button>
                 </div>
               )}
