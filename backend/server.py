@@ -2575,13 +2575,18 @@ async def update_pedido(pedido_id: str, data: PedidoUpdate):
 @api_router.patch("/pedidos/{pedido_id}/status")
 async def update_pedido_status(pedido_id: str, status: str):
     """Atualiza o status de um pedido"""
-    valid_statuses = ['aguardando_aceite', 'producao', 'pronto', 'na_bag', 'em_rota', 'concluido', 'cancelado']
+    valid_statuses = ['aguardando_aceite', 'aceito', 'producao', 'pronto', 'na_bag', 'em_rota', 'concluido', 'cancelado', 'entregue', 'retirado']
     if status not in valid_statuses:
         raise HTTPException(status_code=400, detail=f"Status inválido. Use: {valid_statuses}")
     
     pedido = await db_call(sqlite_db.update_pedido_status, pedido_id, status)
     if not pedido:
         raise HTTPException(status_code=404, detail="Pedido não encontrado")
+    
+    # Enviar notificação WhatsApp imediatamente
+    if pedido.get('cliente_telefone') and status not in ['cancelado']:
+        whatsapp_notifications.schedule_order_notification(pedido_id, status, delay_seconds=0)
+    
     return pedido
 
 
