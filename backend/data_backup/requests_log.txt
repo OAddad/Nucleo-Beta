@@ -21402,3 +21402,9 @@
 2026-01-12T21:31:22.299590+00:00 | DB_CALL count_ingredients | P3 | 0.23ms | success
 2026-01-12T21:31:22.299770+00:00 | DB_CALL count_products | P3 | 0.12ms | success
 2026-01-12T21:31:22.299914+00:00 | DB_CALL count_users | P3 | 0.09ms | success
+2026-01-12T21:31:32.628111+00:00 | DB_CALL init_database | P3 | 2.91ms | success
+2026-01-12T21:31:32.628641+00:00 | DB_CALL count_ingredients | P3 | 0.24ms | success
+2026-01-12T21:31:32.628827+00:00 | DB_CALL count_products | P3 | 0.12ms | success
+2026-01-12T21:31:32.628965+00:00 | DB_CALL count_users | P3 | 0.09ms | success
+2026-01-12T21:31:33.401097+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.32ms | success
+2026-01-12T21:31:33.588293+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.25ms | success
