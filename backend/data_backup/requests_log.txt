@@ -19087,3 +19087,8 @@
 2026-01-12T19:40:40.331514+00:00 | DB_CALL get_all_pedidos | P3 | 5.43ms | success
 2026-01-12T19:40:40.333154+00:00 | DB_CALL get_all_entregadores | P3 | 5.84ms | success
 2026-01-12T19:40:40.333457+00:00 | DB_CALL get_all_settings | P3 | 6.85ms | success
+2026-01-12T19:40:43.855721+00:00 | DB_CALL get_user_by_id | P3 | 0.27ms | success
+2026-01-12T19:40:43.856009+00:00 | DB_CALL get_word_analytics_summary | P3 | 0.15ms | error | ERROR: no such column: type
+2026-01-12T19:40:45.322115+00:00 | DB_CALL get_all_settings | P3 | 0.29ms | success
+2026-01-12T19:40:45.324610+00:00 | DB_CALL get_all_entregadores | P3 | 0.14ms | success
+2026-01-12T19:40:45.327167+00:00 | DB_CALL get_all_pedidos | P3 | 0.75ms | success
