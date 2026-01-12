@@ -21825,3 +21825,4 @@
 2026-01-12T22:25:32.422604+00:00 | DB_CALL get_all_settings | P3 | 0.28ms | success
 2026-01-12T22:25:32.423936+00:00 | DB_CALL get_user_by_id | P3 | 0.2ms | success
 2026-01-12T22:25:32.424225+00:00 | DB_CALL get_all_keyword_responses | P3 | 0.18ms | success
+2026-01-12T22:25:56.044882+00:00 | DB_CALL get_all_settings | P3 | 0.59ms | success
