@@ -22473,3 +22473,7 @@
 2026-01-12T23:07:50.423175+00:00 | DB_CALL get_pedido_by_id | P3 | 0.29ms | success
 2026-01-12T23:07:55.424065+00:00 | DB_CALL get_pedido_by_id | P3 | 0.32ms | success
 2026-01-12T23:08:14.078023+00:00 | DB_CALL increment_whatsapp_stat | P3 | 2.05ms | success
+2026-01-12T23:08:33.429702+00:00 | DB_CALL get_pedido_by_id | P3 | 0.31ms | success
+2026-01-12T23:08:33.453149+00:00 | DB_CALL get_all_pedidos | P3 | 1.52ms | success
+2026-01-12T23:08:33.454517+00:00 | DB_CALL get_all_entregadores | P3 | 2.21ms | success
+2026-01-12T23:08:33.456327+00:00 | DB_CALL get_all_settings | P3 | 0.19ms | success

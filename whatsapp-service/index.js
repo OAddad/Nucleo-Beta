@@ -72,16 +72,26 @@ async function sendMessageWithTyping(jid, message) {
       return false;
     }
     
+    console.log(`[WhatsApp] Iniciando envio para ${jid}...`);
+    
     // Mostrar "digitando..."
-    await sock.presenceSubscribe(jid);
-    await sock.sendPresenceUpdate('composing', jid);
+    try {
+      await sock.presenceSubscribe(jid);
+      await sock.sendPresenceUpdate('composing', jid);
+    } catch (presenceErr) {
+      console.log('[WhatsApp] Aviso ao atualizar presença:', presenceErr.message);
+      // Continua mesmo se falhar o presence
+    }
     
     // Calcular tempo de digitação baseado no tamanho da mensagem (mais natural)
     const typingTime = Math.min(Math.max(message.length * 30, 1000), 4000);
+    console.log(`[WhatsApp] Aguardando ${typingTime}ms de "digitação"...`);
     await new Promise(resolve => setTimeout(resolve, typingTime));
     
     // Enviar mensagem
-    await sock.sendMessage(jid, { text: message });
+    console.log('[WhatsApp] Enviando mensagem...');
+    const result = await sock.sendMessage(jid, { text: message });
+    console.log('[WhatsApp] Resultado do envio:', result?.key?.id ? 'OK' : 'Falha');
     
     // Incrementar contador de mensagens enviadas (memória)
     stats.messagesSent++;
@@ -96,12 +106,17 @@ async function sendMessageWithTyping(jid, message) {
     }
     
     // Parar de "digitar"
-    await sock.sendPresenceUpdate('paused', jid);
+    try {
+      await sock.sendPresenceUpdate('paused', jid);
+    } catch (pauseErr) {
+      // Ignora erro de presence
+    }
     
     console.log(`[WhatsApp] Mensagem enviada para ${jid}`);
     return true;
   } catch (error) {
     console.log('[WhatsApp] Erro ao enviar mensagem:', error.message);
+    console.log('[WhatsApp] Stack:', error.stack);
     return false;
   }
 }
