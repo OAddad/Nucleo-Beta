@@ -20646,3 +20646,10 @@
 2026-01-12T21:09:06.373828+00:00 | DB_CALL get_all_settings | P3 | 2.37ms | success
 2026-01-12T21:09:06.374138+00:00 | DB_CALL get_all_entregadores | P3 | 2.93ms | success
 2026-01-12T21:09:08.364305+00:00 | DB_CALL get_pedido_by_id | P3 | 0.28ms | success
+2026-01-12T21:09:11.361171+00:00 | DB_CALL get_all_entregadores | P3 | 1.03ms | success
+2026-01-12T21:09:11.362268+00:00 | DB_CALL get_all_pedidos | P3 | 1.36ms | success
+2026-01-12T21:09:11.363478+00:00 | DB_CALL get_all_settings | P3 | 2.93ms | success
+2026-01-12T21:09:13.368668+00:00 | DB_CALL get_pedido_by_id | P3 | 0.29ms | success
+2026-01-12T21:09:16.361946+00:00 | DB_CALL get_all_pedidos | P3 | 1.39ms | success
+2026-01-12T21:09:16.363314+00:00 | DB_CALL get_all_entregadores | P3 | 2.05ms | success
+2026-01-12T21:09:16.364467+00:00 | DB_CALL get_all_settings | P3 | 0.21ms | success
