@@ -174,19 +174,6 @@ export default function ChatBot() {
             </div>
           </button>
           <button
-            onClick={() => setActiveTab("flow-editor")}
-            className={`px-4 py-3 font-medium text-sm border-b-2 transition-colors ${
-              activeTab === "flow-editor"
-                ? "border-blue-500 text-blue-600"
-                : "border-transparent text-muted-foreground hover:text-foreground"
-            }`}
-          >
-            <div className="flex items-center gap-2">
-              <GitBranch className="w-4 h-4" />
-              Editor de Fluxo
-            </div>
-          </button>
-          <button
             onClick={() => setActiveTab("messages")}
             className={`px-4 py-3 font-medium text-sm border-b-2 transition-colors ${
               activeTab === "messages"
@@ -223,8 +210,6 @@ export default function ChatBot() {
           <RespostasAutomaticasTab toast={toast} />
         ) : activeTab === "simulator" ? (
           <SimulatorTab toast={toast} />
-        ) : activeTab === "flow-editor" ? (
-          <FlowEditorTab toast={toast} />
         ) : activeTab === "palavras" ? (
           <PalavrasTab toast={toast} />
         ) : (

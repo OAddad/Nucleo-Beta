@@ -18682,3 +18682,24 @@
 2026-01-12T16:45:48.246806+00:00 | DB_CALL get_all_pedidos | P3 | 0.82ms | success
 2026-01-12T16:45:51.694458+00:00 | DB_CALL get_user_by_id | P3 | 1.0ms | success
 2026-01-12T16:45:51.696260+00:00 | DB_CALL get_all_keyword_responses | P3 | 1.64ms | success
+2026-01-12T16:46:39.666608+00:00 | DB_CALL get_user_by_id | P3 | 0.24ms | success
+2026-01-12T16:46:39.671519+00:00 | DB_CALL create_keyword_response | P3 | 4.69ms | success
+2026-01-12T16:46:39.836220+00:00 | DB_CALL get_user_by_id | P3 | 0.26ms | success
+2026-01-12T16:46:39.836469+00:00 | DB_CALL get_all_keyword_responses | P3 | 0.11ms | success
+2026-01-12T16:48:59.473195+00:00 | DB_CALL get_user_by_id | P3 | 0.26ms | success
+2026-01-12T16:48:59.477259+00:00 | DB_CALL get_all_flow_nodes | P3 | 3.91ms | success
+2026-01-12T16:48:59.480073+00:00 | DB_CALL get_all_flow_edges | P3 | 2.73ms | success
+2026-01-12T16:49:03.715337+00:00 | DB_CALL get_user_by_id | P3 | 0.27ms | success
+2026-01-12T16:49:04.183526+00:00 | DB_CALL get_user_by_id | P3 | 0.26ms | success
+2026-01-12T16:49:04.183891+00:00 | DB_CALL get_word_analytics_summary | P3 | 0.21ms | error | ERROR: no such column: type
+2026-01-12T16:49:05.373668+00:00 | DB_CALL get_user_by_id | P3 | 0.27ms | success
+2026-01-12T16:49:05.373947+00:00 | DB_CALL get_all_keyword_responses | P3 | 0.13ms | success
+2026-01-12T16:49:08.099647+00:00 | DB_CALL get_user_by_id | P3 | 0.27ms | success
+2026-01-12T16:49:08.099904+00:00 | DB_CALL get_all_flow_nodes | P3 | 0.11ms | success
+2026-01-12T16:49:08.100040+00:00 | DB_CALL get_all_flow_edges | P3 | 0.08ms | success
+2026-01-12T16:49:08.794776+00:00 | DB_CALL get_user_by_id | P3 | 0.29ms | success
+2026-01-12T16:49:09.445958+00:00 | DB_CALL get_user_by_id | P3 | 0.26ms | success
+2026-01-12T16:49:09.446262+00:00 | DB_CALL get_word_analytics_summary | P3 | 0.16ms | error | ERROR: no such column: type
+2026-01-12T16:49:10.558875+00:00 | DB_CALL get_user_by_id | P3 | 0.27ms | success
+2026-01-12T16:49:10.559129+00:00 | DB_CALL get_all_flow_nodes | P3 | 0.11ms | success
+2026-01-12T16:49:10.559265+00:00 | DB_CALL get_all_flow_edges | P3 | 0.08ms | success
