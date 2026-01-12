@@ -19168,3 +19168,4 @@
 2026-01-12T19:44:53.405068+00:00 | DB_CALL get_all_products | P3 | 1.57ms | success
 2026-01-12T19:44:53.583475+00:00 | DB_CALL get_all_bairros | P3 | 0.31ms | success
 2026-01-12T19:47:17.915405+00:00 | DB_CALL get_all_settings | P3 | 0.37ms | success
+2026-01-12T19:48:11.348001+00:00 | DB_CALL get_all_settings | P3 | 0.26ms | success
