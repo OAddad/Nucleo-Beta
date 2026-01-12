@@ -303,7 +303,12 @@ app.get('/status', (req, res) => {
     error: lastError,
     phone: connectedPhone,
     messagesCount: receivedMessages.length,
-    autoReplyEnabled: autoReplyEnabled
+    autoReplyEnabled: autoReplyEnabled,
+    stats: {
+      clientsServed: stats.clientsServed.size,
+      messagesReceived: stats.messagesReceived,
+      messagesSent: stats.messagesSent
+    }
   });
 });
 
