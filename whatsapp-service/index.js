@@ -133,17 +133,20 @@ async function connectToWhatsApp() {
             fs.rmSync(AUTH_SESSION_PATH, { recursive: true, force: true });
             fs.mkdirSync(AUTH_SESSION_PATH, { recursive: true });
           }
+          // SEMPRE reconectar para gerar novo QR Code
+          console.log('[WhatsApp] Deslogado. Gerando novo QR Code em 2 segundos...');
+          setTimeout(connectToWhatsApp, 2000);
         } else {
           connectionStatus = 'reconnecting';
           lastError = `Conexão perdida (código: ${statusCode})`;
+          
+          if (shouldReconnect) {
+            console.log('[WhatsApp] Reconectando em 3 segundos...');
+            setTimeout(connectToWhatsApp, 3000);
+          }
         }
         
         reconnecting = false;
-        
-        if (shouldReconnect) {
-          console.log('[WhatsApp] Reconectando em 3 segundos...');
-          setTimeout(connectToWhatsApp, 3000);
-        }
       } else if (connection === 'open') {
         console.log('[WhatsApp] Conectado com sucesso!');
         connectionStatus = 'connected';
