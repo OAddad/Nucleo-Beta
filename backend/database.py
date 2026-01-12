@@ -779,6 +779,14 @@ def init_database():
             conn.commit()
             print("[DATABASE] Colunas de segundo período adicionadas em business_hours")
         
+        # Migração: adicionar coluna type em word_analytics se não existir
+        try:
+            cursor.execute("SELECT type FROM word_analytics LIMIT 1")
+        except sqlite3.OperationalError:
+            cursor.execute("ALTER TABLE word_analytics ADD COLUMN type TEXT DEFAULT 'word'")
+            conn.commit()
+            print("[DATABASE] Coluna 'type' adicionada em word_analytics")
+        
         # Inicializar horários padrão se tabela vazia
         cursor.execute("SELECT COUNT(*) FROM business_hours")
         if cursor.fetchone()[0] == 0:
