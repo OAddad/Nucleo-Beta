@@ -1892,6 +1892,272 @@ function PalavrasTab({ toast }) {
 
 
 // ==================== ABA RESPOSTAS AUTOMÁTICAS ====================
+// Variáveis disponíveis para usar nas notificações de status de pedidos
+const ORDER_NOTIFICATION_VARIABLES = [
+  { key: "{codigo}", label: "Código do Pedido", description: "Número único do pedido" },
+  { key: "{endereco}", label: "Endereço da Empresa", description: "Endereço para retirada" },
+  { key: "{motivo}", label: "Motivo do Cancelamento", description: "Razão do cancelamento (se aplicável)" },
+];
+
+// Labels amigáveis para os status de pedidos
+const STATUS_LABELS = {
+  aguardando_aceite: { label: "Pedido Criado", icon: Package, color: "bg-blue-500" },
+  producao: { label: "Em Produção", icon: Clock, color: "bg-yellow-500" },
+  pronto: { label: "Pronto", icon: CheckCircle, color: "bg-green-500" },
+  na_bag: { label: "Na Bag", icon: ShoppingBag, color: "bg-purple-500" },
+  em_rota: { label: "Em Rota", icon: Truck, color: "bg-orange-500" },
+  entregue: { label: "Entregue", icon: CheckCircle, color: "bg-green-600" },
+  concluido: { label: "Concluído", icon: CheckCircle, color: "bg-green-600" },
+  retirado: { label: "Retirado", icon: CheckCircle, color: "bg-green-600" },
+  cancelado: { label: "Cancelado", icon: X, color: "bg-red-500" },
+};
+
+function OrderStatusNotificationsSection({ toast }) {
+  const [templates, setTemplates] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [activeTab, setActiveTab] = useState("delivery"); // delivery ou pickup
+  const [editingTemplate, setEditingTemplate] = useState(null);
+  const [editForm, setEditForm] = useState({ template: "", delay_seconds: 0, is_active: true });
+
+  const fetchTemplates = useCallback(async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`${API_URL}/api/order-status-templates`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (data.success) {
+        setTemplates(data.templates || []);
+      }
+    } catch (error) {
+      console.error("Erro ao buscar templates:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchTemplates();
+  }, [fetchTemplates]);
+
+  const openEditModal = (template) => {
+    setEditingTemplate(template);
+    setEditForm({
+      template: template.template || "",
+      delay_seconds: template.delay_seconds || 0,
+      is_active: template.is_active === 1 || template.is_active === true
+    });
+  };
+
+  const saveTemplate = async () => {
+    if (!editingTemplate) return;
+    setSaving(true);
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`${API_URL}/api/order-status-templates/${editingTemplate.tipo_entrega}/${editingTemplate.status}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(editForm)
+      });
+      const data = await res.json();
+      if (data.success) {
+        toast({ title: "Sucesso", description: "Template atualizado com sucesso!" });
+        await fetchTemplates();
+        setEditingTemplate(null);
+      } else {
+        toast({ title: "Erro", description: data.detail || "Erro ao salvar template", variant: "destructive" });
+      }
+    } catch (error) {
+      toast({ title: "Erro", description: "Erro ao salvar template", variant: "destructive" });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const filteredTemplates = templates.filter(t => t.tipo_entrega === activeTab);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* Info Card */}
+      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30 rounded-xl border p-4">
+        <div className="flex items-start gap-3">
+          <div className="p-2 rounded-lg bg-blue-500 text-white">
+            <Bell className="w-4 h-4" />
+          </div>
+          <div className="flex-1">
+            <h4 className="font-medium">Notificações Automáticas de Pedidos</h4>
+            <p className="text-sm text-muted-foreground mt-1 mb-3">
+              Configure as mensagens que serão enviadas automaticamente ao cliente em cada etapa do pedido.
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {ORDER_NOTIFICATION_VARIABLES.map((v) => (
+                <span 
+                  key={v.key}
+                  className="px-2 py-1 bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 rounded text-xs font-mono cursor-help"
+                  title={v.description}
+                >
+                  {v.key}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Tabs Entrega / Retirada */}
+      <div className="flex gap-2">
+        <Button 
+          variant={activeTab === "delivery" ? "default" : "outline"}
+          onClick={() => setActiveTab("delivery")}
+        >
+          <Truck className="w-4 h-4 mr-2" />
+          Entrega (Delivery)
+        </Button>
+        <Button 
+          variant={activeTab === "pickup" ? "default" : "outline"}
+          onClick={() => setActiveTab("pickup")}
+        >
+          <Package className="w-4 h-4 mr-2" />
+          Retirada (Pickup)
+        </Button>
+      </div>
+
+      {/* Lista de Templates */}
+      <div className="space-y-3">
+        {filteredTemplates.map((template) => {
+          const statusConfig = STATUS_LABELS[template.status] || { label: template.status, icon: MessageCircle, color: "bg-gray-500" };
+          const StatusIcon = statusConfig.icon;
+          return (
+            <div 
+              key={template.id} 
+              className={`bg-card border rounded-xl p-4 ${!template.is_active ? 'opacity-60' : ''}`}
+            >
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className={`p-1.5 rounded-lg ${statusConfig.color} text-white`}>
+                      <StatusIcon className="w-4 h-4" />
+                    </span>
+                    <span className="font-medium">{statusConfig.label}</span>
+                    {template.delay_seconds > 0 && (
+                      <span className="px-2 py-0.5 bg-amber-100 dark:bg-amber-900/50 text-amber-700 dark:text-amber-300 rounded text-xs">
+                        ⏱️ {template.delay_seconds}s de delay
+                      </span>
+                    )}
+                    <span className={`px-2 py-0.5 rounded text-xs font-medium ${
+                      template.is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'
+                    }`}>
+                      {template.is_active ? 'Ativo' : 'Inativo'}
+                    </span>
+                  </div>
+                  <div className="bg-muted/50 rounded-lg p-3">
+                    <pre className="text-sm text-muted-foreground whitespace-pre-wrap font-sans">
+                      {template.template}
+                    </pre>
+                  </div>
+                </div>
+                <Button variant="outline" size="sm" onClick={() => openEditModal(template)}>
+                  <Edit2 className="w-4 h-4" />
+                </Button>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Modal de Edição */}
+      <Dialog open={!!editingTemplate} onOpenChange={(open) => !open && setEditingTemplate(null)}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>
+              Editar Notificação - {editingTemplate && STATUS_LABELS[editingTemplate.status]?.label}
+            </DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-4 py-4">
+            <div>
+              <div className="flex items-center justify-between mb-1">
+                <Label>Mensagem da Notificação</Label>
+                <span className="text-xs text-muted-foreground">Variáveis disponíveis:</span>
+              </div>
+              <div className="flex flex-wrap gap-1 mb-2">
+                {ORDER_NOTIFICATION_VARIABLES.map((v) => (
+                  <button
+                    key={v.key}
+                    type="button"
+                    className="px-2 py-1 bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 rounded text-xs font-mono hover:bg-blue-200 transition-colors"
+                    onClick={() => setEditForm(prev => ({...prev, template: prev.template + v.key}))}
+                    title={v.description}
+                  >
+                    {v.key}
+                  </button>
+                ))}
+              </div>
+              <Textarea 
+                placeholder="Digite a mensagem de notificação..."
+                rows={4}
+                value={editForm.template}
+                onChange={(e) => setEditForm(prev => ({...prev, template: e.target.value}))}
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label>Delay (segundos)</Label>
+                <Input 
+                  type="number"
+                  min={0}
+                  max={300}
+                  value={editForm.delay_seconds}
+                  onChange={(e) => setEditForm(prev => ({...prev, delay_seconds: parseInt(e.target.value) || 0}))}
+                />
+                <p className="text-xs text-muted-foreground mt-1">
+                  Tempo de espera antes de enviar a notificação
+                </p>
+              </div>
+              <div>
+                <Label>Status</Label>
+                <div className="flex items-center gap-2 mt-2">
+                  <Switch 
+                    checked={editForm.is_active}
+                    onCheckedChange={(checked) => setEditForm(prev => ({...prev, is_active: checked}))}
+                  />
+                  <span className="text-sm">{editForm.is_active ? "Ativo" : "Inativo"}</span>
+                </div>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Se inativo, a notificação não será enviada
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setEditingTemplate(null)}>
+              Cancelar
+            </Button>
+            <Button onClick={saveTemplate} disabled={saving}>
+              {saving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
+              Salvar
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}
+
 // Variáveis disponíveis para usar nas respostas
 const AVAILABLE_VARIABLES = [
   { key: "[NOME-DO-CLIENTE]", label: "Nome do Cliente", description: "Nome do cliente identificado pelo telefone" },
