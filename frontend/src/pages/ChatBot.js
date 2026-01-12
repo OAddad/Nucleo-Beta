@@ -2199,9 +2199,6 @@ function RespostasAutomaticasTab({ toast }) {
       
       await fetchTemplates();
       setEditingTemplate(null);
-      } else {
-        toast({ title: "Erro", description: data.detail || "Erro ao salvar template", variant: "destructive" });
-      }
     } catch (error) {
       toast({ title: "Erro", description: "Erro ao salvar template", variant: "destructive" });
     } finally {
