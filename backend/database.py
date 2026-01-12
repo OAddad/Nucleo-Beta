@@ -739,6 +739,36 @@ def init_database():
         ''')
         conn.commit()
         
+        # Tabela para estatísticas do WhatsApp/ChatBot
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS whatsapp_stats (
+                id TEXT PRIMARY KEY DEFAULT 'main',
+                messages_received INTEGER DEFAULT 0,
+                messages_sent INTEGER DEFAULT 0,
+                updated_at TEXT
+            )
+        ''')
+        conn.commit()
+        
+        # Tabela para clientes atendidos pelo WhatsApp
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS whatsapp_clients (
+                phone TEXT PRIMARY KEY,
+                name TEXT,
+                first_contact TEXT,
+                last_contact TEXT,
+                messages_count INTEGER DEFAULT 0
+            )
+        ''')
+        conn.commit()
+        
+        # Inicializar registro de estatísticas se não existir
+        cursor.execute("SELECT COUNT(*) FROM whatsapp_stats WHERE id = 'main'")
+        if cursor.fetchone()[0] == 0:
+            now = datetime.now(timezone.utc).isoformat()
+            cursor.execute("INSERT INTO whatsapp_stats (id, messages_received, messages_sent, updated_at) VALUES ('main', 0, 0, ?)", (now,))
+            conn.commit()
+        
         # Verificar se precisa adicionar novas colunas (migração)
         try:
             cursor.execute("SELECT has_second_period FROM business_hours LIMIT 1")
