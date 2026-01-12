@@ -1340,15 +1340,15 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
         tipo_entrega: tipoEntrega,
         modulo: "Delivery",
         items: cart.map(item => ({
-          product_id: item.id,
-          product_name: item.name,
-          quantity: item.quantity,
-          unit_price: item.sale_price || 0,
-          observation: item.observation || ""
+          id: item.id,
+          nome: item.name,
+          quantidade: item.quantity,
+          preco: item.sale_price || 0,
+          observacao: item.observation || ""
         })),
         total: total,
         forma_pagamento: formaPagamento,
-        troco_precisa: formaPagamento === "dinheiro" && trocoPara,
+        troco_precisa: formaPagamento === "dinheiro" && trocoPara ? true : false,
         troco_valor: formaPagamento === "dinheiro" && trocoPara ? parseFloat(trocoPara) : null,
         observacao: observacao,
         valor_entrega: tipoEntrega === "delivery" ? taxaEntrega : 0,
