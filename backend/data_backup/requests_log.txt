@@ -19003,3 +19003,11 @@
 2026-01-12T19:07:05.162409+00:00 | DB_CALL process_message_words | P3 | 0.38ms | error | ERROR: no such column: type
 2026-01-12T19:07:26.655571+00:00 | DB_CALL process_message_words | P3 | 0.37ms | error | ERROR: no such column: type
 2026-01-12T19:08:02.404244+00:00 | DB_CALL process_message_words | P3 | 0.37ms | error | ERROR: no such column: type
+2026-01-12T19:31:41.932505+00:00 | DB_CALL init_database | P3 | 2.82ms | success
+2026-01-12T19:31:41.933010+00:00 | DB_CALL count_ingredients | P3 | 0.26ms | success
+2026-01-12T19:31:41.933255+00:00 | DB_CALL count_products | P3 | 0.18ms | success
+2026-01-12T19:31:41.934347+00:00 | DB_CALL count_users | P3 | 1.03ms | success
+2026-01-12T19:31:49.969361+00:00 | DB_CALL init_database | P3 | 2.74ms | success
+2026-01-12T19:31:49.969855+00:00 | DB_CALL count_ingredients | P3 | 0.25ms | success
+2026-01-12T19:31:49.970045+00:00 | DB_CALL count_products | P3 | 0.13ms | success
+2026-01-12T19:31:49.970188+00:00 | DB_CALL count_users | P3 | 0.09ms | success
