@@ -22036,3 +22036,7 @@
 2026-01-12T22:48:58.188338+00:00 | DB_CALL get_all_keyword_responses | P3 | 0.14ms | success
 2026-01-12T22:48:59.234909+00:00 | DB_CALL get_user_by_id | P3 | 0.26ms | success
 2026-01-12T22:48:59.235265+00:00 | DB_CALL get_all_order_status_templates | P3 | 0.21ms | success
+2026-01-12T22:52:59.471952+00:00 | DB_CALL get_whatsapp_stats | P3 | 1.39ms | success
+2026-01-12T22:53:00.432306+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.24ms | success
+2026-01-12T22:53:04.440668+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.21ms | success
+2026-01-12T22:53:05.438999+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.2ms | success
