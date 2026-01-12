@@ -1489,7 +1489,7 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
                       <div 
                         key={product.id}
                         className="border rounded-lg p-3 hover:border-orange-500 cursor-pointer transition-all bg-card"
-                        onClick={() => addToCart(product)}
+                        onClick={() => openProductPopup(product)}
                       >
                         {product.photo_url ? (
                           <img 
@@ -1504,10 +1504,10 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
                           </div>
                         )}
                         <h4 className="font-medium text-sm truncate">{product.name}</h4>
+                        {product.description && (
+                          <p className="text-xs text-muted-foreground line-clamp-2 mb-1">{product.description}</p>
+                        )}
                         <p className="text-orange-600 font-bold">R$ {(product.sale_price || 0).toFixed(2)}</p>
-                        <Button size="sm" className="w-full mt-2 bg-orange-500 hover:bg-orange-600">
-                          <Plus className="w-4 h-4 mr-1" /> Adicionar
-                        </Button>
                       </div>
                     ))}
                   </div>
