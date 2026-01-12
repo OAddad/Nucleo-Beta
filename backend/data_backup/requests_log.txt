@@ -21566,3 +21566,6 @@
 2026-01-12T21:54:48.576813+00:00 | DB_CALL get_user_by_username | P3 | 0.27ms | success
 2026-01-12T21:54:48.598948+00:00 | DB_CALL get_all_pedidos | P3 | 1.19ms | success
 2026-01-12T21:54:48.633737+00:00 | DB_CALL update_pedido_status | P3 | 4.68ms | success
+2026-01-12T21:54:54.282496+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.27ms | success
+2026-01-12T21:54:54.464130+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.29ms | success
+2026-01-12T21:54:57.406650+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.27ms | success
