@@ -1285,29 +1285,70 @@ function FlowEditorTab({ toast }) {
 function MessagesTab({ toast }) {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedContact, setSelectedContact] = useState(null);
+  const [contacts, setContacts] = useState([]);
 
   const fetchMessages = useCallback(async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(`${API_URL}/api/whatsapp/messages?limit=50`, {
+      const res = await fetch(`${API_URL}/api/whatsapp/messages?limit=200`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();
       if (data.success) {
-        setMessages(data.messages || []);
+        const msgs = data.messages || [];
+        setMessages(msgs);
+        
+        // Agrupar por contato (número de telefone)
+        const contactMap = {};
+        msgs.forEach(msg => {
+          const phone = msg.from?.replace("@s.whatsapp.net", "") || "Desconhecido";
+          if (!contactMap[phone]) {
+            contactMap[phone] = {
+              phone,
+              name: msg.pushName || msg.sender_name || "Cliente",
+              messages: [],
+              lastMessage: null,
+              lastTimestamp: null
+            };
+          }
+          contactMap[phone].messages.push(msg);
+          // Atualizar última mensagem
+          const msgTime = new Date(msg.timestamp || msg.created_at);
+          if (!contactMap[phone].lastTimestamp || msgTime > contactMap[phone].lastTimestamp) {
+            contactMap[phone].lastTimestamp = msgTime;
+            contactMap[phone].lastMessage = msg.message;
+            contactMap[phone].name = msg.pushName || msg.sender_name || contactMap[phone].name;
+          }
+        });
+        
+        // Converter para array e ordenar por última mensagem
+        const contactList = Object.values(contactMap).sort((a, b) => 
+          (b.lastTimestamp || 0) - (a.lastTimestamp || 0)
+        );
+        setContacts(contactList);
+        
+        // Selecionar primeiro contato se nenhum selecionado
+        if (!selectedContact && contactList.length > 0) {
+          setSelectedContact(contactList[0]);
+        } else if (selectedContact) {
+          // Atualizar contato selecionado com novas mensagens
+          const updated = contactList.find(c => c.phone === selectedContact.phone);
+          if (updated) setSelectedContact(updated);
+        }
       }
     } catch (error) {
       console.error("Erro ao buscar mensagens:", error);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [selectedContact]);
 
   useEffect(() => {
     fetchMessages();
     const interval = setInterval(fetchMessages, 10000);
     return () => clearInterval(interval);
-  }, [fetchMessages]);
+  }, []);
 
   if (loading) {
     return (
@@ -1318,48 +1359,102 @@ function MessagesTab({ toast }) {
   }
 
   return (
-    <div className="p-6 max-w-4xl mx-auto">
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl font-semibold">Mensagens Recebidas</h2>
-        <Button variant="outline" onClick={fetchMessages}>
-          <RefreshCw className="w-4 h-4 mr-2" />
-          Atualizar
-        </Button>
-      </div>
-
-      {messages.length === 0 ? (
-        <div className="text-center py-12 bg-card rounded-xl border">
-          <MessageSquare className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-          <h3 className="text-lg font-medium mb-2">Nenhuma mensagem</h3>
-          <p className="text-sm text-muted-foreground">
-            As mensagens recebidas aparecerão aqui
-          </p>
+    <div className="flex h-[calc(100vh-200px)] min-h-[500px]">
+      {/* Lista de Contatos */}
+      <div className="w-80 border-r bg-card flex flex-col">
+        <div className="p-4 border-b">
+          <div className="flex items-center justify-between">
+            <h3 className="font-semibold">Conversas</h3>
+            <Button variant="ghost" size="sm" onClick={fetchMessages}>
+              <RefreshCw className="w-4 h-4" />
+            </Button>
+          </div>
+          <p className="text-xs text-muted-foreground mt-1">{contacts.length} contatos</p>
         </div>
-      ) : (
-        <div className="space-y-3">
-          {messages.map((msg, index) => (
-            <div key={msg.id || index} className="bg-card rounded-lg border p-4">
-              <div className="flex items-start gap-3">
-                <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
-                  <User className="w-5 h-5 text-green-600" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <span className="font-medium">{msg.pushName || "Cliente"}</span>
-                    <span className="text-xs text-muted-foreground">
-                      {msg.from?.replace("@s.whatsapp.net", "")}
+        
+        <div className="flex-1 overflow-y-auto">
+          {contacts.length === 0 ? (
+            <div className="p-4 text-center text-muted-foreground text-sm">
+              Nenhuma conversa ainda
+            </div>
+          ) : (
+            contacts.map((contact) => (
+              <div
+                key={contact.phone}
+                onClick={() => setSelectedContact(contact)}
+                className={`p-3 border-b cursor-pointer hover:bg-muted/50 transition-colors ${
+                  selectedContact?.phone === contact.phone ? 'bg-muted' : ''
+                }`}
+              >
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center flex-shrink-0">
+                    <User className="w-5 h-5 text-green-600" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between">
+                      <span className="font-medium text-sm truncate">{contact.name}</span>
+                      <span className="text-xs text-muted-foreground">
+                        {contact.lastTimestamp?.toLocaleTimeString("pt-BR", { hour: '2-digit', minute: '2-digit' })}
+                      </span>
+                    </div>
+                    <p className="text-xs text-muted-foreground truncate">{contact.phone}</p>
+                    <p className="text-sm text-muted-foreground truncate mt-1">{contact.lastMessage}</p>
+                    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs bg-green-100 text-green-700 mt-1">
+                      {contact.messages.length} msgs
                     </span>
                   </div>
-                  <p className="mt-1 text-sm">{msg.message}</p>
-                  <p className="text-xs text-muted-foreground mt-2">
-                    {new Date(msg.timestamp).toLocaleString("pt-BR")}
-                  </p>
                 </div>
               </div>
-            </div>
-          ))}
+            ))
+          )}
         </div>
-      )}
+      </div>
+
+      {/* Área de Mensagens */}
+      <div className="flex-1 flex flex-col bg-muted/30">
+        {selectedContact ? (
+          <>
+            {/* Header do Contato */}
+            <div className="p-4 border-b bg-card flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
+                <User className="w-5 h-5 text-green-600" />
+              </div>
+              <div>
+                <h3 className="font-semibold">{selectedContact.name}</h3>
+                <p className="text-sm text-muted-foreground">{selectedContact.phone}</p>
+              </div>
+            </div>
+
+            {/* Lista de Mensagens */}
+            <div className="flex-1 overflow-y-auto p-4 space-y-3">
+              {selectedContact.messages
+                .sort((a, b) => new Date(a.timestamp || a.created_at) - new Date(b.timestamp || b.created_at))
+                .map((msg, index) => (
+                  <div key={msg.id || index} className="flex justify-start">
+                    <div className="bg-white dark:bg-gray-800 rounded-lg rounded-tl-none px-4 py-2 max-w-[70%] shadow-sm">
+                      <p className="text-sm">{msg.message}</p>
+                      <p className="text-xs text-muted-foreground text-right mt-1">
+                        {new Date(msg.timestamp || msg.created_at).toLocaleString("pt-BR", {
+                          day: '2-digit',
+                          month: '2-digit',
+                          hour: '2-digit',
+                          minute: '2-digit'
+                        })}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+            </div>
+          </>
+        ) : (
+          <div className="flex-1 flex items-center justify-center">
+            <div className="text-center text-muted-foreground">
+              <MessageSquare className="w-16 h-16 mx-auto mb-4 opacity-50" />
+              <p>Selecione uma conversa para ver as mensagens</p>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
