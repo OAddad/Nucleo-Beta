@@ -18428,3 +18428,4 @@
 2026-01-12T16:34:42.868706+00:00 | DB_CALL get_user_by_id | P3 | 0.29ms | success
 2026-01-12T16:34:42.868982+00:00 | DB_CALL get_all_flow_nodes | P3 | 0.12ms | success
 2026-01-12T16:34:42.869116+00:00 | DB_CALL get_all_flow_edges | P3 | 0.08ms | success
+2026-01-12T16:34:50.733402+00:00 | DB_CALL get_all_settings | P3 | 0.31ms | success
