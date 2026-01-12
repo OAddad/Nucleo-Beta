@@ -2255,6 +2255,9 @@ function RespostasAutomaticasTab({ toast }) {
             </div>
           )}
         </>
+      ) : activeSection === "notificacoes" ? (
+        /* Seção de Notificações de Pedidos */
+        <OrderStatusNotificationsSection toast={toast} />
       ) : (
         /* Seção de Configurações do Bot */
         <div className="space-y-6">
