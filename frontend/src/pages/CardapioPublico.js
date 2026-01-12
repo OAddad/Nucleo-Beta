@@ -58,7 +58,7 @@ function OrderTrackingScreen({ pedido: pedidoInicial, onClose, darkMode }) {
     { id: 'producao', label: 'Em Produção', icon: ChefHat, description: 'Seu pedido está sendo preparado' },
     { id: 'aguardando_entregador', label: 'Aguardando Entregador', icon: Timer, description: 'Aguardando um entregador disponível' },
     { id: 'bag_entregador', label: 'Na Bag do Entregador', icon: Package, description: 'Seu pedido está com o entregador' },
-    { id: 'em_rota', label: 'Em Rota de Entrega', icon: Bike, description: 'O entregador está a caminho' },
+    { id: 'em_rota', label: 'Em Rota de Entrega', icon: Bike, description: 'O entregador está a caminho', showTracking: true },
     { id: 'entregue', label: 'Pedido Entregue', icon: CheckCircle, description: 'Seu pedido foi entregue!' },
   ];
   
