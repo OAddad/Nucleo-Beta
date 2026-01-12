@@ -21937,3 +21937,8 @@
 2026-01-12T22:39:51.395001+00:00 | DB_CALL get_word_analytics | P3 | 0.37ms | success
 2026-01-12T22:39:51.567217+00:00 | DB_CALL get_user_by_id | P3 | 0.27ms | success
 2026-01-12T22:39:51.567682+00:00 | DB_CALL get_recent_messages | P3 | 0.29ms | success
+2026-01-12T22:39:54.799911+00:00 | DB_CALL get_user_by_id | P3 | 0.29ms | success
+2026-01-12T22:39:56.099085+00:00 | DB_CALL get_user_by_id | P3 | 0.27ms | success
+2026-01-12T22:39:56.099377+00:00 | DB_CALL get_all_settings | P3 | 0.15ms | success
+2026-01-12T22:39:56.101453+00:00 | DB_CALL get_user_by_id | P3 | 0.17ms | success
+2026-01-12T22:39:56.101668+00:00 | DB_CALL get_all_keyword_responses | P3 | 0.12ms | success
