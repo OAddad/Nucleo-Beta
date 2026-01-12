@@ -146,6 +146,9 @@ async def notify_order_status(pedido_id: str, new_status: str, delay_seconds: in
         settings = db.get_all_settings()
         endereco = settings.get('company_address', 'nosso estabelecimento')
         
+        # Nome do entregador
+        nome_entregador = pedido.get('entregador_nome') or 'Entregador'
+        
         # Usar motivo do cancelamento se fornecido, ou buscar do pedido
         if new_status == 'cancelado':
             motivo_final = motivo or pedido.get('motivo_cancelamento', 'Não informado')
@@ -155,6 +158,7 @@ async def notify_order_status(pedido_id: str, new_status: str, delay_seconds: in
         variables = {
             'codigo': codigo,
             'endereco': endereco,
+            'nome_entregador': nome_entregador,
             'motivo': motivo_final
         }
         
