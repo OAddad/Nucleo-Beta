@@ -3740,6 +3740,88 @@ async def delete_decision_node(node_id: str, current_user: User = Depends(get_cu
     return {"success": True, "message": "Nó deletado com sucesso"}
 
 
+# ==================== KEYWORD RESPONSES ====================
+class KeywordResponseCreate(BaseModel):
+    keywords: str  # Palavras-chave separadas por vírgula
+    response: str
+    is_active: bool = True
+    priority: int = 0
+    match_type: str = "contains"  # contains, exact, word
+
+
+class KeywordResponseUpdate(BaseModel):
+    keywords: Optional[str] = None
+    response: Optional[str] = None
+    is_active: Optional[bool] = None
+    priority: Optional[int] = None
+    match_type: Optional[str] = None
+
+
+@api_router.get("/keyword-responses")
+async def get_keyword_responses(current_user: User = Depends(get_current_user)):
+    """Retorna todas as respostas por palavras-chave"""
+    responses = await db_call(sqlite_db.get_all_keyword_responses)
+    return {"success": True, "responses": responses}
+
+
+@api_router.get("/keyword-responses/{response_id}")
+async def get_keyword_response(response_id: str, current_user: User = Depends(get_current_user)):
+    """Retorna uma resposta específica"""
+    response = await db_call(sqlite_db.get_keyword_response, response_id)
+    if not response:
+        raise HTTPException(status_code=404, detail="Resposta não encontrada")
+    return {"success": True, "response": response}
+
+
+@api_router.post("/keyword-responses")
+async def create_keyword_response(data: KeywordResponseCreate, current_user: User = Depends(get_current_user)):
+    """Cria uma nova resposta por palavra-chave"""
+    if current_user.role not in ["proprietario", "administrador"]:
+        raise HTTPException(status_code=403, detail="Sem permissão")
+    
+    response_data = {
+        "id": str(uuid.uuid4()),
+        "keywords": data.keywords,
+        "response": data.response,
+        "is_active": data.is_active,
+        "priority": data.priority,
+        "match_type": data.match_type
+    }
+    
+    response = await db_call(sqlite_db.create_keyword_response, response_data)
+    return {"success": True, "response": response}
+
+
+@api_router.put("/keyword-responses/{response_id}")
+async def update_keyword_response(response_id: str, data: KeywordResponseUpdate, current_user: User = Depends(get_current_user)):
+    """Atualiza uma resposta existente"""
+    if current_user.role not in ["proprietario", "administrador"]:
+        raise HTTPException(status_code=403, detail="Sem permissão")
+    
+    response = await db_call(sqlite_db.get_keyword_response, response_id)
+    if not response:
+        raise HTTPException(status_code=404, detail="Resposta não encontrada")
+    
+    update_data = {k: v for k, v in data.model_dump().items() if v is not None}
+    
+    updated = await db_call(sqlite_db.update_keyword_response, response_id, update_data)
+    return {"success": True, "response": updated}
+
+
+@api_router.delete("/keyword-responses/{response_id}")
+async def delete_keyword_response(response_id: str, current_user: User = Depends(get_current_user)):
+    """Deleta uma resposta por palavra-chave"""
+    if current_user.role not in ["proprietario", "administrador"]:
+        raise HTTPException(status_code=403, detail="Sem permissão")
+    
+    response = await db_call(sqlite_db.get_keyword_response, response_id)
+    if not response:
+        raise HTTPException(status_code=404, detail="Resposta não encontrada")
+    
+    await db_call(sqlite_db.delete_keyword_response, response_id)
+    return {"success": True, "message": "Resposta deletada com sucesso"}
+
+
 # ==================== EMPRESA / COMPANY SETTINGS ====================
 class CompanySettingsUpdate(BaseModel):
     company_name: Optional[str] = None
