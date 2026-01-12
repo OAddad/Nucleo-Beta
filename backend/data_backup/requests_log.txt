@@ -21146,3 +21146,9 @@
 2026-01-12T21:25:06.378996+00:00 | DB_CALL get_all_entregadores | P3 | 0.27ms | success
 2026-01-12T21:25:06.380519+00:00 | DB_CALL get_all_pedidos | P3 | 0.77ms | success
 2026-01-12T21:25:06.397337+00:00 | DB_CALL get_all_settings | P3 | 0.26ms | success
+2026-01-12T21:25:11.372961+00:00 | DB_CALL get_all_pedidos | P3 | 0.96ms | success
+2026-01-12T21:25:11.375186+00:00 | DB_CALL get_all_entregadores | P3 | 0.54ms | success
+2026-01-12T21:25:11.375583+00:00 | DB_CALL get_all_settings | P3 | 0.62ms | success
+2026-01-12T21:25:16.377364+00:00 | DB_CALL get_all_entregadores | P3 | 0.67ms | success
+2026-01-12T21:25:16.379074+00:00 | DB_CALL get_all_pedidos | P3 | 1.92ms | success
+2026-01-12T21:25:16.380242+00:00 | DB_CALL get_all_settings | P3 | 1.88ms | success
