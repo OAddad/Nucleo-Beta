@@ -2200,6 +2200,36 @@ function RespostasAutomaticasTab({ toast }) {
       ) : (
         /* Seção de Configurações do Bot */
         <div className="space-y-6">
+          {/* Card de Nome do Chatbot */}
+          <div className="bg-card border rounded-xl p-6">
+            <div className="flex items-start gap-4 mb-6">
+              <div className="p-3 rounded-xl bg-green-100 dark:bg-green-900/30">
+                <Bot className="w-6 h-6 text-green-600" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-lg">Identidade do Chatbot</h3>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Defina o nome que o chatbot usará ao se apresentar para os clientes.
+                </p>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <div className="max-w-xs">
+                <Label>Nome do Chatbot</Label>
+                <Input 
+                  placeholder="Ex: Ana, Maria, João..."
+                  value={botSettings.chatbot_name}
+                  onChange={(e) => setBotSettings(prev => ({...prev, chatbot_name: e.target.value}))}
+                  className="mt-1"
+                />
+                <p className="text-xs text-muted-foreground mt-1">
+                  Quando perguntarem o nome, o bot responderá com este nome.
+                </p>
+              </div>
+            </div>
+          </div>
+
           {/* Card de Pausa do Bot */}
           <div className="bg-card border rounded-xl p-6">
             <div className="flex items-start gap-4 mb-6">
@@ -2226,7 +2256,7 @@ function RespostasAutomaticasTab({ toast }) {
                   className="mt-1"
                 />
                 <p className="text-xs text-muted-foreground mt-1">
-                  Esta mensagem será enviada quando o bot detectar intervenção de um atendente humano.
+                  Esta mensagem será enviada quando o bot detectar intervenção de um atendente humano. Use [TEMPO] para mostrar a duração.
                 </p>
               </div>
 
