@@ -239,6 +239,10 @@ async function connectToWhatsApp() {
             
             console.log(`[WhatsApp] Mensagem de ${from}: ${messageContent}`);
             
+            // Incrementar estatísticas
+            stats.messagesReceived++;
+            stats.clientsServed.add(from);  // Set automaticamente ignora duplicados
+            
             // Armazenar mensagem
             const msgData = {
               id: msg.key.id,
