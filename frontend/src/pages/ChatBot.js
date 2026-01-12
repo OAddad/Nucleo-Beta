@@ -2414,11 +2414,6 @@ function RespostasAutomaticasTab({ toast }) {
               </div>
             </div>
           ) : (
-                  </Button>
-                </div>
-              )}
-            </div>
-          ) : (
             /* Seção de Configurações do Bot */
             <div className="space-y-4">
               {/* Card de Nome do Chatbot */}

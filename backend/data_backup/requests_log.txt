@@ -23249,3 +23249,5 @@
 2026-01-12T23:26:43.426207+00:00 | DB_CALL get_pedido_by_id | P3 | 0.26ms | success
 2026-01-12T23:26:48.423465+00:00 | DB_CALL get_pedido_by_id | P3 | 0.31ms | success
 2026-01-12T23:26:53.432127+00:00 | DB_CALL get_pedido_by_id | P3 | 0.29ms | success
+2026-01-12T23:26:58.424591+00:00 | DB_CALL get_pedido_by_id | P3 | 0.34ms | success
+2026-01-12T23:27:03.420831+00:00 | DB_CALL get_pedido_by_id | P3 | 0.28ms | success
