@@ -21760,3 +21760,7 @@
 2026-01-12T22:21:49.492277+00:00 | DB_CALL count_ingredients | P3 | 0.29ms | success
 2026-01-12T22:21:49.492623+00:00 | DB_CALL count_products | P3 | 0.26ms | success
 2026-01-12T22:21:49.492828+00:00 | DB_CALL count_users | P3 | 0.12ms | success
+2026-01-12T22:22:43.663311+00:00 | DB_CALL init_database | P3 | 4.59ms | success
+2026-01-12T22:22:43.663792+00:00 | DB_CALL count_ingredients | P3 | 0.23ms | success
+2026-01-12T22:22:43.663971+00:00 | DB_CALL count_products | P3 | 0.12ms | success
+2026-01-12T22:22:43.664122+00:00 | DB_CALL count_users | P3 | 0.1ms | success

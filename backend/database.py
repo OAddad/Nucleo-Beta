@@ -826,6 +826,38 @@ def init_database():
             conn.commit()
             print("[DATABASE] Horários de funcionamento padrão criados")
         
+        # Inicializar templates de notificações de status de pedidos se tabela vazia
+        cursor.execute("SELECT COUNT(*) FROM order_status_templates")
+        if cursor.fetchone()[0] == 0:
+            now = datetime.now(timezone.utc).isoformat()
+            # Templates para ENTREGA (delivery)
+            delivery_templates = [
+                ('delivery', 'aguardando_aceite', 'Pedido Criado #{codigo}', 1, 35),
+                ('delivery', 'producao', 'Pedido #{codigo} Aceito, ja esta em produção', 1, 42),
+                ('delivery', 'pronto', 'Pedido #{codigo} Pronto, estamos aguardando entregador', 1, 0),
+                ('delivery', 'na_bag', 'Pedido #{codigo} Na Bag do entregador, em breve entra em rota de entrega', 1, 0),
+                ('delivery', 'em_rota', 'Pedido #{codigo} Esta em rota de entrega, confira no link www.rastreio.com.br', 1, 0),
+                ('delivery', 'entregue', 'Pedido #{codigo} Entregue', 1, 0),
+                ('delivery', 'concluido', 'Pedido #{codigo} Entregue', 1, 0),
+                ('delivery', 'cancelado', 'Pedido #{codigo} foi Cancelado\n\nMotivo: {motivo}', 1, 0),
+            ]
+            # Templates para RETIRADA (pickup)
+            pickup_templates = [
+                ('pickup', 'aguardando_aceite', 'Pedido Criado #{codigo}', 1, 35),
+                ('pickup', 'producao', 'Pedido #{codigo} Aceito, ja esta em produção', 1, 42),
+                ('pickup', 'pronto', 'Pedido #{codigo} Pronto, pode retirar\n\n📍 {endereco}', 1, 0),
+                ('pickup', 'retirado', 'Pedido #{codigo} Retirado com sucesso', 1, 0),
+                ('pickup', 'concluido', 'Pedido #{codigo} Retirado com sucesso', 1, 0),
+                ('pickup', 'cancelado', 'Pedido #{codigo} foi Cancelado\n\nMotivo: {motivo}', 1, 0),
+            ]
+            for t in delivery_templates + pickup_templates:
+                cursor.execute('''
+                    INSERT INTO order_status_templates (id, tipo_entrega, status, template, is_active, delay_seconds, created_at, updated_at)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                ''', (str(uuid.uuid4()), t[0], t[1], t[2], t[3], t[4], now, now))
+            conn.commit()
+            print("[DATABASE] Templates de notificações de status de pedidos criados")
+        
         _initialized = True
         print(f"[DATABASE] Inicializado em: {DB_PATH}")
 
