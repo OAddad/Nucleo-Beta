@@ -508,6 +508,21 @@ backend:
         agent: "testing"
         comment: "✅ CHATBOT SIMULADOR SPECIFIC TESTING COMPLETED (Jan 11, 2026): Testei especificamente o endpoint do ChatBot Inteligente para o Simulador de Conversas exatamente conforme especificado na review request. RESULTADOS: ✅ STEP 1 PASSED: Login com credenciais Addad/Addad123 funcionando perfeitamente (user role: proprietario). ✅ STEP 2 PASSED: POST /api/chatbot/process com mensagem 'Olá, qual o horário de funcionamento?' retornou success: true e resposta da IA (242 caracteres) sobre horários de funcionamento. ✅ STEP 3 PASSED: POST /api/chatbot/process com mensagem 'Quero ver o cardápio' retornou success: true e resposta da IA (542 caracteres) listando produtos do cardápio. ✅ STEP 4 PASSED: POST /api/chatbot/process com mensagem 'Qual o endereço?' retornou success: true e resposta da IA (184 caracteres) sobre endereço. ✅ ALL TESTS PASSED: Todos os endpoints respondendo com success: true e respostas da IA conforme especificado. ✅ SIMULADOR INTEGRATION: Backend está 100% pronto para a nova aba Simulador no frontend. Endpoint POST /api/chatbot/process totalmente operacional para o Simulador de Conversas."
 
+  - task: "Order Status Notification Templates"
+    implemented: true
+    working: true
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Endpoints de templates de notificações de status de pedidos implementados: GET /api/order-status-templates, GET /api/order-status-templates/{tipo_entrega}, PUT /api/order-status-templates/{tipo_entrega}/{status}"
+      - working: true
+        agent: "testing"
+        comment: "✅ ORDER STATUS TEMPLATES TESTING COMPLETED (Jan 11, 2026): Testei os NOVOS endpoints de Templates de Notificações de Status de Pedidos exatamente conforme especificado na review request usando credenciais Addad/Addad123. RESULTADOS: ✅ TEST 1 PASSED: GET /api/order-status-templates retorna success: true e 14 templates (8 delivery + 6 pickup) com todos os campos obrigatórios (id, tipo_entrega, status, template, is_active, delay_seconds, created_at, updated_at). ✅ TEST 2 PASSED: GET /api/order-status-templates/delivery retorna apenas templates delivery com aguardando_aceite delay_seconds=35 e producao delay_seconds=42 conforme especificado. ✅ TEST 3 PASSED: GET /api/order-status-templates/pickup retorna apenas templates pickup com aguardando_aceite delay_seconds=35 e producao delay_seconds=42 conforme especificado. ✅ TEST 4 PASSED: PUT /api/order-status-templates/delivery/pronto atualiza template com success: true, template='Pedido #{codigo} PRONTO para entrega!', delay_seconds=5, is_active=true. ✅ TEST 5 PASSED: GET /api/order-status-templates/delivery confirma que atualização persistiu corretamente. ✅ VALIDATION: Status válidos para delivery (aguardando_aceite, producao, pronto, na_bag, em_rota, entregue, concluido, cancelado) e pickup (aguardando_aceite, producao, pronto, retirado, concluido, cancelado) verificados. ✅ VARIABLES: Templates suportam variáveis {codigo}, {endereco}, {motivo} conforme especificado. ✅ AUTHENTICATION: Credenciais Addad/Addad123 funcionando perfeitamente. Sistema de templates de notificações 100% operacional conforme especificações da review request. Minor: Campo is_active retorna como integer (1/0) em vez de boolean, mas funcionalidade está correta."
+
   - task: "Sistema Endpoints - Company Settings and Data Cleanup"
     implemented: true
     working: true
