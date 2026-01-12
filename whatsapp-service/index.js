@@ -22,6 +22,13 @@ let reconnecting = false;
 let autoReplyEnabled = true;
 let connectedPhone = null;  // Número conectado
 
+// Estatísticas de atendimento
+let stats = {
+  clientsServed: new Set(),  // Set de números únicos atendidos
+  messagesReceived: 0,
+  messagesSent: 0
+};
+
 // Logger silencioso para Baileys
 const logger = pino({ level: 'silent' });
 
