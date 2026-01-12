@@ -21173,3 +21173,10 @@
 2026-01-12T21:25:36.375838+00:00 | DB_CALL get_all_entregadores | P3 | 3.0ms | success
 2026-01-12T21:25:36.376550+00:00 | DB_CALL get_all_settings | P3 | 2.81ms | success
 2026-01-12T21:25:36.380438+00:00 | DB_CALL get_all_pedidos | P3 | 3.25ms | success
+2026-01-12T21:25:42.521352+00:00 | DB_CALL init_database | P3 | 2.81ms | success
+2026-01-12T21:25:42.521868+00:00 | DB_CALL count_ingredients | P3 | 0.25ms | success
+2026-01-12T21:25:42.522054+00:00 | DB_CALL count_products | P3 | 0.12ms | success
+2026-01-12T21:25:42.522203+00:00 | DB_CALL count_users | P3 | 0.1ms | success
+2026-01-12T21:25:42.525411+00:00 | DB_CALL get_all_pedidos | P3 | 1.56ms | success
+2026-01-12T21:25:42.526794+00:00 | DB_CALL get_all_settings | P3 | 3.14ms | success
+2026-01-12T21:25:42.527176+00:00 | DB_CALL get_all_entregadores | P3 | 3.22ms | success
