@@ -18871,3 +18871,11 @@
 2026-01-12T17:22:07.447861+00:00 | DB_CALL get_user_by_id | P3 | 0.69ms | success
 2026-01-12T17:22:07.448082+00:00 | DB_CALL get_all_keyword_responses | P3 | 0.16ms | success
 2026-01-12T17:22:07.448571+00:00 | DB_CALL get_all_settings | P3 | 0.75ms | success
+2026-01-12T17:58:00.879760+00:00 | DB_CALL process_message_words | P3 | 9.32ms | success
+2026-01-12T17:58:03.517897+00:00 | DB_CALL get_user_by_id | P3 | 0.28ms | success
+2026-01-12T17:58:08.758700+00:00 | DB_CALL get_user_by_id | P3 | 0.85ms | success
+2026-01-12T17:58:08.758914+00:00 | DB_CALL get_user_by_id | P3 | 0.77ms | success
+2026-01-12T17:58:08.759190+00:00 | DB_CALL get_all_keyword_responses | P3 | 0.2ms | success
+2026-01-12T17:58:08.759734+00:00 | DB_CALL get_all_settings | P3 | 0.88ms | success
+2026-01-12T17:58:11.938150+00:00 | DB_CALL process_message_words | P3 | 0.35ms | error | ERROR: no such column: type
+2026-01-12T17:58:26.376129+00:00 | DB_CALL get_user_by_id | P3 | 0.34ms | success
