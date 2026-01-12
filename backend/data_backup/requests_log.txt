@@ -18442,3 +18442,8 @@
 2026-01-12T16:35:10.838185+00:00 | DB_CALL get_user_by_username | P3 | 0.29ms | success
 2026-01-12T16:35:10.838438+00:00 | DB_CALL get_user_by_username | P3 | 0.13ms | success
 2026-01-12T16:35:10.887364+00:00 | DB_CALL get_all_clientes | P3 | 48.82ms | success
+2026-01-12T16:35:11.418792+00:00 | DB_CALL get_cliente_by_id | P3 | 1.13ms | success
+2026-01-12T16:35:12.238214+00:00 | DB_CALL get_all_settings | P3 | 0.29ms | success
+2026-01-12T16:35:12.240894+00:00 | DB_CALL get_all_pedidos | P3 | 0.69ms | success
+2026-01-12T16:35:12.243615+00:00 | DB_CALL get_all_entregadores | P3 | 0.22ms | success
+2026-01-12T16:35:15.186454+00:00 | DB_CALL get_client_addresses | P3 | 2.79ms | success
