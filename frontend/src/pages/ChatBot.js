@@ -1831,6 +1831,18 @@ function PalavrasTab({ toast }) {
 
 
 // ==================== ABA RESPOSTAS AUTOMÁTICAS ====================
+// Variáveis disponíveis para usar nas respostas
+const AVAILABLE_VARIABLES = [
+  { key: "[NOME-DO-CLIENTE]", label: "Nome do Cliente", description: "Nome do cliente identificado pelo telefone" },
+  { key: "[DELIVERY-URL]", label: "URL do Delivery/Cardápio", description: "Link do cardápio digital" },
+  { key: "[ENDERECO]", label: "Endereço da Empresa", description: "Endereço configurado nas configurações" },
+  { key: "[HORARIOS]", label: "Horários de Funcionamento", description: "Todos os horários de funcionamento" },
+  { key: "[CODIGO-PEDIDO]", label: "Código do Último Pedido", description: "Número do último pedido do cliente" },
+  { key: "[TELEFONE-EMPRESA]", label: "Telefone da Empresa", description: "Telefone de contato" },
+  { key: "[NOME-EMPRESA]", label: "Nome da Empresa", description: "Nome fantasia da empresa" },
+  { key: "[INSTAGRAM]", label: "Instagram", description: "@ do Instagram da empresa" },
+];
+
 function RespostasAutomaticasTab({ toast }) {
   const [responses, setResponses] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -1844,6 +1856,12 @@ function RespostasAutomaticasTab({ toast }) {
     match_type: "contains"
   });
   const [deleteConfirm, setDeleteConfirm] = useState(null);
+  const [activeSection, setActiveSection] = useState("respostas"); // respostas ou configuracoes
+  const [botSettings, setBotSettings] = useState({
+    bot_pause_message: "",
+    bot_pause_duration: 15
+  });
+  const [savingSettings, setSavingSettings] = useState(false);
 
   const fetchResponses = useCallback(async () => {
     try {
@@ -1862,9 +1880,28 @@ function RespostasAutomaticasTab({ toast }) {
     }
   }, []);
 
+  const fetchBotSettings = useCallback(async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`${API_URL}/api/chatbot/bot-settings`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (data.success) {
+        setBotSettings({
+          bot_pause_message: data.bot_pause_message || "",
+          bot_pause_duration: data.bot_pause_duration || 15
+        });
+      }
+    } catch (error) {
+      console.error("Erro ao buscar configurações:", error);
+    }
+  }, []);
+
   useEffect(() => {
     fetchResponses();
-  }, [fetchResponses]);
+    fetchBotSettings();
+  }, [fetchResponses, fetchBotSettings]);
 
   const openCreateModal = () => {
     setEditingResponse(null);
@@ -1963,6 +2000,36 @@ function RespostasAutomaticasTab({ toast }) {
     }
   };
 
+  const insertVariable = (variable) => {
+    setFormData(prev => ({
+      ...prev,
+      response: prev.response + variable
+    }));
+  };
+
+  const saveBotSettings = async () => {
+    setSavingSettings(true);
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`${API_URL}/api/chatbot/bot-settings`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(botSettings)
+      });
+      const data = await res.json();
+      if (data.success) {
+        toast({ title: "Salvo", description: "Configurações salvas com sucesso" });
+      }
+    } catch (error) {
+      toast({ title: "Erro", description: "Erro ao salvar configurações", variant: "destructive" });
+    } finally {
+      setSavingSettings(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -1973,114 +2040,242 @@ function RespostasAutomaticasTab({ toast }) {
 
   return (
     <div className="p-6 space-y-6">
-      {/* Header */}
+      {/* Header com abas */}
       <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-lg font-semibold">Respostas Automáticas</h2>
-          <p className="text-sm text-muted-foreground">
-            Configure palavras-chave e as respostas que o BOT enviará automaticamente
-          </p>
-        </div>
-        <Button onClick={openCreateModal}>
-          <Plus className="w-4 h-4 mr-2" />
-          Nova Resposta
-        </Button>
-      </div>
-
-      {/* Info Card */}
-      <div className="bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/30 dark:to-orange-950/30 rounded-xl border p-4">
-        <div className="flex items-start gap-3">
-          <div className="p-2 rounded-lg bg-amber-500 text-white">
-            <HelpCircle className="w-4 h-4" />
-          </div>
-          <div>
-            <h4 className="font-medium">Como funciona?</h4>
-            <p className="text-sm text-muted-foreground mt-1">
-              Quando o cliente enviar uma mensagem contendo uma das palavras-chave configuradas, 
-              o BOT responderá automaticamente com a mensagem definida, <strong>sem usar a IA</strong>.
-              Separe múltiplas palavras-chave por vírgula (ex: "oi, olá, bom dia").
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* Lista de Respostas */}
-      {responses.length === 0 ? (
-        <div className="bg-card border rounded-xl p-12 text-center">
-          <MessageCircle className="w-12 h-12 mx-auto mb-4 text-muted-foreground opacity-50" />
-          <h3 className="font-medium mb-2">Nenhuma resposta configurada</h3>
-          <p className="text-sm text-muted-foreground mb-4">
-            Crie respostas automáticas para agilizar o atendimento do seu BOT
-          </p>
-          <Button onClick={openCreateModal}>
-            <Plus className="w-4 h-4 mr-2" />
-            Criar Primeira Resposta
+        <div className="flex gap-2">
+          <Button 
+            variant={activeSection === "respostas" ? "default" : "outline"}
+            onClick={() => setActiveSection("respostas")}
+          >
+            <MessageCircle className="w-4 h-4 mr-2" />
+            Respostas Automáticas
+          </Button>
+          <Button 
+            variant={activeSection === "configuracoes" ? "default" : "outline"}
+            onClick={() => setActiveSection("configuracoes")}
+          >
+            <Settings className="w-4 h-4 mr-2" />
+            Configurações do Bot
           </Button>
         </div>
-      ) : (
-        <div className="space-y-3">
-          {responses.map((resp) => (
-            <div 
-              key={resp.id} 
-              className={`bg-card border rounded-xl p-4 ${!resp.is_active ? 'opacity-60' : ''}`}
-            >
-              <div className="flex items-start justify-between gap-4">
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-2">
-                    <span className={`px-2 py-0.5 rounded text-xs font-medium ${
-                      resp.is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'
-                    }`}>
-                      {resp.is_active ? 'Ativo' : 'Inativo'}
+        {activeSection === "respostas" && (
+          <Button onClick={openCreateModal}>
+            <Plus className="w-4 h-4 mr-2" />
+            Nova Resposta
+          </Button>
+        )}
+      </div>
+
+      {activeSection === "respostas" ? (
+        <>
+          {/* Card de Variáveis Disponíveis */}
+          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30 rounded-xl border p-4">
+            <div className="flex items-start gap-3">
+              <div className="p-2 rounded-lg bg-blue-500 text-white">
+                <Zap className="w-4 h-4" />
+              </div>
+              <div className="flex-1">
+                <h4 className="font-medium">Variáveis Disponíveis</h4>
+                <p className="text-sm text-muted-foreground mt-1 mb-3">
+                  Use estas variáveis nas suas respostas para personalizar automaticamente:
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {AVAILABLE_VARIABLES.map((v) => (
+                    <span 
+                      key={v.key}
+                      className="px-2 py-1 bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 rounded text-xs font-mono cursor-help"
+                      title={v.description}
+                    >
+                      {v.key}
                     </span>
-                    <span className="px-2 py-0.5 rounded text-xs bg-muted">
-                      {resp.match_type === 'exact' ? 'Correspondência Exata' : 
-                       resp.match_type === 'word' ? 'Palavra Inteira' : 'Contém'}
-                    </span>
-                    {resp.priority > 0 && (
-                      <span className="px-2 py-0.5 rounded text-xs bg-amber-100 text-amber-700">
-                        Prioridade: {resp.priority}
-                      </span>
-                    )}
-                  </div>
-                  
-                  <div className="mb-2">
-                    <span className="text-sm font-medium text-muted-foreground">Palavras-chave:</span>
-                    <div className="flex flex-wrap gap-1 mt-1">
-                      {resp.keywords.split(',').map((kw, i) => (
-                        <span key={i} className="px-2 py-0.5 bg-amber-500/10 text-amber-700 rounded text-sm">
-                          {kw.trim()}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <span className="text-sm font-medium text-muted-foreground">Resposta:</span>
-                    <p className="text-sm mt-1 bg-muted/50 rounded p-2 whitespace-pre-wrap">{resp.response}</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-center gap-2">
-                  <Switch 
-                    checked={resp.is_active === 1 || resp.is_active === true}
-                    onCheckedChange={() => toggleActive(resp)}
-                  />
-                  <Button variant="outline" size="sm" onClick={() => openEditModal(resp)}>
-                    <Edit2 className="w-4 h-4" />
-                  </Button>
-                  <Button variant="outline" size="sm" onClick={() => setDeleteConfirm(resp)}>
-                    <Trash2 className="w-4 h-4 text-red-500" />
-                  </Button>
+                  ))}
                 </div>
               </div>
             </div>
-          ))}
+          </div>
+
+          {/* Info Card */}
+          <div className="bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/30 dark:to-orange-950/30 rounded-xl border p-4">
+            <div className="flex items-start gap-3">
+              <div className="p-2 rounded-lg bg-amber-500 text-white">
+                <HelpCircle className="w-4 h-4" />
+              </div>
+              <div>
+                <h4 className="font-medium">Como funciona?</h4>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Quando o cliente enviar uma mensagem contendo uma das palavras-chave configuradas, 
+                  o BOT responderá automaticamente com a mensagem definida, <strong>sem usar a IA</strong>.
+                  Separe múltiplas palavras-chave por vírgula (ex: "oi, olá, bom dia").
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Lista de Respostas */}
+          {responses.length === 0 ? (
+            <div className="bg-card border rounded-xl p-12 text-center">
+              <MessageCircle className="w-12 h-12 mx-auto mb-4 text-muted-foreground opacity-50" />
+              <h3 className="font-medium mb-2">Nenhuma resposta configurada</h3>
+              <p className="text-sm text-muted-foreground mb-4">
+                Crie respostas automáticas para agilizar o atendimento do seu BOT
+              </p>
+              <Button onClick={openCreateModal}>
+                <Plus className="w-4 h-4 mr-2" />
+                Criar Primeira Resposta
+              </Button>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {responses.map((resp) => (
+                <div 
+                  key={resp.id} 
+                  className={`bg-card border rounded-xl p-4 ${!resp.is_active ? 'opacity-60' : ''}`}
+                >
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className={`px-2 py-0.5 rounded text-xs font-medium ${
+                          resp.is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'
+                        }`}>
+                          {resp.is_active ? 'Ativo' : 'Inativo'}
+                        </span>
+                        <span className="px-2 py-0.5 rounded text-xs bg-muted">
+                          {resp.match_type === 'exact' ? 'Correspondência Exata' : 
+                           resp.match_type === 'word' ? 'Palavra Inteira' : 'Contém'}
+                        </span>
+                        {resp.priority > 0 && (
+                          <span className="px-2 py-0.5 rounded text-xs bg-amber-100 text-amber-700">
+                            Prioridade: {resp.priority}
+                          </span>
+                        )}
+                      </div>
+                      
+                      <div className="mb-2">
+                        <span className="text-sm font-medium text-muted-foreground">Palavras-chave:</span>
+                        <div className="flex flex-wrap gap-1 mt-1">
+                          {resp.keywords.split(',').map((kw, i) => (
+                            <span key={i} className="px-2 py-0.5 bg-amber-500/10 text-amber-700 rounded text-sm">
+                              {kw.trim()}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                      
+                      <div>
+                        <span className="text-sm font-medium text-muted-foreground">Resposta:</span>
+                        <p className="text-sm mt-1 bg-muted/50 rounded p-2 whitespace-pre-wrap">{resp.response}</p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-center gap-2">
+                      <Switch 
+                        checked={resp.is_active === 1 || resp.is_active === true}
+                        onCheckedChange={() => toggleActive(resp)}
+                      />
+                      <Button variant="outline" size="sm" onClick={() => openEditModal(resp)}>
+                        <Edit2 className="w-4 h-4" />
+                      </Button>
+                      <Button variant="outline" size="sm" onClick={() => setDeleteConfirm(resp)}>
+                        <Trash2 className="w-4 h-4 text-red-500" />
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </>
+      ) : (
+        /* Seção de Configurações do Bot */
+        <div className="space-y-6">
+          {/* Card de Pausa do Bot */}
+          <div className="bg-card border rounded-xl p-6">
+            <div className="flex items-start gap-4 mb-6">
+              <div className="p-3 rounded-xl bg-purple-100 dark:bg-purple-900/30">
+                <User className="w-6 h-6 text-purple-600" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-lg">Pausa por Intervenção Humana</h3>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Quando um atendente humano enviar mensagem, o bot será pausado automaticamente 
+                  e enviará a mensagem abaixo para o cliente.
+                </p>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <Label>Mensagem de Pausa do Bot</Label>
+                <Textarea 
+                  placeholder="Ex: Opa, vi que um atendente humano começou o atendimento! Núcleo-Vox pausado por 15 minutos."
+                  rows={3}
+                  value={botSettings.bot_pause_message}
+                  onChange={(e) => setBotSettings(prev => ({...prev, bot_pause_message: e.target.value}))}
+                  className="mt-1"
+                />
+                <p className="text-xs text-muted-foreground mt-1">
+                  Esta mensagem será enviada quando o bot detectar intervenção de um atendente humano.
+                </p>
+              </div>
+
+              <div className="w-48">
+                <Label>Duração da Pausa (minutos)</Label>
+                <Input 
+                  type="number"
+                  min={1}
+                  max={120}
+                  value={botSettings.bot_pause_duration}
+                  onChange={(e) => setBotSettings(prev => ({...prev, bot_pause_duration: parseInt(e.target.value) || 15}))}
+                  className="mt-1"
+                />
+                <p className="text-xs text-muted-foreground mt-1">
+                  O bot ficará pausado por este tempo após intervenção humana.
+                </p>
+              </div>
+
+              <Button onClick={saveBotSettings} disabled={savingSettings}>
+                {savingSettings ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
+                Salvar Configurações
+              </Button>
+            </div>
+          </div>
+
+          {/* Card de Variáveis */}
+          <div className="bg-card border rounded-xl p-6">
+            <div className="flex items-start gap-4 mb-4">
+              <div className="p-3 rounded-xl bg-blue-100 dark:bg-blue-900/30">
+                <Zap className="w-6 h-6 text-blue-600" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-lg">Variáveis Disponíveis</h3>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Use estas variáveis nas respostas automáticas para personalizar as mensagens.
+                </p>
+              </div>
+            </div>
+
+            <div className="grid gap-2">
+              {AVAILABLE_VARIABLES.map((v) => (
+                <div key={v.key} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <code className="px-2 py-1 bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 rounded text-sm font-mono">
+                      {v.key}
+                    </code>
+                    <div>
+                      <p className="font-medium text-sm">{v.label}</p>
+                      <p className="text-xs text-muted-foreground">{v.description}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       )}
 
       {/* Modal de Criar/Editar */}
       <Dialog open={showModal} onOpenChange={setShowModal}>
-        <DialogContent className="max-w-lg">
+        <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle>
               {editingResponse ? 'Editar Resposta Automática' : 'Nova Resposta Automática'}
@@ -2101,9 +2296,25 @@ function RespostasAutomaticasTab({ toast }) {
             </div>
             
             <div>
-              <Label>Resposta do BOT *</Label>
+              <div className="flex items-center justify-between mb-1">
+                <Label>Resposta do BOT *</Label>
+                <span className="text-xs text-muted-foreground">Clique nas variáveis para inserir:</span>
+              </div>
+              <div className="flex flex-wrap gap-1 mb-2">
+                {AVAILABLE_VARIABLES.map((v) => (
+                  <button
+                    key={v.key}
+                    type="button"
+                    onClick={() => insertVariable(v.key)}
+                    className="px-2 py-0.5 bg-blue-100 hover:bg-blue-200 dark:bg-blue-900/50 dark:hover:bg-blue-800/50 text-blue-700 dark:text-blue-300 rounded text-xs font-mono transition-colors"
+                    title={v.description}
+                  >
+                    {v.key}
+                  </button>
+                ))}
+              </div>
               <Textarea 
-                placeholder="Olá! Seja bem-vindo ao nosso restaurante. Como posso ajudar?"
+                placeholder="Olá [NOME-DO-CLIENTE]! Seja bem-vindo ao [NOME-EMPRESA]. Como posso ajudar?"
                 rows={4}
                 value={formData.response}
                 onChange={(e) => setFormData({...formData, response: e.target.value})}
