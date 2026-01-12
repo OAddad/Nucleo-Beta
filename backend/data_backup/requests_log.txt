@@ -24217,3 +24217,6 @@
 2026-01-12T23:55:44.450204+00:00 | DB_CALL get_all_pedidos | P3 | 2.44ms | success
 2026-01-12T23:55:44.451764+00:00 | DB_CALL get_all_settings | P3 | 2.7ms | success
 2026-01-12T23:55:44.452036+00:00 | DB_CALL get_all_entregadores | P3 | 3.36ms | success
+2026-01-12T23:55:50.437768+00:00 | DB_CALL get_all_entregadores | P3 | 0.29ms | success
+2026-01-12T23:55:50.439226+00:00 | DB_CALL get_all_pedidos | P3 | 2.09ms | success
+2026-01-12T23:55:50.441096+00:00 | DB_CALL get_all_settings | P3 | 0.17ms | success
