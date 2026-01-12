@@ -2164,19 +2164,41 @@ function RespostasAutomaticasTab({ toast }) {
     setSaving(true);
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(`${API_URL}/api/order-status-templates/${editingTemplate.tipo_entrega}/${editingTemplate.status}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify(editForm)
-      });
-      const data = await res.json();
-      if (data.success) {
-        toast({ title: "Sucesso", description: "Template atualizado com sucesso!" });
-        await fetchTemplates();
-        setEditingTemplate(null);
+      
+      // Se for template comum, salvar para delivery E pickup
+      if (editingTemplate.isCommon) {
+        // Salvar para delivery
+        await fetch(`${API_URL}/api/order-status-templates/delivery/${editingTemplate.status}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+          body: JSON.stringify(editForm)
+        });
+        // Salvar para pickup
+        await fetch(`${API_URL}/api/order-status-templates/pickup/${editingTemplate.status}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+          body: JSON.stringify(editForm)
+        });
+        toast({ title: "Sucesso", description: "Template atualizado para Entrega e Retirada!" });
+      } else {
+        // Salvar apenas para o tipo específico
+        const res = await fetch(`${API_URL}/api/order-status-templates/${editingTemplate.tipo_entrega}/${editingTemplate.status}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+          body: JSON.stringify(editForm)
+        });
+        const data = await res.json();
+        if (data.success) {
+          toast({ title: "Sucesso", description: "Template atualizado com sucesso!" });
+        } else {
+          toast({ title: "Erro", description: data.detail || "Erro ao salvar template", variant: "destructive" });
+          setSaving(false);
+          return;
+        }
+      }
+      
+      await fetchTemplates();
+      setEditingTemplate(null);
       } else {
         toast({ title: "Erro", description: data.detail || "Erro ao salvar template", variant: "destructive" });
       }
