@@ -22463,3 +22463,7 @@
 2026-01-12T23:07:30.423563+00:00 | DB_CALL get_all_pedidos | P3 | 2.35ms | success
 2026-01-12T23:07:30.425129+00:00 | DB_CALL get_all_settings | P3 | 2.64ms | success
 2026-01-12T23:07:30.425461+00:00 | DB_CALL get_pedido_by_id | P3 | 2.83ms | success
+2026-01-12T23:07:35.422149+00:00 | DB_CALL get_all_entregadores | P3 | 0.84ms | success
+2026-01-12T23:07:35.422770+00:00 | DB_CALL get_pedido_by_id | P3 | 0.89ms | success
+2026-01-12T23:07:35.426284+00:00 | DB_CALL get_all_pedidos | P3 | 1.42ms | success
+2026-01-12T23:07:35.427692+00:00 | DB_CALL get_all_settings | P3 | 2.44ms | success
