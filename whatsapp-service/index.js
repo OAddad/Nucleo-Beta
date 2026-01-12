@@ -405,6 +405,7 @@ app.post('/disconnect', async (req, res) => {
     connectionStatus = 'disconnected';
     lastError = null;
     reconnecting = false;
+    connectedPhone = null;  // Limpar número conectado
     
     // Responder imediatamente
     res.json({ 
