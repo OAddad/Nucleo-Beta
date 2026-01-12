@@ -18864,3 +18864,10 @@
 2026-01-12T17:13:45.888534+00:00 | DB_CALL get_user_by_id | P3 | 0.26ms | success
 2026-01-12T17:13:46.581526+00:00 | DB_CALL get_user_by_id | P3 | 0.25ms | success
 2026-01-12T17:13:46.581813+00:00 | DB_CALL get_word_analytics_summary | P3 | 0.14ms | error | ERROR: no such column: type
+2026-01-12T17:22:05.227835+00:00 | DB_CALL get_user_by_id | P3 | 27.57ms | success
+2026-01-12T17:22:05.899875+00:00 | DB_CALL get_user_by_id | P3 | 0.27ms | success
+2026-01-12T17:22:05.900518+00:00 | DB_CALL get_word_analytics_summary | P3 | 0.49ms | error | ERROR: no such column: type
+2026-01-12T17:22:07.447681+00:00 | DB_CALL get_user_by_id | P3 | 1.04ms | success
+2026-01-12T17:22:07.447861+00:00 | DB_CALL get_user_by_id | P3 | 0.69ms | success
+2026-01-12T17:22:07.448082+00:00 | DB_CALL get_all_keyword_responses | P3 | 0.16ms | success
+2026-01-12T17:22:07.448571+00:00 | DB_CALL get_all_settings | P3 | 0.75ms | success
