@@ -2577,6 +2577,95 @@ function RespostasAutomaticasTab({ toast }) {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Modal de Edição de Template de Notificação */}
+      <Dialog open={!!editingTemplate} onOpenChange={(open) => !open && setEditingTemplate(null)}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              {editingTemplate && STATUS_LABELS[editingTemplate.status] && (
+                <>
+                  <span className={`p-1.5 rounded-lg ${STATUS_LABELS[editingTemplate.status].color} text-white`}>
+                    {(() => { const Icon = STATUS_LABELS[editingTemplate.status].icon; return <Icon className="w-4 h-4" />; })()}
+                  </span>
+                  Editar Notificação: {STATUS_LABELS[editingTemplate.status].label}
+                </>
+              )}
+            </DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-4 py-4">
+            {/* Variáveis disponíveis */}
+            <div className="bg-muted/50 rounded-lg p-3">
+              <p className="text-sm font-medium mb-2">Variáveis disponíveis (clique para inserir):</p>
+              <div className="flex flex-wrap gap-2">
+                {ORDER_NOTIFICATION_VARIABLES.map((v) => (
+                  <button
+                    key={v.key}
+                    type="button"
+                    className="px-3 py-1.5 bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 rounded-lg text-sm font-mono hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors"
+                    onClick={() => { 
+                      setEditForm(prev => ({...prev, template: prev.template + v.key})); 
+                      setPreviewMessage(editForm.template + v.key); 
+                    }}
+                    title={v.description}
+                  >
+                    {v.key}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Campo de mensagem */}
+            <div>
+              <Label className="text-base font-medium">Mensagem da Notificação</Label>
+              <Textarea 
+                placeholder="Digite a mensagem que será enviada ao cliente..."
+                rows={6}
+                value={editForm.template}
+                onChange={(e) => { setEditForm(prev => ({...prev, template: e.target.value})); setPreviewMessage(e.target.value); }}
+                className="mt-2 text-base"
+              />
+            </div>
+
+            {/* Configurações em linha */}
+            <div className="flex items-end gap-6">
+              <div className="w-40">
+                <Label>Delay (segundos)</Label>
+                <Input 
+                  type="number"
+                  min={0}
+                  max={300}
+                  value={editForm.delay_seconds}
+                  onChange={(e) => setEditForm(prev => ({...prev, delay_seconds: parseInt(e.target.value) || 0}))}
+                  className="mt-1"
+                />
+                <p className="text-xs text-muted-foreground mt-1">Tempo de espera antes de enviar</p>
+              </div>
+              <div className="flex items-center gap-3 pb-6">
+                <Switch 
+                  checked={editForm.is_active}
+                  onCheckedChange={(checked) => setEditForm(prev => ({...prev, is_active: checked}))}
+                />
+                <div>
+                  <span className="text-sm font-medium">{editForm.is_active ? "Ativo" : "Inativo"}</span>
+                  <p className="text-xs text-muted-foreground">Se inativo, não será enviada</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setEditingTemplate(null)}>
+              Cancelar
+            </Button>
+            <Button onClick={saveTemplate} disabled={saving}>
+              {saving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
+              Salvar Notificação
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

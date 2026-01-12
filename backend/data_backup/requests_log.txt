@@ -23258,3 +23258,9 @@
 2026-01-12T23:27:09.448077+00:00 | DB_CALL get_all_order_status_templates | P3 | 0.26ms | success
 2026-01-12T23:27:09.448659+00:00 | DB_CALL get_all_settings | P3 | 0.99ms | success
 2026-01-12T23:27:09.470805+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.18ms | success
+2026-01-12T23:27:15.455008+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.24ms | success
+2026-01-12T23:27:20.443130+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.35ms | success
+2026-01-12T23:27:23.612523+00:00 | DB_CALL get_pedido_by_id | P3 | 0.29ms | success
+2026-01-12T23:27:25.449171+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.21ms | success
+2026-01-12T23:27:28.436361+00:00 | DB_CALL get_pedido_by_id | P3 | 0.3ms | success
+2026-01-12T23:27:30.447709+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.21ms | success
