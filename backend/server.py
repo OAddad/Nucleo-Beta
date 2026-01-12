@@ -3524,6 +3524,7 @@ async def chatbot_get_pause_status(phone: str, current_user: User = Depends(get_
 class BotSettingsUpdate(BaseModel):
     bot_pause_message: Optional[str] = None
     bot_pause_duration: Optional[int] = None  # em minutos
+    chatbot_name: Optional[str] = None  # Nome do chatbot
 
 @api_router.get("/chatbot/bot-settings")
 async def get_bot_settings(current_user: User = Depends(get_current_user)):
@@ -3532,7 +3533,8 @@ async def get_bot_settings(current_user: User = Depends(get_current_user)):
     return {
         "success": True,
         "bot_pause_message": settings.get('bot_pause_message', 'Opa, vi que um atendente humano começou o atendimento! Núcleo-Vox pausado por 15 minutos. 🤖➡️👤'),
-        "bot_pause_duration": int(settings.get('bot_pause_duration', '15'))
+        "bot_pause_duration": int(settings.get('bot_pause_duration', '15')),
+        "chatbot_name": settings.get('chatbot_name', 'Ana')
     }
 
 @api_router.put("/chatbot/bot-settings")
@@ -3546,6 +3548,10 @@ async def update_bot_settings(data: BotSettingsUpdate, current_user: User = Depe
             await db_call(sqlite_db.set_setting, 'bot_pause_message', data.bot_pause_message)
         if data.bot_pause_duration is not None:
             await db_call(sqlite_db.set_setting, 'bot_pause_duration', str(data.bot_pause_duration))
+        if data.chatbot_name is not None:
+            await db_call(sqlite_db.set_setting, 'chatbot_name', data.chatbot_name)
+            # Limpar cache de instâncias de chat para forçar atualização do prompt
+            chatbot_ai.chat_instances.clear()
         
         return {"success": True}
     except Exception as e:
