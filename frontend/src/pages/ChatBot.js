@@ -1865,7 +1865,7 @@ function PalavrasTab({ toast }) {
             <h4 className="font-medium">Como funciona?</h4>
             <p className="text-sm text-muted-foreground mt-1">
               O sistema analisa automaticamente todas as mensagens recebidas pelo WhatsApp, 
-              extraindo as palavras mais relevantes (ignorando artigos, preposições e palavras comuns).
+              extraindo todas as palavras e frases mais frequentes.
               Use esses dados para entender o que seus clientes mais perguntam e melhorar seu atendimento!
             </p>
           </div>

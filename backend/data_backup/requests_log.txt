@@ -23712,3 +23712,5 @@
 2026-01-12T23:43:40.085347+00:00 | DB_CALL count_users | P3 | 0.09ms | success
 2026-01-12T23:43:40.108015+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.28ms | success
 2026-01-12T23:43:45.026959+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.26ms | success
+2026-01-12T23:43:45.638739+00:00 | DB_CALL get_user_by_id | P3 | 0.39ms | success
+2026-01-12T23:43:50.024550+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.26ms | success
