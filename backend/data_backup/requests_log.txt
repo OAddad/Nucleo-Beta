@@ -23723,3 +23723,15 @@
 2026-01-12T23:44:02.724165+00:00 | DB_CALL count_products | P3 | 0.22ms | success
 2026-01-12T23:44:02.724313+00:00 | DB_CALL count_users | P3 | 0.1ms | success
 2026-01-12T23:44:02.926121+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.38ms | success
+2026-01-12T23:44:07.925963+00:00 | DB_CALL get_user_by_id | P3 | 20.39ms | success
+2026-01-12T23:44:07.949180+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.25ms | success
+2026-01-12T23:44:12.923814+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.24ms | success
+2026-01-12T23:44:17.926940+00:00 | DB_CALL get_user_by_id | P3 | 0.4ms | success
+2026-01-12T23:44:17.951426+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.22ms | success
+2026-01-12T23:44:22.926034+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.22ms | success
+2026-01-12T23:44:28.456938+00:00 | DB_CALL get_user_by_id | P3 | 19.46ms | success
+2026-01-12T23:44:28.479446+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.23ms | success
+2026-01-12T23:44:33.460875+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.22ms | success
+2026-01-12T23:44:38.487165+00:00 | DB_CALL get_user_by_id | P3 | 0.42ms | success
+2026-01-12T23:44:38.581931+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.22ms | success
+2026-01-12T23:44:43.456984+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.21ms | success
