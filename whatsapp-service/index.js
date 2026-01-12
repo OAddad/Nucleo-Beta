@@ -83,8 +83,17 @@ async function sendMessageWithTyping(jid, message) {
     // Enviar mensagem
     await sock.sendMessage(jid, { text: message });
     
-    // Incrementar contador de mensagens enviadas
+    // Incrementar contador de mensagens enviadas (memória)
     stats.messagesSent++;
+    
+    // Salvar estatística no banco de dados
+    try {
+      await fetch(`${BACKEND_URL}/api/whatsapp/stats/increment?stat_type=messages_sent&amount=1`, {
+        method: 'POST'
+      });
+    } catch (e) {
+      console.log('[WhatsApp] Erro ao salvar estatística de envio no banco:', e.message);
+    }
     
     // Parar de "digitar"
     await sock.sendPresenceUpdate('paused', jid);
