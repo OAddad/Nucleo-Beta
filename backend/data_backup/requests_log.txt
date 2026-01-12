@@ -20655,3 +20655,7 @@
 2026-01-12T21:09:16.364467+00:00 | DB_CALL get_all_settings | P3 | 0.21ms | success
 2026-01-12T21:09:18.363657+00:00 | DB_CALL get_pedido_by_id | P3 | 0.27ms | success
 2026-01-12T21:09:23.373430+00:00 | DB_CALL get_pedido_by_id | P3 | 0.37ms | success
+2026-01-12T21:09:33.361403+00:00 | DB_CALL get_all_entregadores | P3 | 0.68ms | success
+2026-01-12T21:09:33.363338+00:00 | DB_CALL get_all_pedidos | P3 | 2.48ms | success
+2026-01-12T21:09:33.364572+00:00 | DB_CALL get_all_settings | P3 | 1.88ms | success
+2026-01-12T21:09:33.369088+00:00 | DB_CALL get_pedido_by_id | P3 | 0.25ms | success
