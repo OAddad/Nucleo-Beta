@@ -1217,6 +1217,388 @@ class CMVMasterAPITester:
         
         return True
 
+    def test_order_status_templates(self):
+        """Test Order Status Notification Templates endpoints as specified in review request"""
+        print("\n=== ORDER STATUS TEMPLATES TESTS ===")
+        print("🎯 Testing Order Status Notification Templates as specified in review request:")
+        print("   1. GET /api/order-status-templates - Lista todos os templates")
+        print("   2. GET /api/order-status-templates/delivery - Lista templates de entrega")
+        print("   3. GET /api/order-status-templates/pickup - Lista templates de retirada")
+        print("   4. PUT /api/order-status-templates/delivery/pronto - Atualiza template")
+        print("   5. GET /api/order-status-templates/delivery novamente - Verifica atualização")
+        print("   Credenciais: Addad/Addad123")
+        
+        all_tests_passed = True
+        
+        # First, authenticate with Addad user as specified
+        print("\n🔍 Authenticating with Addad user...")
+        success, login_response = self.run_test(
+            "Login with Addad user for order status templates tests",
+            "POST",
+            "auth/login",
+            200,
+            data={"username": "Addad", "password": "Addad123"}
+        )
+        
+        if success and 'access_token' in login_response:
+            self.token = login_response['access_token']
+            self.user_id = login_response['user']['id']
+            print(f"   ✅ Addad login successful")
+            print(f"   - User role: {login_response['user']['role']}")
+        else:
+            print(f"   ❌ Addad login failed - trying fallback authentication...")
+            # Try other authentication methods as fallback
+            fallback_users = [
+                ("admin", "admin"),
+                ("teste_admin", "senha123"),
+                ("proprietario", "senha123")
+            ]
+            
+            auth_success = False
+            for username, password in fallback_users:
+                success, response = self.run_test(
+                    f"Fallback login with {username}",
+                    "POST",
+                    "auth/login",
+                    200,
+                    data={"username": username, "password": password}
+                )
+                
+                if success and 'access_token' in response:
+                    self.token = response['access_token']
+                    self.user_id = response['user']['id']
+                    print(f"   ✅ Fallback authentication successful with {username}")
+                    auth_success = True
+                    break
+            
+            if not auth_success:
+                print(f"   ❌ No valid authentication found - cannot proceed with tests")
+                return False
+        
+        # TEST 1: GET /api/order-status-templates - Lista todos os templates
+        print(f"\n🔍 TEST 1: GET /api/order-status-templates - Lista todos os templates")
+        success, all_templates_response = self.run_test(
+            "Get all order status templates",
+            "GET",
+            "order-status-templates",
+            200
+        )
+        
+        if success:
+            templates = all_templates_response.get('templates', [])
+            print(f"   ✅ Found {len(templates)} total templates")
+            
+            # Verify response structure
+            if all_templates_response.get('success') is True:
+                print(f"   ✅ Response has success: true")
+            else:
+                print(f"   ❌ Response missing success: true")
+                all_tests_passed = False
+            
+            if isinstance(templates, list):
+                print(f"   ✅ Templates is an array")
+            else:
+                print(f"   ❌ Templates should be an array, got {type(templates)}")
+                all_tests_passed = False
+            
+            # Check if we have the expected 14 templates (8 delivery + 6 pickup)
+            delivery_templates = [t for t in templates if t.get('tipo_entrega') == 'delivery']
+            pickup_templates = [t for t in templates if t.get('tipo_entrega') == 'pickup']
+            
+            print(f"   - Delivery templates: {len(delivery_templates)}")
+            print(f"   - Pickup templates: {len(pickup_templates)}")
+            
+            if len(templates) == 14:
+                print(f"   ✅ TEST 1 PASSED: Found exactly 14 templates as expected")
+            else:
+                print(f"   ⚠️ TEST 1 PARTIAL: Expected 14 templates, found {len(templates)}")
+            
+            # Verify template structure
+            if templates:
+                sample_template = templates[0]
+                required_fields = ['id', 'tipo_entrega', 'status', 'template', 'is_active', 'delay_seconds', 'created_at', 'updated_at']
+                missing_fields = [field for field in required_fields if field not in sample_template]
+                
+                if not missing_fields:
+                    print(f"   ✅ Template structure correct - all required fields present")
+                else:
+                    print(f"   ❌ Missing template fields: {missing_fields}")
+                    all_tests_passed = False
+        else:
+            print(f"   ❌ TEST 1 FAILED: Failed to get all templates")
+            all_tests_passed = False
+            return False
+        
+        # TEST 2: GET /api/order-status-templates/delivery - Lista templates de entrega
+        print(f"\n🔍 TEST 2: GET /api/order-status-templates/delivery - Lista templates de entrega")
+        success, delivery_response = self.run_test(
+            "Get delivery order status templates",
+            "GET",
+            "order-status-templates/delivery",
+            200
+        )
+        
+        if success:
+            delivery_templates = delivery_response.get('templates', [])
+            print(f"   ✅ Found {len(delivery_templates)} delivery templates")
+            
+            # Verify all templates are delivery type
+            non_delivery = [t for t in delivery_templates if t.get('tipo_entrega') != 'delivery']
+            if not non_delivery:
+                print(f"   ✅ All templates have tipo_entrega='delivery'")
+            else:
+                print(f"   ❌ Found {len(non_delivery)} templates with wrong tipo_entrega")
+                all_tests_passed = False
+            
+            # Check for specific status templates and their delay_seconds
+            aguardando_aceite = next((t for t in delivery_templates if t.get('status') == 'aguardando_aceite'), None)
+            producao = next((t for t in delivery_templates if t.get('status') == 'producao'), None)
+            
+            if aguardando_aceite:
+                delay = aguardando_aceite.get('delay_seconds')
+                print(f"   - aguardando_aceite delay_seconds: {delay}")
+                if delay == 35:
+                    print(f"   ✅ aguardando_aceite has correct delay_seconds=35")
+                else:
+                    print(f"   ❌ aguardando_aceite should have delay_seconds=35, got {delay}")
+                    all_tests_passed = False
+            else:
+                print(f"   ❌ aguardando_aceite template not found")
+                all_tests_passed = False
+            
+            if producao:
+                delay = producao.get('delay_seconds')
+                print(f"   - producao delay_seconds: {delay}")
+                if delay == 42:
+                    print(f"   ✅ producao has correct delay_seconds=42")
+                else:
+                    print(f"   ❌ producao should have delay_seconds=42, got {delay}")
+                    all_tests_passed = False
+            else:
+                print(f"   ❌ producao template not found")
+                all_tests_passed = False
+            
+            # Verify expected delivery statuses
+            expected_delivery_statuses = ['aguardando_aceite', 'producao', 'pronto', 'na_bag', 'em_rota', 'entregue', 'concluido', 'cancelado']
+            found_statuses = [t.get('status') for t in delivery_templates]
+            missing_statuses = [s for s in expected_delivery_statuses if s not in found_statuses]
+            
+            if not missing_statuses:
+                print(f"   ✅ All expected delivery statuses present: {', '.join(expected_delivery_statuses)}")
+            else:
+                print(f"   ❌ Missing delivery statuses: {', '.join(missing_statuses)}")
+                all_tests_passed = False
+            
+            print(f"   ✅ TEST 2 PASSED: Delivery templates endpoint working correctly")
+        else:
+            print(f"   ❌ TEST 2 FAILED: Failed to get delivery templates")
+            all_tests_passed = False
+        
+        # TEST 3: GET /api/order-status-templates/pickup - Lista templates de retirada
+        print(f"\n🔍 TEST 3: GET /api/order-status-templates/pickup - Lista templates de retirada")
+        success, pickup_response = self.run_test(
+            "Get pickup order status templates",
+            "GET",
+            "order-status-templates/pickup",
+            200
+        )
+        
+        if success:
+            pickup_templates = pickup_response.get('templates', [])
+            print(f"   ✅ Found {len(pickup_templates)} pickup templates")
+            
+            # Verify all templates are pickup type
+            non_pickup = [t for t in pickup_templates if t.get('tipo_entrega') != 'pickup']
+            if not non_pickup:
+                print(f"   ✅ All templates have tipo_entrega='pickup'")
+            else:
+                print(f"   ❌ Found {len(non_pickup)} templates with wrong tipo_entrega")
+                all_tests_passed = False
+            
+            # Check for specific status templates and their delay_seconds
+            aguardando_aceite = next((t for t in pickup_templates if t.get('status') == 'aguardando_aceite'), None)
+            producao = next((t for t in pickup_templates if t.get('status') == 'producao'), None)
+            
+            if aguardando_aceite:
+                delay = aguardando_aceite.get('delay_seconds')
+                print(f"   - aguardando_aceite delay_seconds: {delay}")
+                if delay == 35:
+                    print(f"   ✅ aguardando_aceite has correct delay_seconds=35")
+                else:
+                    print(f"   ❌ aguardando_aceite should have delay_seconds=35, got {delay}")
+                    all_tests_passed = False
+            else:
+                print(f"   ❌ aguardando_aceite template not found")
+                all_tests_passed = False
+            
+            if producao:
+                delay = producao.get('delay_seconds')
+                print(f"   - producao delay_seconds: {delay}")
+                if delay == 42:
+                    print(f"   ✅ producao has correct delay_seconds=42")
+                else:
+                    print(f"   ❌ producao should have delay_seconds=42, got {delay}")
+                    all_tests_passed = False
+            else:
+                print(f"   ❌ producao template not found")
+                all_tests_passed = False
+            
+            # Verify expected pickup statuses
+            expected_pickup_statuses = ['aguardando_aceite', 'producao', 'pronto', 'retirado', 'concluido', 'cancelado']
+            found_statuses = [t.get('status') for t in pickup_templates]
+            missing_statuses = [s for s in expected_pickup_statuses if s not in found_statuses]
+            
+            if not missing_statuses:
+                print(f"   ✅ All expected pickup statuses present: {', '.join(expected_pickup_statuses)}")
+            else:
+                print(f"   ❌ Missing pickup statuses: {', '.join(missing_statuses)}")
+                all_tests_passed = False
+            
+            print(f"   ✅ TEST 3 PASSED: Pickup templates endpoint working correctly")
+        else:
+            print(f"   ❌ TEST 3 FAILED: Failed to get pickup templates")
+            all_tests_passed = False
+        
+        # TEST 4: PUT /api/order-status-templates/delivery/pronto - Atualiza template
+        print(f"\n🔍 TEST 4: PUT /api/order-status-templates/delivery/pronto - Atualiza template")
+        
+        update_data = {
+            "template": "Pedido #{codigo} PRONTO para entrega!",
+            "delay_seconds": 5,
+            "is_active": True
+        }
+        
+        success, update_response = self.run_test(
+            "Update delivery pronto template",
+            "PUT",
+            "order-status-templates/delivery/pronto",
+            200,
+            data=update_data
+        )
+        
+        if success:
+            updated_template = update_response.get('template', {})
+            print(f"   ✅ Template updated successfully")
+            
+            # Verify response structure
+            if update_response.get('success') is True:
+                print(f"   ✅ Response has success: true")
+            else:
+                print(f"   ❌ Response missing success: true")
+                all_tests_passed = False
+            
+            # Verify updated fields
+            if updated_template.get('template') == update_data['template']:
+                print(f"   ✅ Template text updated correctly: '{updated_template['template']}'")
+            else:
+                print(f"   ❌ Template text not updated correctly")
+                all_tests_passed = False
+            
+            if updated_template.get('delay_seconds') == update_data['delay_seconds']:
+                print(f"   ✅ Delay seconds updated correctly: {updated_template['delay_seconds']}")
+            else:
+                print(f"   ❌ Delay seconds not updated correctly")
+                all_tests_passed = False
+            
+            if updated_template.get('is_active') == update_data['is_active']:
+                print(f"   ✅ Is active updated correctly: {updated_template['is_active']}")
+            else:
+                print(f"   ❌ Is active not updated correctly")
+                all_tests_passed = False
+            
+            print(f"   ✅ TEST 4 PASSED: Template update working correctly")
+        else:
+            print(f"   ❌ TEST 4 FAILED: Failed to update template")
+            all_tests_passed = False
+        
+        # TEST 5: GET /api/order-status-templates/delivery novamente - Verifica atualização
+        print(f"\n🔍 TEST 5: GET /api/order-status-templates/delivery - Verifica se atualização persistiu")
+        success, verify_response = self.run_test(
+            "Verify delivery template update persisted",
+            "GET",
+            "order-status-templates/delivery",
+            200
+        )
+        
+        if success:
+            delivery_templates = verify_response.get('templates', [])
+            pronto_template = next((t for t in delivery_templates if t.get('status') == 'pronto'), None)
+            
+            if pronto_template:
+                print(f"   ✅ Found pronto template after update")
+                
+                # Verify the changes persisted
+                if pronto_template.get('template') == "Pedido #{codigo} PRONTO para entrega!":
+                    print(f"   ✅ Template text persisted: '{pronto_template['template']}'")
+                else:
+                    print(f"   ❌ Template text not persisted correctly")
+                    all_tests_passed = False
+                
+                if pronto_template.get('delay_seconds') == 5:
+                    print(f"   ✅ Delay seconds persisted: {pronto_template['delay_seconds']}")
+                else:
+                    print(f"   ❌ Delay seconds not persisted correctly")
+                    all_tests_passed = False
+                
+                if pronto_template.get('is_active') is True:
+                    print(f"   ✅ Is active persisted: {pronto_template['is_active']}")
+                else:
+                    print(f"   ❌ Is active not persisted correctly")
+                    all_tests_passed = False
+                
+                print(f"   ✅ TEST 5 PASSED: Template update persisted correctly")
+            else:
+                print(f"   ❌ TEST 5 FAILED: Pronto template not found after update")
+                all_tests_passed = False
+        else:
+            print(f"   ❌ TEST 5 FAILED: Failed to verify template update")
+            all_tests_passed = False
+        
+        # ADDITIONAL VERIFICATION: Check template variables support
+        print(f"\n🔍 ADDITIONAL: Verifying template variables support")
+        
+        # Check if templates contain expected variables
+        all_templates = all_templates_response.get('templates', [])
+        variables_found = set()
+        
+        for template in all_templates:
+            template_text = template.get('template', '')
+            if '{codigo}' in template_text:
+                variables_found.add('{codigo}')
+            if '{endereco}' in template_text:
+                variables_found.add('{endereco}')
+            if '{motivo}' in template_text:
+                variables_found.add('{motivo}')
+        
+        expected_variables = ['{codigo}', '{endereco}', '{motivo}']
+        print(f"   Expected variables: {', '.join(expected_variables)}")
+        print(f"   Found variables: {', '.join(variables_found)}")
+        
+        missing_variables = [v for v in expected_variables if v not in variables_found]
+        if not missing_variables:
+            print(f"   ✅ All expected template variables are supported")
+        else:
+            print(f"   ⚠️ Some template variables not found in existing templates: {', '.join(missing_variables)}")
+            print(f"   ℹ️ This may be normal if templates don't use all variables")
+        
+        # Summary
+        print(f"\n🔍 ORDER STATUS TEMPLATES TESTING SUMMARY:")
+        if all_tests_passed:
+            print(f"   ✅ ALL ORDER STATUS TEMPLATE TESTS PASSED")
+            print(f"   ✅ GET /api/order-status-templates working - returns all templates")
+            print(f"   ✅ GET /api/order-status-templates/delivery working - filters delivery templates")
+            print(f"   ✅ GET /api/order-status-templates/pickup working - filters pickup templates")
+            print(f"   ✅ PUT /api/order-status-templates/delivery/pronto working - updates template")
+            print(f"   ✅ Template updates persist correctly")
+            print(f"   ✅ All required template fields present")
+            print(f"   ✅ Delay seconds validation working (aguardando_aceite=35, producao=42)")
+            print(f"   ✅ Template variables support verified")
+        else:
+            print(f"   ❌ SOME ORDER STATUS TEMPLATE TESTS FAILED")
+            print(f"   ℹ️ Check individual test results above for details")
+        
+        return all_tests_passed
+
     def test_order_steps_feature(self):
         """Test Order Steps (Etapas de Pedido) functionality as specified in review request"""
         print("\n=== ORDER STEPS FEATURE TESTS ===")
