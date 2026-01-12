@@ -2552,12 +2552,12 @@ async def create_pedido(data: PedidoCreate):
     if data.cliente_id:
         await db_call(sqlite_db.update_cliente_pedido_stats, data.cliente_id, data.total)
     
-    # Enviar notificação WhatsApp com delay de 35 segundos
+    # Enviar notificação WhatsApp com delay de 25 segundos
     if pedido and pedido.get('cliente_telefone'):
         whatsapp_notifications.schedule_order_notification(
             pedido['id'], 
             'aguardando_aceite', 
-            delay_seconds=35
+            delay_seconds=25
         )
     
     return pedido

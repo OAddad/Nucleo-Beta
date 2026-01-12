@@ -21398,3 +21398,7 @@
 2026-01-12T21:31:12.392045+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.22ms | success
 2026-01-12T21:31:13.408019+00:00 | DB_CALL get_whatsapp_stats | P3 | 4.3ms | success
 2026-01-12T21:31:14.263379+00:00 | DB_CALL get_pedido_by_id | P3 | 0.31ms | success
+2026-01-12T21:31:22.299083+00:00 | DB_CALL init_database | P3 | 2.75ms | success
+2026-01-12T21:31:22.299590+00:00 | DB_CALL count_ingredients | P3 | 0.23ms | success
+2026-01-12T21:31:22.299770+00:00 | DB_CALL count_products | P3 | 0.12ms | success
+2026-01-12T21:31:22.299914+00:00 | DB_CALL count_users | P3 | 0.09ms | success
