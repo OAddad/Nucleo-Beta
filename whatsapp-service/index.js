@@ -413,10 +413,35 @@ app.post('/send', async (req, res) => {
       });
     }
     
-    // Formatar número (adicionar @s.whatsapp.net)
-    let jid = phone.replace(/\D/g, '');
+    // Formatar número
+    let jid = phone;
+    
+    // Se já tem @, usar como está
     if (!jid.includes('@')) {
+      // Remover caracteres não numéricos
+      jid = jid.replace(/\D/g, '');
+      
+      // Adicionar código do país se não tiver
+      if (jid.length === 10 || jid.length === 11) {
+        jid = '55' + jid;
+      }
+      
       jid = jid + '@s.whatsapp.net';
+    }
+    
+    console.log(`[WhatsApp] Tentando enviar para: ${jid}`);
+    
+    // Verificar se o número existe no WhatsApp
+    try {
+      const [result] = await sock.onWhatsApp(jid.replace('@s.whatsapp.net', ''));
+      if (result && result.exists) {
+        jid = result.jid;
+        console.log(`[WhatsApp] Número verificado, JID correto: ${jid}`);
+      } else {
+        console.log(`[WhatsApp] Número não encontrado no WhatsApp: ${jid}`);
+      }
+    } catch (checkErr) {
+      console.log(`[WhatsApp] Erro ao verificar número (continuando): ${checkErr.message}`);
     }
     
     const success = await sendMessageWithTyping(jid, message);
