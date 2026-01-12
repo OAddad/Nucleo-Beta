@@ -69,38 +69,54 @@ export default function ChatBot() {
   const [qrCode, setQrCode] = useState(null);
   const { toast } = useToast();
 
-  // Carregar status e QR Code automaticamente ao iniciar
+  // Carregar status e QR Code automaticamente ao iniciar e manter ativo
   useEffect(() => {
-    const fetchInitialData = async () => {
+    let isMounted = true;
+    
+    const fetchWhatsAppData = async () => {
+      if (!isMounted) return;
+      
       try {
         const token = localStorage.getItem("token");
+        const headers = token ? { Authorization: `Bearer ${token}` } : {};
+        
         // Buscar status
-        const statusRes = await fetch(`${API_URL}/api/whatsapp/status`, {
-          headers: token ? { Authorization: `Bearer ${token}` } : {}
-        });
+        const statusRes = await fetch(`${API_URL}/api/whatsapp/status`, { headers });
         const statusData = await statusRes.json();
+        
+        if (!isMounted) return;
         setWhatsappStatus(statusData);
 
-        // Se não conectado, buscar QR Code
-        if (statusData.status === "waiting_qr" || statusData.status === "disconnected") {
-          const qrRes = await fetch(`${API_URL}/api/whatsapp/qr`, {
-            headers: token ? { Authorization: `Bearer ${token}` } : {}
-          });
+        // Se não conectado, SEMPRE buscar QR Code
+        if (!statusData.connected) {
+          const qrRes = await fetch(`${API_URL}/api/whatsapp/qr`, { headers });
           const qrData = await qrRes.json();
+          
+          if (!isMounted) return;
           if (qrData.success && qrData.qr) {
             setQrCode(qrData.qr);
           }
+        } else {
+          setQrCode(null);
         }
       } catch (error) {
-        console.error("Erro ao inicializar WhatsApp:", error);
+        console.error("Erro ao buscar dados do WhatsApp:", error);
+        if (isMounted) {
+          setWhatsappStatus({ status: "error", connected: false, error: "Erro de conexão" });
+        }
       }
     };
 
-    fetchInitialData();
+    // Executar imediatamente
+    fetchWhatsAppData();
     
-    // Polling para manter status atualizado
-    const interval = setInterval(fetchInitialData, 10000);
-    return () => clearInterval(interval);
+    // Polling a cada 5 segundos para manter sempre atualizado
+    const interval = setInterval(fetchWhatsAppData, 5000);
+    
+    return () => {
+      isMounted = false;
+      clearInterval(interval);
+    };
   }, []);
 
   return (
@@ -121,11 +137,13 @@ export default function ChatBot() {
           <div className={`w-2 h-2 rounded-full ${
             whatsappStatus?.connected ? "bg-green-500" : 
             whatsappStatus?.status === "waiting_qr" ? "bg-yellow-500 animate-pulse" : 
+            whatsappStatus?.status === "service_offline" ? "bg-orange-500" :
             "bg-red-500"
           }`} />
           <span className="text-xs font-medium">
             {whatsappStatus?.connected ? "WhatsApp Conectado" : 
              whatsappStatus?.status === "waiting_qr" ? "Aguardando QR" : 
+             whatsappStatus?.status === "service_offline" ? "Serviço Offline" :
              "Desconectado"}
           </span>
         </div>
