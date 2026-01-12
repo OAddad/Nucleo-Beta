@@ -3168,6 +3168,94 @@ def find_keyword_response_for_message(message: str) -> Optional[Dict]:
         return None
 
 
+# ==================== ORDER STATUS TEMPLATES ====================
+def get_all_order_status_templates() -> List[Dict]:
+    """Retorna todos os templates de notificações de status de pedidos"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM order_status_templates ORDER BY tipo_entrega, status")
+        return [dict(row) for row in cursor.fetchall()]
+
+
+def get_order_status_templates_by_type(tipo_entrega: str) -> List[Dict]:
+    """Retorna os templates de um tipo específico (delivery ou pickup)"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM order_status_templates WHERE tipo_entrega = ? ORDER BY status", (tipo_entrega,))
+        return [dict(row) for row in cursor.fetchall()]
+
+
+def get_order_status_template(tipo_entrega: str, status: str) -> Optional[Dict]:
+    """Retorna um template específico por tipo de entrega e status"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM order_status_templates WHERE tipo_entrega = ? AND status = ?", (tipo_entrega, status))
+        row = cursor.fetchone()
+        return dict(row) if row else None
+
+
+def update_order_status_template(tipo_entrega: str, status: str, data: Dict) -> Optional[Dict]:
+    """Atualiza um template de status de pedido"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        now = datetime.now(timezone.utc).isoformat()
+        
+        # Construir update dinâmico
+        updates = []
+        values = []
+        
+        if 'template' in data:
+            updates.append("template = ?")
+            values.append(data['template'])
+        if 'is_active' in data:
+            updates.append("is_active = ?")
+            values.append(1 if data['is_active'] else 0)
+        if 'delay_seconds' in data:
+            updates.append("delay_seconds = ?")
+            values.append(data['delay_seconds'])
+        
+        updates.append("updated_at = ?")
+        values.append(now)
+        values.append(tipo_entrega)
+        values.append(status)
+        
+        cursor.execute(f'''
+            UPDATE order_status_templates SET {', '.join(updates)} WHERE tipo_entrega = ? AND status = ?
+        ''', values)
+        conn.commit()
+        
+        return get_order_status_template(tipo_entrega, status)
+
+
+def get_order_message_for_status(tipo_entrega: str, status: str, variables: Dict = None) -> Optional[str]:
+    """
+    Retorna a mensagem formatada para um status específico.
+    Substitui as variáveis {codigo}, {endereco}, {motivo} etc.
+    """
+    template_data = get_order_status_template(tipo_entrega, status)
+    if not template_data or not template_data.get('is_active'):
+        return None
+    
+    template = template_data['template']
+    if variables:
+        for key, value in variables.items():
+            template = template.replace('{' + key + '}', str(value))
+    
+    return template
+
+
+def get_order_delay_for_status(tipo_entrega: str, status: str) -> int:
+    """Retorna o delay em segundos para um status específico"""
+    template_data = get_order_status_template(tipo_entrega, status)
+    if not template_data:
+        return 0
+    return template_data.get('delay_seconds', 0)
+
+
 # ==================== WHATSAPP STATS ====================
 def get_whatsapp_stats() -> Dict:
     """Retorna as estatísticas do WhatsApp"""
