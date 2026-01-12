@@ -65,7 +65,43 @@ const TEMPLATE_VARIABLES = [
 
 export default function ChatBot() {
   const [activeTab, setActiveTab] = useState("whatsapp");
+  const [whatsappStatus, setWhatsappStatus] = useState(null);
+  const [qrCode, setQrCode] = useState(null);
   const { toast } = useToast();
+
+  // Carregar status e QR Code automaticamente ao iniciar
+  useEffect(() => {
+    const fetchInitialData = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        // Buscar status
+        const statusRes = await fetch(`${API_URL}/api/whatsapp/status`, {
+          headers: token ? { Authorization: `Bearer ${token}` } : {}
+        });
+        const statusData = await statusRes.json();
+        setWhatsappStatus(statusData);
+
+        // Se não conectado, buscar QR Code
+        if (statusData.status === "waiting_qr" || statusData.status === "disconnected") {
+          const qrRes = await fetch(`${API_URL}/api/whatsapp/qr`, {
+            headers: token ? { Authorization: `Bearer ${token}` } : {}
+          });
+          const qrData = await qrRes.json();
+          if (qrData.success && qrData.qr) {
+            setQrCode(qrData.qr);
+          }
+        }
+      } catch (error) {
+        console.error("Erro ao inicializar WhatsApp:", error);
+      }
+    };
+
+    fetchInitialData();
+    
+    // Polling para manter status atualizado
+    const interval = setInterval(fetchInitialData, 10000);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <div className="h-full flex flex-col">
@@ -79,6 +115,19 @@ export default function ChatBot() {
             <h1 className="text-xl font-bold">ChatBot Inteligente</h1>
             <p className="text-sm text-muted-foreground">Atendimento automatizado com IA</p>
           </div>
+        </div>
+        {/* Indicador de Status do WhatsApp */}
+        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-muted">
+          <div className={`w-2 h-2 rounded-full ${
+            whatsappStatus?.connected ? "bg-green-500" : 
+            whatsappStatus?.status === "waiting_qr" ? "bg-yellow-500 animate-pulse" : 
+            "bg-red-500"
+          }`} />
+          <span className="text-xs font-medium">
+            {whatsappStatus?.connected ? "WhatsApp Conectado" : 
+             whatsappStatus?.status === "waiting_qr" ? "Aguardando QR" : 
+             "Desconectado"}
+          </span>
         </div>
       </div>
 
@@ -96,6 +145,19 @@ export default function ChatBot() {
             <div className="flex items-center gap-2">
               <QrCode className="w-4 h-4" />
               WhatsApp
+            </div>
+          </button>
+          <button
+            onClick={() => setActiveTab("respostas")}
+            className={`px-4 py-3 font-medium text-sm border-b-2 transition-colors ${
+              activeTab === "respostas"
+                ? "border-amber-500 text-amber-600"
+                : "border-transparent text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            <div className="flex items-center gap-2">
+              <MessageCircle className="w-4 h-4" />
+              Respostas
             </div>
           </button>
           <button
@@ -156,7 +218,9 @@ export default function ChatBot() {
       {/* Conteúdo */}
       <div className="flex-1 overflow-auto">
         {activeTab === "whatsapp" ? (
-          <WhatsAppTab toast={toast} />
+          <WhatsAppTab toast={toast} initialStatus={whatsappStatus} initialQr={qrCode} setGlobalStatus={setWhatsappStatus} setGlobalQr={setQrCode} />
+        ) : activeTab === "respostas" ? (
+          <RespostasAutomaticasTab toast={toast} />
         ) : activeTab === "simulator" ? (
           <SimulatorTab toast={toast} />
         ) : activeTab === "flow-editor" ? (

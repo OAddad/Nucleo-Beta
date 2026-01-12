@@ -18413,3 +18413,15 @@
 2026-01-12T16:34:03.315136+00:00 | DB_CALL get_all_business_hours | P3 | 6.42ms | success
 2026-01-12T16:34:03.489703+00:00 | DB_CALL get_all_bairros | P3 | 3.09ms | success
 2026-01-12T16:34:07.398111+00:00 | DB_CALL get_user_by_username | P3 | 0.34ms | success
+2026-01-12T16:34:09.487253+00:00 | DB_CALL get_user_by_username | P3 | 0.27ms | success
+2026-01-12T16:34:09.704560+00:00 | DB_CALL get_all_settings | P3 | 0.29ms | success
+2026-01-12T16:34:14.604459+00:00 | DB_CALL get_user_by_id | P3 | 0.61ms | success
+2026-01-12T16:34:14.604808+00:00 | DB_CALL get_word_analytics_summary | P3 | 0.19ms | error | ERROR: no such column: type
+2026-01-12T16:34:15.470119+00:00 | DB_CALL get_user_by_id | P3 | 0.26ms | success
+2026-01-12T16:34:16.048867+00:00 | DB_CALL get_user_by_id | P3 | 0.74ms | success
+2026-01-12T16:34:16.050190+00:00 | DB_CALL get_all_flow_nodes | P3 | 1.15ms | success
+2026-01-12T16:34:16.051263+00:00 | DB_CALL get_all_flow_edges | P3 | 0.97ms | success
+2026-01-12T16:34:17.262750+00:00 | DB_CALL get_user_by_id | P3 | 0.29ms | success
+2026-01-12T16:34:18.367792+00:00 | DB_CALL get_user_by_id | P3 | 0.28ms | success
+2026-01-12T16:34:18.368041+00:00 | DB_CALL get_all_flow_nodes | P3 | 0.11ms | success
+2026-01-12T16:34:18.368170+00:00 | DB_CALL get_all_flow_edges | P3 | 0.08ms | success
