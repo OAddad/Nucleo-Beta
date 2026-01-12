@@ -21894,3 +21894,5 @@
 2026-01-12T22:35:24.013505+00:00 | DB_CALL get_user_by_id | P3 | 0.75ms | success
 2026-01-12T22:35:24.013776+00:00 | DB_CALL get_all_keyword_responses | P3 | 0.32ms | success
 2026-01-12T22:35:24.014270+00:00 | DB_CALL get_all_settings | P3 | 0.7ms | success
+2026-01-12T22:35:25.744008+00:00 | DB_CALL get_user_by_id | P3 | 0.28ms | success
+2026-01-12T22:35:25.744323+00:00 | DB_CALL get_all_order_status_templates | P3 | 0.17ms | success
