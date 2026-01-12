@@ -221,9 +221,6 @@ def format_context_for_llm(context: Dict[str, Any]) -> str:
 async def process_message(phone: str, message: str, push_name: str = "") -> str:
     """Processa uma mensagem e retorna a resposta da IA"""
     
-    if not LLM_AVAILABLE or not EMERGENT_LLM_KEY:
-        return "Desculpe, nosso sistema de atendimento está temporariamente indisponível. Por favor, tente novamente em alguns minutos ou entre em contato pelo telefone."
-    
     try:
         # Buscar ou criar conversa
         conversation = db.get_conversation_by_phone(phone)
@@ -254,6 +251,29 @@ async def process_message(phone: str, message: str, push_name: str = "") -> str:
             "content": message,
             "created_at": now
         })
+        
+        # =====================================================
+        # VERIFICAR RESPOSTAS POR PALAVRAS-CHAVE PRIMEIRO
+        # =====================================================
+        keyword_response = db.find_keyword_response_for_message(message)
+        if keyword_response:
+            response_text = keyword_response['response']
+            
+            # Salvar resposta do bot
+            db.add_conversation_message({
+                "id": str(uuid.uuid4()),
+                "conversation_id": conversation["id"],
+                "role": "assistant",
+                "content": response_text,
+                "created_at": datetime.now(timezone.utc).isoformat()
+            })
+            
+            return response_text
+        # =====================================================
+        
+        # Se não encontrou palavra-chave, usar IA
+        if not LLM_AVAILABLE or not EMERGENT_LLM_KEY:
+            return "Desculpe, nosso sistema de atendimento está temporariamente indisponível. Por favor, tente novamente em alguns minutos ou entre em contato pelo telefone."
         
         # Buscar contexto do cliente
         client_context = await get_client_context(phone)
