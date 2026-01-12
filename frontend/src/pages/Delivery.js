@@ -1846,6 +1846,94 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
           </div>
         </div>
       </DialogContent>
+
+      {/* Popup de Produto */}
+      <Dialog open={!!selectedProduct} onOpenChange={(open) => !open && closeProductPopup()}>
+        <DialogContent className="max-w-lg">
+          {selectedProduct && (
+            <>
+              {/* Imagem do Produto */}
+              {selectedProduct.photo_url ? (
+                <div className="relative h-48 -mx-6 -mt-6 mb-4">
+                  <img 
+                    src={selectedProduct.photo_url} 
+                    alt={selectedProduct.name}
+                    className="w-full h-full object-cover"
+                  />
+                  <button 
+                    onClick={closeProductPopup}
+                    className="absolute top-2 right-2 bg-black/50 rounded-full p-1 text-white hover:bg-black/70"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+              ) : (
+                <div className="relative h-32 -mx-6 -mt-6 mb-4 bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center">
+                  <Package className="w-16 h-16 text-white/50" />
+                  <button 
+                    onClick={closeProductPopup}
+                    className="absolute top-2 right-2 bg-black/50 rounded-full p-1 text-white hover:bg-black/70"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+              )}
+
+              {/* Info do Produto */}
+              <div className="space-y-4">
+                <div>
+                  <h2 className="text-xl font-bold">{selectedProduct.name}</h2>
+                  <p className="text-2xl font-bold text-orange-600 mt-1">
+                    R$ {(selectedProduct.sale_price || 0).toFixed(2)}
+                  </p>
+                </div>
+
+                {selectedProduct.description && (
+                  <p className="text-muted-foreground">{selectedProduct.description}</p>
+                )}
+
+                {/* Observação */}
+                <div>
+                  <Label>Observação (opcional)</Label>
+                  <Textarea
+                    value={productObservation}
+                    onChange={(e) => setProductObservation(e.target.value)}
+                    placeholder="Ex: Sem cebola, bem passado..."
+                    rows={2}
+                    className="mt-1"
+                  />
+                </div>
+
+                {/* Quantidade e Adicionar */}
+                <div className="flex items-center justify-between pt-4 border-t">
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={() => setProductQuantity(Math.max(1, productQuantity - 1))}
+                      className="w-10 h-10 rounded-full border-2 border-orange-500 text-orange-500 flex items-center justify-center hover:bg-orange-500 hover:text-white transition-colors"
+                    >
+                      <Minus className="w-5 h-5" />
+                    </button>
+                    <span className="text-xl font-bold w-8 text-center">{productQuantity}</span>
+                    <button
+                      onClick={() => setProductQuantity(productQuantity + 1)}
+                      className="w-10 h-10 rounded-full border-2 border-orange-500 text-orange-500 flex items-center justify-center hover:bg-orange-500 hover:text-white transition-colors"
+                    >
+                      <Plus className="w-5 h-5" />
+                    </button>
+                  </div>
+                  
+                  <Button 
+                    onClick={confirmAddToCart}
+                    className="bg-orange-500 hover:bg-orange-600 px-6"
+                  >
+                    Adicionar R$ {((selectedProduct.sale_price || 0) * productQuantity).toFixed(2)}
+                  </Button>
+                </div>
+              </div>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
     </Dialog>
   );
 }
