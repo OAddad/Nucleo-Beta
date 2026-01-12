@@ -18847,3 +18847,9 @@
 2026-01-12T17:03:05.645670+00:00 | DB_CALL get_all_bairros | P3 | 1.67ms | success
 2026-01-12T17:03:30.411096+00:00 | DB_CALL get_all_pedidos | P3 | 6.57ms | success
 2026-01-12T17:03:30.432048+00:00 | DB_CALL get_all_settings | P3 | 0.2ms | success
+2026-01-12T17:04:25.952560+00:00 | DB_CALL get_user_by_id | P3 | 1.03ms | success
+2026-01-12T17:04:25.952753+00:00 | DB_CALL get_user_by_id | P3 | 0.67ms | success
+2026-01-12T17:04:25.952979+00:00 | DB_CALL get_all_settings | P3 | 0.16ms | success
+2026-01-12T17:04:25.953821+00:00 | DB_CALL get_all_keyword_responses | P3 | 1.11ms | success
+2026-01-12T17:04:28.113426+00:00 | DB_CALL get_all_pedidos | P3 | 0.83ms | success
+2026-01-12T17:04:28.138417+00:00 | DB_CALL get_all_settings | P3 | 0.23ms | success
