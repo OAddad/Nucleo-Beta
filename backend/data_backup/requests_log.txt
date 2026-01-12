@@ -19206,3 +19206,7 @@
 2026-01-12T19:57:36.800663+00:00 | DB_CALL count_products | P3 | 0.12ms | success
 2026-01-12T19:57:36.800811+00:00 | DB_CALL count_users | P3 | 0.1ms | success
 2026-01-12T19:57:41.949041+00:00 | DB_CALL process_message_words | P3 | 0.49ms | error | ERROR: no such column: type
+2026-01-12T19:58:06.601948+00:00 | DB_CALL init_database | P3 | 2.63ms | success
+2026-01-12T19:58:06.602458+00:00 | DB_CALL count_ingredients | P3 | 0.27ms | success
+2026-01-12T19:58:06.602639+00:00 | DB_CALL count_products | P3 | 0.12ms | success
+2026-01-12T19:58:06.602783+00:00 | DB_CALL count_users | P3 | 0.1ms | success
