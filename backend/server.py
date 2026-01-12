@@ -2603,6 +2603,16 @@ async def cancel_pedido(pedido_id: str, data: CancelPedidoRequest, current_user:
     pedido = await db_call(sqlite_db.cancel_pedido, pedido_id, data.motivo.strip())
     if not pedido:
         raise HTTPException(status_code=404, detail="Pedido não encontrado")
+    
+    # Enviar notificação de cancelamento
+    if pedido.get('cliente_telefone'):
+        whatsapp_notifications.schedule_order_notification(
+            pedido_id, 
+            'cancelado', 
+            delay_seconds=0,
+            motivo=data.motivo.strip()
+        )
+    
     return pedido
 
 
