@@ -174,21 +174,8 @@ export default function ChatBot() {
             }`}
           >
             <div className="flex items-center gap-2">
-              <MessageCircle className="w-4 h-4" />
-              Respostas
-            </div>
-          </button>
-          <button
-            onClick={() => setActiveTab("simulator")}
-            className={`px-4 py-3 font-medium text-sm border-b-2 transition-colors ${
-              activeTab === "simulator"
-                ? "border-emerald-500 text-emerald-600"
-                : "border-transparent text-muted-foreground hover:text-foreground"
-            }`}
-          >
-            <div className="flex items-center gap-2">
-              <Smartphone className="w-4 h-4" />
-              Simulador
+              <Settings className="w-4 h-4" />
+              Configurações BOT
             </div>
           </button>
           <button
