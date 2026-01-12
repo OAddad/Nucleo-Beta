@@ -30,8 +30,19 @@ def format_phone(phone: str) -> str:
     if len(phone_clean) == 10 or len(phone_clean) == 11:
         phone_clean = '55' + phone_clean
     
-    # Adicionar sufixo do WhatsApp
-    return f"{phone_clean}@s.whatsapp.net"
+    # Para números brasileiros, remover o 9 adicional do celular
+    # Formato: 55 + DDD (2) + 9 + número (8) = 55DDNNNNNNNNN (13 dígitos)
+    # WhatsApp usa: 55 + DDD (2) + número (8) = 55DDNNNNNNNN (12 dígitos)
+    if len(phone_clean) == 13 and phone_clean.startswith('55'):
+        ddd = phone_clean[2:4]
+        numero = phone_clean[4:]
+        # Se começa com 9 e tem 9 dígitos, remover o 9
+        if numero.startswith('9') and len(numero) == 9:
+            phone_clean = '55' + ddd + numero[1:]
+            print(f"[WhatsApp Notify] Número formatado: {phone_clean} (removido 9 extra)")
+    
+    # Retornar apenas os números (sem @s.whatsapp.net - o serviço adiciona)
+    return phone_clean
 
 
 def get_order_message_from_templates(tipo_entrega: str, status: str, variables: dict) -> Optional[str]:
