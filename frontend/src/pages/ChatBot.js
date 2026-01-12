@@ -442,14 +442,54 @@ function WhatsAppTab({ toast, initialStatus, initialQr, setGlobalStatus, setGlob
           </div>
         )}
 
-        {/* Conectado */}
+        {/* Conectado - Card com informações */}
         {status?.connected && (
-          <div className="flex flex-col items-center p-6 bg-green-50 dark:bg-green-950/30 rounded-xl border border-green-200">
-            <CheckCircle className="w-16 h-16 text-green-500 mb-4" />
-            <h3 className="text-lg font-medium text-green-700 dark:text-green-300">WhatsApp Conectado!</h3>
-            <p className="text-sm text-green-600 text-center mt-2">
-              O ChatBot está pronto para atender seus clientes.
-            </p>
+          <div className="bg-green-50 dark:bg-green-950/30 rounded-xl border border-green-200 p-6">
+            <div className="flex items-center gap-4 mb-4">
+              <div className="p-3 rounded-full bg-green-100 dark:bg-green-900/50">
+                <CheckCircle className="w-8 h-8 text-green-500" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-green-700 dark:text-green-300">WhatsApp Conectado!</h3>
+                <p className="text-sm text-green-600 dark:text-green-400">
+                  O ChatBot está pronto para atender seus clientes.
+                </p>
+              </div>
+            </div>
+            
+            {/* Card do Número Conectado */}
+            <div className="bg-white dark:bg-gray-800 rounded-lg border p-4 mt-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-green-100 dark:bg-green-900/30">
+                  <Phone className="w-5 h-5 text-green-600" />
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground uppercase tracking-wide">Número Conectado</p>
+                  <p className="font-semibold text-lg">
+                    {status?.phone ? (
+                      // Formatar número para exibição
+                      status.phone.replace('@s.whatsapp.net', '').replace(/(\d{2})(\d{2})(\d{5})(\d{4})/, '+$1 ($2) $3-$4')
+                    ) : (
+                      <span className="text-muted-foreground">Número não identificado</span>
+                    )}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Estatísticas */}
+            <div className="grid grid-cols-2 gap-3 mt-4">
+              <div className="bg-white dark:bg-gray-800 rounded-lg border p-3 text-center">
+                <p className="text-2xl font-bold text-green-600">{status?.messagesCount || 0}</p>
+                <p className="text-xs text-muted-foreground">Mensagens Recebidas</p>
+              </div>
+              <div className="bg-white dark:bg-gray-800 rounded-lg border p-3 text-center">
+                <p className="text-2xl font-bold text-green-600">
+                  {status?.autoReplyEnabled ? '✓' : '✗'}
+                </p>
+                <p className="text-xs text-muted-foreground">Auto-Resposta</p>
+              </div>
+            </div>
           </div>
         )}
       </div>
