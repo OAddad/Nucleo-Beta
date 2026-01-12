@@ -21188,3 +21188,4 @@
 2026-01-12T21:26:18.970400+00:00 | DB_CALL count_ingredients | P3 | 0.26ms | success
 2026-01-12T21:26:18.970583+00:00 | DB_CALL count_products | P3 | 0.12ms | success
 2026-01-12T21:26:18.970718+00:00 | DB_CALL count_users | P3 | 0.09ms | success
+2026-01-12T21:26:28.933366+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.37ms | success
