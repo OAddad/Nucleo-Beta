@@ -19221,3 +19221,12 @@
 2026-01-12T20:02:25.508654+00:00 | DB_CALL get_user_by_id | P3 | 0.35ms | success
 2026-01-12T20:02:26.091448+00:00 | DB_CALL get_user_by_id | P3 | 0.29ms | success
 2026-01-12T20:02:26.091780+00:00 | DB_CALL get_word_analytics_summary | P3 | 0.17ms | error | ERROR: no such column: type
+2026-01-12T20:05:05.309568+00:00 | DB_CALL init_database | P3 | 2.67ms | success
+2026-01-12T20:05:05.310087+00:00 | DB_CALL count_ingredients | P3 | 0.27ms | success
+2026-01-12T20:05:05.310290+00:00 | DB_CALL count_products | P3 | 0.14ms | success
+2026-01-12T20:05:05.310445+00:00 | DB_CALL count_users | P3 | 0.1ms | success
+2026-01-12T20:05:11.545599+00:00 | DB_CALL init_database | P3 | 2.65ms | success
+2026-01-12T20:05:11.546082+00:00 | DB_CALL count_ingredients | P3 | 0.25ms | success
+2026-01-12T20:05:11.546282+00:00 | DB_CALL count_products | P3 | 0.14ms | success
+2026-01-12T20:05:11.546431+00:00 | DB_CALL count_users | P3 | 0.1ms | success
+2026-01-12T20:05:12.912426+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.34ms | success
