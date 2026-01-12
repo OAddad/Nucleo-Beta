@@ -21963,3 +21963,8 @@
 2026-01-12T22:45:25.396181+00:00 | DB_CALL get_user_by_username | P3 | 0.27ms | success
 2026-01-12T22:45:28.100572+00:00 | DB_CALL get_user_by_username | P3 | 0.26ms | success
 2026-01-12T22:45:28.298810+00:00 | DB_CALL get_all_settings | P3 | 0.23ms | success
+2026-01-12T22:45:45.487231+00:00 | DB_CALL get_all_business_hours | P3 | 4.2ms | success
+2026-01-12T22:45:45.488353+00:00 | DB_CALL get_all_settings | P3 | 5.53ms | success
+2026-01-12T22:45:45.489056+00:00 | DB_CALL get_all_products | P3 | 5.98ms | success
+2026-01-12T22:45:45.490540+00:00 | DB_CALL get_all_categories | P3 | 7.37ms | success
+2026-01-12T22:45:45.681714+00:00 | DB_CALL get_all_bairros | P3 | 0.32ms | success
