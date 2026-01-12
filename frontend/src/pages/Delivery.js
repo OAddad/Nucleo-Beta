@@ -1339,26 +1339,23 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
         cliente_telefone: selectedCliente.telefone,
         tipo_entrega: tipoEntrega,
         modulo: "Delivery",
-        itens: cart.map(item => ({
-          produto_id: item.id,
-          produto_nome: item.name,
-          quantidade: item.quantity,
-          preco_unitario: item.sale_price || 0,
-          observacao: item.observation || ""
+        items: cart.map(item => ({
+          product_id: item.id,
+          product_name: item.name,
+          quantity: item.quantity,
+          unit_price: item.sale_price || 0,
+          observation: item.observation || ""
         })),
-        subtotal: subtotal,
-        taxa_entrega: tipoEntrega === "delivery" ? taxaEntrega : 0,
         total: total,
         forma_pagamento: formaPagamento,
-        troco_para: formaPagamento === "dinheiro" && trocoPara ? parseFloat(trocoPara) : null,
+        troco_precisa: formaPagamento === "dinheiro" && trocoPara,
+        troco_valor: formaPagamento === "dinheiro" && trocoPara ? parseFloat(trocoPara) : null,
         observacao: observacao,
-        endereco_entrega: tipoEntrega === "delivery" ? {
-          rua: endereco.rua,
-          numero: endereco.numero,
-          bairro: endereco.bairro,
-          complemento: endereco.complemento,
-          referencia: endereco.referencia
-        } : null,
+        valor_entrega: tipoEntrega === "delivery" ? taxaEntrega : 0,
+        endereco_rua: tipoEntrega === "delivery" ? endereco.rua : null,
+        endereco_numero: tipoEntrega === "delivery" ? endereco.numero : null,
+        endereco_bairro: tipoEntrega === "delivery" ? endereco.bairro : null,
+        endereco_complemento: tipoEntrega === "delivery" ? endereco.complemento : null,
         status: "aguardando_aceite"
       };
       
