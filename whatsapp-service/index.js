@@ -20,6 +20,7 @@ let connectionStatus = 'disconnected';
 let lastError = null;
 let reconnecting = false;
 let autoReplyEnabled = true;
+let connectedPhone = null;  // Número conectado
 
 // Logger silencioso para Baileys
 const logger = pino({ level: 'silent' });
