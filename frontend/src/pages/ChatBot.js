@@ -213,8 +213,6 @@ export default function ChatBot() {
           <WhatsAppTab toast={toast} initialStatus={whatsappStatus} initialQr={qrCode} setGlobalStatus={setWhatsappStatus} setGlobalQr={setQrCode} />
         ) : activeTab === "respostas" ? (
           <RespostasAutomaticasTab toast={toast} />
-        ) : activeTab === "simulator" ? (
-          <SimulatorTab toast={toast} />
         ) : activeTab === "palavras" ? (
           <PalavrasTab toast={toast} />
         ) : (
