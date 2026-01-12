@@ -21830,3 +21830,8 @@
 2026-01-12T22:26:46.507192+00:00 | DB_CALL get_all_settings | P3 | 0.13ms | success
 2026-01-12T22:26:46.510315+00:00 | DB_CALL get_user_by_id | P3 | 0.17ms | success
 2026-01-12T22:26:46.510573+00:00 | DB_CALL get_all_keyword_responses | P3 | 0.14ms | success
+2026-01-12T22:27:00.430263+00:00 | DB_CALL get_all_settings | P3 | 0.27ms | success
+2026-01-12T22:27:07.891943+00:00 | DB_CALL init_database | P3 | 2.64ms | success
+2026-01-12T22:27:07.892455+00:00 | DB_CALL count_ingredients | P3 | 0.27ms | success
+2026-01-12T22:27:07.892640+00:00 | DB_CALL count_products | P3 | 0.12ms | success
+2026-01-12T22:27:07.892778+00:00 | DB_CALL count_users | P3 | 0.09ms | success
