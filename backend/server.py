@@ -9,6 +9,7 @@ import os
 import logging
 import time
 import traceback
+import subprocess
 from pathlib import Path
 from pydantic import BaseModel, Field, ConfigDict
 from typing import List, Optional
@@ -30,6 +31,34 @@ load_dotenv(ROOT_DIR / '.env')
 
 # Inicializar o banco SQLite
 sqlite_db.init_database()
+
+# ==================== INICIAR SERVIÇO WHATSAPP ====================
+def start_whatsapp_service():
+    """Inicia o serviço WhatsApp automaticamente"""
+    try:
+        whatsapp_dir = ROOT_DIR.parent / 'whatsapp-service'
+        if whatsapp_dir.exists():
+            # Verificar se já está rodando
+            result = subprocess.run(['pgrep', '-f', 'whatsapp-service/index.js'], capture_output=True)
+            if result.returncode != 0:
+                # Não está rodando, iniciar
+                log_file = Path('/var/log/supervisor/whatsapp-real.log')
+                subprocess.Popen(
+                    ['node', 'index.js'],
+                    cwd=str(whatsapp_dir),
+                    stdout=open(log_file, 'a'),
+                    stderr=subprocess.STDOUT,
+                    start_new_session=True
+                )
+                print(f"[SERVER] Serviço WhatsApp iniciado automaticamente")
+            else:
+                print(f"[SERVER] Serviço WhatsApp já está rodando")
+    except Exception as e:
+        print(f"[SERVER] Erro ao iniciar serviço WhatsApp: {e}")
+
+# Iniciar serviço WhatsApp junto com o backend
+start_whatsapp_service()
+# ================================================================
 
 app = FastAPI()
 api_router = APIRouter(prefix="/api")
