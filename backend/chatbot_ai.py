@@ -275,8 +275,6 @@ Se o cliente quiser fazer um pedido, oriente a usar o app/site ou pergunte se qu
 
 LEMBRE-SE: Você está em uma conversa contínua via WhatsApp. Não recomece a conversa, continue de onde parou."""
 
-Lembre-se: você representa a empresa {nome_fantasia if nome_fantasia else nome_empresa}, então seja sempre profissional e acolhedora!"""
-
 
 async def get_client_context(phone: str) -> Dict[str, Any]:
     """Busca contexto do cliente no banco de dados"""
