@@ -163,17 +163,55 @@ async function connectToWhatsApp() {
     sock.ev.on('messages.upsert', async ({ messages, type }) => {
       if (type === 'notify') {
         for (const msg of messages) {
+          const from = msg.key.remoteJid;
+          
+          // Ignorar mensagens de grupo e status
+          if (from.endsWith('@g.us') || from === 'status@broadcast') {
+            continue;
+          }
+          
+          // MENSAGEM ENVIADA PELO ATENDENTE (fromMe = true)
+          if (msg.key.fromMe && msg.message) {
+            const messageContent = msg.message.conversation || 
+                                  msg.message.extendedTextMessage?.text || 
+                                  null;
+            
+            // Se não é uma mensagem automática do bot, pausar o bot para este número
+            if (messageContent && !messageContent.includes('🤖') && autoReplyEnabled) {
+              console.log(`[WhatsApp] Atendente humano enviou mensagem para ${from}. Pausando bot...`);
+              
+              // Chamar API para pausar o bot
+              try {
+                const pauseResponse = await fetch(`${BACKEND_URL}/api/chatbot/process`, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    phone: from,
+                    message: '',
+                    push_name: '',
+                    is_from_human_agent: true
+                  })
+                });
+                
+                const pauseData = await pauseResponse.json();
+                if (pauseData.bot_paused && pauseData.response) {
+                  // Enviar mensagem de pausa para o cliente
+                  await sendMessageWithTyping(from, pauseData.response);
+                  console.log(`[WhatsApp] Bot pausado para ${from}`);
+                }
+              } catch (e) {
+                console.log('[WhatsApp] Erro ao pausar bot:', e.message);
+              }
+            }
+            continue;
+          }
+          
+          // MENSAGEM RECEBIDA DO CLIENTE (fromMe = false)
           if (!msg.key.fromMe && msg.message) {
-            const from = msg.key.remoteJid;
             const messageContent = msg.message.conversation || 
                                   msg.message.extendedTextMessage?.text || 
                                   msg.message.imageMessage?.caption ||
                                   null;
-            
-            // Ignorar mensagens de grupo e status
-            if (from.endsWith('@g.us') || from === 'status@broadcast') {
-              continue;
-            }
             
             // Ignorar mensagens sem texto
             if (!messageContent) {
@@ -211,8 +249,11 @@ async function connectToWhatsApp() {
               console.log('[WhatsApp] Processando resposta da IA...');
               const aiResponse = await getAIResponse(from, messageContent, msg.pushName);
               
+              // Se aiResponse é null, significa que o bot está pausado ou houve erro
               if (aiResponse) {
                 await sendMessageWithTyping(from, aiResponse);
+              } else {
+                console.log(`[WhatsApp] Bot pausado ou sem resposta para ${from}`);
               }
             }
           }
