@@ -24158,3 +24158,12 @@
 2026-01-12T23:54:29.508353+00:00 | DB_CALL get_all_pedidos | P3 | 2.08ms | success
 2026-01-12T23:54:29.510933+00:00 | DB_CALL get_all_entregadores | P3 | 2.68ms | success
 2026-01-12T23:54:29.511614+00:00 | DB_CALL get_all_settings | P3 | 3.44ms | success
+2026-01-12T23:54:34.573767+00:00 | DB_CALL get_all_pedidos | P3 | 6.65ms | success
+2026-01-12T23:54:34.579723+00:00 | DB_CALL get_all_settings | P3 | 13.24ms | success
+2026-01-12T23:54:34.582592+00:00 | DB_CALL get_all_entregadores | P3 | 15.34ms | success
+2026-01-12T23:54:36.630248+00:00 | DB_CALL get_all_entregadores | P3 | 0.3ms | success
+2026-01-12T23:54:36.632216+00:00 | DB_CALL get_all_pedidos | P3 | 2.75ms | success
+2026-01-12T23:54:36.633554+00:00 | DB_CALL get_all_settings | P3 | 1.95ms | success
+2026-01-12T23:54:41.639085+00:00 | DB_CALL get_all_pedidos | P3 | 1.82ms | success
+2026-01-12T23:54:41.640858+00:00 | DB_CALL get_all_entregadores | P3 | 2.71ms | success
+2026-01-12T23:54:41.641931+00:00 | DB_CALL get_all_settings | P3 | 0.21ms | success

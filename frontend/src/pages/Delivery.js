@@ -1248,16 +1248,44 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
   ).slice(0, 10);
 
   // Adicionar ao carrinho
-  const addToCart = (product) => {
-    const existing = cart.find(item => item.id === product.id);
-    if (existing) {
-      setCart(cart.map(item => 
-        item.id === product.id 
-          ? { ...item, quantity: item.quantity + 1 }
-          : item
-      ));
+  const addToCart = (product, quantity = 1, observation = "") => {
+    // Se tem observação, sempre adiciona como novo item
+    if (observation) {
+      setCart([...cart, { ...product, quantity, observation }]);
     } else {
-      setCart([...cart, { ...product, quantity: 1 }]);
+      // Sem observação, agrupa por id
+      const existing = cart.find(item => item.id === product.id && !item.observation);
+      if (existing) {
+        setCart(cart.map(item => 
+          item.id === product.id && !item.observation
+            ? { ...item, quantity: item.quantity + quantity }
+            : item
+        ));
+      } else {
+        setCart([...cart, { ...product, quantity, observation: "" }]);
+      }
+    }
+  };
+
+  // Abrir popup do produto
+  const openProductPopup = (product) => {
+    setSelectedProduct(product);
+    setProductQuantity(1);
+    setProductObservation("");
+  };
+
+  // Fechar popup do produto
+  const closeProductPopup = () => {
+    setSelectedProduct(null);
+    setProductQuantity(1);
+    setProductObservation("");
+  };
+
+  // Confirmar adição do popup
+  const confirmAddToCart = () => {
+    if (selectedProduct) {
+      addToCart(selectedProduct, productQuantity, productObservation.trim());
+      closeProductPopup();
     }
   };
 
