@@ -19060,3 +19060,11 @@
 2026-01-12T19:40:04.443636+00:00 | DB_CALL get_all_pedidos | P3 | 1.07ms | success
 2026-01-12T19:40:04.444987+00:00 | DB_CALL get_all_entregadores | P3 | 2.84ms | success
 2026-01-12T19:40:04.445734+00:00 | DB_CALL get_all_settings | P3 | 0.18ms | success
+2026-01-12T19:40:08.033524+00:00 | DB_CALL get_user_by_id | P3 | 0.24ms | success
+2026-01-12T19:40:08.037647+00:00 | DB_CALL cancel_pedido | P3 | 3.93ms | success
+2026-01-12T19:40:08.201196+00:00 | DB_CALL get_all_pedidos | P3 | 1.18ms | success
+2026-01-12T19:40:08.203639+00:00 | DB_CALL get_all_entregadores | P3 | 0.88ms | success
+2026-01-12T19:40:08.204025+00:00 | DB_CALL get_all_settings | P3 | 0.56ms | success
+2026-01-12T19:40:09.446273+00:00 | DB_CALL get_all_pedidos | P3 | 2.24ms | success
+2026-01-12T19:40:09.447589+00:00 | DB_CALL get_all_entregadores | P3 | 3.2ms | success
+2026-01-12T19:40:09.447863+00:00 | DB_CALL get_all_settings | P3 | 2.46ms | success
