@@ -3430,11 +3430,21 @@ class ChatbotProcessMessage(BaseModel):
     phone: str
     message: str
     push_name: Optional[str] = ""
+    is_from_human_agent: Optional[bool] = False  # Se a mensagem é de um atendente humano
 
 @api_router.post("/chatbot/process")
 async def chatbot_process_message(data: ChatbotProcessMessage):
     """Processa mensagem do WhatsApp com IA"""
     try:
+        # Se é mensagem de atendente humano, pausar o bot
+        if data.is_from_human_agent:
+            pause_msg = chatbot_ai.pause_bot_for_phone(data.phone)
+            return {"success": True, "response": pause_msg, "bot_paused": True}
+        
+        # Verificar se o bot está pausado para este telefone
+        if chatbot_ai.is_bot_paused_for_phone(data.phone):
+            return {"success": True, "response": None, "bot_paused": True, "message": "Bot pausado - atendimento humano em andamento"}
+        
         # Processar analytics de palavras
         await db_call(sqlite_db.process_message_words, data.message, data.phone, data.push_name or "")
         
@@ -3443,10 +3453,72 @@ async def chatbot_process_message(data: ChatbotProcessMessage):
             message=data.message,
             push_name=data.push_name or ""
         )
-        return {"success": True, "response": response}
+        return {"success": True, "response": response, "bot_paused": False}
     except Exception as e:
         logger.error(f"Erro no chatbot: {e}")
         return {"success": False, "response": "Desculpe, ocorreu um erro. Tente novamente."}
+
+
+@api_router.post("/chatbot/pause/{phone}")
+async def chatbot_pause_for_phone(phone: str, current_user: User = Depends(get_current_user)):
+    """Pausa o bot para um telefone específico (intervenção humana)"""
+    try:
+        pause_msg = chatbot_ai.pause_bot_for_phone(phone)
+        return {"success": True, "message": pause_msg, "paused": True}
+    except Exception as e:
+        return {"success": False, "error": str(e)}
+
+
+@api_router.post("/chatbot/resume/{phone}")
+async def chatbot_resume_for_phone(phone: str, current_user: User = Depends(get_current_user)):
+    """Remove a pausa do bot para um telefone específico"""
+    try:
+        success = chatbot_ai.resume_bot_for_phone(phone)
+        return {"success": success, "paused": False}
+    except Exception as e:
+        return {"success": False, "error": str(e)}
+
+
+@api_router.get("/chatbot/pause-status/{phone}")
+async def chatbot_get_pause_status(phone: str, current_user: User = Depends(get_current_user)):
+    """Verifica se o bot está pausado para um telefone"""
+    try:
+        is_paused = chatbot_ai.is_bot_paused_for_phone(phone)
+        return {"success": True, "paused": is_paused}
+    except Exception as e:
+        return {"success": False, "error": str(e)}
+
+
+class BotSettingsUpdate(BaseModel):
+    bot_pause_message: Optional[str] = None
+    bot_pause_duration: Optional[int] = None  # em minutos
+
+@api_router.get("/chatbot/bot-settings")
+async def get_bot_settings(current_user: User = Depends(get_current_user)):
+    """Retorna configurações do bot"""
+    settings = await db_call(sqlite_db.get_all_settings)
+    return {
+        "success": True,
+        "bot_pause_message": settings.get('bot_pause_message', 'Opa, vi que um atendente humano começou o atendimento! Núcleo-Vox pausado por 15 minutos. 🤖➡️👤'),
+        "bot_pause_duration": int(settings.get('bot_pause_duration', '15'))
+    }
+
+@api_router.put("/chatbot/bot-settings")
+async def update_bot_settings(data: BotSettingsUpdate, current_user: User = Depends(get_current_user)):
+    """Atualiza configurações do bot"""
+    if current_user.role not in ["proprietario", "administrador"]:
+        raise HTTPException(status_code=403, detail="Sem permissão")
+    
+    try:
+        if data.bot_pause_message is not None:
+            await db_call(sqlite_db.set_setting, 'bot_pause_message', data.bot_pause_message)
+        if data.bot_pause_duration is not None:
+            await db_call(sqlite_db.set_setting, 'bot_pause_duration', str(data.bot_pause_duration))
+        
+        return {"success": True}
+    except Exception as e:
+        return {"success": False, "error": str(e)}
+
 
 @api_router.post("/chatbot/reset-conversation")
 async def chatbot_reset_conversation(phone: str, current_user: User = Depends(get_current_user)):
