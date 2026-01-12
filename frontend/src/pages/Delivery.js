@@ -711,15 +711,6 @@ export default function Delivery() {
           <div className="p-3 bg-muted/50 border-b">
             <div className="flex items-center justify-between">
               <h3 className="font-bold text-sm">ENTREGADORES</h3>
-              <Button 
-                size="sm" 
-                variant="outline" 
-                className="h-6 px-2 text-xs"
-                onClick={() => setCriarEntregadorModalOpen(true)}
-              >
-                <Plus className="w-3 h-3 mr-1" />
-                Novo
-              </Button>
             </div>
           </div>
           
