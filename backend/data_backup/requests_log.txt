@@ -21976,3 +21976,11 @@
 2026-01-12T22:46:39.066818+00:00 | DB_CALL get_user_by_username | P3 | 38.57ms | success
 2026-01-12T22:46:41.776459+00:00 | DB_CALL get_user_by_username | P3 | 0.26ms | success
 2026-01-12T22:46:41.977765+00:00 | DB_CALL get_all_settings | P3 | 0.3ms | success
+2026-01-12T22:47:03.468567+00:00 | DB_CALL get_all_settings | P3 | 45.26ms | success
+2026-01-12T22:47:03.469600+00:00 | DB_CALL get_all_products | P3 | 2.67ms | success
+2026-01-12T22:47:03.470401+00:00 | DB_CALL get_all_business_hours | P3 | 2.39ms | success
+2026-01-12T22:47:03.470731+00:00 | DB_CALL get_all_categories | P3 | 2.63ms | success
+2026-01-12T22:47:03.581654+00:00 | DB_CALL get_all_bairros | P3 | 15.5ms | success
+2026-01-12T22:47:07.967410+00:00 | DB_CALL get_user_by_username | P3 | 0.35ms | success
+2026-01-12T22:47:09.989570+00:00 | DB_CALL get_user_by_username | P3 | 0.39ms | success
+2026-01-12T22:47:10.194353+00:00 | DB_CALL get_all_settings | P3 | 0.26ms | success
