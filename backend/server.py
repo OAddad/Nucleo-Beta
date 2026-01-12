@@ -3445,8 +3445,11 @@ async def chatbot_process_message(data: ChatbotProcessMessage):
         if chatbot_ai.is_bot_paused_for_phone(data.phone):
             return {"success": True, "response": None, "bot_paused": True, "message": "Bot pausado - atendimento humano em andamento"}
         
-        # Processar analytics de palavras
-        await db_call(sqlite_db.process_message_words, data.message, data.phone, data.push_name or "")
+        # Processar analytics de palavras (não bloqueia se falhar)
+        try:
+            await db_call(sqlite_db.process_message_words, data.message, data.phone, data.push_name or "")
+        except Exception as e:
+            logger.warning(f"Erro ao processar analytics de palavras: {e}")
         
         response = await chatbot_ai.process_message(
             phone=data.phone,
