@@ -2708,6 +2708,11 @@ async def assign_entregador_to_pedido(pedido_id: str, entregador_id: str, curren
     
     # Atualiza status para na_bag
     pedido = await db_call(sqlite_db.update_pedido_status, pedido_id, "na_bag")
+    
+    # Enviar notificação WhatsApp
+    if pedido and pedido.get('cliente_telefone'):
+        whatsapp_notifications.schedule_order_notification(pedido_id, "na_bag", delay_seconds=0)
+    
     return pedido
 
 
