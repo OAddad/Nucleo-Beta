@@ -21852,3 +21852,6 @@
 2026-01-12T22:27:50.283682+00:00 | DB_CALL get_all_order_status_templates | P3 | 0.22ms | success
 2026-01-12T22:27:58.944444+00:00 | DB_CALL get_user_by_id | P3 | 0.26ms | success
 2026-01-12T22:27:58.944806+00:00 | DB_CALL get_order_status_templates_by_type | P3 | 0.21ms | success
+2026-01-12T22:28:05.972648+00:00 | DB_CALL get_user_by_id | P3 | 0.26ms | success
+2026-01-12T22:28:05.973014+00:00 | DB_CALL get_order_status_template | P3 | 0.17ms | success
+2026-01-12T22:28:05.977820+00:00 | DB_CALL update_order_status_template | P3 | 4.7ms | success
