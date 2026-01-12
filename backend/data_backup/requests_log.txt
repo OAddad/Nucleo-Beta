@@ -23595,3 +23595,15 @@
 2026-01-12T23:39:26.244107+00:00 | DB_CALL update_order_status_template | P3 | 1.97ms | success
 2026-01-12T23:39:26.408142+00:00 | DB_CALL get_user_by_id | P3 | 0.27ms | success
 2026-01-12T23:39:26.408487+00:00 | DB_CALL get_all_order_status_templates | P3 | 0.2ms | success
+2026-01-12T23:39:29.667273+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.3ms | success
+2026-01-12T23:39:29.995135+00:00 | DB_CALL get_user_by_id | P3 | 1.64ms | success
+2026-01-12T23:39:30.016877+00:00 | DB_CALL get_user_by_id | P3 | 22.69ms | success
+2026-01-12T23:39:30.017935+00:00 | DB_CALL get_user_by_id | P3 | 1.15ms | success
+2026-01-12T23:39:30.018412+00:00 | DB_CALL get_all_keyword_responses | P3 | 1.37ms | success
+2026-01-12T23:39:30.019075+00:00 | DB_CALL get_all_settings | P3 | 23.8ms | success
+2026-01-12T23:39:30.019354+00:00 | DB_CALL get_all_order_status_templates | P3 | 1.28ms | success
+2026-01-12T23:39:30.021358+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.18ms | success
+2026-01-12T23:39:36.634306+00:00 | DB_CALL init_database | P3 | 2.79ms | success
+2026-01-12T23:39:36.634812+00:00 | DB_CALL count_ingredients | P3 | 0.23ms | success
+2026-01-12T23:39:36.634993+00:00 | DB_CALL count_products | P3 | 0.12ms | success
+2026-01-12T23:39:36.635135+00:00 | DB_CALL count_users | P3 | 0.09ms | success
