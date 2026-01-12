@@ -21180,3 +21180,11 @@
 2026-01-12T21:25:42.525411+00:00 | DB_CALL get_all_pedidos | P3 | 1.56ms | success
 2026-01-12T21:25:42.526794+00:00 | DB_CALL get_all_settings | P3 | 3.14ms | success
 2026-01-12T21:25:42.527176+00:00 | DB_CALL get_all_entregadores | P3 | 3.22ms | success
+2026-01-12T21:26:09.699536+00:00 | DB_CALL init_database | P3 | 2.79ms | success
+2026-01-12T21:26:09.700023+00:00 | DB_CALL count_ingredients | P3 | 0.23ms | success
+2026-01-12T21:26:09.700204+00:00 | DB_CALL count_products | P3 | 0.12ms | success
+2026-01-12T21:26:09.700358+00:00 | DB_CALL count_users | P3 | 0.1ms | success
+2026-01-12T21:26:18.969902+00:00 | DB_CALL init_database | P3 | 2.76ms | success
+2026-01-12T21:26:18.970400+00:00 | DB_CALL count_ingredients | P3 | 0.26ms | success
+2026-01-12T21:26:18.970583+00:00 | DB_CALL count_products | P3 | 0.12ms | success
+2026-01-12T21:26:18.970718+00:00 | DB_CALL count_users | P3 | 0.09ms | success
