@@ -2114,6 +2114,13 @@ function RespostasAutomaticasTab({ toast }) {
             Respostas Automáticas
           </Button>
           <Button 
+            variant={activeSection === "notificacoes" ? "default" : "outline"}
+            onClick={() => setActiveSection("notificacoes")}
+          >
+            <Bell className="w-4 h-4 mr-2" />
+            Notificações de Pedidos
+          </Button>
+          <Button 
             variant={activeSection === "configuracoes" ? "default" : "outline"}
             onClick={() => setActiveSection("configuracoes")}
           >
