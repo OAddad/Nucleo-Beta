@@ -18592,3 +18592,4 @@
 2026-01-12T16:39:01.519852+00:00 | DB_CALL get_all_pedidos | P3 | 0.93ms | success
 2026-01-12T16:39:06.523129+00:00 | DB_CALL get_all_pedidos | P3 | 0.8ms | success
 2026-01-12T16:39:11.517777+00:00 | DB_CALL get_all_pedidos | P3 | 0.81ms | success
+2026-01-12T16:39:16.517435+00:00 | DB_CALL get_all_pedidos | P3 | 0.83ms | success
