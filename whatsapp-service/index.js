@@ -331,8 +331,14 @@ app.post('/send', async (req, res) => {
 // Endpoint: Desconectar
 app.post('/disconnect', async (req, res) => {
   try {
+    console.log('[WhatsApp] Iniciando desconexão...');
+    
     if (sock) {
-      await sock.logout();
+      try {
+        await sock.logout();
+      } catch (logoutErr) {
+        console.log('[WhatsApp] Erro no logout (ignorando):', logoutErr.message);
+      }
       sock = null;
     }
     
@@ -345,20 +351,32 @@ app.post('/disconnect', async (req, res) => {
     currentQR = null;
     connectionStatus = 'disconnected';
     lastError = null;
+    reconnecting = false;
     
-    // Reiniciar conexão para gerar novo QR
-    setTimeout(connectToWhatsApp, 1000);
+    // Responder imediatamente
+    res.json({ 
+      success: true, 
+      message: 'Desconectado com sucesso. Gerando novo QR Code...' 
+    });
+    
+    // Reiniciar conexão para gerar novo QR (após responder)
+    console.log('[WhatsApp] Gerando novo QR Code em 2 segundos...');
+    setTimeout(connectToWhatsApp, 2000);
+    
+  } catch (error) {
+    console.error('[WhatsApp] Erro ao desconectar:', error.message);
+    
+    // Mesmo com erro, tentar reconectar
+    currentQR = null;
+    connectionStatus = 'disconnected';
+    sock = null;
     
     res.json({ 
       success: true, 
-      message: 'Desconectado com sucesso' 
+      message: 'Desconectado (com erros). Gerando novo QR Code...' 
     });
-  } catch (error) {
-    console.error('[WhatsApp] Erro ao desconectar:', error.message);
-    res.status(500).json({ 
-      success: false, 
-      message: error.message 
-    });
+    
+    setTimeout(connectToWhatsApp, 2000);
   }
 });
 
