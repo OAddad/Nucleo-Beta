@@ -1869,7 +1869,8 @@ function RespostasAutomaticasTab({ toast }) {
   const [activeSection, setActiveSection] = useState("respostas"); // respostas ou configuracoes
   const [botSettings, setBotSettings] = useState({
     bot_pause_message: "",
-    bot_pause_duration: 15
+    bot_pause_duration: 15,
+    chatbot_name: "Ana"
   });
   const [savingSettings, setSavingSettings] = useState(false);
 
@@ -1900,7 +1901,8 @@ function RespostasAutomaticasTab({ toast }) {
       if (data.success) {
         setBotSettings({
           bot_pause_message: data.bot_pause_message || "",
-          bot_pause_duration: data.bot_pause_duration || 15
+          bot_pause_duration: data.bot_pause_duration || 15,
+          chatbot_name: data.chatbot_name || "Ana"
         });
       }
     } catch (error) {
