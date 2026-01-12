@@ -245,52 +245,50 @@ function WhatsAppTab({ toast, initialStatus, initialQr, setGlobalStatus, setGlob
   const [loading, setLoading] = useState(!initialStatus);
   const [disconnecting, setDisconnecting] = useState(false);
 
-  // Sincronizar com props iniciais
+  // Sincronizar com props globais sempre que mudarem
   useEffect(() => {
-    if (initialStatus) setStatus(initialStatus);
-    if (initialQr) setQrCode(initialQr);
+    setStatus(initialStatus);
+    setQrCode(initialQr);
     if (initialStatus) setLoading(false);
   }, [initialStatus, initialQr]);
 
   const fetchStatus = useCallback(async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(`${API_URL}/api/whatsapp/status`, {
-        headers: token ? { Authorization: `Bearer ${token}` } : {}
-      });
+      const headers = token ? { Authorization: `Bearer ${token}` } : {};
+      
+      const res = await fetch(`${API_URL}/api/whatsapp/status`, { headers });
       const data = await res.json();
       setStatus(data);
       setGlobalStatus?.(data);
       
-      if (data.status === "waiting_qr" || data.status === "disconnected") {
-        fetchQR();
+      // Se não conectado, buscar QR
+      if (!data.connected) {
+        const qrRes = await fetch(`${API_URL}/api/whatsapp/qr`, { headers });
+        const qrData = await qrRes.json();
+        if (qrData.success && qrData.qr) {
+          setQrCode(qrData.qr);
+          setGlobalQr?.(qrData.qr);
+        }
       } else {
         setQrCode(null);
         setGlobalQr?.(null);
       }
     } catch (error) {
       console.error("Erro ao buscar status:", error);
-      setStatus({ status: "error", connected: false, error: "Erro ao conectar ao serviço" });
+      const errorStatus = { status: "error", connected: false, error: "Erro ao conectar ao serviço" };
+      setStatus(errorStatus);
+      setGlobalStatus?.(errorStatus);
     } finally {
       setLoading(false);
     }
   }, [setGlobalStatus, setGlobalQr]);
 
-  const fetchQR = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      const res = await fetch(`${API_URL}/api/whatsapp/qr`, {
-        headers: token ? { Authorization: `Bearer ${token}` } : {}
-      });
-      const data = await res.json();
-      if (data.success && data.qr) {
-        setQrCode(data.qr);
-        setGlobalQr?.(data.qr);
-      }
-    } catch (error) {
-      console.error("Erro ao buscar QR:", error);
-    }
-  };
+  // Polling próprio da aba para manter sincronizado
+  useEffect(() => {
+    const interval = setInterval(fetchStatus, 5000);
+    return () => clearInterval(interval);
+  }, [fetchStatus]);
 
   const handleDisconnect = async () => {
     setDisconnecting(true);
