@@ -3571,7 +3571,7 @@ async def chatbot_reset_conversation(phone: str, current_user: User = Depends(ge
 # ==================== WHATSAPP STATS ====================
 
 @api_router.get("/whatsapp/stats")
-async def get_whatsapp_stats(current_user: User = Depends(get_current_user)):
+async def get_whatsapp_stats():
     """Retorna estatísticas do WhatsApp salvas no banco"""
     stats = await db_call(sqlite_db.get_whatsapp_stats)
     return {"success": True, "stats": stats}
