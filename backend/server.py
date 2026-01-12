@@ -4006,6 +4006,57 @@ async def delete_keyword_response(response_id: str, current_user: User = Depends
     return {"success": True, "message": "Resposta deletada com sucesso"}
 
 
+# ==================== ORDER STATUS TEMPLATES (Notificações de Status de Pedidos) ====================
+class OrderStatusTemplateUpdate(BaseModel):
+    template: Optional[str] = None
+    is_active: Optional[bool] = None
+    delay_seconds: Optional[int] = None
+
+
+@api_router.get("/order-status-templates")
+async def get_order_status_templates(current_user: User = Depends(get_current_user)):
+    """Retorna todos os templates de notificações de status de pedidos"""
+    templates = await db_call(sqlite_db.get_all_order_status_templates)
+    return {"success": True, "templates": templates}
+
+
+@api_router.get("/order-status-templates/{tipo_entrega}")
+async def get_order_status_templates_by_type(tipo_entrega: str, current_user: User = Depends(get_current_user)):
+    """Retorna os templates de um tipo específico (delivery ou pickup)"""
+    if tipo_entrega not in ['delivery', 'pickup']:
+        raise HTTPException(status_code=400, detail="Tipo de entrega inválido. Use: delivery ou pickup")
+    
+    templates = await db_call(sqlite_db.get_order_status_templates_by_type, tipo_entrega)
+    return {"success": True, "templates": templates}
+
+
+@api_router.put("/order-status-templates/{tipo_entrega}/{status}")
+async def update_order_status_template(
+    tipo_entrega: str, 
+    status: str, 
+    data: OrderStatusTemplateUpdate, 
+    current_user: User = Depends(get_current_user)
+):
+    """Atualiza um template de notificação de status de pedido"""
+    if current_user.role not in ["proprietario", "administrador"]:
+        raise HTTPException(status_code=403, detail="Sem permissão")
+    
+    if tipo_entrega not in ['delivery', 'pickup']:
+        raise HTTPException(status_code=400, detail="Tipo de entrega inválido. Use: delivery ou pickup")
+    
+    # Verificar se o template existe
+    template = await db_call(sqlite_db.get_order_status_template, tipo_entrega, status)
+    if not template:
+        raise HTTPException(status_code=404, detail="Template não encontrado")
+    
+    update_data = data.model_dump(exclude_none=True)
+    if not update_data:
+        raise HTTPException(status_code=400, detail="Nenhum campo para atualizar")
+    
+    updated = await db_call(sqlite_db.update_order_status_template, tipo_entrega, status, update_data)
+    return {"success": True, "template": updated}
+
+
 # ==================== EMPRESA / COMPANY SETTINGS ====================
 class CompanySettingsUpdate(BaseModel):
     company_name: Optional[str] = None
