@@ -3568,6 +3568,49 @@ async def chatbot_reset_conversation(phone: str, current_user: User = Depends(ge
         return {"success": False, "error": str(e)}
 
 
+# ==================== WHATSAPP STATS ====================
+
+@api_router.get("/whatsapp/stats")
+async def get_whatsapp_stats(current_user: User = Depends(get_current_user)):
+    """Retorna estatísticas do WhatsApp salvas no banco"""
+    stats = await db_call(sqlite_db.get_whatsapp_stats)
+    return {"success": True, "stats": stats}
+
+
+@api_router.post("/whatsapp/stats/increment")
+async def increment_whatsapp_stats(stat_type: str, amount: int = 1):
+    """Incrementa estatística do WhatsApp (chamado pelo serviço WhatsApp)"""
+    if stat_type not in ["messages_received", "messages_sent"]:
+        raise HTTPException(status_code=400, detail="Tipo de estatística inválido")
+    
+    await db_call(sqlite_db.increment_whatsapp_stat, stat_type, amount)
+    return {"success": True}
+
+
+@api_router.post("/whatsapp/stats/client")
+async def register_whatsapp_client(phone: str, name: str = None):
+    """Registra um cliente do WhatsApp (chamado pelo serviço WhatsApp)"""
+    client = await db_call(sqlite_db.register_whatsapp_client, phone, name)
+    return {"success": True, "client": client}
+
+
+@api_router.get("/whatsapp/clients")
+async def get_whatsapp_clients(current_user: User = Depends(get_current_user)):
+    """Retorna lista de clientes atendidos pelo WhatsApp"""
+    clients = await db_call(sqlite_db.get_all_whatsapp_clients)
+    return {"success": True, "clients": clients}
+
+
+@api_router.delete("/whatsapp/stats/reset")
+async def reset_whatsapp_stats(current_user: User = Depends(get_current_user)):
+    """Reseta todas as estatísticas do WhatsApp"""
+    if current_user.role != "proprietario":
+        raise HTTPException(status_code=403, detail="Apenas proprietário pode resetar estatísticas")
+    
+    await db_call(sqlite_db.reset_whatsapp_stats)
+    return {"success": True, "message": "Estatísticas resetadas"}
+
+
 # ==================== ANALYTICS DE PALAVRAS ====================
 
 @api_router.get("/chatbot/analytics/words")
