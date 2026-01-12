@@ -21968,3 +21968,11 @@
 2026-01-12T22:45:45.489056+00:00 | DB_CALL get_all_products | P3 | 5.98ms | success
 2026-01-12T22:45:45.490540+00:00 | DB_CALL get_all_categories | P3 | 7.37ms | success
 2026-01-12T22:45:45.681714+00:00 | DB_CALL get_all_bairros | P3 | 0.32ms | success
+2026-01-12T22:46:33.630078+00:00 | DB_CALL get_all_settings | P3 | 0.56ms | success
+2026-01-12T22:46:33.637109+00:00 | DB_CALL get_all_products | P3 | 0.34ms | success
+2026-01-12T22:46:33.665998+00:00 | DB_CALL get_all_categories | P3 | 0.27ms | success
+2026-01-12T22:46:33.671803+00:00 | DB_CALL get_all_business_hours | P3 | 0.45ms | success
+2026-01-12T22:46:33.710567+00:00 | DB_CALL get_all_bairros | P3 | 0.37ms | success
+2026-01-12T22:46:39.066818+00:00 | DB_CALL get_user_by_username | P3 | 38.57ms | success
+2026-01-12T22:46:41.776459+00:00 | DB_CALL get_user_by_username | P3 | 0.26ms | success
+2026-01-12T22:46:41.977765+00:00 | DB_CALL get_all_settings | P3 | 0.3ms | success
