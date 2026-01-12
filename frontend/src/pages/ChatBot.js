@@ -336,12 +336,6 @@ function WhatsAppTab({ toast, initialStatus, initialQr, setGlobalStatus, setGlob
     }
   };
 
-  useEffect(() => {
-    fetchStatus();
-    const interval = setInterval(fetchStatus, 5000);
-    return () => clearInterval(interval);
-  }, [fetchStatus]);
-
   const getStatusInfo = () => {
     if (!status) return { text: "Carregando...", color: "gray", icon: Loader2 };
     
@@ -353,7 +347,7 @@ function WhatsAppTab({ toast, initialStatus, initialQr, setGlobalStatus, setGlob
       case "reconnecting":
         return { text: "Reconectando...", color: "yellow", icon: RefreshCw };
       case "service_offline":
-        return { text: "Serviço Offline", color: "red", icon: WifiOff };
+        return { text: "Serviço Offline", color: "orange", icon: WifiOff };
       case "disconnected":
         return { text: "Desconectado", color: "gray", icon: WifiOff };
       default:
