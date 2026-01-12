@@ -316,7 +316,23 @@ async function connectToWhatsApp() {
 }
 
 // Endpoint: Status da conexão
-app.get('/status', (req, res) => {
+app.get('/status', async (req, res) => {
+  // Tentar buscar estatísticas do banco de dados
+  let dbStats = null;
+  try {
+    const response = await fetch(`${BACKEND_URL}/api/whatsapp/stats`, {
+      headers: { 'Authorization': 'Bearer internal' }
+    });
+    if (response.ok) {
+      const data = await response.json();
+      if (data.success && data.stats) {
+        dbStats = data.stats;
+      }
+    }
+  } catch (e) {
+    // Usar estatísticas em memória se falhar
+  }
+
   res.json({
     status: connectionStatus,
     connected: connectionStatus === 'connected',
@@ -325,7 +341,11 @@ app.get('/status', (req, res) => {
     phone: connectedPhone,
     messagesCount: receivedMessages.length,
     autoReplyEnabled: autoReplyEnabled,
-    stats: {
+    stats: dbStats ? {
+      clientsServed: dbStats.clients_served || 0,
+      messagesReceived: dbStats.messages_received || 0,
+      messagesSent: dbStats.messages_sent || 0
+    } : {
       clientsServed: stats.clientsServed.size,
       messagesReceived: stats.messagesReceived,
       messagesSent: stats.messagesSent
