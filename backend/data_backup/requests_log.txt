@@ -18727,3 +18727,8 @@
 2026-01-12T16:53:32.252948+00:00 | DB_CALL get_user_by_id | P3 | 0.25ms | success
 2026-01-12T16:53:42.246549+00:00 | DB_CALL get_user_by_id | P3 | 0.27ms | success
 2026-01-12T16:53:52.255915+00:00 | DB_CALL get_user_by_id | P3 | 0.3ms | success
+2026-01-12T16:53:56.716618+00:00 | DB_CALL init_database | P3 | 4.89ms | success
+2026-01-12T16:53:56.717098+00:00 | DB_CALL count_ingredients | P3 | 0.23ms | success
+2026-01-12T16:53:56.717280+00:00 | DB_CALL count_products | P3 | 0.12ms | success
+2026-01-12T16:53:56.717426+00:00 | DB_CALL count_users | P3 | 0.1ms | success
+2026-01-12T16:54:02.249251+00:00 | DB_CALL get_user_by_id | P3 | 0.35ms | success

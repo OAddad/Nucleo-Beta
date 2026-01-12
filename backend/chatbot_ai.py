@@ -403,6 +403,9 @@ async def process_message(phone: str, message: str, push_name: str = "") -> str:
         if keyword_response:
             response_text = keyword_response['response']
             
+            # Substituir variáveis na resposta
+            response_text = replace_variables_in_response(response_text, phone, push_name)
+            
             # Salvar resposta do bot
             db.add_conversation_message({
                 "id": str(uuid.uuid4()),
