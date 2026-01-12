@@ -242,9 +242,21 @@ async function connectToWhatsApp() {
             
             console.log(`[WhatsApp] Mensagem de ${from}: ${messageContent}`);
             
-            // Incrementar estatísticas
+            // Incrementar estatísticas em memória
             stats.messagesReceived++;
-            stats.clientsServed.add(from);  // Set automaticamente ignora duplicados
+            stats.clientsServed.add(from);
+            
+            // Salvar estatísticas no banco de dados
+            try {
+              await fetch(`${BACKEND_URL}/api/whatsapp/stats/increment?stat_type=messages_received&amount=1`, {
+                method: 'POST'
+              });
+              await fetch(`${BACKEND_URL}/api/whatsapp/stats/client?phone=${encodeURIComponent(from)}&name=${encodeURIComponent(msg.pushName || '')}`, {
+                method: 'POST'
+              });
+            } catch (e) {
+              console.log('[WhatsApp] Erro ao salvar estatística no banco:', e.message);
+            }
             
             // Armazenar mensagem
             const msgData = {
