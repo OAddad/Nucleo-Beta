@@ -3110,14 +3110,109 @@ def find_keyword_response_for_message(message: str) -> Optional[Dict]:
                         return resp
         
         return None
-        cursor.execute("""
-            SELECT * FROM decision_tree 
-            WHERE LOWER(trigger) = LOWER(?) AND is_active = 1
-            ORDER BY parent_id NULLS FIRST, "order" ASC
-            LIMIT 1
-        """, (trigger,))
+
+
+# ==================== WHATSAPP STATS ====================
+def get_whatsapp_stats() -> Dict:
+    """Retorna as estatísticas do WhatsApp"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        
+        # Buscar estatísticas gerais
+        cursor.execute("SELECT * FROM whatsapp_stats WHERE id = 'main'")
+        row = cursor.fetchone()
+        stats = dict(row) if row else {"messages_received": 0, "messages_sent": 0}
+        
+        # Contar clientes únicos atendidos
+        cursor.execute("SELECT COUNT(*) FROM whatsapp_clients")
+        stats["clients_served"] = cursor.fetchone()[0]
+        
+        return stats
+
+
+def increment_whatsapp_stat(stat_type: str, amount: int = 1) -> bool:
+    """Incrementa uma estatística do WhatsApp (messages_received ou messages_sent)"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        now = datetime.now(timezone.utc).isoformat()
+        
+        if stat_type == "messages_received":
+            cursor.execute("""
+                UPDATE whatsapp_stats 
+                SET messages_received = messages_received + ?, updated_at = ?
+                WHERE id = 'main'
+            """, (amount, now))
+        elif stat_type == "messages_sent":
+            cursor.execute("""
+                UPDATE whatsapp_stats 
+                SET messages_sent = messages_sent + ?, updated_at = ?
+                WHERE id = 'main'
+            """, (amount, now))
+        
+        conn.commit()
+        return cursor.rowcount > 0
+
+
+def register_whatsapp_client(phone: str, name: str = None) -> Dict:
+    """Registra ou atualiza um cliente do WhatsApp"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        now = datetime.now(timezone.utc).isoformat()
+        
+        # Verificar se cliente já existe
+        cursor.execute("SELECT * FROM whatsapp_clients WHERE phone = ?", (phone,))
+        existing = cursor.fetchone()
+        
+        if existing:
+            # Atualizar cliente existente
+            cursor.execute("""
+                UPDATE whatsapp_clients 
+                SET last_contact = ?, messages_count = messages_count + 1, name = COALESCE(?, name)
+                WHERE phone = ?
+            """, (now, name, phone))
+        else:
+            # Criar novo cliente
+            cursor.execute("""
+                INSERT INTO whatsapp_clients (phone, name, first_contact, last_contact, messages_count)
+                VALUES (?, ?, ?, ?, 1)
+            """, (phone, name, now, now))
+        
+        conn.commit()
+        
+        # Retornar dados do cliente
+        cursor.execute("SELECT * FROM whatsapp_clients WHERE phone = ?", (phone,))
         row = cursor.fetchone()
         return dict(row) if row else None
+
+
+def get_all_whatsapp_clients() -> List[Dict]:
+    """Retorna todos os clientes do WhatsApp"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM whatsapp_clients ORDER BY last_contact DESC")
+        return [dict(row) for row in cursor.fetchall()]
+
+
+def reset_whatsapp_stats() -> bool:
+    """Reseta as estatísticas do WhatsApp"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        now = datetime.now(timezone.utc).isoformat()
+        
+        cursor.execute("""
+            UPDATE whatsapp_stats 
+            SET messages_received = 0, messages_sent = 0, updated_at = ?
+            WHERE id = 'main'
+        """, (now,))
+        
+        cursor.execute("DELETE FROM whatsapp_clients")
+        conn.commit()
+        return True
 
 
 # ==================== CHATBOT FLOW NODES ====================
