@@ -1843,3 +1843,360 @@ function PalavrasTab({ toast }) {
     </div>
   );
 }
+
+
+// ==================== ABA RESPOSTAS AUTOMÁTICAS ====================
+function RespostasAutomaticasTab({ toast }) {
+  const [responses, setResponses] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [showModal, setShowModal] = useState(false);
+  const [editingResponse, setEditingResponse] = useState(null);
+  const [formData, setFormData] = useState({
+    keywords: "",
+    response: "",
+    is_active: true,
+    priority: 0,
+    match_type: "contains"
+  });
+  const [deleteConfirm, setDeleteConfirm] = useState(null);
+
+  const fetchResponses = useCallback(async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`${API_URL}/api/keyword-responses`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (data.success) {
+        setResponses(data.responses || []);
+      }
+    } catch (error) {
+      console.error("Erro ao buscar respostas:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchResponses();
+  }, [fetchResponses]);
+
+  const openCreateModal = () => {
+    setEditingResponse(null);
+    setFormData({
+      keywords: "",
+      response: "",
+      is_active: true,
+      priority: 0,
+      match_type: "contains"
+    });
+    setShowModal(true);
+  };
+
+  const openEditModal = (resp) => {
+    setEditingResponse(resp);
+    setFormData({
+      keywords: resp.keywords || "",
+      response: resp.response || "",
+      is_active: resp.is_active === 1 || resp.is_active === true,
+      priority: resp.priority || 0,
+      match_type: resp.match_type || "contains"
+    });
+    setShowModal(true);
+  };
+
+  const handleSubmit = async () => {
+    if (!formData.keywords.trim() || !formData.response.trim()) {
+      toast({ title: "Erro", description: "Preencha as palavras-chave e a resposta", variant: "destructive" });
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem("token");
+      const url = editingResponse 
+        ? `${API_URL}/api/keyword-responses/${editingResponse.id}`
+        : `${API_URL}/api/keyword-responses`;
+      
+      const res = await fetch(url, {
+        method: editingResponse ? "PUT" : "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(formData)
+      });
+
+      const data = await res.json();
+      if (data.success) {
+        toast({ 
+          title: editingResponse ? "Atualizado" : "Criado", 
+          description: editingResponse ? "Resposta atualizada com sucesso" : "Resposta criada com sucesso" 
+        });
+        setShowModal(false);
+        fetchResponses();
+      } else {
+        throw new Error(data.detail || "Erro ao salvar");
+      }
+    } catch (error) {
+      toast({ title: "Erro", description: error.message, variant: "destructive" });
+    }
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`${API_URL}/api/keyword-responses/${id}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
+      const data = await res.json();
+      if (data.success) {
+        toast({ title: "Deletado", description: "Resposta removida com sucesso" });
+        fetchResponses();
+      }
+    } catch (error) {
+      toast({ title: "Erro", description: "Erro ao deletar", variant: "destructive" });
+    }
+    setDeleteConfirm(null);
+  };
+
+  const toggleActive = async (resp) => {
+    try {
+      const token = localStorage.getItem("token");
+      await fetch(`${API_URL}/api/keyword-responses/${resp.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ is_active: !resp.is_active })
+      });
+      fetchResponses();
+    } catch (error) {
+      toast({ title: "Erro", description: "Erro ao atualizar", variant: "destructive" });
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="p-6 space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-lg font-semibold">Respostas Automáticas</h2>
+          <p className="text-sm text-muted-foreground">
+            Configure palavras-chave e as respostas que o BOT enviará automaticamente
+          </p>
+        </div>
+        <Button onClick={openCreateModal}>
+          <Plus className="w-4 h-4 mr-2" />
+          Nova Resposta
+        </Button>
+      </div>
+
+      {/* Info Card */}
+      <div className="bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/30 dark:to-orange-950/30 rounded-xl border p-4">
+        <div className="flex items-start gap-3">
+          <div className="p-2 rounded-lg bg-amber-500 text-white">
+            <HelpCircle className="w-4 h-4" />
+          </div>
+          <div>
+            <h4 className="font-medium">Como funciona?</h4>
+            <p className="text-sm text-muted-foreground mt-1">
+              Quando o cliente enviar uma mensagem contendo uma das palavras-chave configuradas, 
+              o BOT responderá automaticamente com a mensagem definida, <strong>sem usar a IA</strong>.
+              Separe múltiplas palavras-chave por vírgula (ex: "oi, olá, bom dia").
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Lista de Respostas */}
+      {responses.length === 0 ? (
+        <div className="bg-card border rounded-xl p-12 text-center">
+          <MessageCircle className="w-12 h-12 mx-auto mb-4 text-muted-foreground opacity-50" />
+          <h3 className="font-medium mb-2">Nenhuma resposta configurada</h3>
+          <p className="text-sm text-muted-foreground mb-4">
+            Crie respostas automáticas para agilizar o atendimento do seu BOT
+          </p>
+          <Button onClick={openCreateModal}>
+            <Plus className="w-4 h-4 mr-2" />
+            Criar Primeira Resposta
+          </Button>
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {responses.map((resp) => (
+            <div 
+              key={resp.id} 
+              className={`bg-card border rounded-xl p-4 ${!resp.is_active ? 'opacity-60' : ''}`}
+            >
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className={`px-2 py-0.5 rounded text-xs font-medium ${
+                      resp.is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'
+                    }`}>
+                      {resp.is_active ? 'Ativo' : 'Inativo'}
+                    </span>
+                    <span className="px-2 py-0.5 rounded text-xs bg-muted">
+                      {resp.match_type === 'exact' ? 'Correspondência Exata' : 
+                       resp.match_type === 'word' ? 'Palavra Inteira' : 'Contém'}
+                    </span>
+                    {resp.priority > 0 && (
+                      <span className="px-2 py-0.5 rounded text-xs bg-amber-100 text-amber-700">
+                        Prioridade: {resp.priority}
+                      </span>
+                    )}
+                  </div>
+                  
+                  <div className="mb-2">
+                    <span className="text-sm font-medium text-muted-foreground">Palavras-chave:</span>
+                    <div className="flex flex-wrap gap-1 mt-1">
+                      {resp.keywords.split(',').map((kw, i) => (
+                        <span key={i} className="px-2 py-0.5 bg-amber-500/10 text-amber-700 rounded text-sm">
+                          {kw.trim()}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <span className="text-sm font-medium text-muted-foreground">Resposta:</span>
+                    <p className="text-sm mt-1 bg-muted/50 rounded p-2 whitespace-pre-wrap">{resp.response}</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-center gap-2">
+                  <Switch 
+                    checked={resp.is_active === 1 || resp.is_active === true}
+                    onCheckedChange={() => toggleActive(resp)}
+                  />
+                  <Button variant="outline" size="sm" onClick={() => openEditModal(resp)}>
+                    <Edit2 className="w-4 h-4" />
+                  </Button>
+                  <Button variant="outline" size="sm" onClick={() => setDeleteConfirm(resp)}>
+                    <Trash2 className="w-4 h-4 text-red-500" />
+                  </Button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Modal de Criar/Editar */}
+      <Dialog open={showModal} onOpenChange={setShowModal}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>
+              {editingResponse ? 'Editar Resposta Automática' : 'Nova Resposta Automática'}
+            </DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-4 py-4">
+            <div>
+              <Label>Palavras-chave *</Label>
+              <Input 
+                placeholder="oi, olá, bom dia, boa tarde"
+                value={formData.keywords}
+                onChange={(e) => setFormData({...formData, keywords: e.target.value})}
+              />
+              <p className="text-xs text-muted-foreground mt-1">
+                Separe múltiplas palavras por vírgula
+              </p>
+            </div>
+            
+            <div>
+              <Label>Resposta do BOT *</Label>
+              <Textarea 
+                placeholder="Olá! Seja bem-vindo ao nosso restaurante. Como posso ajudar?"
+                rows={4}
+                value={formData.response}
+                onChange={(e) => setFormData({...formData, response: e.target.value})}
+              />
+            </div>
+            
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label>Tipo de Correspondência</Label>
+                <Select 
+                  value={formData.match_type} 
+                  onValueChange={(v) => setFormData({...formData, match_type: v})}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="contains">Contém a palavra</SelectItem>
+                    <SelectItem value="word">Palavra inteira</SelectItem>
+                    <SelectItem value="exact">Mensagem exata</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div>
+                <Label>Prioridade</Label>
+                <Input 
+                  type="number"
+                  min={0}
+                  value={formData.priority}
+                  onChange={(e) => setFormData({...formData, priority: parseInt(e.target.value) || 0})}
+                />
+                <p className="text-xs text-muted-foreground mt-1">
+                  Maior = mais prioridade
+                </p>
+              </div>
+            </div>
+            
+            <div className="flex items-center gap-2">
+              <Switch 
+                checked={formData.is_active}
+                onCheckedChange={(v) => setFormData({...formData, is_active: v})}
+              />
+              <Label>Ativo</Label>
+            </div>
+          </div>
+          
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowModal(false)}>
+              Cancelar
+            </Button>
+            <Button onClick={handleSubmit}>
+              {editingResponse ? 'Salvar Alterações' : 'Criar Resposta'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Confirmação de Exclusão */}
+      <AlertDialog open={!!deleteConfirm} onOpenChange={() => setDeleteConfirm(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirmar Exclusão</AlertDialogTitle>
+            <AlertDialogDescription>
+              Tem certeza que deseja excluir esta resposta automática? Esta ação não pode ser desfeita.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction 
+              className="bg-red-500 hover:bg-red-600"
+              onClick={() => handleDelete(deleteConfirm?.id)}
+            >
+              Excluir
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </div>
+  );
+}
