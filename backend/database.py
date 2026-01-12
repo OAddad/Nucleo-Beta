@@ -724,6 +724,21 @@ def init_database():
         ''')
         conn.commit()
         
+        # Tabela para respostas automáticas por palavras-chave
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS keyword_responses (
+                id TEXT PRIMARY KEY,
+                keywords TEXT NOT NULL,
+                response TEXT NOT NULL,
+                is_active INTEGER DEFAULT 1,
+                priority INTEGER DEFAULT 0,
+                match_type TEXT DEFAULT 'contains',
+                created_at TEXT,
+                updated_at TEXT
+            )
+        ''')
+        conn.commit()
+        
         # Verificar se precisa adicionar novas colunas (migração)
         try:
             cursor.execute("SELECT has_second_period FROM business_hours LIMIT 1")
