@@ -141,7 +141,10 @@ async def notify_order_status(pedido_id: str, new_status: str, delay_seconds: in
         
         # Preparar variáveis para a mensagem
         # O código do pedido está no campo 'codigo' (formato: #00000)
-        codigo = pedido.get('codigo') or pedido.get('numero_pedido') or f"#{pedido_id[:5].upper()}"
+        # Remover o # do código pois os templates já incluem o #
+        codigo_raw = pedido.get('codigo') or pedido.get('numero_pedido') or f"#{pedido_id[:5].upper()}"
+        codigo = codigo_raw.replace('#', '') if codigo_raw else pedido_id[:5].upper()
+        
         settings = db.get_all_settings()
         endereco = settings.get('company_address', 'nosso estabelecimento')
         
