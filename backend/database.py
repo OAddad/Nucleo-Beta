@@ -2943,6 +2943,143 @@ def find_decision_node_by_trigger(trigger: str) -> Optional[Dict]:
         conn = get_connection()
         cursor = conn.cursor()
         # Busca case-insensitive
+
+
+# ==================== KEYWORD RESPONSES ====================
+def get_all_keyword_responses() -> List[Dict]:
+    """Retorna todas as respostas por palavras-chave"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM keyword_responses ORDER BY priority DESC, created_at ASC")
+        return [dict(row) for row in cursor.fetchall()]
+
+
+def get_keyword_response(response_id: str) -> Optional[Dict]:
+    """Retorna uma resposta específica por ID"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM keyword_responses WHERE id = ?", (response_id,))
+        row = cursor.fetchone()
+        return dict(row) if row else None
+
+
+def create_keyword_response(data: Dict) -> Dict:
+    """Cria uma nova resposta por palavra-chave"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        now = datetime.now(timezone.utc).isoformat()
+        response_id = data.get('id', str(uuid.uuid4()))
+        
+        cursor.execute('''
+            INSERT INTO keyword_responses (id, keywords, response, is_active, priority, match_type, created_at, updated_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        ''', (
+            response_id,
+            data['keywords'],
+            data['response'],
+            1 if data.get('is_active', True) else 0,
+            data.get('priority', 0),
+            data.get('match_type', 'contains'),
+            now,
+            now
+        ))
+        conn.commit()
+        return get_keyword_response(response_id)
+
+
+def update_keyword_response(response_id: str, data: Dict) -> Optional[Dict]:
+    """Atualiza uma resposta existente"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        now = datetime.now(timezone.utc).isoformat()
+        
+        # Construir update dinâmico
+        updates = []
+        values = []
+        
+        if 'keywords' in data:
+            updates.append("keywords = ?")
+            values.append(data['keywords'])
+        if 'response' in data:
+            updates.append("response = ?")
+            values.append(data['response'])
+        if 'is_active' in data:
+            updates.append("is_active = ?")
+            values.append(1 if data['is_active'] else 0)
+        if 'priority' in data:
+            updates.append("priority = ?")
+            values.append(data['priority'])
+        if 'match_type' in data:
+            updates.append("match_type = ?")
+            values.append(data['match_type'])
+        
+        updates.append("updated_at = ?")
+        values.append(now)
+        values.append(response_id)
+        
+        cursor.execute(f'''
+            UPDATE keyword_responses SET {', '.join(updates)} WHERE id = ?
+        ''', values)
+        conn.commit()
+        
+        return get_keyword_response(response_id)
+
+
+def delete_keyword_response(response_id: str) -> bool:
+    """Deleta uma resposta por palavra-chave"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM keyword_responses WHERE id = ?", (response_id,))
+        conn.commit()
+        return cursor.rowcount > 0
+
+
+def find_keyword_response_for_message(message: str) -> Optional[Dict]:
+    """
+    Busca uma resposta automática baseada nas palavras-chave da mensagem.
+    Retorna a resposta com maior prioridade que corresponda.
+    """
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("""
+            SELECT * FROM keyword_responses 
+            WHERE is_active = 1 
+            ORDER BY priority DESC, created_at ASC
+        """)
+        responses = [dict(row) for row in cursor.fetchall()]
+        
+        message_lower = message.lower().strip()
+        
+        for resp in responses:
+            keywords = [k.strip().lower() for k in resp['keywords'].split(',')]
+            match_type = resp.get('match_type', 'contains')
+            
+            for keyword in keywords:
+                if not keyword:
+                    continue
+                    
+                if match_type == 'exact':
+                    # Correspondência exata da mensagem inteira
+                    if message_lower == keyword:
+                        return resp
+                elif match_type == 'word':
+                    # Palavra inteira presente na mensagem
+                    import re
+                    pattern = r'\b' + re.escape(keyword) + r'\b'
+                    if re.search(pattern, message_lower):
+                        return resp
+                else:  # contains (padrão)
+                    # Palavra-chave contida na mensagem
+                    if keyword in message_lower:
+                        return resp
+        
+        return None
         cursor.execute("""
             SELECT * FROM decision_tree 
             WHERE LOWER(trigger) = LOWER(?) AND is_active = 1
