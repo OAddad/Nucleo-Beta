@@ -21813,3 +21813,7 @@
 2026-01-12T22:24:45.551055+00:00 | DB_CALL count_ingredients | P3 | 0.22ms | success
 2026-01-12T22:24:45.551314+00:00 | DB_CALL count_products | P3 | 0.2ms | success
 2026-01-12T22:24:45.551472+00:00 | DB_CALL count_users | P3 | 0.11ms | success
+2026-01-12T22:25:11.469354+00:00 | DB_CALL init_database | P3 | 2.79ms | success
+2026-01-12T22:25:11.469880+00:00 | DB_CALL count_ingredients | P3 | 0.28ms | success
+2026-01-12T22:25:11.470073+00:00 | DB_CALL count_products | P3 | 0.13ms | success
+2026-01-12T22:25:11.470227+00:00 | DB_CALL count_users | P3 | 0.1ms | success
