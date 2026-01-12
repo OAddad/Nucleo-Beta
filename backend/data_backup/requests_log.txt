@@ -23588,3 +23588,10 @@
 2026-01-12T23:39:17.021617+00:00 | DB_CALL update_order_status_template | P3 | 3.39ms | success
 2026-01-12T23:39:17.184486+00:00 | DB_CALL get_user_by_id | P3 | 0.27ms | success
 2026-01-12T23:39:17.184849+00:00 | DB_CALL get_all_order_status_templates | P3 | 0.22ms | success
+2026-01-12T23:39:19.561257+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.24ms | success
+2026-01-12T23:39:24.563542+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.23ms | success
+2026-01-12T23:39:26.241671+00:00 | DB_CALL get_user_by_id | P3 | 0.32ms | success
+2026-01-12T23:39:26.242041+00:00 | DB_CALL get_order_status_template | P3 | 0.16ms | success
+2026-01-12T23:39:26.244107+00:00 | DB_CALL update_order_status_template | P3 | 1.97ms | success
+2026-01-12T23:39:26.408142+00:00 | DB_CALL get_user_by_id | P3 | 0.27ms | success
+2026-01-12T23:39:26.408487+00:00 | DB_CALL get_all_order_status_templates | P3 | 0.2ms | success

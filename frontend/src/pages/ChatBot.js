@@ -1919,7 +1919,8 @@ function PhonePreview({ message, type = "bot" }) {
       .replace(/{motivo}/g, "Cliente solicitou cancelamento")
       .replace(/{nome}/g, "João")
       .replace(/{hora}/g, currentTime)
-      .replace(/{saudacao}/g, "Boa tarde");
+      .replace(/{saudacao}/g, "Boa tarde")
+      .replace(/{nome_entregador}/g, "Carlos");
   };
 
   return (
