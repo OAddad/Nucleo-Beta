@@ -21855,3 +21855,9 @@
 2026-01-12T22:28:05.972648+00:00 | DB_CALL get_user_by_id | P3 | 0.26ms | success
 2026-01-12T22:28:05.973014+00:00 | DB_CALL get_order_status_template | P3 | 0.17ms | success
 2026-01-12T22:28:05.977820+00:00 | DB_CALL update_order_status_template | P3 | 4.7ms | success
+2026-01-12T22:28:41.833171+00:00 | DB_CALL get_user_by_id | P3 | 1.11ms | success
+2026-01-12T22:28:41.833380+00:00 | DB_CALL get_user_by_id | P3 | 0.95ms | success
+2026-01-12T22:28:41.833748+00:00 | DB_CALL get_all_settings | P3 | 0.39ms | success
+2026-01-12T22:28:41.834244+00:00 | DB_CALL get_all_keyword_responses | P3 | 0.78ms | success
+2026-01-12T22:28:44.460621+00:00 | DB_CALL get_user_by_id | P3 | 0.26ms | success
+2026-01-12T22:28:44.460901+00:00 | DB_CALL get_all_order_status_templates | P3 | 0.15ms | success
