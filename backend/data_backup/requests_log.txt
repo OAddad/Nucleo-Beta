@@ -18879,3 +18879,111 @@
 2026-01-12T17:58:08.759734+00:00 | DB_CALL get_all_settings | P3 | 0.88ms | success
 2026-01-12T17:58:11.938150+00:00 | DB_CALL process_message_words | P3 | 0.35ms | error | ERROR: no such column: type
 2026-01-12T17:58:26.376129+00:00 | DB_CALL get_user_by_id | P3 | 0.34ms | success
+2026-01-12T18:50:33.164657+00:00 | DB_CALL init_database | P3 | 6.09ms | success
+2026-01-12T18:50:33.166155+00:00 | DB_CALL count_ingredients | P3 | 0.31ms | success
+2026-01-12T18:50:33.166488+00:00 | DB_CALL count_products | P3 | 0.25ms | success
+2026-01-12T18:50:33.166715+00:00 | DB_CALL count_users | P3 | 0.14ms | success
+2026-01-12T18:50:37.469544+00:00 | DB_CALL get_all_settings | P3 | 1.59ms | success
+2026-01-12T18:50:37.470492+00:00 | DB_CALL get_all_products | P3 | 1.89ms | success
+2026-01-12T18:50:37.471148+00:00 | DB_CALL get_all_business_hours | P3 | 2.33ms | success
+2026-01-12T18:50:37.472152+00:00 | DB_CALL get_all_categories | P3 | 0.26ms | success
+2026-01-12T18:50:38.064695+00:00 | DB_CALL get_all_bairros | P3 | 2.31ms | success
+2026-01-12T18:50:40.048662+00:00 | DB_CALL get_all_pedidos | P3 | 4.18ms | success
+2026-01-12T18:50:40.073512+00:00 | DB_CALL get_all_settings | P3 | 0.29ms | success
+2026-01-12T18:51:04.642245+00:00 | DB_CALL get_user_by_id | P3 | 1.6ms | success
+2026-01-12T18:51:04.642451+00:00 | DB_CALL get_user_by_id | P3 | 0.61ms | success
+2026-01-12T18:51:04.642690+00:00 | DB_CALL get_all_settings | P3 | 0.16ms | success
+2026-01-12T18:51:04.643497+00:00 | DB_CALL get_all_keyword_responses | P3 | 1.1ms | success
+2026-01-12T18:53:09.442088+00:00 | DB_CALL get_user_by_id | P3 | 0.35ms | success
+2026-01-12T18:53:09.442377+00:00 | DB_CALL get_all_keyword_responses | P3 | 0.13ms | success
+2026-01-12T18:53:09.444706+00:00 | DB_CALL get_user_by_id | P3 | 0.17ms | success
+2026-01-12T18:53:09.444993+00:00 | DB_CALL get_all_settings | P3 | 0.18ms | success
+2026-01-12T18:53:11.461983+00:00 | DB_CALL get_user_by_id | P3 | 0.38ms | success
+2026-01-12T18:53:11.880108+00:00 | DB_CALL get_user_by_id | P3 | 0.44ms | success
+2026-01-12T18:53:11.880653+00:00 | DB_CALL get_word_analytics_summary | P3 | 0.22ms | error | ERROR: no such column: type
+2026-01-12T18:53:12.663585+00:00 | DB_CALL get_user_by_id | P3 | 0.26ms | success
+2026-01-12T18:53:12.670227+00:00 | DB_CALL get_all_keyword_responses | P3 | 6.37ms | success
+2026-01-12T18:53:12.670766+00:00 | DB_CALL get_user_by_id | P3 | 0.87ms | success
+2026-01-12T18:53:12.671341+00:00 | DB_CALL get_all_settings | P3 | 0.2ms | success
+2026-01-12T18:53:22.061987+00:00 | DB_CALL process_message_words | P3 | 5.09ms | success
+2026-01-12T18:53:25.425773+00:00 | DB_CALL get_user_by_id | P3 | 0.28ms | success
+2026-01-12T18:53:25.426060+00:00 | DB_CALL get_all_keyword_responses | P3 | 0.14ms | success
+2026-01-12T18:53:25.427775+00:00 | DB_CALL get_user_by_id | P3 | 0.14ms | success
+2026-01-12T18:53:25.428063+00:00 | DB_CALL get_all_settings | P3 | 0.17ms | success
+2026-01-12T18:55:00.466422+00:00 | DB_CALL get_user_by_id | P3 | 0.31ms | success
+2026-01-12T18:55:00.467751+00:00 | DB_CALL get_keyword_response | P3 | 1.1ms | success
+2026-01-12T18:55:00.470791+00:00 | DB_CALL update_keyword_response | P3 | 2.92ms | success
+2026-01-12T18:55:00.633853+00:00 | DB_CALL get_user_by_id | P3 | 0.25ms | success
+2026-01-12T18:55:00.634116+00:00 | DB_CALL get_all_keyword_responses | P3 | 0.13ms | success
+2026-01-12T18:55:14.620476+00:00 | DB_CALL process_message_words | P3 | 0.37ms | error | ERROR: no such column: type
+2026-01-12T18:56:01.715526+00:00 | DB_CALL get_user_by_id | P3 | 0.31ms | success
+2026-01-12T18:56:01.716420+00:00 | DB_CALL get_keyword_response | P3 | 0.21ms | success
+2026-01-12T18:56:01.719075+00:00 | DB_CALL update_keyword_response | P3 | 2.55ms | success
+2026-01-12T18:56:01.883806+00:00 | DB_CALL get_user_by_id | P3 | 0.26ms | success
+2026-01-12T18:56:01.884125+00:00 | DB_CALL get_all_keyword_responses | P3 | 0.18ms | success
+2026-01-12T18:56:09.484550+00:00 | DB_CALL process_message_words | P3 | 0.35ms | error | ERROR: no such column: type
+2026-01-12T18:56:49.983887+00:00 | DB_CALL get_user_by_id | P3 | 0.28ms | success
+2026-01-12T18:56:49.984889+00:00 | DB_CALL get_keyword_response | P3 | 0.14ms | success
+2026-01-12T18:56:49.987258+00:00 | DB_CALL update_keyword_response | P3 | 2.26ms | success
+2026-01-12T18:56:50.155763+00:00 | DB_CALL get_user_by_id | P3 | 0.25ms | success
+2026-01-12T18:56:50.156116+00:00 | DB_CALL get_all_keyword_responses | P3 | 0.19ms | success
+2026-01-12T18:57:10.183315+00:00 | DB_CALL get_user_by_id | P3 | 0.27ms | success
+2026-01-12T18:57:10.183631+00:00 | DB_CALL get_keyword_response | P3 | 0.11ms | success
+2026-01-12T18:57:10.185697+00:00 | DB_CALL update_keyword_response | P3 | 2.0ms | success
+2026-01-12T18:57:10.348381+00:00 | DB_CALL get_user_by_id | P3 | 0.27ms | success
+2026-01-12T18:57:10.348650+00:00 | DB_CALL get_all_keyword_responses | P3 | 0.13ms | success
+2026-01-12T18:57:18.257576+00:00 | DB_CALL process_message_words | P3 | 1.42ms | error | ERROR: no such column: type
+2026-01-12T18:57:34.517483+00:00 | DB_CALL get_user_by_id | P3 | 0.3ms | success
+2026-01-12T18:57:34.517788+00:00 | DB_CALL get_keyword_response | P3 | 0.12ms | success
+2026-01-12T18:57:34.520536+00:00 | DB_CALL update_keyword_response | P3 | 2.66ms | success
+2026-01-12T18:57:34.685096+00:00 | DB_CALL get_user_by_id | P3 | 0.27ms | success
+2026-01-12T18:57:34.685391+00:00 | DB_CALL get_all_keyword_responses | P3 | 0.14ms | success
+2026-01-12T18:58:24.752091+00:00 | DB_CALL get_user_by_id | P3 | 0.28ms | success
+2026-01-12T18:58:24.752421+00:00 | DB_CALL get_keyword_response | P3 | 0.12ms | success
+2026-01-12T18:58:24.755279+00:00 | DB_CALL update_keyword_response | P3 | 2.78ms | success
+2026-01-12T18:58:24.915145+00:00 | DB_CALL get_user_by_id | P3 | 0.26ms | success
+2026-01-12T18:58:24.915448+00:00 | DB_CALL get_all_keyword_responses | P3 | 0.14ms | success
+2026-01-12T18:58:28.070028+00:00 | DB_CALL process_message_words | P3 | 0.34ms | error | ERROR: no such column: type
+2026-01-12T18:58:43.487072+00:00 | DB_CALL get_user_by_id | P3 | 0.26ms | success
+2026-01-12T18:58:43.487407+00:00 | DB_CALL get_keyword_response | P3 | 0.12ms | success
+2026-01-12T18:58:43.489590+00:00 | DB_CALL update_keyword_response | P3 | 2.1ms | success
+2026-01-12T18:58:43.650161+00:00 | DB_CALL get_user_by_id | P3 | 0.27ms | success
+2026-01-12T18:58:43.650440+00:00 | DB_CALL get_all_keyword_responses | P3 | 0.13ms | success
+2026-01-12T18:59:55.923241+00:00 | DB_CALL get_user_by_id | P3 | 0.27ms | success
+2026-01-12T18:59:55.923558+00:00 | DB_CALL get_keyword_response | P3 | 0.12ms | success
+2026-01-12T18:59:55.926342+00:00 | DB_CALL update_keyword_response | P3 | 2.7ms | success
+2026-01-12T18:59:56.088301+00:00 | DB_CALL get_user_by_id | P3 | 0.28ms | success
+2026-01-12T18:59:56.088563+00:00 | DB_CALL get_all_keyword_responses | P3 | 0.12ms | success
+2026-01-12T18:59:57.645762+00:00 | DB_CALL process_message_words | P3 | 4.07ms | success
+2026-01-12T19:01:25.560128+00:00 | DB_CALL get_user_by_id | P3 | 0.3ms | success
+2026-01-12T19:01:25.561461+00:00 | DB_CALL get_all_keyword_responses | P3 | 1.16ms | success
+2026-01-12T19:01:25.561923+00:00 | DB_CALL get_user_by_id | P3 | 0.87ms | success
+2026-01-12T19:01:25.562140+00:00 | DB_CALL get_all_settings | P3 | 0.14ms | success
+2026-01-12T19:01:27.471983+00:00 | DB_CALL process_message_words | P3 | 2.87ms | success
+2026-01-12T19:01:37.738462+00:00 | DB_CALL process_message_words | P3 | 0.48ms | error | ERROR: no such column: type
+2026-01-12T19:02:05.748641+00:00 | DB_CALL process_message_words | P3 | 0.34ms | error | ERROR: no such column: type
+2026-01-12T19:02:42.451656+00:00 | DB_CALL get_user_by_username | P3 | 0.34ms | success
+2026-01-12T19:02:44.798695+00:00 | DB_CALL get_user_by_username | P3 | 0.29ms | success
+2026-01-12T19:02:45.025010+00:00 | DB_CALL get_all_settings | P3 | 0.27ms | success
+2026-01-12T19:02:47.893405+00:00 | DB_CALL get_all_settings | P3 | 0.27ms | success
+2026-01-12T19:03:00.889175+00:00 | DB_CALL get_user_by_id | P3 | 0.24ms | success
+2026-01-12T19:03:00.891818+00:00 | DB_CALL set_setting | P3 | 2.43ms | success
+2026-01-12T19:03:00.894245+00:00 | DB_CALL set_setting | P3 | 2.31ms | success
+2026-01-12T19:03:00.896260+00:00 | DB_CALL set_setting | P3 | 1.93ms | success
+2026-01-12T19:03:00.899032+00:00 | DB_CALL set_setting | P3 | 2.7ms | success
+2026-01-12T19:03:00.900951+00:00 | DB_CALL set_setting | P3 | 1.85ms | success
+2026-01-12T19:03:00.902865+00:00 | DB_CALL set_setting | P3 | 1.85ms | success
+2026-01-12T19:03:00.904664+00:00 | DB_CALL set_setting | P3 | 1.73ms | success
+2026-01-12T19:03:00.906949+00:00 | DB_CALL set_setting | P3 | 2.2ms | success
+2026-01-12T19:03:00.909128+00:00 | DB_CALL set_setting | P3 | 2.09ms | success
+2026-01-12T19:03:00.911098+00:00 | DB_CALL set_setting | P3 | 1.87ms | success
+2026-01-12T19:03:00.912933+00:00 | DB_CALL set_setting | P3 | 1.77ms | success
+2026-01-12T19:03:00.914918+00:00 | DB_CALL set_setting | P3 | 1.92ms | success
+2026-01-12T19:03:00.916912+00:00 | DB_CALL set_setting | P3 | 1.92ms | success
+2026-01-12T19:03:00.918951+00:00 | DB_CALL set_setting | P3 | 1.97ms | success
+2026-01-12T19:03:00.920662+00:00 | DB_CALL set_setting | P3 | 1.65ms | success
+2026-01-12T19:03:00.920824+00:00 | DB_CALL get_all_settings | P3 | 0.1ms | success
+2026-01-12T19:03:07.909055+00:00 | DB_CALL process_message_words | P3 | 0.32ms | error | ERROR: no such column: type
+2026-01-12T19:03:44.144391+00:00 | DB_CALL process_message_words | P3 | 0.35ms | error | ERROR: no such column: type
+2026-01-12T19:03:56.422750+00:00 | DB_CALL process_message_words | P3 | 0.33ms | error | ERROR: no such column: type
+2026-01-12T19:04:36.600319+00:00 | DB_CALL process_message_words | P3 | 0.38ms | error | ERROR: no such column: type
