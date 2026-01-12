@@ -19265,3 +19265,6 @@
 2026-01-12T20:08:12.402059+00:00 | DB_CALL count_ingredients | P3 | 0.24ms | success
 2026-01-12T20:08:12.402255+00:00 | DB_CALL count_products | P3 | 0.14ms | success
 2026-01-12T20:08:12.402404+00:00 | DB_CALL count_users | P3 | 0.09ms | success
+2026-01-12T20:08:22.814091+00:00 | DB_CALL get_user_by_username | P3 | 0.34ms | success
+2026-01-12T20:08:22.837233+00:00 | DB_CALL get_user_by_id | P3 | 0.34ms | success
+2026-01-12T20:08:22.838525+00:00 | DB_CALL get_word_analytics | P3 | 1.1ms | success
