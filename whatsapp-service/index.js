@@ -154,6 +154,16 @@ async function connectToWhatsApp() {
         currentQR = null;
         lastError = null;
         reconnecting = false;
+        
+        // Obter número conectado
+        try {
+          if (sock && sock.user) {
+            connectedPhone = sock.user.id.split(':')[0] || sock.user.id.split('@')[0];
+            console.log('[WhatsApp] Número conectado:', connectedPhone);
+          }
+        } catch (e) {
+          console.log('[WhatsApp] Erro ao obter número:', e.message);
+        }
       }
     });
 
