@@ -24048,3 +24048,6 @@
 2026-01-12T23:51:58.435564+00:00 | DB_CALL get_all_pedidos | P3 | 0.97ms | success
 2026-01-12T23:51:58.437503+00:00 | DB_CALL get_all_settings | P3 | 0.2ms | success
 2026-01-12T23:51:58.439918+00:00 | DB_CALL get_all_entregadores | P3 | 0.16ms | success
+2026-01-12T23:52:03.431640+00:00 | DB_CALL get_all_settings | P3 | 0.44ms | success
+2026-01-12T23:52:03.435350+00:00 | DB_CALL get_all_pedidos | P3 | 1.5ms | success
+2026-01-12T23:52:03.436761+00:00 | DB_CALL get_all_entregadores | P3 | 2.61ms | success
