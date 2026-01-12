@@ -2693,6 +2693,11 @@ function RespostasAutomaticasTab({ toast }) {
                     {(() => { const Icon = STATUS_LABELS[editingTemplate.status].icon; return <Icon className="w-4 h-4" />; })()}
                   </span>
                   Editar Notificação: {STATUS_LABELS[editingTemplate.status].label}
+                  {editingTemplate.isCommon && (
+                    <span className="px-2 py-0.5 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 rounded text-xs ml-2">
+                      Comum (Entrega + Retirada)
+                    </span>
+                  )}
                 </>
               )}
             </DialogTitle>
