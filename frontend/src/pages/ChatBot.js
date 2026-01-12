@@ -477,17 +477,28 @@ function WhatsAppTab({ toast, initialStatus, initialQr, setGlobalStatus, setGlob
               </div>
             </div>
 
-            {/* Estatísticas */}
-            <div className="grid grid-cols-2 gap-3 mt-4">
+            {/* Estatísticas de Atendimento */}
+            <div className="grid grid-cols-3 gap-3 mt-4">
               <div className="bg-white dark:bg-gray-800 rounded-lg border p-3 text-center">
-                <p className="text-2xl font-bold text-green-600">{status?.messagesCount || 0}</p>
-                <p className="text-xs text-muted-foreground">Mensagens Recebidas</p>
+                <div className="flex items-center justify-center gap-2 mb-1">
+                  <Users className="w-4 h-4 text-blue-500" />
+                </div>
+                <p className="text-2xl font-bold text-blue-600">{status?.stats?.clientsServed || 0}</p>
+                <p className="text-xs text-muted-foreground">Clientes Atendidos</p>
               </div>
               <div className="bg-white dark:bg-gray-800 rounded-lg border p-3 text-center">
-                <p className="text-2xl font-bold text-green-600">
-                  {status?.autoReplyEnabled ? '✓' : '✗'}
-                </p>
-                <p className="text-xs text-muted-foreground">Auto-Resposta</p>
+                <div className="flex items-center justify-center gap-2 mb-1">
+                  <MessageCircle className="w-4 h-4 text-green-500" />
+                </div>
+                <p className="text-2xl font-bold text-green-600">{status?.stats?.messagesReceived || 0}</p>
+                <p className="text-xs text-muted-foreground">Msgs Recebidas</p>
+              </div>
+              <div className="bg-white dark:bg-gray-800 rounded-lg border p-3 text-center">
+                <div className="flex items-center justify-center gap-2 mb-1">
+                  <Send className="w-4 h-4 text-purple-500" />
+                </div>
+                <p className="text-2xl font-bold text-purple-600">{status?.stats?.messagesSent || 0}</p>
+                <p className="text-xs text-muted-foreground">Msgs Enviadas</p>
               </div>
             </div>
           </div>
