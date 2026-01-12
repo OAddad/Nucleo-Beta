@@ -762,6 +762,22 @@ def init_database():
         ''')
         conn.commit()
         
+        # Tabela para templates de notificações de status de pedidos
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS order_status_templates (
+                id TEXT PRIMARY KEY,
+                tipo_entrega TEXT NOT NULL,
+                status TEXT NOT NULL,
+                template TEXT NOT NULL,
+                is_active INTEGER DEFAULT 1,
+                delay_seconds INTEGER DEFAULT 0,
+                created_at TEXT,
+                updated_at TEXT,
+                UNIQUE(tipo_entrega, status)
+            )
+        ''')
+        conn.commit()
+        
         # Inicializar registro de estatísticas se não existir
         cursor.execute("SELECT COUNT(*) FROM whatsapp_stats WHERE id = 'main'")
         if cursor.fetchone()[0] == 0:
