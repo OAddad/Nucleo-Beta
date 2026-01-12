@@ -282,6 +282,7 @@ function WhatsAppTab({ toast, initialStatus, initialQr, setGlobalStatus, setGlob
       const data = await res.json();
       if (data.success && data.qr) {
         setQrCode(data.qr);
+        setGlobalQr?.(data.qr);
       }
     } catch (error) {
       console.error("Erro ao buscar QR:", error);
