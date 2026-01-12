@@ -18786,3 +18786,4 @@
 2026-01-12T16:57:05.628767+00:00 | DB_CALL set_setting | P3 | 2.4ms | success
 2026-01-12T16:57:12.831062+00:00 | DB_CALL get_user_by_id | P3 | 0.27ms | success
 2026-01-12T16:57:12.834031+00:00 | DB_CALL create_keyword_response | P3 | 2.76ms | success
+2026-01-12T16:57:19.484954+00:00 | DB_CALL process_message_words | P3 | 0.47ms | error | ERROR: no such column: type
