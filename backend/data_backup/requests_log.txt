@@ -21631,3 +21631,6 @@
 2026-01-12T21:58:33.457215+00:00 | DB_CALL get_pedido_by_id | P3 | 0.29ms | success
 2026-01-12T21:58:33.484398+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.21ms | success
 2026-01-12T21:58:33.668810+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.19ms | success
+2026-01-12T21:58:58.302354+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.23ms | success
+2026-01-12T21:58:58.494305+00:00 | DB_CALL get_whatsapp_stats | P3 | 4.46ms | success
+2026-01-12T21:58:58.800834+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.22ms | success
