@@ -23689,3 +23689,11 @@
 2026-01-12T23:42:50.453635+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.22ms | success
 2026-01-12T23:42:55.458703+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.23ms | success
 2026-01-12T23:43:00.459221+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.22ms | success
+2026-01-12T23:43:05.020313+00:00 | DB_CALL get_user_by_id | P3 | 4.31ms | success
+2026-01-12T23:43:05.020600+00:00 | DB_CALL get_user_by_id | P3 | 3.71ms | success
+2026-01-12T23:43:05.020674+00:00 | DB_CALL get_user_by_id | P3 | 1.07ms | success
+2026-01-12T23:43:05.021561+00:00 | DB_CALL get_all_keyword_responses | P3 | 1.05ms | success
+2026-01-12T23:43:05.022029+00:00 | DB_CALL get_all_settings | P3 | 1.36ms | success
+2026-01-12T23:43:05.022991+00:00 | DB_CALL get_all_order_status_templates | P3 | 2.25ms | success
+2026-01-12T23:43:05.024413+00:00 | DB_CALL get_whatsapp_stats | P3 | 1.64ms | success
+2026-01-12T23:43:05.635956+00:00 | DB_CALL get_user_by_id | P3 | 0.26ms | success
