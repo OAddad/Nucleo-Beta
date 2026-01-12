@@ -22649,3 +22649,16 @@
 2026-01-12T23:12:35.417682+00:00 | DB_CALL get_all_settings | P3 | 0.96ms | success
 2026-01-12T23:12:35.418996+00:00 | DB_CALL get_all_pedidos | P3 | 0.88ms | success
 2026-01-12T23:12:36.521706+00:00 | DB_CALL get_pedido_by_id | P3 | 0.29ms | success
+2026-01-12T23:12:40.420495+00:00 | DB_CALL get_all_pedidos | P3 | 1.68ms | success
+2026-01-12T23:12:40.422668+00:00 | DB_CALL get_all_entregadores | P3 | 0.29ms | success
+2026-01-12T23:12:40.423033+00:00 | DB_CALL get_all_settings | P3 | 1.05ms | success
+2026-01-12T23:12:41.518750+00:00 | DB_CALL get_pedido_by_id | P3 | 0.34ms | success
+2026-01-12T23:12:45.426348+00:00 | DB_CALL get_all_pedidos | P3 | 1.88ms | success
+2026-01-12T23:12:45.428029+00:00 | DB_CALL get_all_entregadores | P3 | 1.77ms | success
+2026-01-12T23:12:45.428435+00:00 | DB_CALL get_all_settings | P3 | 2.36ms | success
+2026-01-12T23:12:46.521094+00:00 | DB_CALL get_pedido_by_id | P3 | 0.29ms | success
+2026-01-12T23:12:47.790800+00:00 | DB_CALL increment_whatsapp_stat | P3 | 3.21ms | success
+2026-01-12T23:12:50.420419+00:00 | DB_CALL get_all_pedidos | P3 | 1.0ms | success
+2026-01-12T23:12:50.421811+00:00 | DB_CALL get_all_entregadores | P3 | 2.78ms | success
+2026-01-12T23:12:50.422972+00:00 | DB_CALL get_all_settings | P3 | 0.17ms | success
+2026-01-12T23:12:52.418248+00:00 | DB_CALL get_pedido_by_id | P3 | 0.29ms | success
