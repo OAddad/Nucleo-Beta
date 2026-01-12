@@ -63,7 +63,10 @@ def pause_bot_for_phone(phone: str) -> str:
     """Pausa o bot para este telefone e retorna a mensagem de pausa"""
     duration = get_bot_pause_duration()
     human_intervention_pauses[phone] = datetime.now(timezone.utc) + timedelta(minutes=duration)
-    return get_bot_pause_message()
+    # Substituir [TEMPO] pela duração na mensagem
+    message = get_bot_pause_message()
+    message = re.sub(r'\[TEMPO\]', str(duration), message, flags=re.IGNORECASE)
+    return message
 
 
 def resume_bot_for_phone(phone: str) -> bool:
