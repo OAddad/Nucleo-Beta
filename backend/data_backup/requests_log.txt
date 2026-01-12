@@ -24185,3 +24185,6 @@
 2026-01-12T23:55:06.567648+00:00 | DB_CALL get_all_pedidos | P3 | 1.68ms | success
 2026-01-12T23:55:06.569186+00:00 | DB_CALL get_all_entregadores | P3 | 2.42ms | success
 2026-01-12T23:55:06.570070+00:00 | DB_CALL get_all_settings | P3 | 0.16ms | success
+2026-01-12T23:55:11.574550+00:00 | DB_CALL get_all_settings | P3 | 1.35ms | success
+2026-01-12T23:55:11.575058+00:00 | DB_CALL get_all_entregadores | P3 | 1.44ms | success
+2026-01-12T23:55:11.576153+00:00 | DB_CALL get_all_pedidos | P3 | 2.01ms | success
