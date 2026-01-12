@@ -9,7 +9,7 @@ import sys
 import json
 
 class StockControlTester:
-    def __init__(self, base_url="https://stoic-gould.preview.emergentagent.com"):
+    def __init__(self, base_url="https://order-notify-5.preview.emergentagent.com"):
         self.base_url = base_url
         self.token = None
         self.user_role = None
