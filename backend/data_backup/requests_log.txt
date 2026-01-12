@@ -21791,3 +21791,9 @@
 2026-01-12T22:24:09.282219+00:00 | DB_CALL get_all_business_hours | P3 | 1.29ms | success
 2026-01-12T22:24:09.455183+00:00 | DB_CALL get_all_bairros | P3 | 0.32ms | success
 2026-01-12T22:24:12.791251+00:00 | DB_CALL get_user_by_username | P3 | 0.63ms | success
+2026-01-12T22:24:16.278141+00:00 | DB_CALL init_database | P3 | 2.65ms | success
+2026-01-12T22:24:16.278612+00:00 | DB_CALL count_ingredients | P3 | 0.24ms | success
+2026-01-12T22:24:16.278782+00:00 | DB_CALL count_products | P3 | 0.11ms | success
+2026-01-12T22:24:16.278917+00:00 | DB_CALL count_users | P3 | 0.09ms | success
+2026-01-12T22:24:16.280126+00:00 | DB_CALL get_user_by_username | P3 | 0.24ms | success
+2026-01-12T22:24:16.491197+00:00 | DB_CALL get_all_settings | P3 | 0.35ms | success

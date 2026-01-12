@@ -168,10 +168,10 @@ async def notify_order_status(pedido_id: str, new_status: str, delay_seconds: in
         traceback.print_exc()
 
 
-def schedule_order_notification(pedido_id: str, status: str, delay_seconds: int = 0, motivo: str = None):
+def schedule_order_notification(pedido_id: str, status: str, delay_seconds: int = None, motivo: str = None):
     """
     Agenda uma notificação de pedido para ser enviada em background.
-    Para novos pedidos, usa delay de 25 segundos.
+    O delay é obtido do template se não especificado.
     """
     try:
         print(f"[WhatsApp Notify] 📝 Agendando notificação: Pedido={pedido_id}, Status={status}, Delay={delay_seconds}s")
