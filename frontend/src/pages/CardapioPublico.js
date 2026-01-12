@@ -20,8 +20,33 @@ const MotoIcon = ({ className }) => (
 );
 
 // Componente de Acompanhamento de Pedido
-function OrderTrackingScreen({ pedido, onClose, darkMode }) {
+function OrderTrackingScreen({ pedido: pedidoInicial, onClose, darkMode }) {
   const [currentStatus, setCurrentStatus] = useState('enviado');
+  const [pedido, setPedido] = useState(pedidoInicial);
+  
+  // Polling para atualizar status do pedido a cada 5 segundos
+  useEffect(() => {
+    if (!pedidoInicial?.id) return;
+    
+    const fetchPedidoStatus = async () => {
+      try {
+        const res = await axios.get(`${API}/pedidos/${pedidoInicial.id}`);
+        if (res.data) {
+          setPedido(res.data);
+        }
+      } catch (error) {
+        console.log("Erro ao buscar status do pedido:", error);
+      }
+    };
+    
+    // Buscar imediatamente
+    fetchPedidoStatus();
+    
+    // Polling a cada 5 segundos
+    const interval = setInterval(fetchPedidoStatus, 5000);
+    
+    return () => clearInterval(interval);
+  }, [pedidoInicial?.id]);
   
   // Verificar se é retirada no local
   const isPickup = pedido?.tipo_entrega === 'pickup';
