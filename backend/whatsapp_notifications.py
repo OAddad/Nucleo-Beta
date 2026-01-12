@@ -140,7 +140,8 @@ async def notify_order_status(pedido_id: str, new_status: str, delay_seconds: in
         print(f"[WhatsApp Notify] Telefone do cliente: {cliente_telefone}")
         
         # Preparar variáveis para a mensagem
-        codigo = pedido.get('numero_pedido', pedido_id[:8].upper())
+        # O código do pedido está no campo 'codigo' (formato: #00000)
+        codigo = pedido.get('codigo') or pedido.get('numero_pedido') or f"#{pedido_id[:5].upper()}"
         settings = db.get_all_settings()
         endereco = settings.get('company_address', 'nosso estabelecimento')
         
