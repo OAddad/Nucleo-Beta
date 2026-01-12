@@ -21009,3 +21009,5 @@
 2026-01-12T21:18:15.384696+00:00 | DB_CALL get_pedido_by_id | P3 | 2.78ms | success
 2026-01-12T21:18:15.385074+00:00 | DB_CALL get_all_categories | P3 | 2.61ms | success
 2026-01-12T21:18:15.385393+00:00 | DB_CALL get_all_business_hours | P3 | 2.24ms | success
+2026-01-12T21:18:21.372743+00:00 | DB_CALL get_pedido_by_id | P3 | 0.3ms | success
+2026-01-12T21:18:26.368684+00:00 | DB_CALL get_pedido_by_id | P3 | 0.54ms | success
