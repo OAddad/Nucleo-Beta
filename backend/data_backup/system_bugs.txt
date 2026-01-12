@@ -500,3 +500,34 @@ Traceback (most recent call last):
 sqlite3.OperationalError: no such column: type
 
 ================================================================================
+
+================================================================================
+BUG ID: 58d252ff-99df-4baa-b2cf-cbec42088f0f
+TIMESTAMP: 2026-01-12T17:13:46.588571+00:00
+TYPE: OperationalError
+ENDPOINT: get_word_analytics_summary
+USER: N/A
+STATUS: new
+MESSAGE: no such column: type
+STACK TRACE:
+Traceback (most recent call last):
+  File "/app/backend/server.py", line 45, in db_call
+    result = await run_in_threadpool(fn, *args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/.venv/lib/python3.11/site-packages/starlette/concurrency.py", line 42, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func, *args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/.venv/lib/python3.11/site-packages/anyio/to_thread.py", line 61, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/.venv/lib/python3.11/site-packages/anyio/_backends/_asyncio.py", line 2525, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "/root/.venv/lib/python3.11/site-packages/anyio/_backends/_asyncio.py", line 986, in run
+    result = context.run(func, *args)
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/backend/database.py", line 3500, in get_word_analytics_summary
+    cursor.execute("SELECT COUNT(*) FROM word_analytics WHERE type = 'word' OR type IS NULL")
+sqlite3.OperationalError: no such column: type
+
+================================================================================
