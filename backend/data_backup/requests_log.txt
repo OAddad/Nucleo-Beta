@@ -19092,3 +19092,14 @@
 2026-01-12T19:40:45.322115+00:00 | DB_CALL get_all_settings | P3 | 0.29ms | success
 2026-01-12T19:40:45.324610+00:00 | DB_CALL get_all_entregadores | P3 | 0.14ms | success
 2026-01-12T19:40:45.327167+00:00 | DB_CALL get_all_pedidos | P3 | 0.75ms | success
+2026-01-12T19:40:48.941225+00:00 | DB_CALL get_user_by_id | P3 | 0.26ms | success
+2026-01-12T19:40:48.941507+00:00 | DB_CALL get_word_analytics_summary | P3 | 0.14ms | error | ERROR: no such column: type
+2026-01-12T19:40:51.157510+00:00 | DB_CALL get_user_by_id | P3 | 0.46ms | success
+2026-01-12T19:40:51.157816+00:00 | DB_CALL get_word_analytics_summary | P3 | 0.16ms | error | ERROR: no such column: type
+2026-01-12T19:40:51.926286+00:00 | DB_CALL get_user_by_id | P3 | 0.25ms | success
+2026-01-12T19:40:51.926559+00:00 | DB_CALL get_word_analytics_summary | P3 | 0.14ms | error | ERROR: no such column: type
+2026-01-12T19:40:54.662988+00:00 | DB_CALL get_user_by_id | P3 | 0.26ms | success
+2026-01-12T19:40:56.218485+00:00 | DB_CALL get_user_by_id | P3 | 0.3ms | success
+2026-01-12T19:40:56.218854+00:00 | DB_CALL get_all_settings | P3 | 0.21ms | success
+2026-01-12T19:40:56.220395+00:00 | DB_CALL get_user_by_id | P3 | 0.2ms | success
+2026-01-12T19:40:56.220738+00:00 | DB_CALL get_all_keyword_responses | P3 | 0.23ms | success

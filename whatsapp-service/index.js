@@ -287,6 +287,7 @@ app.get('/status', (req, res) => {
     connected: connectionStatus === 'connected',
     hasQR: currentQR !== null,
     error: lastError,
+    phone: connectedPhone,
     messagesCount: receivedMessages.length,
     autoReplyEnabled: autoReplyEnabled
   });
