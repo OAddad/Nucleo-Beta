@@ -18997,3 +18997,9 @@
 2026-01-12T19:05:34.477903+00:00 | DB_CALL count_products | P3 | 0.12ms | success
 2026-01-12T19:05:34.478047+00:00 | DB_CALL count_users | P3 | 0.09ms | success
 2026-01-12T19:05:36.928280+00:00 | DB_CALL process_message_words | P3 | 0.5ms | error | ERROR: no such column: type
+2026-01-12T19:06:14.408146+00:00 | DB_CALL process_message_words | P3 | 2.59ms | success
+2026-01-12T19:06:16.178384+00:00 | DB_CALL process_message_words | P3 | 0.38ms | error | ERROR: no such column: type
+2026-01-12T19:06:28.875294+00:00 | DB_CALL process_message_words | P3 | 0.36ms | error | ERROR: no such column: type
+2026-01-12T19:07:05.162409+00:00 | DB_CALL process_message_words | P3 | 0.38ms | error | ERROR: no such column: type
+2026-01-12T19:07:26.655571+00:00 | DB_CALL process_message_words | P3 | 0.37ms | error | ERROR: no such column: type
+2026-01-12T19:08:02.404244+00:00 | DB_CALL process_message_words | P3 | 0.37ms | error | ERROR: no such column: type
