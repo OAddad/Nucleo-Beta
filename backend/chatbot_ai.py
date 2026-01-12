@@ -448,22 +448,40 @@ async def process_message(phone: str, message: str, push_name: str = "") -> str:
         # Criar ou recuperar instância de chat
         session_id = f"whatsapp_{phone}"
         
-        if session_id not in chat_instances:
-            system_prompt = get_system_prompt()
-            chat_instances[session_id] = LlmChat(
-                api_key=EMERGENT_LLM_KEY,
-                session_id=session_id,
-                system_message=system_prompt
-            ).with_model("openai", "gpt-4o-mini")
+        # Sempre recriar a instância para garantir prompt atualizado
+        system_prompt = get_system_prompt()
+        chat_instances[session_id] = LlmChat(
+            api_key=EMERGENT_LLM_KEY,
+            session_id=session_id,
+            system_message=system_prompt
+        ).with_model("openai", "gpt-4o-mini")
         
         chat = chat_instances[session_id]
         
+        # Construir histórico de conversa para contexto
+        history_text = ""
+        if history and len(history) > 1:
+            # Tem histórico, incluir para manter contexto
+            history_items = []
+            for msg in reversed(history[:-1]):  # Excluir a última (mensagem atual)
+                role = "Cliente" if msg.get('role') == 'user' else "Você"
+                history_items.append(f"{role}: {msg.get('content', '')}")
+            
+            if history_items:
+                history_text = f"""
+HISTÓRICO DA CONVERSA (continue naturalmente, NÃO repita saudações):
+{chr(10).join(history_items[-6:])}
+---
+"""
+        
         # Construir mensagem com contexto
-        full_message = f"""CONTEXTO DO CLIENTE:
+        full_message = f"""{history_text}CONTEXTO DO CLIENTE:
 {context_text}
 
-MENSAGEM DO CLIENTE:
-{message}"""
+MENSAGEM ATUAL DO CLIENTE:
+{message}
+
+INSTRUÇÕES: Responda de forma natural e direta. Se já cumprimentou antes, NÃO cumprimente novamente."""
         
         # Enviar para LLM
         user_message = UserMessage(text=full_message)
