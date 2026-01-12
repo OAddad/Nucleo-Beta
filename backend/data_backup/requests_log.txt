@@ -18674,3 +18674,8 @@
 2026-01-12T16:45:08.252883+00:00 | DB_CALL get_all_pedidos | P3 | 0.92ms | success
 2026-01-12T16:45:13.285757+00:00 | DB_CALL get_all_pedidos | P3 | 0.79ms | success
 2026-01-12T16:45:18.254664+00:00 | DB_CALL get_all_pedidos | P3 | 0.85ms | success
+2026-01-12T16:45:23.241003+00:00 | DB_CALL get_all_pedidos | P3 | 0.84ms | success
+2026-01-12T16:45:28.248298+00:00 | DB_CALL get_all_pedidos | P3 | 0.82ms | success
+2026-01-12T16:45:33.252306+00:00 | DB_CALL get_all_pedidos | P3 | 0.84ms | success
+2026-01-12T16:45:38.249574+00:00 | DB_CALL get_all_pedidos | P3 | 0.84ms | success
+2026-01-12T16:45:43.255335+00:00 | DB_CALL get_all_pedidos | P3 | 0.84ms | success
