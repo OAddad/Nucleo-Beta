@@ -23387,3 +23387,5 @@
 2026-01-12T23:33:00.489691+00:00 | DB_CALL get_all_order_status_templates | P3 | 1.28ms | success
 2026-01-12T23:33:00.490204+00:00 | DB_CALL get_all_settings | P3 | 1.72ms | success
 2026-01-12T23:33:00.490866+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.16ms | success
+2026-01-12T23:33:06.450505+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.23ms | success
+2026-01-12T23:33:11.452554+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.38ms | success
