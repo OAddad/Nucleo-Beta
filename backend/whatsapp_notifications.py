@@ -79,22 +79,17 @@ async def send_whatsapp_message(phone: str, message: str) -> bool:
         return False
 
 
-async def notify_order_status(pedido_id: str, new_status: str, delay_seconds: int = 0, motivo: str = None):
+async def notify_order_status(pedido_id: str, new_status: str, delay_seconds: int = None, motivo: str = None):
     """
     Notifica o cliente sobre mudança de status do pedido.
     
     Args:
         pedido_id: ID do pedido
         new_status: Novo status do pedido
-        delay_seconds: Delay em segundos antes de enviar
+        delay_seconds: Delay em segundos antes de enviar (se None, usa o delay do template)
         motivo: Motivo do cancelamento (se aplicável)
     """
     try:
-        # Aguardar delay se especificado
-        if delay_seconds > 0:
-            print(f"[WhatsApp Notify] Aguardando {delay_seconds}s antes de notificar pedido {pedido_id}")
-            await asyncio.sleep(delay_seconds)
-        
         # Buscar dados do pedido
         pedido = db.get_pedido_by_id(pedido_id)
         if not pedido:
@@ -102,6 +97,18 @@ async def notify_order_status(pedido_id: str, new_status: str, delay_seconds: in
             return
         
         print(f"[WhatsApp Notify] Pedido encontrado: {pedido.get('numero_pedido')} - Cliente: {pedido.get('cliente_nome')}")
+        
+        # Obter tipo de entrega
+        tipo_entrega = pedido.get('tipo_entrega', 'delivery')
+        
+        # Se delay_seconds não foi especificado, usar o do template
+        if delay_seconds is None:
+            delay_seconds = get_order_delay_from_templates(tipo_entrega, new_status)
+        
+        # Aguardar delay se especificado
+        if delay_seconds > 0:
+            print(f"[WhatsApp Notify] Aguardando {delay_seconds}s antes de notificar pedido {pedido_id}")
+            await asyncio.sleep(delay_seconds)
         
         # Verificar se tem telefone do cliente
         cliente_telefone = pedido.get('cliente_telefone')
@@ -121,18 +128,7 @@ async def notify_order_status(pedido_id: str, new_status: str, delay_seconds: in
         
         print(f"[WhatsApp Notify] Telefone do cliente: {cliente_telefone}")
         
-        # Obter tipo de entrega
-        tipo_entrega = pedido.get('tipo_entrega', 'delivery')
-        
-        # Obter mensagens para o tipo de entrega
-        messages = get_order_messages(tipo_entrega)
-        
-        # Verificar se tem mensagem para esse status
-        if new_status not in messages:
-            print(f"[WhatsApp Notify] ⚠️ Sem mensagem configurada para status '{new_status}'")
-            return
-        
-        # Preparar mensagem
+        # Preparar variáveis para a mensagem
         codigo = pedido.get('numero_pedido', pedido_id[:8].upper())
         settings = db.get_all_settings()
         endereco = settings.get('company_address', 'nosso estabelecimento')
@@ -143,11 +139,18 @@ async def notify_order_status(pedido_id: str, new_status: str, delay_seconds: in
         else:
             motivo_final = ''
         
-        message = messages[new_status].format(
-            codigo=codigo,
-            endereco=endereco,
-            motivo=motivo_final
-        )
+        variables = {
+            'codigo': codigo,
+            'endereco': endereco,
+            'motivo': motivo_final
+        }
+        
+        # Buscar mensagem do template
+        message = get_order_message_from_templates(tipo_entrega, new_status, variables)
+        
+        if not message:
+            print(f"[WhatsApp Notify] ⚠️ Template não encontrado ou desativado para status '{new_status}' tipo '{tipo_entrega}'")
+            return
         
         print(f"[WhatsApp Notify] Mensagem: {message[:50]}...")
         
