@@ -21898,3 +21898,4 @@
 2026-01-12T22:35:25.744323+00:00 | DB_CALL get_all_order_status_templates | P3 | 0.17ms | success
 2026-01-12T22:35:31.722908+00:00 | DB_CALL get_user_by_id | P3 | 0.27ms | success
 2026-01-12T22:35:31.723217+00:00 | DB_CALL get_all_order_status_templates | P3 | 0.16ms | success
+2026-01-12T22:38:03.888674+00:00 | DB_CALL get_all_settings | P3 | 1.45ms | success
