@@ -5,7 +5,7 @@ Integração com LLM para respostas humanizadas e contextuais
 import os
 import json
 import re
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from typing import Optional, Dict, List, Any
 from dotenv import load_dotenv
 
@@ -26,6 +26,150 @@ EMERGENT_LLM_KEY = os.environ.get("EMERGENT_LLM_KEY", "")
 
 # Cache de instâncias de chat por sessão
 chat_instances: Dict[str, LlmChat] = {}
+
+# Cache de pausas por telefone (quando atendente humano intervém)
+# Formato: {phone: datetime_expiracao}
+human_intervention_pauses: Dict[str, datetime] = {}
+
+
+def get_bot_pause_message() -> str:
+    """Retorna a mensagem de pausa do bot (configurável)"""
+    settings = db.get_all_settings()
+    default_msg = "Opa, vi que um atendente humano começou o atendimento! Núcleo-Vox pausado por 15 minutos. 🤖➡️👤"
+    return settings.get('bot_pause_message', default_msg)
+
+
+def get_bot_pause_duration() -> int:
+    """Retorna a duração da pausa em minutos (configurável)"""
+    settings = db.get_all_settings()
+    try:
+        return int(settings.get('bot_pause_duration', '15'))
+    except:
+        return 15
+
+
+def is_bot_paused_for_phone(phone: str) -> bool:
+    """Verifica se o bot está pausado para este telefone"""
+    if phone in human_intervention_pauses:
+        if datetime.now(timezone.utc) < human_intervention_pauses[phone]:
+            return True
+        else:
+            # Pausa expirou, remover
+            del human_intervention_pauses[phone]
+    return False
+
+
+def pause_bot_for_phone(phone: str) -> str:
+    """Pausa o bot para este telefone e retorna a mensagem de pausa"""
+    duration = get_bot_pause_duration()
+    human_intervention_pauses[phone] = datetime.now(timezone.utc) + timedelta(minutes=duration)
+    return get_bot_pause_message()
+
+
+def resume_bot_for_phone(phone: str) -> bool:
+    """Remove a pausa do bot para este telefone"""
+    if phone in human_intervention_pauses:
+        del human_intervention_pauses[phone]
+        return True
+    return False
+
+
+def replace_variables_in_response(response_text: str, phone: str, push_name: str = "") -> str:
+    """
+    Substitui variáveis/comandos na resposta por valores reais.
+    
+    Variáveis disponíveis:
+    - [NOME-DO-CLIENTE] ou [NOME-CLIENTE] - Nome do cliente
+    - [DELIVERY-URL] - URL do cardápio digital
+    - [ENDERECO] - Endereço da empresa
+    - [HORARIOS] - Horários de funcionamento
+    - [CODIGO-PEDIDO] ou [ULTIMO-PEDIDO] - Código do último pedido do cliente
+    - [TELEFONE-EMPRESA] - Telefone da empresa
+    - [NOME-EMPRESA] - Nome da empresa
+    - [INSTAGRAM] - Instagram da empresa
+    """
+    
+    # Buscar configurações
+    settings = db.get_all_settings()
+    business_hours = db.get_all_business_hours()
+    
+    # Dados da empresa
+    nome_empresa = settings.get('company_name', settings.get('company_fantasy_name', 'Núcleo'))
+    endereco = settings.get('company_address', 'Endereço não configurado')
+    telefone_empresa = settings.get('company_phone', '')
+    instagram = settings.get('company_instagram', '')
+    delivery_url = settings.get('delivery_url', settings.get('cardapio_url', ''))
+    
+    # Formatar horários
+    horarios = []
+    for h in business_hours:
+        if h.get('is_open'):
+            horario = f"{h['day_name']}: {h['opening_time']} às {h['closing_time']}"
+            if h.get('has_second_period'):
+                horario += f" e {h['opening_time_2']} às {h['closing_time_2']}"
+            horarios.append(horario)
+        else:
+            horarios.append(f"{h['day_name']}: Fechado")
+    horarios_texto = "\n".join(horarios) if horarios else "Horários não configurados"
+    
+    # Buscar dados do cliente
+    nome_cliente = push_name or "Cliente"
+    codigo_pedido = ""
+    
+    # Limpar telefone para busca
+    phone_clean = re.sub(r'\D', '', phone)
+    if '@s.whatsapp.net' in phone:
+        phone_clean = phone.replace('@s.whatsapp.net', '')
+        phone_clean = re.sub(r'\D', '', phone_clean)
+    
+    # Buscar cliente no banco
+    clientes = db.get_all_clientes()
+    cliente = None
+    for c in clientes:
+        c_phone = re.sub(r'\D', '', c.get('telefone', ''))
+        if c_phone == phone_clean or phone_clean.endswith(c_phone[-8:]) or c_phone.endswith(phone_clean[-8:]):
+            cliente = c
+            nome_cliente = c.get('nome', nome_cliente)
+            break
+    
+    # Buscar último pedido do cliente
+    if cliente:
+        pedidos = db.get_all_pedidos()
+        pedidos_cliente = [p for p in pedidos if p.get('cliente_id') == cliente.get('id')]
+        if pedidos_cliente:
+            pedidos_cliente.sort(key=lambda x: x.get('created_at', ''), reverse=True)
+            ultimo_pedido = pedidos_cliente[0]
+            codigo_pedido = ultimo_pedido.get('numero_pedido', ultimo_pedido.get('id', '')[:8])
+    
+    # Substituir variáveis (case-insensitive)
+    replacements = {
+        r'\[NOME[_-]?DO[_-]?CLIENTE\]': nome_cliente,
+        r'\[NOME[_-]?CLIENTE\]': nome_cliente,
+        r'\[CLIENTE\]': nome_cliente,
+        r'\[DELIVERY[_-]?URL\]': delivery_url,
+        r'\[CARDAPIO[_-]?URL\]': delivery_url,
+        r'\[URL\]': delivery_url,
+        r'\[ENDERECO\]': endereco,
+        r'\[ENDEREÇO\]': endereco,
+        r'\[HORARIOS\]': horarios_texto,
+        r'\[HORÁRIOS\]': horarios_texto,
+        r'\[CODIGO[_-]?PEDIDO\]': codigo_pedido,
+        r'\[CÓDIGO[_-]?PEDIDO\]': codigo_pedido,
+        r'\[ULTIMO[_-]?PEDIDO\]': codigo_pedido,
+        r'\[ÚLTIMO[_-]?PEDIDO\]': codigo_pedido,
+        r'\[PEDIDO\]': codigo_pedido,
+        r'\[TELEFONE[_-]?EMPRESA\]': telefone_empresa,
+        r'\[TELEFONE\]': telefone_empresa,
+        r'\[NOME[_-]?EMPRESA\]': nome_empresa,
+        r'\[EMPRESA\]': nome_empresa,
+        r'\[INSTAGRAM\]': instagram,
+    }
+    
+    result = response_text
+    for pattern, value in replacements.items():
+        result = re.sub(pattern, value or '', result, flags=re.IGNORECASE)
+    
+    return result
 
 
 def get_system_prompt() -> str:
