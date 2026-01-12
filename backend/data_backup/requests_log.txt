@@ -24152,3 +24152,9 @@
 2026-01-12T23:54:19.756859+00:00 | DB_CALL get_all_pedidos | P3 | 1.38ms | success
 2026-01-12T23:54:19.760259+00:00 | DB_CALL get_all_entregadores | P3 | 0.25ms | success
 2026-01-12T23:54:20.530712+00:00 | DB_CALL get_all_settings | P3 | 1.21ms | success
+2026-01-12T23:54:24.502731+00:00 | DB_CALL get_all_settings | P3 | 0.39ms | success
+2026-01-12T23:54:24.505367+00:00 | DB_CALL get_all_pedidos | P3 | 1.64ms | success
+2026-01-12T23:54:24.506836+00:00 | DB_CALL get_all_entregadores | P3 | 2.82ms | success
+2026-01-12T23:54:29.508353+00:00 | DB_CALL get_all_pedidos | P3 | 2.08ms | success
+2026-01-12T23:54:29.510933+00:00 | DB_CALL get_all_entregadores | P3 | 2.68ms | success
+2026-01-12T23:54:29.511614+00:00 | DB_CALL get_all_settings | P3 | 3.44ms | success

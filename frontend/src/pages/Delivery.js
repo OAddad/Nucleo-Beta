@@ -1165,6 +1165,11 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
   const [observacao, setObservacao] = useState("");
   const [trocoPara, setTrocoPara] = useState("");
   
+  // Popup de produto
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [productQuantity, setProductQuantity] = useState(1);
+  const [productObservation, setProductObservation] = useState("");
+  
   // Etapa do checkout
   const [step, setStep] = useState(1); // 1 = Produtos, 2 = Cliente, 3 = Entrega, 4 = Pagamento
   
