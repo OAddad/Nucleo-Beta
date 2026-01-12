@@ -19011,3 +19011,10 @@
 2026-01-12T19:31:49.969855+00:00 | DB_CALL count_ingredients | P3 | 0.25ms | success
 2026-01-12T19:31:49.970045+00:00 | DB_CALL count_products | P3 | 0.13ms | success
 2026-01-12T19:31:49.970188+00:00 | DB_CALL count_users | P3 | 0.09ms | success
+2026-01-12T19:31:57.217415+00:00 | DB_CALL get_user_by_id | P3 | 1.12ms | success
+2026-01-12T19:31:57.217650+00:00 | DB_CALL get_user_by_id | P3 | 0.84ms | success
+2026-01-12T19:31:57.217937+00:00 | DB_CALL get_all_settings | P3 | 0.36ms | success
+2026-01-12T19:31:57.218397+00:00 | DB_CALL get_all_keyword_responses | P3 | 0.67ms | success
+2026-01-12T19:31:59.913212+00:00 | DB_CALL get_user_by_id | P3 | 0.28ms | success
+2026-01-12T19:32:00.310520+00:00 | DB_CALL get_user_by_id | P3 | 0.27ms | success
+2026-01-12T19:32:00.310790+00:00 | DB_CALL get_word_analytics_summary | P3 | 0.14ms | error | ERROR: no such column: type
