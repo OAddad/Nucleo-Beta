@@ -236,11 +236,18 @@ export default function ChatBot() {
 }
 
 // ==================== ABA WHATSAPP ====================
-function WhatsAppTab({ toast }) {
-  const [status, setStatus] = useState(null);
-  const [qrCode, setQrCode] = useState(null);
-  const [loading, setLoading] = useState(true);
+function WhatsAppTab({ toast, initialStatus, initialQr, setGlobalStatus, setGlobalQr }) {
+  const [status, setStatus] = useState(initialStatus);
+  const [qrCode, setQrCode] = useState(initialQr);
+  const [loading, setLoading] = useState(!initialStatus);
   const [disconnecting, setDisconnecting] = useState(false);
+
+  // Sincronizar com props iniciais
+  useEffect(() => {
+    if (initialStatus) setStatus(initialStatus);
+    if (initialQr) setQrCode(initialQr);
+    if (initialStatus) setLoading(false);
+  }, [initialStatus, initialQr]);
 
   const fetchStatus = useCallback(async () => {
     try {
@@ -250,11 +257,13 @@ function WhatsAppTab({ toast }) {
       });
       const data = await res.json();
       setStatus(data);
+      setGlobalStatus?.(data);
       
       if (data.status === "waiting_qr" || data.status === "disconnected") {
         fetchQR();
       } else {
         setQrCode(null);
+        setGlobalQr?.(null);
       }
     } catch (error) {
       console.error("Erro ao buscar status:", error);
@@ -262,7 +271,7 @@ function WhatsAppTab({ toast }) {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [setGlobalStatus, setGlobalQr]);
 
   const fetchQR = async () => {
     try {
