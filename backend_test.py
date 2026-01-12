@@ -15,6 +15,7 @@ class CMVMasterAPITester:
         self.created_categories = []
         self.batch_ids = []
         self.user_id = None
+        self.created_keyword_responses = []
 
     def run_test(self, name, method, endpoint, expected_status, data=None, headers=None):
         """Run a single API test"""
