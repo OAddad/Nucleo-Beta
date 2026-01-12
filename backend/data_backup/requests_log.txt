@@ -21955,3 +21955,11 @@
 2026-01-12T22:41:19.334269+00:00 | DB_CALL get_user_by_username | P3 | 0.27ms | success
 2026-01-12T22:41:23.280673+00:00 | DB_CALL get_user_by_username | P3 | 0.28ms | success
 2026-01-12T22:41:23.489146+00:00 | DB_CALL get_all_settings | P3 | 0.28ms | success
+2026-01-12T22:45:19.206150+00:00 | DB_CALL get_all_settings | P3 | 7.74ms | success
+2026-01-12T22:45:19.206720+00:00 | DB_CALL get_all_categories | P3 | 7.94ms | success
+2026-01-12T22:45:19.207437+00:00 | DB_CALL get_all_products | P3 | 2.17ms | success
+2026-01-12T22:45:19.207984+00:00 | DB_CALL get_all_business_hours | P3 | 2.34ms | success
+2026-01-12T22:45:19.291480+00:00 | DB_CALL get_all_bairros | P3 | 0.39ms | success
+2026-01-12T22:45:25.396181+00:00 | DB_CALL get_user_by_username | P3 | 0.27ms | success
+2026-01-12T22:45:28.100572+00:00 | DB_CALL get_user_by_username | P3 | 0.26ms | success
+2026-01-12T22:45:28.298810+00:00 | DB_CALL get_all_settings | P3 | 0.23ms | success
