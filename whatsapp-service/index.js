@@ -83,6 +83,9 @@ async function sendMessageWithTyping(jid, message) {
     // Enviar mensagem
     await sock.sendMessage(jid, { text: message });
     
+    // Incrementar contador de mensagens enviadas
+    stats.messagesSent++;
+    
     // Parar de "digitar"
     await sock.sendPresenceUpdate('paused', jid);
     
