@@ -18987,3 +18987,4 @@
 2026-01-12T19:03:44.144391+00:00 | DB_CALL process_message_words | P3 | 0.35ms | error | ERROR: no such column: type
 2026-01-12T19:03:56.422750+00:00 | DB_CALL process_message_words | P3 | 0.33ms | error | ERROR: no such column: type
 2026-01-12T19:04:36.600319+00:00 | DB_CALL process_message_words | P3 | 0.38ms | error | ERROR: no such column: type
+2026-01-12T19:04:58.528153+00:00 | DB_CALL process_message_words | P3 | 0.36ms | error | ERROR: no such column: type
