@@ -239,6 +239,37 @@ function OrderTrackingScreen({ pedido: pedidoInicial, onClose, darkMode }) {
                         </button>
                       </div>
                     )}
+                    
+                    {/* Espaço para link de rastreio quando em rota (futuro) */}
+                    {step.showTracking && isCurrent && (
+                      <div className={`mt-3 p-3 rounded-lg ${darkMode ? 'bg-zinc-700' : 'bg-gray-100'}`}>
+                        <p className={`font-semibold text-sm ${t.text}`}>
+                          <Bike className="w-4 h-4 inline mr-1" />
+                          Rastreio em Tempo Real
+                        </p>
+                        {pedido?.tracking_url ? (
+                          <a
+                            href={pedido.tracking_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="mt-2 flex items-center gap-2 text-blue-500 hover:text-blue-600 text-sm font-medium"
+                          >
+                            <ExternalLink className="w-4 h-4" />
+                            Acompanhar Entregador
+                          </a>
+                        ) : (
+                          <p className={`text-sm mt-1 ${t.textMuted}`}>
+                            O entregador está a caminho do seu endereço
+                          </p>
+                        )}
+                        {pedido?.entregador_nome && (
+                          <p className={`text-sm mt-2 ${t.text}`}>
+                            <User className="w-4 h-4 inline mr-1" />
+                            Entregador: {pedido.entregador_nome}
+                          </p>
+                        )}
+                      </div>
+                    )}
                   </div>
                 </div>
               );
