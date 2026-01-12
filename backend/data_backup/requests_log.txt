@@ -23264,3 +23264,13 @@
 2026-01-12T23:27:25.449171+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.21ms | success
 2026-01-12T23:27:28.436361+00:00 | DB_CALL get_pedido_by_id | P3 | 0.3ms | success
 2026-01-12T23:27:30.447709+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.21ms | success
+2026-01-12T23:27:33.467321+00:00 | DB_CALL get_pedido_by_id | P3 | 1.2ms | success
+2026-01-12T23:27:35.585586+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.2ms | success
+2026-01-12T23:27:37.490372+00:00 | DB_CALL get_user_by_id | P3 | 24.76ms | success
+2026-01-12T23:27:37.491371+00:00 | DB_CALL get_user_by_id | P3 | 1.28ms | success
+2026-01-12T23:27:37.491997+00:00 | DB_CALL get_all_keyword_responses | P3 | 1.44ms | success
+2026-01-12T23:27:37.492565+00:00 | DB_CALL get_all_settings | P3 | 1.07ms | success
+2026-01-12T23:27:37.500832+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.72ms | success
+2026-01-12T23:27:37.867081+00:00 | DB_CALL get_user_by_id | P3 | 0.26ms | success
+2026-01-12T23:27:37.868978+00:00 | DB_CALL get_all_order_status_templates | P3 | 1.74ms | success
+2026-01-12T23:27:38.427195+00:00 | DB_CALL get_pedido_by_id | P3 | 0.31ms | success
