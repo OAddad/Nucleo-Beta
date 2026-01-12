@@ -23251,3 +23251,10 @@
 2026-01-12T23:26:53.432127+00:00 | DB_CALL get_pedido_by_id | P3 | 0.29ms | success
 2026-01-12T23:26:58.424591+00:00 | DB_CALL get_pedido_by_id | P3 | 0.34ms | success
 2026-01-12T23:27:03.420831+00:00 | DB_CALL get_pedido_by_id | P3 | 0.28ms | success
+2026-01-12T23:27:09.442140+00:00 | DB_CALL get_user_by_id | P3 | 0.4ms | success
+2026-01-12T23:27:09.447067+00:00 | DB_CALL get_all_keyword_responses | P3 | 4.68ms | success
+2026-01-12T23:27:09.447579+00:00 | DB_CALL get_user_by_id | P3 | 4.69ms | success
+2026-01-12T23:27:09.447736+00:00 | DB_CALL get_user_by_id | P3 | 4.35ms | success
+2026-01-12T23:27:09.448077+00:00 | DB_CALL get_all_order_status_templates | P3 | 0.26ms | success
+2026-01-12T23:27:09.448659+00:00 | DB_CALL get_all_settings | P3 | 0.99ms | success
+2026-01-12T23:27:09.470805+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.18ms | success
