@@ -13,9 +13,6 @@ import database as db
 # URL do serviço WhatsApp
 WHATSAPP_SERVICE_URL = "http://localhost:3002"
 
-# Delay para novos pedidos (em segundos)
-NEW_ORDER_DELAY = 25
-
 
 def format_phone(phone: str) -> str:
     """Formata número de telefone para o formato do WhatsApp"""
@@ -37,37 +34,14 @@ def format_phone(phone: str) -> str:
     return f"{phone_clean}@s.whatsapp.net"
 
 
-def get_order_messages(tipo_entrega: str = 'delivery') -> dict:
-    """Retorna as mensagens para cada status do pedido"""
-    
-    # Buscar endereço da empresa
-    settings = db.get_all_settings()
-    endereco = settings.get('company_address', 'nosso estabelecimento')
-    
-    if tipo_entrega == 'pickup':
-        # Mensagens para RETIRADA
-        return {
-            'aguardando_aceite': '📦 Pedido Criado #{codigo}\n\nSeu pedido foi recebido e está aguardando confirmação!',
-            'aceito': '✅ Pedido #{codigo} Aceito!\n\nJá está em produção. Em breve estará pronto para retirada.',
-            'producao': '👨‍🍳 Pedido #{codigo} em Produção!\n\nEstamos preparando seu pedido com carinho.',
-            'pronto': '🎉 Pedido #{codigo} Pronto!\n\nPode retirar em:\n📍 {endereco}',
-            'concluido': '✅ Pedido #{codigo} Retirado com sucesso!\n\nObrigado pela preferência! 😊',
-            'retirado': '✅ Pedido #{codigo} Retirado com sucesso!\n\nObrigado pela preferência! 😊',
-            'cancelado': '❌ Pedido #{codigo} foi Cancelado\n\nMotivo: {motivo}',
-        }
-    else:
-        # Mensagens para ENTREGA
-        return {
-            'aguardando_aceite': '📦 Pedido Criado #{codigo}\n\nSeu pedido foi recebido e está aguardando confirmação!',
-            'aceito': '✅ Pedido #{codigo} Aceito!\n\nJá está em produção.',
-            'producao': '👨‍🍳 Pedido #{codigo} em Produção!\n\nEstamos preparando seu pedido com carinho.',
-            'pronto': '✅ Pedido #{codigo} Pronto!\n\nEstamos aguardando um entregador disponível.',
-            'na_bag': '🎒 Pedido #{codigo} na Bag do Entregador!\n\nEm breve entra em rota de entrega.',
-            'em_rota': '🛵 Pedido #{codigo} em Rota de Entrega!\n\nO entregador está a caminho. Aguarde!',
-            'concluido': '✅ Pedido #{codigo} Entregue!\n\nObrigado pela preferência! 😊',
-            'entregue': '✅ Pedido #{codigo} Entregue!\n\nObrigado pela preferência! 😊',
-            'cancelado': '❌ Pedido #{codigo} foi Cancelado\n\nMotivo: {motivo}',
-        }
+def get_order_message_from_templates(tipo_entrega: str, status: str, variables: dict) -> Optional[str]:
+    """Busca a mensagem do banco de dados e aplica as variáveis"""
+    return db.get_order_message_for_status(tipo_entrega, status, variables)
+
+
+def get_order_delay_from_templates(tipo_entrega: str, status: str) -> int:
+    """Busca o delay do banco de dados para um status"""
+    return db.get_order_delay_for_status(tipo_entrega, status)
 
 
 async def send_whatsapp_message(phone: str, message: str) -> bool:
