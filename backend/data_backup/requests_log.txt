@@ -20653,3 +20653,5 @@
 2026-01-12T21:09:16.361946+00:00 | DB_CALL get_all_pedidos | P3 | 1.39ms | success
 2026-01-12T21:09:16.363314+00:00 | DB_CALL get_all_entregadores | P3 | 2.05ms | success
 2026-01-12T21:09:16.364467+00:00 | DB_CALL get_all_settings | P3 | 0.21ms | success
+2026-01-12T21:09:18.363657+00:00 | DB_CALL get_pedido_by_id | P3 | 0.27ms | success
+2026-01-12T21:09:23.373430+00:00 | DB_CALL get_pedido_by_id | P3 | 0.37ms | success
