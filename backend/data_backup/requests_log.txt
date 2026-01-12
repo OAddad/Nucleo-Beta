@@ -24137,3 +24137,9 @@
 2026-01-12T23:53:54.500045+00:00 | DB_CALL get_all_pedidos | P3 | 1.21ms | success
 2026-01-12T23:53:54.503293+00:00 | DB_CALL get_all_entregadores | P3 | 0.82ms | success
 2026-01-12T23:53:54.503670+00:00 | DB_CALL get_all_settings | P3 | 1.57ms | success
+2026-01-12T23:53:59.505097+00:00 | DB_CALL get_all_pedidos | P3 | 2.18ms | success
+2026-01-12T23:53:59.506698+00:00 | DB_CALL get_all_entregadores | P3 | 3.16ms | success
+2026-01-12T23:53:59.506986+00:00 | DB_CALL get_all_settings | P3 | 2.89ms | success
+2026-01-12T23:54:04.499904+00:00 | DB_CALL get_all_entregadores | P3 | 0.28ms | success
+2026-01-12T23:54:04.503046+00:00 | DB_CALL get_all_settings | P3 | 0.22ms | success
+2026-01-12T23:54:04.504200+00:00 | DB_CALL get_all_pedidos | P3 | 1.76ms | success
