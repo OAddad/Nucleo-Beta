@@ -20641,3 +20641,8 @@
 2026-01-12T21:09:01.364505+00:00 | DB_CALL get_all_entregadores | P3 | 0.31ms | success
 2026-01-12T21:09:01.365069+00:00 | DB_CALL get_all_settings | P3 | 1.5ms | success
 2026-01-12T21:09:01.366096+00:00 | DB_CALL get_all_pedidos | P3 | 2.08ms | success
+2026-01-12T21:09:03.359015+00:00 | DB_CALL get_pedido_by_id | P3 | 0.29ms | success
+2026-01-12T21:09:06.372335+00:00 | DB_CALL get_all_pedidos | P3 | 1.81ms | success
+2026-01-12T21:09:06.373828+00:00 | DB_CALL get_all_settings | P3 | 2.37ms | success
+2026-01-12T21:09:06.374138+00:00 | DB_CALL get_all_entregadores | P3 | 2.93ms | success
+2026-01-12T21:09:08.364305+00:00 | DB_CALL get_pedido_by_id | P3 | 0.28ms | success
