@@ -2583,9 +2583,9 @@ async def update_pedido_status(pedido_id: str, status: str):
     if not pedido:
         raise HTTPException(status_code=404, detail="Pedido não encontrado")
     
-    # Enviar notificação WhatsApp imediatamente
+    # Enviar notificação WhatsApp - delay será obtido do template
     if pedido.get('cliente_telefone') and status not in ['cancelado']:
-        whatsapp_notifications.schedule_order_notification(pedido_id, status, delay_seconds=0)
+        whatsapp_notifications.schedule_order_notification(pedido_id, status, delay_seconds=None)
     
     return pedido
 
