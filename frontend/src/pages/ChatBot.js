@@ -2339,7 +2339,7 @@ function RespostasAutomaticasTab({ toast }) {
               )}
             </div>
           ) : activeSection === "notificacoes" ? (
-            <div className="space-y-4">
+            <div className="space-y-6">
               {/* Info Card */}
               <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30 rounded-xl border p-4">
                 <div className="flex items-start gap-3">
@@ -2362,55 +2362,140 @@ function RespostasAutomaticasTab({ toast }) {
                 </div>
               </div>
 
-              {/* Tabs Entrega / Retirada */}
-              <div className="flex gap-2">
-                <Button variant={deliveryTab === "delivery" ? "default" : "outline"} onClick={() => setDeliveryTab("delivery")} size="sm">
-                  <Truck className="w-4 h-4 mr-2" />
-                  Entrega
-                </Button>
-                <Button variant={deliveryTab === "pickup" ? "default" : "outline"} onClick={() => setDeliveryTab("pickup")} size="sm">
-                  <Package className="w-4 h-4 mr-2" />
-                  Retirada
-                </Button>
-              </div>
-
-              {/* Lista de Templates */}
-              <div className="space-y-3">
-                {filteredTemplates.map((template) => {
-                  const statusConfig = STATUS_LABELS[template.status] || { label: template.status, icon: MessageCircle, color: "bg-gray-500" };
-                  const StatusIcon = statusConfig.icon;
-                  
-                  return (
-                    <div 
-                      key={template.id} 
-                      className={`bg-card border rounded-xl p-4 cursor-pointer hover:border-primary/50 transition-colors ${!template.is_active ? 'opacity-60' : ''}`}
-                      onClick={() => { openTemplateEdit(template); }}
-                    >
-                      <div className="flex items-start justify-between gap-4">
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2 mb-2">
-                            <span className={`p-1.5 rounded-lg ${statusConfig.color} text-white`}>
+              {/* SEÇÃO: Mensagens Comuns */}
+              <div>
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="p-1.5 rounded-lg bg-gray-500 text-white">
+                    <MessageCircle className="w-4 h-4" />
+                  </div>
+                  <h3 className="font-semibold">Mensagens Comuns</h3>
+                  <span className="text-xs text-muted-foreground">(Entrega e Retirada)</span>
+                </div>
+                <div className="space-y-2">
+                  {templates.filter(t => t.tipo_entrega === 'delivery' && ['aguardando_aceite', 'producao', 'cancelado'].includes(t.status)).map((template) => {
+                    const statusConfig = STATUS_LABELS[template.status] || { label: template.status, icon: MessageCircle, color: "bg-gray-500" };
+                    const StatusIcon = statusConfig.icon;
+                    return (
+                      <div 
+                        key={template.id} 
+                        className={`bg-card border rounded-xl p-3 cursor-pointer hover:border-primary/50 transition-colors ${!template.is_active ? 'opacity-60' : ''}`}
+                        onClick={() => { openTemplateEdit({...template, isCommon: true}); }}
+                      >
+                        <div className="flex items-center justify-between gap-4">
+                          <div className="flex items-center gap-3 flex-1 min-w-0">
+                            <span className={`p-1.5 rounded-lg ${statusConfig.color} text-white shrink-0`}>
                               <StatusIcon className="w-4 h-4" />
                             </span>
-                            <span className="font-medium">{statusConfig.label}</span>
-                            {template.delay_seconds > 0 && (
-                              <span className="px-2 py-0.5 bg-amber-100 dark:bg-amber-900/50 text-amber-700 dark:text-amber-300 rounded text-xs">
-                                ⏱️ {template.delay_seconds}s
-                              </span>
-                            )}
-                            <span className={`px-2 py-0.5 rounded text-xs font-medium ${template.is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
-                              {template.is_active ? 'Ativo' : 'Inativo'}
-                            </span>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2">
+                                <span className="font-medium">{statusConfig.label}</span>
+                                {template.delay_seconds > 0 && (
+                                  <span className="px-2 py-0.5 bg-amber-100 dark:bg-amber-900/50 text-amber-700 dark:text-amber-300 rounded text-xs">
+                                    ⏱️ {template.delay_seconds}s
+                                  </span>
+                                )}
+                              </div>
+                              <p className="text-sm text-muted-foreground truncate">{template.template}</p>
+                            </div>
                           </div>
-                          <p className="text-sm text-muted-foreground line-clamp-2">{template.template}</p>
+                          <Button variant="outline" size="sm" onClick={(e) => { e.stopPropagation(); openTemplateEdit({...template, isCommon: true}); }}>
+                            <Edit2 className="w-4 h-4" />
+                          </Button>
                         </div>
-                        <Button variant="outline" size="sm" onClick={(e) => { e.stopPropagation(); openTemplateEdit(template); }}>
-                          <Edit2 className="w-4 h-4" />
-                        </Button>
                       </div>
-                    </div>
-                  );
-                })}
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* SEÇÃO: Específico Entrega */}
+              <div>
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="p-1.5 rounded-lg bg-orange-500 text-white">
+                    <Truck className="w-4 h-4" />
+                  </div>
+                  <h3 className="font-semibold">Específico Entrega</h3>
+                </div>
+                <div className="space-y-2">
+                  {templates.filter(t => t.tipo_entrega === 'delivery' && ['pronto', 'na_bag', 'em_rota', 'entregue', 'concluido'].includes(t.status)).map((template) => {
+                    const statusConfig = STATUS_LABELS[template.status] || { label: template.status, icon: MessageCircle, color: "bg-gray-500" };
+                    const StatusIcon = statusConfig.icon;
+                    return (
+                      <div 
+                        key={template.id} 
+                        className={`bg-card border rounded-xl p-3 cursor-pointer hover:border-primary/50 transition-colors ${!template.is_active ? 'opacity-60' : ''}`}
+                        onClick={() => { openTemplateEdit(template); }}
+                      >
+                        <div className="flex items-center justify-between gap-4">
+                          <div className="flex items-center gap-3 flex-1 min-w-0">
+                            <span className={`p-1.5 rounded-lg ${statusConfig.color} text-white shrink-0`}>
+                              <StatusIcon className="w-4 h-4" />
+                            </span>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2">
+                                <span className="font-medium">{statusConfig.label}</span>
+                                {template.delay_seconds > 0 && (
+                                  <span className="px-2 py-0.5 bg-amber-100 dark:bg-amber-900/50 text-amber-700 dark:text-amber-300 rounded text-xs">
+                                    ⏱️ {template.delay_seconds}s
+                                  </span>
+                                )}
+                              </div>
+                              <p className="text-sm text-muted-foreground truncate">{template.template}</p>
+                            </div>
+                          </div>
+                          <Button variant="outline" size="sm" onClick={(e) => { e.stopPropagation(); openTemplateEdit(template); }}>
+                            <Edit2 className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* SEÇÃO: Específico Retirada */}
+              <div>
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="p-1.5 rounded-lg bg-purple-500 text-white">
+                    <Package className="w-4 h-4" />
+                  </div>
+                  <h3 className="font-semibold">Específico Retirada</h3>
+                </div>
+                <div className="space-y-2">
+                  {templates.filter(t => t.tipo_entrega === 'pickup' && ['pronto', 'retirado', 'concluido'].includes(t.status)).map((template) => {
+                    const statusConfig = STATUS_LABELS[template.status] || { label: template.status, icon: MessageCircle, color: "bg-gray-500" };
+                    const StatusIcon = statusConfig.icon;
+                    return (
+                      <div 
+                        key={template.id} 
+                        className={`bg-card border rounded-xl p-3 cursor-pointer hover:border-primary/50 transition-colors ${!template.is_active ? 'opacity-60' : ''}`}
+                        onClick={() => { openTemplateEdit(template); }}
+                      >
+                        <div className="flex items-center justify-between gap-4">
+                          <div className="flex items-center gap-3 flex-1 min-w-0">
+                            <span className={`p-1.5 rounded-lg ${statusConfig.color} text-white shrink-0`}>
+                              <StatusIcon className="w-4 h-4" />
+                            </span>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2">
+                                <span className="font-medium">{statusConfig.label}</span>
+                                {template.delay_seconds > 0 && (
+                                  <span className="px-2 py-0.5 bg-amber-100 dark:bg-amber-900/50 text-amber-700 dark:text-amber-300 rounded text-xs">
+                                    ⏱️ {template.delay_seconds}s
+                                  </span>
+                                )}
+                              </div>
+                              <p className="text-sm text-muted-foreground truncate">{template.template}</p>
+                            </div>
+                          </div>
+                          <Button variant="outline" size="sm" onClick={(e) => { e.stopPropagation(); openTemplateEdit(template); }}>
+                            <Edit2 className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
             </div>
           ) : (
