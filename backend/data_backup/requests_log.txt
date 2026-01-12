@@ -20600,3 +20600,6 @@
 2026-01-12T21:08:01.368342+00:00 | DB_CALL get_all_pedidos | P3 | 2.1ms | success
 2026-01-12T21:08:01.369849+00:00 | DB_CALL get_all_entregadores | P3 | 3.18ms | success
 2026-01-12T21:08:01.370285+00:00 | DB_CALL get_all_settings | P3 | 2.72ms | success
+2026-01-12T21:08:16.245549+00:00 | DB_CALL get_all_entregadores | P3 | 0.39ms | success
+2026-01-12T21:08:16.247664+00:00 | DB_CALL get_all_settings | P3 | 0.19ms | success
+2026-01-12T21:08:16.249145+00:00 | DB_CALL get_all_pedidos | P3 | 0.77ms | success
