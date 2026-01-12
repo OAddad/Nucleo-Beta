@@ -23393,3 +23393,11 @@
 2026-01-12T23:33:14.320112+00:00 | DB_CALL register_whatsapp_client | P3 | 2.18ms | success
 2026-01-12T23:33:16.455540+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.25ms | success
 2026-01-12T23:33:21.446582+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.23ms | success
+2026-01-12T23:33:25.494352+00:00 | DB_CALL get_user_by_id | P3 | 25.19ms | success
+2026-01-12T23:33:25.494591+00:00 | DB_CALL get_user_by_id | P3 | 26.15ms | success
+2026-01-12T23:33:25.494756+00:00 | DB_CALL get_user_by_id | P3 | 24.02ms | success
+2026-01-12T23:33:25.495288+00:00 | DB_CALL get_all_order_status_templates | P3 | 0.66ms | success
+2026-01-12T23:33:25.496344+00:00 | DB_CALL get_all_settings | P3 | 1.52ms | success
+2026-01-12T23:33:25.497104+00:00 | DB_CALL get_all_keyword_responses | P3 | 2.44ms | success
+2026-01-12T23:33:25.565861+00:00 | DB_CALL get_whatsapp_stats | P3 | 65.71ms | success
+2026-01-12T23:33:31.453568+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.24ms | success
