@@ -1917,7 +1917,7 @@ function RespostasAutomaticasTab({ toast }) {
     match_type: "contains"
   });
   const [deleteConfirm, setDeleteConfirm] = useState(null);
-  const [activeSection, setActiveSection] = useState("respostas"); // respostas ou configuracoes
+  const [activeSection, setActiveSection] = useState("respostas"); // respostas, notificacoes ou configuracoes
   const [botSettings, setBotSettings] = useState({
     bot_pause_message: "",
     bot_pause_duration: 15,
