@@ -31226,3 +31226,7 @@
 2026-01-13T15:01:43.515945+00:00 | DB_CALL get_all_settings | P3 | 3.24ms | success
 2026-01-13T15:01:43.516221+00:00 | DB_CALL get_all_business_hours | P3 | 2.68ms | success
 2026-01-13T15:01:43.741364+00:00 | DB_CALL get_all_bairros | P3 | 0.35ms | success
+2026-01-13T15:08:38.924952+00:00 | DB_CALL get_all_products | P3 | 0.93ms | success
+2026-01-13T15:08:38.926537+00:00 | DB_CALL get_all_categories | P3 | 0.3ms | success
+2026-01-13T15:08:38.929284+00:00 | DB_CALL get_all_settings | P3 | 0.7ms | success
+2026-01-13T15:08:38.929756+00:00 | DB_CALL get_all_business_hours | P3 | 0.86ms | success

@@ -1639,18 +1639,18 @@ export default function CardapioPublico({ onAdminLogin }) {
     <div className={`min-h-screen ${t.bg} ${t.text} pb-20`}>
       {/* Header Fixo - Mais fino */}
       <header className={`${t.bgHeader} fixed top-0 left-0 right-0 z-40 border-b ${t.border}`}>
-        <div className="flex items-center justify-between px-3 py-2">
-          {/* Lado Esquerdo - Pontos + Nome */}
+        <div className="flex items-center justify-between px-3 py-1.5">
+          {/* Lado Esquerdo - Nome + Pontos */}
           <div className="flex items-center gap-2">
+            <span className={`text-sm font-medium ${t.text}`}>
+              Oi, {loggedClient?.nome?.split(' ')[0] || 'Visitante'}!
+            </span>
             {loggedClient && (
               <div className="flex items-center gap-1 bg-orange-500/10 px-2 py-0.5 rounded-full">
                 <Star className="w-3 h-3 fill-orange-500 text-orange-500" />
                 <span className="text-xs font-bold text-orange-500">{loggedClient?.pontos || 0}</span>
               </div>
             )}
-            <span className={`text-sm font-medium ${t.text}`}>
-              Oi, {loggedClient?.nome?.split(' ')[0] || 'Visitante'}!
-            </span>
           </div>
           
           {/* Lado Direito - Lupa + Foto/Entrar */}
@@ -1663,34 +1663,66 @@ export default function CardapioPublico({ onAdminLogin }) {
                   setTimeout(() => searchInputRef.current?.focus(), 100);
                 }
               }}
-              className={`w-9 h-9 rounded-full flex items-center justify-center transition-colors ${searchOpen ? 'bg-orange-500 text-white' : `${t.bgMuted} ${t.textMuted}`}`}
+              className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${searchOpen ? 'bg-orange-500 text-white' : `${t.bgMuted} ${t.textMuted}`}`}
             >
               <Search className="w-4 h-4" />
             </button>
             
             {/* Foto ou Botão Entrar */}
             {loggedClient ? (
-              <button 
-                onClick={() => {}}
-                className="w-9 h-9 rounded-full overflow-hidden border-2 border-orange-500 flex items-center justify-center bg-orange-500/10"
-              >
-                {loggedClient.foto_url ? (
-                  <img src={loggedClient.foto_url} alt="" className="w-full h-full object-cover" />
-                ) : (
-                  <User className="w-4 h-4 text-orange-500" />
-                )}
-              </button>
+              <ProfileMenu 
+                client={loggedClient} 
+                onLogout={handleLogout} 
+                onClientUpdate={handleClientUpdate} 
+                darkMode={darkMode} 
+                onToggleTheme={() => {}}
+              />
             ) : (
-              <Button onClick={() => setShowLoginModal(true)} className="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-4 h-8 text-xs">
+              <Button onClick={() => setShowLoginModal(true)} className="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-4 h-7 text-xs">
                 ENTRAR
               </Button>
             )}
           </div>
         </div>
         
+        {/* Status Aberto/Fechado - Colado no header */}
+        <div className={`px-3 py-1 ${t.bg} flex items-center gap-2 border-t ${t.border}`}>
+          <div className={`w-1.5 h-1.5 rounded-full ${isOpen ? 'bg-green-500' : 'bg-red-500'}`}></div>
+          <span className={`text-[11px] ${t.textMuted}`}>
+            {isOpen ? 'Aberto' : 'Fechado'}
+            {isOpen && closingTime && ` • Fecha ${closingTime}`}
+            {!isOpen && nextOpenTime && ` • Abre ${nextOpenTime}`}
+          </span>
+        </div>
+        
+        {/* Categorias - Logo abaixo do status */}
+        {categoriesWithProducts.length > 0 && (
+          <div className={`px-3 py-1.5 ${t.bg} border-t ${t.border}`}>
+            <div className="flex items-center gap-2">
+              <div className="flex-1 overflow-x-auto scrollbar-hide flex gap-1.5" style={{ scrollbarWidth: 'none' }}>
+                <button 
+                  onClick={() => setSelectedCategory(null)} 
+                  className={`flex-shrink-0 px-3 py-1 rounded-full font-medium text-xs transition-all ${!selectedCategory ? 'bg-orange-500 text-white' : t.btnCat}`}
+                >
+                  Todos
+                </button>
+                {categoriesWithProducts.map(cat => (
+                  <button 
+                    key={cat.id} 
+                    onClick={() => setSelectedCategory(cat.name)} 
+                    className={`flex-shrink-0 px-3 py-1 rounded-full font-medium text-xs transition-all ${selectedCategory === cat.name ? 'bg-orange-500 text-white' : t.btnCat}`}
+                  >
+                    {cat.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+        
         {/* Campo de Busca Expandível */}
         {searchOpen && (
-          <div className={`px-3 pb-2 ${t.bg}`}>
+          <div className={`px-3 py-2 ${t.bg} border-t ${t.border}`}>
             <div className="relative">
               <Search className={`absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 ${t.textMuted2}`} />
               <Input 
@@ -1711,21 +1743,11 @@ export default function CardapioPublico({ onAdminLogin }) {
         )}
       </header>
 
-      {/* Conteúdo Principal - padding menor para header mais fino */}
-      <main className={`pt-12 pb-4 ${searchOpen ? 'pt-[88px]' : ''}`}>
+      {/* Conteúdo Principal */}
+      <main className={`pb-4 ${categoriesWithProducts.length > 0 ? (searchOpen ? 'pt-[140px]' : 'pt-[100px]') : (searchOpen ? 'pt-[100px]' : 'pt-[60px]')}`}>
         {/* Aba Cardápio */}
         {activeTab === 'cardapio' && (
           <>
-            {/* Status Aberto/Fechado - Discreto */}
-            <div className={`px-4 py-1.5 ${t.bg} flex items-center gap-2`}>
-              <div className={`w-1.5 h-1.5 rounded-full ${isOpen ? 'bg-green-500' : 'bg-red-500'}`}></div>
-              <span className={`text-xs ${t.textMuted}`}>
-                {isOpen ? 'Aberto' : 'Fechado'}
-                {isOpen && closingTime && ` • Fecha ${closingTime}`}
-                {!isOpen && nextOpenTime && ` • Abre ${nextOpenTime}`}
-              </span>
-            </div>
-
             {/* Produtos por Categoria */}
             <div className="px-4 space-y-6 mt-2">
               {Object.keys(productsByCategory).length === 0 ? (
