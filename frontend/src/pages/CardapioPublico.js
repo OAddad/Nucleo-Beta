@@ -2098,6 +2098,7 @@ export default function CardapioPublico({ onAdminLogin }) {
             <div className="flex items-center gap-2">
               {/* Botão Lupa */}
               <button 
+                id="search-button"
                 onClick={() => {
                   setSearchOpen(!searchOpen);
                   if (!searchOpen) {
