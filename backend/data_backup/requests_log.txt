@@ -31562,3 +31562,8 @@
 2026-01-13T15:31:34.226462+00:00 | DB_CALL get_user_by_username | P3 | 0.17ms | success
 2026-01-13T15:31:34.227351+00:00 | DB_CALL get_all_clientes | P3 | 0.81ms | success
 2026-01-13T15:31:34.255674+00:00 | DB_CALL get_cliente_by_id | P3 | 0.32ms | success
+2026-01-13T15:32:19.871292+00:00 | DB_CALL get_all_business_hours | P3 | 2.3ms | success
+2026-01-13T15:32:19.875057+00:00 | DB_CALL get_all_settings | P3 | 5.77ms | success
+2026-01-13T15:32:19.877228+00:00 | DB_CALL get_all_categories | P3 | 7.86ms | success
+2026-01-13T15:32:19.878374+00:00 | DB_CALL get_all_products | P3 | 8.92ms | success
+2026-01-13T15:32:19.961604+00:00 | DB_CALL get_all_bairros | P3 | 0.38ms | success
