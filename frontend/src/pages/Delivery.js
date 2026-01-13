@@ -2416,12 +2416,12 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
 
       {/* Popup de Produto */}
       <Dialog open={!!selectedProduct} onOpenChange={(open) => !open && closeProductPopup()}>
-        <DialogContent className="max-w-lg">
+        <DialogContent className="max-w-md p-0 overflow-hidden">
           {selectedProduct && (
             <>
-              {/* Imagem do Produto */}
+              {/* Imagem do Produto - QUADRADA */}
               {selectedProduct.photo_url ? (
-                <div className="relative h-48 -mx-6 -mt-6 mb-4">
+                <div className="relative aspect-square w-full">
                   <img 
                     src={getImageUrl(selectedProduct.photo_url)} 
                     alt={selectedProduct.name}
@@ -2429,17 +2429,17 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
                   />
                   <button 
                     onClick={closeProductPopup}
-                    className="absolute top-2 right-2 bg-black/50 rounded-full p-1 text-white hover:bg-black/70"
+                    className="absolute top-3 right-3 bg-black/50 rounded-full p-1.5 text-white hover:bg-black/70"
                   >
                     <X className="w-5 h-5" />
                   </button>
                 </div>
               ) : (
-                <div className="relative h-32 -mx-6 -mt-6 mb-4 bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center">
-                  <Package className="w-16 h-16 text-white/50" />
+                <div className="relative aspect-square w-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center">
+                  <Package className="w-24 h-24 text-white/50" />
                   <button 
                     onClick={closeProductPopup}
-                    className="absolute top-2 right-2 bg-black/50 rounded-full p-1 text-white hover:bg-black/70"
+                    className="absolute top-3 right-3 bg-black/50 rounded-full p-1.5 text-white hover:bg-black/70"
                   >
                     <X className="w-5 h-5" />
                   </button>
@@ -2447,7 +2447,7 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
               )}
 
               {/* Info do Produto */}
-              <div className="space-y-4">
+              <div className="p-4 space-y-4">
                 <div>
                   <h2 className="text-xl font-bold">{selectedProduct.name}</h2>
                   <p className="text-2xl font-bold text-orange-600 mt-1">
