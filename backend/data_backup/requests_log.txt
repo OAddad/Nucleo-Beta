@@ -26171,3 +26171,13 @@
 2026-01-13T00:35:41.398298+00:00 | DB_CALL get_user_by_id | P3 | 0.69ms | success
 2026-01-13T00:35:41.398545+00:00 | DB_CALL get_all_categories | P3 | 0.28ms | success
 2026-01-13T00:35:41.399266+00:00 | DB_CALL get_all_products | P3 | 0.89ms | success
+2026-01-13T00:35:48.463429+00:00 | DB_CALL get_all_settings | P3 | 0.29ms | success
+2026-01-13T00:35:48.465552+00:00 | DB_CALL get_all_pedidos | P3 | 1.11ms | success
+2026-01-13T00:35:48.467707+00:00 | DB_CALL get_all_entregadores | P3 | 0.15ms | success
+2026-01-13T00:35:49.207224+00:00 | DB_CALL get_user_by_id | P3 | 0.29ms | success
+2026-01-13T00:35:49.207529+00:00 | DB_CALL get_next_product_code | P3 | 0.11ms | success
+2026-01-13T00:35:49.207686+00:00 | DB_CALL get_ingredient_by_id | P3 | 0.1ms | success
+2026-01-13T00:35:49.213156+00:00 | DB_CALL create_product | P3 | 5.38ms | success
+2026-01-13T00:35:49.218455+00:00 | DB_CALL create_audit_log | P3 | 5.2ms | success
+2026-01-13T00:35:49.379848+00:00 | DB_CALL get_user_by_id | P3 | 0.26ms | success
+2026-01-13T00:35:49.380428+00:00 | DB_CALL get_all_products | P3 | 0.44ms | success
