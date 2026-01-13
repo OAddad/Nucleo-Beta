@@ -27,3 +27,17 @@ h1, h2, h3, h4, h5, h6 {
     display: inline;
   }
 }
+
+/* Cardápio - Largura dos itens no mobile (2.5 itens) */
+.cardapio-item-mobile {
+  width: calc((100% - 1.5rem) / 2.5);
+  min-width: calc((100% - 1.5rem) / 2.5);
+}
+
+/* Desktop: largura automática para grade */
+@media (min-width: 1024px) {
+  .cardapio-item-mobile {
+    width: auto;
+    min-width: auto;
+  }
+}
