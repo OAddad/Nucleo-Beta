@@ -2505,6 +2505,130 @@ async def get_cliente_clube_status(cliente_id: str):
         return dict(cliente)
 
 
+@api_router.get("/public/cliente/{cliente_id}/consentimento/pdf")
+async def get_cliente_consentimento_pdf(cliente_id: str):
+    """Retorna o termo de consentimento do cliente em PDF"""
+    import io
+    from fastapi.responses import StreamingResponse
+    
+    # Buscar dados do cliente
+    with sqlite_db.get_db() as conn:
+        cursor = conn.cursor()
+        cursor.execute('''
+            SELECT id, nome, email, cpf, data_nascimento, telefone, aceita_whatsapp, 
+                   data_aceite_whatsapp
+            FROM clientes WHERE id = ?
+        ''', (cliente_id,))
+        cliente = cursor.fetchone()
+        
+        if not cliente:
+            raise HTTPException(status_code=404, detail="Cliente não encontrado")
+        
+        cliente = dict(cliente)
+        
+        if cliente.get('aceita_whatsapp') != 1:
+            raise HTTPException(status_code=400, detail="Cliente não possui consentimento de divulgação")
+    
+    # Buscar arquivo de consentimento se existir
+    consentimento_dir = Path(__file__).parent / "consentimentos"
+    consentimento_file = None
+    hash_assinatura = "N/A"
+    
+    if consentimento_dir.exists():
+        import json
+        for file in consentimento_dir.glob(f"*_{cliente_id}_*.json"):
+            try:
+                with open(file, 'r') as f:
+                    data = json.load(f)
+                    if data.get('tipo') == 'CONSENTIMENTO_WHATSAPP':
+                        hash_assinatura = data.get('hash', 'N/A')[:32] + "..."
+                        consentimento_file = file
+                        break
+            except:
+                pass
+    
+    # Gerar PDF simples em texto
+    data_aceite = cliente.get('data_aceite_whatsapp', 'N/A')
+    if data_aceite and data_aceite != 'N/A':
+        try:
+            dt = datetime.fromisoformat(data_aceite.replace('Z', '+00:00'))
+            data_aceite = dt.strftime('%d/%m/%Y às %H:%M')
+        except:
+            pass
+    
+    # Criar conteúdo do termo
+    termo_content = f"""
+================================================================================
+                    TERMO DE CONSENTIMENTO PARA COMUNICAÇÃO
+                              VIA WHATSAPP
+================================================================================
+
+IDENTIFICAÇÃO DO TITULAR DOS DADOS:
+
+Nome: {cliente.get('nome', 'N/A')}
+CPF: {cliente.get('cpf', 'N/A')}
+Telefone: {cliente.get('telefone', 'N/A')}
+E-mail: {cliente.get('email', 'N/A')}
+Data de Nascimento: {cliente.get('data_nascimento', 'N/A')}
+
+--------------------------------------------------------------------------------
+
+DECLARAÇÃO DE CONSENTIMENTO:
+
+Eu, {cliente.get('nome', 'N/A')}, portador(a) do CPF {cliente.get('cpf', 'N/A')}, 
+AUTORIZO o estabelecimento a entrar em contato comigo através do aplicativo 
+WhatsApp, no número {cliente.get('telefone', 'N/A')}, para fins de:
+
+• Envio de promoções e ofertas exclusivas
+• Informações sobre novos produtos e serviços  
+• Comunicados importantes sobre meus pedidos
+• Novidades e campanhas do estabelecimento
+
+--------------------------------------------------------------------------------
+
+TERMOS E CONDIÇÕES:
+
+1. Este consentimento pode ser revogado a qualquer momento, mediante 
+   solicitação expressa ao estabelecimento.
+
+2. Os dados fornecidos serão utilizados exclusivamente para as finalidades 
+   acima descritas.
+
+3. O estabelecimento compromete-se a não compartilhar seus dados com 
+   terceiros sem autorização prévia.
+
+4. As mensagens serão enviadas em horário comercial, salvo comunicados 
+   urgentes sobre pedidos em andamento.
+
+--------------------------------------------------------------------------------
+
+REGISTRO DO CONSENTIMENTO:
+
+Data do Aceite: {data_aceite}
+ID do Cliente: {cliente_id}
+Assinatura Digital (Hash): {hash_assinatura}
+
+================================================================================
+                         DOCUMENTO GERADO ELETRONICAMENTE
+                    Sistema Núcleo - Gestão de Restaurantes
+================================================================================
+"""
+    
+    # Retornar como arquivo de texto (simulando PDF)
+    buffer = io.BytesIO(termo_content.encode('utf-8'))
+    buffer.seek(0)
+    
+    filename = f"termo_consentimento_{cliente.get('nome', 'cliente').replace(' ', '_')}.txt"
+    
+    return StreamingResponse(
+        buffer,
+        media_type="text/plain",
+        headers={
+            "Content-Disposition": f"attachment; filename={filename}"
+        }
+    )
+
+
 # ========== CLIENT ADDRESSES ENDPOINTS ==========
 class ClientAddressCreate(BaseModel):
     client_id: str
