@@ -2801,38 +2801,69 @@ function RespostasAutomaticasTab({ toast }) {
           </DialogHeader>
           
           <div className="space-y-4 py-4">
-            {/* Variáveis disponíveis */}
-            <div className="bg-muted/50 rounded-lg p-3">
-              <p className="text-sm font-medium mb-2">Variáveis disponíveis (clique para inserir):</p>
-              <div className="flex flex-wrap gap-2">
-                {ORDER_NOTIFICATION_VARIABLES.map((v) => (
-                  <button
-                    key={v.key}
-                    type="button"
-                    className="px-3 py-1.5 bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 rounded-lg text-sm font-mono hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors"
-                    onClick={() => { 
-                      setEditForm(prev => ({...prev, template: prev.template + v.key})); 
-                      setPreviewMessage(editForm.template + v.key); 
-                    }}
-                    title={v.description}
-                  >
-                    {v.key}
-                  </button>
-                ))}
+            {/* Aviso para Pedido Criado - mensagem automática */}
+            {editingTemplate?.status === 'aguardando_aceite' && (
+              <div className="bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+                <div className="flex items-start gap-3">
+                  <div className="p-2 bg-blue-100 dark:bg-blue-800 rounded-lg">
+                    <Package className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                  </div>
+                  <div className="flex-1">
+                    <h4 className="font-semibold text-blue-800 dark:text-blue-300">Mensagem Automática</h4>
+                    <p className="text-sm text-blue-700 dark:text-blue-400 mt-1">
+                      A mensagem de "Pedido Criado" é gerada automaticamente com o resumo completo do pedido:
+                    </p>
+                    <ul className="text-sm text-blue-600 dark:text-blue-400 mt-2 space-y-1">
+                      <li>✅ Código do pedido</li>
+                      <li>✅ Itens com preços</li>
+                      <li>✅ Endereço de entrega ou local de retirada</li>
+                      <li>✅ Forma de pagamento e troco</li>
+                      <li>✅ Valor do frete e total</li>
+                    </ul>
+                    <p className="text-xs text-blue-600 dark:text-blue-500 mt-2 italic">
+                      Esta mensagem não pode ser editada pois contém informações dinâmicas do pedido.
+                    </p>
+                  </div>
+                </div>
               </div>
-            </div>
+            )}
 
-            {/* Campo de mensagem */}
-            <div>
-              <Label className="text-base font-medium">Mensagem da Notificação</Label>
-              <Textarea 
-                placeholder="Digite a mensagem que será enviada ao cliente..."
-                rows={6}
-                value={editForm.template}
-                onChange={(e) => { setEditForm(prev => ({...prev, template: e.target.value})); setPreviewMessage(e.target.value); }}
-                className="mt-2 text-base"
-              />
-            </div>
+            {/* Variáveis disponíveis - não mostra para aguardando_aceite */}
+            {editingTemplate?.status !== 'aguardando_aceite' && (
+              <div className="bg-muted/50 rounded-lg p-3">
+                <p className="text-sm font-medium mb-2">Variáveis disponíveis (clique para inserir):</p>
+                <div className="flex flex-wrap gap-2">
+                  {ORDER_NOTIFICATION_VARIABLES.map((v) => (
+                    <button
+                      key={v.key}
+                      type="button"
+                      className="px-3 py-1.5 bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 rounded-lg text-sm font-mono hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors"
+                      onClick={() => { 
+                        setEditForm(prev => ({...prev, template: prev.template + v.key})); 
+                        setPreviewMessage(editForm.template + v.key); 
+                      }}
+                      title={v.description}
+                    >
+                      {v.key}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Campo de mensagem - desabilitado para aguardando_aceite */}
+            {editingTemplate?.status !== 'aguardando_aceite' && (
+              <div>
+                <Label className="text-base font-medium">Mensagem da Notificação</Label>
+                <Textarea 
+                  placeholder="Digite a mensagem que será enviada ao cliente..."
+                  rows={6}
+                  value={editForm.template}
+                  onChange={(e) => { setEditForm(prev => ({...prev, template: e.target.value})); setPreviewMessage(e.target.value); }}
+                  className="mt-2 text-base"
+                />
+              </div>
+            )}
 
             {/* Configurações em linha */}
             <div className="flex items-end gap-6">
