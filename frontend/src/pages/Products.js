@@ -1394,7 +1394,9 @@ export default function Products() {
                     {/* Preço de Venda - Oculto para RECEITA */}
                     {productType !== "receita" && (
                       <div>
-                        <Label htmlFor="salePrice">Preço de Venda (R$)</Label>
+                        <Label htmlFor="salePrice">
+                          {productType === "combo" ? "Preço do COMBO (R$)" : "Preço de Venda (R$)"}
+                        </Label>
                         <Input
                           id="salePrice"
                           data-testid="product-sale-price-input"
@@ -1409,6 +1411,37 @@ export default function Products() {
                     )}
                   </div>
                 </div>
+
+                {/* Campos extras para COMBO */}
+                {productType === "combo" && (
+                  <div className="grid grid-cols-2 gap-4 p-4 bg-orange-50 dark:bg-orange-500/10 rounded-xl border border-orange-200 dark:border-orange-500/20">
+                    <div>
+                      <Label htmlFor="simplePrice">Preço do SIMPLES (R$)</Label>
+                      <Input
+                        id="simplePrice"
+                        type="number"
+                        step="0.01"
+                        value={simplePrice}
+                        onChange={(e) => setSimplePrice(e.target.value)}
+                        placeholder="Ex: 25.90"
+                        className="mt-1 h-11"
+                      />
+                      <p className="text-xs text-muted-foreground mt-1">Preço quando o cliente escolhe só o produto</p>
+                    </div>
+                    <div>
+                      <Label htmlFor="comboDescription">Descrição do Combo</Label>
+                      <Input
+                        id="comboDescription"
+                        type="text"
+                        value={comboDescription}
+                        onChange={(e) => setComboDescription(e.target.value)}
+                        placeholder="Ex: + Batata + Refrigerante"
+                        className="mt-1 h-11"
+                      />
+                      <p className="text-xs text-muted-foreground mt-1">Ex: "+ Batata + Refrigerante"</p>
+                    </div>
+                  </div>
+                )}
 
                 {/* Categoria e Tipo lado a lado */}
                 <div className="grid grid-cols-2 gap-4">
