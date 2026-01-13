@@ -29770,3 +29770,10 @@
 2026-01-13T01:39:17.503776+00:00 | DB_CALL get_all_pedidos | P3 | 2.04ms | success
 2026-01-13T01:39:17.505556+00:00 | DB_CALL get_all_entregadores | P3 | 2.94ms | success
 2026-01-13T01:39:17.505840+00:00 | DB_CALL get_all_settings | P3 | 2.84ms | success
+2026-01-13T01:39:23.459192+00:00 | DB_CALL get_user_by_username | P3 | 0.26ms | success
+2026-01-13T01:39:23.459433+00:00 | DB_CALL get_user_by_username | P3 | 0.1ms | success
+2026-01-13T01:39:23.460384+00:00 | DB_CALL get_all_clientes | P3 | 0.89ms | success
+2026-01-13T01:39:23.497639+00:00 | DB_CALL get_all_pedidos | P3 | 1.17ms | success
+2026-01-13T01:39:23.500825+00:00 | DB_CALL get_all_settings | P3 | 0.59ms | success
+2026-01-13T01:39:23.501154+00:00 | DB_CALL get_all_entregadores | P3 | 0.54ms | success
+2026-01-13T01:39:23.972934+00:00 | DB_CALL get_cliente_by_id | P3 | 0.47ms | success
