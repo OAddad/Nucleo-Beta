@@ -323,7 +323,7 @@ export default function Dashboard({ setIsAuthenticated }) {
       {/* Overlay para mobile quando sidebar está aberto */}
       {sidebarOpen && (
         <div 
-          className="fixed inset-0 bg-black/50 z-30 lg:hidden"
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-30 lg:hidden transition-opacity duration-300"
           onClick={() => setSidebarOpen(false)}
         />
       )}
@@ -331,14 +331,16 @@ export default function Dashboard({ setIsAuthenticated }) {
       {/* Sidebar - Fixo com scroll próprio */}
       <aside className={`
         bg-sidebar text-sidebar-foreground flex-col border-r
-        transition-all duration-300 ease-in-out flex-shrink-0
+        transition-transform duration-300 ease-in-out flex-shrink-0
         fixed left-0 top-0 h-screen z-40
-        ${sidebarOpen ? 'w-64' : 'w-0 lg:w-16'}
-        ${sidebarOpen ? 'flex' : 'hidden lg:flex'}
+        w-[280px] lg:w-64
+        ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0 lg:w-16'}
+        flex
       `}>
         {/* Conteúdo do Sidebar */}
-        <div className={`${sidebarOpen ? 'block' : 'hidden lg:block'} w-64 lg:w-full h-full flex flex-col`}>
-          <div className="p-6 border-b flex items-center justify-between flex-shrink-0">
+        <div className={`${sidebarOpen ? 'block' : 'hidden lg:block'} w-full h-full flex flex-col`}>
+          {/* Header do Sidebar - com botão fechar em mobile */}
+          <div className="p-4 lg:p-6 border-b flex items-center justify-between flex-shrink-0">
             <button 
               onClick={() => {
                 setActiveTopMenu(null);
@@ -356,14 +358,23 @@ export default function Dashboard({ setIsAuthenticated }) {
               </div>
               {sidebarOpen && (
                 <div className="text-left">
-                  <h1 className="text-sidebar-foreground font-bold text-lg tracking-tight">{companySettings.company_name || "Núcleo"}</h1>
+                  <h1 className="text-sidebar-foreground font-bold text-base lg:text-lg tracking-tight">{companySettings.company_name || "Núcleo"}</h1>
                   <p className="text-xs text-muted-foreground">{companySettings.slogan || "o centro da sua gestão"}</p>
                 </div>
               )}
             </button>
+            {/* Botão fechar - apenas mobile */}
+            {sidebarOpen && (
+              <button 
+                onClick={() => setSidebarOpen(false)}
+                className="lg:hidden w-8 h-8 flex items-center justify-center rounded-lg hover:bg-muted text-sidebar-foreground"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            )}
           </div>
 
-        <nav className="flex-1 p-4 space-y-1 overflow-y-auto overflow-x-hidden">
+        <nav className="flex-1 p-3 lg:p-4 space-y-1 overflow-y-auto overflow-x-hidden">
           {/* Tabs Principais */}
           {mainTabs.map((tab) => {
             const Icon = tab.icon;
