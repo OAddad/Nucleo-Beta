@@ -1217,6 +1217,336 @@ class CMVMasterAPITester:
         
         return True
 
+    def test_clube_addad_endpoints(self):
+        """Test CLUBE ADDAD endpoints as specified in review request"""
+        print("\n=== CLUBE ADDAD ENDPOINTS TESTS ===")
+        print("🎯 Testing CLUBE ADDAD endpoints as specified in review request:")
+        print("   1. Login with Addad/Addad123")
+        print("   2. GET /api/clientes - Find Diego (phone 999658914)")
+        print("   3. GET /api/public/cliente/{cliente_id}/clube - Check club status (public)")
+        print("   4. POST /api/public/clube/registrar/{cliente_id} - Register in club (public)")
+        print("   5. POST /api/public/clube/whatsapp/{cliente_id} - WhatsApp consent (public)")
+        print("   6. Verify membro_clube field changes")
+        print("   7. Check consent file creation in /app/backend/consentimentos/")
+        
+        all_tests_passed = True
+        cliente_id = None
+        
+        # STEP 1: Login with Addad/Addad123
+        print("\n🔍 STEP 1: Login with Addad/Addad123")
+        success, login_response = self.run_test(
+            "Login with Addad user",
+            "POST",
+            "auth/login",
+            200,
+            data={"username": "Addad", "password": "Addad123"}
+        )
+        
+        if success and 'access_token' in login_response:
+            self.token = login_response['access_token']
+            self.user_id = login_response['user']['id']
+            print(f"   ✅ Addad login successful")
+            print(f"   - User role: {login_response['user']['role']}")
+        else:
+            print(f"   ❌ Addad login failed - cannot proceed with club tests")
+            return False
+        
+        # STEP 2: GET /api/clientes - Find Diego (phone 999658914)
+        print("\n🔍 STEP 2: GET /api/clientes - Find Diego (phone 999658914)")
+        success, clientes = self.run_test(
+            "Get all clients to find Diego",
+            "GET",
+            "clientes",
+            200
+        )
+        
+        if success:
+            print(f"   ✅ Found {len(clientes)} clients")
+            
+            # Look for Diego with phone 999658914
+            diego_cliente = None
+            for cliente in clientes:
+                telefone = cliente.get('telefone', '')
+                nome = cliente.get('nome', '').lower()
+                
+                # Check if phone contains 999658914 or name contains Diego
+                if '999658914' in telefone or 'diego' in nome:
+                    diego_cliente = cliente
+                    break
+            
+            if diego_cliente:
+                cliente_id = diego_cliente['id']
+                print(f"   ✅ Found Diego client:")
+                print(f"      - ID: {cliente_id}")
+                print(f"      - Name: {diego_cliente.get('nome', 'N/A')}")
+                print(f"      - Phone: {diego_cliente.get('telefone', 'N/A')}")
+                print(f"      - Current membro_clube: {diego_cliente.get('membro_clube', 0)}")
+            else:
+                # Use first available client for testing
+                if clientes:
+                    cliente_id = clientes[0]['id']
+                    print(f"   ⚠️ Diego not found, using first client for testing:")
+                    print(f"      - ID: {cliente_id}")
+                    print(f"      - Name: {clientes[0].get('nome', 'N/A')}")
+                    print(f"      - Phone: {clientes[0].get('telefone', 'N/A')}")
+                else:
+                    print(f"   ❌ No clients found - cannot proceed with club tests")
+                    return False
+        else:
+            print(f"   ❌ Failed to get clients list")
+            return False
+        
+        # STEP 3: GET /api/public/cliente/{cliente_id}/clube - Check club status (public)
+        print(f"\n🔍 STEP 3: GET /api/public/cliente/{cliente_id}/clube - Check club status (public)")
+        
+        # Remove token for public endpoint test
+        original_token = self.token
+        self.token = None
+        
+        success, club_status_before = self.run_test(
+            "Get client club status (public endpoint)",
+            "GET",
+            f"public/cliente/{cliente_id}/clube",
+            200
+        )
+        
+        # Restore token
+        self.token = original_token
+        
+        if success:
+            print(f"   ✅ Club status retrieved (public endpoint working)")
+            print(f"      - membro_clube: {club_status_before.get('membro_clube', 0)}")
+            print(f"      - aceita_whatsapp: {club_status_before.get('aceita_whatsapp', 0)}")
+            print(f"      - pontuacao: {club_status_before.get('pontuacao', 0)}")
+            print(f"      - email: {club_status_before.get('email', 'N/A')}")
+            print(f"      - cpf: {club_status_before.get('cpf', 'N/A')}")
+        else:
+            print(f"   ❌ Failed to get club status")
+            all_tests_passed = False
+        
+        # STEP 4: POST /api/public/clube/registrar/{cliente_id} - Register in club (public)
+        print(f"\n🔍 STEP 4: POST /api/public/clube/registrar/{cliente_id} - Register in club (public)")
+        
+        # Remove token for public endpoint test
+        self.token = None
+        
+        registro_data = {
+            "cpf": "123.456.789-00",
+            "data_nascimento": "1990-01-15",
+            "email": "teste@email.com"
+        }
+        
+        success, registro_response = self.run_test(
+            "Register client in club (public endpoint)",
+            "POST",
+            f"public/clube/registrar/{cliente_id}",
+            200,
+            data=registro_data
+        )
+        
+        # Restore token
+        self.token = original_token
+        
+        if success:
+            print(f"   ✅ Club registration successful")
+            print(f"      - Message: {registro_response.get('message', 'N/A')}")
+            
+            # Check if client data was updated
+            cliente_updated = registro_response.get('cliente')
+            if cliente_updated:
+                print(f"      - Updated membro_clube: {cliente_updated.get('membro_clube', 0)}")
+                print(f"      - Updated CPF: {cliente_updated.get('cpf', 'N/A')}")
+                print(f"      - Updated email: {cliente_updated.get('email', 'N/A')}")
+        else:
+            print(f"   ❌ Failed to register in club")
+            all_tests_passed = False
+        
+        # STEP 5: Verify membro_clube changed to 1
+        print(f"\n🔍 STEP 5: Verify membro_clube changed to 1")
+        
+        # Remove token for public endpoint test
+        self.token = None
+        
+        success, club_status_after = self.run_test(
+            "Get club status after registration",
+            "GET",
+            f"public/cliente/{cliente_id}/clube",
+            200
+        )
+        
+        # Restore token
+        self.token = original_token
+        
+        if success:
+            membro_clube_after = club_status_after.get('membro_clube', 0)
+            print(f"   ✅ Club status after registration:")
+            print(f"      - membro_clube: {membro_clube_after}")
+            
+            if membro_clube_after == 1:
+                print(f"      ✅ membro_clube correctly updated to 1")
+            else:
+                print(f"      ❌ membro_clube should be 1, got {membro_clube_after}")
+                all_tests_passed = False
+        else:
+            print(f"   ❌ Failed to verify club status after registration")
+            all_tests_passed = False
+        
+        # STEP 6: POST /api/public/clube/whatsapp/{cliente_id} - WhatsApp consent (public)
+        print(f"\n🔍 STEP 6: POST /api/public/clube/whatsapp/{cliente_id} - WhatsApp consent (public)")
+        
+        # Remove token for public endpoint test
+        self.token = None
+        
+        whatsapp_data = {
+            "aceita": True
+        }
+        
+        success, whatsapp_response = self.run_test(
+            "Register WhatsApp consent (public endpoint)",
+            "POST",
+            f"public/clube/whatsapp/{cliente_id}",
+            200,
+            data=whatsapp_data
+        )
+        
+        # Restore token
+        self.token = original_token
+        
+        if success:
+            print(f"   ✅ WhatsApp consent registered")
+            print(f"      - Message: {whatsapp_response.get('message', 'N/A')}")
+            print(f"      - aceita_whatsapp: {whatsapp_response.get('aceita_whatsapp', False)}")
+        else:
+            print(f"   ❌ Failed to register WhatsApp consent")
+            all_tests_passed = False
+        
+        # STEP 7: Verify aceita_whatsapp field updated
+        print(f"\n🔍 STEP 7: Verify aceita_whatsapp field updated")
+        
+        # Remove token for public endpoint test
+        self.token = None
+        
+        success, final_status = self.run_test(
+            "Get final club status",
+            "GET",
+            f"public/cliente/{cliente_id}/clube",
+            200
+        )
+        
+        # Restore token
+        self.token = original_token
+        
+        if success:
+            aceita_whatsapp = final_status.get('aceita_whatsapp', 0)
+            print(f"   ✅ Final club status:")
+            print(f"      - membro_clube: {final_status.get('membro_clube', 0)}")
+            print(f"      - aceita_whatsapp: {aceita_whatsapp}")
+            
+            if aceita_whatsapp == 1:
+                print(f"      ✅ aceita_whatsapp correctly updated to 1")
+            else:
+                print(f"      ❌ aceita_whatsapp should be 1, got {aceita_whatsapp}")
+                all_tests_passed = False
+        else:
+            print(f"   ❌ Failed to verify final club status")
+            all_tests_passed = False
+        
+        # STEP 8: Check consent file creation
+        print(f"\n🔍 STEP 8: Check consent file creation in /app/backend/consentimentos/")
+        
+        import os
+        consent_dir = "/app/backend/consentimentos"
+        
+        try:
+            if os.path.exists(consent_dir):
+                files = os.listdir(consent_dir)
+                consent_files = [f for f in files if f.startswith(f"consent_{cliente_id}")]
+                
+                print(f"   ✅ Consent directory exists: {consent_dir}")
+                print(f"   - Total files in directory: {len(files)}")
+                print(f"   - Consent files for client {cliente_id}: {len(consent_files)}")
+                
+                if consent_files:
+                    print(f"      ✅ Consent file created: {consent_files[0]}")
+                    
+                    # Try to read and validate consent file
+                    try:
+                        import json
+                        consent_file_path = os.path.join(consent_dir, consent_files[0])
+                        with open(consent_file_path, 'r', encoding='utf-8') as f:
+                            consent_data = json.load(f)
+                        
+                        print(f"      ✅ Consent file is valid JSON")
+                        print(f"         - Type: {consent_data.get('tipo', 'N/A')}")
+                        print(f"         - Client ID: {consent_data.get('cliente_id', 'N/A')}")
+                        print(f"         - Hash: {consent_data.get('hash_documento', 'N/A')[:20]}...")
+                        
+                        if consent_data.get('tipo') == 'CONSENTIMENTO_WHATSAPP':
+                            print(f"      ✅ Consent file has correct type")
+                        else:
+                            print(f"      ❌ Consent file has wrong type: {consent_data.get('tipo')}")
+                            all_tests_passed = False
+                            
+                    except Exception as e:
+                        print(f"      ❌ Failed to read consent file: {e}")
+                        all_tests_passed = False
+                else:
+                    print(f"      ❌ No consent file created for client {cliente_id}")
+                    all_tests_passed = False
+            else:
+                print(f"   ❌ Consent directory does not exist: {consent_dir}")
+                all_tests_passed = False
+                
+        except Exception as e:
+            print(f"   ❌ Error checking consent directory: {e}")
+            all_tests_passed = False
+        
+        # STEP 9: Test authenticated GET /api/clientes to verify membro_clube field
+        print(f"\n🔍 STEP 9: Test authenticated GET /api/clientes to verify membro_clube field")
+        
+        success, clientes_final = self.run_test(
+            "Get clients list (authenticated) to verify membro_clube field",
+            "GET",
+            "clientes",
+            200
+        )
+        
+        if success:
+            print(f"   ✅ Authenticated clients endpoint working")
+            
+            # Find our test client
+            test_client = next((c for c in clientes_final if c['id'] == cliente_id), None)
+            if test_client:
+                membro_clube_final = test_client.get('membro_clube', 0)
+                print(f"      - Test client membro_clube: {membro_clube_final}")
+                
+                if membro_clube_final == 1:
+                    print(f"      ✅ membro_clube field correctly shows 1 in authenticated endpoint")
+                else:
+                    print(f"      ❌ membro_clube should be 1 in authenticated endpoint, got {membro_clube_final}")
+                    all_tests_passed = False
+            else:
+                print(f"      ❌ Test client not found in authenticated endpoint")
+                all_tests_passed = False
+        else:
+            print(f"   ❌ Failed to get authenticated clients list")
+            all_tests_passed = False
+        
+        # Summary
+        print(f"\n🔍 CLUBE ADDAD TESTING SUMMARY:")
+        if all_tests_passed:
+            print(f"   ✅ ALL CLUBE ADDAD TESTS PASSED")
+            print(f"   ✅ Public endpoints working without authentication")
+            print(f"   ✅ Club registration updates membro_clube to 1")
+            print(f"   ✅ WhatsApp consent updates aceita_whatsapp to 1")
+            print(f"   ✅ Consent file created in /app/backend/consentimentos/")
+            print(f"   ✅ Authenticated /api/clientes shows membro_clube field")
+        else:
+            print(f"   ❌ SOME CLUBE ADDAD TESTS FAILED")
+            print(f"   ℹ️ Check individual test results above for details")
+        
+        return all_tests_passed
+
     def test_order_status_templates(self):
         """Test Order Status Notification Templates endpoints as specified in review request"""
         print("\n=== ORDER STATUS TEMPLATES TESTS ===")
