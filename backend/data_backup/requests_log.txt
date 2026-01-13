@@ -29543,3 +29543,17 @@
 2026-01-13T01:34:45.501183+00:00 | DB_CALL get_all_settings | P3 | 0.43ms | success
 2026-01-13T01:34:45.501532+00:00 | DB_CALL get_all_entregadores | P3 | 0.64ms | success
 2026-01-13T01:34:46.043751+00:00 | DB_CALL increment_whatsapp_stat | P3 | 5.43ms | success
+2026-01-13T01:34:50.485167+00:00 | DB_CALL get_all_pedidos | P3 | 1.17ms | success
+2026-01-13T01:34:50.488858+00:00 | DB_CALL get_all_settings | P3 | 0.7ms | success
+2026-01-13T01:34:50.489209+00:00 | DB_CALL get_all_entregadores | P3 | 0.59ms | success
+2026-01-13T01:34:55.558639+00:00 | DB_CALL get_all_pedidos | P3 | 72.3ms | success
+2026-01-13T01:34:55.561852+00:00 | DB_CALL get_all_entregadores | P3 | 1.09ms | success
+2026-01-13T01:34:55.562272+00:00 | DB_CALL get_all_settings | P3 | 0.75ms | success
+2026-01-13T01:34:58.971440+00:00 | DB_CALL get_all_settings | P3 | 0.79ms | success
+2026-01-13T01:34:58.971927+00:00 | DB_CALL get_all_business_hours | P3 | 0.75ms | success
+2026-01-13T01:34:58.974150+00:00 | DB_CALL get_all_products | P3 | 0.72ms | success
+2026-01-13T01:34:58.975061+00:00 | DB_CALL get_all_categories | P3 | 1.42ms | success
+2026-01-13T01:34:59.158409+00:00 | DB_CALL get_entregador_by_id | P3 | 42.77ms | success
+2026-01-13T01:34:59.159481+00:00 | DB_CALL get_pedidos_by_entregador | P3 | 44.43ms | success
+2026-01-13T01:34:59.159902+00:00 | DB_CALL get_all_settings | P3 | 0.46ms | success
+2026-01-13T01:34:59.172821+00:00 | DB_CALL get_all_bairros | P3 | 0.32ms | success
