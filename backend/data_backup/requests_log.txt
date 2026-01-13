@@ -30024,3 +30024,14 @@
 2026-01-13T01:51:56.798880+00:00 | DB_CALL recalculate_all_cliente_stats | P3 | 129.44ms | success
 2026-01-13T01:51:56.799127+00:00 | DB_CALL get_all_categories | P3 | 129.63ms | success
 2026-01-13T01:51:56.800504+00:00 | DB_CALL get_all_clientes | P3 | 1.45ms | success
+2026-01-13T01:51:58.718352+00:00 | DB_CALL get_pedidos_by_entregador | P3 | 0.41ms | success
+2026-01-13T01:51:58.723496+00:00 | DB_CALL get_entregador_by_id | P3 | 2.24ms | success
+2026-01-13T01:51:59.959724+00:00 | DB_CALL update_pedido_status | P3 | 12.55ms | success
+2026-01-13T01:52:00.129784+00:00 | DB_CALL get_pedidos_by_entregador | P3 | 0.31ms | success
+2026-01-13T01:52:00.130323+00:00 | DB_CALL get_entregador_by_id | P3 | 1.31ms | success
+2026-01-13T01:52:00.936469+00:00 | DB_CALL update_pedido_status | P3 | 5.89ms | success
+2026-01-13T01:52:01.109377+00:00 | DB_CALL get_entregador_by_id | P3 | 0.29ms | success
+2026-01-13T01:52:01.110881+00:00 | DB_CALL get_pedidos_by_entregador | P3 | 0.2ms | success
+2026-01-13T01:52:03.398272+00:00 | DB_CALL get_all_bairros | P3 | 0.37ms | success
+2026-01-13T01:52:03.399110+00:00 | DB_CALL get_all_pedidos | P3 | 3.61ms | success
+2026-01-13T01:52:03.400609+00:00 | DB_CALL get_all_entregadores | P3 | 4.6ms | success
