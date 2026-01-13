@@ -379,7 +379,7 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode }) {
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className={`sm:max-w-lg p-0 gap-0 overflow-hidden ${t.bg} ${t.text} border-0`}>
+      <DialogContent className={`sm:max-w-lg p-0 gap-0 overflow-hidden ${t.bg} ${t.text} border-0 w-[95vw] sm:w-full max-h-[90vh] overflow-y-auto`}>
         {/* Header com X */}
         <div className="absolute top-4 right-4 z-10">
           <button
@@ -391,11 +391,11 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode }) {
         </div>
 
         {/* Conteúdo */}
-        <div className="p-6">
-          {/* Foto e Info lado a lado */}
-          <div className="flex gap-6 mb-6">
-            {/* Foto Grande */}
-            <div className={`w-40 h-40 rounded-xl ${t.bgMuted} overflow-hidden flex-shrink-0 shadow-sm`}>
+        <div className="p-4 sm:p-6">
+          {/* Foto e Info - vertical em mobile, horizontal em desktop */}
+          <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 mb-6">
+            {/* Foto Grande - full width em mobile */}
+            <div className={`w-full sm:w-40 h-48 sm:h-40 rounded-xl ${t.bgMuted} overflow-hidden flex-shrink-0 shadow-sm`}>
               {product.photo_url && !imageError ? (
                 <img
                   src={getImageUrl(product.photo_url)}
@@ -413,20 +413,20 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode }) {
 
             {/* Info do Produto */}
             <div className="flex-1">
-              <h2 className="text-2xl font-bold mb-1">{product.name}</h2>
+              <h2 className="text-xl sm:text-2xl font-bold mb-1">{product.name}</h2>
               {product.description && (
                 <p className={`${t.textMuted} text-sm mb-4 line-clamp-3`}>{product.description}</p>
               )}
               
               {/* Preço */}
-              <div className="text-2xl font-bold text-orange-500">
+              <div className="text-xl sm:text-2xl font-bold text-orange-500">
                 R$ {(product.sale_price || 0).toFixed(2).replace('.', ',')}
               </div>
             </div>
           </div>
 
           {/* Campo de Observação */}
-          <div className="mb-6">
+          <div className="mb-4 sm:mb-6">
             <Label className={`text-base font-medium mb-2 block ${t.text}`}>Alguma observação?</Label>
             <Textarea
               value={observation}
@@ -443,37 +443,37 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode }) {
         </div>
 
         {/* Footer Fixo - Quantidade e Botão Adicionar */}
-        <div className={`border-t ${t.border} ${t.bgMuted} p-4`}>
-          <div className="flex items-center justify-between gap-4">
+        <div className={`border-t ${t.border} ${t.bgMuted} p-3 sm:p-4`}>
+          <div className="flex items-center justify-between gap-3 sm:gap-4">
             {/* Controle de Quantidade */}
             <div className={`flex items-center gap-1 ${t.bg} rounded-full border ${t.border} p-1`}>
               <Button
                 variant="ghost"
                 size="icon"
-                className={`h-12 w-12 rounded-full hover:${t.bgMuted}`}
+                className={`h-10 w-10 sm:h-12 sm:w-12 rounded-full hover:${t.bgMuted}`}
                 onClick={() => setQuantity(Math.max(1, quantity - 1))}
                 disabled={quantity <= 1}
               >
-                <Minus className="w-5 h-5" />
+                <Minus className="w-4 h-4 sm:w-5 sm:h-5" />
               </Button>
-              <span className="w-10 text-center text-xl font-bold">{quantity}</span>
+              <span className="w-8 sm:w-10 text-center text-lg sm:text-xl font-bold">{quantity}</span>
               <Button
                 variant="ghost"
                 size="icon"
-                className={`h-12 w-12 rounded-full hover:${t.bgMuted}`}
+                className={`h-10 w-10 sm:h-12 sm:w-12 rounded-full hover:${t.bgMuted}`}
                 onClick={() => setQuantity(quantity + 1)}
               >
-                <Plus className="w-5 h-5" />
+                <Plus className="w-4 h-4 sm:w-5 sm:h-5" />
               </Button>
             </div>
 
             {/* Botão Adicionar Grande */}
             <Button
               onClick={handleAdd}
-              className="flex-1 h-14 text-lg font-bold rounded-full bg-orange-500 hover:bg-orange-600 text-white shadow-lg"
+              className="flex-1 h-12 sm:h-14 text-base sm:text-lg font-bold rounded-full bg-orange-500 hover:bg-orange-600 text-white shadow-lg"
             >
-              <ShoppingBag className="w-6 h-6 mr-2" />
-              Adicionar  R$ {totalPrice.toFixed(2).replace('.', ',')}
+              <ShoppingBag className="w-5 h-5 sm:w-6 sm:h-6 mr-2" />
+              <span className="hidden sm:inline">Adicionar </span>R$ {totalPrice.toFixed(2).replace('.', ',')}
             </Button>
           </div>
         </div>
