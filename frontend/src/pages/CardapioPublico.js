@@ -1862,25 +1862,13 @@ export default function CardapioPublico({ onAdminLogin }) {
 
         {/* Aba Clube Addad */}
         {activeTab === 'clube' && (
-          <div className="px-4 py-8 flex flex-col items-center justify-center min-h-[60vh]">
-            <div className={`w-20 h-20 ${t.bgCard} rounded-full flex items-center justify-center mb-4 border ${t.border}`}>
-              <Crown className="w-10 h-10 text-orange-500" />
-            </div>
-            <h2 className={`text-xl font-bold ${t.text} mb-2`}>Clube Addad</h2>
-            <p className={`${t.textMuted} text-center text-sm mb-4`}>Acumule pontos e ganhe recompensas!</p>
-            {loggedClient ? (
-              <div className={`${t.bgCard} rounded-xl p-4 border ${t.border} w-full max-w-sm`}>
-                <div className="text-center">
-                  <p className={`text-3xl font-bold text-orange-500`}>{loggedClient.pontos || 0}</p>
-                  <p className={`text-sm ${t.textMuted}`}>pontos acumulados</p>
-                </div>
-              </div>
-            ) : (
-              <Button onClick={() => setShowLoginModal(true)} className="bg-orange-500 hover:bg-orange-600 text-white">
-                Entrar para participar
-              </Button>
-            )}
-          </div>
+          <ClubeAddadTab 
+            loggedClient={loggedClient}
+            onLogin={() => setShowLoginModal(true)}
+            onClientUpdate={handleClientUpdate}
+            darkMode={darkMode}
+            t={t}
+          />
         )}
 
         {/* Aba Pedidos - Histórico Completo */}
