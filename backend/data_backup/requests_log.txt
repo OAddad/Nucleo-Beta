@@ -30142,3 +30142,8 @@
 2026-01-13T01:53:52.801009+00:00 | DB_CALL get_all_categories | P3 | 2.03ms | success
 2026-01-13T01:53:52.801461+00:00 | DB_CALL get_all_business_hours | P3 | 0.53ms | success
 2026-01-13T01:53:52.974746+00:00 | DB_CALL get_all_bairros | P3 | 0.34ms | success
+2026-01-13T01:53:56.587484+00:00 | DB_CALL get_all_settings | P3 | 0.72ms | success
+2026-01-13T01:53:56.588436+00:00 | DB_CALL get_all_products | P3 | 2.03ms | success
+2026-01-13T01:53:56.589515+00:00 | DB_CALL get_all_categories | P3 | 2.32ms | success
+2026-01-13T01:53:56.590528+00:00 | DB_CALL get_all_business_hours | P3 | 0.19ms | success
+2026-01-13T01:53:56.881323+00:00 | DB_CALL get_all_bairros | P3 | 0.34ms | success

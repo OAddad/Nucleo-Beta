@@ -11,3 +11,19 @@ h1, h2, h3, h4, h5, h6 {
 .font-mono {
   font-family: 'JetBrains Mono', monospace;
 }
+
+/* Hide scrollbar utility */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Custom breakpoint for extra small screens */
+@media (min-width: 475px) {
+  .xs\:inline {
+    display: inline;
+  }
+}
