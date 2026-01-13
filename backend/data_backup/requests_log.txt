@@ -31618,3 +31618,4 @@
 2026-01-13T16:00:37.075085+00:00 | DB_CALL get_all_business_hours | P3 | 2.62ms | success
 2026-01-13T16:00:37.075933+00:00 | DB_CALL get_all_categories | P3 | 2.83ms | success
 2026-01-13T16:00:37.127150+00:00 | DB_CALL get_all_bairros | P3 | 0.73ms | success
+2026-01-13T16:02:21.104543+00:00 | DB_CALL get_all_products | P3 | 3.77ms | success
