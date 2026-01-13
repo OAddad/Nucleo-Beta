@@ -2339,9 +2339,9 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
             )}
           </div>
 
-          {/* COLUNA DIREITA - Histórico do Cliente */}
+          {/* COLUNA DIREITA - Histórico do Cliente - Esconde em mobile */}
           {selectedCliente && (
-            <div className="w-80 border-l bg-muted/20 flex flex-col">
+            <div className="hidden lg:flex w-80 border-l bg-muted/20 flex-col">
               <div className="p-3 border-b bg-card">
                 <h3 className="font-semibold flex items-center gap-2 text-sm">
                   <Clock className="w-4 h-4 text-orange-500" /> 
