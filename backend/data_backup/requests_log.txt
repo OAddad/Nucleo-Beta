@@ -32573,3 +32573,7 @@
 2026-01-13T17:53:27.528940+00:00 | DB_CALL count_ingredients | P3 | 0.28ms | success
 2026-01-13T17:53:27.529440+00:00 | DB_CALL count_products | P3 | 0.39ms | success
 2026-01-13T17:53:27.529651+00:00 | DB_CALL count_users | P3 | 0.14ms | success
+2026-01-13T17:53:41.026024+00:00 | DB_CALL init_database | P3 | 2.83ms | success
+2026-01-13T17:53:41.026696+00:00 | DB_CALL count_ingredients | P3 | 0.42ms | success
+2026-01-13T17:53:41.027463+00:00 | DB_CALL count_products | P3 | 0.69ms | success
+2026-01-13T17:53:41.027780+00:00 | DB_CALL count_users | P3 | 0.21ms | success
