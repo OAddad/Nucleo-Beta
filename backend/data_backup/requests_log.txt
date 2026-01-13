@@ -24734,3 +24734,11 @@
 2026-01-13T00:03:42.481159+00:00 | DB_CALL get_all_bairros | P3 | 4.0ms | success
 2026-01-13T00:03:42.481948+00:00 | DB_CALL get_all_clientes | P3 | 1.18ms | success
 2026-01-13T00:03:42.485229+00:00 | DB_CALL get_all_categories | P3 | 4.29ms | success
+2026-01-13T00:03:47.815549+00:00 | DB_CALL get_pedido_by_id | P3 | 0.3ms | success
+2026-01-13T00:03:48.439268+00:00 | DB_CALL get_all_pedidos | P3 | 1.46ms | success
+2026-01-13T00:03:48.440960+00:00 | DB_CALL get_all_entregadores | P3 | 3.52ms | success
+2026-01-13T00:03:48.441273+00:00 | DB_CALL get_all_settings | P3 | 2.97ms | success
+2026-01-13T00:03:53.447428+00:00 | DB_CALL get_pedido_by_id | P3 | 1.08ms | success
+2026-01-13T00:03:53.448762+00:00 | DB_CALL get_all_pedidos | P3 | 1.58ms | success
+2026-01-13T00:03:53.451117+00:00 | DB_CALL get_all_entregadores | P3 | 0.18ms | success
+2026-01-13T00:03:53.453755+00:00 | DB_CALL get_all_settings | P3 | 0.16ms | success
