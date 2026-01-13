@@ -29777,3 +29777,12 @@
 2026-01-13T01:39:23.500825+00:00 | DB_CALL get_all_settings | P3 | 0.59ms | success
 2026-01-13T01:39:23.501154+00:00 | DB_CALL get_all_entregadores | P3 | 0.54ms | success
 2026-01-13T01:39:23.972934+00:00 | DB_CALL get_cliente_by_id | P3 | 0.47ms | success
+2026-01-13T01:39:28.489802+00:00 | DB_CALL get_all_pedidos | P3 | 1.3ms | success
+2026-01-13T01:39:28.493536+00:00 | DB_CALL get_all_entregadores | P3 | 0.65ms | success
+2026-01-13T01:39:28.493924+00:00 | DB_CALL get_all_settings | P3 | 0.56ms | success
+2026-01-13T01:39:33.488560+00:00 | DB_CALL get_all_pedidos | P3 | 1.19ms | success
+2026-01-13T01:39:33.490923+00:00 | DB_CALL get_all_settings | P3 | 0.15ms | success
+2026-01-13T01:39:33.493566+00:00 | DB_CALL get_all_entregadores | P3 | 0.13ms | success
+2026-01-13T01:39:38.496981+00:00 | DB_CALL get_all_pedidos | P3 | 1.28ms | success
+2026-01-13T01:39:38.499240+00:00 | DB_CALL get_all_entregadores | P3 | 0.14ms | success
+2026-01-13T01:39:38.503589+00:00 | DB_CALL get_all_settings | P3 | 0.14ms | success

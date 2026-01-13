@@ -2432,22 +2432,22 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
             </div>
           )}
           
-          {/* Carrinho lateral */}
-          <div className="w-80 border-l bg-muted/30 flex flex-col">
-            <div className="p-3 border-b bg-card">
-              <h3 className="font-semibold flex items-center gap-2">
+          {/* Carrinho lateral - Responsivo */}
+          <div className="w-full sm:w-80 border-t sm:border-t-0 sm:border-l bg-muted/30 flex flex-col max-h-[40vh] sm:max-h-none">
+            <div className="p-2 sm:p-3 border-b bg-card">
+              <h3 className="font-semibold flex items-center gap-2 text-sm sm:text-base">
                 <ShoppingBag className="w-4 h-4" /> Carrinho ({cart.length})
               </h3>
             </div>
             
-            <div className="flex-1 overflow-y-auto p-3 space-y-2">
+            <div className="flex-1 overflow-y-auto p-2 sm:p-3 space-y-2">
               {cart.length === 0 ? (
-                <p className="text-center text-muted-foreground py-8">Carrinho vazio</p>
+                <p className="text-center text-muted-foreground py-4 sm:py-8 text-sm">Carrinho vazio</p>
               ) : (
                 cart.map((item, index) => (
                   <div key={`${item.id}-${index}`} className="bg-card p-2 rounded-lg border flex gap-2">
                     {/* Foto quadrada do produto */}
-                    <div className="w-16 h-16 flex-shrink-0 rounded-lg overflow-hidden bg-muted">
+                    <div className="w-12 h-12 sm:w-16 sm:h-16 flex-shrink-0 rounded-lg overflow-hidden bg-muted">
                       {item.photo_url ? (
                         <img 
                           src={getImageUrl(item.photo_url)} 
@@ -2456,7 +2456,7 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
                         />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-orange-400 to-orange-500">
-                          <Package className="w-6 h-6 text-white/70" />
+                          <Package className="w-5 h-5 sm:w-6 sm:h-6 text-white/70" />
                         </div>
                       )}
                     </div>
