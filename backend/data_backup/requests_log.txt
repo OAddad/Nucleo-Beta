@@ -32187,3 +32187,13 @@
 2026-01-13T16:54:21.551874+00:00 | DB_CALL get_all_bairros | P3 | 0.28ms | success
 2026-01-13T16:54:44.146186+00:00 | DB_CALL increment_whatsapp_stat | P3 | 4.46ms | success
 2026-01-13T16:54:45.283038+00:00 | DB_CALL increment_whatsapp_stat | P3 | 2.77ms | success
+2026-01-13T17:00:33.934893+00:00 | DB_CALL get_all_settings | P3 | 1.97ms | success
+2026-01-13T17:00:33.935730+00:00 | DB_CALL get_all_products | P3 | 2.18ms | success
+2026-01-13T17:00:33.936587+00:00 | DB_CALL get_all_categories | P3 | 2.96ms | success
+2026-01-13T17:00:33.936957+00:00 | DB_CALL get_all_business_hours | P3 | 3.11ms | success
+2026-01-13T17:00:33.950742+00:00 | DB_CALL get_all_bairros | P3 | 0.34ms | success
+2026-01-13T17:00:34.924557+00:00 | DB_CALL get_all_settings | P3 | 0.27ms | success
+2026-01-13T17:00:34.927043+00:00 | DB_CALL get_all_products | P3 | 0.5ms | success
+2026-01-13T17:00:34.929033+00:00 | DB_CALL get_all_categories | P3 | 0.63ms | success
+2026-01-13T17:00:34.929447+00:00 | DB_CALL get_all_business_hours | P3 | 0.62ms | success
+2026-01-13T17:00:34.951226+00:00 | DB_CALL get_all_bairros | P3 | 0.28ms | success

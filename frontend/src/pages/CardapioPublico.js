@@ -778,18 +778,59 @@ function ClubeAddadTab({ loggedClient, onLogin, onClientUpdate, darkMode, t }) {
     );
   }
 
-  // Etapa: Inicial (não é membro ainda)
+  // Etapa: Inicial (não é membro ainda) - Visual inspirado na imagem
   return (
-    <div className="px-4 py-8 flex flex-col items-center justify-center min-h-[60vh]">
-      <div className={`w-24 h-24 ${t.bgCard} rounded-full flex items-center justify-center mb-4 border-2 border-dashed ${t.border}`}>
-        <Crown className="w-12 h-12 text-orange-300" />
+    <div className="px-4 py-6">
+      {/* Header */}
+      <div className="text-center mb-6">
+        <h1 className="text-2xl font-black text-orange-500 uppercase tracking-wide">
+          Confira sobre o
+        </h1>
+        <h2 className="text-2xl font-black text-orange-500 uppercase tracking-wide">
+          {clubeConfig.clube_nome}
+        </h2>
       </div>
-      <h2 className={`text-xl font-bold ${t.text} mb-2 text-center`}>Você ainda não participa do nosso clube!</h2>
-      <p className={`${t.textMuted} text-center text-sm mb-6 max-w-xs`}>
-        Cadastre-se e aproveite benefícios exclusivos, acumule pontos e receba ofertas especiais.
-      </p>
-      <Button onClick={() => setEtapa('cadastro')} className="bg-orange-500 hover:bg-orange-600 text-white font-bold px-8 h-12">
-        Cadastrar-se no Clube
+
+      {/* Pontos por Real */}
+      <div className="flex items-center justify-center gap-2 mb-8">
+        <div className="flex items-baseline">
+          <span className="text-gray-400 text-lg">R$</span>
+          <span className="text-5xl font-black text-orange-500">1</span>
+        </div>
+        <span className="text-4xl font-black text-orange-400">=</span>
+        <div className="flex flex-col items-start">
+          <span className="text-5xl font-black text-orange-500">{clubeConfig.pontos_por_real}</span>
+          <span className="text-orange-500 font-bold text-sm uppercase tracking-wider">PONTOS</span>
+        </div>
+        <div className="ml-2 text-sm text-gray-500 max-w-[120px]">
+          <p className="font-medium">Ao comprar,</p>
+          <p>identifique-se</p>
+          <p>para ganhar</p>
+          <p>pontos.</p>
+        </div>
+      </div>
+
+      {/* Benefício */}
+      <div className="flex items-center justify-center gap-4 mb-8 px-4">
+        <div className="flex items-center gap-3">
+          <span className="text-2xl font-black text-gray-400">2</span>
+          <div className="text-sm text-gray-600">
+            <p className="font-semibold">Seus pontos valem</p>
+            <p className="font-semibold">recompensas</p>
+            <p className="font-semibold">deliciosas.</p>
+          </div>
+        </div>
+        <div className="w-16 h-16 bg-orange-500 rounded-lg flex items-center justify-center">
+          <Gift className="w-8 h-8 text-white" />
+        </div>
+      </div>
+
+      {/* Botão Entrar no Clube */}
+      <Button 
+        onClick={() => setEtapa('cadastro')} 
+        className="w-full bg-orange-500 hover:bg-orange-600 text-white font-black text-lg py-6 rounded-full uppercase tracking-wider shadow-lg"
+      >
+        Entrar no Clube
       </Button>
     </div>
   );
