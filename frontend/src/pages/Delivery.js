@@ -1750,14 +1750,34 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
                 </div>
                 
                 {formaPagamento === "dinheiro" && (
-                  <div>
-                    <Label>Troco para (opcional)</Label>
-                    <Input
-                      type="number"
-                      value={trocoPara}
-                      onChange={(e) => setTrocoPara(e.target.value)}
-                      placeholder="Ex: 50.00"
-                    />
+                  <div className="space-y-2 p-4 bg-amber-50 dark:bg-amber-950/30 rounded-lg border border-amber-200 dark:border-amber-800">
+                    <Label className="text-amber-800 dark:text-amber-300 font-medium">💵 Precisa de troco?</Label>
+                    <div className="flex gap-3">
+                      <Input
+                        type="number"
+                        value={trocoPara}
+                        onChange={(e) => setTrocoPara(e.target.value)}
+                        placeholder={`Total: R$ ${total.toFixed(2)}`}
+                        className="flex-1"
+                      />
+                      <Button 
+                        variant="outline" 
+                        onClick={() => setTrocoPara("")}
+                        className="text-xs"
+                      >
+                        Não precisa
+                      </Button>
+                    </div>
+                    {trocoPara && parseFloat(trocoPara) > total && (
+                      <p className="text-sm text-amber-700 dark:text-amber-400">
+                        Troco: <strong>R$ {(parseFloat(trocoPara) - total).toFixed(2)}</strong>
+                      </p>
+                    )}
+                    {trocoPara && parseFloat(trocoPara) < total && (
+                      <p className="text-sm text-red-500">
+                        ⚠️ Valor menor que o total do pedido
+                      </p>
+                    )}
                   </div>
                 )}
                 
