@@ -2359,6 +2359,152 @@ async def get_total_pontuacao(current_user: User = Depends(get_current_user)):
     return {"total_pontuacao": total, "total_clientes": count}
 
 
+# ========== CLUBE ADDAD ENDPOINTS ==========
+class ClubeRegistroRequest(BaseModel):
+    cpf: str
+    data_nascimento: str
+    email: str
+
+class ClubeWhatsappConsentRequest(BaseModel):
+    aceita: bool
+
+@api_router.post("/public/clube/registrar/{cliente_id}")
+async def registrar_no_clube(cliente_id: str, dados: ClubeRegistroRequest):
+    """Registra um cliente no clube, salvando CPF, data de nascimento e email"""
+    import re
+    
+    # Validar CPF (formato: 000.000.000-00 ou 00000000000)
+    cpf_limpo = re.sub(r'\D', '', dados.cpf)
+    if len(cpf_limpo) != 11:
+        raise HTTPException(status_code=400, detail="CPF inválido. Deve conter 11 dígitos.")
+    
+    # Validar email
+    email_regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+    if not re.match(email_regex, dados.email):
+        raise HTTPException(status_code=400, detail="Email inválido.")
+    
+    # Validar data de nascimento (formato: DD/MM/YYYY ou YYYY-MM-DD)
+    try:
+        if '/' in dados.data_nascimento:
+            partes = dados.data_nascimento.split('/')
+            if len(partes) == 3:
+                dia, mes, ano = partes
+                data_nasc = datetime(int(ano), int(mes), int(dia))
+        elif '-' in dados.data_nascimento:
+            data_nasc = datetime.fromisoformat(dados.data_nascimento.replace('Z', ''))
+        else:
+            raise ValueError("Formato inválido")
+        
+        # Verificar se é uma data razoável (pessoa deve ter pelo menos 10 anos)
+        idade = (datetime.now() - data_nasc).days / 365
+        if idade < 10 or idade > 120:
+            raise HTTPException(status_code=400, detail="Data de nascimento inválida.")
+    except:
+        raise HTTPException(status_code=400, detail="Data de nascimento inválida. Use o formato DD/MM/AAAA.")
+    
+    # Atualizar cliente no banco
+    data_aceite = datetime.now(timezone.utc).isoformat()
+    
+    with sqlite_db.get_db() as conn:
+        cursor = conn.cursor()
+        cursor.execute('''
+            UPDATE clientes 
+            SET cpf = ?, data_nascimento = ?, email = ?, membro_clube = 1, data_aceite_clube = ?
+            WHERE id = ?
+        ''', (cpf_limpo, dados.data_nascimento, dados.email, data_aceite, cliente_id))
+        conn.commit()
+        
+        if cursor.rowcount == 0:
+            raise HTTPException(status_code=404, detail="Cliente não encontrado")
+        
+        # Buscar cliente atualizado
+        cursor.execute('SELECT * FROM clientes WHERE id = ?', (cliente_id,))
+        cliente = cursor.fetchone()
+        
+    return {"message": "Cadastro no clube realizado com sucesso!", "cliente": dict(cliente) if cliente else None}
+
+
+@api_router.post("/public/clube/whatsapp/{cliente_id}")
+async def registrar_consentimento_whatsapp(cliente_id: str, dados: ClubeWhatsappConsentRequest):
+    """Registra o consentimento de WhatsApp do cliente"""
+    import os
+    import json
+    
+    data_aceite = datetime.now(timezone.utc).isoformat()
+    
+    with sqlite_db.get_db() as conn:
+        cursor = conn.cursor()
+        
+        # Buscar dados do cliente primeiro
+        cursor.execute('SELECT nome, telefone, email, cpf FROM clientes WHERE id = ?', (cliente_id,))
+        cliente = cursor.fetchone()
+        
+        if not cliente:
+            raise HTTPException(status_code=404, detail="Cliente não encontrado")
+        
+        # Atualizar aceitação de WhatsApp
+        cursor.execute('''
+            UPDATE clientes 
+            SET aceita_whatsapp = ?, data_aceite_whatsapp = ?
+            WHERE id = ?
+        ''', (1 if dados.aceita else 0, data_aceite if dados.aceita else None, cliente_id))
+        conn.commit()
+        
+        # Se aceitou, salvar documento de consentimento
+        if dados.aceita:
+            # Criar pasta de consentimentos se não existir
+            consent_dir = os.path.join(os.path.dirname(__file__), 'consentimentos')
+            os.makedirs(consent_dir, exist_ok=True)
+            
+            # Criar documento de consentimento
+            consentimento = {
+                "tipo": "CONSENTIMENTO_WHATSAPP",
+                "versao": "1.0",
+                "cliente_id": cliente_id,
+                "nome": cliente["nome"],
+                "telefone": cliente["telefone"],
+                "email": cliente["email"],
+                "cpf": cliente["cpf"],
+                "data_aceite_utc": data_aceite,
+                "ip_aceite": "N/A",  # Em ambiente real, capturar IP
+                "hash_documento": None
+            }
+            
+            # Gerar hash do documento (assinatura digital simples)
+            doc_string = json.dumps(consentimento, sort_keys=True)
+            import hashlib
+            consentimento["hash_documento"] = hashlib.sha256(doc_string.encode()).hexdigest()
+            
+            # Salvar arquivo
+            filename = f"consent_{cliente_id}_{data_aceite.replace(':', '-').replace('+', '_')}.json"
+            filepath = os.path.join(consent_dir, filename)
+            
+            with open(filepath, 'w', encoding='utf-8') as f:
+                json.dump(consentimento, f, ensure_ascii=False, indent=2)
+            
+            print(f"[CLUBE] Consentimento salvo em: {filepath}")
+    
+    return {"message": "Preferência de WhatsApp registrada!", "aceita_whatsapp": dados.aceita}
+
+
+@api_router.get("/public/cliente/{cliente_id}/clube")
+async def get_cliente_clube_status(cliente_id: str):
+    """Retorna o status do cliente no clube"""
+    with sqlite_db.get_db() as conn:
+        cursor = conn.cursor()
+        cursor.execute('''
+            SELECT id, nome, email, cpf, data_nascimento, membro_clube, aceita_whatsapp, 
+                   data_aceite_clube, data_aceite_whatsapp, pontuacao
+            FROM clientes WHERE id = ?
+        ''', (cliente_id,))
+        cliente = cursor.fetchone()
+        
+        if not cliente:
+            raise HTTPException(status_code=404, detail="Cliente não encontrado")
+        
+        return dict(cliente)
+
+
 # ========== CLIENT ADDRESSES ENDPOINTS ==========
 class ClientAddressCreate(BaseModel):
     client_id: str
