@@ -30438,3 +30438,5 @@
 2026-01-13T02:03:33.508843+00:00 | DB_CALL get_all_pedidos | P3 | 2.5ms | success
 2026-01-13T02:03:49.515817+00:00 | DB_CALL get_all_settings | P3 | 0.42ms | success
 2026-01-13T02:03:49.686417+00:00 | DB_CALL get_all_settings | P3 | 0.26ms | success
+2026-01-13T02:04:03.509509+00:00 | DB_CALL get_all_settings | P3 | 0.26ms | success
+2026-01-13T02:04:03.677097+00:00 | DB_CALL get_all_settings | P3 | 0.28ms | success
