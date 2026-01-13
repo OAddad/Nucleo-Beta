@@ -2096,7 +2096,7 @@ export default function CardapioPublico({ onAdminLogin }) {
       )}
 
       {/* Carrinho Expansível - Mais estreito e mais alto */}
-      <div className={`fixed bottom-20 right-3 z-50 transition-all duration-300 ${cartOpen ? 'w-72 sm:w-80' : 'w-12 h-12'}`}>
+      <div className={`fixed bottom-14 right-3 z-50 transition-all duration-300 ${cartOpen ? 'w-72 sm:w-80' : 'w-12 h-12'}`}>
         {cartOpen ? (
           /* Carrinho Expandido */
           <div className={`${t.bgCart} rounded-2xl shadow-2xl border ${t.border} overflow-hidden flex flex-col`} style={{ maxHeight: 'calc(100vh - 140px)' }}>
