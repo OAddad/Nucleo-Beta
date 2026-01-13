@@ -491,7 +491,7 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode }) {
   if (isCombo && comboStep === 0) {
     return (
       <Dialog open={open} onOpenChange={onClose}>
-        <DialogContent className={`sm:max-w-lg p-0 gap-0 overflow-hidden ${t.bg} border-0 rounded-2xl w-[95vw] sm:w-full max-h-[90vh] flex flex-col`}>
+        <DialogContent className={`sm:max-w-xl p-0 gap-0 overflow-hidden ${t.bg} border-0 rounded-2xl w-[95vw] sm:w-full`}>
           {/* Header - Apenas Nome e Descrição */}
           <div className={`p-4 border-b ${t.border}`}>
             {/* Botão Fechar */}
@@ -512,12 +512,12 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode }) {
           </div>
 
           {/* Cards de Opção - Dois Cards */}
-          <div className="p-4 flex-1 overflow-y-auto">
-            <div className="flex gap-3 items-center">
+          <div className="p-4">
+            <div className="flex gap-4 items-center">
               {/* Card SIMPLES - Menor e Centralizado */}
               <button
                 onClick={() => setSelectedComboType('simples')}
-                className={`w-28 rounded-xl border-2 transition-all text-left overflow-hidden flex flex-col ${
+                className={`w-36 rounded-xl border-2 transition-all text-left overflow-hidden flex flex-col ${
                   selectedComboType === 'simples' 
                     ? 'border-orange-500 bg-orange-50 dark:bg-orange-500/10' 
                     : `${t.border} ${t.bgCard} hover:border-orange-300`
