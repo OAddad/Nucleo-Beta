@@ -629,25 +629,8 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode }) {
       </Dialog>
     );
   }
-                  </p>
-                  <p className="text-xl font-black text-orange-500 mt-2">
-                    R$ {comboPrice.toFixed(2).replace('.', ',')}
-                  </p>
-                </div>
-              </button>
-            </div>
-          </div>
 
-          {/* Footer */}
-          <div className={`p-4 ${t.bgMuted} border-t ${t.border}`}>
-            <button
-              onClick={handleNextStep}
-              disabled={!canAdvanceStep()}
-              className={`w-full h-12 rounded-full font-bold text-white flex items-center justify-center gap-2 transition-all ${
-                canAdvanceStep() 
-                  ? 'bg-orange-500 hover:bg-orange-600 shadow-lg shadow-orange-500/20' 
-                  : 'bg-gray-300 dark:bg-zinc-600 cursor-not-allowed'
-              }`}
+  // TELA DE ETAPAS (order_steps)
             >
               {hasOrderSteps && selectedComboType === 'combo' ? (
                 <>PRÓXIMA ETAPA <ChevronRight className="w-5 h-5" /></>
