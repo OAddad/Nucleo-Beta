@@ -2114,14 +2114,14 @@ export default function CardapioPublico({ onAdminLogin }) {
         
         {/* Barra de Status - Verde (Aberto) ou Vermelha (Fechado) */}
         {isOpen ? (
-          /* Barra VERDE - Fininha quando aberto */
-          <div className="bg-green-500 px-3 py-0.5 flex items-center justify-center gap-1">
+          /* Barra VERDE - Fininha quando aberto - Esconde ao rolar */
+          <div className={`bg-green-500 px-3 py-0.5 flex items-center justify-center gap-1 transition-all duration-300 ${statusBarVisible ? 'max-h-10 opacity-100' : 'max-h-0 opacity-0 overflow-hidden py-0'}`}>
             <span className="text-white text-[10px] font-medium">
               Aberto{closingTime && `, fecha às ${closingTime}`}
             </span>
           </div>
         ) : (
-          /* Barra VERMELHA - Maior quando fechado */
+          /* Barra VERMELHA - Maior quando fechado - Sempre visível */
           <div className="bg-red-600 px-3 py-2 flex items-center justify-center">
             <div className="text-center">
               <span className="text-white text-sm font-bold block">
