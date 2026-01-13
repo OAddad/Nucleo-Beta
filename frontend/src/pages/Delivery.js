@@ -1591,7 +1591,7 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="max-w-6xl h-[90vh] p-0 flex flex-col bg-background">
+      <DialogContent className="max-w-[95vw] w-[1400px] h-[90vh] p-0 flex flex-col bg-background">
         <DialogHeader className="p-4 border-b flex-shrink-0">
           <DialogTitle className="flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -1608,7 +1608,41 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
         </DialogHeader>
         
         <div className="flex-1 overflow-hidden flex">
-          {/* Área principal */}
+          {/* COLUNA ESQUERDA - Pedidos Ativos */}
+          <div className="w-48 border-r bg-muted/30 flex flex-col">
+            <div className="p-2 border-b">
+              <Button size="sm" className="w-full bg-orange-500 hover:bg-orange-600" onClick={novoPedidoTab}>
+                <Plus className="w-4 h-4 mr-1" /> Novo
+              </Button>
+            </div>
+            <div className="flex-1 overflow-y-auto p-2 space-y-1">
+              {pedidosAtivos.map((pedido, idx) => (
+                <div 
+                  key={pedido.id}
+                  className={`p-2 rounded cursor-pointer text-xs ${pedidoAtualId === pedido.id ? 'bg-orange-500 text-white' : 'bg-card hover:bg-muted'}`}
+                  onClick={() => switchPedido(pedido)}
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="font-medium truncate">
+                      {pedido.selectedCliente?.nome || `Pedido ${idx + 1}`}
+                    </span>
+                    <button 
+                      onClick={(e) => { e.stopPropagation(); removerPedidoTab(pedido.id); }}
+                      className="opacity-60 hover:opacity-100"
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                  </div>
+                  <p className="text-[10px] opacity-70">{pedido.cart?.length || 0} itens</p>
+                </div>
+              ))}
+              {pedidosAtivos.length === 0 && (
+                <p className="text-center text-muted-foreground text-xs py-4">Nenhum pedido ativo</p>
+              )}
+            </div>
+          </div>
+
+          {/* COLUNA CENTRAL - Conteúdo Principal */}
           <div className="flex-1 overflow-y-auto p-4 bg-background">
             {/* ETAPA 1: PRODUTOS */}
             {step === 1 && (
