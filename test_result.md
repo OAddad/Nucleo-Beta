@@ -701,3 +701,15 @@ agent_communication:
       - working: "NA"
         agent: "main"
         comment: "Sistema de templates de notificações de status de pedidos implementado. Backend: nova tabela order_status_templates no SQLite, endpoints GET/PUT /api/order-status-templates, lógica de delay configurável por status. Frontend: nova aba 'Notificações de Pedidos' na página ChatBot/Respostas com editor para ENTREGA e RETIRADA. Templates padrão criados: PEDIDO CRIADO (35s delay), PRODUÇÃO (42s delay), e demais status sem delay. Variáveis suportadas: {codigo}, {endereco}, {motivo}."
+
+  - task: "Clube Addad - Endpoints de Cadastro e Status"
+    implemented: true
+    working: "NA"
+    file: "backend/server.py, frontend/src/pages/CardapioPublico.js, frontend/src/pages/Clientes.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Sistema Clube Addad implementado. Backend: endpoints POST /api/public/clube/registrar/{cliente_id} para registro no clube (CPF, data nascimento, email), POST /api/public/clube/whatsapp/{cliente_id} para consentimento WhatsApp, GET /api/public/cliente/{cliente_id}/clube para status do clube. Campos no banco: membro_clube, aceita_whatsapp, data_aceite_clube, data_aceite_whatsapp. Frontend: componente ClubeAddadTab em CardapioPublico.js com fluxo completo de cadastro, popup de consentimento WhatsApp, tela de membro com pontos. Coluna 'Clube' adicionada na tabela de clientes (Clientes.js) com ícone ✓/✗ baseado em membro_clube."
