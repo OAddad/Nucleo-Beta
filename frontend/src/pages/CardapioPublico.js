@@ -765,60 +765,87 @@ function ClubeAddadTab({ loggedClient, onLogin, onClientUpdate, darkMode, t, clu
     );
   }
 
-  // Etapa: Inicial (não é membro ainda) - Visual inspirado na imagem
+  // Etapa: Inicial (não é membro ainda) - Visual melhorado e centralizado
   return (
-    <div className="px-4 py-6">
+    <div className="px-4 py-8 flex flex-col items-center justify-center min-h-[70vh]">
+      {/* Ícone do Clube */}
+      <div className="w-24 h-24 bg-gradient-to-br from-orange-400 to-orange-600 rounded-full flex items-center justify-center mb-6 shadow-xl">
+        <Crown className="w-12 h-12 text-white" />
+      </div>
+
       {/* Header */}
-      <div className="text-center mb-6">
-        <h1 className="text-2xl font-black text-orange-500 uppercase tracking-wide">
-          Confira sobre o
-        </h1>
-        <h2 className="text-2xl font-black text-orange-500 uppercase tracking-wide">
+      <div className="text-center mb-8">
+        <p className={`text-sm ${t.textMuted} uppercase tracking-widest mb-1`}>Conheça o</p>
+        <h1 className="text-3xl font-black text-orange-500 uppercase tracking-wide">
           Clube {clubeConfig.clube_nome}
-        </h2>
+        </h1>
       </div>
 
-      {/* Pontos por Real */}
-      <div className="flex items-center justify-center gap-2 mb-8">
-        <div className="flex items-baseline">
-          <span className="text-gray-400 text-lg">R$</span>
-          <span className="text-5xl font-black text-orange-500">1</span>
-        </div>
-        <span className="text-4xl font-black text-orange-400">=</span>
-        <div className="flex flex-col items-start">
-          <span className="text-5xl font-black text-orange-500">{clubeConfig.pontos_por_real}</span>
-          <span className="text-orange-500 font-bold text-sm uppercase tracking-wider">PONTOS</span>
-        </div>
-        <div className="ml-2 text-sm text-gray-500 max-w-[120px]">
-          <p className="font-medium">Ao comprar,</p>
-          <p>identifique-se</p>
-          <p>para ganhar</p>
-          <p>pontos.</p>
-        </div>
-      </div>
-
-      {/* Benefício */}
-      <div className="flex items-center justify-center gap-4 mb-8 px-4">
-        <div className="flex items-center gap-3">
-          <span className="text-2xl font-black text-gray-400">2</span>
-          <div className="text-sm text-gray-600">
-            <p className="font-semibold">Seus pontos valem</p>
-            <p className="font-semibold">recompensas</p>
-            <p className="font-semibold">deliciosas.</p>
+      {/* Card de Pontos */}
+      <div className={`${t.bgCard} rounded-2xl p-6 border-2 border-orange-200 shadow-lg mb-6 w-full max-w-sm`}>
+        <div className="flex items-center justify-center gap-4">
+          <div className="text-center">
+            <span className={`text-sm ${t.textMuted}`}>A cada</span>
+            <div className="flex items-baseline justify-center">
+              <span className={`text-lg ${t.textMuted}`}>R$</span>
+              <span className="text-5xl font-black text-orange-500">1</span>
+            </div>
+            <span className={`text-xs ${t.textMuted}`}>em compras</span>
+          </div>
+          
+          <div className="text-4xl text-orange-400 font-bold">=</div>
+          
+          <div className="text-center">
+            <span className={`text-sm ${t.textMuted}`}>Você ganha</span>
+            <div className="text-5xl font-black text-orange-500">{clubeConfig.pontos_por_real}</div>
+            <span className="text-orange-500 font-bold text-sm uppercase">
+              {clubeConfig.pontos_por_real === 1 ? 'PONTO' : 'PONTOS'}
+            </span>
           </div>
         </div>
-        <div className="w-16 h-16 bg-orange-500 rounded-lg flex items-center justify-center">
-          <Gift className="w-8 h-8 text-white" />
+      </div>
+
+      {/* Benefícios */}
+      <div className="w-full max-w-sm space-y-3 mb-8">
+        <div className={`flex items-center gap-4 ${t.bgCard} rounded-xl p-4 border ${t.border}`}>
+          <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+            <span className="text-green-600 font-bold">1</span>
+          </div>
+          <p className={`${t.text} text-sm`}>
+            <strong>Identifique-se</strong> ao fazer seu pedido para acumular pontos
+          </p>
+        </div>
+        
+        <div className={`flex items-center gap-4 ${t.bgCard} rounded-xl p-4 border ${t.border}`}>
+          <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0">
+            <span className="text-purple-600 font-bold">2</span>
+          </div>
+          <p className={`${t.text} text-sm`}>
+            <strong>Troque seus pontos</strong> por recompensas deliciosas
+          </p>
+        </div>
+        
+        <div className={`flex items-center gap-4 ${t.bgCard} rounded-xl p-4 border ${t.border}`}>
+          <div className="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center flex-shrink-0">
+            <Gift className="w-5 h-5 text-orange-600" />
+          </div>
+          <p className={`${t.text} text-sm`}>
+            <strong>Receba ofertas exclusivas</strong> e promoções especiais
+          </p>
         </div>
       </div>
 
       {/* Botão Entrar no Clube */}
       <Button 
         onClick={() => setEtapa('cadastro')} 
-        className="w-full bg-orange-500 hover:bg-orange-600 text-white font-black text-lg py-6 rounded-full uppercase tracking-wider shadow-lg"
+        className="w-full max-w-sm bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-black text-lg py-6 rounded-full uppercase tracking-wider shadow-xl"
       >
-        Entrar no Clube
+        🎉 Entrar no Clube
       </Button>
+      
+      <p className={`text-xs ${t.textMuted} mt-4 text-center`}>
+        É rápido, gratuito e cheio de benefícios!
+      </p>
     </div>
   );
 }
