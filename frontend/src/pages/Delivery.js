@@ -1877,7 +1877,7 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
             {!selectedCliente && novoCliente.nome && (
               <div className="mt-2 p-3 bg-green-50 dark:bg-green-950/20 rounded-lg border border-green-200 dark:border-green-800">
                 <p className="text-sm font-medium text-green-700 dark:text-green-400 mb-2">Criar novo cliente:</p>
-                <div className="flex items-center gap-2">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
                   <Input
                     value={novoCliente.nome}
                     onChange={(e) => setNovoCliente({...novoCliente, nome: e.target.value})}
@@ -1888,23 +1888,25 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
                     value={novoCliente.telefone}
                     onChange={(e) => setNovoCliente({...novoCliente, telefone: e.target.value})}
                     placeholder="Telefone"
-                    className="w-40"
+                    className="w-full sm:w-40"
                   />
-                  <Button onClick={handleCriarCliente} disabled={creatingCliente} className="bg-green-600 hover:bg-green-700">
-                    {creatingCliente ? "..." : "Criar"}
-                  </Button>
-                  <Button variant="ghost" size="sm" onClick={() => setNovoCliente({ nome: "", telefone: "" })}>
-                    <X className="w-4 h-4" />
-                  </Button>
+                  <div className="flex gap-2">
+                    <Button onClick={handleCriarCliente} disabled={creatingCliente} className="flex-1 sm:flex-none bg-green-600 hover:bg-green-700">
+                      {creatingCliente ? "..." : "Criar"}
+                    </Button>
+                    <Button variant="ghost" size="sm" onClick={() => setNovoCliente({ nome: "", telefone: "" })}>
+                      <X className="w-4 h-4" />
+                    </Button>
+                  </div>
                 </div>
               </div>
             )}
           </div>
         </div>
         
-        <div className="flex-1 overflow-hidden flex">
-          {/* COLUNA ESQUERDA - Pedidos Ativos */}
-          <div className="w-48 border-r bg-muted/30 flex flex-col">
+        <div className="flex-1 overflow-hidden flex flex-col sm:flex-row">
+          {/* COLUNA ESQUERDA - Pedidos Ativos - Esconde em mobile */}
+          <div className="hidden sm:flex w-48 border-r bg-muted/30 flex-col">
             <div className="p-2 border-b">
               <Button size="sm" className="w-full bg-orange-500 hover:bg-orange-600" onClick={() => novoPedidoTab()}>
                 <Plus className="w-4 h-4 mr-1" /> Novo
