@@ -26301,3 +26301,11 @@
 2026-01-13T00:37:27.468425+00:00 | DB_CALL get_all_pedidos | P3 | 1.17ms | success
 2026-01-13T00:37:27.471312+00:00 | DB_CALL get_all_entregadores | P3 | 0.98ms | success
 2026-01-13T00:37:27.471686+00:00 | DB_CALL get_all_settings | P3 | 0.79ms | success
+2026-01-13T00:37:32.475666+00:00 | DB_CALL get_all_settings | P3 | 0.92ms | success
+2026-01-13T00:37:32.476270+00:00 | DB_CALL get_all_bairros | P3 | 2.0ms | success
+2026-01-13T00:37:32.476688+00:00 | DB_CALL get_all_business_hours | P3 | 1.42ms | success
+2026-01-13T00:37:32.483855+00:00 | DB_CALL get_all_categories | P3 | 6.24ms | success
+2026-01-13T00:37:32.559061+00:00 | DB_CALL get_all_products | P3 | 74.51ms | success
+2026-01-13T00:37:32.560111+00:00 | DB_CALL get_all_settings | P3 | 74.91ms | success
+2026-01-13T00:37:32.561212+00:00 | DB_CALL get_all_pedidos | P3 | 76.24ms | success
+2026-01-13T00:37:32.562559+00:00 | DB_CALL get_all_entregadores | P3 | 76.87ms | success
