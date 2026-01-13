@@ -383,15 +383,15 @@ export default function Dashboard({ setIsAuthenticated }) {
               <button
                 key={tab.path}
                 onClick={() => handleSidebarClick(tab.path)}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 ${
+                className={`w-full flex items-center gap-3 px-4 py-3.5 lg:py-3 rounded-xl lg:rounded-lg transition-all duration-200 ${
                   active
                     ? "bg-primary text-primary-foreground font-medium shadow-lg"
-                    : "text-sidebar-foreground hover:bg-muted"
+                    : "text-sidebar-foreground hover:bg-muted active:bg-muted/80"
                 } ${!sidebarOpen ? 'lg:justify-center lg:px-2' : ''}`}
                 title={!sidebarOpen ? tab.label : ''}
               >
                 <Icon className="w-5 h-5 flex-shrink-0" strokeWidth={1.5} />
-                {sidebarOpen && <span className="text-sm">{tab.label}</span>}
+                {sidebarOpen && <span className="text-sm font-medium">{tab.label}</span>}
               </button>
             );
           })}
@@ -401,10 +401,10 @@ export default function Dashboard({ setIsAuthenticated }) {
             {/* Header do módulo */}
             <button
               onClick={() => handleModuleClick(() => setStockControlExpanded(!stockControlExpanded))}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 ${
+              className={`w-full flex items-center gap-3 px-4 py-3.5 lg:py-3 rounded-xl lg:rounded-lg transition-all duration-200 ${
                 isStockControlActive() && !activeTopMenu
                   ? "bg-primary/10 text-primary font-medium"
-                  : "text-sidebar-foreground hover:bg-muted"
+                  : "text-sidebar-foreground hover:bg-muted active:bg-muted/80"
               } ${!sidebarOpen ? 'lg:justify-center lg:px-2' : ''}`}
               title={!sidebarOpen ? stockControlModule.label : ''}
             >
