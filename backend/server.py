@@ -2422,6 +2422,7 @@ class PedidoItemCreate(BaseModel):
     quantidade: int = 1
     preco: float = 0
     observacao: Optional[str] = None
+    photo_url: Optional[str] = None
 
 
 class PedidoCreate(BaseModel):
