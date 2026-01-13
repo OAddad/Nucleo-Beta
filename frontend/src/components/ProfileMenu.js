@@ -892,8 +892,8 @@ export default function ProfileMenu({ client, onLogout, onClientUpdate, darkMode
                   onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }}
                 />
               ) : null}
-              <div className={`w-12 h-12 rounded-full ${darkMode ? 'bg-zinc-700' : 'bg-gray-100'} items-center justify-center ${client?.foto ? 'hidden' : 'flex'}`}>
-                <User className={`w-6 h-6 ${darkMode ? 'text-zinc-400' : 'text-gray-400'}`} />
+              <div className={`w-12 h-12 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 items-center justify-center ${client?.foto ? 'hidden' : 'flex'}`}>
+                <User className={`w-6 h-6 text-white`} />
               </div>
               <div>
                 <p className={`font-semibold ${darkMode ? 'text-white' : 'text-gray-900'}`}>{client?.nome}</p>
