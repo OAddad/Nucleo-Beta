@@ -29520,3 +29520,6 @@
 2026-01-13T01:34:10.484410+00:00 | DB_CALL get_all_pedidos | P3 | 1.21ms | success
 2026-01-13T01:34:10.487212+00:00 | DB_CALL get_all_entregadores | P3 | 0.23ms | success
 2026-01-13T01:34:10.487585+00:00 | DB_CALL get_all_settings | P3 | 0.97ms | success
+2026-01-13T01:34:15.487486+00:00 | DB_CALL get_all_pedidos | P3 | 1.26ms | success
+2026-01-13T01:34:15.490332+00:00 | DB_CALL get_all_entregadores | P3 | 0.76ms | success
+2026-01-13T01:34:15.490814+00:00 | DB_CALL get_all_settings | P3 | 0.67ms | success
