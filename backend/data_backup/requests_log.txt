@@ -26151,3 +26151,9 @@
 2026-01-13T00:35:22.662905+00:00 | DB_CALL create_audit_log | P3 | 5.3ms | success
 2026-01-13T00:35:22.825832+00:00 | DB_CALL get_user_by_id | P3 | 0.27ms | success
 2026-01-13T00:35:22.826369+00:00 | DB_CALL get_all_products | P3 | 0.39ms | success
+2026-01-13T00:35:23.460968+00:00 | DB_CALL get_all_settings | P3 | 0.3ms | success
+2026-01-13T00:35:23.462234+00:00 | DB_CALL get_all_entregadores | P3 | 0.16ms | success
+2026-01-13T00:35:23.464527+00:00 | DB_CALL get_all_pedidos | P3 | 0.94ms | success
+2026-01-13T00:35:28.451439+00:00 | DB_CALL get_all_entregadores | P3 | 0.28ms | success
+2026-01-13T00:35:28.453706+00:00 | DB_CALL get_all_pedidos | P3 | 0.99ms | success
+2026-01-13T00:35:28.457638+00:00 | DB_CALL get_all_settings | P3 | 0.27ms | success
