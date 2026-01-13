@@ -29028,3 +29028,13 @@
 2026-01-13T01:20:17.723541+00:00 | DB_CALL get_all_entregadores | P3 | 0.39ms | success
 2026-01-13T01:20:17.724333+00:00 | DB_CALL get_all_settings | P3 | 0.14ms | success
 2026-01-13T01:20:18.611051+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.29ms | success
+2026-01-13T01:20:19.614957+00:00 | DB_CALL get_pedidos_by_entregador | P3 | 0.35ms | success
+2026-01-13T01:20:19.618326+00:00 | DB_CALL get_entregador_by_id | P3 | 0.18ms | success
+2026-01-13T01:20:20.120511+00:00 | DB_CALL increment_whatsapp_stat | P3 | 6.05ms | success
+2026-01-13T01:20:20.492361+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.26ms | success
+2026-01-13T01:20:20.674414+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.23ms | success
+2026-01-13T01:20:24.111316+00:00 | DB_CALL update_pedido_status | P3 | 5.91ms | success
+2026-01-13T01:20:24.275042+00:00 | DB_CALL get_pedidos_by_entregador | P3 | 0.77ms | success
+2026-01-13T01:20:24.275561+00:00 | DB_CALL get_entregador_by_id | P3 | 0.81ms | success
+2026-01-13T01:20:25.505259+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.21ms | success
+2026-01-13T01:20:25.688027+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.22ms | success
