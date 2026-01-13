@@ -25240,3 +25240,7 @@
 2026-01-13T00:13:13.749934+00:00 | DB_CALL get_all_entregadores | P3 | 0.95ms | success
 2026-01-13T00:13:13.750437+00:00 | DB_CALL get_all_settings | P3 | 0.72ms | success
 2026-01-13T00:13:13.755312+00:00 | DB_CALL get_all_pedidos | P3 | 0.97ms | success
+2026-01-13T00:17:06.974615+00:00 | DB_CALL init_database | P3 | 2.86ms | success
+2026-01-13T00:17:06.975143+00:00 | DB_CALL count_ingredients | P3 | 0.25ms | success
+2026-01-13T00:17:06.975334+00:00 | DB_CALL count_products | P3 | 0.13ms | success
+2026-01-13T00:17:06.975479+00:00 | DB_CALL count_users | P3 | 0.09ms | success
