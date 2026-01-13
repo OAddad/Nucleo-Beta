@@ -2624,6 +2624,7 @@ async def get_cliente_consentimento_pdf(cliente_id: str):
 ================================================================================
                     TERMO DE CONSENTIMENTO PARA COMUNICAÇÃO
                               VIA WHATSAPP
+                           {nome_completo_clube.upper()}
 ================================================================================
 
 IDENTIFICAÇÃO DO TITULAR DOS DADOS:
@@ -2639,10 +2640,11 @@ Data de Nascimento: {cliente.get('data_nascimento', 'N/A')}
 DECLARAÇÃO DE CONSENTIMENTO:
 
 Eu, {cliente.get('nome', 'N/A')}, portador(a) do CPF {cliente.get('cpf', 'N/A')}, 
-AUTORIZO o estabelecimento a entrar em contato comigo através do aplicativo 
-WhatsApp, no número {cliente.get('telefone', 'N/A')}, para fins de:
+membro do {nome_completo_clube}, AUTORIZO o estabelecimento a entrar em contato 
+comigo através do aplicativo WhatsApp, no número {cliente.get('telefone', 'N/A')}, 
+para fins de:
 
-• Envio de promoções e ofertas exclusivas
+• Envio de promoções e ofertas exclusivas do {nome_completo_clube}
 • Informações sobre novos produtos e serviços  
 • Comunicados importantes sobre meus pedidos
 • Novidades e campanhas do estabelecimento
@@ -2652,7 +2654,7 @@ WhatsApp, no número {cliente.get('telefone', 'N/A')}, para fins de:
 TERMOS E CONDIÇÕES:
 
 1. Este consentimento pode ser revogado a qualquer momento, mediante 
-   solicitação expressa ao estabelecimento.
+   solicitação expressa ao estabelecimento ou saída do {nome_completo_clube}.
 
 2. Os dados fornecidos serão utilizados exclusivamente para as finalidades 
    acima descritas.
@@ -2667,6 +2669,7 @@ TERMOS E CONDIÇÕES:
 
 REGISTRO DO CONSENTIMENTO:
 
+Programa de Fidelidade: {nome_completo_clube}
 Data do Aceite: {data_aceite}
 ID do Cliente: {cliente_id}
 Assinatura Digital (Hash): {hash_assinatura}
