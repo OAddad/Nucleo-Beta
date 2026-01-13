@@ -520,27 +520,27 @@ export default function Delivery() {
   return (
     <div className="h-full flex flex-col overflow-hidden bg-background">
       {/* Header com botão NOVO PEDIDO */}
-      <div className="p-4">
+      <div className="p-2 sm:p-4">
         <Button
           onClick={handleNovoPedido}
-          className="w-full h-14 text-lg font-bold"
+          className="w-full h-12 sm:h-14 text-base sm:text-lg font-bold"
           size="lg"
         >
-          <Plus className="w-6 h-6 mr-2" />
+          <Plus className="w-5 h-5 sm:w-6 sm:h-6 mr-2" />
           NOVO PEDIDO
         </Button>
       </div>
 
-      {/* Área principal com 4 colunas */}
-      <div className="flex-1 flex gap-3 p-4 pt-0 overflow-hidden">
+      {/* Área principal com colunas - responsivo */}
+      <div className="flex-1 flex flex-col lg:flex-row gap-2 sm:gap-3 p-2 sm:p-4 pt-0 overflow-hidden">
         
         {/* Coluna 1: AGUARDANDO ACEITE */}
         <div className={`flex flex-col rounded-xl border bg-card overflow-hidden min-w-0 transition-all ${
-          autoAccept ? 'flex-[0.5]' : 'flex-1'
+          autoAccept ? 'hidden lg:flex lg:flex-[0.5]' : 'flex-1 lg:flex-1'
         }`}>
-          <div className={`p-3 bg-muted/50 border-b`}>
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="font-bold text-sm">AGUARDANDO ACEITE</h3>
+          <div className={`p-2 sm:p-3 bg-muted/50 border-b`}>
+            <div className="flex items-center justify-between mb-2 sm:mb-3">
+              <h3 className="font-bold text-xs sm:text-sm">AGUARDANDO ACEITE</h3>
               <span className="bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400 px-2 py-0.5 rounded-full text-xs font-bold">
                 {getPedidosByStatus('aguardando_aceite').length}
               </span>
