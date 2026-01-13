@@ -859,20 +859,24 @@ export default function ProfileMenu({ client, onLogout, onClientUpdate, darkMode
 
       {/* Dropdown Menu */}
       {isOpen && (
-        <div className="absolute right-0 top-full mt-2 w-64 bg-zinc-800 rounded-xl shadow-2xl border border-zinc-700 overflow-hidden z-50">
+        <div className={`absolute right-0 top-full mt-2 w-64 rounded-xl shadow-2xl border overflow-hidden z-50 ${darkMode ? 'bg-zinc-800 border-zinc-700' : 'bg-white border-gray-200'}`}>
           {/* Header do Menu */}
-          <div className="p-4 border-b border-zinc-700">
+          <div className={`p-4 border-b ${darkMode ? 'border-zinc-700' : 'border-gray-200'}`}>
             <div className="flex items-center gap-3">
               {client?.foto ? (
-                <img src={client.foto} alt={client.nome} className="w-12 h-12 rounded-full object-cover" />
-              ) : (
-                <div className="w-12 h-12 rounded-full bg-zinc-700 flex items-center justify-center">
-                  <User className="w-6 h-6 text-zinc-400" />
-                </div>
-              )}
+                <img 
+                  src={client.foto.startsWith('http') ? client.foto : `/api${client.foto}`} 
+                  alt={client.nome} 
+                  className="w-12 h-12 rounded-full object-cover"
+                  onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }}
+                />
+              ) : null}
+              <div className={`w-12 h-12 rounded-full ${darkMode ? 'bg-zinc-700' : 'bg-gray-100'} items-center justify-center ${client?.foto ? 'hidden' : 'flex'}`}>
+                <User className={`w-6 h-6 ${darkMode ? 'text-zinc-400' : 'text-gray-400'}`} />
+              </div>
               <div>
-                <p className="font-semibold text-white">{client?.nome}</p>
-                <p className="text-xs text-zinc-400">{client?.telefone}</p>
+                <p className={`font-semibold ${darkMode ? 'text-white' : 'text-gray-900'}`}>{client?.nome}</p>
+                <p className={`text-xs ${darkMode ? 'text-zinc-400' : 'text-gray-500'}`}>{client?.telefone}</p>
               </div>
             </div>
           </div>
