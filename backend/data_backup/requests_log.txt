@@ -32252,3 +32252,13 @@
 2026-01-13T17:05:16.928204+00:00 | DB_CALL get_all_categories | P3 | 4.2ms | success
 2026-01-13T17:05:16.930218+00:00 | DB_CALL get_all_business_hours | P3 | 2.38ms | success
 2026-01-13T17:05:24.333451+00:00 | DB_CALL get_pedidos_by_cliente | P3 | 0.99ms | success
+2026-01-13T17:05:32.903497+00:00 | DB_CALL get_all_products | P3 | 1.95ms | success
+2026-01-13T17:05:32.904504+00:00 | DB_CALL get_all_categories | P3 | 2.31ms | success
+2026-01-13T17:05:32.904819+00:00 | DB_CALL get_all_business_hours | P3 | 1.95ms | success
+2026-01-13T17:05:32.905646+00:00 | DB_CALL get_all_bairros | P3 | 0.19ms | success
+2026-01-13T17:05:32.907577+00:00 | DB_CALL get_all_settings | P3 | 0.16ms | success
+2026-01-13T17:05:33.926659+00:00 | DB_CALL get_all_bairros | P3 | 1.83ms | success
+2026-01-13T17:05:33.927576+00:00 | DB_CALL get_all_products | P3 | 1.78ms | success
+2026-01-13T17:05:33.928864+00:00 | DB_CALL get_all_settings | P3 | 2.45ms | success
+2026-01-13T17:05:33.930090+00:00 | DB_CALL get_all_business_hours | P3 | 0.33ms | success
+2026-01-13T17:05:33.930483+00:00 | DB_CALL get_all_categories | P3 | 0.64ms | success
