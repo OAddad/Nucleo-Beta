@@ -773,11 +773,13 @@ export default function Clientes() {
                   <TableRow key={cliente.id}>
                     <TableCell>
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-muted overflow-hidden flex items-center justify-center">
+                        <div className="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center">
                           {cliente.foto ? (
                             <img src={cliente.foto} alt={cliente.nome} className="w-full h-full object-cover" />
                           ) : (
-                            <User className="w-5 h-5 text-muted-foreground" />
+                            <div className="w-full h-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center">
+                              <User className="w-5 h-5 text-white" />
+                            </div>
                           )}
                         </div>
                         <div>
