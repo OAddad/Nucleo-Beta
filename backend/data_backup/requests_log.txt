@@ -27930,3 +27930,9 @@
 2026-01-13T01:00:14.469410+00:00 | DB_CALL get_all_pedidos | P3 | 1.14ms | success
 2026-01-13T01:00:14.471748+00:00 | DB_CALL get_all_entregadores | P3 | 0.18ms | success
 2026-01-13T01:00:14.474956+00:00 | DB_CALL get_all_settings | P3 | 0.17ms | success
+2026-01-13T01:00:19.468647+00:00 | DB_CALL get_all_entregadores | P3 | 1.07ms | success
+2026-01-13T01:00:19.469226+00:00 | DB_CALL get_all_settings | P3 | 0.92ms | success
+2026-01-13T01:00:19.470824+00:00 | DB_CALL get_all_pedidos | P3 | 1.0ms | success
+2026-01-13T01:00:24.477285+00:00 | DB_CALL get_all_pedidos | P3 | 1.25ms | success
+2026-01-13T01:00:24.480116+00:00 | DB_CALL get_all_entregadores | P3 | 0.23ms | success
+2026-01-13T01:00:24.480529+00:00 | DB_CALL get_all_settings | P3 | 1.07ms | success
