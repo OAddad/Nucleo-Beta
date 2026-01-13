@@ -31034,3 +31034,5 @@
 2026-01-13T14:43:40.823752+00:00 | DB_CALL get_all_pedidos | P3 | 1.21ms | success
 2026-01-13T14:43:40.826251+00:00 | DB_CALL get_all_entregadores | P3 | 0.2ms | success
 2026-01-13T14:43:40.828482+00:00 | DB_CALL get_all_settings | P3 | 0.22ms | success
+2026-01-13T14:43:50.847911+00:00 | DB_CALL get_all_settings | P3 | 0.39ms | success
+2026-01-13T14:43:51.019843+00:00 | DB_CALL get_all_settings | P3 | 0.29ms | success
