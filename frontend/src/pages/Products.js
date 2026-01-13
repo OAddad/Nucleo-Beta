@@ -464,6 +464,8 @@ export default function Products() {
   const [category, setCategory] = useState("");
   const [productType, setProductType] = useState("produto");
   const [salePrice, setSalePrice] = useState("");
+  const [simplePrice, setSimplePrice] = useState("");
+  const [comboDescription, setComboDescription] = useState("");
   const [photoUrl, setPhotoUrl] = useState("");
   const [photoFile, setPhotoFile] = useState(null);
   const [isInsumo, setIsInsumo] = useState(false);
