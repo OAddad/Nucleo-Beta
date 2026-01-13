@@ -754,6 +754,7 @@ export default function Clientes() {
               <TableRow>
                 <TableHead>Cliente</TableHead>
                 <TableHead>Status</TableHead>
+                <TableHead>Clube</TableHead>
                 <TableHead>Telefone</TableHead>
                 <TableHead>Pedidos</TableHead>
                 <TableHead>Pontos</TableHead>
