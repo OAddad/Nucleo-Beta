@@ -529,15 +529,15 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode }) {
                     <img
                       src={getImageUrl(product.photo_url)}
                       alt={product.name}
-                      className="w-full h-full object-contain p-2"
+                      className="w-full h-full object-contain p-3"
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-orange-300">
-                      <span className="text-3xl">🍔</span>
+                      <span className="text-4xl">🍔</span>
                     </div>
                   )}
                   {/* Indicador de seleção */}
-                  <div className={`absolute top-1.5 right-1.5 w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                  <div className={`absolute top-2 right-2 w-5 h-5 rounded-full border-2 flex items-center justify-center ${
                     selectedComboType === 'simples' ? 'border-orange-500 bg-orange-500' : 'border-gray-300 bg-white dark:bg-zinc-700'
                   }`}>
                     {selectedComboType === 'simples' && <Check className="w-3 h-3 text-white" />}
@@ -545,10 +545,10 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode }) {
                 </div>
                 
                 {/* Info do Simples */}
-                <div className="p-2 text-center">
-                  <p className={`font-bold ${t.text} text-xs`}>SIMPLES</p>
-                  <p className={`text-[9px] ${t.textMuted} mt-0.5`}>Apenas o produto</p>
-                  <p className="text-sm font-black text-orange-500 mt-1">
+                <div className="p-3 text-center">
+                  <p className={`font-bold ${t.text} text-sm`}>SIMPLES</p>
+                  <p className={`text-[10px] ${t.textMuted} mt-0.5`}>Apenas o produto</p>
+                  <p className="text-lg font-black text-orange-500 mt-1">
                     R$ {simplePrice.toFixed(2).replace('.', ',')}
                   </p>
                 </div>
