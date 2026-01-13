@@ -1366,7 +1366,36 @@ export default function CardapioPublico({ onAdminLogin }) {
     // Abrir tela de acompanhamento
     setCurrentOrder(orderData);
     setTrackingOpen(true);
+    // Atualizar lista de pedidos
+    if (loggedClient) {
+      fetchClientPedidos();
+    }
   };
+
+  // Buscar pedidos do cliente
+  const fetchClientPedidos = async () => {
+    if (!loggedClient?.id) return;
+    setLoadingPedidos(true);
+    try {
+      const response = await axios.get(`${API}/pedidos/cliente/${loggedClient.id}`);
+      const pedidosOrdenados = (response.data || []).sort((a, b) => 
+        new Date(b.created_at) - new Date(a.created_at)
+      );
+      setClientPedidos(pedidosOrdenados);
+    } catch (error) {
+      console.error("Erro ao carregar pedidos:", error);
+      setClientPedidos([]);
+    } finally {
+      setLoadingPedidos(false);
+    }
+  };
+
+  // Buscar pedidos quando mudar para aba de pedidos
+  useEffect(() => {
+    if (activeTab === 'pedidos' && loggedClient) {
+      fetchClientPedidos();
+    }
+  }, [activeTab, loggedClient]);
 
   useEffect(() => {
     const client = localStorage.getItem("client");
