@@ -49,7 +49,7 @@ const formatCEP = (value) => {
 };
 
 // Modal de Edição de Conta (Réplica do popup de Clientes)
-function EditAccountModal({ isOpen, onClose, client, onUpdate }) {
+function EditAccountModal({ isOpen, onClose, client, onUpdate, clubeNome }) {
   const [loading, setLoading] = useState(false);
   const [nome, setNome] = useState("");
   const [telefone, setTelefone] = useState("");
