@@ -1815,14 +1815,16 @@ export default function CardapioPublico({ onAdminLogin }) {
     fetchCompanySettings();
   }, []);
 
-  // Detectar scroll para esconder header em mobile
+  // Detectar scroll para esconder header e barra de status em mobile
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
       if (currentScrollY > lastScrollY.current && currentScrollY > 100) {
         setHeaderVisible(false); // Rolando para baixo
+        setStatusBarVisible(false); // Esconder barra de status quando aberto
       } else {
         setHeaderVisible(true); // Rolando para cima
+        setStatusBarVisible(true); // Mostrar barra de status
       }
       lastScrollY.current = currentScrollY;
     };
