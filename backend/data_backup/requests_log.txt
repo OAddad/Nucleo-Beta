@@ -31988,3 +31988,10 @@
 2026-01-13T16:30:21.879172+00:00 | DB_CALL get_all_settings | P3 | 0.29ms | success
 2026-01-13T16:30:21.881034+00:00 | DB_CALL get_all_entregadores | P3 | 0.21ms | success
 2026-01-13T16:30:21.883471+00:00 | DB_CALL get_all_pedidos | P3 | 1.05ms | success
+2026-01-13T16:30:48.983230+00:00 | DB_CALL get_user_by_username | P3 | 0.25ms | success
+2026-01-13T16:30:48.986310+00:00 | DB_CALL get_user_by_id | P3 | 0.86ms | success
+2026-01-13T16:30:49.040998+00:00 | DB_CALL recalculate_all_cliente_stats | P3 | 54.54ms | success
+2026-01-13T16:30:49.041936+00:00 | DB_CALL get_all_clientes | P3 | 0.81ms | success
+2026-01-13T16:30:49.068152+00:00 | DB_CALL get_user_by_id | P3 | 0.21ms | success
+2026-01-13T16:30:49.068656+00:00 | DB_CALL recalculate_all_cliente_stats | P3 | 0.4ms | success
+2026-01-13T16:30:49.068934+00:00 | DB_CALL get_all_clientes | P3 | 0.23ms | success
