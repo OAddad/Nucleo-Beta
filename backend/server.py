@@ -2570,6 +2570,10 @@ async def get_cliente_consentimento_pdf(cliente_id: str):
     import io
     from fastapi.responses import StreamingResponse
     
+    # Buscar nome do clube das configurações
+    clube_nome = sqlite_db.get_setting("clube_nome") or "Addad"
+    nome_completo_clube = f"Clube {clube_nome}"
+    
     # Buscar dados do cliente
     with sqlite_db.get_db() as conn:
         cursor = conn.cursor()
