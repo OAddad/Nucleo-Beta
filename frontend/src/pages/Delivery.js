@@ -1774,23 +1774,30 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
               {cart.length === 0 ? (
                 <p className="text-center text-muted-foreground py-8">Carrinho vazio</p>
               ) : (
-                cart.map(item => (
-                  <div key={item.id} className="bg-card p-3 rounded-lg border">
+                cart.map((item, index) => (
+                  <div key={`${item.id}-${index}`} className="bg-card p-3 rounded-lg border">
                     <div className="flex justify-between items-start">
                       <div className="flex-1">
                         <p className="font-medium text-sm">{item.name}</p>
                         <p className="text-orange-600 text-sm">R$ {(item.sale_price || 0).toFixed(2)}</p>
+                        {item.observation && (
+                          <p className="text-xs text-muted-foreground mt-1 italic">📝 {item.observation}</p>
+                        )}
                       </div>
                       <div className="flex items-center gap-2">
                         <button 
-                          onClick={() => removeFromCart(item.id)}
+                          onClick={() => removeFromCart(item.id, index)}
                           className="w-6 h-6 rounded bg-muted hover:bg-muted/80 flex items-center justify-center"
                         >
                           <span className="text-lg leading-none">-</span>
                         </button>
                         <span className="w-6 text-center font-medium">{item.quantity}</span>
                         <button 
-                          onClick={() => addToCart(item)}
+                          onClick={() => {
+                            const newCart = [...cart];
+                            newCart[index] = { ...newCart[index], quantity: newCart[index].quantity + 1 };
+                            setCart(newCart);
+                          }}
                           className="w-6 h-6 rounded bg-orange-500 hover:bg-orange-600 text-white flex items-center justify-center"
                         >
                           <span className="text-lg leading-none">+</span>

@@ -24742,3 +24742,11 @@
 2026-01-13T00:03:53.448762+00:00 | DB_CALL get_all_pedidos | P3 | 1.58ms | success
 2026-01-13T00:03:53.451117+00:00 | DB_CALL get_all_entregadores | P3 | 0.18ms | success
 2026-01-13T00:03:53.453755+00:00 | DB_CALL get_all_settings | P3 | 0.16ms | success
+2026-01-13T00:03:58.453037+00:00 | DB_CALL get_all_pedidos | P3 | 3.04ms | success
+2026-01-13T00:03:58.454851+00:00 | DB_CALL get_all_entregadores | P3 | 4.09ms | success
+2026-01-13T00:03:58.455193+00:00 | DB_CALL get_all_settings | P3 | 4.18ms | success
+2026-01-13T00:03:58.455436+00:00 | DB_CALL get_pedido_by_id | P3 | 3.51ms | success
+2026-01-13T00:04:03.444989+00:00 | DB_CALL get_all_settings | P3 | 0.26ms | success
+2026-01-13T00:04:03.446991+00:00 | DB_CALL get_all_pedidos | P3 | 2.71ms | success
+2026-01-13T00:04:03.448682+00:00 | DB_CALL get_pedido_by_id | P3 | 4.79ms | success
+2026-01-13T00:04:03.449009+00:00 | DB_CALL get_all_entregadores | P3 | 2.99ms | success
