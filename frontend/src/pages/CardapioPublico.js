@@ -1836,8 +1836,6 @@ export default function CardapioPublico({ onAdminLogin }) {
                         </div>
                       ))}
                       </div>
-                      {/* Indicador visual de scroll - só no mobile */}
-                      <div className="absolute right-0 top-0 bottom-2 w-6 bg-gradient-to-l from-white dark:from-zinc-900 to-transparent pointer-events-none lg:hidden" />
                     </div>
                   </div>
                 ))
