@@ -1620,10 +1620,32 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
               <span>Novo Pedido - Delivery</span>
             </div>
             <div className="flex items-center gap-2 text-sm font-normal">
-              <span className={`px-2 py-1 rounded ${step === 1 ? 'bg-orange-500 text-white' : 'bg-muted text-muted-foreground'}`}>1. Produtos</span>
-              <span className={`px-2 py-1 rounded ${step === 2 ? 'bg-orange-500 text-white' : 'bg-muted text-muted-foreground'}`}>2. Cliente</span>
-              <span className={`px-2 py-1 rounded ${step === 3 ? 'bg-orange-500 text-white' : 'bg-muted text-muted-foreground'}`}>3. Entrega</span>
-              <span className={`px-2 py-1 rounded ${step === 4 ? 'bg-orange-500 text-white' : 'bg-muted text-muted-foreground'}`}>4. Pagamento</span>
+              <button 
+                onClick={() => setStep(1)} 
+                className={`px-2 py-1 rounded cursor-pointer transition-all hover:opacity-80 ${step === 1 ? 'bg-orange-500 text-white' : 'bg-muted text-muted-foreground'}`}
+              >
+                1. Produtos
+              </button>
+              <button 
+                onClick={() => setStep(2)} 
+                className={`px-2 py-1 rounded cursor-pointer transition-all hover:opacity-80 ${step === 2 ? 'bg-orange-500 text-white' : 'bg-muted text-muted-foreground'}`}
+              >
+                2. Cliente
+              </button>
+              <button 
+                onClick={() => setStep(3)} 
+                disabled={!selectedCliente}
+                className={`px-2 py-1 rounded cursor-pointer transition-all hover:opacity-80 disabled:opacity-50 disabled:cursor-not-allowed ${step === 3 ? 'bg-orange-500 text-white' : 'bg-muted text-muted-foreground'}`}
+              >
+                3. Entrega
+              </button>
+              <button 
+                onClick={() => setStep(4)} 
+                disabled={!selectedCliente}
+                className={`px-2 py-1 rounded cursor-pointer transition-all hover:opacity-80 disabled:opacity-50 disabled:cursor-not-allowed ${step === 4 ? 'bg-orange-500 text-white' : 'bg-muted text-muted-foreground'}`}
+              >
+                4. Pagamento
+              </button>
             </div>
           </DialogTitle>
         </DialogHeader>
