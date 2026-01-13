@@ -1750,13 +1750,11 @@ export default function CardapioPublico({ onAdminLogin }) {
                     {/* Mobile: Scroll Horizontal 2.5 itens | Desktop: Grade */}
                     <div 
                       className="flex lg:grid gap-3 overflow-x-auto lg:overflow-visible pb-2 lg:pb-0 snap-x snap-mandatory lg:snap-none scrollbar-hide lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6"
-                      style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
                     >
                       {categoryProducts.map(product => (
                         <div 
                           key={product.id} 
-                          className={`${t.bgCard} rounded-xl overflow-hidden border ${t.border} cursor-pointer snap-start flex-shrink-0 lg:flex-shrink hover:shadow-lg transition-shadow`}
-                          style={{ width: 'calc((100% - 1.5rem) / 2.5)' }}
+                          className={`${t.bgCard} rounded-xl overflow-hidden border ${t.border} cursor-pointer snap-start flex-shrink-0 lg:flex-shrink hover:shadow-lg transition-shadow cardapio-item-mobile`}
                           onClick={() => openProductPopup(product)}
                         >
                           {/* Imagem - Menor no desktop */}
