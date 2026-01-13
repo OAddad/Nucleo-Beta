@@ -1834,7 +1834,6 @@ export default function CardapioPublico({ onAdminLogin }) {
                           </div>
                         </div>
                       ))}
-                      </div>
                     </div>
                   </div>
                 ))
