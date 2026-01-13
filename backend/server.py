@@ -2384,10 +2384,8 @@ async def get_clube_config_public():
     }
 
 @api_router.get("/clube/config")
-async def get_clube_config(credentials: HTTPAuthorizationCredentials = Depends(security)):
+async def get_clube_config(user: User = Depends(get_current_user)):
     """Retorna as configurações do clube"""
-    verify_token(credentials)
-    
     clube_nome = sqlite_db.get_setting("clube_nome") or "Addad"
     pontos_por_real = sqlite_db.get_setting("pontos_por_real") or "1"
     
@@ -2397,20 +2395,16 @@ async def get_clube_config(credentials: HTTPAuthorizationCredentials = Depends(s
     }
 
 @api_router.put("/clube/config")
-async def update_clube_config(config: ClubeConfigRequest, credentials: HTTPAuthorizationCredentials = Depends(security)):
+async def update_clube_config(config: ClubeConfigRequest, user: User = Depends(get_current_user)):
     """Atualiza as configurações do clube"""
-    verify_token(credentials)
-    
     sqlite_db.set_setting("clube_nome", config.clube_nome)
     sqlite_db.set_setting("pontos_por_real", str(config.pontos_por_real))
     
     return {"message": "Configurações do clube atualizadas com sucesso!"}
 
 @api_router.get("/clube/stats")
-async def get_clube_stats(credentials: HTTPAuthorizationCredentials = Depends(security)):
+async def get_clube_stats(user: User = Depends(get_current_user)):
     """Retorna estatísticas do clube"""
-    verify_token(credentials)
-    
     with sqlite_db.get_db() as conn:
         cursor = conn.cursor()
         
