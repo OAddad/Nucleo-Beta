@@ -24770,3 +24770,11 @@
 2026-01-13T00:04:16.448678+00:00 | DB_CALL get_all_settings | P3 | 3.16ms | success
 2026-01-13T00:04:16.449004+00:00 | DB_CALL get_all_entregadores | P3 | 3.08ms | success
 2026-01-13T00:04:18.449045+00:00 | DB_CALL get_pedido_by_id | P3 | 0.28ms | success
+2026-01-13T00:04:21.440774+00:00 | DB_CALL get_all_entregadores | P3 | 0.51ms | success
+2026-01-13T00:04:21.447842+00:00 | DB_CALL get_all_settings | P3 | 0.27ms | success
+2026-01-13T00:04:21.449125+00:00 | DB_CALL get_all_pedidos | P3 | 1.97ms | success
+2026-01-13T00:04:23.440427+00:00 | DB_CALL get_pedido_by_id | P3 | 0.29ms | success
+2026-01-13T00:04:26.451493+00:00 | DB_CALL get_all_entregadores | P3 | 0.73ms | success
+2026-01-13T00:04:26.452927+00:00 | DB_CALL get_all_pedidos | P3 | 1.86ms | success
+2026-01-13T00:04:26.455874+00:00 | DB_CALL get_all_settings | P3 | 1.02ms | success
+2026-01-13T00:04:28.439917+00:00 | DB_CALL get_pedido_by_id | P3 | 0.29ms | success

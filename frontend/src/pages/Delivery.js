@@ -1299,16 +1299,14 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
   };
 
   // Remover do carrinho
-  const removeFromCart = (productId) => {
-    const existing = cart.find(item => item.id === productId);
-    if (existing && existing.quantity > 1) {
-      setCart(cart.map(item => 
-        item.id === productId 
-          ? { ...item, quantity: item.quantity - 1 }
-          : item
-      ));
+  const removeFromCart = (productId, index) => {
+    const item = cart[index];
+    if (item && item.quantity > 1) {
+      const newCart = [...cart];
+      newCart[index] = { ...newCart[index], quantity: newCart[index].quantity - 1 };
+      setCart(newCart);
     } else {
-      setCart(cart.filter(item => item.id !== productId));
+      setCart(cart.filter((_, i) => i !== index));
     }
   };
 
