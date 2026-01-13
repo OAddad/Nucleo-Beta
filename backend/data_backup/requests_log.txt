@@ -29684,3 +29684,6 @@
 2026-01-13T01:37:38.494515+00:00 | DB_CALL get_all_pedidos | P3 | 1.83ms | success
 2026-01-13T01:37:38.496350+00:00 | DB_CALL get_all_entregadores | P3 | 3.16ms | success
 2026-01-13T01:37:38.497250+00:00 | DB_CALL get_all_settings | P3 | 0.18ms | success
+2026-01-13T01:37:43.561216+00:00 | DB_CALL get_all_pedidos | P3 | 2.49ms | success
+2026-01-13T01:37:43.563096+00:00 | DB_CALL get_all_settings | P3 | 3.44ms | success
+2026-01-13T01:37:43.564591+00:00 | DB_CALL get_all_entregadores | P3 | 4.78ms | success
