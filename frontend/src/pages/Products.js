@@ -1013,7 +1013,8 @@ export default function Products() {
       calculation_type: "soma",
       min_selections: 0,
       max_selections: 0,
-      items: []
+      items: [],
+      combo_only: false  // Se true, etapa só aparece para combo (ex: bebida)
     }]);
   };
 
