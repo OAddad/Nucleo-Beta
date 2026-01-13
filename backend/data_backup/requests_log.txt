@@ -32086,3 +32086,14 @@
 2026-01-13T16:33:59.472257+00:00 | DB_CALL get_all_clientes | P3 | 0.88ms | success
 2026-01-13T16:33:59.475732+00:00 | DB_CALL get_total_pontuacao | P3 | 4.22ms | success
 2026-01-13T16:33:59.476115+00:00 | DB_CALL count_clientes | P3 | 0.29ms | success
+2026-01-13T16:35:39.401028+00:00 | DB_CALL get_user_by_id | P3 | 0.43ms | success
+2026-01-13T16:35:39.401307+00:00 | DB_CALL get_total_pontuacao | P3 | 0.12ms | success
+2026-01-13T16:35:39.401475+00:00 | DB_CALL count_clientes | P3 | 0.09ms | success
+2026-01-13T16:35:39.403807+00:00 | DB_CALL get_user_by_id | P3 | 0.18ms | success
+2026-01-13T16:35:39.404668+00:00 | DB_CALL recalculate_all_cliente_stats | P3 | 0.74ms | success
+2026-01-13T16:35:39.405278+00:00 | DB_CALL get_all_clientes | P3 | 0.56ms | success
+2026-01-13T16:35:39.458640+00:00 | DB_CALL get_all_settings | P3 | 1.01ms | success
+2026-01-13T16:35:48.476855+00:00 | DB_CALL get_user_by_username | P3 | 0.27ms | success
+2026-01-13T16:35:48.477083+00:00 | DB_CALL get_user_by_username | P3 | 0.09ms | success
+2026-01-13T16:35:48.477597+00:00 | DB_CALL get_all_clientes | P3 | 0.43ms | success
+2026-01-13T16:35:49.051627+00:00 | DB_CALL get_cliente_by_id | P3 | 0.38ms | success
