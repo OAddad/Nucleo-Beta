@@ -32367,3 +32367,13 @@
 2026-01-13T17:14:13.873515+00:00 | DB_CALL count_ingredients | P3 | 0.24ms | success
 2026-01-13T17:14:13.873701+00:00 | DB_CALL count_products | P3 | 0.12ms | success
 2026-01-13T17:14:13.873845+00:00 | DB_CALL count_users | P3 | 0.09ms | success
+2026-01-13T17:14:49.931048+00:00 | DB_CALL get_all_products | P3 | 3.58ms | success
+2026-01-13T17:14:49.932312+00:00 | DB_CALL get_all_categories | P3 | 4.34ms | success
+2026-01-13T17:14:49.932708+00:00 | DB_CALL get_all_business_hours | P3 | 3.29ms | success
+2026-01-13T17:14:49.933149+00:00 | DB_CALL get_all_settings | P3 | 2.74ms | success
+2026-01-13T17:14:49.934885+00:00 | DB_CALL get_all_bairros | P3 | 0.27ms | success
+2026-01-13T17:14:49.936818+00:00 | DB_CALL get_all_business_hours | P3 | 0.17ms | success
+2026-01-13T17:14:49.954794+00:00 | DB_CALL get_all_bairros | P3 | 0.22ms | success
+2026-01-13T17:14:49.979779+00:00 | DB_CALL get_all_settings | P3 | 0.18ms | success
+2026-01-13T17:14:49.980957+00:00 | DB_CALL get_all_categories | P3 | 0.16ms | success
+2026-01-13T17:14:50.347898+00:00 | DB_CALL get_all_products | P3 | 0.59ms | success
