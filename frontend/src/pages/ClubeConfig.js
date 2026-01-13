@@ -163,15 +163,18 @@ export default function ClubeConfig() {
             <Label htmlFor="clube_nome" className="text-sm font-medium">
               Nome do Clube
             </Label>
-            <Input
-              id="clube_nome"
-              value={config.clube_nome}
-              onChange={(e) => setConfig({ ...config, clube_nome: e.target.value })}
-              placeholder="Ex: Clube VIP, Clube Fidelidade..."
-              className="max-w-md"
-            />
+            <div className="flex items-center gap-2 max-w-md">
+              <span className="text-lg font-bold text-orange-500 whitespace-nowrap">Clube</span>
+              <Input
+                id="clube_nome"
+                value={config.clube_nome}
+                onChange={(e) => setConfig({ ...config, clube_nome: e.target.value })}
+                placeholder="Ex: Addad, VIP, Fidelidade..."
+                className="flex-1"
+              />
+            </div>
             <p className="text-xs text-muted-foreground">
-              Este nome será exibido para os clientes no cardápio digital
+              O nome completo será: <strong className="text-orange-500">Clube {config.clube_nome || 'Nome'}</strong>
             </p>
           </div>
 
