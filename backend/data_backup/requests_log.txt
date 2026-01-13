@@ -32097,3 +32097,13 @@
 2026-01-13T16:35:48.477083+00:00 | DB_CALL get_user_by_username | P3 | 0.09ms | success
 2026-01-13T16:35:48.477597+00:00 | DB_CALL get_all_clientes | P3 | 0.43ms | success
 2026-01-13T16:35:49.051627+00:00 | DB_CALL get_cliente_by_id | P3 | 0.38ms | success
+2026-01-13T16:37:57.827594+00:00 | DB_CALL get_all_settings | P3 | 2.69ms | success
+2026-01-13T16:37:57.828383+00:00 | DB_CALL get_all_business_hours | P3 | 3.15ms | success
+2026-01-13T16:37:57.833998+00:00 | DB_CALL get_all_categories | P3 | 8.98ms | success
+2026-01-13T16:37:57.836546+00:00 | DB_CALL get_all_bairros | P3 | 11.12ms | success
+2026-01-13T16:37:57.839076+00:00 | DB_CALL get_all_products | P3 | 13.6ms | success
+2026-01-13T16:37:58.898913+00:00 | DB_CALL get_all_bairros | P3 | 0.32ms | success
+2026-01-13T16:37:58.900581+00:00 | DB_CALL get_all_products | P3 | 0.51ms | success
+2026-01-13T16:37:58.902009+00:00 | DB_CALL get_all_categories | P3 | 0.17ms | success
+2026-01-13T16:37:58.903619+00:00 | DB_CALL get_all_business_hours | P3 | 0.18ms | success
+2026-01-13T16:37:58.904549+00:00 | DB_CALL get_all_settings | P3 | 0.15ms | success
