@@ -2533,7 +2533,7 @@ function RespostasAutomaticasTab({ toast }) {
                   <h3 className="font-semibold">Específico Entrega</h3>
                 </div>
                 <div className="space-y-2">
-                  {templates.filter(t => t.tipo_entrega === 'delivery' && ['pronto', 'na_bag', 'em_rota', 'entregue', 'concluido'].includes(t.status)).map((template) => {
+                  {templates.filter(t => t.tipo_entrega === 'delivery' && ['pronto', 'na_bag', 'em_rota', 'entregue'].includes(t.status)).map((template) => {
                     const statusConfig = STATUS_LABELS[template.status] || { label: template.status, icon: MessageCircle, color: "bg-gray-500" };
                     const StatusIcon = statusConfig.icon;
                     return (
