@@ -224,7 +224,7 @@ function EditAccountModal({ isOpen, onClose, client, onUpdate, clubeNome }) {
                   <Award className="w-6 h-6 text-white" />
                 </div>
                 <div className="flex-1">
-                  <p className="font-bold text-lg">Você é membro do Clube!</p>
+                  <p className="font-bold text-lg">Você é membro do Clube {clubeNome || 'Addad'}!</p>
                   <p className="text-white/80 text-sm">Seus pontos: {client?.pontuacao || 0}</p>
                 </div>
               </div>
