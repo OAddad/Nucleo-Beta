@@ -1833,7 +1833,7 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
                 <div className="flex-1 flex items-center gap-2">
                   <div className="relative flex-1">
                     <Input
-                      placeholder="Buscar cliente por nome ou telefone..."
+                      placeholder="Buscar por nome, CPF ou telefone..."
                       value={clienteSearch}
                       onChange={(e) => {
                         setClienteSearch(e.target.value);

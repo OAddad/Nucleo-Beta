@@ -28131,3 +28131,6 @@
 2026-01-13T01:05:03.070629+00:00 | DB_CALL recalculate_all_cliente_stats | P3 | 0.63ms | success
 2026-01-13T01:05:03.070810+00:00 | DB_CALL get_all_categories | P3 | 0.94ms | success
 2026-01-13T01:05:03.071531+00:00 | DB_CALL get_all_clientes | P3 | 0.82ms | success
+2026-01-13T01:05:08.476913+00:00 | DB_CALL get_all_pedidos | P3 | 1.49ms | success
+2026-01-13T01:05:08.478631+00:00 | DB_CALL get_all_entregadores | P3 | 2.85ms | success
+2026-01-13T01:05:08.479530+00:00 | DB_CALL get_all_settings | P3 | 0.14ms | success
