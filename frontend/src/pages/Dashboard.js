@@ -739,7 +739,7 @@ export default function Dashboard({ setIsAuthenticated }) {
           </div>
         </nav>
 
-        <div className="p-4 border-t space-y-2 flex-shrink-0">
+        <div className="p-3 lg:p-4 border-t space-y-2 flex-shrink-0">
           {sidebarOpen && (
             <div className="flex justify-center pb-2">
               <DarkModeToggle />
@@ -749,7 +749,7 @@ export default function Dashboard({ setIsAuthenticated }) {
             data-testid="logout-button"
             onClick={handleLogout}
             variant="ghost"
-            className={`w-full hover:bg-muted ${sidebarOpen ? 'justify-start' : 'lg:justify-center lg:px-2'}`}
+            className={`w-full hover:bg-muted active:bg-muted/80 py-3 lg:py-2 ${sidebarOpen ? 'justify-start' : 'lg:justify-center lg:px-2'}`}
             title={!sidebarOpen ? 'Sair' : ''}
           >
             <LogOut className="w-5 h-5 flex-shrink-0" strokeWidth={1.5} />
@@ -759,8 +759,8 @@ export default function Dashboard({ setIsAuthenticated }) {
         </div>
       </aside>
 
-      {/* Espaçador para compensar o sidebar fixo */}
-      <div className={`flex-shrink-0 transition-all duration-300 ${sidebarOpen ? 'w-64' : 'w-0 lg:w-16'}`}></div>
+      {/* Espaçador para compensar o sidebar fixo - apenas desktop */}
+      <div className={`flex-shrink-0 transition-all duration-300 hidden lg:block ${sidebarOpen ? 'lg:w-64' : 'lg:w-16'}`}></div>
 
       {/* Conteúdo Principal */}
       <div className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
