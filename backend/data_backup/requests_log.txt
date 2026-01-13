@@ -25790,3 +25790,10 @@
 2026-01-13T00:28:19.737637+00:00 | DB_CALL get_all_pedidos | P3 | 1.34ms | success
 2026-01-13T00:28:19.739228+00:00 | DB_CALL get_all_settings | P3 | 2.61ms | success
 2026-01-13T00:28:20.030013+00:00 | DB_CALL get_all_pedidos | P3 | 1.08ms | success
+2026-01-13T00:28:27.670673+00:00 | DB_CALL get_user_by_id | P3 | 0.37ms | success
+2026-01-13T00:28:27.670976+00:00 | DB_CALL get_next_product_code | P3 | 0.12ms | success
+2026-01-13T00:28:27.671127+00:00 | DB_CALL get_ingredient_by_id | P3 | 0.09ms | success
+2026-01-13T00:28:27.678053+00:00 | DB_CALL create_product | P3 | 6.84ms | success
+2026-01-13T00:28:27.683160+00:00 | DB_CALL create_audit_log | P3 | 5.03ms | success
+2026-01-13T00:28:27.845350+00:00 | DB_CALL get_user_by_id | P3 | 0.25ms | success
+2026-01-13T00:28:27.845787+00:00 | DB_CALL get_all_products | P3 | 0.31ms | success
