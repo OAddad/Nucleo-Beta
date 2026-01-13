@@ -30348,3 +30348,11 @@
 2026-01-13T01:59:55.889599+00:00 | DB_CALL get_all_categories | P3 | 3.23ms | success
 2026-01-13T01:59:55.894775+00:00 | DB_CALL get_all_business_hours | P3 | 0.29ms | success
 2026-01-13T01:59:56.011315+00:00 | DB_CALL get_all_bairros | P3 | 0.54ms | success
+2026-01-13T02:00:33.607218+00:00 | DB_CALL get_all_settings | P3 | 1.82ms | success
+2026-01-13T02:00:33.607816+00:00 | DB_CALL get_all_entregadores | P3 | 2.31ms | success
+2026-01-13T02:00:33.612109+00:00 | DB_CALL get_all_pedidos | P3 | 5.31ms | success
+2026-01-13T02:00:44.884943+00:00 | DB_CALL get_all_settings | P3 | 41.1ms | success
+2026-01-13T02:00:44.886030+00:00 | DB_CALL get_all_categories | P3 | 42.18ms | success
+2026-01-13T02:00:44.887460+00:00 | DB_CALL get_all_products | P3 | 3.43ms | success
+2026-01-13T02:00:44.888416+00:00 | DB_CALL get_all_business_hours | P3 | 3.71ms | success
+2026-01-13T02:00:44.990259+00:00 | DB_CALL get_all_bairros | P3 | 0.46ms | success
