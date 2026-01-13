@@ -1399,8 +1399,6 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
 
   // Criar novo pedido (botão "+ Novo")
   const novoPedidoTab = () => {
-    console.log("novoPedidoTab chamada - cart:", cart.length, "cliente:", selectedCliente?.nome);
-    
     // Se tem algo no pedido atual, salva antes de criar novo
     if (cart.length > 0 || selectedCliente) {
       const id = pedidoAtualId || Date.now();
@@ -1415,8 +1413,6 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
         step
       };
       
-      console.log("Salvando pedido atual:", pedidoAtual);
-      
       // Adiciona à lista
       setPedidosAtivos(prev => {
         const existe = prev.find(p => p.id === id);
@@ -1430,7 +1426,6 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
     // Usar setTimeout para garantir que o state anterior foi salvo
     setTimeout(() => {
       const novoId = Date.now();
-      console.log("Criando novo pedido com ID:", novoId);
       
       // Limpar todos os states para novo pedido
       setPedidoAtualId(novoId);
