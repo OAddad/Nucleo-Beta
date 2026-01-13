@@ -1391,6 +1391,22 @@ export default function CardapioPublico({ onAdminLogin }) {
     fetchCompanySettings();
   }, []);
 
+  // Detectar scroll para esconder header em mobile
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      if (currentScrollY > lastScrollY.current && currentScrollY > 100) {
+        setHeaderVisible(false); // Rolando para baixo
+      } else {
+        setHeaderVisible(true); // Rolando para cima
+      }
+      lastScrollY.current = currentScrollY;
+    };
+    
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   useEffect(() => {
     fetchProducts();
     fetchCategories();
