@@ -29994,3 +29994,9 @@
 2026-01-13T01:50:52.722526+00:00 | DB_CALL get_user_by_username | P3 | 0.7ms | success
 2026-01-13T01:50:57.071112+00:00 | DB_CALL get_user_by_username | P3 | 0.3ms | success
 2026-01-13T01:50:57.450668+00:00 | DB_CALL get_all_settings | P3 | 0.28ms | success
+2026-01-13T01:51:41.008432+00:00 | DB_CALL get_all_settings | P3 | 0.41ms | success
+2026-01-13T01:51:41.009968+00:00 | DB_CALL get_all_products | P3 | 0.63ms | success
+2026-01-13T01:51:41.014404+00:00 | DB_CALL get_all_categories | P3 | 0.73ms | success
+2026-01-13T01:51:41.014899+00:00 | DB_CALL get_all_business_hours | P3 | 1.49ms | success
+2026-01-13T01:51:41.251950+00:00 | DB_CALL get_all_bairros | P3 | 3.53ms | success
+2026-01-13T01:51:44.530521+00:00 | DB_CALL get_user_by_username | P3 | 0.31ms | success
