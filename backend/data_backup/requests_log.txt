@@ -29909,3 +29909,7 @@
 2026-01-13T01:43:33.500545+00:00 | DB_CALL get_pedidos_by_entregador | P3 | 0.96ms | success
 2026-01-13T01:44:33.504059+00:00 | DB_CALL get_entregador_by_id | P3 | 0.7ms | success
 2026-01-13T01:44:33.504685+00:00 | DB_CALL get_pedidos_by_entregador | P3 | 0.7ms | success
+2026-01-13T01:48:35.383344+00:00 | DB_CALL init_database | P3 | 73.52ms | success
+2026-01-13T01:48:35.383947+00:00 | DB_CALL count_ingredients | P3 | 0.3ms | success
+2026-01-13T01:48:35.384326+00:00 | DB_CALL count_products | P3 | 0.26ms | success
+2026-01-13T01:48:35.384534+00:00 | DB_CALL count_users | P3 | 0.11ms | success
