@@ -1365,23 +1365,32 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
 
   // Gerenciar múltiplos pedidos - Salvar pedido atual na lista
   const salvarPedidoAtual = () => {
+    // Só salva se tiver algo (carrinho ou cliente)
     if (cart.length > 0 || selectedCliente) {
+      const id = pedidoAtualId || Date.now();
       const pedidoAtual = {
-        id: pedidoAtualId || Date.now(),
-        cart,
+        id: id,
+        cart: [...cart],
         selectedCliente,
         tipoEntrega,
-        endereco,
+        endereco: {...endereco},
         formaPagamento,
         observacao,
         step
       };
       
-      const existe = pedidosAtivos.find(p => p.id === pedidoAtual.id);
-      if (existe) {
-        setPedidosAtivos(prev => prev.map(p => p.id === pedidoAtual.id ? pedidoAtual : p));
-      } else {
-        setPedidosAtivos(prev => [...prev, pedidoAtual]);
+      setPedidosAtivos(prev => {
+        const existe = prev.find(p => p.id === id);
+        if (existe) {
+          return prev.map(p => p.id === id ? pedidoAtual : p);
+        } else {
+          return [...prev, pedidoAtual];
+        }
+      });
+      
+      // Retorna o ID do pedido salvo
+      if (!pedidoAtualId) {
+        setPedidoAtualId(id);
       }
       return pedidoAtual;
     }
@@ -1391,10 +1400,12 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
   // Criar novo pedido (botão "+ Novo")
   const novoPedidoTab = () => {
     // Salvar estado atual se houver algo
-    salvarPedidoAtual();
+    const pedidoSalvo = salvarPedidoAtual();
     
-    // Limpar para novo pedido
-    const novoId = Date.now();
+    // Criar novo ID para o novo pedido
+    const novoId = Date.now() + 1;
+    
+    // Limpar todos os states para novo pedido
     setPedidoAtualId(novoId);
     setCart([]);
     setSelectedCliente(null);
@@ -1408,6 +1419,8 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
     setClienteHistorico([]);
     setEnderecosSalvos([]);
     setEnderecoSelecionado(null);
+    setClienteSearch("");
+    setShowClienteDropdown(false);
   };
 
   // Trocar para pedido existente
