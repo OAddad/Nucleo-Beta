@@ -1672,8 +1672,8 @@ export default function CardapioPublico({ onAdminLogin }) {
     <div className={`min-h-screen ${t.bg} ${t.text} pb-16`}>
       {/* Header Fixo - Estilo Burger King */}
       <header className="fixed top-0 left-0 right-0 z-40">
-        {/* Barra Principal - Marrom escuro */}
-        <div className="bg-gradient-to-r from-amber-900 to-amber-800 px-3 py-2">
+        {/* Barra Principal - Laranja */}
+        <div className="bg-gradient-to-r from-orange-600 to-orange-500 px-3 py-2">
           <div className="flex items-center justify-between">
             {/* Lado Esquerdo - Nome + Pontos */}
             <div className="flex items-center gap-2">
