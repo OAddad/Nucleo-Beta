@@ -32133,3 +32133,9 @@
 2026-01-13T16:42:26.172284+00:00 | DB_CALL get_all_clientes | P3 | 0.98ms | success
 2026-01-13T16:42:26.175912+00:00 | DB_CALL get_total_pontuacao | P3 | 4.47ms | success
 2026-01-13T16:42:26.176244+00:00 | DB_CALL count_clientes | P3 | 0.22ms | success
+2026-01-13T16:50:30.038291+00:00 | DB_CALL get_user_by_id | P3 | 2.12ms | success
+2026-01-13T16:50:30.040798+00:00 | DB_CALL get_total_pontuacao | P3 | 2.28ms | success
+2026-01-13T16:50:30.041023+00:00 | DB_CALL get_user_by_id | P3 | 2.0ms | success
+2026-01-13T16:50:30.041436+00:00 | DB_CALL count_clientes | P3 | 0.5ms | success
+2026-01-13T16:50:30.042672+00:00 | DB_CALL recalculate_all_cliente_stats | P3 | 1.44ms | success
+2026-01-13T16:50:30.043406+00:00 | DB_CALL get_all_clientes | P3 | 0.61ms | success
