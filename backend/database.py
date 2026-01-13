@@ -343,7 +343,11 @@ def init_database():
                 last_order_date TEXT,
                 orders_last_30_days INTEGER DEFAULT 0,
                 pontuacao INTEGER DEFAULT 0,
-                created_at TEXT
+                created_at TEXT,
+                membro_clube INTEGER DEFAULT 0,
+                aceita_whatsapp INTEGER DEFAULT 0,
+                data_aceite_clube TEXT,
+                data_aceite_whatsapp TEXT
             )
         ''')
         
