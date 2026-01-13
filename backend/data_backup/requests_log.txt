@@ -29762,3 +29762,11 @@
 2026-01-13T01:39:07.489933+00:00 | DB_CALL get_all_pedidos | P3 | 1.25ms | success
 2026-01-13T01:39:07.492883+00:00 | DB_CALL get_all_entregadores | P3 | 0.75ms | success
 2026-01-13T01:39:07.493280+00:00 | DB_CALL get_all_settings | P3 | 0.77ms | success
+2026-01-13T01:39:14.660015+00:00 | DB_CALL get_all_categories | P3 | 0.95ms | success
+2026-01-13T01:39:14.661057+00:00 | DB_CALL get_all_products | P3 | 1.91ms | success
+2026-01-13T01:39:14.662238+00:00 | DB_CALL get_all_business_hours | P3 | 2.87ms | success
+2026-01-13T01:39:14.662636+00:00 | DB_CALL get_all_settings | P3 | 34.74ms | success
+2026-01-13T01:39:14.958373+00:00 | DB_CALL get_all_bairros | P3 | 64.61ms | success
+2026-01-13T01:39:17.503776+00:00 | DB_CALL get_all_pedidos | P3 | 2.04ms | success
+2026-01-13T01:39:17.505556+00:00 | DB_CALL get_all_entregadores | P3 | 2.94ms | success
+2026-01-13T01:39:17.505840+00:00 | DB_CALL get_all_settings | P3 | 2.84ms | success
