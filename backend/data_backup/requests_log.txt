@@ -31267,3 +31267,11 @@
 2026-01-13T15:10:27.025993+00:00 | DB_CALL get_all_business_hours | P3 | 5.15ms | success
 2026-01-13T15:10:27.026314+00:00 | DB_CALL get_all_products | P3 | 6.74ms | success
 2026-01-13T15:10:27.077053+00:00 | DB_CALL get_all_bairros | P3 | 0.37ms | success
+2026-01-13T15:10:46.137464+00:00 | DB_CALL get_all_settings | P3 | 1.25ms | success
+2026-01-13T15:10:46.140687+00:00 | DB_CALL get_all_products | P3 | 1.65ms | success
+2026-01-13T15:10:46.151960+00:00 | DB_CALL get_all_business_hours | P3 | 12.7ms | success
+2026-01-13T15:10:46.152837+00:00 | DB_CALL get_all_categories | P3 | 13.96ms | success
+2026-01-13T15:10:46.260430+00:00 | DB_CALL get_all_bairros | P3 | 1.17ms | success
+2026-01-13T15:10:52.602948+00:00 | DB_CALL get_user_by_username | P3 | 0.41ms | success
+2026-01-13T15:10:54.158411+00:00 | DB_CALL get_user_by_username | P3 | 0.3ms | success
+2026-01-13T15:10:54.273449+00:00 | DB_CALL get_all_settings | P3 | 0.28ms | success
