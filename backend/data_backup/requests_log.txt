@@ -31553,3 +31553,12 @@
 2026-01-13T15:31:09.974258+00:00 | DB_CALL get_all_categories | P3 | 0.82ms | success
 2026-01-13T15:31:09.975105+00:00 | DB_CALL get_all_business_hours | P3 | 1.18ms | success
 2026-01-13T15:31:10.025807+00:00 | DB_CALL get_all_bairros | P3 | 2.27ms | success
+2026-01-13T15:31:29.709329+00:00 | DB_CALL get_all_settings | P3 | 7.31ms | success
+2026-01-13T15:31:29.710810+00:00 | DB_CALL get_all_business_hours | P3 | 2.86ms | success
+2026-01-13T15:31:29.713033+00:00 | DB_CALL get_all_products | P3 | 5.62ms | success
+2026-01-13T15:31:29.717433+00:00 | DB_CALL get_all_categories | P3 | 9.87ms | success
+2026-01-13T15:31:29.774367+00:00 | DB_CALL get_all_bairros | P3 | 1.42ms | success
+2026-01-13T15:31:34.226150+00:00 | DB_CALL get_user_by_username | P3 | 0.24ms | success
+2026-01-13T15:31:34.226462+00:00 | DB_CALL get_user_by_username | P3 | 0.17ms | success
+2026-01-13T15:31:34.227351+00:00 | DB_CALL get_all_clientes | P3 | 0.81ms | success
+2026-01-13T15:31:34.255674+00:00 | DB_CALL get_cliente_by_id | P3 | 0.32ms | success
