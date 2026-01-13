@@ -512,6 +512,16 @@ def init_database():
             cursor.execute("ALTER TABLE pedidos ADD COLUMN valor_entrega REAL DEFAULT 0")
             print("[DATABASE] Coluna valor_entrega adicionada em pedidos")
         
+        # Migração: Adicionar colunas do clube na tabela clientes
+        try:
+            cursor.execute("SELECT membro_clube FROM clientes LIMIT 1")
+        except sqlite3.OperationalError:
+            cursor.execute("ALTER TABLE clientes ADD COLUMN membro_clube INTEGER DEFAULT 0")
+            cursor.execute("ALTER TABLE clientes ADD COLUMN aceita_whatsapp INTEGER DEFAULT 0")
+            cursor.execute("ALTER TABLE clientes ADD COLUMN data_aceite_clube TEXT")
+            cursor.execute("ALTER TABLE clientes ADD COLUMN data_aceite_whatsapp TEXT")
+            print("[DATABASE] Colunas do clube adicionadas em clientes")
+        
         conn.commit()
         
         # Criar admin se não existir nenhum usuário
