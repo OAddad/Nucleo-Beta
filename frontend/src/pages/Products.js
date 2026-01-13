@@ -2033,6 +2033,20 @@ export default function Products() {
                                   </div>
                                 </div>
 
+                                {/* Checkbox: Só Combo (para etapas como bebida que só aparecem no combo) */}
+                                <div className="flex items-center gap-2 p-2 rounded-lg bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800">
+                                  <input
+                                    type="checkbox"
+                                    id={`combo_only_${stepIndex}`}
+                                    checked={step.combo_only || false}
+                                    onChange={(e) => updateOrderStep(stepIndex, "combo_only", e.target.checked)}
+                                    className="w-4 h-4 text-orange-500 rounded focus:ring-orange-500"
+                                  />
+                                  <label htmlFor={`combo_only_${stepIndex}`} className="text-xs font-medium text-orange-700 dark:text-orange-300 cursor-pointer">
+                                    Somente Combo - Esta etapa só aparece quando o cliente escolhe o COMBO (ex: Escolha da Bebida)
+                                  </label>
+                                </div>
+
                                 {/* Linha 3: Produtos da Etapa */}
                                 <div className="space-y-2">
                                   <div className="flex items-center justify-between">
