@@ -30067,3 +30067,8 @@
 2026-01-13T01:52:52.098011+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.25ms | success
 2026-01-13T01:52:57.516138+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.2ms | success
 2026-01-13T01:52:57.914224+00:00 | DB_CALL get_whatsapp_stats | P3 | 1.48ms | success
+2026-01-13T01:53:08.652082+00:00 | DB_CALL get_all_bairros | P3 | 5.0ms | success
+2026-01-13T01:53:08.652947+00:00 | DB_CALL get_all_settings | P3 | 5.34ms | success
+2026-01-13T01:53:08.653914+00:00 | DB_CALL get_all_products | P3 | 5.47ms | success
+2026-01-13T01:53:08.655033+00:00 | DB_CALL get_all_categories | P3 | 5.95ms | success
+2026-01-13T01:53:08.655411+00:00 | DB_CALL get_all_business_hours | P3 | 5.8ms | success

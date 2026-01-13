@@ -798,7 +798,7 @@ function CheckoutModal({ open, onClose, cart, cartTotal, client, darkMode, onOrd
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className={`sm:max-w-lg p-0 gap-0 overflow-hidden ${t.bg} ${t.text} border-0 max-h-[90vh] overflow-y-auto`}>
+      <DialogContent className={`sm:max-w-lg p-0 gap-0 overflow-hidden ${t.bg} ${t.text} border-0 w-[95vw] sm:w-full max-h-[95vh] sm:max-h-[90vh] overflow-y-auto`}>
         {/* Header */}
         <div className="sticky top-0 z-10 bg-orange-500 p-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
