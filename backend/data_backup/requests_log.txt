@@ -26181,3 +26181,12 @@
 2026-01-13T00:35:49.218455+00:00 | DB_CALL create_audit_log | P3 | 5.2ms | success
 2026-01-13T00:35:49.379848+00:00 | DB_CALL get_user_by_id | P3 | 0.26ms | success
 2026-01-13T00:35:49.380428+00:00 | DB_CALL get_all_products | P3 | 0.44ms | success
+2026-01-13T00:35:54.454874+00:00 | DB_CALL get_all_pedidos | P3 | 1.13ms | success
+2026-01-13T00:35:54.457519+00:00 | DB_CALL get_all_entregadores | P3 | 0.7ms | success
+2026-01-13T00:35:54.457890+00:00 | DB_CALL get_all_settings | P3 | 0.74ms | success
+2026-01-13T00:35:59.462755+00:00 | DB_CALL get_all_pedidos | P3 | 2.14ms | success
+2026-01-13T00:35:59.464484+00:00 | DB_CALL get_all_entregadores | P3 | 3.41ms | success
+2026-01-13T00:35:59.464776+00:00 | DB_CALL get_all_settings | P3 | 3.37ms | success
+2026-01-13T00:36:04.459114+00:00 | DB_CALL get_all_settings | P3 | 0.29ms | success
+2026-01-13T00:36:04.461077+00:00 | DB_CALL get_all_pedidos | P3 | 1.0ms | success
+2026-01-13T00:36:04.463001+00:00 | DB_CALL get_all_entregadores | P3 | 0.13ms | success

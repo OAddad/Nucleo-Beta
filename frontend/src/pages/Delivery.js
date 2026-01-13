@@ -1344,9 +1344,8 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
     }
   };
 
-  // Gerenciar múltiplos pedidos
-  const novoPedidoTab = () => {
-    // Salvar estado atual
+  // Gerenciar múltiplos pedidos - Salvar pedido atual na lista
+  const salvarPedidoAtual = () => {
     if (cart.length > 0 || selectedCliente) {
       const pedidoAtual = {
         id: pedidoAtualId || Date.now(),
@@ -1361,11 +1360,19 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
       
       const existe = pedidosAtivos.find(p => p.id === pedidoAtual.id);
       if (existe) {
-        setPedidosAtivos(pedidosAtivos.map(p => p.id === pedidoAtual.id ? pedidoAtual : p));
+        setPedidosAtivos(prev => prev.map(p => p.id === pedidoAtual.id ? pedidoAtual : p));
       } else {
-        setPedidosAtivos([...pedidosAtivos, pedidoAtual]);
+        setPedidosAtivos(prev => [...prev, pedidoAtual]);
       }
+      return pedidoAtual;
     }
+    return null;
+  };
+
+  // Criar novo pedido (botão "+ Novo")
+  const novoPedidoTab = () => {
+    // Salvar estado atual se houver algo
+    salvarPedidoAtual();
     
     // Limpar para novo pedido
     const novoId = Date.now();
@@ -1381,24 +1388,13 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
     setStep(1);
     setClienteHistorico([]);
     setEnderecosSalvos([]);
+    setEnderecoSelecionado(null);
   };
 
   // Trocar para pedido existente
   const switchPedido = (pedido) => {
     // Salvar atual primeiro
-    if (pedidoAtualId) {
-      const pedidoAtual = {
-        id: pedidoAtualId,
-        cart,
-        selectedCliente,
-        tipoEntrega,
-        endereco,
-        formaPagamento,
-        observacao,
-        step
-      };
-      setPedidosAtivos(pedidosAtivos.map(p => p.id === pedidoAtualId ? pedidoAtual : p));
-    }
+    salvarPedidoAtual();
     
     // Carregar o pedido selecionado
     setPedidoAtualId(pedido.id);
@@ -1410,19 +1406,19 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
     setObservacao(pedido.observacao || "");
     setStep(pedido.step || 1);
     
-    // Carregar histórico se tiver cliente
+    // Carregar histórico e endereços se tiver cliente
     if (pedido.selectedCliente) {
       fetchClienteHistorico(pedido.selectedCliente.id);
+      fetchClienteEnderecos(pedido.selectedCliente.id);
     }
   };
 
   // Remover pedido da lista
   const removerPedidoTab = (pedidoId) => {
-    setPedidosAtivos(pedidosAtivos.filter(p => p.id !== pedidoId));
+    setPedidosAtivos(prev => prev.filter(p => p.id !== pedidoId));
     if (pedidoAtualId === pedidoId) {
-      setPedidoAtualId(null);
-      setCart([]);
-      setSelectedCliente(null);
+      // Se removeu o atual, criar um novo
+      novoPedidoTab();
     }
   };
 
