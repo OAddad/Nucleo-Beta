@@ -1199,12 +1199,14 @@ def create_product(data: Dict) -> Dict:
         
         cursor.execute('''
             INSERT INTO products (id, code, name, description, category, product_type,
-                                 sale_price, simple_price, combo_description, photo_url, recipe, cmv, profit_margin,
+                                 sale_price, simple_price, combo_description, simple_description,
+                                 simple_photo_url, combo_photo_url, photo_url, recipe, cmv, profit_margin,
                                  is_insumo, is_divisible, order_steps, created_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ''', (prod_id, code, data['name'], data.get('description'), data.get('category'),
               data.get('product_type', 'produto'), data.get('sale_price'), data.get('simple_price'),
-              data.get('combo_description'), data.get('photo_url'),
+              data.get('combo_description'), data.get('simple_description'),
+              data.get('simple_photo_url'), data.get('combo_photo_url'), data.get('photo_url'),
               json.dumps(data.get('recipe', [])), data.get('cmv', 0), data.get('profit_margin'),
               1 if data.get('is_insumo') else 0, 1 if data.get('is_divisible') else 0,
               json.dumps(data.get('order_steps', [])), created_at))
