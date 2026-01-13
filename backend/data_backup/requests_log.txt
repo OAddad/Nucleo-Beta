@@ -28943,3 +28943,11 @@
 2026-01-13T01:19:09.019336+00:00 | DB_CALL increment_whatsapp_stat | P3 | 5.81ms | success
 2026-01-13T01:19:10.505442+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.22ms | success
 2026-01-13T01:19:10.685860+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.21ms | success
+2026-01-13T01:19:13.485018+00:00 | DB_CALL get_all_pedidos | P3 | 1.2ms | success
+2026-01-13T01:19:13.491186+00:00 | DB_CALL get_all_entregadores | P3 | 0.56ms | success
+2026-01-13T01:19:13.491586+00:00 | DB_CALL get_all_settings | P3 | 0.62ms | success
+2026-01-13T01:19:15.501712+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.21ms | success
+2026-01-13T01:19:15.683002+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.21ms | success
+2026-01-13T01:19:18.488693+00:00 | DB_CALL get_all_pedidos | P3 | 1.52ms | success
+2026-01-13T01:19:18.492589+00:00 | DB_CALL get_all_entregadores | P3 | 4.97ms | success
+2026-01-13T01:19:18.493348+00:00 | DB_CALL get_all_settings | P3 | 0.17ms | success
