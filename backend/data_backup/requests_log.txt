@@ -30444,3 +30444,10 @@
 2026-01-13T02:04:21.786749+00:00 | DB_CALL get_all_settings | P3 | 0.39ms | success
 2026-01-13T02:04:26.617347+00:00 | DB_CALL get_all_settings | P3 | 0.28ms | success
 2026-01-13T02:04:27.505806+00:00 | DB_CALL get_all_settings | P3 | 0.27ms | success
+2026-01-13T02:04:49.618761+00:00 | DB_CALL get_all_settings | P3 | 0.29ms | success
+2026-01-13T02:04:50.508146+00:00 | DB_CALL get_all_settings | P3 | 0.31ms | success
+2026-01-13T02:05:01.436584+00:00 | DB_CALL get_all_settings | P3 | 0.99ms | success
+2026-01-13T02:05:01.438183+00:00 | DB_CALL get_all_products | P3 | 2.02ms | success
+2026-01-13T02:05:01.441959+00:00 | DB_CALL get_all_categories | P3 | 0.57ms | success
+2026-01-13T02:05:01.442527+00:00 | DB_CALL get_all_business_hours | P3 | 0.92ms | success
+2026-01-13T02:05:01.533514+00:00 | DB_CALL get_all_bairros | P3 | 3.18ms | success
