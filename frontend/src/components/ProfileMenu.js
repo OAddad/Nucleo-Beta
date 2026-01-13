@@ -909,7 +909,7 @@ export default function ProfileMenu({ client, onLogout, onClientUpdate, darkMode
             </button>
 
             <button
-              onClick={() => { setShowPedidos(true); setIsOpen(false); }}
+              onClick={handleNavigateToPedidos}
               className={`w-full flex items-center gap-3 px-4 py-3 text-left transition-colors ${darkMode ? 'hover:bg-zinc-700' : 'hover:bg-gray-100'}`}
             >
               <ShoppingBag className={`w-5 h-5 ${darkMode ? 'text-zinc-400' : 'text-gray-400'}`} />
