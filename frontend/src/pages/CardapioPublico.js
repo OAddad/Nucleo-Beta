@@ -1636,68 +1636,81 @@ export default function CardapioPublico({ onAdminLogin }) {
   }
 
   return (
-    <div className={`min-h-screen ${t.bg} ${t.text} pb-20`}>
-      {/* Header Fixo - Mais fino */}
-      <header className={`${t.bgHeader} fixed top-0 left-0 right-0 z-40 border-b ${t.border}`}>
-        <div className="flex items-center justify-between px-3 py-1.5">
-          {/* Lado Esquerdo - Nome + Pontos */}
-          <div className="flex items-center gap-2">
-            <span className={`text-sm font-medium ${t.text}`}>
-              Oi, {loggedClient?.nome?.split(' ')[0] || 'Visitante'}!
-            </span>
-            {loggedClient && (
-              <div className="flex items-center gap-1 bg-orange-500/10 px-2 py-0.5 rounded-full">
-                <Star className="w-3 h-3 fill-orange-500 text-orange-500" />
-                <span className="text-xs font-bold text-orange-500">{loggedClient?.pontos || 0}</span>
+    <div className={`min-h-screen ${t.bg} ${t.text} pb-16`}>
+      {/* Header Fixo - Estilo Burger King */}
+      <header className="fixed top-0 left-0 right-0 z-40">
+        {/* Barra Principal - Marrom escuro */}
+        <div className="bg-gradient-to-r from-amber-900 to-amber-800 px-3 py-2">
+          <div className="flex items-center justify-between">
+            {/* Lado Esquerdo - Nome + Pontos */}
+            <div className="flex items-center gap-2">
+              <span className="text-white text-sm font-medium">
+                Oi, {loggedClient?.nome?.split(' ')[0] || 'Visitante'}!
+              </span>
+              <div className="flex items-center gap-1 bg-orange-500/30 px-2 py-0.5 rounded-full">
+                <Crown className="w-3.5 h-3.5 fill-orange-400 text-orange-400" />
+                <span className="text-xs font-bold text-orange-300">{loggedClient?.pontos || 0}</span>
               </div>
-            )}
-          </div>
-          
-          {/* Lado Direito - Lupa + Foto/Entrar */}
-          <div className="flex items-center gap-2">
-            {/* Botão Lupa */}
-            <button 
-              onClick={() => {
-                setSearchOpen(!searchOpen);
-                if (!searchOpen) {
-                  setTimeout(() => searchInputRef.current?.focus(), 100);
-                }
-              }}
-              className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${searchOpen ? 'bg-orange-500 text-white' : `${t.bgMuted} ${t.textMuted}`}`}
-            >
-              <Search className="w-4 h-4" />
-            </button>
+            </div>
             
-            {/* Foto ou Botão Entrar */}
-            {loggedClient ? (
-              <ProfileMenu 
-                client={loggedClient} 
-                onLogout={handleLogout} 
-                onClientUpdate={handleClientUpdate} 
-                darkMode={darkMode} 
-                onToggleTheme={() => {}}
-              />
-            ) : (
-              <Button onClick={() => setShowLoginModal(true)} className="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-4 h-7 text-xs">
-                ENTRAR
-              </Button>
-            )}
+            {/* Lado Direito - Lupa + Foto/Entrar */}
+            <div className="flex items-center gap-2">
+              {/* Botão Lupa */}
+              <button 
+                onClick={() => {
+                  setSearchOpen(!searchOpen);
+                  if (!searchOpen) {
+                    setTimeout(() => searchInputRef.current?.focus(), 100);
+                  }
+                }}
+                className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${searchOpen ? 'bg-orange-500 text-white' : 'bg-white/10 text-white/80 hover:bg-white/20'}`}
+              >
+                <Search className="w-4 h-4" />
+              </button>
+              
+              {/* Foto ou Botão Entrar */}
+              {loggedClient ? (
+                <ProfileMenu 
+                  client={loggedClient} 
+                  onLogout={handleLogout} 
+                  onClientUpdate={handleClientUpdate} 
+                  darkMode={darkMode} 
+                  onToggleTheme={() => {}}
+                />
+              ) : (
+                <Button onClick={() => setShowLoginModal(true)} className="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-4 h-7 text-xs">
+                  ENTRAR
+                </Button>
+              )}
+            </div>
           </div>
         </div>
         
-        {/* Status Aberto/Fechado - Colado no header */}
-        <div className={`px-3 py-1 ${t.bg} flex items-center gap-2 border-t ${t.border}`}>
-          <div className={`w-1.5 h-1.5 rounded-full ${isOpen ? 'bg-green-500' : 'bg-red-500'}`}></div>
-          <span className={`text-[11px] ${t.textMuted}`}>
-            {isOpen ? 'Aberto' : 'Fechado'}
-            {isOpen && closingTime && ` • Fecha ${closingTime}`}
-            {!isOpen && nextOpenTime && ` • Abre ${nextOpenTime}`}
-          </span>
-        </div>
+        {/* Barra de Status - Verde (Aberto) ou Vermelha (Fechado) */}
+        {isOpen ? (
+          /* Barra VERDE - Fininha quando aberto */
+          <div className="bg-green-500 px-3 py-0.5 flex items-center justify-center gap-1">
+            <span className="text-white text-[10px] font-medium">
+              Aberto{closingTime && `, fecha às ${closingTime}`}
+            </span>
+          </div>
+        ) : (
+          /* Barra VERMELHA - Maior quando fechado */
+          <div className="bg-red-600 px-3 py-2 flex items-center justify-center">
+            <div className="text-center">
+              <span className="text-white text-sm font-bold block">
+                FECHADO
+              </span>
+              <span className="text-white/90 text-xs">
+                Estamos descansando{nextOpenTime ? `, voltamos às ${nextOpenTime}` : ', volte em breve!'}
+              </span>
+            </div>
+          </div>
+        )}
         
         {/* Categorias - Logo abaixo do status */}
-        {categoriesWithProducts.length > 0 && (
-          <div className={`px-3 py-1.5 ${t.bg} border-t ${t.border}`}>
+        {categoriesWithProducts.length > 0 && activeTab === 'cardapio' && (
+          <div className={`px-3 py-1.5 ${t.bg} border-b ${t.border}`}>
             <div className="flex items-center gap-2">
               <div className="flex-1 overflow-x-auto scrollbar-hide flex gap-1.5" style={{ scrollbarWidth: 'none' }}>
                 <button 
@@ -1722,7 +1735,7 @@ export default function CardapioPublico({ onAdminLogin }) {
         
         {/* Campo de Busca Expandível */}
         {searchOpen && (
-          <div className={`px-3 py-2 ${t.bg} border-t ${t.border}`}>
+          <div className={`px-3 py-2 ${t.bg} border-b ${t.border}`}>
             <div className="relative">
               <Search className={`absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 ${t.textMuted2}`} />
               <Input 
@@ -1744,7 +1757,11 @@ export default function CardapioPublico({ onAdminLogin }) {
       </header>
 
       {/* Conteúdo Principal */}
-      <main className={`pb-4 ${categoriesWithProducts.length > 0 ? (searchOpen ? 'pt-[140px]' : 'pt-[100px]') : (searchOpen ? 'pt-[100px]' : 'pt-[60px]')}`}>
+      <main className={`pb-4 ${
+        activeTab === 'cardapio' && categoriesWithProducts.length > 0 
+          ? (searchOpen ? 'pt-[130px]' : (isOpen ? 'pt-[90px]' : 'pt-[110px]'))
+          : (searchOpen ? 'pt-[100px]' : (isOpen ? 'pt-[52px]' : 'pt-[72px]'))
+      }`}>
         {/* Aba Cardápio */}
         {activeTab === 'cardapio' && (
           <>
