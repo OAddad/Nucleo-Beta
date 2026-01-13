@@ -963,7 +963,7 @@ export default function ProfileMenu({ client, onLogout, onClientUpdate, darkMode
 
       {/* Modais */}
       <PontuacaoModal isOpen={showPontuacao} onClose={() => setShowPontuacao(false)} client={client} />
-      <EditAccountModal isOpen={showEditAccount} onClose={() => setShowEditAccount(false)} client={client} onUpdate={onClientUpdate} />
+      <EditAccountModal isOpen={showEditAccount} onClose={() => setShowEditAccount(false)} client={client} onUpdate={onClientUpdate} clubeNome={clubeNome} />
     </div>
   );
 }
