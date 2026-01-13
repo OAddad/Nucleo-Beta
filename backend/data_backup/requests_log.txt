@@ -25192,3 +25192,7 @@
 2026-01-13T00:12:27.452772+00:00 | DB_CALL get_all_settings | P3 | 0.88ms | success
 2026-01-13T00:12:27.453909+00:00 | DB_CALL get_all_pedidos | P3 | 2.27ms | success
 2026-01-13T00:12:27.739129+00:00 | DB_CALL get_pedido_by_id | P3 | 0.28ms | success
+2026-01-13T00:12:31.457196+00:00 | DB_CALL get_all_settings | P3 | 0.33ms | success
+2026-01-13T00:12:31.457838+00:00 | DB_CALL get_all_entregadores | P3 | 1.77ms | success
+2026-01-13T00:12:31.458979+00:00 | DB_CALL get_all_pedidos | P3 | 2.41ms | success
+2026-01-13T00:12:33.440957+00:00 | DB_CALL get_pedido_by_id | P3 | 0.32ms | success
