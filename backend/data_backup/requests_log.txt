@@ -28103,3 +28103,9 @@
 2026-01-13T01:03:08.840926+00:00 | DB_CALL get_all_pedidos | P3 | 1.54ms | success
 2026-01-13T01:03:08.842626+00:00 | DB_CALL get_all_entregadores | P3 | 2.46ms | success
 2026-01-13T01:03:08.844023+00:00 | DB_CALL get_all_settings | P3 | 0.16ms | success
+2026-01-13T01:04:39.509541+00:00 | DB_CALL get_user_by_id | P3 | 0.4ms | success
+2026-01-13T01:04:39.510452+00:00 | DB_CALL get_all_keyword_responses | P3 | 0.75ms | success
+2026-01-13T01:04:39.510976+00:00 | DB_CALL get_user_by_id | P3 | 0.56ms | success
+2026-01-13T01:04:39.511235+00:00 | DB_CALL get_all_order_status_templates | P3 | 0.17ms | success
+2026-01-13T01:04:39.512429+00:00 | DB_CALL get_user_by_id | P3 | 0.12ms | success
+2026-01-13T01:04:39.512624+00:00 | DB_CALL get_all_settings | P3 | 0.11ms | success
