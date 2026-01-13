@@ -44,7 +44,22 @@ def start_whatsapp_service():
             # Verificar se já está rodando
             result = subprocess.run(['pgrep', '-f', 'whatsapp-service/index.js'], capture_output=True)
             if result.returncode != 0:
-                # Não está rodando, iniciar
+                # Verificar se as dependências estão instaladas
+                node_modules = whatsapp_dir / 'node_modules'
+                if not node_modules.exists():
+                    print(f"[SERVER] Instalando dependências do WhatsApp...")
+                    install_result = subprocess.run(
+                        ['npm', 'install'],
+                        cwd=str(whatsapp_dir),
+                        capture_output=True,
+                        timeout=120
+                    )
+                    if install_result.returncode != 0:
+                        print(f"[SERVER] Erro ao instalar dependências: {install_result.stderr.decode()}")
+                        return
+                    print(f"[SERVER] Dependências instaladas com sucesso")
+                
+                # Iniciar o serviço
                 log_file = Path('/var/log/supervisor/whatsapp-real.log')
                 subprocess.Popen(
                     ['node', 'index.js'],
