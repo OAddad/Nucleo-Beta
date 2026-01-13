@@ -801,6 +801,9 @@ export default function Products() {
     setSalePrice(product.sale_price ? product.sale_price.toString() : "");
     setSimplePrice(product.simple_price ? product.simple_price.toString() : "");
     setComboDescription(product.combo_description || "");
+    setSimpleDescription(product.simple_description || "");
+    setSimplePhotoUrl(product.simple_photo_url || "");
+    setComboPhotoUrl(product.combo_photo_url || "");
     setPhotoUrl(product.photo_url || "");
     setIsInsumo(product.is_insumo || false);
     setIsDivisible(product.is_divisible || false);
