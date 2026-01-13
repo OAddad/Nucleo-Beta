@@ -32240,3 +32240,4 @@
 2026-01-13T17:05:02.900942+00:00 | DB_CALL get_all_business_hours | P3 | 0.17ms | success
 2026-01-13T17:05:02.902104+00:00 | DB_CALL get_all_categories | P3 | 0.15ms | success
 2026-01-13T17:05:03.115458+00:00 | DB_CALL get_all_bairros | P3 | 0.32ms | success
+2026-01-13T17:05:07.777602+00:00 | DB_CALL get_client_addresses | P3 | 0.27ms | success

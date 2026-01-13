@@ -2256,6 +2256,7 @@ export default function CardapioPublico({ onAdminLogin }) {
             onClientUpdate={handleClientUpdate}
             darkMode={darkMode}
             t={t}
+            clubeConfigProp={clubeConfig}
           />
         )}
 
