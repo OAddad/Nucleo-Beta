@@ -28714,3 +28714,12 @@
 2026-01-13T01:16:15.483720+00:00 | DB_CALL get_all_entregadores | P3 | 0.77ms | success
 2026-01-13T01:16:15.484116+00:00 | DB_CALL get_all_settings | P3 | 0.59ms | success
 2026-01-13T01:16:16.798812+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.34ms | success
+2026-01-13T01:16:18.476728+00:00 | DB_CALL get_all_pedidos | P3 | 2.0ms | success
+2026-01-13T01:16:18.478372+00:00 | DB_CALL get_all_entregadores | P3 | 3.06ms | success
+2026-01-13T01:16:18.478651+00:00 | DB_CALL get_all_settings | P3 | 3.12ms | success
+2026-01-13T01:16:20.479352+00:00 | DB_CALL get_all_entregadores | P3 | 0.66ms | success
+2026-01-13T01:16:20.481205+00:00 | DB_CALL get_all_pedidos | P3 | 2.1ms | success
+2026-01-13T01:16:20.483303+00:00 | DB_CALL get_all_settings | P3 | 3.03ms | success
+2026-01-13T01:16:23.478692+00:00 | DB_CALL get_all_pedidos | P3 | 1.55ms | success
+2026-01-13T01:16:23.480362+00:00 | DB_CALL get_all_entregadores | P3 | 2.65ms | success
+2026-01-13T01:16:23.481021+00:00 | DB_CALL get_all_settings | P3 | 0.16ms | success
