@@ -1502,7 +1502,7 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
                       >
                         {product.photo_url ? (
                           <img 
-                            src={product.photo_url} 
+                            src={getImageUrl(product.photo_url)} 
                             alt={product.name}
                             className="w-full h-24 object-cover rounded mb-2"
                             onError={(e) => e.target.style.display = 'none'}
