@@ -1727,12 +1727,13 @@ export default function CardapioPublico({ onAdminLogin }) {
         
         {/* Categorias - Logo abaixo do status */}
         {categoriesWithProducts.length > 0 && activeTab === 'cardapio' && (
-          <div className={`px-3 py-1.5 ${t.bg} border-b ${t.border}`}>
-            <div className="flex items-center gap-2">
-              <div className="flex-1 overflow-x-auto scrollbar-hide flex gap-1.5" style={{ scrollbarWidth: 'none' }}>
+          <div className={`px-3 py-2 ${t.bg} border-b ${t.border}`}>
+            <p className={`text-[10px] ${t.textMuted} mb-1.5`}>Navegue pelas categorias</p>
+            <div className="relative">
+              <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide pb-1" style={{ scrollbarWidth: 'none' }}>
                 <button 
                   onClick={() => setSelectedCategory(null)} 
-                  className={`flex-shrink-0 px-3 py-1 rounded-full font-medium text-xs transition-all ${!selectedCategory ? 'bg-orange-500 text-white' : t.btnCat}`}
+                  className={`flex-shrink-0 px-3 py-1.5 rounded-full font-medium text-xs transition-all ${!selectedCategory ? 'bg-orange-500 text-white shadow-md' : t.btnCat}`}
                 >
                   Todos
                 </button>
@@ -1740,12 +1741,14 @@ export default function CardapioPublico({ onAdminLogin }) {
                   <button 
                     key={cat.id} 
                     onClick={() => setSelectedCategory(cat.name)} 
-                    className={`flex-shrink-0 px-3 py-1 rounded-full font-medium text-xs transition-all ${selectedCategory === cat.name ? 'bg-orange-500 text-white' : t.btnCat}`}
+                    className={`flex-shrink-0 px-3 py-1.5 rounded-full font-medium text-xs transition-all ${selectedCategory === cat.name ? 'bg-orange-500 text-white shadow-md' : t.btnCat}`}
                   >
                     {cat.name}
                   </button>
                 ))}
               </div>
+              {/* Indicador de scroll */}
+              <div className="absolute right-0 top-0 bottom-1 w-8 bg-gradient-to-l from-white dark:from-zinc-900 to-transparent pointer-events-none" />
             </div>
           </div>
         )}
