@@ -30518,3 +30518,13 @@
 2026-01-13T02:08:48.563795+00:00 | DB_CALL get_user_by_username | P3 | 0.28ms | success
 2026-01-13T02:08:50.398329+00:00 | DB_CALL get_user_by_username | P3 | 0.46ms | success
 2026-01-13T02:08:50.584209+00:00 | DB_CALL get_all_settings | P3 | 50.34ms | success
+2026-01-13T02:09:40.909259+00:00 | DB_CALL get_all_settings | P3 | 4.85ms | success
+2026-01-13T02:09:40.912000+00:00 | DB_CALL get_all_categories | P3 | 4.44ms | success
+2026-01-13T02:09:40.912876+00:00 | DB_CALL get_all_products | P3 | 4.69ms | success
+2026-01-13T02:09:40.914384+00:00 | DB_CALL get_all_business_hours | P3 | 5.34ms | success
+2026-01-13T02:09:41.028052+00:00 | DB_CALL get_all_bairros | P3 | 0.67ms | success
+2026-01-13T02:09:41.932187+00:00 | DB_CALL get_all_categories | P3 | 0.7ms | success
+2026-01-13T02:09:41.933090+00:00 | DB_CALL get_all_products | P3 | 1.88ms | success
+2026-01-13T02:09:41.934025+00:00 | DB_CALL get_all_settings | P3 | 2.93ms | success
+2026-01-13T02:09:41.934319+00:00 | DB_CALL get_all_business_hours | P3 | 2.53ms | success
+2026-01-13T02:09:42.012181+00:00 | DB_CALL get_all_bairros | P3 | 1.49ms | success
