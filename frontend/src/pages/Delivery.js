@@ -1477,6 +1477,46 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
     }
   };
 
+  // Repetir um pedido anterior (adiciona todos os itens ao carrinho)
+  const repetirPedido = async (pedido) => {
+    if (!pedido.items || pedido.items.length === 0) return;
+    
+    // Buscar produtos atuais para pegar os dados completos
+    const novosItens = [];
+    
+    for (const item of pedido.items) {
+      // Buscar produto atual pelo ID ou nome
+      const produtoAtual = products.find(p => 
+        p.id === item.id || 
+        p.name?.toLowerCase() === (item.nome || item.name)?.toLowerCase()
+      );
+      
+      if (produtoAtual) {
+        novosItens.push({
+          ...produtoAtual,
+          quantity: item.quantidade || item.qty || 1,
+          observation: item.observacao || ""
+        });
+      } else {
+        // Se o produto não existe mais, adiciona com os dados do histórico
+        novosItens.push({
+          id: item.id,
+          name: item.nome || item.name,
+          sale_price: item.preco || 0,
+          photo_url: item.photo_url || item.foto_url,
+          quantity: item.quantidade || item.qty || 1,
+          observation: item.observacao || ""
+        });
+      }
+    }
+    
+    // Adiciona ao carrinho
+    setCart(prev => [...prev, ...novosItens]);
+    
+    // Ir para etapa de produtos para revisar
+    setStep(1);
+  };
+
   // Filtrar produtos
   const filteredProducts = products.filter(p => {
     const matchSearch = p.name.toLowerCase().includes(searchTerm.toLowerCase());
