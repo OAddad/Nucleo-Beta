@@ -331,12 +331,12 @@ export default function Dashboard({ setIsAuthenticated }) {
       {/* Sidebar - Fixo com scroll próprio */}
       <aside className={`
         bg-sidebar text-sidebar-foreground flex-col border-r
-        transition-transform duration-300 ease-in-out flex-shrink-0
+        transition-all duration-300 ease-in-out flex-shrink-0
         fixed left-0 top-0 h-screen z-40
-        w-[85vw] max-w-[320px] lg:w-64
-        ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0 lg:w-16'}
         flex
-        shadow-2xl lg:shadow-none
+        ${sidebarOpen 
+          ? 'w-[85vw] max-w-[320px] lg:w-64 translate-x-0 shadow-2xl lg:shadow-none' 
+          : '-translate-x-full lg:translate-x-0 lg:w-16 lg:shadow-none'}
       `}>
         {/* Conteúdo do Sidebar */}
         <div className={`${sidebarOpen ? 'block' : 'hidden lg:block'} w-full h-full flex flex-col`}>
