@@ -30581,3 +30581,12 @@
 2026-01-13T14:30:25.422509+00:00 | DB_CALL get_all_categories | P3 | 2.79ms | success
 2026-01-13T14:30:25.423158+00:00 | DB_CALL get_all_business_hours | P3 | 3.19ms | success
 2026-01-13T14:30:25.523365+00:00 | DB_CALL get_all_bairros | P3 | 1.27ms | success
+2026-01-13T14:31:09.597211+00:00 | DB_CALL get_all_settings | P3 | 35.38ms | success
+2026-01-13T14:31:09.600853+00:00 | DB_CALL get_all_products | P3 | 10.76ms | success
+2026-01-13T14:31:09.602231+00:00 | DB_CALL get_all_business_hours | P3 | 3.72ms | success
+2026-01-13T14:31:09.602760+00:00 | DB_CALL get_all_categories | P3 | 4.15ms | success
+2026-01-13T14:31:09.720150+00:00 | DB_CALL get_all_bairros | P3 | 3.11ms | success
+2026-01-13T14:31:20.598356+00:00 | DB_CALL get_user_by_id | P3 | 3.37ms | success
+2026-01-13T14:31:20.598618+00:00 | DB_CALL get_user_by_id | P3 | 3.5ms | success
+2026-01-13T14:31:20.599318+00:00 | DB_CALL get_all_products | P3 | 0.77ms | success
+2026-01-13T14:31:20.600460+00:00 | DB_CALL get_all_categories | P3 | 1.75ms | success
