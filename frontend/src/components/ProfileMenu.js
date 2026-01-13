@@ -904,31 +904,31 @@ export default function ProfileMenu({ client, onLogout, onClientUpdate, darkMode
 
             <button
               onClick={() => { setShowPedidos(true); setIsOpen(false); }}
-              className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-zinc-700 transition-colors"
+              className={`w-full flex items-center gap-3 px-4 py-3 text-left transition-colors ${darkMode ? 'hover:bg-zinc-700' : 'hover:bg-gray-100'}`}
             >
-              <ShoppingBag className="w-5 h-5 text-zinc-400" />
-              <span className="text-white">Meus Pedidos</span>
+              <ShoppingBag className={`w-5 h-5 ${darkMode ? 'text-zinc-400' : 'text-gray-400'}`} />
+              <span className={darkMode ? 'text-white' : 'text-gray-900'}>Meus Pedidos</span>
             </button>
           </div>
 
           {/* Theme Toggle */}
-          <div className="px-4 py-3 border-t border-zinc-700">
+          <div className={`px-4 py-3 border-t ${darkMode ? 'border-zinc-700' : 'border-gray-200'}`}>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                {darkMode ? <Moon className="w-5 h-5 text-zinc-400" /> : <Sun className="w-5 h-5 text-yellow-500" />}
-                <span className="text-white text-sm">Modo {darkMode ? 'Escuro' : 'Claro'}</span>
+                {darkMode ? <Moon className={`w-5 h-5 ${darkMode ? 'text-zinc-400' : 'text-gray-400'}`} /> : <Sun className="w-5 h-5 text-yellow-500" />}
+                <span className={`text-sm ${darkMode ? 'text-white' : 'text-gray-900'}`}>Modo {darkMode ? 'Escuro' : 'Claro'}</span>
               </div>
               <button
                 onClick={onToggleTheme}
-                className={`w-12 h-6 rounded-full transition-colors relative ${darkMode ? 'bg-orange-500' : 'bg-zinc-600'}`}
+                className={`w-12 h-6 rounded-full transition-colors relative ${darkMode ? 'bg-orange-500' : 'bg-gray-300'}`}
               >
-                <div className={`w-5 h-5 bg-white rounded-full absolute top-0.5 transition-transform ${darkMode ? 'translate-x-6' : 'translate-x-0.5'}`} />
+                <div className={`w-5 h-5 bg-white rounded-full absolute top-0.5 transition-transform shadow ${darkMode ? 'translate-x-6' : 'translate-x-0.5'}`} />
               </button>
             </div>
           </div>
 
           {/* Logout */}
-          <div className="p-2 border-t border-zinc-700">
+          <div className={`p-2 border-t ${darkMode ? 'border-zinc-700' : 'border-gray-200'}`}>
             <button
               onClick={handleLogout}
               className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-red-500/10 rounded-lg transition-colors text-red-400"
