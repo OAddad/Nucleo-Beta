@@ -31841,3 +31841,11 @@
 2026-01-13T16:16:17.327549+00:00 | DB_CALL count_users | P3 | 0.1ms | success
 2026-01-13T16:16:21.898166+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.36ms | success
 2026-01-13T16:16:22.096979+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.26ms | success
+2026-01-13T16:16:52.554388+00:00 | DB_CALL init_database | P3 | 2.7ms | success
+2026-01-13T16:16:52.554891+00:00 | DB_CALL count_ingredients | P3 | 0.25ms | success
+2026-01-13T16:16:52.555076+00:00 | DB_CALL count_products | P3 | 0.12ms | success
+2026-01-13T16:16:52.555215+00:00 | DB_CALL count_users | P3 | 0.09ms | success
+2026-01-13T16:17:00.828126+00:00 | DB_CALL init_database | P3 | 2.83ms | success
+2026-01-13T16:17:00.828663+00:00 | DB_CALL count_ingredients | P3 | 0.25ms | success
+2026-01-13T16:17:00.828856+00:00 | DB_CALL count_products | P3 | 0.13ms | success
+2026-01-13T16:17:00.828998+00:00 | DB_CALL count_users | P3 | 0.09ms | success
