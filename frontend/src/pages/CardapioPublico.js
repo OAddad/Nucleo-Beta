@@ -1543,7 +1543,10 @@ export default function CardapioPublico({ onAdminLogin }) {
 
   const categoriesWithProducts = useMemo(() => {
     const categorySet = new Set(products.map(p => p.category).filter(Boolean));
-    return categories.filter(cat => categorySet.has(cat.name));
+    // Filtrar e ordenar alfabeticamente
+    return categories
+      .filter(cat => categorySet.has(cat.name))
+      .sort((a, b) => a.name.localeCompare(b.name));
   }, [categories, products]);
 
   const filteredProducts = useMemo(() => {
