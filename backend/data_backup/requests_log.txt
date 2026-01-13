@@ -28596,3 +28596,13 @@
 2026-01-13T01:14:53.477723+00:00 | DB_CALL get_all_settings | P3 | 0.38ms | success
 2026-01-13T01:14:53.478085+00:00 | DB_CALL get_all_entregadores | P3 | 0.6ms | success
 2026-01-13T01:14:53.883123+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.27ms | success
+2026-01-13T01:14:55.478431+00:00 | DB_CALL get_all_pedidos | P3 | 1.66ms | success
+2026-01-13T01:14:55.480264+00:00 | DB_CALL get_all_settings | P3 | 3.0ms | success
+2026-01-13T01:14:55.482469+00:00 | DB_CALL get_all_entregadores | P3 | 0.14ms | success
+2026-01-13T01:14:58.480250+00:00 | DB_CALL get_all_settings | P3 | 0.28ms | success
+2026-01-13T01:14:58.482775+00:00 | DB_CALL get_all_pedidos | P3 | 1.12ms | success
+2026-01-13T01:14:58.484731+00:00 | DB_CALL get_all_entregadores | P3 | 0.16ms | success
+2026-01-13T01:15:00.476570+00:00 | DB_CALL get_all_entregadores | P3 | 0.27ms | success
+2026-01-13T01:15:00.478383+00:00 | DB_CALL get_all_pedidos | P3 | 1.04ms | success
+2026-01-13T01:15:00.482315+00:00 | DB_CALL get_all_settings | P3 | 0.16ms | success
+2026-01-13T01:15:01.052649+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.28ms | success
