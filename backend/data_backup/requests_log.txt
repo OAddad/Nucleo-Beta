@@ -31866,3 +31866,5 @@
 2026-01-13T16:17:31.895507+00:00 | DB_CALL get_all_categories | P3 | 4.6ms | success
 2026-01-13T16:17:31.896066+00:00 | DB_CALL get_all_business_hours | P3 | 2.61ms | success
 2026-01-13T16:17:31.896626+00:00 | DB_CALL get_all_products | P3 | 3.07ms | success
+2026-01-13T16:18:21.983023+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.48ms | success
+2026-01-13T16:18:22.181628+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.23ms | success

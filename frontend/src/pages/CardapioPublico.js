@@ -465,6 +465,321 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode }) {
   );
 }
 
+// Componente Clube Addad
+function ClubeAddadTab({ loggedClient, onLogin, onClientUpdate, darkMode, t }) {
+  const [etapa, setEtapa] = useState('inicial'); // 'inicial', 'cadastro', 'whatsapp', 'regras', 'membro'
+  const [formData, setFormData] = useState({ cpf: '', data_nascimento: '', email: '' });
+  const [loading, setLoading] = useState(false);
+  const [clubeStatus, setClubeStatus] = useState(null);
+
+  // Buscar status do clube quando o cliente estiver logado
+  useEffect(() => {
+    if (loggedClient?.id) {
+      fetchClubeStatus();
+    }
+  }, [loggedClient?.id]);
+
+  const fetchClubeStatus = async () => {
+    try {
+      const response = await axios.get(`/api/public/cliente/${loggedClient.id}/clube`);
+      setClubeStatus(response.data);
+      if (response.data.membro_clube === 1) {
+        setEtapa('membro');
+      }
+    } catch (error) {
+      console.error('Erro ao buscar status do clube:', error);
+    }
+  };
+
+  // Formatar CPF
+  const formatCPF = (value) => {
+    const numbers = value.replace(/\D/g, '').slice(0, 11);
+    if (numbers.length <= 3) return numbers;
+    if (numbers.length <= 6) return `${numbers.slice(0, 3)}.${numbers.slice(3)}`;
+    if (numbers.length <= 9) return `${numbers.slice(0, 3)}.${numbers.slice(3, 6)}.${numbers.slice(6)}`;
+    return `${numbers.slice(0, 3)}.${numbers.slice(3, 6)}.${numbers.slice(6, 9)}-${numbers.slice(9)}`;
+  };
+
+  // Formatar Data
+  const formatData = (value) => {
+    const numbers = value.replace(/\D/g, '').slice(0, 8);
+    if (numbers.length <= 2) return numbers;
+    if (numbers.length <= 4) return `${numbers.slice(0, 2)}/${numbers.slice(2)}`;
+    return `${numbers.slice(0, 2)}/${numbers.slice(2, 4)}/${numbers.slice(4)}`;
+  };
+
+  // Validar email
+  const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+  // Validar CPF
+  const isValidCPF = (cpf) => cpf.replace(/\D/g, '').length === 11;
+
+  // Validar data
+  const isValidData = (data) => {
+    const parts = data.split('/');
+    if (parts.length !== 3) return false;
+    const [dia, mes, ano] = parts.map(Number);
+    if (dia < 1 || dia > 31 || mes < 1 || mes > 12 || ano < 1900 || ano > 2020) return false;
+    return true;
+  };
+
+  const handleCadastro = async () => {
+    if (!isValidCPF(formData.cpf)) {
+      toast.error('CPF inválido');
+      return;
+    }
+    if (!isValidData(formData.data_nascimento)) {
+      toast.error('Data de nascimento inválida');
+      return;
+    }
+    if (!isValidEmail(formData.email)) {
+      toast.error('Email inválido');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      await axios.post(`/api/public/clube/registrar/${loggedClient.id}`, formData);
+      setEtapa('whatsapp');
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Erro ao cadastrar');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleWhatsappResponse = async (aceita) => {
+    setLoading(true);
+    try {
+      await axios.post(`/api/public/clube/whatsapp/${loggedClient.id}`, { aceita });
+      toast.success(aceita ? 'Você agora receberá nossas ofertas!' : 'Preferência salva!');
+      // Atualizar cliente
+      if (onClientUpdate) {
+        const response = await axios.get(`/api/public/cliente/${loggedClient.id}/clube`);
+        onClientUpdate({ ...loggedClient, ...response.data, membro_clube: 1 });
+      }
+      setEtapa('membro');
+    } catch (error) {
+      toast.error('Erro ao salvar preferência');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Se não está logado
+  if (!loggedClient) {
+    return (
+      <div className="px-4 py-8 flex flex-col items-center justify-center min-h-[60vh]">
+        <div className={`w-20 h-20 ${t.bgCard} rounded-full flex items-center justify-center mb-4 border ${t.border}`}>
+          <Crown className="w-10 h-10 text-orange-500" />
+        </div>
+        <h2 className={`text-xl font-bold ${t.text} mb-2`}>Clube Addad</h2>
+        <p className={`${t.textMuted} text-center text-sm mb-4`}>Faça login para participar do nosso clube!</p>
+        <Button onClick={onLogin} className="bg-orange-500 hover:bg-orange-600 text-white">
+          Entrar
+        </Button>
+      </div>
+    );
+  }
+
+  // Etapa: Membro do clube
+  if (etapa === 'membro' || clubeStatus?.membro_clube === 1) {
+    return (
+      <div className="px-4 py-6">
+        <div className="text-center mb-6">
+          <div className="w-20 h-20 bg-gradient-to-br from-orange-500 to-orange-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
+            <Crown className="w-10 h-10 text-white" />
+          </div>
+          <h2 className={`text-xl font-bold ${t.text} mb-1`}>Bem-vindo ao Clube!</h2>
+          <p className={`${t.textMuted} text-sm`}>{loggedClient.nome}</p>
+        </div>
+
+        <div className={`${t.bgCard} rounded-2xl p-5 border ${t.border} mb-4`}>
+          <div className="text-center">
+            <p className={`text-4xl font-bold text-orange-500 mb-1`}>{loggedClient.pontos || clubeStatus?.pontuacao || 0}</p>
+            <p className={`text-sm ${t.textMuted}`}>pontos acumulados</p>
+          </div>
+        </div>
+
+        <div className={`${t.bgCard} rounded-xl p-4 border ${t.border}`}>
+          <h3 className={`font-semibold ${t.text} mb-3`}>Como funciona</h3>
+          <div className="space-y-2 text-sm">
+            <div className="flex items-start gap-2">
+              <span className="text-green-500">✓</span>
+              <span className={t.textMuted}>A cada R$ 1,00 em compras = 1 ponto</span>
+            </div>
+            <div className="flex items-start gap-2">
+              <span className="text-green-500">✓</span>
+              <span className={t.textMuted}>Ofertas exclusivas para membros</span>
+            </div>
+            <div className="flex items-start gap-2">
+              <span className="text-green-500">✓</span>
+              <span className={t.textMuted}>Promoções de aniversário</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Etapa: Regras do WhatsApp
+  if (etapa === 'regras') {
+    return (
+      <div className="px-4 py-4">
+        <div className="flex items-center gap-3 mb-4">
+          <button onClick={() => setEtapa('whatsapp')} className={`w-8 h-8 rounded-full ${t.bgMuted} flex items-center justify-center`}>
+            <ChevronLeft className="w-5 h-5" />
+          </button>
+          <h2 className={`text-lg font-bold ${t.text}`}>Política de Comunicação</h2>
+        </div>
+        
+        <div className={`${t.bgCard} rounded-xl p-4 border ${t.border} text-sm ${t.textMuted} space-y-4`}>
+          <p>Ao aceitar receber mensagens pelo WhatsApp, você autoriza o <strong className={t.text}>estabelecimento</strong> a manter contato com você utilizando exclusivamente os dados informados acima.</p>
+          
+          <p>Esse contato será feito de forma consciente e responsável, seguindo os princípios abaixo:</p>
+          
+          <div className="space-y-1">
+            <p className="text-green-600">✔ Mensagens ocasionais, com motivo claro.</p>
+            <p className="text-green-600">✔ Comunicação apenas com clientes que já tiveram relacionamento conosco.</p>
+            <p className="text-green-600">✔ Uso do WhatsApp para novidades, promoções pontuais e informações relevantes sobre pedidos.</p>
+            <p className="text-green-600">✔ Nenhum compartilhamento de dados com terceiros.</p>
+          </div>
+          
+          <p className="font-semibold">O que não fazemos:</p>
+          <div className="space-y-1">
+            <p className="text-red-500">✖ Não enviamos spam.</p>
+            <p className="text-red-500">✖ Não insistimos se você não responder.</p>
+            <p className="text-red-500">✖ Não continuamos enviando mensagens após solicitação de cancelamento.</p>
+          </div>
+          
+          <p className="font-semibold">Controle total é seu:</p>
+          <ul className="list-disc list-inside space-y-1">
+            <li>Você pode cancelar a qualquer momento entrando em contato pelo nosso canal de atendimento e solicitar a exclusão.</li>
+            <li>Pode solicitar a remoção saindo do clube.</li>
+            <li>Caso fique um longo período sem interação, podemos interromper os envios automaticamente.</li>
+          </ul>
+          
+          <p className="text-xs italic border-t pt-3 mt-3">Este registro fica armazenado como comprovante do seu consentimento.</p>
+        </div>
+        
+        <Button onClick={() => setEtapa('whatsapp')} className="w-full mt-4 bg-orange-500 hover:bg-orange-600 text-white">
+          Voltar
+        </Button>
+      </div>
+    );
+  }
+
+  // Etapa: Pergunta sobre WhatsApp
+  if (etapa === 'whatsapp') {
+    return (
+      <div className="px-4 py-8 flex flex-col items-center justify-center min-h-[50vh]">
+        <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mb-4">
+          <MessageCircle className="w-8 h-8 text-white" />
+        </div>
+        <h2 className={`text-xl font-bold ${t.text} mb-2 text-center`}>Quase lá!</h2>
+        <p className={`${t.textMuted} text-center text-sm mb-2`}>Deseja receber informações e ofertas via WhatsApp?</p>
+        <button onClick={() => setEtapa('regras')} className="text-orange-500 text-sm underline mb-6">
+          LEIA MAIS
+        </button>
+        
+        <div className="flex gap-3 w-full max-w-xs">
+          <Button 
+            onClick={() => handleWhatsappResponse(true)} 
+            disabled={loading}
+            className="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold h-12"
+          >
+            {loading ? '...' : 'SIM'}
+          </Button>
+          <Button 
+            onClick={() => handleWhatsappResponse(false)} 
+            disabled={loading}
+            variant="outline"
+            className="px-6 border-red-400 text-red-500 hover:bg-red-50 h-12"
+          >
+            não
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  // Etapa: Formulário de cadastro
+  if (etapa === 'cadastro') {
+    return (
+      <div className="px-4 py-6">
+        <div className="text-center mb-6">
+          <div className="w-16 h-16 bg-orange-500 rounded-full flex items-center justify-center mx-auto mb-3">
+            <Crown className="w-8 h-8 text-white" />
+          </div>
+          <h2 className={`text-xl font-bold ${t.text} mb-1`}>Complete seu cadastro</h2>
+          <p className={`${t.textMuted} text-sm`}>Precisamos de algumas informações</p>
+        </div>
+
+        <div className="space-y-4">
+          <div>
+            <Label className={`text-sm ${t.textMuted} mb-1 block`}>CPF *</Label>
+            <Input
+              value={formData.cpf}
+              onChange={(e) => setFormData({ ...formData, cpf: formatCPF(e.target.value) })}
+              placeholder="000.000.000-00"
+              className={`${t.bgInput} ${t.text} h-12`}
+            />
+          </div>
+
+          <div>
+            <Label className={`text-sm ${t.textMuted} mb-1 block`}>Data de Nascimento *</Label>
+            <Input
+              value={formData.data_nascimento}
+              onChange={(e) => setFormData({ ...formData, data_nascimento: formatData(e.target.value) })}
+              placeholder="DD/MM/AAAA"
+              className={`${t.bgInput} ${t.text} h-12`}
+            />
+          </div>
+
+          <div>
+            <Label className={`text-sm ${t.textMuted} mb-1 block`}>Email *</Label>
+            <Input
+              type="email"
+              value={formData.email}
+              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              placeholder="seu@email.com"
+              className={`${t.bgInput} ${t.text} h-12`}
+            />
+          </div>
+
+          <Button 
+            onClick={handleCadastro} 
+            disabled={loading || !formData.cpf || !formData.data_nascimento || !formData.email}
+            className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold h-12 mt-4"
+          >
+            {loading ? 'Cadastrando...' : 'Cadastrar-se'}
+          </Button>
+
+          <button onClick={() => setEtapa('inicial')} className={`w-full text-sm ${t.textMuted} mt-2`}>
+            Voltar
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Etapa: Inicial (não é membro ainda)
+  return (
+    <div className="px-4 py-8 flex flex-col items-center justify-center min-h-[60vh]">
+      <div className={`w-24 h-24 ${t.bgCard} rounded-full flex items-center justify-center mb-4 border-2 border-dashed ${t.border}`}>
+        <Crown className="w-12 h-12 text-orange-300" />
+      </div>
+      <h2 className={`text-xl font-bold ${t.text} mb-2 text-center`}>Você ainda não participa do nosso clube!</h2>
+      <p className={`${t.textMuted} text-center text-sm mb-6 max-w-xs`}>
+        Cadastre-se e aproveite benefícios exclusivos, acumule pontos e receba ofertas especiais.
+      </p>
+      <Button onClick={() => setEtapa('cadastro')} className="bg-orange-500 hover:bg-orange-600 text-white font-bold px-8 h-12">
+        Cadastrar-se no Clube
+      </Button>
+    </div>
+  );
+}
+
 // Componente de Checkout (Endereço + Pagamento)
 function CheckoutModal({ open, onClose, cart, cartTotal, client, darkMode, onOrderComplete }) {
   const [step, setStep] = useState(1); // 1 = Tipo entrega, 2 = Endereço (se delivery), 3 = Pagamento
