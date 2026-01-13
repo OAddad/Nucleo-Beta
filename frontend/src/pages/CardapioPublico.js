@@ -513,18 +513,18 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode }) {
 
           {/* Cards de Opção - Dois Cards */}
           <div className="p-4 flex-1 overflow-y-auto">
-            <div className="flex gap-3">
-              {/* Card SIMPLES - Menor */}
+            <div className="flex gap-3 items-center">
+              {/* Card SIMPLES - Menor e Centralizado */}
               <button
                 onClick={() => setSelectedComboType('simples')}
-                className={`w-[35%] rounded-2xl border-2 transition-all text-left overflow-hidden flex flex-col ${
+                className={`w-28 rounded-xl border-2 transition-all text-left overflow-hidden flex flex-col ${
                   selectedComboType === 'simples' 
                     ? 'border-orange-500 bg-orange-50 dark:bg-orange-500/10' 
                     : `${t.border} ${t.bgCard} hover:border-orange-300`
                 }`}
               >
                 {/* Imagem do Simples */}
-                <div className="w-full aspect-[4/3] bg-gradient-to-b from-orange-50 to-orange-100 dark:from-zinc-800 dark:to-zinc-700 relative">
+                <div className="w-full aspect-square bg-gradient-to-b from-orange-50 to-orange-100 dark:from-zinc-800 dark:to-zinc-700 relative">
                   {product.photo_url && !imageError ? (
                     <img
                       src={getImageUrl(product.photo_url)}
@@ -533,11 +533,11 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode }) {
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-orange-300">
-                      <span className="text-4xl">🍔</span>
+                      <span className="text-3xl">🍔</span>
                     </div>
                   )}
                   {/* Indicador de seleção */}
-                  <div className={`absolute top-2 right-2 w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                  <div className={`absolute top-1.5 right-1.5 w-5 h-5 rounded-full border-2 flex items-center justify-center ${
                     selectedComboType === 'simples' ? 'border-orange-500 bg-orange-500' : 'border-gray-300 bg-white dark:bg-zinc-700'
                   }`}>
                     {selectedComboType === 'simples' && <Check className="w-3 h-3 text-white" />}
@@ -545,9 +545,10 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode }) {
                 </div>
                 
                 {/* Info do Simples */}
-                <div className="p-2">
+                <div className="p-2 text-center">
                   <p className={`font-bold ${t.text} text-xs`}>SIMPLES</p>
-                  <p className="text-base font-black text-orange-500 mt-1">
+                  <p className={`text-[9px] ${t.textMuted} mt-0.5`}>Apenas o produto</p>
+                  <p className="text-sm font-black text-orange-500 mt-1">
                     R$ {simplePrice.toFixed(2).replace('.', ',')}
                   </p>
                 </div>
