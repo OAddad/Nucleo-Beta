@@ -2053,33 +2053,62 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
                 </div>
                 
                 {formaPagamento === "dinheiro" && (
-                  <div className="space-y-2 p-4 bg-amber-50 dark:bg-amber-950/30 rounded-lg border border-amber-200 dark:border-amber-800">
-                    <Label className="text-amber-800 dark:text-amber-300 font-medium">💵 Precisa de troco?</Label>
-                    <div className="flex gap-3">
-                      <Input
-                        type="number"
-                        value={trocoPara}
-                        onChange={(e) => setTrocoPara(e.target.value)}
-                        placeholder={`Total: R$ ${total.toFixed(2)}`}
-                        className="flex-1"
-                      />
+                  <div className="space-y-3 p-4 bg-amber-50 dark:bg-amber-950/30 rounded-lg border border-amber-200 dark:border-amber-800">
+                    <Label className="text-amber-800 dark:text-amber-300 font-medium flex items-center gap-2">
+                      <Banknote className="w-5 h-5" /> Precisa de troco?
+                    </Label>
+                    
+                    {/* Botões de valor rápido */}
+                    <div className="grid grid-cols-5 gap-2">
+                      {[20, 50, 100, 150, 200].map((valor) => (
+                        <button
+                          key={valor}
+                          type="button"
+                          onClick={() => setTrocoPara(valor.toString())}
+                          className={`p-2 rounded-lg border-2 text-sm font-medium transition-all ${
+                            trocoPara === valor.toString()
+                              ? 'border-amber-500 bg-amber-500 text-white'
+                              : 'border-amber-300 hover:border-amber-400 text-amber-700 dark:text-amber-400'
+                          }`}
+                        >
+                          R$ {valor}
+                        </button>
+                      ))}
+                    </div>
+                    
+                    <div className="flex gap-2 items-end">
+                      <div className="flex-1">
+                        <Label className="text-xs text-amber-700 dark:text-amber-400">Ou digite outro valor:</Label>
+                        <Input
+                          type="number"
+                          value={trocoPara}
+                          onChange={(e) => setTrocoPara(e.target.value)}
+                          placeholder={`Total: R$ ${total.toFixed(2)}`}
+                          className="bg-white dark:bg-background"
+                        />
+                      </div>
                       <Button 
                         variant="outline" 
                         onClick={() => setTrocoPara("")}
-                        className="text-xs"
+                        className="text-xs border-amber-400 text-amber-700 hover:bg-amber-100"
                       >
-                        Não precisa
+                        Sem troco
                       </Button>
                     </div>
+                    
                     {trocoPara && parseFloat(trocoPara) > total && (
-                      <p className="text-sm text-amber-700 dark:text-amber-400">
-                        Troco: <strong>R$ {(parseFloat(trocoPara) - total).toFixed(2)}</strong>
-                      </p>
+                      <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg">
+                        <p className="text-sm text-green-700 dark:text-green-400 font-medium">
+                          Troco a levar: <strong>R$ {(parseFloat(trocoPara) - total).toFixed(2)}</strong>
+                        </p>
+                      </div>
                     )}
-                    {trocoPara && parseFloat(trocoPara) < total && (
-                      <p className="text-sm text-red-500">
-                        ⚠️ Valor menor que o total do pedido
-                      </p>
+                    {trocoPara && parseFloat(trocoPara) > 0 && parseFloat(trocoPara) < total && (
+                      <div className="p-2 bg-red-100 dark:bg-red-900/30 rounded-lg">
+                        <p className="text-sm text-red-600 dark:text-red-400 font-medium">
+                          Valor menor que o total do pedido (R$ {total.toFixed(2)})
+                        </p>
+                      </div>
                     )}
                   </div>
                 )}
