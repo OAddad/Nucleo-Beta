@@ -774,7 +774,7 @@ function ClubeAddadTab({ loggedClient, onLogin, onClientUpdate, darkMode, t, clu
           Confira sobre o
         </h1>
         <h2 className="text-2xl font-black text-orange-500 uppercase tracking-wide">
-          {clubeConfig.clube_nome}
+          Clube {clubeConfig.clube_nome}
         </h2>
       </div>
 
