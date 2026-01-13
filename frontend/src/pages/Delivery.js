@@ -2190,7 +2190,7 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
 
           {/* COLUNA DIREITA - Histórico do Cliente */}
           {selectedCliente && (
-            <div className="w-72 border-l bg-muted/20 flex flex-col">
+            <div className="w-80 border-l bg-muted/20 flex flex-col">
               <div className="p-3 border-b bg-card">
                 <h3 className="font-semibold flex items-center gap-2 text-sm">
                   <Clock className="w-4 h-4 text-orange-500" /> 
@@ -2198,7 +2198,7 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
                 </h3>
               </div>
               
-              <div className="flex-1 overflow-y-auto p-2 space-y-2">
+              <div className="flex-1 overflow-y-auto p-2 space-y-3">
                 {loadingHistorico ? (
                   <div className="flex items-center justify-center py-8">
                     <RefreshCw className="w-5 h-5 animate-spin text-orange-500" />
@@ -2210,10 +2210,10 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
                   </div>
                 ) : (
                   clienteHistorico.map((pedido) => (
-                    <div key={pedido.id} className="bg-card border rounded-lg p-3 space-y-2">
+                    <div key={pedido.id} className="bg-card border rounded-lg p-2 space-y-2">
                       {/* Header com data e valor */}
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2 text-xs">
+                      <div className="flex items-center justify-between px-1">
+                        <div className="flex items-center gap-1 text-xs">
                           <Calendar className="w-3 h-3 text-muted-foreground" />
                           <span className="text-muted-foreground">
                             {new Date(pedido.created_at).toLocaleDateString('pt-BR')}
@@ -2226,7 +2226,7 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
                       
                       {/* Endereço */}
                       {pedido.endereco_rua && (
-                        <div className="flex items-start gap-1 text-xs text-muted-foreground">
+                        <div className="flex items-start gap-1 text-xs text-muted-foreground px-1">
                           <MapPin className="w-3 h-3 mt-0.5 flex-shrink-0" />
                           <span className="line-clamp-1">
                             {pedido.endereco_rua}{pedido.endereco_numero ? `, ${pedido.endereco_numero}` : ''}
@@ -2235,37 +2235,36 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
                         </div>
                       )}
                       
-                      {/* Itens com foto */}
-                      <div className="space-y-1.5 pt-1 border-t">
-                        {pedido.items?.slice(0, 3).map((item, idx) => (
-                          <div key={idx} className="flex items-center gap-2">
+                      {/* Itens em grid de cards quadrados */}
+                      <div className="grid grid-cols-3 gap-1.5 pt-1 border-t">
+                        {pedido.items?.slice(0, 6).map((item, idx) => (
+                          <div key={idx} className="aspect-square relative rounded-lg overflow-hidden bg-muted">
                             {item.foto_url || item.photo_url ? (
                               <img 
                                 src={getImageUrl(item.foto_url || item.photo_url)} 
                                 alt={item.nome || item.name}
-                                className="w-10 h-10 rounded object-cover flex-shrink-0 aspect-square"
+                                className="w-full h-full object-cover"
                                 onError={(e) => {
                                   e.target.style.display = 'none';
+                                  e.target.nextSibling.style.display = 'flex';
                                 }}
                               />
-                            ) : (
-                              <div className="w-10 h-10 rounded bg-muted flex items-center justify-center flex-shrink-0 aspect-square">
-                                <Package className="w-5 h-5 text-muted-foreground" />
-                              </div>
-                            )}
-                            <div className="flex-1 min-w-0">
-                              <p className="text-xs font-medium truncate">
-                                {item.quantidade || item.qty || 1}x {item.nome || item.name}
-                              </p>
+                            ) : null}
+                            <div className={`w-full h-full ${item.foto_url || item.photo_url ? 'hidden' : 'flex'} items-center justify-center bg-muted`}>
+                              <Package className="w-6 h-6 text-muted-foreground" />
+                            </div>
+                            {/* Badge de quantidade */}
+                            <div className="absolute bottom-0 left-0 right-0 bg-black/70 text-white text-[10px] px-1 py-0.5 truncate text-center">
+                              {item.quantidade || item.qty || 1}x {(item.nome || item.name)?.split(' ')[0]}
                             </div>
                           </div>
                         ))}
-                        {pedido.items?.length > 3 && (
-                          <p className="text-xs text-muted-foreground">
-                            +{pedido.items.length - 3} item(s)
-                          </p>
-                        )}
                       </div>
+                      {pedido.items?.length > 6 && (
+                        <p className="text-xs text-muted-foreground text-center">
+                          +{pedido.items.length - 6} item(s)
+                        </p>
+                      )}
                     </div>
                   ))
                 )}
