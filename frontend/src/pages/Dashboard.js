@@ -451,7 +451,7 @@ export default function Dashboard({ setIsAuthenticated }) {
             {/* Header do módulo */}
             <button
               onClick={() => handleModuleClick(() => setSalesExpanded(!salesExpanded))}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 ${
+              className={`w-full flex items-center gap-3 px-4 py-3.5 lg:py-3 rounded-xl lg:rounded-lg transition-all duration-200 ${
                 isSalesActive() && !activeTopMenu
                   ? "bg-primary/10 text-primary font-medium"
                   : "text-sidebar-foreground hover:bg-muted"
@@ -500,7 +500,7 @@ export default function Dashboard({ setIsAuthenticated }) {
           <div>
             <button
               onClick={() => handleModuleClick(() => setClientesFornecedoresExpanded(!clientesFornecedoresExpanded))}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 ${
+              className={`w-full flex items-center gap-3 px-4 py-3.5 lg:py-3 rounded-xl lg:rounded-lg transition-all duration-200 ${
                 isClientesFornecedoresActive() && !activeTopMenu
                   ? "bg-primary/10 text-primary font-medium"
                   : "text-sidebar-foreground hover:bg-muted"
@@ -548,7 +548,7 @@ export default function Dashboard({ setIsAuthenticated }) {
           <div>
             <button
               onClick={() => handleModuleClick(() => setFinanceiroExpanded(!financeiroExpanded))}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 ${
+              className={`w-full flex items-center gap-3 px-4 py-3.5 lg:py-3 rounded-xl lg:rounded-lg transition-all duration-200 ${
                 isFinanceiroActive() && !activeTopMenu
                   ? "bg-primary/10 text-primary font-medium"
                   : "text-sidebar-foreground hover:bg-muted"
@@ -596,7 +596,7 @@ export default function Dashboard({ setIsAuthenticated }) {
           <div>
             <button
               onClick={() => handleModuleClick(() => setLocalizacaoExpanded(!localizacaoExpanded))}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 ${
+              className={`w-full flex items-center gap-3 px-4 py-3.5 lg:py-3 rounded-xl lg:rounded-lg transition-all duration-200 ${
                 isLocalizacaoActive() && !activeTopMenu
                   ? "bg-primary/10 text-primary font-medium"
                   : "text-sidebar-foreground hover:bg-muted"
@@ -644,7 +644,7 @@ export default function Dashboard({ setIsAuthenticated }) {
           <div>
             <button
               onClick={() => handleModuleClick(() => setImpulsioneVendasExpanded(!impulsioneVendasExpanded))}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 ${
+              className={`w-full flex items-center gap-3 px-4 py-3.5 lg:py-3 rounded-xl lg:rounded-lg transition-all duration-200 ${
                 isImpulsioneVendasActive() && !activeTopMenu
                   ? "bg-primary/10 text-primary font-medium"
                   : "text-sidebar-foreground hover:bg-muted"
@@ -693,7 +693,7 @@ export default function Dashboard({ setIsAuthenticated }) {
             {/* Header do módulo */}
             <button
               onClick={() => handleModuleClick(() => setConfigExpanded(!configExpanded))}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 ${
+              className={`w-full flex items-center gap-3 px-4 py-3.5 lg:py-3 rounded-xl lg:rounded-lg transition-all duration-200 ${
                 isConfigActive() && !activeTopMenu
                   ? "bg-primary/10 text-primary font-medium"
                   : "text-sidebar-foreground hover:bg-muted"
