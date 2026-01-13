@@ -846,7 +846,7 @@ export default function ProfileMenu({ client, onLogout, onClientUpdate, darkMode
       >
         {client?.foto ? (
           <img 
-            src={client.foto.startsWith('http') ? client.foto : `/api${client.foto}`} 
+            src={client.foto.startsWith('data:') || client.foto.startsWith('http') ? client.foto : `${process.env.REACT_APP_BACKEND_URL || ''}${client.foto}`} 
             alt={client.nome}
             className="w-8 h-8 rounded-full object-cover border-2 border-orange-500"
             onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }}
