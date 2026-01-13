@@ -32377,3 +32377,13 @@
 2026-01-13T17:14:49.979779+00:00 | DB_CALL get_all_settings | P3 | 0.18ms | success
 2026-01-13T17:14:49.980957+00:00 | DB_CALL get_all_categories | P3 | 0.16ms | success
 2026-01-13T17:14:50.347898+00:00 | DB_CALL get_all_products | P3 | 0.59ms | success
+2026-01-13T17:15:43.934280+00:00 | DB_CALL get_all_settings | P3 | 1.94ms | success
+2026-01-13T17:15:43.936221+00:00 | DB_CALL get_all_business_hours | P3 | 38.5ms | success
+2026-01-13T17:15:43.942344+00:00 | DB_CALL get_all_categories | P3 | 44.49ms | success
+2026-01-13T17:15:43.943149+00:00 | DB_CALL get_all_products | P3 | 45.25ms | success
+2026-01-13T17:15:43.943943+00:00 | DB_CALL get_all_categories | P3 | 7.09ms | success
+2026-01-13T17:15:43.944320+00:00 | DB_CALL get_all_business_hours | P3 | 7.21ms | success
+2026-01-13T17:15:43.944729+00:00 | DB_CALL get_all_products | P3 | 6.33ms | success
+2026-01-13T17:15:43.945693+00:00 | DB_CALL get_all_settings | P3 | 3.51ms | success
+2026-01-13T17:15:44.138236+00:00 | DB_CALL get_all_bairros | P3 | 0.32ms | success
+2026-01-13T17:15:44.155641+00:00 | DB_CALL get_all_bairros | P3 | 1.11ms | success
