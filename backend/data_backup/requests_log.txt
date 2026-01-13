@@ -29992,3 +29992,5 @@
 2026-01-13T01:50:38.274851+00:00 | DB_CALL get_all_business_hours | P3 | 1.56ms | success
 2026-01-13T01:50:38.523140+00:00 | DB_CALL get_all_bairros | P3 | 0.35ms | success
 2026-01-13T01:50:52.722526+00:00 | DB_CALL get_user_by_username | P3 | 0.7ms | success
+2026-01-13T01:50:57.071112+00:00 | DB_CALL get_user_by_username | P3 | 0.3ms | success
+2026-01-13T01:50:57.450668+00:00 | DB_CALL get_all_settings | P3 | 0.28ms | success
