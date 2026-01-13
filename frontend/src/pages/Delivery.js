@@ -1865,7 +1865,7 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
               {selectedProduct.photo_url ? (
                 <div className="relative h-48 -mx-6 -mt-6 mb-4">
                   <img 
-                    src={selectedProduct.photo_url} 
+                    src={getImageUrl(selectedProduct.photo_url)} 
                     alt={selectedProduct.name}
                     className="w-full h-full object-cover"
                   />
