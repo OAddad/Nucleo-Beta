@@ -31284,3 +31284,8 @@
 2026-01-13T15:11:14.358799+00:00 | DB_CALL get_user_by_username | P3 | 0.15ms | success
 2026-01-13T15:11:14.477559+00:00 | DB_CALL get_all_clientes | P3 | 118.65ms | success
 2026-01-13T15:11:29.029859+00:00 | DB_CALL get_pedidos_by_cliente | P3 | 9.28ms | success
+2026-01-13T15:13:40.326561+00:00 | DB_CALL get_all_business_hours | P3 | 1.55ms | success
+2026-01-13T15:13:40.327227+00:00 | DB_CALL get_all_settings | P3 | 1.85ms | success
+2026-01-13T15:13:40.328578+00:00 | DB_CALL get_all_products | P3 | 0.88ms | success
+2026-01-13T15:13:40.329740+00:00 | DB_CALL get_all_categories | P3 | 1.78ms | success
+2026-01-13T15:13:40.377569+00:00 | DB_CALL get_all_bairros | P3 | 2.18ms | success
