@@ -471,6 +471,22 @@ function ClubeAddadTab({ loggedClient, onLogin, onClientUpdate, darkMode, t }) {
   const [formData, setFormData] = useState({ cpf: '', data_nascimento: '', email: '' });
   const [loading, setLoading] = useState(false);
   const [clubeStatus, setClubeStatus] = useState(null);
+  const [clubeConfig, setClubeConfig] = useState({ clube_nome: 'Clube Addad', pontos_por_real: 1 });
+
+  // Buscar configurações do clube
+  useEffect(() => {
+    const fetchClubeConfig = async () => {
+      try {
+        const response = await axios.get('/api/public/clube/config');
+        if (response.data) {
+          setClubeConfig(response.data);
+        }
+      } catch (error) {
+        console.error('Erro ao buscar config do clube:', error);
+      }
+    };
+    fetchClubeConfig();
+  }, []);
 
   // Buscar status do clube quando o cliente estiver logado
   useEffect(() => {
