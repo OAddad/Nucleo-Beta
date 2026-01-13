@@ -1,105 +1,46 @@
 #!/bin/bash
-#
-# SETUP.SH - Configuração inicial do Sistema Núcleo
-# Executar UMA VEZ após clonar o repositório
-#
-# Uso: ./setup.sh
-#
+# ==============================================
+# Script de Setup - Pedido Express
+# Execute este script após clonar o repositório
+# ==============================================
 
-set -e
+echo "🚀 Iniciando setup do Pedido Express..."
 
-echo "╔════════════════════════════════════════════════════════════╗"
-echo "║           NÚCLEO - Setup Inicial                           ║"
-echo "╚════════════════════════════════════════════════════════════╝"
+# 1. Instalar dependências do Backend
+echo "📦 Instalando dependências do Backend..."
+cd /app/backend
+if [ -f requirements.txt ]; then
+    pip install -r requirements.txt --quiet
+    echo "✅ Dependências do backend instaladas"
+fi
+
+# 2. Instalar dependências do Frontend
+echo "📦 Instalando dependências do Frontend..."
+cd /app/frontend
+if [ -f package.json ]; then
+    yarn install --silent
+    echo "✅ Dependências do frontend instaladas"
+fi
+
+# 3. Instalar dependências do WhatsApp Service
+echo "📦 Instalando dependências do WhatsApp Service..."
+cd /app/whatsapp-service
+if [ -f package.json ]; then
+    npm install --silent
+    echo "✅ Dependências do WhatsApp Service instaladas"
+fi
+
+# 4. Criar diretórios necessários
+echo "📁 Criando diretórios..."
+mkdir -p /var/log/supervisor
+mkdir -p /app/backend/data_backup
+
+# 5. Configurar permissões
+chmod +x /app/backend/start_whatsapp.sh 2>/dev/null
+
 echo ""
-
-cd "$(dirname "$0")"
-ROOT_DIR=$(pwd)
-
-# =====================================================
-# 1. BACKEND - Dependências Python
-# =====================================================
-echo "📦 [1/4] Instalando dependências do Backend..."
-cd "$ROOT_DIR/backend"
-
-if [ ! -d "venv" ]; then
-    python3 -m venv venv 2>/dev/null || true
-fi
-
-# Instalar dependências
-pip install -r requirements.txt -q 2>/dev/null || pip3 install -r requirements.txt -q
-
-echo "   ✅ Backend pronto"
-
-# =====================================================
-# 2. FRONTEND - Dependências Node
-# =====================================================
-echo "📦 [2/4] Instalando dependências do Frontend..."
-cd "$ROOT_DIR/frontend"
-
-# Verificar se yarn está disponível
-if command -v yarn &> /dev/null; then
-    yarn install --silent 2>/dev/null || yarn install
-else
-    npm install --silent 2>/dev/null || npm install
-fi
-
-echo "   ✅ Frontend pronto"
-
-# =====================================================
-# 3. ARQUIVOS .ENV
-# =====================================================
-echo "⚙️  [3/4] Configurando arquivos de ambiente..."
-
-# Backend .env
-if [ ! -f "$ROOT_DIR/backend/.env" ]; then
-    cat > "$ROOT_DIR/backend/.env" << 'EOF'
-# Configuração do Backend - Núcleo
-CORS_ORIGINS="*"
-JWT_SECRET="nucleo-secret-key-change-in-production"
-EOF
-    echo "   ✅ backend/.env criado"
-else
-    echo "   ℹ️  backend/.env já existe"
-fi
-
-# Frontend .env (usando URL relativa, não precisa de BACKEND_URL específico)
-if [ ! -f "$ROOT_DIR/frontend/.env" ]; then
-    cat > "$ROOT_DIR/frontend/.env" << 'EOF'
-# Configuração do Frontend - Núcleo
-# Não precisa de REACT_APP_BACKEND_URL - usa URLs relativas
-WDS_SOCKET_PORT=443
-ENABLE_HEALTH_CHECK=false
-EOF
-    echo "   ✅ frontend/.env criado"
-else
-    echo "   ℹ️  frontend/.env já existe"
-fi
-
-# =====================================================
-# 4. BANCO DE DADOS SQLite
-# =====================================================
-echo "🗄️  [4/4] Verificando banco de dados..."
-cd "$ROOT_DIR/backend"
-
-# Criar diretório se não existir
-mkdir -p data_backup
-
-# Inicializar banco (cria tabelas se não existirem)
-python3 -c "import database" 2>/dev/null || python -c "import database"
-
-echo "   ✅ SQLite configurado"
-
-# =====================================================
-# FINALIZAÇÃO
-# =====================================================
+echo "✅ Setup concluído com sucesso!"
 echo ""
-echo "╔════════════════════════════════════════════════════════════╗"
-echo "║           ✅ Setup concluído com sucesso!                  ║"
-echo "╠════════════════════════════════════════════════════════════╣"
-echo "║                                                            ║"
-echo "║  Para iniciar o sistema, execute:                          ║"
-echo "║                                                            ║"
-echo "║    ./launch.sh                                             ║"
-echo "║                                                            ║"
-echo "╚════════════════════════════════════════════════════════════╝"
+echo "Para iniciar os serviços:"
+echo "  sudo supervisorctl restart all"
+echo ""
