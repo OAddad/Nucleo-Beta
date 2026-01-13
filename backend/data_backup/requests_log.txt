@@ -29224,3 +29224,9 @@
 2026-01-13T01:26:25.464653+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.21ms | success
 2026-01-13T01:26:25.480890+00:00 | DB_CALL get_entregador_by_id | P3 | 0.16ms | success
 2026-01-13T01:26:25.482083+00:00 | DB_CALL get_pedidos_by_entregador | P3 | 0.15ms | success
+2026-01-13T01:26:30.234890+00:00 | DB_CALL get_user_by_id | P3 | 0.29ms | success
+2026-01-13T01:26:30.235254+00:00 | DB_CALL get_order_status_template | P3 | 0.14ms | success
+2026-01-13T01:26:30.239706+00:00 | DB_CALL update_order_status_template | P3 | 4.37ms | success
+2026-01-13T01:26:30.406564+00:00 | DB_CALL get_user_by_id | P3 | 0.26ms | success
+2026-01-13T01:26:30.406858+00:00 | DB_CALL get_all_order_status_templates | P3 | 0.16ms | success
+2026-01-13T01:26:30.476840+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.73ms | success
