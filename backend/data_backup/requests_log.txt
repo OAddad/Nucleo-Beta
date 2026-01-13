@@ -29257,3 +29257,16 @@
 2026-01-13T01:27:09.560464+00:00 | DB_CALL get_user_by_id | P3 | 0.26ms | success
 2026-01-13T01:27:09.560753+00:00 | DB_CALL get_all_order_status_templates | P3 | 0.16ms | success
 2026-01-13T01:27:10.468087+00:00 | DB_CALL get_whatsapp_stats | P3 | 5.09ms | success
+2026-01-13T01:27:15.665047+00:00 | DB_CALL init_database | P3 | 2.74ms | success
+2026-01-13T01:27:15.665523+00:00 | DB_CALL count_ingredients | P3 | 0.22ms | success
+2026-01-13T01:27:15.665700+00:00 | DB_CALL count_products | P3 | 0.11ms | success
+2026-01-13T01:27:15.665839+00:00 | DB_CALL count_users | P3 | 0.09ms | success
+2026-01-13T01:27:15.704620+00:00 | DB_CALL get_pedidos_by_entregador | P3 | 37.36ms | success
+2026-01-13T01:27:15.708075+00:00 | DB_CALL get_entregador_by_id | P3 | 40.65ms | success
+2026-01-13T01:27:15.711343+00:00 | DB_CALL get_whatsapp_stats | P3 | 21.51ms | success
+2026-01-13T01:27:15.877561+00:00 | DB_CALL get_pedidos_by_entregador | P3 | 0.29ms | success
+2026-01-13T01:27:15.881677+00:00 | DB_CALL get_entregador_by_id | P3 | 0.21ms | success
+2026-01-13T01:27:20.510586+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.23ms | success
+2026-01-13T01:27:25.481619+00:00 | DB_CALL get_entregador_by_id | P3 | 0.25ms | success
+2026-01-13T01:27:25.482616+00:00 | DB_CALL get_pedidos_by_entregador | P3 | 0.14ms | success
+2026-01-13T01:27:25.505640+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.21ms | success
