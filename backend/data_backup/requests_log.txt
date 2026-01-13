@@ -31049,3 +31049,8 @@
 2026-01-13T14:44:32.848062+00:00 | DB_CALL get_user_by_username | P3 | 2.37ms | success
 2026-01-13T14:44:34.538639+00:00 | DB_CALL get_user_by_username | P3 | 3.3ms | success
 2026-01-13T14:44:34.807799+00:00 | DB_CALL get_all_settings | P3 | 0.3ms | success
+2026-01-13T14:44:56.817363+00:00 | DB_CALL get_all_settings | P3 | 1.22ms | success
+2026-01-13T14:44:56.819819+00:00 | DB_CALL get_all_products | P3 | 1.53ms | success
+2026-01-13T14:44:56.820812+00:00 | DB_CALL get_all_business_hours | P3 | 2.16ms | success
+2026-01-13T14:44:56.822323+00:00 | DB_CALL get_all_categories | P3 | 0.79ms | success
+2026-01-13T14:44:56.920888+00:00 | DB_CALL get_all_bairros | P3 | 0.44ms | success
