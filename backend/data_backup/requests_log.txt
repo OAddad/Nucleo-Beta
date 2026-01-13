@@ -32968,3 +32968,12 @@
 2026-01-13T18:36:13.734433+00:00 | DB_CALL count_ingredients | P3 | 0.22ms | success
 2026-01-13T18:36:13.734632+00:00 | DB_CALL count_products | P3 | 0.12ms | success
 2026-01-13T18:36:13.734850+00:00 | DB_CALL count_users | P3 | 0.15ms | success
+2026-01-13T18:43:05.732880+00:00 | DB_CALL get_user_by_username | P3 | 0.34ms | success
+2026-01-13T18:43:05.736953+00:00 | DB_CALL get_user_by_id | P3 | 0.27ms | success
+2026-01-13T18:43:05.739256+00:00 | DB_CALL get_all_products | P3 | 2.18ms | success
+2026-01-13T18:43:05.743713+00:00 | DB_CALL get_user_by_id | P3 | 0.24ms | success
+2026-01-13T18:43:05.744066+00:00 | DB_CALL get_next_product_code | P3 | 0.18ms | success
+2026-01-13T18:43:05.747125+00:00 | DB_CALL create_product | P3 | 2.96ms | success
+2026-01-13T18:43:05.749215+00:00 | DB_CALL create_audit_log | P3 | 2.01ms | success
+2026-01-13T18:43:05.751731+00:00 | DB_CALL get_user_by_id | P3 | 0.18ms | success
+2026-01-13T18:43:05.752305+00:00 | DB_CALL get_all_products | P3 | 0.48ms | success
