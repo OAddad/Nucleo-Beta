@@ -26280,3 +26280,6 @@
 2026-01-13T00:36:52.466445+00:00 | DB_CALL get_all_settings | P3 | 4.97ms | success
 2026-01-13T00:36:52.466862+00:00 | DB_CALL recalculate_all_cliente_stats | P3 | 5.17ms | success
 2026-01-13T00:36:52.467147+00:00 | DB_CALL get_all_clientes | P3 | 0.23ms | success
+2026-01-13T00:36:57.429349+00:00 | DB_CALL get_all_pedidos | P3 | 1.62ms | success
+2026-01-13T00:36:57.431008+00:00 | DB_CALL get_all_settings | P3 | 2.52ms | success
+2026-01-13T00:36:57.431713+00:00 | DB_CALL get_all_entregadores | P3 | 0.17ms | success
