@@ -5130,17 +5130,19 @@ def main():
         """Run specific tests as requested in the review"""
         print("🚀 Starting Review Request Specific Tests...")
         print(f"Base URL: {self.base_url}")
-        print("🎯 Testing Order Status Notification Templates endpoints as specified in review request:")
-        print("   1. GET /api/order-status-templates - Lista todos os templates")
-        print("   2. GET /api/order-status-templates/delivery - Lista templates de entrega")
-        print("   3. GET /api/order-status-templates/pickup - Lista templates de retirada")
-        print("   4. PUT /api/order-status-templates/delivery/pronto - Atualiza template")
-        print("   5. GET /api/order-status-templates/delivery novamente - Verifica atualização")
-        print("   Credenciais: Addad/Addad123")
+        print("🎯 Testing CLUBE ADDAD endpoints as specified in review request:")
+        print("   Backend URL: http://localhost:8001")
+        print("   Credenciais admin: Addad/Addad123")
+        print("   Cliente de teste: procure por Diego (telefone 999658914) via GET /api/clientes")
+        print("   ENDPOINTS A TESTAR:")
+        print("   1. GET /api/public/cliente/{cliente_id}/clube")
+        print("   2. POST /api/public/clube/registrar/{cliente_id}")
+        print("   3. POST /api/public/clube/whatsapp/{cliente_id}")
+        print("   4. GET /api/clientes (autenticado)")
         
         # Run specific tests for the review request
         test_results = {
-            "order_status_templates": self.test_order_status_templates()
+            "clube_addad_endpoints": self.test_clube_addad_endpoints()
         }
         
         # Print summary
