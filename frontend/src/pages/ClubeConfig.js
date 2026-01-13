@@ -213,7 +213,7 @@ export default function ClubeConfig() {
                 <Crown className="w-6 h-6 text-white" />
               </div>
               <div>
-                <p className="font-bold text-lg">{config.clube_nome || "Clube"}</p>
+                <p className="font-bold text-lg">Clube {config.clube_nome || "Nome"}</p>
                 <p className="text-sm text-muted-foreground">
                   Ganhe {config.pontos_por_real || 1} {config.pontos_por_real === 1 ? 'ponto' : 'pontos'} a cada R$ 1,00 gasto
                 </p>
