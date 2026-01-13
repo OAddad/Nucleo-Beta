@@ -2178,7 +2178,7 @@ export default function CardapioPublico({ onAdminLogin }) {
         
         {/* Campo de Busca Expandível */}
         {searchOpen && (
-          <div className={`px-3 py-2 ${t.bg} border-b ${t.border}`}>
+          <div id="search-container" className={`px-3 py-2 ${t.bg} border-b ${t.border}`}>
             <div className="relative">
               <Search className={`absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 ${t.textMuted2}`} />
               <Input 
