@@ -320,6 +320,14 @@ export default function Dashboard({ setIsAuthenticated }) {
 
   return (
     <div className="flex h-screen bg-background overflow-hidden">
+      {/* Overlay para mobile quando sidebar está aberto */}
+      {sidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-black/50 z-30 lg:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+      
       {/* Sidebar - Fixo com scroll próprio */}
       <aside className={`
         bg-sidebar text-sidebar-foreground flex-col border-r
