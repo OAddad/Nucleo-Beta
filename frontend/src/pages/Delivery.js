@@ -1257,6 +1257,150 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
     }
   };
 
+  // Buscar histórico de pedidos do cliente
+  const fetchClienteHistorico = async (clienteId) => {
+    setLoadingHistorico(true);
+    try {
+      const res = await axios.get(`${API}/pedidos?cliente_id=${clienteId}`, getAuthHeader());
+      const pedidos = Array.isArray(res.data) ? res.data : (res.data.pedidos || []);
+      setClienteHistorico(pedidos.slice(0, 10)); // Últimos 10 pedidos
+    } catch (error) {
+      console.error("Erro ao carregar histórico:", error);
+      setClienteHistorico([]);
+    } finally {
+      setLoadingHistorico(false);
+    }
+  };
+
+  // Quando selecionar um cliente, carregar histórico e endereços
+  const handleSelectCliente = (cliente) => {
+    setSelectedCliente(cliente);
+    setClienteSearch("");
+    setShowClienteDropdown(false);
+    
+    // Carregar histórico
+    fetchClienteHistorico(cliente.id);
+    
+    // Extrair endereços salvos do cliente e dos pedidos anteriores
+    const enderecos = [];
+    
+    // Endereço principal do cliente
+    if (cliente.endereco || cliente.endereco_rua) {
+      enderecos.push({
+        id: 'principal',
+        label: 'Endereço Principal',
+        rua: cliente.endereco_rua || cliente.endereco || '',
+        numero: cliente.endereco_numero || '',
+        bairro: cliente.bairro || '',
+        complemento: cliente.complemento || '',
+        referencia: cliente.referencia || '',
+        cep: cliente.cep || ''
+      });
+    }
+    
+    setEnderecosSalvos(enderecos);
+  };
+
+  // Selecionar endereço salvo
+  const handleSelectEndereco = (end) => {
+    setEnderecoSelecionado(end.id);
+    setEndereco({
+      rua: end.rua || '',
+      numero: end.numero || '',
+      bairro: end.bairro || '',
+      complemento: end.complemento || '',
+      referencia: end.referencia || '',
+      cep: end.cep || ''
+    });
+    // Buscar taxa do bairro
+    const bairro = bairros.find(b => b.nome === end.bairro);
+    if (bairro) {
+      setTaxaEntrega(bairro.taxa_entrega || 0);
+    }
+  };
+
+  // Gerenciar múltiplos pedidos
+  const novoPedidoTab = () => {
+    // Salvar estado atual
+    if (cart.length > 0 || selectedCliente) {
+      const pedidoAtual = {
+        id: pedidoAtualId || Date.now(),
+        cart,
+        selectedCliente,
+        tipoEntrega,
+        endereco,
+        formaPagamento,
+        observacao,
+        step
+      };
+      
+      const existe = pedidosAtivos.find(p => p.id === pedidoAtual.id);
+      if (existe) {
+        setPedidosAtivos(pedidosAtivos.map(p => p.id === pedidoAtual.id ? pedidoAtual : p));
+      } else {
+        setPedidosAtivos([...pedidosAtivos, pedidoAtual]);
+      }
+    }
+    
+    // Limpar para novo pedido
+    const novoId = Date.now();
+    setPedidoAtualId(novoId);
+    setCart([]);
+    setSelectedCliente(null);
+    setTipoEntrega("delivery");
+    setEndereco({ rua: "", numero: "", bairro: "", complemento: "", referencia: "", cep: "" });
+    setFormaPagamento("");
+    setObservacao("");
+    setTrocoPara("");
+    setPrecisaTroco(false);
+    setStep(1);
+    setClienteHistorico([]);
+    setEnderecosSalvos([]);
+  };
+
+  // Trocar para pedido existente
+  const switchPedido = (pedido) => {
+    // Salvar atual primeiro
+    if (pedidoAtualId) {
+      const pedidoAtual = {
+        id: pedidoAtualId,
+        cart,
+        selectedCliente,
+        tipoEntrega,
+        endereco,
+        formaPagamento,
+        observacao,
+        step
+      };
+      setPedidosAtivos(pedidosAtivos.map(p => p.id === pedidoAtualId ? pedidoAtual : p));
+    }
+    
+    // Carregar o pedido selecionado
+    setPedidoAtualId(pedido.id);
+    setCart(pedido.cart || []);
+    setSelectedCliente(pedido.selectedCliente);
+    setTipoEntrega(pedido.tipoEntrega || "delivery");
+    setEndereco(pedido.endereco || { rua: "", numero: "", bairro: "", complemento: "", referencia: "", cep: "" });
+    setFormaPagamento(pedido.formaPagamento || "");
+    setObservacao(pedido.observacao || "");
+    setStep(pedido.step || 1);
+    
+    // Carregar histórico se tiver cliente
+    if (pedido.selectedCliente) {
+      fetchClienteHistorico(pedido.selectedCliente.id);
+    }
+  };
+
+  // Remover pedido da lista
+  const removerPedidoTab = (pedidoId) => {
+    setPedidosAtivos(pedidosAtivos.filter(p => p.id !== pedidoId));
+    if (pedidoAtualId === pedidoId) {
+      setPedidoAtualId(null);
+      setCart([]);
+      setSelectedCliente(null);
+    }
+  };
+
   // Filtrar produtos
   const filteredProducts = products.filter(p => {
     const matchSearch = p.name.toLowerCase().includes(searchTerm.toLowerCase());
