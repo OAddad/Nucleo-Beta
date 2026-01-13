@@ -31548,3 +31548,8 @@
 2026-01-13T15:30:52.833833+00:00 | DB_CALL get_all_categories | P3 | 0.8ms | success
 2026-01-13T15:30:52.834399+00:00 | DB_CALL get_all_business_hours | P3 | 1.15ms | success
 2026-01-13T15:30:52.900834+00:00 | DB_CALL get_all_bairros | P3 | 2.65ms | success
+2026-01-13T15:31:09.970772+00:00 | DB_CALL get_all_settings | P3 | 1.26ms | success
+2026-01-13T15:31:09.972102+00:00 | DB_CALL get_all_products | P3 | 1.4ms | success
+2026-01-13T15:31:09.974258+00:00 | DB_CALL get_all_categories | P3 | 0.82ms | success
+2026-01-13T15:31:09.975105+00:00 | DB_CALL get_all_business_hours | P3 | 1.18ms | success
+2026-01-13T15:31:10.025807+00:00 | DB_CALL get_all_bairros | P3 | 2.27ms | success
