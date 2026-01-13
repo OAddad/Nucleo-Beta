@@ -239,6 +239,8 @@ def init_database():
                 category TEXT,
                 product_type TEXT DEFAULT 'produto',
                 sale_price REAL,
+                simple_price REAL,
+                combo_description TEXT,
                 photo_url TEXT,
                 recipe TEXT,
                 cmv REAL DEFAULT 0,
