@@ -32150,3 +32150,8 @@
 2026-01-13T16:50:54.843015+00:00 | DB_CALL get_all_settings | P3 | 2.55ms | success
 2026-01-13T16:50:54.843475+00:00 | DB_CALL get_all_categories | P3 | 2.91ms | success
 2026-01-13T16:50:55.061136+00:00 | DB_CALL get_all_bairros | P3 | 0.32ms | success
+2026-01-13T16:51:01.132875+00:00 | DB_CALL get_user_by_username | P3 | 0.27ms | success
+2026-01-13T16:51:01.133122+00:00 | DB_CALL get_user_by_username | P3 | 0.13ms | success
+2026-01-13T16:51:01.134184+00:00 | DB_CALL get_all_clientes | P3 | 0.95ms | success
+2026-01-13T16:51:01.626940+00:00 | DB_CALL get_cliente_by_id | P3 | 2.49ms | success
+2026-01-13T16:51:03.976662+00:00 | DB_CALL get_all_settings | P3 | 1.07ms | success
