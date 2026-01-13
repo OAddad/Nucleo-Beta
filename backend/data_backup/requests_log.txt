@@ -31567,3 +31567,4 @@
 2026-01-13T15:32:19.877228+00:00 | DB_CALL get_all_categories | P3 | 7.86ms | success
 2026-01-13T15:32:19.878374+00:00 | DB_CALL get_all_products | P3 | 8.92ms | success
 2026-01-13T15:32:19.961604+00:00 | DB_CALL get_all_bairros | P3 | 0.38ms | success
+2026-01-13T15:58:41.094590+00:00 | DB_CALL get_pedidos_by_cliente | P3 | 1.67ms | success
