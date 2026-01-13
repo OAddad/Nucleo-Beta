@@ -375,7 +375,7 @@ export default function Dashboard({ setIsAuthenticated }) {
             )}
           </div>
 
-        <nav className="flex-1 p-3 lg:p-4 space-y-1 overflow-y-auto overflow-x-hidden">
+        <nav className="flex-1 p-3 lg:p-4 space-y-1.5 lg:space-y-1 overflow-y-auto overflow-x-hidden">
           {/* Tabs Principais */}
           {mainTabs.map((tab) => {
             const Icon = tab.icon;
@@ -384,15 +384,15 @@ export default function Dashboard({ setIsAuthenticated }) {
               <button
                 key={tab.path}
                 onClick={() => handleSidebarClick(tab.path)}
-                className={`w-full flex items-center gap-3 px-4 py-3.5 lg:py-3 rounded-xl lg:rounded-lg transition-all duration-200 ${
+                className={`w-full flex items-center gap-3 lg:gap-3 px-4 py-4 lg:py-3 rounded-xl lg:rounded-lg transition-all duration-200 ${
                   active
                     ? "bg-primary text-primary-foreground font-medium shadow-lg"
                     : "text-sidebar-foreground hover:bg-muted active:bg-muted/80"
                 } ${!sidebarOpen ? 'lg:justify-center lg:px-2' : ''}`}
                 title={!sidebarOpen ? tab.label : ''}
               >
-                <Icon className="w-5 h-5 flex-shrink-0" strokeWidth={1.5} />
-                {sidebarOpen && <span className="text-sm font-medium">{tab.label}</span>}
+                <Icon className="w-6 h-6 lg:w-5 lg:h-5 flex-shrink-0" strokeWidth={1.5} />
+                {sidebarOpen && <span className="text-base lg:text-sm font-medium">{tab.label}</span>}
               </button>
             );
           })}
