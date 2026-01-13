@@ -1158,6 +1158,18 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
   const [novoCliente, setNovoCliente] = useState({ nome: "", telefone: "" });
   const [creatingCliente, setCreatingCliente] = useState(false);
   
+  // Histórico de pedidos do cliente
+  const [clienteHistorico, setClienteHistorico] = useState([]);
+  const [loadingHistorico, setLoadingHistorico] = useState(false);
+  
+  // Endereços salvos do cliente
+  const [enderecosSalvos, setEnderecosSalvos] = useState([]);
+  const [enderecoSelecionado, setEnderecoSelecionado] = useState(null);
+  
+  // Múltiplos pedidos simultâneos
+  const [pedidosAtivos, setPedidosAtivos] = useState([]);
+  const [pedidoAtualId, setPedidoAtualId] = useState(null);
+  
   // Tipo de entrega e endereço
   const [tipoEntrega, setTipoEntrega] = useState("delivery"); // delivery ou pickup
   const [endereco, setEndereco] = useState({
@@ -1165,7 +1177,8 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
     numero: "",
     bairro: "",
     complemento: "",
-    referencia: ""
+    referencia: "",
+    cep: ""
   });
   const [taxaEntrega, setTaxaEntrega] = useState(0);
   
@@ -1173,6 +1186,7 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
   const [formaPagamento, setFormaPagamento] = useState("");
   const [observacao, setObservacao] = useState("");
   const [trocoPara, setTrocoPara] = useState("");
+  const [precisaTroco, setPrecisaTroco] = useState(false);
   
   // Popup de produto
   const [selectedProduct, setSelectedProduct] = useState(null);
