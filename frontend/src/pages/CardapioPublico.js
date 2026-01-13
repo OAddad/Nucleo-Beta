@@ -745,7 +745,8 @@ function CheckoutModal({ open, onClose, cart, cartTotal, client, darkMode, onOrd
         nome: item.name,
         quantidade: item.quantity,
         preco: item.sale_price,
-        observacao: item.observation || null
+        observacao: item.observation || null,
+        photo_url: item.photo_url || null
       })),
       total: cartTotal,
       forma_pagamento: paymentMap[paymentMethod],
