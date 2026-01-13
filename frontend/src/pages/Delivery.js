@@ -596,10 +596,10 @@ export default function Delivery() {
         </div>
 
         {/* Coluna 2: EM PRODUÇÃO */}
-        <div className="flex-[1.2] flex flex-col rounded-xl border bg-card overflow-hidden min-w-0">
-          <div className="p-3 bg-muted/50 border-b">
+        <div className="flex-1 lg:flex-[1.2] flex flex-col rounded-xl border bg-card overflow-hidden min-w-0">
+          <div className="p-2 sm:p-3 bg-muted/50 border-b">
             <div className="flex items-center justify-between">
-              <h3 className="font-bold text-sm">EM PRODUÇÃO</h3>
+              <h3 className="font-bold text-xs sm:text-sm">EM PRODUÇÃO</h3>
               <span className="bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400 px-2 py-0.5 rounded-full text-xs font-bold">
                 {getPedidosByStatus('producao').length}
               </span>
@@ -608,8 +608,8 @@ export default function Delivery() {
           
           <div className="flex-1 overflow-auto p-2 space-y-2">
             {getPedidosByStatus('producao').length === 0 ? (
-              <div className="flex flex-col items-center justify-center h-full text-muted-foreground text-sm">
-                <ChefHat className="w-8 h-8 mb-2 opacity-30" />
+              <div className="flex flex-col items-center justify-center h-20 lg:h-full text-muted-foreground text-xs sm:text-sm">
+                <ChefHat className="w-6 h-6 sm:w-8 sm:h-8 mb-2 opacity-30" />
                 <p>Nenhum pedido em produção</p>
               </div>
             ) : (
@@ -627,10 +627,10 @@ export default function Delivery() {
         </div>
 
         {/* Coluna 3: PRONTO */}
-        <div className="flex-[1.2] flex flex-col rounded-xl border bg-card overflow-hidden min-w-0">
-          <div className="p-3 bg-muted/50 border-b space-y-2">
+        <div className="flex-1 lg:flex-[1.2] flex flex-col rounded-xl border bg-card overflow-hidden min-w-0">
+          <div className="p-2 sm:p-3 bg-muted/50 border-b space-y-2">
             <div className="flex items-center justify-between">
-              <h3 className="font-bold text-sm">PRONTO</h3>
+              <h3 className="font-bold text-xs sm:text-sm">PRONTO</h3>
               <span className="bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 px-2 py-0.5 rounded-full text-xs font-bold">
                 {getPedidosByStatus('pronto').length}
               </span>
