@@ -1656,16 +1656,16 @@ export default function CardapioPublico({ onAdminLogin }) {
       {/* Header Fixo - Estilo Burger King */}
       <header className="fixed top-0 left-0 right-0 z-40">
         {/* Barra Principal - Laranja */}
-        <div className="bg-gradient-to-r from-orange-600 to-orange-500 px-3 py-2">
+        <div className="bg-gradient-to-r from-orange-600 to-orange-500 px-3 py-2.5">
           <div className="flex items-center justify-between">
             {/* Lado Esquerdo - Nome + Pontos */}
             <div className="flex items-center gap-2">
-              <span className="text-white text-sm font-medium">
+              <span className="text-white text-sm font-semibold">
                 Oi, {loggedClient?.nome?.split(' ')[0] || 'Visitante'}!
               </span>
-              <div className="flex items-center gap-1 bg-orange-500/30 px-2 py-0.5 rounded-full">
-                <Crown className="w-3.5 h-3.5 fill-orange-400 text-orange-400" />
-                <span className="text-xs font-bold text-orange-300">{loggedClient?.pontos || 0}</span>
+              <div className="flex items-center gap-1 bg-white/20 px-2 py-0.5 rounded-full">
+                <Crown className="w-3.5 h-3.5 fill-white text-white" />
+                <span className="text-xs font-bold text-white">{loggedClient?.pontos || 0}</span>
               </div>
             </div>
             
@@ -1679,7 +1679,7 @@ export default function CardapioPublico({ onAdminLogin }) {
                     setTimeout(() => searchInputRef.current?.focus(), 100);
                   }
                 }}
-                className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${searchOpen ? 'bg-orange-500 text-white' : 'bg-white/10 text-white/80 hover:bg-white/20'}`}
+                className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${searchOpen ? 'bg-white text-orange-500' : 'bg-white/20 text-white hover:bg-white/30'}`}
               >
                 <Search className="w-4 h-4" />
               </button>
@@ -1691,10 +1691,11 @@ export default function CardapioPublico({ onAdminLogin }) {
                   onLogout={handleLogout} 
                   onClientUpdate={handleClientUpdate} 
                   darkMode={darkMode} 
-                  onToggleTheme={() => {}}
+                  onToggleTheme={toggleTheme}
+                  onNavigateToPedidos={() => setActiveTab('pedidos')}
                 />
               ) : (
-                <Button onClick={() => setShowLoginModal(true)} className="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-4 h-7 text-xs">
+                <Button onClick={() => setShowLoginModal(true)} className="bg-white hover:bg-gray-100 text-orange-600 font-semibold px-4 h-7 text-xs">
                   ENTRAR
                 </Button>
               )}
