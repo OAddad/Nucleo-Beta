@@ -466,6 +466,9 @@ export default function Products() {
   const [salePrice, setSalePrice] = useState("");
   const [simplePrice, setSimplePrice] = useState("");
   const [comboDescription, setComboDescription] = useState("");
+  const [simpleDescription, setSimpleDescription] = useState("");
+  const [simplePhotoUrl, setSimplePhotoUrl] = useState("");
+  const [comboPhotoUrl, setComboPhotoUrl] = useState("");
   const [photoUrl, setPhotoUrl] = useState("");
   const [photoFile, setPhotoFile] = useState(null);
   const [isInsumo, setIsInsumo] = useState(false);
