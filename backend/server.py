@@ -2368,6 +2368,54 @@ class ClubeRegistroRequest(BaseModel):
 class ClubeWhatsappConsentRequest(BaseModel):
     aceita: bool
 
+class ClubeConfigRequest(BaseModel):
+    clube_nome: str
+    pontos_por_real: float
+
+@api_router.get("/clube/config")
+async def get_clube_config(credentials: HTTPAuthorizationCredentials = Depends(security)):
+    """Retorna as configurações do clube"""
+    verify_token(credentials)
+    
+    clube_nome = sqlite_db.get_setting("clube_nome") or "Clube Addad"
+    pontos_por_real = sqlite_db.get_setting("pontos_por_real") or "1"
+    
+    return {
+        "clube_nome": clube_nome,
+        "pontos_por_real": float(pontos_por_real)
+    }
+
+@api_router.put("/clube/config")
+async def update_clube_config(config: ClubeConfigRequest, credentials: HTTPAuthorizationCredentials = Depends(security)):
+    """Atualiza as configurações do clube"""
+    verify_token(credentials)
+    
+    sqlite_db.set_setting("clube_nome", config.clube_nome)
+    sqlite_db.set_setting("pontos_por_real", str(config.pontos_por_real))
+    
+    return {"message": "Configurações do clube atualizadas com sucesso!"}
+
+@api_router.get("/clube/stats")
+async def get_clube_stats(credentials: HTTPAuthorizationCredentials = Depends(security)):
+    """Retorna estatísticas do clube"""
+    verify_token(credentials)
+    
+    with sqlite_db.get_db() as conn:
+        cursor = conn.cursor()
+        
+        # Total de membros do clube
+        cursor.execute("SELECT COUNT(*) FROM clientes WHERE membro_clube = 1")
+        total_membros = cursor.fetchone()[0]
+        
+        # Total de pontos distribuídos
+        cursor.execute("SELECT COALESCE(SUM(pontuacao), 0) FROM clientes WHERE membro_clube = 1")
+        total_pontos = cursor.fetchone()[0]
+        
+        return {
+            "total_membros": total_membros,
+            "total_pontos_distribuidos": total_pontos
+        }
+
 @api_router.post("/public/clube/registrar/{cliente_id}")
 async def registrar_no_clube(cliente_id: str, dados: ClubeRegistroRequest):
     """Registra um cliente no clube, salvando CPF, data de nascimento e email"""
