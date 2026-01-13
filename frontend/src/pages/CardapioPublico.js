@@ -566,9 +566,9 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode }) {
                 
                 {/* Imagem do Combo */}
                 <div className="w-full aspect-square bg-gradient-to-b from-orange-100 to-orange-200 dark:from-zinc-700 dark:to-zinc-600 pt-8">
-                  {product.photo_url && !imageError ? (
+                  {(product.combo_photo_url || product.photo_url) && !imageError ? (
                     <img
-                      src={getImageUrl(product.photo_url)}
+                      src={getImageUrl(product.combo_photo_url || product.photo_url)}
                       alt={product.name}
                       className="w-full h-full object-contain p-2"
                     />
