@@ -32427,3 +32427,4 @@
 2026-01-13T17:17:53.032269+00:00 | DB_CALL get_all_categories | P3 | 2.81ms | success
 2026-01-13T17:17:53.032562+00:00 | DB_CALL get_all_business_hours | P3 | 2.38ms | success
 2026-01-13T17:17:53.241564+00:00 | DB_CALL get_all_bairros | P3 | 0.31ms | success
+2026-01-13T17:20:34.300565+00:00 | DB_CALL get_pedidos_by_cliente | P3 | 1.17ms | success
