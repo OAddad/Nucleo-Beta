@@ -30590,3 +30590,8 @@
 2026-01-13T14:31:20.598618+00:00 | DB_CALL get_user_by_id | P3 | 3.5ms | success
 2026-01-13T14:31:20.599318+00:00 | DB_CALL get_all_products | P3 | 0.77ms | success
 2026-01-13T14:31:20.600460+00:00 | DB_CALL get_all_categories | P3 | 1.75ms | success
+2026-01-13T14:32:24.259034+00:00 | DB_CALL get_all_settings | P3 | 0.34ms | success
+2026-01-13T14:32:24.261130+00:00 | DB_CALL get_all_products | P3 | 0.51ms | success
+2026-01-13T14:32:24.264528+00:00 | DB_CALL get_all_categories | P3 | 0.18ms | success
+2026-01-13T14:32:24.269070+00:00 | DB_CALL get_all_business_hours | P3 | 0.26ms | success
+2026-01-13T14:32:24.473345+00:00 | DB_CALL get_all_bairros | P3 | 0.32ms | success

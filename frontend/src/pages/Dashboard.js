@@ -323,7 +323,7 @@ export default function Dashboard({ setIsAuthenticated }) {
       {/* Overlay para mobile quando sidebar está aberto */}
       {sidebarOpen && (
         <div 
-          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-30 lg:hidden transition-opacity duration-300"
+          className="fixed inset-0 bg-black/70 backdrop-blur-sm z-30 lg:hidden transition-opacity duration-300"
           onClick={() => setSidebarOpen(false)}
         />
       )}
@@ -333,9 +333,10 @@ export default function Dashboard({ setIsAuthenticated }) {
         bg-sidebar text-sidebar-foreground flex-col border-r
         transition-transform duration-300 ease-in-out flex-shrink-0
         fixed left-0 top-0 h-screen z-40
-        w-[280px] lg:w-64
+        w-[85vw] max-w-[320px] lg:w-64
         ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0 lg:w-16'}
         flex
+        shadow-2xl lg:shadow-none
       `}>
         {/* Conteúdo do Sidebar */}
         <div className={`${sidebarOpen ? 'block' : 'hidden lg:block'} w-full h-full flex flex-col`}>
@@ -352,24 +353,24 @@ export default function Dashboard({ setIsAuthenticated }) {
                 <img 
                   src={companySettings.logo_url ? `${process.env.REACT_APP_BACKEND_URL || ""}${companySettings.logo_url}` : "/logo-nucleo.png"} 
                   alt={companySettings.company_name || "Núcleo"} 
-                  className="w-10 h-10 object-contain rounded-lg"
+                  className="w-12 h-12 lg:w-10 lg:h-10 object-contain rounded-lg"
                   onError={(e) => { e.target.src = "/logo-nucleo.png"; }}
                 />
               </div>
               {sidebarOpen && (
                 <div className="text-left">
-                  <h1 className="text-sidebar-foreground font-bold text-base lg:text-lg tracking-tight">{companySettings.company_name || "Núcleo"}</h1>
+                  <h1 className="text-sidebar-foreground font-bold text-lg lg:text-lg tracking-tight">{companySettings.company_name || "Núcleo"}</h1>
                   <p className="text-xs text-muted-foreground">{companySettings.slogan || "o centro da sua gestão"}</p>
                 </div>
               )}
             </button>
-            {/* Botão fechar - apenas mobile */}
+            {/* Botão fechar - apenas mobile - mais visível */}
             {sidebarOpen && (
               <button 
                 onClick={() => setSidebarOpen(false)}
-                className="lg:hidden w-8 h-8 flex items-center justify-center rounded-lg hover:bg-muted text-sidebar-foreground"
+                className="lg:hidden w-10 h-10 flex items-center justify-center rounded-xl bg-muted/50 hover:bg-muted active:bg-muted/80 text-sidebar-foreground transition-colors"
               >
-                <X className="w-5 h-5" />
+                <X className="w-6 h-6" />
               </button>
             )}
           </div>
