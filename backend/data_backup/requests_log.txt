@@ -30157,3 +30157,13 @@
 2026-01-13T01:54:10.507983+00:00 | DB_CALL get_all_pedidos | P3 | 2.85ms | success
 2026-01-13T01:54:10.509877+00:00 | DB_CALL get_all_entregadores | P3 | 3.98ms | success
 2026-01-13T01:54:10.510210+00:00 | DB_CALL get_all_settings | P3 | 3.7ms | success
+2026-01-13T01:54:12.084063+00:00 | DB_CALL get_user_by_id | P3 | 0.87ms | success
+2026-01-13T01:54:12.084256+00:00 | DB_CALL get_user_by_id | P3 | 0.46ms | success
+2026-01-13T01:54:12.084885+00:00 | DB_CALL get_all_products | P3 | 0.64ms | success
+2026-01-13T01:54:12.087566+00:00 | DB_CALL get_all_categories | P3 | 3.23ms | success
+2026-01-13T01:54:15.283619+00:00 | DB_CALL get_user_by_id | P3 | 0.27ms | success
+2026-01-13T01:54:15.285698+00:00 | DB_CALL get_all_keyword_responses | P3 | 1.88ms | success
+2026-01-13T01:54:15.286271+00:00 | DB_CALL get_user_by_id | P3 | 1.82ms | success
+2026-01-13T01:54:15.286622+00:00 | DB_CALL get_all_order_status_templates | P3 | 0.26ms | success
+2026-01-13T01:54:15.287991+00:00 | DB_CALL get_user_by_id | P3 | 0.16ms | success
+2026-01-13T01:54:15.288220+00:00 | DB_CALL get_all_settings | P3 | 0.13ms | success
