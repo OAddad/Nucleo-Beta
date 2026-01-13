@@ -32301,3 +32301,11 @@
 2026-01-13T17:09:54.980235+00:00 | DB_CALL count_ingredients | P3 | 0.23ms | success
 2026-01-13T17:09:54.980409+00:00 | DB_CALL count_products | P3 | 0.11ms | success
 2026-01-13T17:09:54.980548+00:00 | DB_CALL count_users | P3 | 0.09ms | success
+2026-01-13T17:10:13.064035+00:00 | DB_CALL init_database | P3 | 2.7ms | success
+2026-01-13T17:10:13.064487+00:00 | DB_CALL count_ingredients | P3 | 0.22ms | success
+2026-01-13T17:10:13.064667+00:00 | DB_CALL count_products | P3 | 0.12ms | success
+2026-01-13T17:10:13.064820+00:00 | DB_CALL count_users | P3 | 0.1ms | success
+2026-01-13T17:10:20.603392+00:00 | DB_CALL init_database | P3 | 2.62ms | success
+2026-01-13T17:10:20.603864+00:00 | DB_CALL count_ingredients | P3 | 0.24ms | success
+2026-01-13T17:10:20.604055+00:00 | DB_CALL count_products | P3 | 0.13ms | success
+2026-01-13T17:10:20.604195+00:00 | DB_CALL count_users | P3 | 0.09ms | success
