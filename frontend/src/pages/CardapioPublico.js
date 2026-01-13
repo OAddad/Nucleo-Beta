@@ -379,7 +379,7 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode }) {
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className={`sm:max-w-lg p-0 gap-0 overflow-hidden ${t.bg} ${t.text} border-0 w-[95vw] sm:w-full max-h-[90vh] overflow-y-auto`}>
+      <DialogContent className={`sm:max-w-lg p-0 gap-0 overflow-hidden ${t.bg} ${t.text} border-0 w-[95vw] sm:w-full max-h-[85vh] flex flex-col`}>
         {/* Header com X */}
         <div className="absolute top-4 right-4 z-10">
           <button
@@ -390,8 +390,8 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode }) {
           </button>
         </div>
 
-        {/* Conteúdo */}
-        <div className="p-4 sm:p-6">
+        {/* Conteúdo com scroll */}
+        <div className="p-4 sm:p-6 overflow-y-auto flex-1">
           {/* Foto e Info - vertical em mobile, horizontal em desktop */}
           <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 mb-6">
             {/* Foto Grande - full width em mobile */}
