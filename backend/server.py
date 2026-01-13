@@ -386,6 +386,7 @@ class OrderStep(BaseModel):
     min_selections: int = 0  # 0 = sem limitador
     max_selections: int = 0  # 0 = sem limitador
     items: List[OrderStepItem] = []
+    combo_only: bool = False  # Se True, essa etapa só aparece para combo (ex: bebida)
 
 class ProductCreate(BaseModel):
     name: str
