@@ -29270,3 +29270,8 @@
 2026-01-13T01:27:25.481619+00:00 | DB_CALL get_entregador_by_id | P3 | 0.25ms | success
 2026-01-13T01:27:25.482616+00:00 | DB_CALL get_pedidos_by_entregador | P3 | 0.14ms | success
 2026-01-13T01:27:25.505640+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.21ms | success
+2026-01-13T01:27:28.363934+00:00 | DB_CALL init_database | P3 | 2.75ms | success
+2026-01-13T01:27:28.364422+00:00 | DB_CALL count_ingredients | P3 | 0.23ms | success
+2026-01-13T01:27:28.364604+00:00 | DB_CALL count_products | P3 | 0.12ms | success
+2026-01-13T01:27:28.364749+00:00 | DB_CALL count_users | P3 | 0.09ms | success
+2026-01-13T01:27:30.510030+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.34ms | success
