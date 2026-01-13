@@ -707,19 +707,19 @@ export default function Delivery() {
         </div>
 
         {/* Coluna 4: ENTREGADORES - MENOR */}
-        <div className="flex-[0.8] flex flex-col rounded-xl border bg-card overflow-hidden min-w-0">
-          <div className="p-3 bg-muted/50 border-b">
+        <div className="flex-1 lg:flex-[0.8] flex flex-col rounded-xl border bg-card overflow-hidden min-w-0">
+          <div className="p-2 sm:p-3 bg-muted/50 border-b">
             <div className="flex items-center justify-between">
-              <h3 className="font-bold text-sm">ENTREGADORES</h3>
+              <h3 className="font-bold text-xs sm:text-sm">ENTREGADORES</h3>
             </div>
           </div>
           
           <div className="flex-1 overflow-auto p-2 space-y-2">
             {entregadoresComPedidos.length === 0 ? (
-              <div className="flex flex-col items-center justify-center h-full text-muted-foreground text-sm p-4 text-center">
-                <Bike className="w-8 h-8 mb-2 opacity-30" />
+              <div className="flex flex-col items-center justify-center h-20 lg:h-full text-muted-foreground text-xs sm:text-sm p-2 sm:p-4 text-center">
+                <Bike className="w-6 h-6 sm:w-8 sm:h-8 mb-2 opacity-30" />
                 <p>Nenhum entregador com pedidos</p>
-                <p className="text-xs mt-1">Entregadores aparecem aqui quando têm pedidos na BAG</p>
+                <p className="text-[10px] sm:text-xs mt-1 hidden sm:block">Entregadores aparecem aqui quando têm pedidos na BAG</p>
               </div>
             ) : (
               entregadoresComPedidos.map(entregador => {
@@ -728,21 +728,21 @@ export default function Delivery() {
                   <button
                     key={entregador.id}
                     onClick={() => handleAbrirEntregador(entregador)}
-                    className="w-full bg-background rounded-xl border p-4 shadow-sm hover:border-primary/50 hover:shadow-md transition-all text-left"
+                    className="w-full bg-background rounded-xl border p-2 sm:p-4 shadow-sm hover:border-primary/50 hover:shadow-md transition-all text-left"
                   >
-                    <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center">
-                        <Bike className="w-6 h-6 text-muted-foreground" />
+                    <div className="flex items-center gap-2 sm:gap-3">
+                      <div className="w-8 h-8 sm:w-12 sm:h-12 rounded-full bg-muted flex items-center justify-center">
+                        <Bike className="w-4 h-4 sm:w-6 sm:h-6 text-muted-foreground" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="font-semibold truncate">{entregador.nome}</p>
+                        <p className="font-semibold truncate text-xs sm:text-base">{entregador.nome}</p>
                         {entregador.telefone && (
-                          <p className="text-xs text-muted-foreground">{entregador.telefone}</p>
+                          <p className="text-[10px] sm:text-xs text-muted-foreground hidden sm:block">{entregador.telefone}</p>
                         )}
                       </div>
-                      <div className="flex items-center gap-1 bg-primary/10 text-primary px-3 py-2 rounded-full">
-                        <ShoppingBag className="w-4 h-4" />
-                        <span className="text-sm font-bold">{bagCount}</span>
+                      <div className="flex items-center gap-1 bg-primary/10 text-primary px-2 py-1 sm:px-3 sm:py-2 rounded-full">
+                        <ShoppingBag className="w-3 h-3 sm:w-4 sm:h-4" />
+                        <span className="text-xs sm:text-sm font-bold">{bagCount}</span>
                       </div>
                     </div>
                   </button>
@@ -755,7 +755,7 @@ export default function Delivery() {
 
       {/* Modal de Detalhes do Pedido */}
       <Dialog open={detalhesModalOpen} onOpenChange={setDetalhesModalOpen}>
-        <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-auto">
+        <DialogContent className="max-w-[95vw] sm:max-w-lg max-h-[90vh] overflow-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <FileText className="w-5 h-5 text-primary" />
