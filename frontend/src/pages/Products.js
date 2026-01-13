@@ -1423,31 +1423,128 @@ export default function Products() {
 
                 {/* Campos extras para COMBO */}
                 {productType === "combo" && (
-                  <div className="grid grid-cols-2 gap-4 p-4 bg-orange-50 dark:bg-orange-500/10 rounded-xl border border-orange-200 dark:border-orange-500/20">
-                    <div>
-                      <Label htmlFor="simplePrice">Preço do SIMPLES (R$)</Label>
-                      <Input
-                        id="simplePrice"
-                        type="number"
-                        step="0.01"
-                        value={simplePrice}
-                        onChange={(e) => setSimplePrice(e.target.value)}
-                        placeholder="Ex: 25.90"
-                        className="mt-1 h-11"
-                      />
-                      <p className="text-xs text-muted-foreground mt-1">Preço quando o cliente escolhe só o produto</p>
+                  <div className="space-y-4 p-4 bg-orange-50 dark:bg-orange-500/10 rounded-xl border border-orange-200 dark:border-orange-500/20">
+                    <h4 className="font-semibold text-orange-600 dark:text-orange-400 flex items-center gap-2">
+                      <Package className="w-4 h-4" />
+                      Configuração dos Cards de Seleção
+                    </h4>
+                    
+                    {/* Preview dos Cards */}
+                    <div className="flex gap-3 p-3 bg-white dark:bg-zinc-800 rounded-lg border">
+                      {/* Preview Card Simples */}
+                      <div className="w-[35%] border rounded-lg overflow-hidden">
+                        <div className="aspect-square bg-orange-50 dark:bg-zinc-700 flex items-center justify-center">
+                          {simplePhotoUrl ? (
+                            <img src={simplePhotoUrl} alt="Simples" className="w-full h-full object-contain p-2" />
+                          ) : photoUrl ? (
+                            <img src={photoUrl} alt="Simples" className="w-full h-full object-contain p-2" />
+                          ) : (
+                            <span className="text-2xl">🍔</span>
+                          )}
+                        </div>
+                        <div className="p-2 text-center text-xs">
+                          <p className="font-bold">SIMPLES</p>
+                          <p className="text-muted-foreground text-[9px]">{simpleDescription || "Apenas o produto"}</p>
+                          <p className="font-bold text-orange-500">R$ {simplePrice || "0,00"}</p>
+                        </div>
+                      </div>
+                      
+                      {/* Preview Card Combo */}
+                      <div className="flex-1 border rounded-lg overflow-hidden relative">
+                        <div className="absolute top-0 left-0 right-0 bg-green-500 text-white text-[8px] font-bold py-0.5 text-center">
+                          ★ RECOMENDADO ★
+                        </div>
+                        <div className="aspect-square bg-orange-100 dark:bg-zinc-700 flex items-center justify-center pt-4">
+                          {comboPhotoUrl ? (
+                            <img src={comboPhotoUrl} alt="Combo" className="w-full h-full object-contain p-2" />
+                          ) : photoUrl ? (
+                            <img src={photoUrl} alt="Combo" className="w-full h-full object-contain p-2" />
+                          ) : (
+                            <span className="text-3xl">🍔</span>
+                          )}
+                        </div>
+                        <div className="p-2 text-xs">
+                          <p className="font-bold">COMBO</p>
+                          <p className="text-muted-foreground text-[9px]">{comboDescription || "+ Acompanhamentos"}</p>
+                          <p className="font-bold text-orange-500">R$ {salePrice || "0,00"}</p>
+                        </div>
+                      </div>
                     </div>
-                    <div>
-                      <Label htmlFor="comboDescription">Descrição do Combo</Label>
-                      <Input
-                        id="comboDescription"
-                        type="text"
-                        value={comboDescription}
-                        onChange={(e) => setComboDescription(e.target.value)}
-                        placeholder="Ex: + Batata + Refrigerante"
-                        className="mt-1 h-11"
-                      />
-                      <p className="text-xs text-muted-foreground mt-1">Ex: "+ Batata + Refrigerante"</p>
+                    
+                    {/* Configuração Card SIMPLES */}
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3 p-3 bg-white dark:bg-zinc-800 rounded-lg border">
+                      <div className="md:col-span-3">
+                        <p className="text-xs font-semibold text-muted-foreground mb-2">CARD SIMPLES</p>
+                      </div>
+                      <div>
+                        <Label className="text-xs">Preço (R$)</Label>
+                        <Input
+                          type="number"
+                          step="0.01"
+                          value={simplePrice}
+                          onChange={(e) => setSimplePrice(e.target.value)}
+                          placeholder="25.90"
+                          className="mt-1 h-9"
+                        />
+                      </div>
+                      <div>
+                        <Label className="text-xs">Descrição</Label>
+                        <Input
+                          type="text"
+                          value={simpleDescription}
+                          onChange={(e) => setSimpleDescription(e.target.value)}
+                          placeholder="Apenas o produto"
+                          className="mt-1 h-9"
+                        />
+                      </div>
+                      <div>
+                        <Label className="text-xs">URL da Foto (opcional)</Label>
+                        <Input
+                          type="text"
+                          value={simplePhotoUrl}
+                          onChange={(e) => setSimplePhotoUrl(e.target.value)}
+                          placeholder="Usar foto principal se vazio"
+                          className="mt-1 h-9"
+                        />
+                      </div>
+                    </div>
+                    
+                    {/* Configuração Card COMBO */}
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3 p-3 bg-white dark:bg-zinc-800 rounded-lg border">
+                      <div className="md:col-span-3">
+                        <p className="text-xs font-semibold text-muted-foreground mb-2">CARD COMBO (Recomendado)</p>
+                      </div>
+                      <div>
+                        <Label className="text-xs">Preço (R$)</Label>
+                        <Input
+                          type="number"
+                          step="0.01"
+                          value={salePrice}
+                          onChange={(e) => setSalePrice(e.target.value)}
+                          placeholder="35.90"
+                          className="mt-1 h-9"
+                        />
+                      </div>
+                      <div>
+                        <Label className="text-xs">Descrição</Label>
+                        <Input
+                          type="text"
+                          value={comboDescription}
+                          onChange={(e) => setComboDescription(e.target.value)}
+                          placeholder="+ Batata + Refrigerante"
+                          className="mt-1 h-9"
+                        />
+                      </div>
+                      <div>
+                        <Label className="text-xs">URL da Foto (opcional)</Label>
+                        <Input
+                          type="text"
+                          value={comboPhotoUrl}
+                          onChange={(e) => setComboPhotoUrl(e.target.value)}
+                          placeholder="Usar foto principal se vazio"
+                          className="mt-1 h-9"
+                        />
+                      </div>
                     </div>
                   </div>
                 )}
