@@ -29002,3 +29002,11 @@
 2026-01-13T01:19:58.485023+00:00 | DB_CALL get_all_entregadores | P3 | 0.63ms | success
 2026-01-13T01:20:00.492292+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.23ms | success
 2026-01-13T01:20:00.675177+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.23ms | success
+2026-01-13T01:20:02.716133+00:00 | DB_CALL get_all_entregadores | P3 | 0.74ms | success
+2026-01-13T01:20:02.716682+00:00 | DB_CALL get_all_settings | P3 | 0.84ms | success
+2026-01-13T01:20:02.718330+00:00 | DB_CALL get_all_pedidos | P3 | 1.03ms | success
+2026-01-13T01:20:05.457698+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.33ms | success
+2026-01-13T01:20:05.639471+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.23ms | success
+2026-01-13T01:20:07.722451+00:00 | DB_CALL get_all_settings | P3 | 1.33ms | success
+2026-01-13T01:20:07.722962+00:00 | DB_CALL get_all_entregadores | P3 | 1.18ms | success
+2026-01-13T01:20:07.724902+00:00 | DB_CALL get_all_pedidos | P3 | 2.99ms | success
