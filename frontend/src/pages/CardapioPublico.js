@@ -1337,6 +1337,10 @@ export default function CardapioPublico({ onAdminLogin }) {
   // State para busca expandida
   const [searchOpen, setSearchOpen] = useState(false);
   const searchInputRef = useRef(null);
+  // State para pedidos do cliente
+  const [clientPedidos, setClientPedidos] = useState([]);
+  const [loadingPedidos, setLoadingPedidos] = useState(false);
+  const [selectedPedido, setSelectedPedido] = useState(null);
 
   // Abrir popup do produto
   const openProductPopup = (product) => {
