@@ -1490,33 +1490,92 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
                     <p>Nenhum produto encontrado</p>
                   </div>
                 ) : (
-                  /* Grid de produtos */
-                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-                    {filteredProducts.map(product => (
-                      <div 
-                        key={product.id}
-                        className="border rounded-lg p-3 hover:border-orange-500 cursor-pointer transition-all bg-card"
-                        onClick={() => openProductPopup(product)}
-                      >
-                        {product.photo_url ? (
-                          <img 
-                            src={getImageUrl(product.photo_url)} 
-                            alt={product.name}
-                            className="w-full h-24 object-cover rounded mb-2"
-                            onError={(e) => e.target.style.display = 'none'}
-                          />
-                        ) : (
-                          <div className="w-full h-24 bg-muted rounded mb-2 flex items-center justify-center">
-                            <Package className="w-8 h-8 text-muted-foreground" />
+                  /* Produtos agrupados por categoria */
+                  <div className="space-y-6">
+                    {categories
+                      .filter(cat => !selectedCategory || cat.name === selectedCategory)
+                      .map(cat => {
+                        const catProducts = filteredProducts.filter(p => p.category === cat.name);
+                        if (catProducts.length === 0) return null;
+                        return (
+                          <div key={cat.id}>
+                            <h3 className="font-bold text-lg text-orange-600 mb-3 pb-2 border-b flex items-center gap-2">
+                              <span className="text-2xl">{cat.icon || "🍽️"}</span>
+                              {cat.name}
+                              <span className="text-sm text-muted-foreground font-normal">({catProducts.length})</span>
+                            </h3>
+                            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                              {catProducts.map(product => (
+                                <div 
+                                  key={product.id}
+                                  className="border rounded-lg p-3 hover:border-orange-500 cursor-pointer transition-all bg-card"
+                                  onClick={() => openProductPopup(product)}
+                                >
+                                  {product.photo_url ? (
+                                    <img 
+                                      src={getImageUrl(product.photo_url)} 
+                                      alt={product.name}
+                                      className="w-full h-24 object-cover rounded mb-2"
+                                      onError={(e) => e.target.style.display = 'none'}
+                                    />
+                                  ) : (
+                                    <div className="w-full h-24 bg-muted rounded mb-2 flex items-center justify-center">
+                                      <Package className="w-8 h-8 text-muted-foreground" />
+                                    </div>
+                                  )}
+                                  <h4 className="font-medium text-sm truncate">{product.name}</h4>
+                                  {product.description && (
+                                    <p className="text-xs text-muted-foreground line-clamp-2 mb-1">{product.description}</p>
+                                  )}
+                                  <p className="text-orange-600 font-bold">R$ {(product.sale_price || 0).toFixed(2)}</p>
+                                </div>
+                              ))}
+                            </div>
                           </div>
-                        )}
-                        <h4 className="font-medium text-sm truncate">{product.name}</h4>
-                        {product.description && (
-                          <p className="text-xs text-muted-foreground line-clamp-2 mb-1">{product.description}</p>
-                        )}
-                        <p className="text-orange-600 font-bold">R$ {(product.sale_price || 0).toFixed(2)}</p>
-                      </div>
-                    ))}
+                        );
+                      })}
+                    
+                    {/* Produtos sem categoria */}
+                    {(() => {
+                      const uncategorized = filteredProducts.filter(p => !p.category || !categories.find(c => c.name === p.category));
+                      if (uncategorized.length === 0 || selectedCategory) return null;
+                      return (
+                        <div>
+                          <h3 className="font-bold text-lg text-gray-600 mb-3 pb-2 border-b flex items-center gap-2">
+                            <span className="text-2xl">📦</span>
+                            Outros
+                            <span className="text-sm text-muted-foreground font-normal">({uncategorized.length})</span>
+                          </h3>
+                          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                            {uncategorized.map(product => (
+                              <div 
+                                key={product.id}
+                                className="border rounded-lg p-3 hover:border-orange-500 cursor-pointer transition-all bg-card"
+                                onClick={() => openProductPopup(product)}
+                              >
+                                {product.photo_url ? (
+                                  <img 
+                                    src={getImageUrl(product.photo_url)} 
+                                    alt={product.name}
+                                    className="w-full h-24 object-cover rounded mb-2"
+                                    onError={(e) => e.target.style.display = 'none'}
+                                  />
+                                ) : (
+                                  <div className="w-full h-24 bg-muted rounded mb-2 flex items-center justify-center">
+                                    <Package className="w-8 h-8 text-muted-foreground" />
+                                  </div>
+                                )}
+                                <h4 className="font-medium text-sm truncate">{product.name}</h4>
+                                {product.description && (
+                                  <p className="text-xs text-muted-foreground line-clamp-2 mb-1">{product.description}</p>
+                                )}
+                                <p className="text-orange-600 font-bold">R$ {(product.sale_price || 0).toFixed(2)}</p>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      );
+                    })()}
                   </div>
                 )}
               </div>
