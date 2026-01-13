@@ -525,9 +525,9 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode }) {
               >
                 {/* Imagem do Simples */}
                 <div className="w-full aspect-square bg-gradient-to-b from-orange-50 to-orange-100 dark:from-zinc-800 dark:to-zinc-700">
-                  {product.photo_url && !imageError ? (
+                  {(product.simple_photo_url || product.photo_url) && !imageError ? (
                     <img
-                      src={getImageUrl(product.photo_url)}
+                      src={getImageUrl(product.simple_photo_url || product.photo_url)}
                       alt={product.name}
                       className="w-full h-full object-contain p-2"
                     />
@@ -541,7 +541,7 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode }) {
                 {/* Info do Simples */}
                 <div className="p-2 text-center">
                   <p className={`font-bold ${t.text} text-xs`}>SIMPLES</p>
-                  <p className={`text-[9px] ${t.textMuted} mt-0.5`}>Apenas o produto</p>
+                  <p className={`text-[9px] ${t.textMuted} mt-0.5`}>{product.simple_description || 'Apenas o produto'}</p>
                   <p className="text-base font-black text-orange-500 mt-1">
                     R$ {simplePrice.toFixed(2).replace('.', ',')}
                   </p>
