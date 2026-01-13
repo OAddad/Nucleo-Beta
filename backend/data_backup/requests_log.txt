@@ -26762,3 +26762,6 @@
 2026-01-13T00:46:05.568060+00:00 | DB_CALL get_all_products | P3 | 5.21ms | success
 2026-01-13T00:46:05.569112+00:00 | DB_CALL recalculate_all_cliente_stats | P3 | 2.94ms | success
 2026-01-13T00:46:05.569558+00:00 | DB_CALL get_all_clientes | P3 | 0.36ms | success
+2026-01-13T00:46:11.463103+00:00 | DB_CALL get_all_entregadores | P3 | 0.76ms | success
+2026-01-13T00:46:11.463615+00:00 | DB_CALL get_all_settings | P3 | 0.75ms | success
+2026-01-13T00:46:11.465489+00:00 | DB_CALL get_all_pedidos | P3 | 1.01ms | success
