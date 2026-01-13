@@ -1132,6 +1132,15 @@ export default function Delivery() {
 }
 
 // ==================== COMPONENTE CARDÁPIO POPUP ====================
+
+// Função para converter URL de imagem
+const getImageUrl = (url) => {
+  if (!url) return null;
+  if (url.startsWith('http://') || url.startsWith('https://')) return url;
+  if (url.startsWith('/uploads/')) return `/api${url}`;
+  return url;
+};
+
 function CardapioPopup({ open, onClose, onPedidoCriado }) {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
