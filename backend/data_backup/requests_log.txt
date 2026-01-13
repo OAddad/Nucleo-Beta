@@ -31123,3 +31123,8 @@
 2026-01-13T14:52:53.703079+00:00 | DB_CALL get_all_business_hours | P3 | 0.99ms | success
 2026-01-13T14:52:53.704003+00:00 | DB_CALL get_all_products | P3 | 1.8ms | success
 2026-01-13T14:52:53.823870+00:00 | DB_CALL get_all_bairros | P3 | 1.56ms | success
+2026-01-13T14:53:14.531795+00:00 | DB_CALL get_all_business_hours | P3 | 6.59ms | success
+2026-01-13T14:53:14.532664+00:00 | DB_CALL get_all_products | P3 | 7.23ms | success
+2026-01-13T14:53:14.534475+00:00 | DB_CALL get_all_categories | P3 | 8.65ms | success
+2026-01-13T14:53:14.537823+00:00 | DB_CALL get_all_settings | P3 | 1.1ms | success
+2026-01-13T14:53:14.634249+00:00 | DB_CALL get_all_bairros | P3 | 0.32ms | success
