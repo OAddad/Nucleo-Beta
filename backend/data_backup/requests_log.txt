@@ -31275,3 +31275,11 @@
 2026-01-13T15:10:52.602948+00:00 | DB_CALL get_user_by_username | P3 | 0.41ms | success
 2026-01-13T15:10:54.158411+00:00 | DB_CALL get_user_by_username | P3 | 0.3ms | success
 2026-01-13T15:10:54.273449+00:00 | DB_CALL get_all_settings | P3 | 0.28ms | success
+2026-01-13T15:11:09.876487+00:00 | DB_CALL get_all_settings | P3 | 2.4ms | success
+2026-01-13T15:11:09.877820+00:00 | DB_CALL get_all_business_hours | P3 | 1.5ms | success
+2026-01-13T15:11:09.878826+00:00 | DB_CALL get_all_products | P3 | 1.72ms | success
+2026-01-13T15:11:09.879737+00:00 | DB_CALL get_all_categories | P3 | 2.55ms | success
+2026-01-13T15:11:09.923225+00:00 | DB_CALL get_all_bairros | P3 | 0.35ms | success
+2026-01-13T15:11:14.358514+00:00 | DB_CALL get_user_by_username | P3 | 0.31ms | success
+2026-01-13T15:11:14.358799+00:00 | DB_CALL get_user_by_username | P3 | 0.15ms | success
+2026-01-13T15:11:14.477559+00:00 | DB_CALL get_all_clientes | P3 | 118.65ms | success
