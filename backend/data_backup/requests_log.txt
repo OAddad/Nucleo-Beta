@@ -29917,3 +29917,13 @@
 2026-01-13T01:48:50.201809+00:00 | DB_CALL count_ingredients | P3 | 0.28ms | success
 2026-01-13T01:48:50.202018+00:00 | DB_CALL count_products | P3 | 0.15ms | success
 2026-01-13T01:48:50.202168+00:00 | DB_CALL count_users | P3 | 0.09ms | success
+2026-01-13T01:49:21.921415+00:00 | DB_CALL get_all_categories | P3 | 6.17ms | success
+2026-01-13T01:49:21.932830+00:00 | DB_CALL get_all_products | P3 | 17.13ms | success
+2026-01-13T01:49:21.934092+00:00 | DB_CALL get_all_settings | P3 | 16.37ms | success
+2026-01-13T01:49:21.934661+00:00 | DB_CALL get_all_business_hours | P3 | 16.7ms | success
+2026-01-13T01:49:22.108288+00:00 | DB_CALL get_all_products | P3 | 0.65ms | success
+2026-01-13T01:49:22.112390+00:00 | DB_CALL get_all_business_hours | P3 | 0.27ms | success
+2026-01-13T01:49:22.113945+00:00 | DB_CALL get_all_categories | P3 | 0.43ms | success
+2026-01-13T01:49:22.114993+00:00 | DB_CALL get_all_settings | P3 | 0.18ms | success
+2026-01-13T01:49:22.135896+00:00 | DB_CALL get_all_bairros | P3 | 0.39ms | success
+2026-01-13T01:49:22.303843+00:00 | DB_CALL get_all_bairros | P3 | 0.34ms | success
