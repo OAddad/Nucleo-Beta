@@ -346,9 +346,10 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode }) {
   const [imageError, setImageError] = useState(false);
   const [quantity, setQuantity] = useState(1);
   const [observation, setObservation] = useState("");
-  const [comboStep, setComboStep] = useState(0); // 0 = selecionar tipo, 1+ = etapas do order_steps
+  const [comboStep, setComboStep] = useState(0); // 0 = selecionar tipo, 1+ = etapas
   const [selectedComboType, setSelectedComboType] = useState(null); // 'simples' ou 'combo'
   const [stepSelections, setStepSelections] = useState({}); // { stepIndex: [itemIds] }
+  const [searchTerm, setSearchTerm] = useState("");
 
   // Reset quando abrir com novo produto
   useEffect(() => {
@@ -359,6 +360,7 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode }) {
       setComboStep(0);
       setSelectedComboType(null);
       setStepSelections({});
+      setSearchTerm("");
     }
   }, [open, product]);
 
@@ -371,20 +373,28 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode }) {
   const comboPrice = product.sale_price || 0;
   const simplePrice = product.simple_price || Math.round(comboPrice * 0.7 * 100) / 100;
 
+  // Filtrar etapas baseado no tipo selecionado
+  const getRelevantSteps = () => {
+    if (!hasOrderSteps) return [];
+    return product.order_steps.filter(step => {
+      if (selectedComboType === 'simples') {
+        return !step.combo_only; // Só etapas que não são exclusivas do combo
+      }
+      return true; // Combo vê todas as etapas
+    });
+  };
+
+  const relevantSteps = getRelevantSteps();
+  const totalSteps = relevantSteps.length;
+
   // Calcular preço total baseado nas seleções das etapas
   const calculateTotalPrice = () => {
     let basePrice = selectedComboType === 'combo' ? comboPrice : simplePrice;
     
-    // Se não é combo ou escolheu simples, não tem etapas extras
-    if (!isCombo || selectedComboType === 'simples') {
-      return basePrice * quantity;
-    }
-    
     // Adicionar preços das etapas se houver
-    if (hasOrderSteps && selectedComboType === 'combo') {
-      Object.keys(stepSelections).forEach(stepIndex => {
-        const step = product.order_steps[parseInt(stepIndex)];
-        const selectedItems = stepSelections[stepIndex] || [];
+    if (hasOrderSteps) {
+      relevantSteps.forEach((step, index) => {
+        const selectedItems = stepSelections[index] || [];
         
         if (step.calculation_type === 'soma') {
           selectedItems.forEach(itemId => {
@@ -417,7 +427,15 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode }) {
       return selectedComboType !== null;
     }
     
-    if (selectedComboType === 'simples') return true;
+    const currentStepIndex = comboStep - 1;
+    const currentStep = relevantSteps[currentStepIndex];
+    if (!currentStep) return true;
+    
+    const selections = stepSelections[currentStepIndex] || [];
+    const minSelections = currentStep.min_selections || 0;
+    
+    return selections.length >= minSelections;
+  };
     
     const currentStep = product.order_steps?.[comboStep - 1];
     if (!currentStep) return true;
