@@ -1626,7 +1626,12 @@ async def update_product(product_id: str, product_data: ProductCreate, current_u
         "linked_ingredient_id": product_data.linked_ingredient_id,
         "recipe_yield": product_data.recipe_yield,
         "recipe_yield_unit": product_data.recipe_yield_unit,
-        "unit_cost": cmv / product_data.recipe_yield if product_data.recipe_yield and product_data.recipe_yield > 0 else cmv
+        "unit_cost": cmv / product_data.recipe_yield if product_data.recipe_yield and product_data.recipe_yield > 0 else cmv,
+        "simple_price": product_data.simple_price,
+        "simple_description": product_data.simple_description,
+        "combo_description": product_data.combo_description,
+        "simple_photo_url": product_data.simple_photo_url,
+        "combo_photo_url": product_data.combo_photo_url
     }
     
     await db_call(sqlite_db.update_product, product_id, update_data)
