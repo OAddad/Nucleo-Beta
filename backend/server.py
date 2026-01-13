@@ -340,7 +340,11 @@ class ClienteCreate(BaseModel):
     last_order_date: Optional[str] = None
     orders_last_30_days: Optional[int] = 0
     pontuacao: Optional[int] = 0
-    senha: Optional[str] = None  # Senha opcional para clientes
+    senha: Optional[str] = None
+    membro_clube: Optional[int] = 0
+    aceita_whatsapp: Optional[int] = 0
+    data_aceite_clube: Optional[str] = None
+    data_aceite_whatsapp: Optional[str] = None
 
 
 class Cliente(BaseModel):
@@ -363,7 +367,11 @@ class Cliente(BaseModel):
     last_order_date: Optional[str] = None
     orders_last_30_days: int = 0
     pontuacao: int = 0
-    senha: Optional[str] = None  # Senha opcional para clientes
+    senha: Optional[str] = None
+    membro_clube: int = 0
+    aceita_whatsapp: int = 0
+    data_aceite_clube: Optional[str] = None
+    data_aceite_whatsapp: Optional[str] = None
     created_at: Optional[datetime] = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 
