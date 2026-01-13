@@ -30315,3 +30315,13 @@
 2026-01-13T01:58:46.509808+00:00 | DB_CALL get_all_pedidos | P3 | 1.29ms | success
 2026-01-13T01:58:46.513890+00:00 | DB_CALL get_all_entregadores | P3 | 0.18ms | success
 2026-01-13T01:58:46.516628+00:00 | DB_CALL get_all_settings | P3 | 0.31ms | success
+2026-01-13T01:59:24.596123+00:00 | DB_CALL get_all_bairros | P3 | 12.37ms | success
+2026-01-13T01:59:24.596846+00:00 | DB_CALL get_all_categories | P3 | 13.04ms | success
+2026-01-13T01:59:24.597223+00:00 | DB_CALL get_all_categories | P3 | 14.65ms | success
+2026-01-13T01:59:24.597513+00:00 | DB_CALL get_all_settings | P3 | 13.4ms | success
+2026-01-13T01:59:24.597783+00:00 | DB_CALL get_all_products | P3 | 13.6ms | success
+2026-01-13T01:59:24.601915+00:00 | DB_CALL get_all_business_hours | P3 | 17.48ms | success
+2026-01-13T01:59:24.602287+00:00 | DB_CALL get_all_products | P3 | 17.75ms | success
+2026-01-13T01:59:24.605280+00:00 | DB_CALL get_all_settings | P3 | 20.45ms | success
+2026-01-13T01:59:24.605618+00:00 | DB_CALL get_all_bairros | P3 | 19.33ms | success
+2026-01-13T01:59:24.607486+00:00 | DB_CALL get_all_business_hours | P3 | 20.97ms | success

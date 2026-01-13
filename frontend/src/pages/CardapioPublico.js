@@ -443,7 +443,7 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode }) {
         </div>
 
         {/* Footer Fixo - Quantidade e Botão Adicionar */}
-        <div className={`border-t ${t.border} ${t.bgMuted} p-3 sm:p-4`}>
+        <div className={`border-t ${t.border} ${t.bgMuted} p-3 sm:p-4 flex-shrink-0`}>
           <div className="flex items-center justify-between gap-3 sm:gap-4">
             {/* Controle de Quantidade */}
             <div className={`flex items-center gap-1 ${t.bg} rounded-full border ${t.border} p-1`}>
