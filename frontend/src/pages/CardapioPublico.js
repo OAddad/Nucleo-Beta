@@ -631,12 +631,18 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode }) {
     );
   }
 
-  // TELA DE ETAPAS (order_steps)
-  if (isCombo && comboStep > 0 && hasOrderSteps) {
+  // TELA DE ETAPAS (order_steps) - Para COMBO e SIMPLES
+  if (isCombo && comboStep > 0 && relevantSteps.length > 0) {
     const currentStepIndex = comboStep - 1;
-    const currentStep = product.order_steps[currentStepIndex];
-    const totalSteps = product.order_steps.length;
+    const currentStep = relevantSteps[currentStepIndex];
+    const stepTotalCount = relevantSteps.length;
     const selections = stepSelections[currentStepIndex] || [];
+    
+    // Se não existe essa etapa, adiciona ao carrinho
+    if (!currentStep) {
+      handleAdd();
+      return null;
+    }
     
     return (
       <Dialog open={open} onOpenChange={onClose}>
@@ -650,7 +656,7 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode }) {
               >
                 <ChevronLeft className="w-5 h-5" />
               </button>
-              <span className={`text-sm ${t.textMuted}`}>Etapa {comboStep + 1} de {totalSteps + 1}</span>
+              <span className={`text-sm ${t.textMuted}`}>Etapa {comboStep} de {stepTotalCount}</span>
               <button
                 onClick={onClose}
                 className={`w-8 h-8 rounded-full ${t.bgMuted} flex items-center justify-center`}
@@ -659,11 +665,18 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode }) {
               </button>
             </div>
             <h2 className={`text-lg font-bold ${t.text} text-center`}>{currentStep.name || `Etapa ${comboStep}`}</h2>
-            {currentStep.min_selections > 0 && (
+            {(currentStep.min_selections > 0 || currentStep.max_selections > 0) && (
               <p className={`text-xs ${t.textMuted} text-center mt-1`}>
-                Selecione {currentStep.min_selections === currentStep.max_selections 
-                  ? currentStep.min_selections 
-                  : `${currentStep.min_selections} a ${currentStep.max_selections}`} {currentStep.min_selections === 1 ? 'opção' : 'opções'}
+                {currentStep.min_selections > 0 && currentStep.max_selections > 0 && currentStep.min_selections === currentStep.max_selections 
+                  ? `Selecione ${currentStep.min_selections} ${currentStep.min_selections === 1 ? 'opção' : 'opções'}`
+                  : currentStep.min_selections > 0 && currentStep.max_selections > 0
+                    ? `Selecione de ${currentStep.min_selections} a ${currentStep.max_selections} opções`
+                    : currentStep.min_selections > 0 
+                      ? `Selecione no mínimo ${currentStep.min_selections} ${currentStep.min_selections === 1 ? 'opção' : 'opções'}`
+                      : currentStep.max_selections > 0 
+                        ? `Selecione até ${currentStep.max_selections} ${currentStep.max_selections === 1 ? 'opção' : 'opções'}`
+                        : 'Selecione suas opções'
+                }
               </p>
             )}
           </div>
@@ -711,8 +724,8 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode }) {
                   : 'bg-gray-300 dark:bg-zinc-600 cursor-not-allowed'
               }`}
             >
-              {comboStep < totalSteps ? (
-                <>ETAPA {comboStep + 2} <ChevronRight className="w-5 h-5" /></>
+              {comboStep < stepTotalCount ? (
+                <>PRÓXIMA ETAPA <ChevronRight className="w-5 h-5" /></>
               ) : (
                 <>Adicionar • R$ {totalPrice.toFixed(2).replace('.', ',')}</>
               )}
