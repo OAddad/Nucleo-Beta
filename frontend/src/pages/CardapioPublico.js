@@ -371,111 +371,94 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode }) {
 
   const t = {
     bg: darkMode ? 'bg-zinc-900' : 'bg-white',
-    bgMuted: darkMode ? 'bg-zinc-800' : 'bg-gray-100',
+    bgMuted: darkMode ? 'bg-zinc-800' : 'bg-gray-50',
     text: darkMode ? 'text-white' : 'text-gray-900',
     textMuted: darkMode ? 'text-zinc-400' : 'text-gray-500',
-    border: darkMode ? 'border-zinc-700' : 'border-gray-200',
+    border: darkMode ? 'border-zinc-700' : 'border-gray-100',
   };
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className={`sm:max-w-lg p-0 gap-0 overflow-hidden ${t.bg} ${t.text} border-0 w-[95vw] sm:w-full max-h-[85vh] flex flex-col`}>
-        {/* Header com X */}
-        <div className="absolute top-4 right-4 z-10">
+      <DialogContent className={`sm:max-w-md p-0 gap-0 overflow-hidden ${t.bg} border-0 rounded-2xl w-[92vw] sm:w-full max-h-[90vh] flex flex-col`}>
+        {/* Imagem Grande no Topo */}
+        <div className="relative w-full h-48 sm:h-56 bg-gradient-to-b from-orange-100 to-orange-50 dark:from-zinc-800 dark:to-zinc-900">
+          {product.photo_url && !imageError ? (
+            <img
+              src={getImageUrl(product.photo_url)}
+              alt={product.name}
+              className="w-full h-full object-cover"
+              onError={() => setImageError(true)}
+            />
+          ) : (
+            <div className="w-full h-full flex flex-col items-center justify-center text-orange-300">
+              <span className="text-6xl">🍽️</span>
+            </div>
+          )}
+          {/* Botão Fechar */}
           <button
             onClick={onClose}
-            className={`rounded-full p-2 ${t.bgMuted} hover:opacity-80 transition-opacity shadow-sm`}
+            className="absolute top-3 right-3 w-8 h-8 rounded-full bg-black/40 hover:bg-black/60 flex items-center justify-center transition-colors"
           >
-            <X className="w-5 h-5" />
+            <X className="w-5 h-5 text-white" />
           </button>
         </div>
 
-        {/* Conteúdo com scroll */}
-        <div className="p-4 sm:p-6 overflow-y-auto flex-1">
-          {/* Foto e Info - vertical em mobile, horizontal em desktop */}
-          <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 mb-6">
-            {/* Foto Grande - full width em mobile */}
-            <div className={`w-full sm:w-40 h-48 sm:h-40 rounded-xl ${t.bgMuted} overflow-hidden flex-shrink-0 shadow-sm`}>
-              {product.photo_url && !imageError ? (
-                <img
-                  src={getImageUrl(product.photo_url)}
-                  alt={product.name}
-                  className="w-full h-full object-cover"
-                  onError={() => setImageError(true)}
-                />
-              ) : (
-                <div className={`w-full h-full flex flex-col items-center justify-center ${t.textMuted}`}>
-                  <ImageOff className="w-12 h-12" />
-                  <span className="text-xs mt-2">Sem foto</span>
-                </div>
-              )}
-            </div>
-
-            {/* Info do Produto */}
-            <div className="flex-1">
-              <h2 className="text-xl sm:text-2xl font-bold mb-1">{product.name}</h2>
-              {product.description && (
-                <p className={`${t.textMuted} text-sm mb-4 line-clamp-3`}>{product.description}</p>
-              )}
-              
-              {/* Preço */}
-              <div className="text-xl sm:text-2xl font-bold text-orange-500">
-                R$ {(product.sale_price || 0).toFixed(2).replace('.', ',')}
-              </div>
-            </div>
+        {/* Conteúdo */}
+        <div className="p-4 sm:p-5 overflow-y-auto flex-1">
+          {/* Nome e Preço */}
+          <div className="mb-4">
+            <h2 className={`text-xl font-bold ${t.text} mb-1`}>{product.name}</h2>
+            {product.description && (
+              <p className={`${t.textMuted} text-sm leading-relaxed`}>{product.description}</p>
+            )}
+          </div>
+          
+          {/* Preço Destacado */}
+          <div className="text-2xl font-bold text-orange-500 mb-5">
+            R$ {(product.sale_price || 0).toFixed(2).replace('.', ',')}
           </div>
 
-          {/* Campo de Observação */}
-          <div className="mb-4 sm:mb-6">
-            <Label className={`text-base font-medium mb-2 block ${t.text}`}>Alguma observação?</Label>
-            <Textarea
+          {/* Campo de Observação - Compacto */}
+          <div>
+            <label className={`text-sm font-medium mb-1.5 block ${t.textMuted}`}>Observação (opcional)</label>
+            <textarea
               value={observation}
               onChange={(e) => setObservation(e.target.value)}
-              placeholder="Ex: tirar cebola, maionese à parte, etc..."
-              className={`resize-none ${t.bgMuted} ${t.text} ${t.border} border focus:ring-orange-500`}
-              maxLength={255}
-              rows={3}
+              placeholder="Ex: sem cebola, molho à parte..."
+              className={`w-full resize-none rounded-xl p-3 text-sm ${t.bgMuted} ${t.text} border-0 focus:ring-2 focus:ring-orange-500 outline-none`}
+              maxLength={200}
+              rows={2}
             />
-            <p className={`text-xs ${t.textMuted} text-right mt-1`}>
-              {observation.length} / 255
-            </p>
           </div>
         </div>
 
-        {/* Footer Fixo - Quantidade e Botão Adicionar */}
-        <div className={`border-t ${t.border} ${t.bgMuted} p-3 sm:p-4 flex-shrink-0`}>
-          <div className="flex items-center justify-between gap-3 sm:gap-4">
-            {/* Controle de Quantidade */}
-            <div className={`flex items-center gap-1 ${t.bg} rounded-full border ${t.border} p-1`}>
-              <Button
-                variant="ghost"
-                size="icon"
-                className={`h-10 w-10 sm:h-12 sm:w-12 rounded-full hover:${t.bgMuted}`}
-                onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                disabled={quantity <= 1}
-              >
-                <Minus className="w-4 h-4 sm:w-5 sm:h-5" />
-              </Button>
-              <span className="w-8 sm:w-10 text-center text-lg sm:text-xl font-bold">{quantity}</span>
-              <Button
-                variant="ghost"
-                size="icon"
-                className={`h-10 w-10 sm:h-12 sm:w-12 rounded-full hover:${t.bgMuted}`}
-                onClick={() => setQuantity(quantity + 1)}
-              >
-                <Plus className="w-4 h-4 sm:w-5 sm:h-5" />
-              </Button>
-            </div>
-
-            {/* Botão Adicionar Grande */}
-            <Button
-              onClick={handleAdd}
-              className="flex-1 h-12 sm:h-14 text-base sm:text-lg font-bold rounded-full bg-orange-500 hover:bg-orange-600 text-white shadow-lg"
+        {/* Footer Fixo - Clean */}
+        <div className={`p-4 ${t.bgMuted} flex items-center gap-3`}>
+          {/* Controle de Quantidade - Compacto */}
+          <div className={`flex items-center gap-0 ${t.bg} rounded-full border ${t.border} overflow-hidden`}>
+            <button
+              className={`w-10 h-10 flex items-center justify-center hover:bg-orange-50 dark:hover:bg-zinc-700 transition-colors ${quantity <= 1 ? 'opacity-30' : ''}`}
+              onClick={() => setQuantity(Math.max(1, quantity - 1))}
+              disabled={quantity <= 1}
             >
-              <ShoppingBag className="w-5 h-5 sm:w-6 sm:h-6 mr-2" />
-              <span className="hidden sm:inline">Adicionar </span>R$ {totalPrice.toFixed(2).replace('.', ',')}
-            </Button>
+              <Minus className="w-4 h-4" />
+            </button>
+            <span className={`w-8 text-center font-bold ${t.text}`}>{quantity}</span>
+            <button
+              className="w-10 h-10 flex items-center justify-center hover:bg-orange-50 dark:hover:bg-zinc-700 transition-colors"
+              onClick={() => setQuantity(quantity + 1)}
+            >
+              <Plus className="w-4 h-4" />
+            </button>
           </div>
+
+          {/* Botão Adicionar */}
+          <button
+            onClick={handleAdd}
+            className="flex-1 h-11 rounded-full bg-orange-500 hover:bg-orange-600 text-white font-bold text-sm flex items-center justify-center gap-2 transition-colors shadow-lg shadow-orange-500/20"
+          >
+            Adicionar • R$ {totalPrice.toFixed(2).replace('.', ',')}
+          </button>
         </div>
       </DialogContent>
     </Dialog>
