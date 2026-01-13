@@ -346,6 +346,9 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode }) {
   const [imageError, setImageError] = useState(false);
   const [quantity, setQuantity] = useState(1);
   const [observation, setObservation] = useState("");
+  const [comboStep, setComboStep] = useState(0); // 0 = selecionar tipo, 1+ = etapas do order_steps
+  const [selectedComboType, setSelectedComboType] = useState(null); // 'simples' ou 'combo'
+  const [stepSelections, setStepSelections] = useState({}); // { stepIndex: [itemIds] }
 
   // Reset quando abrir com novo produto
   useEffect(() => {
@@ -353,18 +356,124 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode }) {
       setQuantity(1);
       setObservation("");
       setImageError(false);
+      setComboStep(0);
+      setSelectedComboType(null);
+      setStepSelections({});
     }
   }, [open, product]);
 
   if (!product) return null;
 
-  const totalPrice = (product.sale_price || 0) * quantity;
+  const isCombo = product.product_type === 'combo';
+  const hasOrderSteps = product.order_steps && product.order_steps.length > 0;
+  
+  // Calcular preço simples como 70% do preço do combo (ou usar campo específico se existir)
+  const comboPrice = product.sale_price || 0;
+  const simplePrice = product.simple_price || Math.round(comboPrice * 0.7 * 100) / 100;
+
+  // Calcular preço total baseado nas seleções das etapas
+  const calculateTotalPrice = () => {
+    let basePrice = selectedComboType === 'combo' ? comboPrice : simplePrice;
+    
+    // Se não é combo ou escolheu simples, não tem etapas extras
+    if (!isCombo || selectedComboType === 'simples') {
+      return basePrice * quantity;
+    }
+    
+    // Adicionar preços das etapas se houver
+    if (hasOrderSteps && selectedComboType === 'combo') {
+      Object.keys(stepSelections).forEach(stepIndex => {
+        const step = product.order_steps[parseInt(stepIndex)];
+        const selectedItems = stepSelections[stepIndex] || [];
+        
+        if (step.calculation_type === 'soma') {
+          selectedItems.forEach(itemId => {
+            const item = step.items?.find(i => i.product_id === itemId);
+            if (item) {
+              basePrice += item.price_override || 0;
+            }
+          });
+        } else if (step.calculation_type === 'maior') {
+          let maxPrice = 0;
+          selectedItems.forEach(itemId => {
+            const item = step.items?.find(i => i.product_id === itemId);
+            if (item && (item.price_override || 0) > maxPrice) {
+              maxPrice = item.price_override || 0;
+            }
+          });
+          basePrice += maxPrice;
+        }
+      });
+    }
+    
+    return basePrice * quantity;
+  };
+
+  const totalPrice = calculateTotalPrice();
+
+  // Verificar se pode avançar para próxima etapa
+  const canAdvanceStep = () => {
+    if (comboStep === 0) {
+      return selectedComboType !== null;
+    }
+    
+    if (selectedComboType === 'simples') return true;
+    
+    const currentStep = product.order_steps?.[comboStep - 1];
+    if (!currentStep) return true;
+    
+    const selections = stepSelections[comboStep - 1] || [];
+    return selections.length >= (currentStep.min_selections || 0);
+  };
+
+  // Avançar etapa
+  const handleNextStep = () => {
+    if (comboStep === 0) {
+      if (selectedComboType === 'simples' || !hasOrderSteps) {
+        // Ir direto para adicionar
+        handleAdd();
+      } else {
+        setComboStep(1);
+      }
+    } else if (comboStep < (product.order_steps?.length || 0)) {
+      setComboStep(comboStep + 1);
+    } else {
+      handleAdd();
+    }
+  };
+
+  // Toggle seleção de item
+  const toggleItemSelection = (stepIndex, itemId) => {
+    const step = product.order_steps?.[stepIndex];
+    if (!step) return;
+    
+    const currentSelections = stepSelections[stepIndex] || [];
+    const isSelected = currentSelections.includes(itemId);
+    
+    if (isSelected) {
+      setStepSelections({
+        ...stepSelections,
+        [stepIndex]: currentSelections.filter(id => id !== itemId)
+      });
+    } else {
+      const maxSelections = step.max_selections || 999;
+      if (currentSelections.length < maxSelections) {
+        setStepSelections({
+          ...stepSelections,
+          [stepIndex]: [...currentSelections, itemId]
+        });
+      }
+    }
+  };
 
   const handleAdd = () => {
     onAddToCart({
       ...product,
       quantity,
-      observation: observation.trim() || null
+      observation: observation.trim() || null,
+      combo_type: isCombo ? selectedComboType : null,
+      step_selections: stepSelections,
+      final_price: totalPrice / quantity
     });
     onClose();
   };
@@ -372,11 +481,225 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode }) {
   const t = {
     bg: darkMode ? 'bg-zinc-900' : 'bg-white',
     bgMuted: darkMode ? 'bg-zinc-800' : 'bg-gray-50',
+    bgCard: darkMode ? 'bg-zinc-800' : 'bg-white',
     text: darkMode ? 'text-white' : 'text-gray-900',
     textMuted: darkMode ? 'text-zinc-400' : 'text-gray-500',
-    border: darkMode ? 'border-zinc-700' : 'border-gray-100',
+    border: darkMode ? 'border-zinc-700' : 'border-gray-200',
   };
 
+  // TELA DE SELEÇÃO COMBO vs SIMPLES (para produtos tipo combo)
+  if (isCombo && comboStep === 0) {
+    return (
+      <Dialog open={open} onOpenChange={onClose}>
+        <DialogContent className={`sm:max-w-md p-0 gap-0 overflow-hidden ${t.bg} border-0 rounded-2xl w-[92vw] sm:w-full max-h-[90vh] flex flex-col`}>
+          {/* Header com Imagem */}
+          <div className="relative bg-gradient-to-b from-orange-100 to-orange-50 dark:from-zinc-800 dark:to-zinc-900 p-6 text-center">
+            {/* Botão Fechar */}
+            <button
+              onClick={onClose}
+              className="absolute top-3 right-3 w-8 h-8 rounded-full bg-black/20 hover:bg-black/40 flex items-center justify-center transition-colors"
+            >
+              <X className="w-5 h-5 text-gray-600 dark:text-white" />
+            </button>
+            
+            {/* Imagem do Produto */}
+            <div className="w-32 h-32 mx-auto mb-4 rounded-2xl overflow-hidden bg-white shadow-lg">
+              {product.photo_url && !imageError ? (
+                <img
+                  src={getImageUrl(product.photo_url)}
+                  alt={product.name}
+                  className="w-full h-full object-cover"
+                  onError={() => setImageError(true)}
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center text-orange-300 bg-orange-50">
+                  <span className="text-5xl">🍔</span>
+                </div>
+              )}
+            </div>
+            
+            <h2 className={`text-xl font-bold ${t.text}`}>{product.name}</h2>
+            <p className={`text-sm ${t.textMuted} mt-1`}>Escolha como quer seu pedido</p>
+          </div>
+
+          {/* Opções */}
+          <div className="p-4 space-y-3 flex-1 overflow-y-auto">
+            {/* Opção SIMPLES */}
+            <button
+              onClick={() => setSelectedComboType('simples')}
+              className={`w-full p-4 rounded-2xl border-2 transition-all text-left ${
+                selectedComboType === 'simples' 
+                  ? 'border-orange-500 bg-orange-50 dark:bg-orange-500/10' 
+                  : `${t.border} ${t.bgCard} hover:border-orange-300`
+              }`}
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
+                    selectedComboType === 'simples' ? 'border-orange-500 bg-orange-500' : 'border-gray-300'
+                  }`}>
+                    {selectedComboType === 'simples' && <Check className="w-4 h-4 text-white" />}
+                  </div>
+                  <div>
+                    <p className={`font-bold ${t.text}`}>SIMPLES</p>
+                    <p className={`text-xs ${t.textMuted}`}>Apenas o {product.name}</p>
+                  </div>
+                </div>
+                <p className="text-lg font-bold text-orange-500">
+                  R$ {simplePrice.toFixed(2).replace('.', ',')}
+                </p>
+              </div>
+            </button>
+
+            {/* Opção COMBO */}
+            <button
+              onClick={() => setSelectedComboType('combo')}
+              className={`w-full p-4 rounded-2xl border-2 transition-all text-left relative overflow-hidden ${
+                selectedComboType === 'combo' 
+                  ? 'border-orange-500 bg-orange-50 dark:bg-orange-500/10' 
+                  : `${t.border} ${t.bgCard} hover:border-orange-300`
+              }`}
+            >
+              {/* Badge Recomendado */}
+              <div className="absolute top-0 right-0 bg-green-500 text-white text-[10px] font-bold px-3 py-1 rounded-bl-xl">
+                RECOMENDADO
+              </div>
+              
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
+                    selectedComboType === 'combo' ? 'border-orange-500 bg-orange-500' : 'border-gray-300'
+                  }`}>
+                    {selectedComboType === 'combo' && <Check className="w-4 h-4 text-white" />}
+                  </div>
+                  <div>
+                    <p className={`font-bold ${t.text}`}>COMBO</p>
+                    <p className={`text-xs ${t.textMuted}`}>{product.name} + Batata + Refrigerante</p>
+                  </div>
+                </div>
+                <p className="text-lg font-bold text-orange-500">
+                  R$ {comboPrice.toFixed(2).replace('.', ',')}
+                </p>
+              </div>
+            </button>
+          </div>
+
+          {/* Footer */}
+          <div className={`p-4 ${t.bgMuted}`}>
+            <button
+              onClick={handleNextStep}
+              disabled={!canAdvanceStep()}
+              className={`w-full h-12 rounded-full font-bold text-white flex items-center justify-center gap-2 transition-all ${
+                canAdvanceStep() 
+                  ? 'bg-orange-500 hover:bg-orange-600 shadow-lg shadow-orange-500/20' 
+                  : 'bg-gray-300 dark:bg-zinc-600 cursor-not-allowed'
+              }`}
+            >
+              {hasOrderSteps && selectedComboType === 'combo' ? (
+                <>ETAPA 2 <ChevronRight className="w-5 h-5" /></>
+              ) : (
+                <>Adicionar • R$ {(selectedComboType === 'combo' ? comboPrice : simplePrice).toFixed(2).replace('.', ',')}</>
+              )}
+            </button>
+          </div>
+        </DialogContent>
+      </Dialog>
+    );
+  }
+
+  // TELA DE ETAPAS (order_steps)
+  if (isCombo && comboStep > 0 && hasOrderSteps) {
+    const currentStepIndex = comboStep - 1;
+    const currentStep = product.order_steps[currentStepIndex];
+    const totalSteps = product.order_steps.length;
+    const selections = stepSelections[currentStepIndex] || [];
+    
+    return (
+      <Dialog open={open} onOpenChange={onClose}>
+        <DialogContent className={`sm:max-w-md p-0 gap-0 overflow-hidden ${t.bg} border-0 rounded-2xl w-[92vw] sm:w-full max-h-[90vh] flex flex-col`}>
+          {/* Header */}
+          <div className={`p-4 border-b ${t.border}`}>
+            <div className="flex items-center justify-between mb-2">
+              <button
+                onClick={() => setComboStep(comboStep - 1)}
+                className={`w-8 h-8 rounded-full ${t.bgMuted} flex items-center justify-center`}
+              >
+                <ChevronLeft className="w-5 h-5" />
+              </button>
+              <span className={`text-sm ${t.textMuted}`}>Etapa {comboStep + 1} de {totalSteps + 1}</span>
+              <button
+                onClick={onClose}
+                className={`w-8 h-8 rounded-full ${t.bgMuted} flex items-center justify-center`}
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <h2 className={`text-lg font-bold ${t.text} text-center`}>{currentStep.name || `Etapa ${comboStep}`}</h2>
+            {currentStep.min_selections > 0 && (
+              <p className={`text-xs ${t.textMuted} text-center mt-1`}>
+                Selecione {currentStep.min_selections === currentStep.max_selections 
+                  ? currentStep.min_selections 
+                  : `${currentStep.min_selections} a ${currentStep.max_selections}`} {currentStep.min_selections === 1 ? 'opção' : 'opções'}
+              </p>
+            )}
+          </div>
+
+          {/* Itens da Etapa */}
+          <div className="p-4 space-y-2 flex-1 overflow-y-auto">
+            {currentStep.items?.map((item) => {
+              const isSelected = selections.includes(item.product_id);
+              return (
+                <button
+                  key={item.product_id}
+                  onClick={() => toggleItemSelection(currentStepIndex, item.product_id)}
+                  className={`w-full p-3 rounded-xl border-2 transition-all text-left flex items-center justify-between ${
+                    isSelected 
+                      ? 'border-orange-500 bg-orange-50 dark:bg-orange-500/10' 
+                      : `${t.border} ${t.bgCard}`
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                      isSelected ? 'border-orange-500 bg-orange-500' : 'border-gray-300'
+                    }`}>
+                      {isSelected && <Check className="w-3 h-3 text-white" />}
+                    </div>
+                    <span className={`font-medium ${t.text}`}>{item.product_name}</span>
+                  </div>
+                  {item.price_override > 0 && (
+                    <span className="text-sm text-orange-500 font-semibold">
+                      +R$ {item.price_override.toFixed(2).replace('.', ',')}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Footer */}
+          <div className={`p-4 ${t.bgMuted}`}>
+            <button
+              onClick={handleNextStep}
+              disabled={!canAdvanceStep()}
+              className={`w-full h-12 rounded-full font-bold text-white flex items-center justify-center gap-2 transition-all ${
+                canAdvanceStep() 
+                  ? 'bg-orange-500 hover:bg-orange-600 shadow-lg shadow-orange-500/20' 
+                  : 'bg-gray-300 dark:bg-zinc-600 cursor-not-allowed'
+              }`}
+            >
+              {comboStep < totalSteps ? (
+                <>ETAPA {comboStep + 2} <ChevronRight className="w-5 h-5" /></>
+              ) : (
+                <>Adicionar • R$ {totalPrice.toFixed(2).replace('.', ',')}</>
+              )}
+            </button>
+          </div>
+        </DialogContent>
+      </Dialog>
+    );
+  }
+
+  // TELA PADRÃO (produtos normais ou última etapa)
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className={`sm:max-w-md p-0 gap-0 overflow-hidden ${t.bg} border-0 rounded-2xl w-[92vw] sm:w-full max-h-[90vh] flex flex-col`}>
