@@ -873,8 +873,8 @@ export default function ProfileMenu({ client, onLogout, onClientUpdate, darkMode
             onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }}
           />
         ) : null}
-        <div className={`w-8 h-8 rounded-full bg-orange-500/20 items-center justify-center border-2 border-orange-500 ${client?.foto ? 'hidden' : 'flex'}`}>
-          <User className="w-4 h-4 text-orange-500" />
+        <div className={`w-8 h-8 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 items-center justify-center ${client?.foto ? 'hidden' : 'flex'}`}>
+          <User className="w-4 h-4 text-white" />
         </div>
       </button>
 
