@@ -31197,3 +31197,7 @@
 2026-01-13T14:59:37.391860+00:00 | DB_CALL get_all_products | P3 | 55.71ms | success
 2026-01-13T14:59:37.392897+00:00 | DB_CALL get_all_business_hours | P3 | 3.5ms | success
 2026-01-13T14:59:37.489829+00:00 | DB_CALL get_all_bairros | P3 | 54.27ms | success
+2026-01-13T15:01:01.133874+00:00 | DB_CALL init_database | P3 | 9.47ms | success
+2026-01-13T15:01:01.137609+00:00 | DB_CALL count_ingredients | P3 | 0.33ms | success
+2026-01-13T15:01:01.137873+00:00 | DB_CALL count_products | P3 | 0.16ms | success
+2026-01-13T15:01:01.138148+00:00 | DB_CALL count_users | P3 | 0.18ms | success
