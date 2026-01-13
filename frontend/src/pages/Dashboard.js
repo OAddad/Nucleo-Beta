@@ -768,19 +768,19 @@ export default function Dashboard({ setIsAuthenticated }) {
         {/* Header com Botão Hamburguer e Mini Menu - Fixo */}
         <header className="bg-card border-b flex items-stretch flex-shrink-0 sticky top-0 z-30">
           {/* Área do botão hamburguer - responsivo */}
-          <div className={`flex items-center justify-center border-r transition-all duration-300 ${sidebarOpen ? 'w-16 lg:w-64' : 'w-16'}`}>
+          <div className={`flex items-center justify-center border-r transition-all duration-300 w-14 lg:w-16 ${sidebarOpen ? 'lg:w-64' : ''}`}>
             <Button
               onClick={toggleSidebar}
               size="icon"
               variant="ghost"
-              className="flex-shrink-0"
+              className="flex-shrink-0 w-10 h-10 lg:w-9 lg:h-9"
             >
-              <Menu className="w-5 h-5" />
+              <Menu className="w-6 h-6 lg:w-5 lg:h-5" />
             </Button>
           </div>
 
           {/* Mini Menu com ícones - scroll horizontal em mobile */}
-          <div className="flex-1 flex items-center px-2 sm:px-4 py-2 gap-1 sm:gap-2 overflow-x-auto scrollbar-hide">
+          <div className="flex-1 flex items-center px-2 sm:px-4 py-2 gap-2 sm:gap-2 overflow-x-auto scrollbar-hide">
             {topMenuItems.map((item) => {
               const IconComponent = item.icon;
               const isActive = activeTopMenu === item.id;
@@ -795,16 +795,16 @@ export default function Dashboard({ setIsAuthenticated }) {
                     setActiveTopMenu(isActive ? null : item.id);
                   }}
                   className={`
-                    flex flex-col items-center gap-0.5 sm:gap-1 px-2 sm:px-4 py-1.5 sm:py-2 rounded-lg font-medium text-[10px] sm:text-xs whitespace-nowrap
-                    transition-all duration-200 min-w-[50px] sm:min-w-[70px] flex-shrink-0
+                    flex flex-col items-center gap-1 px-3 sm:px-4 py-2 sm:py-2 rounded-lg font-medium text-xs sm:text-xs whitespace-nowrap
+                    transition-all duration-200 min-w-[60px] sm:min-w-[70px] flex-shrink-0
                     ${isActive
                       ? 'bg-primary text-primary-foreground shadow-md'
-                      : 'bg-muted hover:bg-muted/80'
+                      : 'bg-muted hover:bg-muted/80 active:bg-muted/60'
                     }
                   `}
                 >
-                  <IconComponent className="w-4 h-4 sm:w-5 sm:h-5" />
-                  <span className="hidden xs:inline sm:inline">{item.label}</span>
+                  <IconComponent className="w-5 h-5 sm:w-5 sm:h-5" />
+                  <span className="text-[10px] sm:text-xs">{item.label}</span>
                 </button>
               );
             })}
