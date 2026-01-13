@@ -839,23 +839,22 @@ export default function ProfileMenu({ client, onLogout, onClientUpdate, darkMode
 
   return (
     <div className="relative" ref={menuRef}>
-      {/* Botão do Perfil */}
+      {/* Botão do Perfil - Compacto */}
       <button 
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center gap-2 hover:opacity-80 transition-opacity"
       >
         {client?.foto ? (
           <img 
-            src={client.foto} 
+            src={client.foto.startsWith('http') ? client.foto : `/api${client.foto}`} 
             alt={client.nome}
-            className="w-10 h-10 rounded-full object-cover border-2 border-orange-500"
+            className="w-8 h-8 rounded-full object-cover border-2 border-orange-500"
+            onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }}
           />
-        ) : (
-          <div className="w-10 h-10 rounded-full bg-zinc-700 flex items-center justify-center border-2 border-orange-500">
-            <User className="w-5 h-5 text-zinc-400" />
-          </div>
-        )}
-        <span className="text-sm font-medium hidden sm:block text-white">{client?.nome}</span>
+        ) : null}
+        <div className={`w-8 h-8 rounded-full bg-orange-500/20 items-center justify-center border-2 border-orange-500 ${client?.foto ? 'hidden' : 'flex'}`}>
+          <User className="w-4 h-4 text-orange-500" />
+        </div>
       </button>
 
       {/* Dropdown Menu */}
