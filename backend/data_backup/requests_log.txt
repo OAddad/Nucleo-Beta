@@ -32309,3 +32309,11 @@
 2026-01-13T17:10:20.603864+00:00 | DB_CALL count_ingredients | P3 | 0.24ms | success
 2026-01-13T17:10:20.604055+00:00 | DB_CALL count_products | P3 | 0.13ms | success
 2026-01-13T17:10:20.604195+00:00 | DB_CALL count_users | P3 | 0.09ms | success
+2026-01-13T17:10:34.327743+00:00 | DB_CALL get_all_entregadores | P3 | 1.04ms | success
+2026-01-13T17:10:34.329214+00:00 | DB_CALL get_all_pedidos | P3 | 1.94ms | success
+2026-01-13T17:10:34.337782+00:00 | DB_CALL get_all_settings | P3 | 0.25ms | success
+2026-01-13T17:10:35.301620+00:00 | DB_CALL get_all_categories | P3 | 0.31ms | success
+2026-01-13T17:10:35.303010+00:00 | DB_CALL get_all_products | P3 | 0.49ms | success
+2026-01-13T17:10:35.305687+00:00 | DB_CALL get_all_settings | P3 | 0.13ms | success
+2026-01-13T17:10:35.308991+00:00 | DB_CALL get_all_business_hours | P3 | 0.18ms | success
+2026-01-13T17:10:35.511793+00:00 | DB_CALL get_all_bairros | P3 | 6.9ms | success
