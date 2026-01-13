@@ -1515,6 +1515,11 @@ async def create_product(product_data: ProductCreate, current_user: User = Depen
         "recipe_yield": product_data.recipe_yield,
         "recipe_yield_unit": product_data.recipe_yield_unit,
         "unit_cost": cmv / product_data.recipe_yield if product_data.recipe_yield and product_data.recipe_yield > 0 else cmv,
+        "simple_price": product_data.simple_price,
+        "simple_description": product_data.simple_description,
+        "combo_description": product_data.combo_description,
+        "simple_photo_url": product_data.simple_photo_url,
+        "combo_photo_url": product_data.combo_photo_url,
         "created_at": created_at.isoformat()
     }
     
