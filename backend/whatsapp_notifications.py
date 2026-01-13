@@ -139,6 +139,120 @@ Pedido: *{codigo}*
     return message
 
 
+def generate_delivery_message_for_entregador(pedido: dict) -> str:
+    """
+    Gera mensagem para o entregador quando o pedido é atribuído a ele.
+    Contém: código, cliente, telefone, endereço e forma de pagamento.
+    """
+    codigo = pedido.get('codigo') or pedido.get('numero_pedido') or f"#{pedido.get('id', '')[:5].upper()}"
+    
+    # Dados do cliente
+    cliente_nome = pedido.get('cliente_nome', 'Cliente')
+    cliente_telefone = pedido.get('cliente_telefone', 'Não informado')
+    
+    # Endereço
+    endereco_rua = pedido.get('endereco_rua', '')
+    endereco_numero = pedido.get('endereco_numero', '')
+    endereco_bairro = pedido.get('endereco_bairro', '')
+    endereco_complemento = pedido.get('endereco_complemento', '')
+    endereco_referencia = pedido.get('endereco_referencia', '')
+    
+    endereco_completo = endereco_rua
+    if endereco_numero:
+        endereco_completo += f", {endereco_numero}"
+    if endereco_bairro:
+        endereco_completo += f" - {endereco_bairro}"
+    if endereco_complemento:
+        endereco_completo += f" ({endereco_complemento})"
+    
+    if not endereco_completo:
+        endereco_completo = "Não informado"
+    
+    # Forma de pagamento
+    forma_pagamento = pedido.get('forma_pagamento', 'Não informado')
+    forma_pagamento_map = {
+        'dinheiro': '💵 Dinheiro',
+        'pix': '📱 PIX',
+        'cartao_credito': '💳 Cartão de Crédito',
+        'cartao_debito': '💳 Cartão de Débito',
+        'cartao': '💳 Cartão'
+    }
+    forma_pagamento_texto = forma_pagamento_map.get(forma_pagamento, forma_pagamento.title())
+    
+    # Troco
+    troco_texto = ""
+    if forma_pagamento == 'dinheiro':
+        troco_precisa = pedido.get('troco_precisa', False)
+        troco_valor = pedido.get('troco_valor')
+        if troco_precisa and troco_valor:
+            total = pedido.get('total', 0)
+            troco_levar = troco_valor - total
+            troco_texto = f"\n💰 Troco para: R$ {troco_valor:.2f}\n💰 Levar troco: *R$ {troco_levar:.2f}*"
+    
+    # Referência
+    referencia_texto = ""
+    if endereco_referencia:
+        referencia_texto = f"\n📍 Referência: {endereco_referencia}"
+    
+    message = f"""🛵 *NOVA ENTREGA*
+
+📦 Pedido: *{codigo}*
+
+👤 *Cliente:* {cliente_nome}
+📞 *Telefone:* {cliente_telefone}
+
+📍 *Endereço:*
+{endereco_completo}{referencia_texto}
+
+💳 *Pagamento:* {forma_pagamento_texto}{troco_texto}
+
+✅ Pedido pronto para entrega!"""
+    
+    return message
+
+
+async def notify_entregador(pedido_id: str, entregador_telefone: str):
+    """Envia notificação ao entregador sobre novo pedido na BAG"""
+    try:
+        if not entregador_telefone:
+            print(f"[WhatsApp Notify] Entregador sem telefone cadastrado")
+            return
+        
+        # Buscar dados do pedido
+        pedido = db.get_pedido_by_id(pedido_id)
+        if not pedido:
+            print(f"[WhatsApp Notify] Pedido {pedido_id} não encontrado")
+            return
+        
+        # Gerar mensagem
+        message = generate_delivery_message_for_entregador(pedido)
+        
+        # Enviar
+        success = await send_whatsapp_message(entregador_telefone, message)
+        if success:
+            print(f"[WhatsApp Notify] ✅ Notificação enviada ao entregador")
+        else:
+            print(f"[WhatsApp Notify] ❌ Falha ao enviar notificação ao entregador")
+    except Exception as e:
+        print(f"[WhatsApp Notify] Erro ao notificar entregador: {e}")
+
+
+def schedule_entregador_notification(pedido_id: str, entregador_telefone: str):
+    """Agenda notificação ao entregador (sem delay)"""
+    if not entregador_telefone:
+        print(f"[WhatsApp Notify] Entregador sem telefone - notificação não enviada")
+        return
+    
+    try:
+        loop = asyncio.get_event_loop()
+        if loop.is_running():
+            asyncio.create_task(notify_entregador(pedido_id, entregador_telefone))
+        else:
+            loop.run_until_complete(notify_entregador(pedido_id, entregador_telefone))
+    except RuntimeError:
+        asyncio.run(notify_entregador(pedido_id, entregador_telefone))
+
+
 def get_order_message_from_templates(tipo_entrega: str, status: str, variables: dict) -> Optional[str]:
     """Busca a mensagem do banco de dados e aplica as variáveis"""
     return db.get_order_message_for_status(tipo_entrega, status, variables)
