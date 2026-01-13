@@ -585,39 +585,72 @@ function ClubeAddadTab({ loggedClient, onLogin, onClientUpdate, darkMode, t, clu
     );
   }
 
-  // Etapa: Membro do clube
+  // Etapa: Membro do clube - Visual bonito
   if (etapa === 'membro' || clubeStatus?.membro_clube === 1) {
+    const pontos = loggedClient?.pontos || clubeStatus?.pontuacao || 0;
     return (
-      <div className="px-4 py-6">
-        <div className="text-center mb-6">
-          <div className="w-20 h-20 bg-gradient-to-br from-orange-500 to-orange-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
-            <Crown className="w-10 h-10 text-white" />
+      <div className="px-4 py-6 min-h-[70vh] flex flex-col">
+        {/* Header com gradiente */}
+        <div className="bg-gradient-to-br from-orange-500 via-orange-500 to-amber-500 rounded-2xl p-6 mb-4 text-center shadow-xl relative overflow-hidden">
+          {/* Decoração de fundo */}
+          <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2"></div>
+          <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full translate-y-1/2 -translate-x-1/2"></div>
+          
+          <div className="relative z-10">
+            <div className="w-16 h-16 bg-white/20 backdrop-blur rounded-full flex items-center justify-center mx-auto mb-3">
+              <Crown className="w-8 h-8 text-white" />
+            </div>
+            <p className="text-white/80 text-xs uppercase tracking-widest mb-1">Membro do</p>
+            <h2 className="text-2xl font-black text-white mb-1">Clube {clubeConfig.clube_nome}</h2>
+            <p className="text-white/90 text-sm">{loggedClient?.nome}</p>
           </div>
-          <h2 className={`text-xl font-bold ${t.text} mb-1`}>Bem-vindo ao Clube {clubeConfig.clube_nome}!</h2>
-          <p className={`${t.textMuted} text-sm`}>{loggedClient.nome}</p>
         </div>
 
-        <div className={`${t.bgCard} rounded-2xl p-5 border ${t.border} mb-4`}>
+        {/* Card de Pontos */}
+        <div className={`${t.bgCard} rounded-2xl p-6 border-2 border-orange-200 shadow-lg mb-4`}>
           <div className="text-center">
-            <p className={`text-4xl font-bold text-orange-500 mb-1`}>{loggedClient.pontos || clubeStatus?.pontuacao || 0}</p>
-            <p className={`text-sm ${t.textMuted}`}>pontos acumulados</p>
+            <p className={`text-xs ${t.textMuted} uppercase tracking-wider mb-1`}>Seus pontos</p>
+            <div className="flex items-center justify-center gap-2">
+              <Star className="w-6 h-6 text-orange-500 fill-orange-500" />
+              <p className="text-5xl font-black text-orange-500">{pontos}</p>
+            </div>
+            <p className={`text-sm ${t.textMuted} mt-2`}>
+              Continue comprando para acumular mais!
+            </p>
           </div>
         </div>
 
-        <div className={`${t.bgCard} rounded-xl p-4 border ${t.border}`}>
-          <h3 className={`font-semibold ${t.text} mb-3`}>Como funciona</h3>
-          <div className="space-y-2 text-sm">
-            <div className="flex items-start gap-2">
-              <span className="text-green-500">✓</span>
-              <span className={t.textMuted}>A cada R$ 1,00 em compras = {clubeConfig.pontos_por_real} {clubeConfig.pontos_por_real === 1 ? 'ponto' : 'pontos'}</span>
+        {/* Benefícios */}
+        <div className="flex-1 space-y-3">
+          <h3 className={`font-bold ${t.text} text-sm uppercase tracking-wider`}>Seus Benefícios</h3>
+          
+          <div className={`flex items-center gap-4 ${t.bgCard} rounded-xl p-4 border ${t.border}`}>
+            <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+              <span className="text-lg">💰</span>
             </div>
-            <div className="flex items-start gap-2">
-              <span className="text-green-500">✓</span>
-              <span className={t.textMuted}>Ofertas exclusivas para membros</span>
+            <div>
+              <p className={`${t.text} font-semibold text-sm`}>Acúmulo de Pontos</p>
+              <p className={`${t.textMuted} text-xs`}>R$ 1,00 = {clubeConfig.pontos_por_real} {clubeConfig.pontos_por_real === 1 ? 'ponto' : 'pontos'}</p>
             </div>
-            <div className="flex items-start gap-2">
-              <span className="text-green-500">✓</span>
-              <span className={t.textMuted}>Promoções de aniversário</span>
+          </div>
+          
+          <div className={`flex items-center gap-4 ${t.bgCard} rounded-xl p-4 border ${t.border}`}>
+            <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0">
+              <span className="text-lg">🎁</span>
+            </div>
+            <div>
+              <p className={`${t.text} font-semibold text-sm`}>Ofertas Exclusivas</p>
+              <p className={`${t.textMuted} text-xs`}>Promoções só para membros do clube</p>
+            </div>
+          </div>
+          
+          <div className={`flex items-center gap-4 ${t.bgCard} rounded-xl p-4 border ${t.border}`}>
+            <div className="w-10 h-10 bg-pink-100 rounded-full flex items-center justify-center flex-shrink-0">
+              <span className="text-lg">🎂</span>
+            </div>
+            <div>
+              <p className={`${t.text} font-semibold text-sm`}>Presente de Aniversário</p>
+              <p className={`${t.textMuted} text-xs`}>Surpresas especiais no seu dia</p>
             </div>
           </div>
         </div>
