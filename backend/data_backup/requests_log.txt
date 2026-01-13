@@ -30528,3 +30528,7 @@
 2026-01-13T02:09:41.934025+00:00 | DB_CALL get_all_settings | P3 | 2.93ms | success
 2026-01-13T02:09:41.934319+00:00 | DB_CALL get_all_business_hours | P3 | 2.53ms | success
 2026-01-13T02:09:42.012181+00:00 | DB_CALL get_all_bairros | P3 | 1.49ms | success
+2026-01-13T14:23:56.418827+00:00 | DB_CALL init_database | P3 | 9.74ms | success
+2026-01-13T14:23:56.419588+00:00 | DB_CALL count_ingredients | P3 | 0.44ms | success
+2026-01-13T14:23:56.419930+00:00 | DB_CALL count_products | P3 | 0.24ms | success
+2026-01-13T14:23:56.420095+00:00 | DB_CALL count_users | P3 | 0.1ms | success
