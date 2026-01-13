@@ -31760,3 +31760,11 @@
 2026-01-13T16:06:49.196193+00:00 | DB_CALL get_all_products | P3 | 2.0ms | success
 2026-01-13T16:06:49.197319+00:00 | DB_CALL get_all_categories | P3 | 3.04ms | success
 2026-01-13T16:06:49.254910+00:00 | DB_CALL get_all_bairros | P3 | 0.35ms | success
+2026-01-13T16:07:21.597282+00:00 | DB_CALL get_whatsapp_stats | P3 | 1.03ms | success
+2026-01-13T16:07:21.796315+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.2ms | success
+2026-01-13T16:07:25.299904+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.23ms | success
+2026-01-13T16:07:25.498116+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.2ms | success
+2026-01-13T16:07:29.897583+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.22ms | success
+2026-01-13T16:07:30.097548+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.24ms | success
+2026-01-13T16:07:34.885985+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.24ms | success
+2026-01-13T16:07:35.093450+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.32ms | success

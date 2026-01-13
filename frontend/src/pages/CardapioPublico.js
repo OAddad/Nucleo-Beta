@@ -380,13 +380,13 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode }) {
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className={`sm:max-w-md p-0 gap-0 overflow-hidden ${t.bg} border-0 rounded-2xl w-[92vw] sm:w-full max-h-[90vh] flex flex-col`}>
-        {/* Imagem Grande no Topo */}
-        <div className="relative w-full h-48 sm:h-56 bg-gradient-to-b from-orange-100 to-orange-50 dark:from-zinc-800 dark:to-zinc-900">
+        {/* Imagem Quadrada no Topo */}
+        <div className="relative w-full aspect-square bg-gradient-to-b from-orange-100 to-orange-50 dark:from-zinc-800 dark:to-zinc-900">
           {product.photo_url && !imageError ? (
             <img
               src={getImageUrl(product.photo_url)}
               alt={product.name}
-              className="w-full h-full object-cover"
+              className="w-full h-full object-contain"
               onError={() => setImageError(true)}
             />
           ) : (
