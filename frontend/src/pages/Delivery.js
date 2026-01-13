@@ -2301,6 +2301,15 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
                           +{pedido.items.length - 6} item(s)
                         </p>
                       )}
+                      
+                      {/* Botão Repetir Pedido */}
+                      <button
+                        onClick={() => repetirPedido(pedido)}
+                        className="w-full mt-2 py-1.5 px-2 bg-orange-500 hover:bg-orange-600 text-white text-xs font-medium rounded-lg flex items-center justify-center gap-1 transition-colors"
+                      >
+                        <RefreshCw className="w-3 h-3" />
+                        Repetir Pedido
+                      </button>
                     </div>
                   ))
                 )}
