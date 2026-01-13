@@ -29328,3 +29328,13 @@
 2026-01-13T01:28:32.227402+00:00 | DB_CALL get_all_entregadores | P3 | 0.75ms | success
 2026-01-13T01:28:32.228064+00:00 | DB_CALL get_all_settings | P3 | 0.94ms | success
 2026-01-13T01:28:32.229486+00:00 | DB_CALL get_all_pedidos | P3 | 0.99ms | success
+2026-01-13T01:28:43.803103+00:00 | DB_CALL get_entregador_by_id | P3 | 0.4ms | success
+2026-01-13T01:28:43.804533+00:00 | DB_CALL get_all_settings | P3 | 0.13ms | success
+2026-01-13T01:28:43.806727+00:00 | DB_CALL get_pedidos_by_entregador | P3 | 0.19ms | success
+2026-01-13T01:28:44.858748+00:00 | DB_CALL get_all_entregadores | P3 | 26.65ms | success
+2026-01-13T01:28:44.860079+00:00 | DB_CALL get_all_pedidos | P3 | 26.61ms | success
+2026-01-13T01:28:44.861619+00:00 | DB_CALL get_all_settings | P3 | 27.95ms | success
+2026-01-13T01:28:50.487473+00:00 | DB_CALL get_all_pedidos | P3 | 1.96ms | success
+2026-01-13T01:28:50.489142+00:00 | DB_CALL get_all_settings | P3 | 3.12ms | success
+2026-01-13T01:28:50.489435+00:00 | DB_CALL get_all_entregadores | P3 | 2.83ms | success
+2026-01-13T01:28:51.321064+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.3ms | success
