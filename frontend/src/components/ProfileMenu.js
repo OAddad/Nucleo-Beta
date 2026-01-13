@@ -885,21 +885,21 @@ export default function ProfileMenu({ client, onLogout, onClientUpdate, darkMode
           <div className="py-2">
             <button
               onClick={() => { setShowPontuacao(true); setIsOpen(false); }}
-              className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-zinc-700 transition-colors"
+              className={`w-full flex items-center gap-3 px-4 py-3 text-left transition-colors ${darkMode ? 'hover:bg-zinc-700' : 'hover:bg-gray-100'}`}
             >
               <Star className="w-5 h-5 text-yellow-500" />
               <div>
-                <span className="text-white">Pontuação</span>
-                <p className="text-xs text-zinc-400">{(client?.pontuacao || 0).toLocaleString('pt-BR')} pontos</p>
+                <span className={darkMode ? 'text-white' : 'text-gray-900'}>Pontuação</span>
+                <p className={`text-xs ${darkMode ? 'text-zinc-400' : 'text-gray-500'}`}>{(client?.pontuacao || client?.pontos || 0).toLocaleString('pt-BR')} pontos</p>
               </div>
             </button>
 
             <button
               onClick={() => { setShowEditAccount(true); setIsOpen(false); }}
-              className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-zinc-700 transition-colors"
+              className={`w-full flex items-center gap-3 px-4 py-3 text-left transition-colors ${darkMode ? 'hover:bg-zinc-700' : 'hover:bg-gray-100'}`}
             >
-              <Settings className="w-5 h-5 text-zinc-400" />
-              <span className="text-white">Minha Conta</span>
+              <Settings className={`w-5 h-5 ${darkMode ? 'text-zinc-400' : 'text-gray-400'}`} />
+              <span className={darkMode ? 'text-white' : 'text-gray-900'}>Minha Conta</span>
             </button>
 
             <button
