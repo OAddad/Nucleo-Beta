@@ -825,7 +825,7 @@ function MeusPedidosModal({ isOpen, onClose, client, darkMode }) {
 }
 
 // Componente Principal - Menu de Perfil
-export default function ProfileMenu({ client, onLogout, onClientUpdate, darkMode, onToggleTheme, onNavigateToPedidos }) {
+export default function ProfileMenu({ client, onLogout, onClientUpdate, darkMode, onToggleTheme, onNavigateToPedidos, clubeNome }) {
   const [isOpen, setIsOpen] = useState(false);
   const [showPontuacao, setShowPontuacao] = useState(false);
   const [showEditAccount, setShowEditAccount] = useState(false);
