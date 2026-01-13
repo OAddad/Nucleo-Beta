@@ -31187,3 +31187,8 @@
 2026-01-13T14:58:49.400903+00:00 | DB_CALL get_all_categories | P3 | 2.72ms | success
 2026-01-13T14:58:49.401900+00:00 | DB_CALL get_all_business_hours | P3 | 2.49ms | success
 2026-01-13T14:58:49.497428+00:00 | DB_CALL get_all_bairros | P3 | 1.08ms | success
+2026-01-13T14:59:22.021346+00:00 | DB_CALL get_all_settings | P3 | 3.44ms | success
+2026-01-13T14:59:22.022502+00:00 | DB_CALL get_all_categories | P3 | 2.34ms | success
+2026-01-13T14:59:22.023153+00:00 | DB_CALL get_all_business_hours | P3 | 2.75ms | success
+2026-01-13T14:59:22.023819+00:00 | DB_CALL get_all_products | P3 | 3.34ms | success
+2026-01-13T14:59:22.126654+00:00 | DB_CALL get_all_bairros | P3 | 0.97ms | success
