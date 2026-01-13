@@ -1633,48 +1633,131 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
   return (
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="max-w-[95vw] w-[1400px] h-[90vh] p-0 flex flex-col bg-background">
-        <DialogHeader className="p-4 border-b flex-shrink-0">
-          <DialogTitle className="flex items-center justify-between">
+        {/* HEADER com Cliente sempre visível */}
+        <div className="border-b flex-shrink-0">
+          {/* Linha 1: Título e Steps */}
+          <div className="p-3 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <ShoppingBag className="w-5 h-5 text-orange-500" />
-              <span>Novo Pedido - Delivery</span>
+              <span className="font-semibold">Novo Pedido - Delivery</span>
             </div>
             <div className="flex items-center gap-2 text-sm font-normal">
               <button 
                 onClick={() => setStep(1)} 
-                className={`px-2 py-1 rounded cursor-pointer transition-all hover:opacity-80 ${step === 1 ? 'bg-orange-500 text-white' : 'bg-muted text-muted-foreground'}`}
+                className={`px-3 py-1.5 rounded cursor-pointer transition-all hover:opacity-80 ${step === 1 ? 'bg-orange-500 text-white' : 'bg-muted text-muted-foreground'}`}
               >
                 1. Produtos
               </button>
               <button 
-                onClick={() => setStep(2)} 
-                className={`px-2 py-1 rounded cursor-pointer transition-all hover:opacity-80 ${step === 2 ? 'bg-orange-500 text-white' : 'bg-muted text-muted-foreground'}`}
-              >
-                2. Cliente
-              </button>
-              <button 
                 onClick={() => setStep(3)} 
                 disabled={!selectedCliente}
-                className={`px-2 py-1 rounded cursor-pointer transition-all hover:opacity-80 disabled:opacity-50 disabled:cursor-not-allowed ${step === 3 ? 'bg-orange-500 text-white' : 'bg-muted text-muted-foreground'}`}
+                className={`px-3 py-1.5 rounded cursor-pointer transition-all hover:opacity-80 disabled:opacity-50 disabled:cursor-not-allowed ${step === 3 ? 'bg-orange-500 text-white' : 'bg-muted text-muted-foreground'}`}
               >
-                3. Entrega
+                2. Entrega
               </button>
               <button 
                 onClick={() => setStep(4)} 
                 disabled={!selectedCliente}
-                className={`px-2 py-1 rounded cursor-pointer transition-all hover:opacity-80 disabled:opacity-50 disabled:cursor-not-allowed ${step === 4 ? 'bg-orange-500 text-white' : 'bg-muted text-muted-foreground'}`}
+                className={`px-3 py-1.5 rounded cursor-pointer transition-all hover:opacity-80 disabled:opacity-50 disabled:cursor-not-allowed ${step === 4 ? 'bg-orange-500 text-white' : 'bg-muted text-muted-foreground'}`}
               >
-                4. Pagamento
+                3. Pagamento
               </button>
             </div>
-          </DialogTitle>
-        </DialogHeader>
+          </div>
+          
+          {/* Linha 2: Seleção de Cliente - SEMPRE VISÍVEL */}
+          <div className="px-3 pb-3">
+            <div className="flex items-center gap-3 bg-muted/50 rounded-lg p-2">
+              <User className="w-5 h-5 text-orange-500 flex-shrink-0" />
+              
+              {selectedCliente ? (
+                <div className="flex items-center gap-3 flex-1">
+                  <div className="flex-1">
+                    <p className="font-semibold text-green-600">{selectedCliente.nome}</p>
+                    <p className="text-sm text-muted-foreground">{selectedCliente.telefone}</p>
+                  </div>
+                  <Button variant="ghost" size="sm" onClick={() => { setSelectedCliente(null); setClienteHistorico([]); setEnderecosSalvos([]); }}>
+                    <X className="w-4 h-4" /> Trocar
+                  </Button>
+                </div>
+              ) : (
+                <div className="flex-1 flex items-center gap-2">
+                  <div className="relative flex-1">
+                    <Input
+                      placeholder="Buscar cliente por nome ou telefone..."
+                      value={clienteSearch}
+                      onChange={(e) => {
+                        setClienteSearch(e.target.value);
+                        setShowClienteDropdown(true);
+                      }}
+                      onFocus={() => setShowClienteDropdown(true)}
+                      className="bg-background"
+                    />
+                    {showClienteDropdown && clienteSearch && filteredClientes.length > 0 && (
+                      <div className="absolute z-50 w-full mt-1 bg-card border rounded-lg shadow-lg max-h-48 overflow-auto">
+                        {filteredClientes.map(cliente => (
+                          <div
+                            key={cliente.id}
+                            className="p-3 hover:bg-muted cursor-pointer flex justify-between"
+                            onClick={() => handleSelectCliente(cliente)}
+                          >
+                            <span className="font-medium">{cliente.nome}</span>
+                            <span className="text-muted-foreground">{cliente.telefone}</span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                  <span className="text-muted-foreground text-sm">ou</span>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => {
+                      if (clienteSearch) {
+                        setNovoCliente({ nome: clienteSearch, telefone: "" });
+                      }
+                    }}
+                  >
+                    <Plus className="w-4 h-4 mr-1" /> Novo Cliente
+                  </Button>
+                </div>
+              )}
+            </div>
+            
+            {/* Form criar novo cliente inline */}
+            {!selectedCliente && novoCliente.nome && (
+              <div className="mt-2 p-3 bg-green-50 dark:bg-green-950/20 rounded-lg border border-green-200 dark:border-green-800">
+                <p className="text-sm font-medium text-green-700 dark:text-green-400 mb-2">Criar novo cliente:</p>
+                <div className="flex items-center gap-2">
+                  <Input
+                    value={novoCliente.nome}
+                    onChange={(e) => setNovoCliente({...novoCliente, nome: e.target.value})}
+                    placeholder="Nome"
+                    className="flex-1"
+                  />
+                  <Input
+                    value={novoCliente.telefone}
+                    onChange={(e) => setNovoCliente({...novoCliente, telefone: e.target.value})}
+                    placeholder="Telefone"
+                    className="w-40"
+                  />
+                  <Button onClick={handleCriarCliente} disabled={creatingCliente} className="bg-green-600 hover:bg-green-700">
+                    {creatingCliente ? "..." : "Criar"}
+                  </Button>
+                  <Button variant="ghost" size="sm" onClick={() => setNovoCliente({ nome: "", telefone: "" })}>
+                    <X className="w-4 h-4" />
+                  </Button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
         
         <div className="flex-1 overflow-hidden flex">
           {/* COLUNA ESQUERDA - Pedidos Ativos */}
           <div className="w-48 border-r bg-muted/30 flex flex-col">
             <div className="p-2 border-b">
-              <Button size="sm" className="w-full bg-orange-500 hover:bg-orange-600" onClick={novoPedidoTab}>
+              <Button size="sm" className="w-full bg-orange-500 hover:bg-orange-600" onClick={() => novoPedidoTab()}>
                 <Plus className="w-4 h-4 mr-1" /> Novo
               </Button>
             </div>
