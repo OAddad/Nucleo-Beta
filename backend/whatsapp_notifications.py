@@ -238,7 +238,7 @@ async def notify_order_status(pedido_id: str, new_status: str, delay_seconds: in
         codigo = pedido.get('codigo') or pedido.get('numero_pedido') or f"#{pedido_id[:5].upper()}"
         
         settings = db.get_all_settings()
-        endereco = settings.get('company_address', 'nosso estabelecimento')
+        endereco_estabelecimento = settings.get('company_address', 'nosso estabelecimento')
         
         # Nome do entregador
         nome_entregador = pedido.get('entregador_nome') or 'Entregador'
@@ -249,21 +249,26 @@ async def notify_order_status(pedido_id: str, new_status: str, delay_seconds: in
         else:
             motivo_final = ''
         
-        variables = {
-            'codigo': codigo,
-            'endereco': endereco,
-            'nome_entregador': nome_entregador,
-            'motivo': motivo_final
-        }
-        
-        # Buscar mensagem do template
-        message = get_order_message_from_templates(tipo_entrega, new_status, variables)
+        # Para status de pedido criado (aguardando_aceite), usar resumo completo
+        if new_status == 'aguardando_aceite':
+            message = generate_order_summary(pedido, settings)
+        else:
+            # Para outros status, usar template do banco
+            variables = {
+                'codigo': codigo,
+                'endereco': endereco_estabelecimento,
+                'nome_entregador': nome_entregador,
+                'motivo': motivo_final
+            }
+            
+            # Buscar mensagem do template
+            message = get_order_message_from_templates(tipo_entrega, new_status, variables)
         
         if not message:
             print(f"[WhatsApp Notify] ⚠️ Template não encontrado ou desativado para status '{new_status}' tipo '{tipo_entrega}'")
             return
         
-        print(f"[WhatsApp Notify] Mensagem: {message[:50]}...")
+        print(f"[WhatsApp Notify] Mensagem: {message[:100]}...")
         
         # Enviar mensagem
         success = await send_whatsapp_message(cliente_telefone, message)
