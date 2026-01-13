@@ -30641,3 +30641,11 @@
 2026-01-13T14:33:12.599622+00:00 | DB_CALL get_all_categories | P3 | 2.31ms | success
 2026-01-13T14:33:12.600737+00:00 | DB_CALL get_all_business_hours | P3 | 0.18ms | success
 2026-01-13T14:33:12.796596+00:00 | DB_CALL get_all_bairros | P3 | 0.34ms | success
+2026-01-13T14:33:17.425024+00:00 | DB_CALL get_all_settings | P3 | 0.32ms | success
+2026-01-13T14:33:17.836752+00:00 | DB_CALL get_all_settings | P3 | 0.27ms | success
+2026-01-13T14:33:25.700262+00:00 | DB_CALL get_all_settings | P3 | 0.49ms | success
+2026-01-13T14:33:25.702817+00:00 | DB_CALL get_all_pedidos | P3 | 1.68ms | success
+2026-01-13T14:33:25.705099+00:00 | DB_CALL get_all_entregadores | P3 | 0.32ms | success
+2026-01-13T14:33:30.829704+00:00 | DB_CALL get_all_pedidos | P3 | 1.36ms | success
+2026-01-13T14:33:30.832219+00:00 | DB_CALL get_all_entregadores | P3 | 0.26ms | success
+2026-01-13T14:33:30.835399+00:00 | DB_CALL get_all_settings | P3 | 0.17ms | success
