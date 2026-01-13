@@ -30480,3 +30480,6 @@
 2026-01-13T02:05:46.535509+00:00 | DB_CALL get_all_pedidos | P3 | 1.6ms | success
 2026-01-13T02:05:46.537322+00:00 | DB_CALL get_all_entregadores | P3 | 3.62ms | success
 2026-01-13T02:05:46.537610+00:00 | DB_CALL get_all_settings | P3 | 3.54ms | success
+2026-01-13T02:05:51.591537+00:00 | DB_CALL get_all_entregadores | P3 | 7.36ms | success
+2026-01-13T02:05:51.592167+00:00 | DB_CALL get_all_pedidos | P3 | 5.64ms | success
+2026-01-13T02:05:51.599512+00:00 | DB_CALL get_all_settings | P3 | 13.08ms | success
