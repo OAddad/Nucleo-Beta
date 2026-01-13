@@ -402,6 +402,12 @@ class ProductCreate(BaseModel):
     linked_ingredient_id: Optional[str] = None  # ID do ingrediente linkado (para receitas)
     recipe_yield: Optional[float] = None  # Rendimento da receita (quantidade produzida)
     recipe_yield_unit: Optional[str] = None  # Unidade do rendimento (kg ou un)
+    # Campos para combo vs simples
+    simple_price: Optional[float] = None  # Preço do produto simples (sem combo)
+    simple_description: Optional[str] = None  # Descrição do simples
+    combo_description: Optional[str] = None  # Descrição do combo (ex: + Batata + Refri)
+    simple_photo_url: Optional[str] = None  # Foto do produto simples
+    combo_photo_url: Optional[str] = None  # Foto do combo
 
 class Product(BaseModel):
     model_config = ConfigDict(extra="ignore")
@@ -423,6 +429,12 @@ class Product(BaseModel):
     recipe_yield: Optional[float] = None  # Rendimento da receita (quantidade produzida)
     recipe_yield_unit: Optional[str] = None  # Unidade do rendimento (kg ou un)
     unit_cost: Optional[float] = None  # Custo por unidade/kg (CMV / rendimento)
+    # Campos para combo vs simples
+    simple_price: Optional[float] = None  # Preço do produto simples (sem combo)
+    simple_description: Optional[str] = None  # Descrição do simples
+    combo_description: Optional[str] = None  # Descrição do combo (ex: + Batata + Refri)
+    simple_photo_url: Optional[str] = None  # Foto do produto simples
+    combo_photo_url: Optional[str] = None  # Foto do combo
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 # ========== BUSINESS HOURS MODELS ==========
