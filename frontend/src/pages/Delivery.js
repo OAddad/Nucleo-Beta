@@ -1563,7 +1563,8 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
           nome: item.name,
           quantidade: item.quantity,
           preco: item.sale_price || 0,
-          observacao: item.observation || ""
+          observacao: item.observation || "",
+          photo_url: item.photo_url || null
         })),
         total: total,
         forma_pagamento: formaPagamento,
