@@ -1637,105 +1637,103 @@ export default function CardapioPublico({ onAdminLogin }) {
 
   return (
     <div className={`min-h-screen ${t.bg} ${t.text} pb-20`}>
-      {/* Header Fixo */}
+      {/* Header Fixo - Mais fino */}
       <header className={`${t.bgHeader} fixed top-0 left-0 right-0 z-40 border-b ${t.border}`}>
-        <div className="flex items-center justify-between px-4 py-3">
-          {/* Lado Esquerdo - Saudação e Pontos */}
-          <div className="flex flex-col">
-            <span className={`text-sm font-medium ${t.text}`}>
-              Oi, {loggedClient?.nome?.split(' ')[0] || 'Visitante'}! 👋
-            </span>
+        <div className="flex items-center justify-between px-3 py-2">
+          {/* Lado Esquerdo - Pontos + Nome */}
+          <div className="flex items-center gap-2">
             {loggedClient && (
-              <div className="flex items-center gap-1 mt-0.5">
-                <Star className="w-3.5 h-3.5 fill-yellow-400 text-yellow-400" />
-                <span className={`text-xs font-semibold text-orange-500`}>{loggedClient?.pontos || 0} pontos</span>
+              <div className="flex items-center gap-1 bg-orange-500/10 px-2 py-0.5 rounded-full">
+                <Star className="w-3 h-3 fill-orange-500 text-orange-500" />
+                <span className="text-xs font-bold text-orange-500">{loggedClient?.pontos || 0}</span>
               </div>
             )}
+            <span className={`text-sm font-medium ${t.text}`}>
+              Oi, {loggedClient?.nome?.split(' ')[0] || 'Visitante'}!
+            </span>
           </div>
           
-          {/* Lado Direito - Botão Entrar ou Foto */}
-          {loggedClient ? (
+          {/* Lado Direito - Lupa + Foto/Entrar */}
+          <div className="flex items-center gap-2">
+            {/* Botão Lupa */}
             <button 
-              onClick={() => {}}
-              className="w-10 h-10 rounded-full overflow-hidden border-2 border-orange-500 flex items-center justify-center bg-orange-500/10"
+              onClick={() => {
+                setSearchOpen(!searchOpen);
+                if (!searchOpen) {
+                  setTimeout(() => searchInputRef.current?.focus(), 100);
+                }
+              }}
+              className={`w-9 h-9 rounded-full flex items-center justify-center transition-colors ${searchOpen ? 'bg-orange-500 text-white' : `${t.bgMuted} ${t.textMuted}`}`}
             >
-              {loggedClient.foto_url ? (
-                <img src={loggedClient.foto_url} alt="" className="w-full h-full object-cover" />
-              ) : (
-                <User className="w-5 h-5 text-orange-500" />
-              )}
+              <Search className="w-4 h-4" />
             </button>
-          ) : (
-            <Button onClick={() => setShowLoginModal(true)} className="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-5 h-9 text-sm">
-              ENTRAR
-            </Button>
-          )}
+            
+            {/* Foto ou Botão Entrar */}
+            {loggedClient ? (
+              <button 
+                onClick={() => {}}
+                className="w-9 h-9 rounded-full overflow-hidden border-2 border-orange-500 flex items-center justify-center bg-orange-500/10"
+              >
+                {loggedClient.foto_url ? (
+                  <img src={loggedClient.foto_url} alt="" className="w-full h-full object-cover" />
+                ) : (
+                  <User className="w-4 h-4 text-orange-500" />
+                )}
+              </button>
+            ) : (
+              <Button onClick={() => setShowLoginModal(true)} className="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-4 h-8 text-xs">
+                ENTRAR
+              </Button>
+            )}
+          </div>
         </div>
+        
+        {/* Campo de Busca Expandível */}
+        {searchOpen && (
+          <div className={`px-3 pb-2 ${t.bg}`}>
+            <div className="relative">
+              <Search className={`absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 ${t.textMuted2}`} />
+              <Input 
+                ref={searchInputRef}
+                type="text" 
+                placeholder="Buscar produto..." 
+                value={searchTerm} 
+                onChange={(e) => setSearchTerm(e.target.value)} 
+                className={`pl-9 pr-9 ${t.bgInput} ${t.text} h-9 rounded-lg text-sm`} 
+              />
+              {searchTerm && (
+                <button onClick={() => setSearchTerm("")} className={`absolute right-3 top-1/2 -translate-y-1/2 ${t.textMuted2}`}>
+                  <X className="w-4 h-4" />
+                </button>
+              )}
+            </div>
+          </div>
+        )}
       </header>
 
-      {/* Conteúdo Principal - com padding top para o header fixo */}
-      <main className="pt-16 pb-4">
+      {/* Conteúdo Principal - padding menor para header mais fino */}
+      <main className={`pt-12 pb-4 ${searchOpen ? 'pt-[88px]' : ''}`}>
         {/* Aba Cardápio */}
         {activeTab === 'cardapio' && (
           <>
-            {/* Banner do Restaurante */}
-            <div className="bg-gradient-to-r from-orange-600 to-orange-500 px-4 py-4">
-              <div className="flex items-center gap-3">
-                <div className="w-14 h-14 bg-white rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg overflow-hidden">
-                  <img 
-                    src={companySettings.logo_url ? companySettings.logo_url : "/logo-nucleo.png"} 
-                    alt="Logo" 
-                    className="w-10 h-10 object-contain" 
-                    onError={(e) => { e.target.style.display = 'none'; e.target.parentElement.innerHTML = `<span class="text-orange-500 font-bold text-xl">${(companySettings.company_name || 'N').charAt(0)}</span>`; }} 
-                  />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <h1 className="text-lg font-bold text-white truncate">{companySettings.fantasy_name || companySettings.company_name || "Núcleo"}</h1>
-                    <div className="flex items-center gap-0.5 bg-white/20 px-1.5 py-0.5 rounded-full">
-                      <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" /><span className="text-xs font-medium text-white">5.0</span>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2 mt-1">
-                    <div className="flex items-center gap-1 text-xs">
-                      <div className={`w-2 h-2 rounded-full ${isOpen ? 'bg-green-400 animate-pulse' : 'bg-red-400'}`}></div>
-                      <span className="text-white/90">{isOpen ? 'Aberto' : 'Fechado'}</span>
-                    </div>
-                    {isOpen && closingTime && (
-                      <span className="text-xs text-white/70">• Fecha {closingTime}</span>
-                    )}
-                  </div>
-                </div>
-              </div>
+            {/* Status Aberto/Fechado - Discreto */}
+            <div className={`px-4 py-1.5 ${t.bg} flex items-center gap-2`}>
+              <div className={`w-1.5 h-1.5 rounded-full ${isOpen ? 'bg-green-500' : 'bg-red-500'}`}></div>
+              <span className={`text-xs ${t.textMuted}`}>
+                {isOpen ? 'Aberto' : 'Fechado'}
+                {isOpen && closingTime && ` • Fecha ${closingTime}`}
+                {!isOpen && nextOpenTime && ` • Abre ${nextOpenTime}`}
+              </span>
             </div>
 
-            {/* Busca */}
-            <div className={`px-4 py-3 ${t.bg}`}>
-              <div className="relative">
-                <Search className={`absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 ${t.textMuted2}`} />
-                <Input 
-                  type="text" 
-                  placeholder="Buscar produto..." 
-                  value={searchTerm} 
-                  onChange={(e) => setSearchTerm(e.target.value)} 
-                  className={`pl-10 ${t.bgInput} ${t.text} h-11 rounded-xl`} 
-                />
-                {searchTerm && (
-                  <button onClick={() => setSearchTerm("")} className={`absolute right-3 top-1/2 -translate-y-1/2 ${t.textMuted2}`}>
-                    <X className="w-4 h-4" />
-                  </button>
-                )}
-              </div>
-            </div>
-
-            {/* Produtos por Categoria - Scroll Horizontal */}
-            <div className="px-4 space-y-6">
+            {/* Produtos por Categoria */}
+            <div className="px-4 space-y-6 mt-2">
               {Object.keys(productsByCategory).length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-20">
-                  <div className={`w-20 h-20 ${t.bgCard} rounded-full flex items-center justify-center mb-4`}>
-                    <Search className={`w-8 h-8 ${t.textMuted2}`} />
+                  <div className={`w-16 h-16 ${t.bgCard} rounded-full flex items-center justify-center mb-4`}>
+                    <Search className={`w-6 h-6 ${t.textMuted2}`} />
                   </div>
-                  <h3 className={`text-lg font-semibold ${t.textMuted} mb-2`}>Nenhum produto encontrado</h3>
+                  <h3 className={`text-base font-semibold ${t.textMuted} mb-2`}>Nenhum produto encontrado</h3>
                   <p className={`${t.textMuted2} text-center text-sm`}>
                     {searchTerm ? `Não encontramos "${searchTerm}"` : "Cardápio vazio"}
                   </p>
@@ -1745,23 +1743,24 @@ export default function CardapioPublico({ onAdminLogin }) {
                   <div key={category}>
                     {/* Título da Categoria */}
                     <div className="flex items-center justify-between mb-3">
-                      <h2 className="text-lg font-bold text-orange-500 uppercase">{category}</h2>
+                      <h2 className="text-base lg:text-lg font-bold text-orange-500 uppercase">{category}</h2>
                       <span className={`text-xs ${t.textMuted}`}>{categoryProducts.length} itens</span>
                     </div>
                     
-                    {/* Scroll Horizontal de Produtos - 2.5 itens visíveis */}
+                    {/* Mobile: Scroll Horizontal 2.5 itens | Desktop: Grade */}
                     <div 
-                      className="flex gap-3 overflow-x-auto pb-2 snap-x snap-mandatory scrollbar-hide"
+                      className="flex lg:grid gap-3 overflow-x-auto lg:overflow-visible pb-2 lg:pb-0 snap-x snap-mandatory lg:snap-none scrollbar-hide lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6"
                       style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
                     >
                       {categoryProducts.map(product => (
                         <div 
                           key={product.id} 
-                          className={`${t.bgCard} rounded-xl overflow-hidden border ${t.border} cursor-pointer snap-start flex-shrink-0 hover:shadow-lg transition-shadow`}
+                          className={`${t.bgCard} rounded-xl overflow-hidden border ${t.border} cursor-pointer snap-start flex-shrink-0 lg:flex-shrink hover:shadow-lg transition-shadow`}
                           style={{ width: 'calc((100% - 1.5rem) / 2.5)' }}
                           onClick={() => openProductPopup(product)}
                         >
-                          <div className={`aspect-square ${t.bgMuted} relative overflow-hidden`}>
+                          {/* Imagem - Menor no desktop */}
+                          <div className={`aspect-square lg:aspect-[4/3] ${t.bgMuted} relative overflow-hidden`}>
                             {product.photo_url ? (
                               <img 
                                 src={getImageUrl(product.photo_url)} 
@@ -1770,13 +1769,13 @@ export default function CardapioPublico({ onAdminLogin }) {
                               />
                             ) : (
                               <div className="w-full h-full flex items-center justify-center">
-                                <span className="text-3xl">🍽️</span>
+                                <span className="text-2xl lg:text-xl">🍽️</span>
                               </div>
                             )}
                           </div>
-                          <div className="p-2.5">
-                            <h3 className={`font-semibold ${t.text} text-sm line-clamp-2 leading-tight mb-1`}>{product.name}</h3>
-                            <span className="text-orange-500 font-bold text-sm">
+                          <div className="p-2 lg:p-2.5">
+                            <h3 className={`font-semibold ${t.text} text-sm lg:text-xs line-clamp-2 leading-tight mb-1`}>{product.name}</h3>
+                            <span className="text-orange-500 font-bold text-sm lg:text-xs">
                               R$ {product.sale_price?.toFixed(2).replace('.', ',')}
                             </span>
                           </div>
