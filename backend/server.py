@@ -2372,6 +2372,17 @@ class ClubeConfigRequest(BaseModel):
     clube_nome: str
     pontos_por_real: float
 
+@api_router.get("/public/clube/config")
+async def get_clube_config_public():
+    """Retorna as configurações do clube (público)"""
+    clube_nome = sqlite_db.get_setting("clube_nome") or "Clube Addad"
+    pontos_por_real = sqlite_db.get_setting("pontos_por_real") or "1"
+    
+    return {
+        "clube_nome": clube_nome,
+        "pontos_por_real": float(pontos_por_real)
+    }
+
 @api_router.get("/clube/config")
 async def get_clube_config(credentials: HTTPAuthorizationCredentials = Depends(security)):
     """Retorna as configurações do clube"""
