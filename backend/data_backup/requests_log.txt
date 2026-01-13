@@ -25523,3 +25523,8 @@
 2026-01-13T00:23:39.449844+00:00 | DB_CALL get_user_by_username | P3 | 0.26ms | success
 2026-01-13T00:23:41.472352+00:00 | DB_CALL get_user_by_username | P3 | 0.27ms | success
 2026-01-13T00:23:41.663211+00:00 | DB_CALL get_all_settings | P3 | 0.3ms | success
+2026-01-13T00:24:04.688672+00:00 | DB_CALL get_all_categories | P3 | 2.03ms | success
+2026-01-13T00:24:04.689331+00:00 | DB_CALL get_all_business_hours | P3 | 2.46ms | success
+2026-01-13T00:24:04.689847+00:00 | DB_CALL get_all_settings | P3 | 1.88ms | success
+2026-01-13T00:24:04.690153+00:00 | DB_CALL get_all_products | P3 | 1.79ms | success
+2026-01-13T00:24:04.789993+00:00 | DB_CALL get_all_bairros | P3 | 2.76ms | success
