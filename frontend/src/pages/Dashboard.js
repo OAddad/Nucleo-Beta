@@ -755,8 +755,8 @@ export default function Dashboard({ setIsAuthenticated }) {
       <div className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
         {/* Header com Botão Hamburguer e Mini Menu - Fixo */}
         <header className="bg-card border-b flex items-stretch flex-shrink-0 sticky top-0 z-30">
-          {/* Área do botão hamburguer - mesmo tamanho da logo */}
-          <div className={`flex items-center justify-center border-r transition-all duration-300 ${sidebarOpen ? 'w-64' : 'w-16'}`}>
+          {/* Área do botão hamburguer - responsivo */}
+          <div className={`flex items-center justify-center border-r transition-all duration-300 ${sidebarOpen ? 'w-16 lg:w-64' : 'w-16'}`}>
             <Button
               onClick={toggleSidebar}
               size="icon"
@@ -767,8 +767,8 @@ export default function Dashboard({ setIsAuthenticated }) {
             </Button>
           </div>
 
-          {/* Mini Menu com ícones */}
-          <div className="flex-1 flex items-center px-4 py-2 gap-2">
+          {/* Mini Menu com ícones - scroll horizontal em mobile */}
+          <div className="flex-1 flex items-center px-2 sm:px-4 py-2 gap-1 sm:gap-2 overflow-x-auto scrollbar-hide">
             {topMenuItems.map((item) => {
               const IconComponent = item.icon;
               const isActive = activeTopMenu === item.id;
@@ -783,22 +783,22 @@ export default function Dashboard({ setIsAuthenticated }) {
                     setActiveTopMenu(isActive ? null : item.id);
                   }}
                   className={`
-                    flex flex-col items-center gap-1 px-4 py-2 rounded-lg font-medium text-xs whitespace-nowrap
-                    transition-all duration-200 min-w-[70px]
+                    flex flex-col items-center gap-0.5 sm:gap-1 px-2 sm:px-4 py-1.5 sm:py-2 rounded-lg font-medium text-[10px] sm:text-xs whitespace-nowrap
+                    transition-all duration-200 min-w-[50px] sm:min-w-[70px] flex-shrink-0
                     ${isActive
                       ? 'bg-primary text-primary-foreground shadow-md'
                       : 'bg-muted hover:bg-muted/80'
                     }
                   `}
                 >
-                  <IconComponent className="w-5 h-5" />
-                  <span>{item.label}</span>
+                  <IconComponent className="w-4 h-4 sm:w-5 sm:h-5" />
+                  <span className="hidden xs:inline sm:inline">{item.label}</span>
                 </button>
               );
             })}
           </div>
 
-          <div className="flex items-center pr-4">
+          <div className="flex items-center pr-2 sm:pr-4 flex-shrink-0">
             <DarkModeToggle />
           </div>
         </header>

@@ -30103,3 +30103,9 @@
 2026-01-13T01:53:34.730466+00:00 | DB_CALL get_all_entregadores | P3 | 0.26ms | success
 2026-01-13T01:53:34.737654+00:00 | DB_CALL get_all_pedidos | P3 | 1.28ms | success
 2026-01-13T01:53:34.740002+00:00 | DB_CALL get_all_settings | P3 | 0.46ms | success
+2026-01-13T01:53:40.507253+00:00 | DB_CALL get_all_pedidos | P3 | 1.21ms | success
+2026-01-13T01:53:40.510274+00:00 | DB_CALL get_all_settings | P3 | 0.69ms | success
+2026-01-13T01:53:40.510654+00:00 | DB_CALL get_all_entregadores | P3 | 0.65ms | success
+2026-01-13T01:53:45.503212+00:00 | DB_CALL get_all_settings | P3 | 0.36ms | success
+2026-01-13T01:53:45.507828+00:00 | DB_CALL get_all_entregadores | P3 | 0.21ms | success
+2026-01-13T01:53:45.509230+00:00 | DB_CALL get_all_pedidos | P3 | 2.04ms | success
