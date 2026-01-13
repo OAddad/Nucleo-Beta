@@ -26283,3 +26283,9 @@
 2026-01-13T00:36:57.429349+00:00 | DB_CALL get_all_pedidos | P3 | 1.62ms | success
 2026-01-13T00:36:57.431008+00:00 | DB_CALL get_all_settings | P3 | 2.52ms | success
 2026-01-13T00:36:57.431713+00:00 | DB_CALL get_all_entregadores | P3 | 0.17ms | success
+2026-01-13T00:37:02.463183+00:00 | DB_CALL get_all_entregadores | P3 | 0.87ms | success
+2026-01-13T00:37:02.463764+00:00 | DB_CALL get_all_settings | P3 | 0.94ms | success
+2026-01-13T00:37:02.465206+00:00 | DB_CALL get_all_pedidos | P3 | 1.04ms | success
+2026-01-13T00:37:07.460439+00:00 | DB_CALL get_all_pedidos | P3 | 2.2ms | success
+2026-01-13T00:37:07.462204+00:00 | DB_CALL get_all_entregadores | P3 | 3.36ms | success
+2026-01-13T00:37:07.462496+00:00 | DB_CALL get_all_settings | P3 | 3.19ms | success
