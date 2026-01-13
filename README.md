@@ -108,7 +108,56 @@ Acesse manualmente: http://localhost:3000
 
 ---
 
+## 📱 ChatBot WhatsApp
+
+O sistema inclui um ChatBot WhatsApp integrado para atendimento automático de pedidos.
+
+### Portas do ChatBot
+- **WhatsApp Service:** http://localhost:3002
+
+### Setup do WhatsApp (Emergent/Cloud)
+O WhatsApp é iniciado automaticamente pelo backend. Se precisar reinstalar as dependências:
+
+```bash
+cd /app/whatsapp-service
+npm install
+```
+
+### Funcionalidades do ChatBot
+- ✅ Atendimento automático via IA
+- ✅ Cardápio interativo
+- ✅ Criação de pedidos pelo WhatsApp
+- ✅ Notificações de status do pedido
+- ✅ Resumo completo do pedido enviado ao cliente
+
+---
+
+## 🔧 Setup para Desenvolvimento (Emergent/Cloud)
+
+Para configurar o ambiente após clonar ou reiniciar:
+
+```bash
+# Executar script de setup completo
+bash /app/setup.sh
+
+# Ou manualmente:
+cd /app/whatsapp-service && npm install
+cd /app/frontend && yarn install
+cd /app/backend && pip install -r requirements.txt
+
+# Reiniciar serviços
+sudo supervisorctl restart all
+```
+
+---
+
 ## 📝 Notas de Versão
+
+### v3.1 - WhatsApp Integration
+- 📱 ChatBot WhatsApp com IA
+- 🔄 Inicialização automática do WhatsApp Service
+- 📦 Setup automático de dependências
+- 📋 Resumo completo do pedido via WhatsApp
 
 ### v3.0 - Windows Native
 - 🖥️ Launcher 100% Windows (sem Bash/Git Bash)
@@ -119,3 +168,4 @@ Acesse manualmente: http://localhost:3000
 ---
 
 **© 2025 Núcleo - Sistema de Gestão de CMV**
+
