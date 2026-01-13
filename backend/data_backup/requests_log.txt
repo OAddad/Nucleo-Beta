@@ -32743,3 +32743,4 @@
 2026-01-13T18:11:28.970939+00:00 | DB_CALL get_all_settings | P3 | 5.04ms | success
 2026-01-13T18:11:28.971600+00:00 | DB_CALL get_all_business_hours | P3 | 4.31ms | success
 2026-01-13T18:11:28.972049+00:00 | DB_CALL get_all_categories | P3 | 4.11ms | success
+2026-01-13T18:13:12.716547+00:00 | DB_CALL get_user_by_username | P3 | 0.34ms | success
