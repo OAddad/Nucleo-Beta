@@ -31216,3 +31216,13 @@
 2026-01-13T15:01:27.232905+00:00 | DB_CALL get_all_business_hours | P3 | 2.73ms | success
 2026-01-13T15:01:27.233456+00:00 | DB_CALL get_all_categories | P3 | 3.2ms | success
 2026-01-13T15:01:27.326938+00:00 | DB_CALL get_all_bairros | P3 | 2.04ms | success
+2026-01-13T15:01:37.605094+00:00 | DB_CALL get_all_products | P3 | 2.75ms | success
+2026-01-13T15:01:37.606270+00:00 | DB_CALL get_all_categories | P3 | 2.51ms | success
+2026-01-13T15:01:37.607456+00:00 | DB_CALL get_all_business_hours | P3 | 3.43ms | success
+2026-01-13T15:01:37.607923+00:00 | DB_CALL get_all_settings | P3 | 0.84ms | success
+2026-01-13T15:01:37.815369+00:00 | DB_CALL get_all_bairros | P3 | 0.31ms | success
+2026-01-13T15:01:43.514277+00:00 | DB_CALL get_all_products | P3 | 2.49ms | success
+2026-01-13T15:01:43.515579+00:00 | DB_CALL get_all_categories | P3 | 2.76ms | success
+2026-01-13T15:01:43.515945+00:00 | DB_CALL get_all_settings | P3 | 3.24ms | success
+2026-01-13T15:01:43.516221+00:00 | DB_CALL get_all_business_hours | P3 | 2.68ms | success
+2026-01-13T15:01:43.741364+00:00 | DB_CALL get_all_bairros | P3 | 0.35ms | success
