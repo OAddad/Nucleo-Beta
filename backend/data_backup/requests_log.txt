@@ -31391,3 +31391,8 @@
 2026-01-13T15:20:00.483772+00:00 | DB_CALL get_all_products | P3 | 3.53ms | success
 2026-01-13T15:20:00.484897+00:00 | DB_CALL get_all_business_hours | P3 | 1.17ms | success
 2026-01-13T15:20:00.536403+00:00 | DB_CALL get_all_bairros | P3 | 0.78ms | success
+2026-01-13T15:20:18.422501+00:00 | DB_CALL get_all_settings | P3 | 3.08ms | success
+2026-01-13T15:20:18.424001+00:00 | DB_CALL get_all_products | P3 | 2.76ms | success
+2026-01-13T15:20:18.425177+00:00 | DB_CALL get_all_business_hours | P3 | 3.71ms | success
+2026-01-13T15:20:18.425778+00:00 | DB_CALL get_all_categories | P3 | 3.68ms | success
+2026-01-13T15:20:18.482735+00:00 | DB_CALL get_all_bairros | P3 | 1.52ms | success
