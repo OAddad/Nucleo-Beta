@@ -32251,3 +32251,4 @@
 2026-01-13T17:05:16.923360+00:00 | DB_CALL get_all_settings | P3 | 3.1ms | success
 2026-01-13T17:05:16.928204+00:00 | DB_CALL get_all_categories | P3 | 4.2ms | success
 2026-01-13T17:05:16.930218+00:00 | DB_CALL get_all_business_hours | P3 | 2.38ms | success
+2026-01-13T17:05:24.333451+00:00 | DB_CALL get_pedidos_by_cliente | P3 | 0.99ms | success

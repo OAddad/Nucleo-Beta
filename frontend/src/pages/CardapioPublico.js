@@ -2586,10 +2586,10 @@ export default function CardapioPublico({ onAdminLogin }) {
           </button>
           <button 
             onClick={() => setActiveTab('clube')}
-            className={`flex flex-col items-center gap-0.5 px-3 py-1 rounded-lg transition-colors ${activeTab === 'clube' ? 'text-orange-500' : t.textMuted}`}
+            className={`flex flex-col items-center gap-0.5 px-2 py-1 rounded-lg transition-colors ${activeTab === 'clube' ? 'text-orange-500' : t.textMuted}`}
           >
             <Crown className="w-5 h-5" />
-            <span className="text-[10px] font-medium">Clube</span>
+            <span className="text-[10px] font-medium leading-tight text-center">Clube {clubeConfig.clube_nome}</span>
           </button>
           <button 
             onClick={() => setActiveTab('pedidos')}
