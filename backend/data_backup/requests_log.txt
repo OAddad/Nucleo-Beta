@@ -25350,3 +25350,6 @@
 2026-01-13T00:18:51.471161+00:00 | DB_CALL get_all_entregadores | P3 | 0.28ms | success
 2026-01-13T00:18:51.473406+00:00 | DB_CALL get_all_pedidos | P3 | 0.94ms | success
 2026-01-13T00:18:51.476954+00:00 | DB_CALL get_all_settings | P3 | 0.24ms | success
+2026-01-13T00:18:57.447505+00:00 | DB_CALL get_all_pedidos | P3 | 1.26ms | success
+2026-01-13T00:18:57.451028+00:00 | DB_CALL get_all_entregadores | P3 | 0.14ms | success
+2026-01-13T00:18:57.451884+00:00 | DB_CALL get_all_settings | P3 | 0.13ms | success
