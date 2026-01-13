@@ -1334,6 +1334,9 @@ export default function CardapioPublico({ onAdminLogin }) {
   const lastScrollY = useRef(0);
   // State para aba ativa do menu inferior
   const [activeTab, setActiveTab] = useState('cardapio');
+  // State para busca expandida
+  const [searchOpen, setSearchOpen] = useState(false);
+  const searchInputRef = useRef(null);
 
   // Abrir popup do produto
   const openProductPopup = (product) => {
