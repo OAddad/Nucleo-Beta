@@ -1,0 +1,12 @@
+{
+  "tipo": "CONSENTIMENTO_WHATSAPP",
+  "versao": "1.0",
+  "cliente_id": "7c7fec4d-8542-43b8-b06c-6b9fd26069ba",
+  "nome": "Diego Addad",
+  "telefone": "(34) 9.9965-8914",
+  "email": "diegoaddadglopes@hotmail.com",
+  "cpf": "06316491662",
+  "data_aceite_utc": "2026-01-13T16:42:17.872377+00:00",
+  "ip_aceite": "N/A",
+  "hash_documento": "c0303516f9dbb3a2ac1245c1a2319dd6208999976bce9af270224ccd1671f1a5"
+}
