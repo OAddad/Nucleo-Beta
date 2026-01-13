@@ -920,6 +920,7 @@ export default function Dashboard({ setIsAuthenticated }) {
               <Route path="/impulsione/promocoes" element={<Promocoes />} />
               <Route path="/impulsione/cupons" element={<CuponsDesconto />} />
               <Route path="/impulsione/campanhas" element={<Campanhas />} />
+              <Route path="/impulsione/clube" element={<ClubeConfig />} />
               {/* Rotas de Configurações */}
               <Route path="/configuracoes/horarios" element={<ConfiguracaoHorarios />} />
               <Route path="/configuracoes/sistema" element={<Sistema />} />
