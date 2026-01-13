@@ -2202,8 +2202,8 @@ export default function CardapioPublico({ onAdminLogin }) {
       {/* Conteúdo Principal */}
       <main className={`pb-4 ${
         activeTab === 'cardapio' && categoriesWithProducts.length > 0 
-          ? (searchOpen ? 'pt-[180px]' : (isOpen ? 'pt-[130px]' : 'pt-[150px]'))
-          : (searchOpen ? 'pt-[130px]' : (isOpen ? 'pt-[70px]' : 'pt-[90px]'))
+          ? (searchOpen ? 'pt-[160px]' : (isOpen && statusBarVisible ? 'pt-[115px]' : isOpen ? 'pt-[100px]' : 'pt-[130px]'))
+          : (searchOpen ? 'pt-[110px]' : (isOpen && statusBarVisible ? 'pt-[55px]' : isOpen ? 'pt-[40px]' : 'pt-[75px]'))
       }`}>
         {/* Aba Cardápio */}
         {activeTab === 'cardapio' && (
