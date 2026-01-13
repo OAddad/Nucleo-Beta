@@ -538,6 +538,22 @@ backend:
         agent: "testing"
         comment: "✅ SISTEMA ENDPOINTS TESTING COMPLETED (Jan 11, 2026): Testei os NOVOS endpoints do Sistema exatamente conforme especificado na review request. RESULTADOS: ✅ TEST 1 PASSED: Login com credenciais Addad/Addad123 funcionando perfeitamente (user role: proprietario). ✅ TEST 2 PASSED: GET /api/company/settings retorna configurações da empresa com todos os campos esperados (company_name, slogan, cnpj, address, logo_url, fantasy_name, legal_name). ✅ TEST 3 PASSED: PUT /api/company/settings salva configurações corretamente - todos os valores testados foram persistidos e verificados. ✅ TEST 4 PASSED: DELETE /api/data/products exige confirmation_word 'LIMPAR' - rejeitou palavra incorreta com erro 400 'Palavra de confirmação incorreta'. ✅ TEST 5 PASSED: DELETE /api/data/sales rejeitou palavra incorreta 'INCORRETA' com erro 400. ✅ TEST 6 PASSED: DELETE /api/data/people rejeitou palavra incorreta 'INVALID' com erro 400. ✅ TEST 7 PASSED: DELETE /api/data/financial rejeitou palavra incorreta 'NOPE' com erro 400. ✅ TEST 8 PASSED: DELETE /api/data/locations rejeitou palavra incorreta 'CLEAR' com erro 400. ✅ VALIDATION: Todos os endpoints de limpeza validam corretamente a palavra de confirmação 'LIMPAR' e retornam erro apropriado para palavras incorretas. ✅ PERMISSIONS: Usuário Addad tem role proprietario necessário para acessar endpoints de limpeza. Sistema de configurações da empresa e limpeza de dados 100% operacional conforme especificações da review request."
 
+  - task: "CLUBE ADDAD Endpoints"
+    implemented: true
+    working: true
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Endpoints do CLUBE ADDAD implementados: GET /api/public/cliente/{cliente_id}/clube (público), POST /api/public/clube/registrar/{cliente_id} (público), POST /api/public/clube/whatsapp/{cliente_id} (público). Sistema de registro no clube com validação de CPF, email e data de nascimento, criação de arquivos de consentimento em /app/backend/consentimentos/"
+      - working: true
+        agent: "testing"
+        comment: "✅ CLUBE ADDAD ENDPOINTS TESTING COMPLETED (Jan 13, 2026): Testei os endpoints do CLUBE ADDAD exatamente conforme especificado na review request. RESULTADOS: ✅ STEP 1 PASSED: Login com credenciais Addad/Addad123 funcionando perfeitamente (user role: proprietario). ✅ STEP 2 PASSED: GET /api/clientes encontrou cliente Diego Addad com telefone (34) 9.9965-8914 e membro_clube: 0 inicial. ✅ STEP 3 PASSED: GET /api/public/cliente/{cliente_id}/clube (endpoint público) retorna status do clube sem autenticação - campos membro_clube, aceita_whatsapp, pontuacao presentes. ✅ STEP 4 PASSED: POST /api/public/clube/registrar/{cliente_id} (endpoint público) registra cliente no clube com CPF '123.456.789-00', data_nascimento '1990-01-15', email 'teste@email.com' - membro_clube atualizado para 1. ✅ STEP 5 PASSED: POST /api/public/clube/whatsapp/{cliente_id} (endpoint público) registra consentimento WhatsApp com aceita=true - aceita_whatsapp atualizado para 1. ✅ STEP 6 PASSED: Arquivo de consentimento criado em /app/backend/consentimentos/ com estrutura JSON válida, tipo CONSENTIMENTO_WHATSAPP e hash de segurança. ✅ STEP 7 PASSED: GET /api/clientes (autenticado) retorna campo membro_clube=1 para o cliente testado. ✅ VALIDATION: Todos os endpoints públicos funcionam sem token JWT. Validações de CPF, email e data de nascimento funcionando. Sistema CLUBE ADDAD 100% operacional conforme especificações da review request."
+
+
 frontend:
   - task: "Login Page"
     implemented: true
