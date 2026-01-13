@@ -2125,6 +2125,91 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
               </div>
             )}
           </div>
+
+          {/* COLUNA DIREITA - Histórico do Cliente */}
+          {selectedCliente && (
+            <div className="w-72 border-l bg-muted/20 flex flex-col">
+              <div className="p-3 border-b bg-card">
+                <h3 className="font-semibold flex items-center gap-2 text-sm">
+                  <Clock className="w-4 h-4 text-orange-500" /> 
+                  Histórico de {selectedCliente.nome?.split(' ')[0]}
+                </h3>
+              </div>
+              
+              <div className="flex-1 overflow-y-auto p-2 space-y-2">
+                {loadingHistorico ? (
+                  <div className="flex items-center justify-center py-8">
+                    <RefreshCw className="w-5 h-5 animate-spin text-orange-500" />
+                  </div>
+                ) : clienteHistorico.length === 0 ? (
+                  <div className="text-center text-muted-foreground py-8 text-sm">
+                    <FileText className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                    <p>Nenhum pedido anterior</p>
+                  </div>
+                ) : (
+                  clienteHistorico.map((pedido) => (
+                    <div key={pedido.id} className="bg-card border rounded-lg p-3 space-y-2">
+                      {/* Header com data e valor */}
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2 text-xs">
+                          <Calendar className="w-3 h-3 text-muted-foreground" />
+                          <span className="text-muted-foreground">
+                            {new Date(pedido.created_at).toLocaleDateString('pt-BR')}
+                          </span>
+                        </div>
+                        <span className="text-orange-600 font-bold text-sm">
+                          R$ {(pedido.total || 0).toFixed(2)}
+                        </span>
+                      </div>
+                      
+                      {/* Endereço */}
+                      {pedido.endereco_rua && (
+                        <div className="flex items-start gap-1 text-xs text-muted-foreground">
+                          <MapPin className="w-3 h-3 mt-0.5 flex-shrink-0" />
+                          <span className="line-clamp-1">
+                            {pedido.endereco_rua}{pedido.endereco_numero ? `, ${pedido.endereco_numero}` : ''}
+                            {pedido.endereco_bairro ? ` - ${pedido.endereco_bairro}` : ''}
+                          </span>
+                        </div>
+                      )}
+                      
+                      {/* Itens com foto */}
+                      <div className="space-y-1.5 pt-1 border-t">
+                        {pedido.items?.slice(0, 3).map((item, idx) => (
+                          <div key={idx} className="flex items-center gap-2">
+                            {item.foto_url || item.photo_url ? (
+                              <img 
+                                src={getImageUrl(item.foto_url || item.photo_url)} 
+                                alt={item.nome || item.name}
+                                className="w-8 h-8 rounded object-cover flex-shrink-0"
+                                onError={(e) => {
+                                  e.target.style.display = 'none';
+                                }}
+                              />
+                            ) : (
+                              <div className="w-8 h-8 rounded bg-muted flex items-center justify-center flex-shrink-0">
+                                <Package className="w-4 h-4 text-muted-foreground" />
+                              </div>
+                            )}
+                            <div className="flex-1 min-w-0">
+                              <p className="text-xs font-medium truncate">
+                                {item.quantidade || item.qty || 1}x {item.nome || item.name}
+                              </p>
+                            </div>
+                          </div>
+                        ))}
+                        {pedido.items?.length > 3 && (
+                          <p className="text-xs text-muted-foreground">
+                            +{pedido.items.length - 3} item(s)
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+          )}
           
           {/* Carrinho lateral */}
           <div className="w-80 border-l bg-muted/30 flex flex-col">
