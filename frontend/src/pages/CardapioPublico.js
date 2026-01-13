@@ -631,20 +631,6 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode }) {
   }
 
   // TELA DE ETAPAS (order_steps)
-            >
-              {hasOrderSteps && selectedComboType === 'combo' ? (
-                <>PRÓXIMA ETAPA <ChevronRight className="w-5 h-5" /></>
-              ) : (
-                <>Adicionar • R$ {(selectedComboType === 'combo' ? comboPrice : simplePrice).toFixed(2).replace('.', ',')}</>
-              )}
-            </button>
-          </div>
-        </DialogContent>
-      </Dialog>
-    );
-  }
-
-  // TELA DE ETAPAS (order_steps)
   if (isCombo && comboStep > 0 && hasOrderSteps) {
     const currentStepIndex = comboStep - 1;
     const currentStep = product.order_steps[currentStepIndex];
