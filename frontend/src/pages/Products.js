@@ -888,6 +888,8 @@ export default function Products() {
         category: category || null,
         product_type: productType || "produto",
         sale_price: salePrice ? parseFloat(salePrice) : null,
+        simple_price: simplePrice ? parseFloat(simplePrice) : null,
+        combo_description: comboDescription || null,
         photo_url: uploadedPhotoUrl || null,
         recipe: allRecipe,
         is_insumo: isInsumo,
