@@ -24670,3 +24670,4 @@
 2026-01-13T00:02:33.448998+00:00 | DB_CALL get_all_pedidos | P3 | 1.64ms | success
 2026-01-13T00:02:33.450895+00:00 | DB_CALL get_all_entregadores | P3 | 3.38ms | success
 2026-01-13T00:02:33.451217+00:00 | DB_CALL get_pedido_by_id | P3 | 3.57ms | success
+2026-01-13T00:02:38.441402+00:00 | DB_CALL get_pedido_by_id | P3 | 0.29ms | success
