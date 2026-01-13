@@ -434,7 +434,7 @@ export default function Dashboard({ setIsAuthenticated }) {
                       className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 text-sm ${
                         active
                           ? "bg-primary text-primary-foreground font-medium"
-                          : "text-sidebar-foreground hover:bg-muted"
+                          : "text-sidebar-foreground hover:bg-muted active:bg-muted/80"
                       }`}
                     >
                       <ChildIcon className="w-4 h-4 flex-shrink-0" strokeWidth={1.5} />
@@ -454,7 +454,7 @@ export default function Dashboard({ setIsAuthenticated }) {
               className={`w-full flex items-center gap-3 px-4 py-3.5 lg:py-3 rounded-xl lg:rounded-lg transition-all duration-200 ${
                 isSalesActive() && !activeTopMenu
                   ? "bg-primary/10 text-primary font-medium"
-                  : "text-sidebar-foreground hover:bg-muted"
+                  : "text-sidebar-foreground hover:bg-muted active:bg-muted/80"
               } ${!sidebarOpen ? 'lg:justify-center lg:px-2' : ''}`}
               title={!sidebarOpen ? salesModule.label : ''}
             >
@@ -484,7 +484,7 @@ export default function Dashboard({ setIsAuthenticated }) {
                       className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 text-sm ${
                         active
                           ? "bg-primary text-primary-foreground font-medium"
-                          : "text-sidebar-foreground hover:bg-muted"
+                          : "text-sidebar-foreground hover:bg-muted active:bg-muted/80"
                       }`}
                     >
                       <ChildIcon className="w-4 h-4 flex-shrink-0" strokeWidth={1.5} />
@@ -503,7 +503,7 @@ export default function Dashboard({ setIsAuthenticated }) {
               className={`w-full flex items-center gap-3 px-4 py-3.5 lg:py-3 rounded-xl lg:rounded-lg transition-all duration-200 ${
                 isClientesFornecedoresActive() && !activeTopMenu
                   ? "bg-primary/10 text-primary font-medium"
-                  : "text-sidebar-foreground hover:bg-muted"
+                  : "text-sidebar-foreground hover:bg-muted active:bg-muted/80"
               } ${!sidebarOpen ? 'lg:justify-center lg:px-2' : ''}`}
               title={!sidebarOpen ? clientesFornecedoresModule.label : ''}
             >
@@ -532,7 +532,7 @@ export default function Dashboard({ setIsAuthenticated }) {
                       className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 text-sm ${
                         active
                           ? "bg-primary text-primary-foreground font-medium"
-                          : "text-sidebar-foreground hover:bg-muted"
+                          : "text-sidebar-foreground hover:bg-muted active:bg-muted/80"
                       }`}
                     >
                       <ChildIcon className="w-4 h-4 flex-shrink-0" strokeWidth={1.5} />
@@ -551,7 +551,7 @@ export default function Dashboard({ setIsAuthenticated }) {
               className={`w-full flex items-center gap-3 px-4 py-3.5 lg:py-3 rounded-xl lg:rounded-lg transition-all duration-200 ${
                 isFinanceiroActive() && !activeTopMenu
                   ? "bg-primary/10 text-primary font-medium"
-                  : "text-sidebar-foreground hover:bg-muted"
+                  : "text-sidebar-foreground hover:bg-muted active:bg-muted/80"
               } ${!sidebarOpen ? 'lg:justify-center lg:px-2' : ''}`}
               title={!sidebarOpen ? financeiroModule.label : ''}
             >
@@ -580,7 +580,7 @@ export default function Dashboard({ setIsAuthenticated }) {
                       className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 text-sm ${
                         active
                           ? "bg-primary text-primary-foreground font-medium"
-                          : "text-sidebar-foreground hover:bg-muted"
+                          : "text-sidebar-foreground hover:bg-muted active:bg-muted/80"
                       }`}
                     >
                       <ChildIcon className="w-4 h-4 flex-shrink-0" strokeWidth={1.5} />
@@ -599,7 +599,7 @@ export default function Dashboard({ setIsAuthenticated }) {
               className={`w-full flex items-center gap-3 px-4 py-3.5 lg:py-3 rounded-xl lg:rounded-lg transition-all duration-200 ${
                 isLocalizacaoActive() && !activeTopMenu
                   ? "bg-primary/10 text-primary font-medium"
-                  : "text-sidebar-foreground hover:bg-muted"
+                  : "text-sidebar-foreground hover:bg-muted active:bg-muted/80"
               } ${!sidebarOpen ? 'lg:justify-center lg:px-2' : ''}`}
               title={!sidebarOpen ? localizacaoModule.label : ''}
             >
@@ -628,7 +628,7 @@ export default function Dashboard({ setIsAuthenticated }) {
                       className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 text-sm ${
                         active
                           ? "bg-primary text-primary-foreground font-medium"
-                          : "text-sidebar-foreground hover:bg-muted"
+                          : "text-sidebar-foreground hover:bg-muted active:bg-muted/80"
                       }`}
                     >
                       <ChildIcon className="w-4 h-4 flex-shrink-0" strokeWidth={1.5} />
@@ -647,7 +647,7 @@ export default function Dashboard({ setIsAuthenticated }) {
               className={`w-full flex items-center gap-3 px-4 py-3.5 lg:py-3 rounded-xl lg:rounded-lg transition-all duration-200 ${
                 isImpulsioneVendasActive() && !activeTopMenu
                   ? "bg-primary/10 text-primary font-medium"
-                  : "text-sidebar-foreground hover:bg-muted"
+                  : "text-sidebar-foreground hover:bg-muted active:bg-muted/80"
               } ${!sidebarOpen ? 'lg:justify-center lg:px-2' : ''}`}
               title={!sidebarOpen ? impulsioneVendasModule.label : ''}
             >
@@ -676,7 +676,7 @@ export default function Dashboard({ setIsAuthenticated }) {
                       className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 text-sm ${
                         active
                           ? "bg-primary text-primary-foreground font-medium"
-                          : "text-sidebar-foreground hover:bg-muted"
+                          : "text-sidebar-foreground hover:bg-muted active:bg-muted/80"
                       }`}
                     >
                       <ChildIcon className="w-4 h-4 flex-shrink-0" strokeWidth={1.5} />
@@ -696,7 +696,7 @@ export default function Dashboard({ setIsAuthenticated }) {
               className={`w-full flex items-center gap-3 px-4 py-3.5 lg:py-3 rounded-xl lg:rounded-lg transition-all duration-200 ${
                 isConfigActive() && !activeTopMenu
                   ? "bg-primary/10 text-primary font-medium"
-                  : "text-sidebar-foreground hover:bg-muted"
+                  : "text-sidebar-foreground hover:bg-muted active:bg-muted/80"
               } ${!sidebarOpen ? 'lg:justify-center lg:px-2' : ''}`}
               title={!sidebarOpen ? configModule.label : ''}
             >
@@ -726,7 +726,7 @@ export default function Dashboard({ setIsAuthenticated }) {
                       className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 text-sm ${
                         active
                           ? "bg-primary text-primary-foreground font-medium"
-                          : "text-sidebar-foreground hover:bg-muted"
+                          : "text-sidebar-foreground hover:bg-muted active:bg-muted/80"
                       }`}
                     >
                       <ChildIcon className="w-4 h-4 flex-shrink-0" strokeWidth={1.5} />

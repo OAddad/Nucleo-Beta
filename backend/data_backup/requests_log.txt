@@ -30440,3 +30440,7 @@
 2026-01-13T02:03:49.686417+00:00 | DB_CALL get_all_settings | P3 | 0.26ms | success
 2026-01-13T02:04:03.509509+00:00 | DB_CALL get_all_settings | P3 | 0.26ms | success
 2026-01-13T02:04:03.677097+00:00 | DB_CALL get_all_settings | P3 | 0.28ms | success
+2026-01-13T02:04:21.618482+00:00 | DB_CALL get_all_settings | P3 | 0.34ms | success
+2026-01-13T02:04:21.786749+00:00 | DB_CALL get_all_settings | P3 | 0.39ms | success
+2026-01-13T02:04:26.617347+00:00 | DB_CALL get_all_settings | P3 | 0.28ms | success
+2026-01-13T02:04:27.505806+00:00 | DB_CALL get_all_settings | P3 | 0.27ms | success
