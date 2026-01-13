@@ -29704,3 +29704,13 @@
 2026-01-13T01:38:09.494904+00:00 | DB_CALL get_all_settings | P3 | 0.68ms | success
 2026-01-13T01:38:13.780652+00:00 | DB_CALL get_user_by_username | P3 | 0.26ms | success
 2026-01-13T01:38:14.493677+00:00 | DB_CALL get_all_pedidos | P3 | 1.17ms | success
+2026-01-13T01:38:14.958479+00:00 | DB_CALL get_all_entregadores | P3 | 58.1ms | success
+2026-01-13T01:38:14.959833+00:00 | DB_CALL get_all_settings | P3 | 0.25ms | success
+2026-01-13T01:38:17.760120+00:00 | DB_CALL get_user_by_username | P3 | 0.28ms | success
+2026-01-13T01:38:18.077350+00:00 | DB_CALL get_all_settings | P3 | 0.29ms | success
+2026-01-13T01:38:19.496375+00:00 | DB_CALL get_all_settings | P3 | 1.72ms | success
+2026-01-13T01:38:19.497714+00:00 | DB_CALL get_all_pedidos | P3 | 2.32ms | success
+2026-01-13T01:38:19.499351+00:00 | DB_CALL get_all_entregadores | P3 | 3.33ms | success
+2026-01-13T01:38:21.481312+00:00 | DB_CALL get_all_pedidos | P3 | 1.19ms | success
+2026-01-13T01:38:21.484282+00:00 | DB_CALL get_all_settings | P3 | 0.69ms | success
+2026-01-13T01:38:21.484687+00:00 | DB_CALL get_all_entregadores | P3 | 0.7ms | success
