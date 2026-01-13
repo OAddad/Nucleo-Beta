@@ -615,7 +615,11 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode }) {
                   : 'bg-gray-300 dark:bg-zinc-600 cursor-not-allowed'
               }`}
             >
-              {hasOrderSteps && selectedComboType === 'combo' ? (
+              {/* Se tem etapas relevantes para o tipo selecionado, mostra "PRÓXIMA ETAPA" */}
+              {selectedComboType && hasOrderSteps && product.order_steps.filter(step => {
+                if (selectedComboType === 'simples') return !step.combo_only;
+                return true;
+              }).length > 0 ? (
                 <>PRÓXIMA ETAPA <ChevronRight className="w-5 h-5" /></>
               ) : (
                 <>Adicionar • R$ {(selectedComboType === 'combo' ? comboPrice : simplePrice).toFixed(2).replace('.', ',')}</>
