@@ -30649,3 +30649,5 @@
 2026-01-13T14:33:30.829704+00:00 | DB_CALL get_all_pedidos | P3 | 1.36ms | success
 2026-01-13T14:33:30.832219+00:00 | DB_CALL get_all_entregadores | P3 | 0.26ms | success
 2026-01-13T14:33:30.835399+00:00 | DB_CALL get_all_settings | P3 | 0.17ms | success
+2026-01-13T14:33:34.834662+00:00 | DB_CALL get_all_settings | P3 | 0.3ms | success
+2026-01-13T14:33:35.007153+00:00 | DB_CALL get_all_settings | P3 | 0.34ms | success
