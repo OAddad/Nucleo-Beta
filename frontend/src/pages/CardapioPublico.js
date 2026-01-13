@@ -2105,9 +2105,9 @@ export default function CardapioPublico({ onAdminLogin }) {
                     setTimeout(() => searchInputRef.current?.focus(), 100);
                   }
                 }}
-                className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${searchOpen ? 'bg-white text-orange-500' : 'bg-white/20 text-white hover:bg-white/30'}`}
+                className={`w-7 h-7 rounded-full flex items-center justify-center transition-colors ${searchOpen ? 'bg-white text-orange-500' : 'bg-white/20 text-white hover:bg-white/30'}`}
               >
-                <Search className="w-4 h-4" />
+                <Search className="w-3.5 h-3.5" />
               </button>
               
               {/* Foto ou Botão Entrar */}
