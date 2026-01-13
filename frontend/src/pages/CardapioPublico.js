@@ -1329,6 +1329,10 @@ export default function CardapioPublico({ onAdminLogin }) {
     fantasy_name: ""
   });
 
+  // State para controlar header visível em mobile
+  const [headerVisible, setHeaderVisible] = useState(true);
+  const lastScrollY = useRef(0);
+
   // Abrir popup do produto
   const openProductPopup = (product) => {
     setSelectedProduct(product);
