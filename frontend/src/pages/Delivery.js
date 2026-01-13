@@ -1263,24 +1263,43 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
     try {
       const res = await axios.get(`${API}/pedidos?cliente_id=${clienteId}`, getAuthHeader());
       const pedidos = Array.isArray(res.data) ? res.data : (res.data.pedidos || []);
-      // Enriquecer items com fotos dos produtos
-      const pedidosComFotos = await Promise.all(pedidos.slice(0, 10).map(async (pedido) => {
+      
+      // Buscar todos os produtos para mapear as fotos
+      let produtosMap = {};
+      try {
+        const prodRes = await axios.get(`${API}/products`, getAuthHeader());
+        const produtosList = Array.isArray(prodRes.data) ? prodRes.data : [];
+        produtosList.forEach(p => {
+          produtosMap[p.id] = p;
+          // Também mapear por nome para pedidos antigos
+          produtosMap[p.name?.toLowerCase()] = p;
+        });
+      } catch {
+        // Se falhar, continua sem fotos
+      }
+      
+      // Enriquecer items com fotos
+      const pedidosComFotos = pedidos.slice(0, 10).map(pedido => {
         if (pedido.items && pedido.items.length > 0) {
-          const itemsComFoto = await Promise.all(pedido.items.map(async (item) => {
-            // Se já tem foto, retorna o item
+          const itemsComFoto = pedido.items.map(item => {
+            // Se já tem foto, retorna
             if (item.foto_url || item.photo_url) return item;
-            // Senão, busca o produto para pegar a foto
-            try {
-              const prodRes = await axios.get(`${API}/products/${item.id}`, getAuthHeader());
-              return { ...item, photo_url: prodRes.data.photo_url };
-            } catch {
-              return item;
+            
+            // Buscar pelo ID ou pelo nome
+            const produto = produtosMap[item.id] || 
+                           produtosMap[item.nome?.toLowerCase()] || 
+                           produtosMap[item.name?.toLowerCase()];
+            
+            if (produto && produto.photo_url) {
+              return { ...item, photo_url: produto.photo_url };
             }
-          }));
+            return item;
+          });
           return { ...pedido, items: itemsComFoto };
         }
         return pedido;
-      }));
+      });
+      
       setClienteHistorico(pedidosComFotos);
     } catch (error) {
       console.error("Erro ao carregar histórico:", error);
