@@ -27838,3 +27838,11 @@
 2026-01-13T00:59:10.518848+00:00 | DB_CALL get_all_pedidos | P3 | 1.54ms | success
 2026-01-13T00:59:10.520674+00:00 | DB_CALL get_all_entregadores | P3 | 2.99ms | success
 2026-01-13T00:59:10.521460+00:00 | DB_CALL get_all_settings | P3 | 0.23ms | success
+2026-01-13T00:59:15.519184+00:00 | DB_CALL get_all_pedidos | P3 | 1.12ms | success
+2026-01-13T00:59:15.522209+00:00 | DB_CALL get_all_settings | P3 | 0.23ms | success
+2026-01-13T00:59:15.523442+00:00 | DB_CALL get_all_entregadores | P3 | 0.12ms | success
+2026-01-13T00:59:15.933709+00:00 | DB_CALL get_user_by_id | P3 | 0.24ms | success
+2026-01-13T00:59:15.940798+00:00 | DB_CALL cancel_pedido | P3 | 6.89ms | success
+2026-01-13T00:59:16.105257+00:00 | DB_CALL get_all_pedidos | P3 | 1.52ms | success
+2026-01-13T00:59:16.106958+00:00 | DB_CALL get_all_settings | P3 | 2.81ms | success
+2026-01-13T00:59:16.107720+00:00 | DB_CALL get_all_entregadores | P3 | 0.14ms | success
