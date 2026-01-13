@@ -1989,7 +1989,6 @@ const STATUS_LABELS = {
   na_bag: { label: "Na Bag", icon: ShoppingBag, color: "bg-purple-500" },
   em_rota: { label: "Em Rota", icon: Truck, color: "bg-orange-500" },
   entregue: { label: "Entregue", icon: CheckCircle, color: "bg-green-600" },
-  concluido: { label: "Concluído", icon: CheckCircle, color: "bg-green-600" },
   retirado: { label: "Retirado", icon: CheckCircle, color: "bg-green-600" },
   cancelado: { label: "Cancelado", icon: X, color: "bg-red-500" },
 };
