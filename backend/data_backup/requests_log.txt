@@ -31440,3 +31440,4 @@
 2026-01-13T15:23:51.220665+00:00 | DB_CALL get_all_settings | P3 | 3.32ms | success
 2026-01-13T15:23:51.221102+00:00 | DB_CALL get_all_products | P3 | 1.99ms | success
 2026-01-13T15:23:51.277694+00:00 | DB_CALL get_all_bairros | P3 | 0.38ms | success
+2026-01-13T15:24:47.115717+00:00 | DB_CALL get_pedidos_by_cliente | P3 | 1.67ms | success
