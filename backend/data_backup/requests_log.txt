@@ -32156,3 +32156,11 @@
 2026-01-13T16:51:01.626940+00:00 | DB_CALL get_cliente_by_id | P3 | 2.49ms | success
 2026-01-13T16:51:03.976662+00:00 | DB_CALL get_all_settings | P3 | 1.07ms | success
 2026-01-13T16:51:32.968753+00:00 | DB_CALL get_all_settings | P3 | 1.37ms | success
+2026-01-13T16:51:52.611228+00:00 | DB_CALL init_database | P3 | 6.36ms | success
+2026-01-13T16:51:52.612842+00:00 | DB_CALL count_ingredients | P3 | 1.3ms | success
+2026-01-13T16:51:52.613148+00:00 | DB_CALL count_products | P3 | 0.22ms | success
+2026-01-13T16:51:52.613327+00:00 | DB_CALL count_users | P3 | 0.11ms | success
+2026-01-13T16:51:58.130127+00:00 | DB_CALL init_database | P3 | 2.89ms | success
+2026-01-13T16:51:58.130677+00:00 | DB_CALL count_ingredients | P3 | 0.29ms | success
+2026-01-13T16:51:58.130940+00:00 | DB_CALL count_products | P3 | 0.2ms | success
+2026-01-13T16:51:58.131103+00:00 | DB_CALL count_users | P3 | 0.11ms | success
