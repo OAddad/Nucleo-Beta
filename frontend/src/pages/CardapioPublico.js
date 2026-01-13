@@ -1332,6 +1332,8 @@ export default function CardapioPublico({ onAdminLogin }) {
   // State para controlar header visível em mobile
   const [headerVisible, setHeaderVisible] = useState(true);
   const lastScrollY = useRef(0);
+  // State para aba ativa do menu inferior
+  const [activeTab, setActiveTab] = useState('cardapio');
 
   // Abrir popup do produto
   const openProductPopup = (product) => {
