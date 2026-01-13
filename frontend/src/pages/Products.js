@@ -796,6 +796,8 @@ export default function Products() {
     setCategory(product.category || "");
     setProductType(product.product_type || "produto");
     setSalePrice(product.sale_price ? product.sale_price.toString() : "");
+    setSimplePrice(product.simple_price ? product.simple_price.toString() : "");
+    setComboDescription(product.combo_description || "");
     setPhotoUrl(product.photo_url || "");
     setIsInsumo(product.is_insumo || false);
     setIsDivisible(product.is_divisible || false);
