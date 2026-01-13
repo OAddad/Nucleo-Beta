@@ -1778,8 +1778,8 @@ export default function CardapioPublico({ onAdminLogin }) {
       {/* Conteúdo Principal */}
       <main className={`pb-4 ${
         activeTab === 'cardapio' && categoriesWithProducts.length > 0 
-          ? (searchOpen ? 'pt-[160px]' : (isOpen ? 'pt-[115px]' : 'pt-[135px]'))
-          : (searchOpen ? 'pt-[120px]' : (isOpen ? 'pt-[60px]' : 'pt-[80px]'))
+          ? (searchOpen ? 'pt-[180px]' : (isOpen ? 'pt-[130px]' : 'pt-[150px]'))
+          : (searchOpen ? 'pt-[130px]' : (isOpen ? 'pt-[70px]' : 'pt-[90px]'))
       }`}>
         {/* Aba Cardápio */}
         {activeTab === 'cardapio' && (
