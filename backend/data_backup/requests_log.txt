@@ -26292,3 +26292,6 @@
 2026-01-13T00:37:12.462861+00:00 | DB_CALL get_all_entregadores | P3 | 0.83ms | success
 2026-01-13T00:37:12.463440+00:00 | DB_CALL get_all_settings | P3 | 0.84ms | success
 2026-01-13T00:37:12.465556+00:00 | DB_CALL get_all_pedidos | P3 | 0.92ms | success
+2026-01-13T00:37:17.454268+00:00 | DB_CALL get_all_settings | P3 | 0.27ms | success
+2026-01-13T00:37:17.455592+00:00 | DB_CALL get_all_entregadores | P3 | 0.13ms | success
+2026-01-13T00:37:17.457160+00:00 | DB_CALL get_all_pedidos | P3 | 0.9ms | success
