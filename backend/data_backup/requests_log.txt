@@ -24664,3 +24664,4 @@
 2026-01-13T00:02:12.451133+00:00 | DB_CALL get_all_settings | P3 | 3.16ms | success
 2026-01-13T00:02:13.446429+00:00 | DB_CALL get_pedido_by_id | P3 | 0.32ms | success
 2026-01-13T00:02:18.448656+00:00 | DB_CALL get_pedido_by_id | P3 | 0.32ms | success
+2026-01-13T00:02:23.444646+00:00 | DB_CALL get_pedido_by_id | P3 | 0.36ms | success
