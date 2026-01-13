@@ -31945,3 +31945,9 @@
 2026-01-13T16:28:51.572024+00:00 | DB_CALL get_all_pedidos | P3 | 1.16ms | success
 2026-01-13T16:28:51.627783+00:00 | DB_CALL get_all_entregadores | P3 | 1.11ms | success
 2026-01-13T16:28:51.628383+00:00 | DB_CALL get_all_settings | P3 | 0.91ms | success
+2026-01-13T16:28:56.871663+00:00 | DB_CALL get_all_pedidos | P3 | 1.36ms | success
+2026-01-13T16:28:56.875141+00:00 | DB_CALL get_all_settings | P3 | 0.24ms | success
+2026-01-13T16:28:56.875615+00:00 | DB_CALL get_all_entregadores | P3 | 1.2ms | success
+2026-01-13T16:29:01.870984+00:00 | DB_CALL get_all_pedidos | P3 | 1.19ms | success
+2026-01-13T16:29:01.874133+00:00 | DB_CALL get_all_entregadores | P3 | 0.71ms | success
+2026-01-13T16:29:01.874577+00:00 | DB_CALL get_all_settings | P3 | 0.92ms | success
