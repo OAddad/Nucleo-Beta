@@ -27875,3 +27875,11 @@
 2026-01-13T00:59:29.971943+00:00 | DB_CALL get_all_pedidos | P3 | 1.6ms | success
 2026-01-13T00:59:29.973867+00:00 | DB_CALL get_all_entregadores | P3 | 3.21ms | success
 2026-01-13T00:59:29.974289+00:00 | DB_CALL get_all_settings | P3 | 0.5ms | success
+2026-01-13T00:59:33.058636+00:00 | DB_CALL get_user_by_id | P3 | 0.3ms | success
+2026-01-13T00:59:33.064456+00:00 | DB_CALL cancel_pedido | P3 | 5.6ms | success
+2026-01-13T00:59:33.260466+00:00 | DB_CALL get_all_settings | P3 | 1.0ms | success
+2026-01-13T00:59:33.261015+00:00 | DB_CALL get_all_entregadores | P3 | 2.0ms | success
+2026-01-13T00:59:33.262198+00:00 | DB_CALL get_all_pedidos | P3 | 2.51ms | success
+2026-01-13T00:59:33.520382+00:00 | DB_CALL get_all_pedidos | P3 | 1.9ms | success
+2026-01-13T00:59:33.560100+00:00 | DB_CALL get_all_settings | P3 | 41.22ms | success
+2026-01-13T00:59:33.560408+00:00 | DB_CALL get_all_entregadores | P3 | 41.13ms | success
