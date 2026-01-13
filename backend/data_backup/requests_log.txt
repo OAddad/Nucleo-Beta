@@ -32293,3 +32293,7 @@
 2026-01-13T17:08:51.926897+00:00 | DB_CALL get_all_settings | P3 | 2.88ms | success
 2026-01-13T17:08:51.927256+00:00 | DB_CALL get_all_categories | P3 | 2.64ms | success
 2026-01-13T17:08:51.928131+00:00 | DB_CALL get_all_business_hours | P3 | 0.17ms | success
+2026-01-13T17:09:27.224865+00:00 | DB_CALL init_database | P3 | 2.71ms | success
+2026-01-13T17:09:27.225374+00:00 | DB_CALL count_ingredients | P3 | 0.24ms | success
+2026-01-13T17:09:27.225550+00:00 | DB_CALL count_products | P3 | 0.12ms | success
+2026-01-13T17:09:27.225705+00:00 | DB_CALL count_users | P3 | 0.1ms | success
