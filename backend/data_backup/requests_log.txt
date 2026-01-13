@@ -31182,3 +31182,8 @@
 2026-01-13T14:58:31.230336+00:00 | DB_CALL get_all_business_hours | P3 | 2.55ms | success
 2026-01-13T14:58:31.231248+00:00 | DB_CALL get_all_products | P3 | 1.41ms | success
 2026-01-13T14:58:31.337883+00:00 | DB_CALL get_all_bairros | P3 | 1.62ms | success
+2026-01-13T14:58:49.394604+00:00 | DB_CALL get_all_settings | P3 | 3.61ms | success
+2026-01-13T14:58:49.395935+00:00 | DB_CALL get_all_products | P3 | 4.47ms | success
+2026-01-13T14:58:49.400903+00:00 | DB_CALL get_all_categories | P3 | 2.72ms | success
+2026-01-13T14:58:49.401900+00:00 | DB_CALL get_all_business_hours | P3 | 2.49ms | success
+2026-01-13T14:58:49.497428+00:00 | DB_CALL get_all_bairros | P3 | 1.08ms | success
