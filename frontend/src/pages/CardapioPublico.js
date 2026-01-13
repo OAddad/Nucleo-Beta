@@ -513,11 +513,11 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode }) {
 
           {/* Cards de Opção - Dois Cards */}
           <div className="p-4">
-            <div className="flex gap-4 items-center">
-              {/* Card SIMPLES - Menor e Centralizado */}
+            <div className="flex gap-3 items-center">
+              {/* Card SIMPLES - 35% da largura */}
               <button
                 onClick={() => setSelectedComboType('simples')}
-                className={`w-44 rounded-xl border-2 transition-all text-left overflow-hidden flex flex-col ${
+                className={`w-[35%] flex-shrink-0 rounded-xl border-2 transition-all text-left overflow-hidden flex flex-col ${
                   selectedComboType === 'simples' 
                     ? 'border-orange-500 bg-orange-50 dark:bg-orange-500/10' 
                     : `${t.border} ${t.bgCard} hover:border-orange-300`
@@ -529,29 +529,29 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode }) {
                     <img
                       src={getImageUrl(product.photo_url)}
                       alt={product.name}
-                      className="w-full h-full object-contain p-3"
+                      className="w-full h-full object-contain p-2"
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-orange-300">
-                      <span className="text-4xl">🍔</span>
+                      <span className="text-3xl">🍔</span>
                     </div>
                   )}
                 </div>
                 
                 {/* Info do Simples */}
-                <div className="p-3 text-center">
-                  <p className={`font-bold ${t.text} text-sm`}>SIMPLES</p>
-                  <p className={`text-[10px] ${t.textMuted} mt-0.5`}>Apenas o produto</p>
-                  <p className="text-lg font-black text-orange-500 mt-1">
+                <div className="p-2 text-center">
+                  <p className={`font-bold ${t.text} text-xs`}>SIMPLES</p>
+                  <p className={`text-[9px] ${t.textMuted} mt-0.5`}>Apenas o produto</p>
+                  <p className="text-base font-black text-orange-500 mt-1">
                     R$ {simplePrice.toFixed(2).replace('.', ',')}
                   </p>
                 </div>
               </button>
 
-              {/* Card COMBO - Maior e Destacado */}
+              {/* Card COMBO - 65% da largura */}
               <button
                 onClick={() => setSelectedComboType('combo')}
-                className={`flex-1 rounded-2xl border-2 transition-all text-left overflow-hidden flex flex-col relative ${
+                className={`w-[65%] flex-shrink-0 rounded-2xl border-2 transition-all text-left overflow-hidden flex flex-col relative ${
                   selectedComboType === 'combo' 
                     ? 'border-orange-500 bg-orange-50 dark:bg-orange-500/10' 
                     : `${t.border} ${t.bgCard} hover:border-orange-300`
