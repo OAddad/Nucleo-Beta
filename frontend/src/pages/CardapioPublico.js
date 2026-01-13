@@ -1805,9 +1805,9 @@ export default function CardapioPublico({ onAdminLogin }) {
                       <span className={`text-xs ${t.textMuted}`}>{categoryProducts.length} itens</span>
                     </div>
                     
-                    {/* Mobile: Scroll Horizontal 2.5 itens | Desktop: Grade */}
+                    {/* Mobile: Scroll Horizontal 2.5 itens | Desktop: Grade maior */}
                     <div 
-                      className="flex lg:grid gap-3 overflow-x-auto lg:overflow-visible pb-2 lg:pb-0 snap-x snap-mandatory lg:snap-none scrollbar-hide lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6"
+                      className="flex lg:grid gap-3 overflow-x-auto lg:overflow-visible pb-2 lg:pb-0 snap-x snap-mandatory lg:snap-none scrollbar-hide lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 lg:gap-4"
                     >
                       {categoryProducts.map(product => (
                         <div 
@@ -1815,7 +1815,7 @@ export default function CardapioPublico({ onAdminLogin }) {
                           className={`${t.bgCard} rounded-xl overflow-hidden border ${t.border} cursor-pointer snap-start flex-shrink-0 lg:flex-shrink hover:shadow-lg transition-shadow cardapio-item-mobile`}
                           onClick={() => openProductPopup(product)}
                         >
-                          {/* Imagem - Menor no desktop */}
+                          {/* Imagem */}
                           <div className={`aspect-square lg:aspect-[4/3] ${t.bgMuted} relative overflow-hidden`}>
                             {product.photo_url ? (
                               <img 
@@ -1825,13 +1825,17 @@ export default function CardapioPublico({ onAdminLogin }) {
                               />
                             ) : (
                               <div className="w-full h-full flex items-center justify-center">
-                                <span className="text-2xl lg:text-xl">🍽️</span>
+                                <span className="text-2xl lg:text-3xl">🍽️</span>
                               </div>
                             )}
                           </div>
-                          <div className="p-2 lg:p-2.5">
-                            <h3 className={`font-semibold ${t.text} text-sm lg:text-xs line-clamp-2 leading-tight mb-1`}>{product.name}</h3>
-                            <span className="text-orange-500 font-bold text-sm lg:text-xs">
+                          {/* Info */}
+                          <div className="p-2.5 lg:p-3">
+                            <h3 className={`font-semibold ${t.text} text-sm lg:text-base line-clamp-1 lg:line-clamp-2 leading-tight mb-1`}>{product.name}</h3>
+                            {product.description && (
+                              <p className={`${t.textMuted} text-[11px] lg:text-xs line-clamp-2 mb-1.5 leading-relaxed`}>{product.description}</p>
+                            )}
+                            <span className="text-orange-500 font-bold text-sm lg:text-base">
                               R$ {product.sale_price?.toFixed(2).replace('.', ',')}
                             </span>
                           </div>
