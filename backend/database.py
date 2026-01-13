@@ -1227,14 +1227,19 @@ def update_product(product_id: str, data: Dict) -> Optional[Dict]:
         cursor.execute('''
             UPDATE products SET 
                 name = ?, description = ?, category = ?, product_type = ?,
-                sale_price = ?, simple_price = ?, combo_description = ?, photo_url = ?, recipe = ?, cmv = ?, profit_margin = ?,
+                sale_price = ?, simple_price = ?, combo_description = ?, simple_description = ?,
+                simple_photo_url = ?, combo_photo_url = ?, photo_url = ?, recipe = ?, cmv = ?, profit_margin = ?,
                 is_insumo = ?, is_divisible = ?, order_steps = ?,
                 linked_ingredient_id = ?, recipe_yield = ?, recipe_yield_unit = ?, unit_cost = ?
             WHERE id = ?
         ''', (data.get('name', current['name']), data.get('description', current.get('description')),
               data.get('category', current.get('category')), data.get('product_type', current.get('product_type', 'produto')),
               data.get('sale_price', current.get('sale_price')), data.get('simple_price', current.get('simple_price')),
-              data.get('combo_description', current.get('combo_description')), data.get('photo_url', current.get('photo_url')),
+              data.get('combo_description', current.get('combo_description')), 
+              data.get('simple_description', current.get('simple_description')),
+              data.get('simple_photo_url', current.get('simple_photo_url')),
+              data.get('combo_photo_url', current.get('combo_photo_url')),
+              data.get('photo_url', current.get('photo_url')),
               json.dumps(data.get('recipe', current.get('recipe', []))), data.get('cmv', current.get('cmv', 0)),
               data.get('profit_margin', current.get('profit_margin')),
               1 if data.get('is_insumo', current.get('is_insumo')) else 0,
