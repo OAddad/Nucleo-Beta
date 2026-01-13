@@ -30606,3 +30606,9 @@
 2026-01-13T14:32:30.432241+00:00 | DB_CALL get_all_settings | P3 | 0.29ms | success
 2026-01-13T14:32:30.857094+00:00 | DB_CALL get_all_settings | P3 | 0.32ms | success
 2026-01-13T14:32:33.817168+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.21ms | success
+2026-01-13T14:32:44.845389+00:00 | DB_CALL get_all_settings | P3 | 0.9ms | success
+2026-01-13T14:32:45.021393+00:00 | DB_CALL get_all_settings | P3 | 0.31ms | success
+2026-01-13T14:32:56.506708+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.24ms | success
+2026-01-13T14:32:58.318328+00:00 | DB_CALL get_all_pedidos | P3 | 6.77ms | success
+2026-01-13T14:32:58.320237+00:00 | DB_CALL get_all_entregadores | P3 | 6.45ms | success
+2026-01-13T14:32:58.320884+00:00 | DB_CALL get_all_settings | P3 | 7.27ms | success

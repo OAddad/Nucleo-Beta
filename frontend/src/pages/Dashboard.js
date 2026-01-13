@@ -402,21 +402,21 @@ export default function Dashboard({ setIsAuthenticated }) {
             {/* Header do módulo */}
             <button
               onClick={() => handleModuleClick(() => setStockControlExpanded(!stockControlExpanded))}
-              className={`w-full flex items-center gap-3 px-4 py-3.5 lg:py-3 rounded-xl lg:rounded-lg transition-all duration-200 ${
+              className={`w-full flex items-center gap-3 lg:gap-3 px-4 py-4 lg:py-3 rounded-xl lg:rounded-lg transition-all duration-200 ${
                 isStockControlActive() && !activeTopMenu
                   ? "bg-primary/10 text-primary font-medium"
                   : "text-sidebar-foreground hover:bg-muted active:bg-muted/80"
               } ${!sidebarOpen ? 'lg:justify-center lg:px-2' : ''}`}
               title={!sidebarOpen ? stockControlModule.label : ''}
             >
-              <BarChart3 className="w-5 h-5 flex-shrink-0" strokeWidth={1.5} />
+              <BarChart3 className="w-6 h-6 lg:w-5 lg:h-5 flex-shrink-0" strokeWidth={1.5} />
               {sidebarOpen && (
                 <>
-                  <span className="text-sm flex-1 text-left">{stockControlModule.label}</span>
+                  <span className="text-base lg:text-sm flex-1 text-left">{stockControlModule.label}</span>
                   {stockControlExpanded ? (
-                    <ChevronDown className="w-4 h-4" strokeWidth={1.5} />
+                    <ChevronDown className="w-5 h-5 lg:w-4 lg:h-4" strokeWidth={1.5} />
                   ) : (
-                    <ChevronRight className="w-4 h-4" strokeWidth={1.5} />
+                    <ChevronRight className="w-5 h-5 lg:w-4 lg:h-4" strokeWidth={1.5} />
                   )}
                 </>
               )}
@@ -432,13 +432,13 @@ export default function Dashboard({ setIsAuthenticated }) {
                     <button
                       key={child.path}
                       onClick={() => handleSidebarClick(child.path)}
-                      className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 text-sm ${
+                      className={`w-full flex items-center gap-3 px-3 py-3 lg:py-2 rounded-lg transition-all duration-200 text-base lg:text-sm ${
                         active
                           ? "bg-primary text-primary-foreground font-medium"
                           : "text-sidebar-foreground hover:bg-muted active:bg-muted/80"
                       }`}
                     >
-                      <ChildIcon className="w-4 h-4 flex-shrink-0" strokeWidth={1.5} />
+                      <ChildIcon className="w-5 h-5 lg:w-4 lg:h-4 flex-shrink-0" strokeWidth={1.5} />
                       <span>{child.label}</span>
                     </button>
                   );
