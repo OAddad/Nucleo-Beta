@@ -803,6 +803,19 @@ export default function Clientes() {
                       </span>
                     </TableCell>
                     <TableCell>
+                      {cliente.aceita_whatsapp === 1 ? (
+                        <button
+                          onClick={() => window.open(`${process.env.REACT_APP_BACKEND_URL || ''}/api/public/cliente/${cliente.id}/consentimento/pdf`, '_blank')}
+                          className="text-green-500 hover:text-green-600 transition-colors"
+                          title="Baixar termo de consentimento"
+                        >
+                          <Download className="w-5 h-5" />
+                        </button>
+                      ) : (
+                        <span className="text-lg text-red-400">✗</span>
+                      )}
+                    </TableCell>
+                    <TableCell>
                       {cliente.telefone ? (
                         <span className="flex items-center gap-1">
                           <Phone className="w-3 h-3 text-muted-foreground" />
