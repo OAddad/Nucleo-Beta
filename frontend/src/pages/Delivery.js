@@ -1895,40 +1895,56 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
                       <MapPin className="w-4 h-4" /> Endereço de Entrega
                     </h4>
                     
-                    {/* CEP */}
-                    <div className="grid grid-cols-3 gap-3">
-                      <div>
-                        <Label>CEP</Label>
-                        <Input
-                          value={endereco.cep || ""}
-                          onChange={(e) => setEndereco({...endereco, cep: e.target.value})}
-                          placeholder="00000-000"
-                          maxLength={9}
-                        />
+                    {/* Endereços Salvos do Cliente */}
+                    {enderecosSalvos.length > 0 && (
+                      <div className="space-y-2">
+                        <Label className="text-sm font-medium text-green-600">Endereços salvos do cliente:</Label>
+                        <div className="grid gap-2">
+                          {enderecosSalvos.map((end) => (
+                            <button
+                              key={end.id}
+                              type="button"
+                              onClick={() => handleSelectEndereco(end)}
+                              className={`p-3 rounded-lg border-2 text-left transition-all ${
+                                enderecoSelecionado === end.id 
+                                  ? 'border-green-500 bg-green-500/10' 
+                                  : 'border-border hover:border-green-300'
+                              }`}
+                            >
+                              <div className="flex items-center gap-2 mb-1">
+                                <MapPin className="w-4 h-4 text-green-500" />
+                                <span className="font-medium text-sm">{end.label}</span>
+                                {enderecoSelecionado === end.id && (
+                                  <Check className="w-4 h-4 text-green-500 ml-auto" />
+                                )}
+                              </div>
+                              <p className="text-sm text-muted-foreground">
+                                {end.rua}{end.numero ? `, ${end.numero}` : ''}{end.bairro ? ` - ${end.bairro}` : ''}
+                              </p>
+                            </button>
+                          ))}
+                        </div>
+                        <div className="relative py-2">
+                          <div className="absolute inset-0 flex items-center">
+                            <span className="w-full border-t" />
+                          </div>
+                          <div className="relative flex justify-center text-xs uppercase">
+                            <span className="bg-background px-2 text-muted-foreground">ou preencha manualmente</span>
+                          </div>
+                        </div>
                       </div>
-                      <div className="col-span-2">
-                        <Label>Bairro *</Label>
-                        <Select value={endereco.bairro} onValueChange={(v) => setEndereco({...endereco, bairro: v})}>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Selecione o bairro" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {bairros.map(b => (
-                              <SelectItem key={b.id} value={b.nome}>
-                                {b.nome} - R$ {(b.taxa_entrega || 0).toFixed(2)}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </div>
+                    )}
                     
+                    {/* Rua e Número */}
                     <div className="grid grid-cols-3 gap-3">
                       <div className="col-span-2">
                         <Label>Rua *</Label>
                         <Input
                           value={endereco.rua}
-                          onChange={(e) => setEndereco({...endereco, rua: e.target.value})}
+                          onChange={(e) => {
+                            setEndereco({...endereco, rua: e.target.value});
+                            setEnderecoSelecionado(null);
+                          }}
                           placeholder="Nome da rua"
                         />
                       </div>
@@ -1936,11 +1952,39 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
                         <Label>Número *</Label>
                         <Input
                           value={endereco.numero}
-                          onChange={(e) => setEndereco({...endereco, numero: e.target.value})}
+                          onChange={(e) => {
+                            setEndereco({...endereco, numero: e.target.value});
+                            setEnderecoSelecionado(null);
+                          }}
                           placeholder="Nº"
                         />
                       </div>
                     </div>
+                    
+                    {/* Bairro */}
+                    <div>
+                      <Label>Bairro *</Label>
+                      <Select 
+                        value={endereco.bairro} 
+                        onValueChange={(v) => {
+                          setEndereco({...endereco, bairro: v});
+                          setEnderecoSelecionado(null);
+                        }}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Selecione o bairro" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {bairros.map(b => (
+                            <SelectItem key={b.id} value={b.nome}>
+                              {b.nome} - R$ {(b.taxa_entrega || 0).toFixed(2)}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    
+                    {/* Complemento e Referência */}
                     <div className="grid grid-cols-2 gap-3">
                       <div>
                         <Label>Complemento</Label>
@@ -1959,6 +2003,18 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
                         />
                       </div>
                     </div>
+                    
+                    {/* CEP */}
+                    <div className="w-1/3">
+                      <Label>CEP</Label>
+                      <Input
+                        value={endereco.cep || ""}
+                        onChange={(e) => setEndereco({...endereco, cep: e.target.value})}
+                        placeholder="00000-000"
+                        maxLength={9}
+                      />
+                    </div>
+                    
                     {taxaEntrega > 0 && (
                       <div className="p-3 bg-blue-500/10 rounded-lg text-blue-500">
                         Taxa de entrega: <strong>R$ {taxaEntrega.toFixed(2)}</strong>
