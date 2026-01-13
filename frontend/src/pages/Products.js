@@ -1472,78 +1472,140 @@ export default function Products() {
                     </div>
                     
                     {/* Configuração Card SIMPLES */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3 p-3 bg-white dark:bg-zinc-800 rounded-lg border">
-                      <div className="md:col-span-3">
-                        <p className="text-xs font-semibold text-muted-foreground mb-2">CARD SIMPLES</p>
-                      </div>
-                      <div>
-                        <Label className="text-xs">Preço (R$)</Label>
-                        <Input
-                          type="number"
-                          step="0.01"
-                          value={simplePrice}
-                          onChange={(e) => setSimplePrice(e.target.value)}
-                          placeholder="25.90"
-                          className="mt-1 h-9"
-                        />
-                      </div>
-                      <div>
-                        <Label className="text-xs">Descrição</Label>
-                        <Input
-                          type="text"
-                          value={simpleDescription}
-                          onChange={(e) => setSimpleDescription(e.target.value)}
-                          placeholder="Apenas o produto"
-                          className="mt-1 h-9"
-                        />
-                      </div>
-                      <div>
-                        <Label className="text-xs">URL da Foto (opcional)</Label>
-                        <Input
-                          type="text"
-                          value={simplePhotoUrl}
-                          onChange={(e) => setSimplePhotoUrl(e.target.value)}
-                          placeholder="Usar foto principal se vazio"
-                          className="mt-1 h-9"
-                        />
+                    <div className="p-3 bg-white dark:bg-zinc-800 rounded-lg border">
+                      <p className="text-xs font-semibold text-muted-foreground mb-3">CARD SIMPLES</p>
+                      <div className="flex gap-4">
+                        {/* Upload Foto Simples */}
+                        <div className="flex-shrink-0">
+                          <label className="cursor-pointer block">
+                            <div className="w-24 h-24 rounded-lg border-2 border-dashed border-gray-300 hover:border-orange-400 transition-colors overflow-hidden flex items-center justify-center bg-gray-50 dark:bg-zinc-700">
+                              {simplePhotoUrl ? (
+                                <img src={simplePhotoUrl} alt="Simples" className="w-full h-full object-cover" />
+                              ) : (
+                                <div className="text-center">
+                                  <Camera className="w-6 h-6 mx-auto text-gray-400" />
+                                  <span className="text-[9px] text-gray-400">1080x1080</span>
+                                </div>
+                              )}
+                            </div>
+                            <input
+                              type="file"
+                              accept="image/*"
+                              className="hidden"
+                              onChange={async (e) => {
+                                const file = e.target.files?.[0];
+                                if (file) {
+                                  const reader = new FileReader();
+                                  reader.onload = (e) => setSimplePhotoUrl(e.target?.result);
+                                  reader.readAsDataURL(file);
+                                }
+                              }}
+                            />
+                          </label>
+                          {simplePhotoUrl && (
+                            <button 
+                              type="button"
+                              onClick={() => setSimplePhotoUrl("")}
+                              className="text-[10px] text-red-500 mt-1 hover:underline"
+                            >
+                              Remover
+                            </button>
+                          )}
+                        </div>
+                        
+                        {/* Campos Simples */}
+                        <div className="flex-1 space-y-2">
+                          <div>
+                            <Label className="text-xs">Preço (R$)</Label>
+                            <Input
+                              type="number"
+                              step="0.01"
+                              value={simplePrice}
+                              onChange={(e) => setSimplePrice(e.target.value)}
+                              placeholder="25.90"
+                              className="mt-1 h-9"
+                            />
+                          </div>
+                          <div>
+                            <Label className="text-xs">Descrição</Label>
+                            <Input
+                              type="text"
+                              value={simpleDescription}
+                              onChange={(e) => setSimpleDescription(e.target.value)}
+                              placeholder="Apenas o produto"
+                              className="mt-1 h-9"
+                            />
+                          </div>
+                        </div>
                       </div>
                     </div>
                     
                     {/* Configuração Card COMBO */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3 p-3 bg-white dark:bg-zinc-800 rounded-lg border">
-                      <div className="md:col-span-3">
-                        <p className="text-xs font-semibold text-muted-foreground mb-2">CARD COMBO (Recomendado)</p>
-                      </div>
-                      <div>
-                        <Label className="text-xs">Preço (R$)</Label>
-                        <Input
-                          type="number"
-                          step="0.01"
-                          value={salePrice}
-                          onChange={(e) => setSalePrice(e.target.value)}
-                          placeholder="35.90"
-                          className="mt-1 h-9"
-                        />
-                      </div>
-                      <div>
-                        <Label className="text-xs">Descrição</Label>
-                        <Input
-                          type="text"
-                          value={comboDescription}
-                          onChange={(e) => setComboDescription(e.target.value)}
-                          placeholder="+ Batata + Refrigerante"
-                          className="mt-1 h-9"
-                        />
-                      </div>
-                      <div>
-                        <Label className="text-xs">URL da Foto (opcional)</Label>
-                        <Input
-                          type="text"
-                          value={comboPhotoUrl}
-                          onChange={(e) => setComboPhotoUrl(e.target.value)}
-                          placeholder="Usar foto principal se vazio"
-                          className="mt-1 h-9"
-                        />
+                    <div className="p-3 bg-white dark:bg-zinc-800 rounded-lg border">
+                      <p className="text-xs font-semibold text-muted-foreground mb-3">CARD COMBO (Recomendado)</p>
+                      <div className="flex gap-4">
+                        {/* Upload Foto Combo */}
+                        <div className="flex-shrink-0">
+                          <label className="cursor-pointer block">
+                            <div className="w-24 h-24 rounded-lg border-2 border-dashed border-gray-300 hover:border-orange-400 transition-colors overflow-hidden flex items-center justify-center bg-gray-50 dark:bg-zinc-700">
+                              {comboPhotoUrl ? (
+                                <img src={comboPhotoUrl} alt="Combo" className="w-full h-full object-cover" />
+                              ) : (
+                                <div className="text-center">
+                                  <Camera className="w-6 h-6 mx-auto text-gray-400" />
+                                  <span className="text-[9px] text-gray-400">1080x1080</span>
+                                </div>
+                              )}
+                            </div>
+                            <input
+                              type="file"
+                              accept="image/*"
+                              className="hidden"
+                              onChange={async (e) => {
+                                const file = e.target.files?.[0];
+                                if (file) {
+                                  const reader = new FileReader();
+                                  reader.onload = (e) => setComboPhotoUrl(e.target?.result);
+                                  reader.readAsDataURL(file);
+                                }
+                              }}
+                            />
+                          </label>
+                          {comboPhotoUrl && (
+                            <button 
+                              type="button"
+                              onClick={() => setComboPhotoUrl("")}
+                              className="text-[10px] text-red-500 mt-1 hover:underline"
+                            >
+                              Remover
+                            </button>
+                          )}
+                        </div>
+                        
+                        {/* Campos Combo */}
+                        <div className="flex-1 space-y-2">
+                          <div>
+                            <Label className="text-xs">Preço (R$)</Label>
+                            <Input
+                              type="number"
+                              step="0.01"
+                              value={salePrice}
+                              onChange={(e) => setSalePrice(e.target.value)}
+                              placeholder="35.90"
+                              className="mt-1 h-9"
+                            />
+                          </div>
+                          <div>
+                            <Label className="text-xs">Descrição</Label>
+                            <Input
+                              type="text"
+                              value={comboDescription}
+                              onChange={(e) => setComboDescription(e.target.value)}
+                              placeholder="+ Batata + Refrigerante"
+                              className="mt-1 h-9"
+                            />
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
