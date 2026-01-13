@@ -31128,3 +31128,7 @@
 2026-01-13T14:53:14.534475+00:00 | DB_CALL get_all_categories | P3 | 8.65ms | success
 2026-01-13T14:53:14.537823+00:00 | DB_CALL get_all_settings | P3 | 1.1ms | success
 2026-01-13T14:53:14.634249+00:00 | DB_CALL get_all_bairros | P3 | 0.32ms | success
+2026-01-13T14:56:46.857145+00:00 | DB_CALL get_user_by_username | P3 | 0.25ms | success
+2026-01-13T14:56:46.857381+00:00 | DB_CALL get_user_by_username | P3 | 0.11ms | success
+2026-01-13T14:56:46.858191+00:00 | DB_CALL get_all_clientes | P3 | 0.75ms | success
+2026-01-13T14:56:47.204238+00:00 | DB_CALL get_cliente_by_id | P3 | 0.34ms | success
