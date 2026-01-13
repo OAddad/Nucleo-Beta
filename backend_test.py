@@ -5499,19 +5499,18 @@ def main():
         """Run specific tests as requested in the review"""
         print("🚀 Starting Review Request Specific Tests...")
         print(f"Base URL: {self.base_url}")
-        print("🎯 Testing CLUBE ADDAD endpoints as specified in review request:")
+        print("🎯 Testing ORDER STEPS COMBO SYSTEM as specified in review request:")
         print("   Backend URL: http://localhost:8001")
-        print("   Credenciais admin: Addad/Addad123")
-        print("   Cliente de teste: procure por Diego (telefone 999658914) via GET /api/clientes")
-        print("   ENDPOINTS A TESTAR:")
-        print("   1. GET /api/public/cliente/{cliente_id}/clube")
-        print("   2. POST /api/public/clube/registrar/{cliente_id}")
-        print("   3. POST /api/public/clube/whatsapp/{cliente_id}")
-        print("   4. GET /api/clientes (autenticado)")
+        print("   Credenciais: Addad/Addad123")
+        print("   TESTES REQUERIDOS:")
+        print("   1. Verificar modelo OrderStep tem campo combo_only")
+        print("   2. Verificar modelo Product tem novos campos para combo")
+        print("   3. Criar produto tipo combo com etapas")
+        print("   4. Verificar se o produto foi criado corretamente")
         
         # Run specific tests for the review request
         test_results = {
-            "clube_addad_endpoints": self.test_clube_addad_endpoints()
+            "order_steps_combo_system": self.test_order_steps_combo_system()
         }
         
         # Print summary
