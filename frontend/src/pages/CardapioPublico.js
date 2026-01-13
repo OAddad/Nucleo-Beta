@@ -606,7 +606,7 @@ function ClubeAddadTab({ loggedClient, onLogin, onClientUpdate, darkMode, t }) {
           <div className="w-20 h-20 bg-gradient-to-br from-orange-500 to-orange-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
             <Crown className="w-10 h-10 text-white" />
           </div>
-          <h2 className={`text-xl font-bold ${t.text} mb-1`}>Bem-vindo ao Clube!</h2>
+          <h2 className={`text-xl font-bold ${t.text} mb-1`}>Bem-vindo ao {clubeConfig.clube_nome}!</h2>
           <p className={`${t.textMuted} text-sm`}>{loggedClient.nome}</p>
         </div>
 
@@ -622,7 +622,7 @@ function ClubeAddadTab({ loggedClient, onLogin, onClientUpdate, darkMode, t }) {
           <div className="space-y-2 text-sm">
             <div className="flex items-start gap-2">
               <span className="text-green-500">✓</span>
-              <span className={t.textMuted}>A cada R$ 1,00 em compras = 1 ponto</span>
+              <span className={t.textMuted}>A cada R$ 1,00 em compras = {clubeConfig.pontos_por_real} {clubeConfig.pontos_por_real === 1 ? 'ponto' : 'pontos'}</span>
             </div>
             <div className="flex items-start gap-2">
               <span className="text-green-500">✓</span>
