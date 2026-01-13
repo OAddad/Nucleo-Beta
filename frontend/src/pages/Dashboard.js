@@ -750,10 +750,10 @@ export default function Dashboard({ setIsAuthenticated }) {
             data-testid="logout-button"
             onClick={handleLogout}
             variant="ghost"
-            className={`w-full hover:bg-muted active:bg-muted/80 py-3 lg:py-2 ${sidebarOpen ? 'justify-start' : 'lg:justify-center lg:px-2'}`}
+            className={`w-full hover:bg-muted active:bg-muted/80 py-4 lg:py-2 text-base lg:text-sm ${sidebarOpen ? 'justify-start' : 'lg:justify-center lg:px-2'}`}
             title={!sidebarOpen ? 'Sair' : ''}
           >
-            <LogOut className="w-5 h-5 flex-shrink-0" strokeWidth={1.5} />
+            <LogOut className="w-6 h-6 lg:w-5 lg:h-5 flex-shrink-0" strokeWidth={1.5} />
             {sidebarOpen && <span className="ml-3">Sair</span>}
           </Button>
         </div>
