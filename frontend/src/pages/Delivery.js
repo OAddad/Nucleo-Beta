@@ -1399,10 +1399,30 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
 
   // Criar novo pedido (botão "+ Novo")
   const novoPedidoTab = () => {
-    // Salvar estado atual se houver algo
-    const pedidoSalvo = salvarPedidoAtual();
+    // Se tem algo no pedido atual, salva antes de criar novo
+    if (cart.length > 0 || selectedCliente) {
+      const id = pedidoAtualId || Date.now();
+      const pedidoAtual = {
+        id: id,
+        cart: [...cart],
+        selectedCliente,
+        tipoEntrega,
+        endereco: {...endereco},
+        formaPagamento,
+        observacao,
+        step
+      };
+      
+      // Adiciona à lista se não existir
+      const existe = pedidosAtivos.find(p => p.id === id);
+      if (!existe) {
+        setPedidosAtivos([...pedidosAtivos, pedidoAtual]);
+      } else {
+        setPedidosAtivos(pedidosAtivos.map(p => p.id === id ? pedidoAtual : p));
+      }
+    }
     
-    // Criar novo ID para o novo pedido
+    // Criar novo ID
     const novoId = Date.now() + 1;
     
     // Limpar todos os states para novo pedido
