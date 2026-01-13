@@ -27085,3 +27085,6 @@
 2026-01-13T00:49:14.473498+00:00 | DB_CALL get_all_pedidos | P3 | 2.44ms | success
 2026-01-13T00:49:14.475232+00:00 | DB_CALL get_all_entregadores | P3 | 3.14ms | success
 2026-01-13T00:49:14.475517+00:00 | DB_CALL get_all_settings | P3 | 2.83ms | success
+2026-01-13T00:49:19.471114+00:00 | DB_CALL get_all_settings | P3 | 0.34ms | success
+2026-01-13T00:49:19.474086+00:00 | DB_CALL get_all_pedidos | P3 | 0.95ms | success
+2026-01-13T00:49:19.478058+00:00 | DB_CALL get_all_entregadores | P3 | 0.16ms | success
