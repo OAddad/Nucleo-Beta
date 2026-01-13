@@ -30496,3 +30496,4 @@
 2026-01-13T02:06:09.509780+00:00 | DB_CALL get_all_products | P3 | 2.92ms | success
 2026-01-13T02:06:09.511410+00:00 | DB_CALL get_all_business_hours | P3 | 0.29ms | success
 2026-01-13T02:06:09.583173+00:00 | DB_CALL get_all_bairros | P3 | 0.43ms | success
+2026-01-13T02:06:23.604914+00:00 | DB_CALL get_user_by_username | P3 | 0.9ms | success
