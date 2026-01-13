@@ -1781,33 +1781,33 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="max-w-[95vw] w-[1400px] h-[90vh] p-0 flex flex-col bg-background">
+      <DialogContent className="max-w-[98vw] sm:max-w-[95vw] w-full sm:w-[1400px] h-[95vh] sm:h-[90vh] p-0 flex flex-col bg-background">
         {/* HEADER com Cliente sempre visível */}
         <div className="border-b flex-shrink-0">
           {/* Linha 1: Título e Steps */}
-          <div className="p-3 flex items-center justify-between">
+          <div className="p-2 sm:p-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
             <div className="flex items-center gap-2">
-              <ShoppingBag className="w-5 h-5 text-orange-500" />
-              <span className="font-semibold">Novo Pedido - Delivery</span>
+              <ShoppingBag className="w-4 h-4 sm:w-5 sm:h-5 text-orange-500" />
+              <span className="font-semibold text-sm sm:text-base">Novo Pedido</span>
             </div>
-            <div className="flex items-center gap-2 text-sm font-normal">
+            <div className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm font-normal overflow-x-auto">
               <button 
                 onClick={() => setStep(1)} 
-                className={`px-3 py-1.5 rounded cursor-pointer transition-all hover:opacity-80 ${step === 1 ? 'bg-orange-500 text-white' : 'bg-muted text-muted-foreground'}`}
+                className={`px-2 sm:px-3 py-1 sm:py-1.5 rounded cursor-pointer transition-all hover:opacity-80 whitespace-nowrap ${step === 1 ? 'bg-orange-500 text-white' : 'bg-muted text-muted-foreground'}`}
               >
                 1. Produtos
               </button>
               <button 
                 onClick={() => setStep(3)} 
                 disabled={!selectedCliente}
-                className={`px-3 py-1.5 rounded cursor-pointer transition-all hover:opacity-80 disabled:opacity-50 disabled:cursor-not-allowed ${step === 3 ? 'bg-orange-500 text-white' : 'bg-muted text-muted-foreground'}`}
+                className={`px-2 sm:px-3 py-1 sm:py-1.5 rounded cursor-pointer transition-all hover:opacity-80 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap ${step === 3 ? 'bg-orange-500 text-white' : 'bg-muted text-muted-foreground'}`}
               >
                 2. Entrega
               </button>
               <button 
                 onClick={() => setStep(4)} 
                 disabled={!selectedCliente}
-                className={`px-3 py-1.5 rounded cursor-pointer transition-all hover:opacity-80 disabled:opacity-50 disabled:cursor-not-allowed ${step === 4 ? 'bg-orange-500 text-white' : 'bg-muted text-muted-foreground'}`}
+                className={`px-2 sm:px-3 py-1 sm:py-1.5 rounded cursor-pointer transition-all hover:opacity-80 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap ${step === 4 ? 'bg-orange-500 text-white' : 'bg-muted text-muted-foreground'}`}
               >
                 3. Pagamento
               </button>
@@ -1815,18 +1815,18 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
           </div>
           
           {/* Linha 2: Seleção de Cliente - SEMPRE VISÍVEL */}
-          <div className="px-3 pb-3">
-            <div className="flex items-center gap-3 bg-muted/50 rounded-lg p-2">
-              <User className="w-5 h-5 text-orange-500 flex-shrink-0" />
+          <div className="px-2 sm:px-3 pb-2 sm:pb-3">
+            <div className="flex items-center gap-2 sm:gap-3 bg-muted/50 rounded-lg p-2">
+              <User className="w-4 h-4 sm:w-5 sm:h-5 text-orange-500 flex-shrink-0" />
               
               {selectedCliente ? (
-                <div className="flex items-center gap-3 flex-1">
-                  <div className="flex-1">
-                    <p className="font-semibold text-green-600">{selectedCliente.nome}</p>
-                    <p className="text-sm text-muted-foreground">{selectedCliente.telefone}</p>
+                <div className="flex items-center gap-2 sm:gap-3 flex-1">
+                  <div className="flex-1 min-w-0">
+                    <p className="font-semibold text-green-600 text-sm sm:text-base truncate">{selectedCliente.nome}</p>
+                    <p className="text-xs sm:text-sm text-muted-foreground">{selectedCliente.telefone}</p>
                   </div>
-                  <Button variant="ghost" size="sm" onClick={() => { setSelectedCliente(null); setClienteHistorico([]); setEnderecosSalvos([]); }}>
-                    <X className="w-4 h-4" /> Trocar
+                  <Button variant="ghost" size="sm" className="text-xs sm:text-sm" onClick={() => { setSelectedCliente(null); setClienteHistorico([]); setEnderecosSalvos([]); }}>
+                    <X className="w-3 h-3 sm:w-4 sm:h-4" /> <span className="hidden sm:inline ml-1">Trocar</span>
                   </Button>
                 </div>
               ) : (
