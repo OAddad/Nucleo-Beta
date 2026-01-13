@@ -2196,41 +2196,40 @@ export default function CardapioPublico({ onAdminLogin }) {
                 {cartItemsCount}
               </span>
             )}
-            )}
           </button>
         )}
       </div>
 
-      {/* Menu Inferior Fixo */}
+      {/* Menu Inferior Fixo - Mais fino */}
       <nav className={`fixed bottom-0 left-0 right-0 ${t.bgCard} border-t ${t.border} z-30`}>
-        <div className="flex items-center justify-around py-2">
+        <div className="flex items-center justify-around py-1.5">
           <button 
             onClick={() => setActiveTab('cardapio')}
-            className={`flex flex-col items-center gap-1 px-4 py-2 rounded-lg transition-colors ${activeTab === 'cardapio' ? 'text-orange-500' : t.textMuted}`}
+            className={`flex flex-col items-center gap-0.5 px-3 py-1 rounded-lg transition-colors ${activeTab === 'cardapio' ? 'text-orange-500' : t.textMuted}`}
           >
             <UtensilsCrossed className="w-5 h-5" />
-            <span className="text-xs font-medium">Cardápio</span>
+            <span className="text-[10px] font-medium">Cardápio</span>
           </button>
           <button 
             onClick={() => setActiveTab('ofertas')}
-            className={`flex flex-col items-center gap-1 px-4 py-2 rounded-lg transition-colors ${activeTab === 'ofertas' ? 'text-orange-500' : t.textMuted}`}
+            className={`flex flex-col items-center gap-0.5 px-3 py-1 rounded-lg transition-colors ${activeTab === 'ofertas' ? 'text-orange-500' : t.textMuted}`}
           >
             <Gift className="w-5 h-5" />
-            <span className="text-xs font-medium">Ofertas</span>
+            <span className="text-[10px] font-medium">Ofertas</span>
           </button>
           <button 
             onClick={() => setActiveTab('clube')}
-            className={`flex flex-col items-center gap-1 px-4 py-2 rounded-lg transition-colors ${activeTab === 'clube' ? 'text-orange-500' : t.textMuted}`}
+            className={`flex flex-col items-center gap-0.5 px-3 py-1 rounded-lg transition-colors ${activeTab === 'clube' ? 'text-orange-500' : t.textMuted}`}
           >
             <Crown className="w-5 h-5" />
-            <span className="text-xs font-medium">Clube Addad</span>
+            <span className="text-[10px] font-medium">Clube</span>
           </button>
           <button 
             onClick={() => setActiveTab('pedidos')}
-            className={`flex flex-col items-center gap-1 px-4 py-2 rounded-lg transition-colors ${activeTab === 'pedidos' ? 'text-orange-500' : t.textMuted}`}
+            className={`flex flex-col items-center gap-0.5 px-3 py-1 rounded-lg transition-colors ${activeTab === 'pedidos' ? 'text-orange-500' : t.textMuted}`}
           >
             <ClipboardList className="w-5 h-5" />
-            <span className="text-xs font-medium">Pedidos</span>
+            <span className="text-[10px] font-medium">Pedidos</span>
           </button>
         </div>
       </nav>
