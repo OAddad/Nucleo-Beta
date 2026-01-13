@@ -30045,3 +30045,10 @@
 2026-01-13T01:52:22.917051+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.24ms | success
 2026-01-13T01:52:26.889545+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.31ms | success
 2026-01-13T01:52:27.082180+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.23ms | success
+2026-01-13T01:52:31.887128+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.2ms | success
+2026-01-13T01:52:32.102343+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.24ms | success
+2026-01-13T01:52:32.507481+00:00 | DB_CALL get_all_bairros | P3 | 0.51ms | success
+2026-01-13T01:52:32.510455+00:00 | DB_CALL get_all_categories | P3 | 1.85ms | success
+2026-01-13T01:52:32.511069+00:00 | DB_CALL get_all_settings | P3 | 1.75ms | success
+2026-01-13T01:52:32.511419+00:00 | DB_CALL get_all_business_hours | P3 | 1.9ms | success
+2026-01-13T01:52:32.512028+00:00 | DB_CALL get_all_products | P3 | 1.9ms | success
