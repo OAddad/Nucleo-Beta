@@ -26118,3 +26118,6 @@
 2026-01-13T00:34:53.460478+00:00 | DB_CALL get_all_entregadores | P3 | 0.85ms | success
 2026-01-13T00:34:53.461768+00:00 | DB_CALL get_all_pedidos | P3 | 2.03ms | success
 2026-01-13T00:34:53.463234+00:00 | DB_CALL get_all_settings | P3 | 2.97ms | success
+2026-01-13T00:34:58.459777+00:00 | DB_CALL get_all_entregadores | P3 | 1.32ms | success
+2026-01-13T00:34:58.461088+00:00 | DB_CALL get_all_pedidos | P3 | 1.57ms | success
+2026-01-13T00:34:58.462618+00:00 | DB_CALL get_all_settings | P3 | 3.54ms | success
