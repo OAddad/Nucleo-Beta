@@ -1730,7 +1730,14 @@ export default function CardapioPublico({ onAdminLogin }) {
 
       {/* Main */}
       <div className="flex">
-        <main className={`flex-1 p-4 transition-all duration-300 ${cartOpen ? 'mr-80' : ''}`}>
+        {/* Overlay para mobile quando carrinho está aberto */}
+        {cartOpen && (
+          <div 
+            className="fixed inset-0 bg-black/50 z-30 md:hidden"
+            onClick={() => setCartOpen(false)}
+          />
+        )}
+        <main className={`flex-1 p-4 transition-all duration-300 ${cartOpen ? 'md:mr-80' : ''}`}>
           <div className="max-w-7xl mx-auto">
             {Object.keys(productsByCategory).length === 0 ? (
               <div className="flex flex-col items-center justify-center py-20">
