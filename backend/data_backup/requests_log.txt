@@ -31960,3 +31960,6 @@
 2026-01-13T16:29:16.869649+00:00 | DB_CALL get_all_pedidos | P3 | 1.39ms | success
 2026-01-13T16:29:16.872514+00:00 | DB_CALL get_all_settings | P3 | 0.25ms | success
 2026-01-13T16:29:16.872843+00:00 | DB_CALL get_all_entregadores | P3 | 0.84ms | success
+2026-01-13T16:29:21.927476+00:00 | DB_CALL get_all_settings | P3 | 3.04ms | success
+2026-01-13T16:29:21.930593+00:00 | DB_CALL get_all_pedidos | P3 | 4.91ms | success
+2026-01-13T16:29:21.934236+00:00 | DB_CALL get_all_entregadores | P3 | 8.38ms | success
