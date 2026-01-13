@@ -2326,32 +2326,48 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
                 <p className="text-center text-muted-foreground py-8">Carrinho vazio</p>
               ) : (
                 cart.map((item, index) => (
-                  <div key={`${item.id}-${index}`} className="bg-card p-3 rounded-lg border">
-                    <div className="flex justify-between items-start">
-                      <div className="flex-1">
-                        <p className="font-medium text-sm">{item.name}</p>
-                        <p className="text-orange-600 text-sm">R$ {(item.sale_price || 0).toFixed(2)}</p>
+                  <div key={`${item.id}-${index}`} className="bg-card p-2 rounded-lg border flex gap-2">
+                    {/* Foto quadrada do produto */}
+                    <div className="w-16 h-16 flex-shrink-0 rounded-lg overflow-hidden bg-muted">
+                      {item.photo_url ? (
+                        <img 
+                          src={getImageUrl(item.photo_url)} 
+                          alt={item.name}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-orange-400 to-orange-500">
+                          <Package className="w-6 h-6 text-white/70" />
+                        </div>
+                      )}
+                    </div>
+                    
+                    {/* Info e controles */}
+                    <div className="flex-1 min-w-0 flex flex-col justify-between">
+                      <div>
+                        <p className="font-medium text-sm truncate">{item.name}</p>
+                        <p className="text-orange-600 text-sm font-semibold">R$ {(item.sale_price || 0).toFixed(2)}</p>
                         {item.observation && (
-                          <p className="text-xs text-muted-foreground mt-1 italic">📝 {item.observation}</p>
+                          <p className="text-[10px] text-muted-foreground truncate">📝 {item.observation}</p>
                         )}
                       </div>
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-1">
                         <button 
                           onClick={() => removeFromCart(item.id, index)}
-                          className="w-6 h-6 rounded bg-muted hover:bg-muted/80 flex items-center justify-center"
+                          className="w-6 h-6 rounded bg-muted hover:bg-red-100 hover:text-red-600 flex items-center justify-center text-sm"
                         >
-                          <span className="text-lg leading-none">-</span>
+                          -
                         </button>
-                        <span className="w-6 text-center font-medium">{item.quantity}</span>
+                        <span className="w-6 text-center font-medium text-sm">{item.quantity}</span>
                         <button 
                           onClick={() => {
                             const newCart = [...cart];
                             newCart[index] = { ...newCart[index], quantity: newCart[index].quantity + 1 };
                             setCart(newCart);
                           }}
-                          className="w-6 h-6 rounded bg-orange-500 hover:bg-orange-600 text-white flex items-center justify-center"
+                          className="w-6 h-6 rounded bg-orange-500 hover:bg-orange-600 text-white flex items-center justify-center text-sm"
                         >
-                          <span className="text-lg leading-none">+</span>
+                          +
                         </button>
                       </div>
                     </div>
