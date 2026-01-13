@@ -25471,3 +25471,8 @@
 2026-01-13T00:21:35.094038+00:00 | DB_CALL get_all_settings | P3 | 2.39ms | success
 2026-01-13T00:21:35.094323+00:00 | DB_CALL get_all_categories | P3 | 2.12ms | success
 2026-01-13T00:21:35.174661+00:00 | DB_CALL get_all_bairros | P3 | 0.95ms | success
+2026-01-13T00:21:49.900210+00:00 | DB_CALL get_all_settings | P3 | 0.51ms | success
+2026-01-13T00:21:49.902495+00:00 | DB_CALL get_all_products | P3 | 1.42ms | success
+2026-01-13T00:21:49.903219+00:00 | DB_CALL get_all_business_hours | P3 | 1.67ms | success
+2026-01-13T00:21:49.903534+00:00 | DB_CALL get_all_categories | P3 | 1.52ms | success
+2026-01-13T00:21:49.995193+00:00 | DB_CALL get_all_bairros | P3 | 0.33ms | success
