@@ -1893,20 +1893,195 @@ export default function CardapioPublico({ onAdminLogin }) {
           </div>
         )}
 
-        {/* Aba Pedidos */}
+        {/* Aba Pedidos - Histórico Completo */}
         {activeTab === 'pedidos' && (
-          <div className="px-4 py-8 flex flex-col items-center justify-center min-h-[60vh]">
-            <div className={`w-20 h-20 ${t.bgCard} rounded-full flex items-center justify-center mb-4 border ${t.border}`}>
-              <ClipboardList className="w-10 h-10 text-orange-500" />
-            </div>
-            <h2 className={`text-xl font-bold ${t.text} mb-2`}>Meus Pedidos</h2>
-            <p className={`${t.textMuted} text-center text-sm`}>
-              {loggedClient ? 'Histórico de pedidos em breve!' : 'Faça login para ver seus pedidos'}
-            </p>
-            {!loggedClient && (
-              <Button onClick={() => setShowLoginModal(true)} className="bg-orange-500 hover:bg-orange-600 text-white mt-4">
-                Entrar
-              </Button>
+          <div className="px-4 py-4">
+            <h2 className={`text-lg font-bold ${t.text} mb-4 flex items-center gap-2`}>
+              <ClipboardList className="w-5 h-5 text-orange-500" />
+              Meus Pedidos
+            </h2>
+            
+            {!loggedClient ? (
+              <div className="flex flex-col items-center justify-center py-12">
+                <div className={`w-16 h-16 ${t.bgCard} rounded-full flex items-center justify-center mb-4 border ${t.border}`}>
+                  <User className="w-8 h-8 text-orange-500" />
+                </div>
+                <p className={`${t.textMuted} text-center text-sm mb-4`}>Faça login para ver seus pedidos</p>
+                <Button onClick={() => setShowLoginModal(true)} className="bg-orange-500 hover:bg-orange-600 text-white">
+                  Entrar
+                </Button>
+              </div>
+            ) : loadingPedidos ? (
+              <div className="flex flex-col items-center justify-center py-12">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500 mb-4"></div>
+                <p className={t.textMuted}>Carregando pedidos...</p>
+              </div>
+            ) : clientPedidos.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-12">
+                <div className={`w-16 h-16 ${t.bgCard} rounded-full flex items-center justify-center mb-4 border ${t.border}`}>
+                  <ClipboardList className="w-8 h-8 text-orange-500/50" />
+                </div>
+                <p className={`${t.textMuted} text-center text-sm`}>Você ainda não fez nenhum pedido</p>
+              </div>
+            ) : selectedPedido ? (
+              /* Detalhes do Pedido */
+              <div className={`${t.bgCard} rounded-xl border ${t.border} overflow-hidden`}>
+                {/* Header com botão voltar */}
+                <div className={`p-3 border-b ${t.border} flex items-center gap-3 bg-orange-500`}>
+                  <button 
+                    onClick={() => setSelectedPedido(null)}
+                    className="w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center"
+                  >
+                    <ChevronLeft className="w-5 h-5 text-white" />
+                  </button>
+                  <div>
+                    <h3 className="font-bold text-white">{selectedPedido.codigo}</h3>
+                    <p className="text-xs text-white/80">
+                      {new Date(selectedPedido.created_at).toLocaleDateString('pt-BR')} às {new Date(selectedPedido.created_at).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                    </p>
+                  </div>
+                </div>
+                
+                {/* Status */}
+                <div className="p-3 border-b border-dashed">
+                  <div className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-white text-xs font-medium ${
+                    selectedPedido.status === 'concluido' ? 'bg-green-500' :
+                    selectedPedido.status === 'cancelado' ? 'bg-red-500' :
+                    selectedPedido.status === 'em_rota' || selectedPedido.status === 'transito' ? 'bg-purple-500' :
+                    selectedPedido.status === 'producao' ? 'bg-orange-500' :
+                    selectedPedido.status === 'pronto' || selectedPedido.status === 'na_bag' ? 'bg-blue-500' :
+                    'bg-yellow-500'
+                  }`}>
+                    <span>{
+                      selectedPedido.status === 'aguardando_aceite' ? '⏳ Aguardando' :
+                      selectedPedido.status === 'producao' ? '🍳 Em Produção' :
+                      selectedPedido.status === 'pronto' ? '✅ Pronto' :
+                      selectedPedido.status === 'na_bag' ? '📦 Na Bag' :
+                      selectedPedido.status === 'em_rota' || selectedPedido.status === 'transito' ? '🛵 Em Rota' :
+                      selectedPedido.status === 'concluido' ? '🎉 Entregue' :
+                      selectedPedido.status === 'cancelado' ? '❌ Cancelado' :
+                      selectedPedido.status
+                    }</span>
+                  </div>
+                </div>
+                
+                {/* Itens */}
+                <div className="p-3 space-y-2">
+                  <h4 className={`text-xs font-semibold ${t.textMuted} uppercase`}>Itens do Pedido</h4>
+                  {selectedPedido.items?.map((item, idx) => (
+                    <div key={idx} className={`flex items-center gap-2 p-2 ${t.bgMuted} rounded-lg`}>
+                      <span className="w-6 h-6 bg-orange-500 text-white rounded-full flex items-center justify-center text-xs font-bold">
+                        {item.quantidade}
+                      </span>
+                      <div className="flex-1">
+                        <p className={`text-sm font-medium ${t.text}`}>{item.nome}</p>
+                        {item.observacao && <p className={`text-xs ${t.textMuted}`}>📝 {item.observacao}</p>}
+                      </div>
+                      <span className="text-sm font-semibold text-orange-500">
+                        R$ {(item.preco_unitario * item.quantidade).toFixed(2).replace('.', ',')}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+                
+                {/* Tipo Entrega e Endereço */}
+                <div className={`p-3 border-t ${t.border}`}>
+                  <div className="flex items-center gap-2 mb-2">
+                    {selectedPedido.tipo_entrega === 'delivery' ? (
+                      <Truck className="w-4 h-4 text-orange-500" />
+                    ) : (
+                      <Store className="w-4 h-4 text-orange-500" />
+                    )}
+                    <span className={`text-sm font-medium ${t.text}`}>
+                      {selectedPedido.tipo_entrega === 'delivery' ? 'Entrega' : 'Retirada no Local'}
+                    </span>
+                  </div>
+                  {selectedPedido.tipo_entrega === 'delivery' && selectedPedido.endereco_entrega && (
+                    <p className={`text-xs ${t.textMuted} ml-6`}>
+                      {selectedPedido.endereco_entrega}
+                    </p>
+                  )}
+                </div>
+                
+                {/* Pagamento */}
+                <div className={`p-3 border-t ${t.border}`}>
+                  <div className="flex items-center gap-2">
+                    {selectedPedido.forma_pagamento === 'pix' ? <QrCode className="w-4 h-4 text-orange-500" /> :
+                     selectedPedido.forma_pagamento === 'cartao' ? <CreditCard className="w-4 h-4 text-orange-500" /> :
+                     <Banknote className="w-4 h-4 text-orange-500" />}
+                    <span className={`text-sm font-medium ${t.text}`}>
+                      {selectedPedido.forma_pagamento === 'pix' ? 'PIX' :
+                       selectedPedido.forma_pagamento === 'cartao' ? 'Cartão' : 'Dinheiro'}
+                    </span>
+                  </div>
+                </div>
+                
+                {/* Total */}
+                <div className="p-3 bg-orange-500">
+                  <div className="flex items-center justify-between">
+                    <span className="text-white font-medium">Total</span>
+                    <span className="text-white font-bold text-xl">
+                      R$ {(selectedPedido.total || 0).toFixed(2).replace('.', ',')}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              /* Lista de Pedidos */
+              <div className="space-y-3">
+                {clientPedidos.map((pedido) => (
+                  <div 
+                    key={pedido.id}
+                    onClick={() => setSelectedPedido(pedido)}
+                    className={`${t.bgCard} rounded-xl p-3 border ${t.border} cursor-pointer hover:border-orange-500/50 transition-colors`}
+                  >
+                    <div className="flex items-center justify-between mb-2">
+                      <div>
+                        <span className={`font-bold ${t.text}`}>{pedido.codigo}</span>
+                        <p className={`text-xs ${t.textMuted}`}>
+                          {new Date(pedido.created_at).toLocaleDateString('pt-BR')} às {new Date(pedido.created_at).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                        </p>
+                      </div>
+                      <div className={`px-2 py-1 rounded-full text-white text-[10px] font-medium ${
+                        pedido.status === 'concluido' ? 'bg-green-500' :
+                        pedido.status === 'cancelado' ? 'bg-red-500' :
+                        pedido.status === 'em_rota' || pedido.status === 'transito' ? 'bg-purple-500' :
+                        pedido.status === 'producao' ? 'bg-orange-500' :
+                        pedido.status === 'pronto' || pedido.status === 'na_bag' ? 'bg-blue-500' :
+                        'bg-yellow-500'
+                      }`}>
+                        {pedido.status === 'aguardando_aceite' ? 'Aguardando' :
+                         pedido.status === 'producao' ? 'Produção' :
+                         pedido.status === 'pronto' ? 'Pronto' :
+                         pedido.status === 'na_bag' ? 'Na Bag' :
+                         pedido.status === 'em_rota' || pedido.status === 'transito' ? 'Em Rota' :
+                         pedido.status === 'concluido' ? 'Entregue' :
+                         pedido.status === 'cancelado' ? 'Cancelado' :
+                         pedido.status}
+                      </div>
+                    </div>
+                    
+                    <div className={`text-xs ${t.textMuted} mb-2 line-clamp-1`}>
+                      {pedido.items?.slice(0, 2).map((item, idx) => (
+                        <span key={idx}>{item.quantidade}x {item.nome}{idx < Math.min(pedido.items.length, 2) - 1 ? ', ' : ''}</span>
+                      ))}
+                      {pedido.items?.length > 2 && <span className="text-orange-500"> +{pedido.items.length - 2}</span>}
+                    </div>
+                    
+                    <div className="flex items-center justify-between">
+                      <span className={`text-xs ${t.textMuted}`}>
+                        {pedido.tipo_entrega === 'delivery' ? '🛵 Entrega' : '🏪 Retirada'}
+                      </span>
+                      <div className="flex items-center gap-1">
+                        <span className="font-bold text-orange-500 text-sm">
+                          R$ {(pedido.total || 0).toFixed(2).replace('.', ',')}
+                        </span>
+                        <ChevronRight className={`w-4 h-4 ${t.textMuted}`} />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
             )}
           </div>
         )}
