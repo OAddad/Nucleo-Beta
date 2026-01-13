@@ -1524,11 +1524,84 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
     return matchSearch && matchCategory;
   });
 
-  // Filtrar clientes
-  const filteredClientes = clientes.filter(c => 
-    c.nome?.toLowerCase().includes(clienteSearch.toLowerCase()) ||
-    c.telefone?.includes(clienteSearch)
-  ).slice(0, 10);
+  // Função para normalizar telefone (remove caracteres não numéricos)
+  const normalizePhone = (phone) => {
+    if (!phone) return '';
+    return phone.replace(/\D/g, '');
+  };
+
+  // Função para verificar se o telefone do cliente corresponde à busca
+  const matchPhone = (clientePhone, searchPhone) => {
+    if (!clientePhone || !searchPhone) return false;
+    
+    const phoneClean = normalizePhone(clientePhone);
+    const searchClean = normalizePhone(searchPhone);
+    
+    if (!phoneClean || !searchClean) return false;
+    
+    // Busca direta (contém)
+    if (phoneClean.includes(searchClean)) return true;
+    
+    // Se o telefone do cliente tem 11 dígitos (com DDD e 9)
+    // Ex: 34999658914
+    if (phoneClean.length === 11) {
+      const ddd = phoneClean.substring(0, 2);           // 34
+      const noveDigito = phoneClean.substring(2, 3);    // 9
+      const numero = phoneClean.substring(3);           // 99658914
+      const numeroSem9 = phoneClean.substring(2);       // 999658914
+      
+      // Busca sem DDD: 999658914
+      if (numeroSem9.includes(searchClean)) return true;
+      
+      // Busca sem DDD e sem o 9 inicial: 99658914
+      if (numero.includes(searchClean)) return true;
+      
+      // Busca com DDD mas sem o 9: 3499658914
+      const phoneSem9 = ddd + numero;
+      if (phoneSem9.includes(searchClean)) return true;
+      
+      // Busca pelo número sem 9 no meio
+      if (searchClean === numero) return true;
+    }
+    
+    // Se o telefone do cliente tem 10 dígitos (com DDD, sem 9)
+    // Ex: 3499658914
+    if (phoneClean.length === 10) {
+      const ddd = phoneClean.substring(0, 2);
+      const numero = phoneClean.substring(2);
+      
+      // Busca sem DDD
+      if (numero.includes(searchClean)) return true;
+      
+      // Busca com 9 adicionado: 34999658914
+      const phoneCom9 = ddd + '9' + numero;
+      if (phoneCom9.includes(searchClean)) return true;
+    }
+    
+    return false;
+  };
+
+  // Filtrar clientes por nome, CPF ou telefone
+  const filteredClientes = clientes.filter(c => {
+    if (!clienteSearch || clienteSearch.trim() === '') return false;
+    
+    const search = clienteSearch.toLowerCase().trim();
+    const searchClean = normalizePhone(clienteSearch);
+    
+    // Busca por nome
+    if (c.nome?.toLowerCase().includes(search)) return true;
+    
+    // Busca por CPF
+    if (c.cpf) {
+      const cpfClean = normalizePhone(c.cpf);
+      if (cpfClean.includes(searchClean)) return true;
+    }
+    
+    // Busca por telefone (com várias combinações)
+    if (matchPhone(c.telefone, clienteSearch)) return true;
+    
+    return false;
+  }).slice(0, 10);
 
   // Adicionar ao carrinho
   const addToCart = (product, quantity = 1, observation = "") => {
