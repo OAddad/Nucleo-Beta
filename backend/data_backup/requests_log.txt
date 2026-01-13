@@ -32230,3 +32230,13 @@
 2026-01-13T17:02:58.064265+00:00 | DB_CALL get_user_by_username | P3 | 0.11ms | success
 2026-01-13T17:02:58.065185+00:00 | DB_CALL get_all_clientes | P3 | 0.86ms | success
 2026-01-13T17:02:58.239102+00:00 | DB_CALL get_cliente_by_id | P3 | 0.32ms | success
+2026-01-13T17:05:01.999570+00:00 | DB_CALL get_all_products | P3 | 2.85ms | success
+2026-01-13T17:05:02.000691+00:00 | DB_CALL get_all_business_hours | P3 | 3.44ms | success
+2026-01-13T17:05:02.001036+00:00 | DB_CALL get_all_settings | P3 | 3.5ms | success
+2026-01-13T17:05:02.001485+00:00 | DB_CALL get_all_categories | P3 | 2.52ms | success
+2026-01-13T17:05:02.190071+00:00 | DB_CALL get_all_bairros | P3 | 0.4ms | success
+2026-01-13T17:05:02.899017+00:00 | DB_CALL get_all_products | P3 | 0.8ms | success
+2026-01-13T17:05:02.900087+00:00 | DB_CALL get_all_settings | P3 | 2.01ms | success
+2026-01-13T17:05:02.900942+00:00 | DB_CALL get_all_business_hours | P3 | 0.17ms | success
+2026-01-13T17:05:02.902104+00:00 | DB_CALL get_all_categories | P3 | 0.15ms | success
+2026-01-13T17:05:03.115458+00:00 | DB_CALL get_all_bairros | P3 | 0.32ms | success
