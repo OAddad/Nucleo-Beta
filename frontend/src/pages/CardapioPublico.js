@@ -2080,17 +2080,17 @@ export default function CardapioPublico({ onAdminLogin }) {
     <div className={`min-h-screen ${t.bg} ${t.text} pb-16`}>
       {/* Header Fixo - Estilo Burger King */}
       <header className="fixed top-0 left-0 right-0 z-40">
-        {/* Barra Principal - Laranja */}
-        <div className="bg-gradient-to-r from-orange-600 to-orange-500 px-3 py-2.5">
+        {/* Barra Principal - Laranja - Mais fina */}
+        <div className="bg-gradient-to-r from-orange-600 to-orange-500 px-3 py-1.5">
           <div className="flex items-center justify-between">
             {/* Lado Esquerdo - Nome + Pontos */}
             <div className="flex items-center gap-2">
-              <span className="text-white text-sm font-semibold">
+              <span className="text-white text-xs font-semibold">
                 Oi, {loggedClient?.nome?.split(' ')[0] || 'Visitante'}!
               </span>
-              <div className="flex items-center gap-1 bg-white/20 px-2 py-0.5 rounded-full">
-                <Crown className="w-3.5 h-3.5 fill-white text-white" />
-                <span className="text-xs font-bold text-white">{loggedClient?.pontos || 0}</span>
+              <div className="flex items-center gap-1 bg-white/20 px-1.5 py-0.5 rounded-full">
+                <Crown className="w-3 h-3 fill-white text-white" />
+                <span className="text-[10px] font-bold text-white">{loggedClient?.pontos || 0}</span>
               </div>
             </div>
             
