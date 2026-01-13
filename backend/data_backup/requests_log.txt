@@ -24852,3 +24852,10 @@
 2026-01-13T00:05:19.469847+00:00 | DB_CALL get_all_categories | P3 | 1.74ms | success
 2026-01-13T00:05:19.470205+00:00 | DB_CALL get_all_clientes | P3 | 2.29ms | success
 2026-01-13T00:05:23.436583+00:00 | DB_CALL get_pedido_by_id | P3 | 0.32ms | success
+2026-01-13T00:05:25.447125+00:00 | DB_CALL get_all_settings | P3 | 0.3ms | success
+2026-01-13T00:05:25.450357+00:00 | DB_CALL get_all_pedidos | P3 | 1.12ms | success
+2026-01-13T00:05:25.452499+00:00 | DB_CALL get_all_entregadores | P3 | 0.2ms | success
+2026-01-13T00:05:28.436262+00:00 | DB_CALL get_pedido_by_id | P3 | 0.29ms | success
+2026-01-13T00:05:30.449426+00:00 | DB_CALL get_all_settings | P3 | 0.61ms | success
+2026-01-13T00:05:30.451850+00:00 | DB_CALL get_all_pedidos | P3 | 1.38ms | success
+2026-01-13T00:05:30.453508+00:00 | DB_CALL get_all_entregadores | P3 | 2.79ms | success
