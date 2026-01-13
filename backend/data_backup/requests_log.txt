@@ -24710,3 +24710,9 @@
 2026-01-13T00:03:19.481093+00:00 | DB_CALL recalculate_all_cliente_stats | P3 | 1.28ms | success
 2026-01-13T00:03:19.481550+00:00 | DB_CALL get_all_clientes | P3 | 0.33ms | success
 2026-01-13T00:03:19.485610+00:00 | DB_CALL get_all_settings | P3 | 0.33ms | success
+2026-01-13T00:03:25.446913+00:00 | DB_CALL get_all_settings | P3 | 1.04ms | success
+2026-01-13T00:03:25.448284+00:00 | DB_CALL get_all_pedidos | P3 | 1.92ms | success
+2026-01-13T00:03:25.450025+00:00 | DB_CALL get_all_entregadores | P3 | 3.39ms | success
+2026-01-13T00:03:30.455199+00:00 | DB_CALL get_all_settings | P3 | 0.3ms | success
+2026-01-13T00:03:30.455690+00:00 | DB_CALL get_all_entregadores | P3 | 1.44ms | success
+2026-01-13T00:03:30.456783+00:00 | DB_CALL get_all_pedidos | P3 | 2.39ms | success
