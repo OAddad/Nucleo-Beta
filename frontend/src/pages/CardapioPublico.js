@@ -2071,6 +2071,7 @@ export default function CardapioPublico({ onAdminLogin }) {
                   darkMode={darkMode} 
                   onToggleTheme={toggleTheme}
                   onNavigateToPedidos={() => setActiveTab('pedidos')}
+                  clubeNome={clubeConfig.clube_nome}
                 />
               ) : (
                 <Button onClick={() => setShowLoginModal(true)} className="bg-white hover:bg-gray-100 text-orange-600 font-semibold px-4 h-7 text-xs">
