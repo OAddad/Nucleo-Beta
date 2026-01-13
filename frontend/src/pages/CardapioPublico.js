@@ -517,7 +517,7 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode }) {
               {/* Card SIMPLES - Menor e Centralizado */}
               <button
                 onClick={() => setSelectedComboType('simples')}
-                className={`w-40 rounded-xl border-2 transition-all text-left overflow-hidden flex flex-col ${
+                className={`w-44 rounded-xl border-2 transition-all text-left overflow-hidden flex flex-col ${
                   selectedComboType === 'simples' 
                     ? 'border-orange-500 bg-orange-50 dark:bg-orange-500/10' 
                     : `${t.border} ${t.bgCard} hover:border-orange-300`
@@ -557,13 +557,15 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode }) {
                     : `${t.border} ${t.bgCard} hover:border-orange-300`
                 }`}
               >
-                {/* Badge Recomendado */}
-                <div className="absolute top-0 left-0 right-0 bg-green-500 text-white text-[10px] font-bold py-1 text-center z-10">
-                  ⭐ RECOMENDADO
+                {/* Badge Recomendado - Melhorado */}
+                <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-green-500 to-emerald-500 text-white text-xs font-bold py-1.5 text-center z-10 flex items-center justify-center gap-1.5 shadow-md">
+                  <span className="text-yellow-300">★</span>
+                  RECOMENDADO
+                  <span className="text-yellow-300">★</span>
                 </div>
                 
                 {/* Imagem do Combo */}
-                <div className="w-full aspect-square bg-gradient-to-b from-orange-100 to-orange-200 dark:from-zinc-700 dark:to-zinc-600 pt-6">
+                <div className="w-full aspect-square bg-gradient-to-b from-orange-100 to-orange-200 dark:from-zinc-700 dark:to-zinc-600 pt-8">
                   {product.photo_url && !imageError ? (
                     <img
                       src={getImageUrl(product.photo_url)}
@@ -575,11 +577,6 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode }) {
                       <span className="text-5xl">🍔</span>
                     </div>
                   )}
-                  {/* Ícones do combo no canto */}
-                  <div className="absolute bottom-2 right-2 flex gap-1">
-                    <span className="text-lg">🍟</span>
-                    <span className="text-lg">🥤</span>
-                  </div>
                 </div>
                 
                 {/* Info do Combo */}
