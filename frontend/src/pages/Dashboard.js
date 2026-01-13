@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import { toast } from "sonner";
-import { ChefHat, Package, ShoppingCart, FileText, BarChart3, LogOut, Shield, Settings, Menu, X, ChevronDown, ChevronRight, Home, DollarSign, ClipboardList, Truck, Users, UtensilsCrossed, UserRound, Bike, MessageCircle, Building2, AlertTriangle, Wallet, Receipt, CreditCard, PieChart, Megaphone, Gift, Ticket, Store, Briefcase, MapPin, Route as RouteIcon, MapPinned } from "lucide-react";
+import { ChefHat, Package, ShoppingCart, FileText, BarChart3, LogOut, Shield, Settings, Menu, X, ChevronDown, ChevronRight, Home, DollarSign, ClipboardList, Truck, Users, UtensilsCrossed, UserRound, Bike, MessageCircle, Building2, AlertTriangle, Wallet, Receipt, CreditCard, PieChart, Megaphone, Gift, Ticket, Store, Briefcase, MapPin, Route as RouteIcon, MapPinned, Crown } from "lucide-react";
 import { Button } from "../components/ui/button";
 import DarkModeToggle from "../components/DarkModeToggle";
 import VisaoGeral from "./VisaoGeral";
@@ -33,6 +33,7 @@ import CuponsDesconto from "./CuponsDesconto";
 import Campanhas from "./Campanhas";
 import CardapioPublico from "./CardapioPublico";
 import ConfiguracaoHorarios from "./ConfiguracaoHorarios";
+import ClubeConfig from "./ClubeConfig";
 
 // Ícone do WhatsApp customizado
 const WhatsAppIcon = ({ className }) => (
