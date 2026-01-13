@@ -216,6 +216,21 @@ function EditAccountModal({ isOpen, onClose, client, onUpdate }) {
           <DialogTitle>Minha Conta</DialogTitle>
         </DialogHeader>
         <div className="space-y-6 mt-4">
+          {/* Card de Membro do Clube */}
+          {client?.membro_clube === 1 && (
+            <div className="bg-gradient-to-r from-orange-500 to-orange-600 rounded-xl p-4 text-white">
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
+                  <Award className="w-6 h-6 text-white" />
+                </div>
+                <div className="flex-1">
+                  <p className="font-bold text-lg">Você é membro do Clube!</p>
+                  <p className="text-white/80 text-sm">Seus pontos: {client?.pontuacao || 0}</p>
+                </div>
+              </div>
+            </div>
+          )}
+          
           {/* Primeira Linha: Foto, Nome e Gênero */}
           <div className="flex gap-6">
             {/* Foto do Cliente */}
