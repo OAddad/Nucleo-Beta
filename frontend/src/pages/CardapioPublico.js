@@ -1870,70 +1870,70 @@ export default function CardapioPublico({ onAdminLogin }) {
         />
       )}
 
-      {/* Carrinho Expansível */}
-      <div className={`fixed bottom-20 right-4 z-50 transition-all duration-300 ${cartOpen ? 'w-[calc(100%-2rem)] max-w-sm' : 'w-14 h-14'}`}>
+      {/* Carrinho Expansível - Mais estreito e mais alto */}
+      <div className={`fixed bottom-20 right-3 z-50 transition-all duration-300 ${cartOpen ? 'w-72 sm:w-80' : 'w-12 h-12'}`}>
         {cartOpen ? (
           /* Carrinho Expandido */
-          <div className={`${t.bgCart} rounded-2xl shadow-2xl border ${t.border} overflow-hidden max-h-[70vh] flex flex-col`}>
+          <div className={`${t.bgCart} rounded-2xl shadow-2xl border ${t.border} overflow-hidden flex flex-col`} style={{ maxHeight: 'calc(100vh - 140px)' }}>
             {/* Header do Carrinho */}
-            <div className={`p-4 border-b ${t.border} flex items-center justify-between bg-orange-500`}>
-              <div className="flex items-center gap-3">
-                <ShoppingBag className="w-6 h-6 text-white" />
+            <div className={`p-3 border-b ${t.border} flex items-center justify-between bg-orange-500`}>
+              <div className="flex items-center gap-2">
+                <ShoppingCart className="w-5 h-5 text-white" />
                 <div>
-                  <h3 className="font-bold text-white">Meu Carrinho</h3>
-                  <p className="text-xs text-white/80">{cartItemsCount} {cartItemsCount === 1 ? 'item' : 'itens'}</p>
+                  <h3 className="font-bold text-white text-sm">Meu Carrinho</h3>
+                  <p className="text-[10px] text-white/80">{cartItemsCount} {cartItemsCount === 1 ? 'item' : 'itens'}</p>
                 </div>
               </div>
               <button 
                 onClick={() => setCartOpen(false)} 
-                className="w-8 h-8 flex items-center justify-center rounded-lg bg-white/20 hover:bg-white/30"
+                className="w-7 h-7 flex items-center justify-center rounded-lg bg-white/20 hover:bg-white/30"
               >
-                <X className="w-5 h-5 text-white" />
+                <X className="w-4 h-4 text-white" />
               </button>
             </div>
             
             {/* Itens do Carrinho */}
-            <div className="flex-1 overflow-y-auto p-3 max-h-[40vh]">
+            <div className="flex-1 overflow-y-auto p-2" style={{ maxHeight: 'calc(100vh - 280px)' }}>
               {cart.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-8 text-center">
-                  <ShoppingBag className={`w-12 h-12 ${t.textMuted2} mb-3`} />
-                  <p className={t.textMuted}>Carrinho vazio</p>
+                  <ShoppingCart className={`w-10 h-10 ${t.textMuted2} mb-3`} />
+                  <p className={`text-sm ${t.textMuted}`}>Carrinho vazio</p>
                 </div>
               ) : (
                 <div className="space-y-2">
                   {cart.map(item => (
-                    <div key={item.cartItemId || item.id} className={`${t.bgCartItem} rounded-lg p-2.5 flex gap-2`}>
-                      <div className={`w-14 h-14 ${t.bgMuted} rounded-lg flex-shrink-0 overflow-hidden`}>
+                    <div key={item.cartItemId || item.id} className={`${t.bgCartItem} rounded-lg p-2 flex gap-2`}>
+                      <div className={`w-12 h-12 ${t.bgMuted} rounded-lg flex-shrink-0 overflow-hidden`}>
                         {item.photo_url ? (
                           <img src={getImageUrl(item.photo_url)} alt="" className="w-full h-full object-cover" />
                         ) : (
-                          <div className="w-full h-full flex items-center justify-center text-xl">🍽️</div>
+                          <div className="w-full h-full flex items-center justify-center text-lg">🍽️</div>
                         )}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <h4 className={`font-medium ${t.text} text-sm truncate`}>{item.name}</h4>
-                        <p className="text-orange-500 font-semibold text-sm">
+                        <h4 className={`font-medium ${t.text} text-xs truncate`}>{item.name}</h4>
+                        <p className="text-orange-500 font-semibold text-xs">
                           R$ {(item.sale_price * item.quantity).toFixed(2).replace('.', ',')}
                         </p>
-                        <div className="flex items-center gap-2 mt-1">
+                        <div className="flex items-center gap-1.5 mt-1">
                           <button 
                             onClick={() => updateQuantity(item.cartItemId || item.id, -1)} 
-                            className={`w-6 h-6 ${t.bgMuted} rounded flex items-center justify-center`}
+                            className={`w-5 h-5 ${t.bgMuted} rounded flex items-center justify-center`}
                           >
-                            <Minus className="w-3 h-3" />
+                            <Minus className="w-2.5 h-2.5" />
                           </button>
-                          <span className={`${t.text} font-medium text-sm w-5 text-center`}>{item.quantity}</span>
+                          <span className={`${t.text} font-medium text-xs w-4 text-center`}>{item.quantity}</span>
                           <button 
                             onClick={() => updateQuantity(item.cartItemId || item.id, 1)} 
-                            className={`w-6 h-6 ${t.bgMuted} rounded flex items-center justify-center`}
+                            className={`w-5 h-5 ${t.bgMuted} rounded flex items-center justify-center`}
                           >
-                            <Plus className="w-3 h-3" />
+                            <Plus className="w-2.5 h-2.5" />
                           </button>
                           <button 
                             onClick={() => removeFromCart(item.cartItemId || item.id)} 
-                            className="w-6 h-6 bg-red-500/20 rounded flex items-center justify-center ml-auto"
+                            className="w-5 h-5 bg-red-500/20 rounded flex items-center justify-center ml-auto"
                           >
-                            <Trash2 className="w-3 h-3 text-red-400" />
+                            <Trash2 className="w-2.5 h-2.5 text-red-400" />
                           </button>
                         </div>
                       </div>
@@ -1945,14 +1945,14 @@ export default function CardapioPublico({ onAdminLogin }) {
             
             {/* Footer do Carrinho */}
             {cart.length > 0 && (
-              <div className={`p-3 border-t ${t.border} ${t.bgCartItem}`}>
-                <div className="flex items-center justify-between mb-3">
-                  <span className={t.textMuted}>Total</span>
-                  <span className="text-xl font-bold text-orange-500">R$ {cartTotal.toFixed(2).replace('.', ',')}</span>
+              <div className={`p-2.5 border-t ${t.border} ${t.bgCartItem}`}>
+                <div className="flex items-center justify-between mb-2">
+                  <span className={`text-xs ${t.textMuted}`}>Total</span>
+                  <span className="text-lg font-bold text-orange-500">R$ {cartTotal.toFixed(2).replace('.', ',')}</span>
                 </div>
                 <Button 
                   onClick={handleMakeOrder} 
-                  className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold h-11"
+                  className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold h-9 text-sm"
                 >
                   Fazer Pedido
                 </Button>
@@ -1960,16 +1960,17 @@ export default function CardapioPublico({ onAdminLogin }) {
             )}
           </div>
         ) : (
-          /* Botão do Carrinho Minimizado */
+          /* Botão do Carrinho Minimizado - Carrinho de compras */
           <button 
             onClick={() => setCartOpen(true)} 
-            className="w-14 h-14 bg-orange-500 rounded-full flex items-center justify-center shadow-lg hover:bg-orange-600 transition-colors"
+            className="w-12 h-12 bg-orange-500 rounded-full flex items-center justify-center shadow-lg hover:bg-orange-600 transition-colors"
           >
-            <ShoppingBag className="w-6 h-6 text-white" />
+            <ShoppingCart className="w-5 h-5 text-white" />
             {cartItemsCount > 0 && (
-              <span className="absolute -top-1 -right-1 w-6 h-6 bg-red-500 rounded-full text-xs font-bold flex items-center justify-center text-white">
+              <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full text-[10px] font-bold flex items-center justify-center text-white">
                 {cartItemsCount}
               </span>
+            )}
             )}
           </button>
         )}
