@@ -436,24 +436,17 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode }) {
     
     return selections.length >= minSelections;
   };
-    
-    const currentStep = product.order_steps?.[comboStep - 1];
-    if (!currentStep) return true;
-    
-    const selections = stepSelections[comboStep - 1] || [];
-    return selections.length >= (currentStep.min_selections || 0);
-  };
 
   // Avançar etapa
   const handleNextStep = () => {
     if (comboStep === 0) {
-      if (selectedComboType === 'simples' || !hasOrderSteps) {
-        // Ir direto para adicionar
+      if (!hasOrderSteps || relevantSteps.length === 0) {
+        // Ir direto para adicionar se não tem etapas
         handleAdd();
       } else {
         setComboStep(1);
       }
-    } else if (comboStep < (product.order_steps?.length || 0)) {
+    } else if (comboStep < totalSteps) {
       setComboStep(comboStep + 1);
     } else {
       handleAdd();
@@ -462,7 +455,7 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode }) {
 
   // Toggle seleção de item
   const toggleItemSelection = (stepIndex, itemId) => {
-    const step = product.order_steps?.[stepIndex];
+    const step = relevantSteps[stepIndex];
     if (!step) return;
     
     const currentSelections = stepSelections[stepIndex] || [];
