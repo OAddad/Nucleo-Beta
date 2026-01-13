@@ -27352,3 +27352,8 @@
 2026-01-13T00:52:11.813913+00:00 | DB_CALL get_all_products | P3 | 0.45ms | success
 2026-01-13T00:52:12.305132+00:00 | DB_CALL get_all_pedidos | P3 | 1.15ms | success
 2026-01-13T00:52:12.308611+00:00 | DB_CALL get_client_addresses | P3 | 0.16ms | success
+2026-01-13T00:52:12.532381+00:00 | DB_CALL get_user_by_id | P3 | 0.24ms | success
+2026-01-13T00:52:12.532961+00:00 | DB_CALL get_all_products | P3 | 0.45ms | success
+2026-01-13T00:52:17.475170+00:00 | DB_CALL get_all_pedidos | P3 | 1.14ms | success
+2026-01-13T00:52:17.477833+00:00 | DB_CALL get_all_entregadores | P3 | 0.24ms | success
+2026-01-13T00:52:17.478272+00:00 | DB_CALL get_all_settings | P3 | 1.03ms | success
