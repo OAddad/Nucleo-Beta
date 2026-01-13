@@ -2224,14 +2224,14 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
                               <img 
                                 src={getImageUrl(item.foto_url || item.photo_url)} 
                                 alt={item.nome || item.name}
-                                className="w-8 h-8 rounded object-cover flex-shrink-0"
+                                className="w-10 h-10 rounded object-cover flex-shrink-0 aspect-square"
                                 onError={(e) => {
                                   e.target.style.display = 'none';
                                 }}
                               />
                             ) : (
-                              <div className="w-8 h-8 rounded bg-muted flex items-center justify-center flex-shrink-0">
-                                <Package className="w-4 h-4 text-muted-foreground" />
+                              <div className="w-10 h-10 rounded bg-muted flex items-center justify-center flex-shrink-0 aspect-square">
+                                <Package className="w-5 h-5 text-muted-foreground" />
                               </div>
                             )}
                             <div className="flex-1 min-w-0">
