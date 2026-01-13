@@ -517,14 +517,14 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode }) {
               {/* Card SIMPLES - Menor e Centralizado */}
               <button
                 onClick={() => setSelectedComboType('simples')}
-                className={`w-36 rounded-xl border-2 transition-all text-left overflow-hidden flex flex-col ${
+                className={`w-40 rounded-xl border-2 transition-all text-left overflow-hidden flex flex-col ${
                   selectedComboType === 'simples' 
                     ? 'border-orange-500 bg-orange-50 dark:bg-orange-500/10' 
                     : `${t.border} ${t.bgCard} hover:border-orange-300`
                 }`}
               >
                 {/* Imagem do Simples */}
-                <div className="w-full aspect-square bg-gradient-to-b from-orange-50 to-orange-100 dark:from-zinc-800 dark:to-zinc-700 relative">
+                <div className="w-full aspect-square bg-gradient-to-b from-orange-50 to-orange-100 dark:from-zinc-800 dark:to-zinc-700">
                   {product.photo_url && !imageError ? (
                     <img
                       src={getImageUrl(product.photo_url)}
@@ -536,12 +536,6 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode }) {
                       <span className="text-4xl">🍔</span>
                     </div>
                   )}
-                  {/* Indicador de seleção */}
-                  <div className={`absolute top-2 right-2 w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-                    selectedComboType === 'simples' ? 'border-orange-500 bg-orange-500' : 'border-gray-300 bg-white dark:bg-zinc-700'
-                  }`}>
-                    {selectedComboType === 'simples' && <Check className="w-3 h-3 text-white" />}
-                  </div>
                 </div>
                 
                 {/* Info do Simples */}
@@ -569,7 +563,7 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode }) {
                 </div>
                 
                 {/* Imagem do Combo */}
-                <div className="w-full aspect-square bg-gradient-to-b from-orange-100 to-orange-200 dark:from-zinc-700 dark:to-zinc-600 relative pt-6">
+                <div className="w-full aspect-square bg-gradient-to-b from-orange-100 to-orange-200 dark:from-zinc-700 dark:to-zinc-600 pt-6">
                   {product.photo_url && !imageError ? (
                     <img
                       src={getImageUrl(product.photo_url)}
@@ -585,12 +579,6 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode }) {
                   <div className="absolute bottom-2 right-2 flex gap-1">
                     <span className="text-lg">🍟</span>
                     <span className="text-lg">🥤</span>
-                  </div>
-                  {/* Indicador de seleção */}
-                  <div className={`absolute top-8 right-2 w-6 h-6 rounded-full border-2 flex items-center justify-center ${
-                    selectedComboType === 'combo' ? 'border-orange-500 bg-orange-500' : 'border-gray-300 bg-white dark:bg-zinc-700'
-                  }`}>
-                    {selectedComboType === 'combo' && <Check className="w-4 h-4 text-white" />}
                   </div>
                 </div>
                 
