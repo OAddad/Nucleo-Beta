@@ -31827,3 +31827,7 @@
 2026-01-13T16:14:41.523091+00:00 | DB_CALL update_cliente | P3 | 14.0ms | success
 2026-01-13T16:15:21.890567+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.21ms | success
 2026-01-13T16:15:22.111118+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.72ms | success
+2026-01-13T16:15:34.854768+00:00 | DB_CALL init_database | P3 | 7.8ms | success
+2026-01-13T16:15:34.856740+00:00 | DB_CALL count_ingredients | P3 | 1.69ms | success
+2026-01-13T16:15:34.856968+00:00 | DB_CALL count_products | P3 | 0.15ms | success
+2026-01-13T16:15:34.857120+00:00 | DB_CALL count_users | P3 | 0.1ms | success
