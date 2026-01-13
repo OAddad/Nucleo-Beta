@@ -1833,6 +1833,23 @@ export default function CardapioPublico({ onAdminLogin }) {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Fechar busca ao clicar fora (só se não tiver texto)
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (searchOpen && !searchTerm) {
+        const searchContainer = document.getElementById('search-container');
+        const searchButton = document.getElementById('search-button');
+        if (searchContainer && !searchContainer.contains(e.target) && 
+            searchButton && !searchButton.contains(e.target)) {
+          setSearchOpen(false);
+        }
+      }
+    };
+    
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [searchOpen, searchTerm]);
+
   useEffect(() => {
     fetchProducts();
     fetchCategories();
