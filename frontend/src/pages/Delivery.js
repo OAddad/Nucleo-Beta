@@ -1263,12 +1263,53 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
     try {
       const res = await axios.get(`${API}/pedidos?cliente_id=${clienteId}`, getAuthHeader());
       const pedidos = Array.isArray(res.data) ? res.data : (res.data.pedidos || []);
-      setClienteHistorico(pedidos.slice(0, 10)); // Últimos 10 pedidos
+      // Enriquecer items com fotos dos produtos
+      const pedidosComFotos = await Promise.all(pedidos.slice(0, 10).map(async (pedido) => {
+        if (pedido.items && pedido.items.length > 0) {
+          const itemsComFoto = await Promise.all(pedido.items.map(async (item) => {
+            // Se já tem foto, retorna o item
+            if (item.foto_url || item.photo_url) return item;
+            // Senão, busca o produto para pegar a foto
+            try {
+              const prodRes = await axios.get(`${API}/products/${item.id}`, getAuthHeader());
+              return { ...item, photo_url: prodRes.data.photo_url };
+            } catch {
+              return item;
+            }
+          }));
+          return { ...pedido, items: itemsComFoto };
+        }
+        return pedido;
+      }));
+      setClienteHistorico(pedidosComFotos);
     } catch (error) {
       console.error("Erro ao carregar histórico:", error);
       setClienteHistorico([]);
     } finally {
       setLoadingHistorico(false);
+    }
+  };
+
+  // Buscar endereços salvos do cliente (da tabela client_addresses)
+  const fetchClienteEnderecos = async (clienteId) => {
+    try {
+      const res = await axios.get(`${API}/client-addresses/${clienteId}`, getAuthHeader());
+      const enderecos = Array.isArray(res.data) ? res.data : [];
+      // Converter para formato usado no componente
+      const enderecosMapeados = enderecos.map(end => ({
+        id: end.id,
+        label: end.label || 'Endereço',
+        rua: end.endereco || '',
+        numero: end.numero || '',
+        bairro: end.bairro || '',
+        complemento: end.complemento || '',
+        referencia: '',
+        cep: end.cep || ''
+      }));
+      setEnderecosSalvos(enderecosMapeados);
+    } catch (error) {
+      console.error("Erro ao carregar endereços:", error);
+      setEnderecosSalvos([]);
     }
   };
 
@@ -1281,24 +1322,8 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
     // Carregar histórico
     fetchClienteHistorico(cliente.id);
     
-    // Extrair endereços salvos do cliente e dos pedidos anteriores
-    const enderecos = [];
-    
-    // Endereço principal do cliente
-    if (cliente.endereco || cliente.endereco_rua) {
-      enderecos.push({
-        id: 'principal',
-        label: 'Endereço Principal',
-        rua: cliente.endereco_rua || cliente.endereco || '',
-        numero: cliente.endereco_numero || '',
-        bairro: cliente.bairro || '',
-        complemento: cliente.complemento || '',
-        referencia: cliente.referencia || '',
-        cep: cliente.cep || ''
-      });
-    }
-    
-    setEnderecosSalvos(enderecos);
+    // Carregar endereços salvos da tabela client_addresses
+    fetchClienteEnderecos(cliente.id);
   };
 
   // Selecionar endereço salvo
