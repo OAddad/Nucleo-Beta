@@ -32332,3 +32332,5 @@
 2026-01-13T17:10:56.913657+00:00 | DB_CALL get_all_settings | P3 | 0.17ms | success
 2026-01-13T17:10:56.914592+00:00 | DB_CALL get_all_categories | P3 | 0.14ms | success
 2026-01-13T17:10:56.918609+00:00 | DB_CALL get_all_business_hours | P3 | 0.17ms | success
+2026-01-13T17:11:32.229597+00:00 | DB_CALL get_user_by_username | P3 | 0.35ms | success
+2026-01-13T17:11:33.992100+00:00 | DB_CALL get_user_by_username | P3 | 0.27ms | success
