@@ -1547,6 +1547,375 @@ class CMVMasterAPITester:
         
         return all_tests_passed
 
+    def test_order_steps_combo_system(self):
+        """Test Order Steps system focusing on combo_only field and new Product fields"""
+        print("\n=== ORDER STEPS COMBO SYSTEM TESTS ===")
+        print("🎯 Testing Order Steps system as specified in review request:")
+        print("   1. Verificar modelo OrderStep tem campo combo_only")
+        print("   2. Verificar modelo Product tem novos campos para combo")
+        print("   3. Criar produto tipo combo com etapas")
+        print("   4. Verificar se o produto foi criado corretamente")
+        print("   Credenciais: Addad/Addad123")
+        print("   Backend URL: http://localhost:8001")
+        
+        all_tests_passed = True
+        created_product_id = None
+        
+        # First, authenticate with Addad user as specified
+        print("\n🔍 Authenticating with Addad user...")
+        success, login_response = self.run_test(
+            "Login with Addad user for Order Steps tests",
+            "POST",
+            "auth/login",
+            200,
+            data={"username": "Addad", "password": "Addad123"}
+        )
+        
+        if success and 'access_token' in login_response:
+            self.token = login_response['access_token']
+            self.user_id = login_response['user']['id']
+            print(f"   ✅ Addad login successful")
+            print(f"   - User role: {login_response['user']['role']}")
+        else:
+            print(f"   ❌ Addad login failed - trying fallback authentication...")
+            # Try other authentication methods as fallback
+            fallback_users = [
+                ("admin", "admin"),
+                ("teste_admin", "senha123"),
+                ("proprietario", "senha123")
+            ]
+            
+            auth_success = False
+            for username, password in fallback_users:
+                success, response = self.run_test(
+                    f"Fallback login with {username}",
+                    "POST",
+                    "auth/login",
+                    200,
+                    data={"username": username, "password": password}
+                )
+                
+                if success and 'access_token' in response:
+                    self.token = response['access_token']
+                    self.user_id = response['user']['id']
+                    print(f"   ✅ Fallback authentication successful with {username}")
+                    auth_success = True
+                    break
+            
+            if not auth_success:
+                print(f"   ❌ No valid authentication found - cannot proceed with Order Steps tests")
+                return False
+        
+        # TEST 1: Verificar modelo OrderStep tem campo combo_only
+        print(f"\n🔍 TEST 1: Verificar modelo OrderStep tem campo combo_only")
+        print(f"   GET /api/products - Verificar se produtos retornados possuem order_steps com campo combo_only")
+        
+        success, products = self.run_test(
+            "Get all products to check OrderStep model",
+            "GET",
+            "products",
+            200
+        )
+        
+        if success:
+            print(f"   ✅ Found {len(products)} products")
+            
+            # Check if any products have order_steps with combo_only field
+            products_with_order_steps = []
+            combo_only_field_found = False
+            
+            for product in products:
+                order_steps = product.get('order_steps', [])
+                if order_steps:
+                    products_with_order_steps.append(product)
+                    print(f"      - Product '{product['name']}' has {len(order_steps)} order steps")
+                    
+                    # Check each step for combo_only field
+                    for i, step in enumerate(order_steps):
+                        if 'combo_only' in step:
+                            combo_only_field_found = True
+                            combo_only_value = step['combo_only']
+                            print(f"         Step {i+1}: '{step.get('name', 'N/A')}' - combo_only: {combo_only_value} (type: {type(combo_only_value).__name__})")
+                        else:
+                            print(f"         Step {i+1}: '{step.get('name', 'N/A')}' - combo_only field MISSING")
+            
+            if combo_only_field_found:
+                print(f"   ✅ TEST 1 PASSED: combo_only field found in OrderStep model")
+            else:
+                if products_with_order_steps:
+                    print(f"   ❌ TEST 1 FAILED: combo_only field NOT found in existing order steps")
+                    all_tests_passed = False
+                else:
+                    print(f"   ⚠️ TEST 1 INCONCLUSIVE: No products with order_steps found to verify combo_only field")
+                    print(f"      Will verify after creating test product...")
+        else:
+            print(f"   ❌ TEST 1 FAILED: Could not retrieve products")
+            all_tests_passed = False
+        
+        # TEST 2: Verificar modelo Product tem novos campos para combo
+        print(f"\n🔍 TEST 2: Verificar modelo Product tem novos campos para combo")
+        print(f"   Verificar se produtos possuem: simple_price, simple_description, combo_description, simple_photo_url, combo_photo_url")
+        
+        if success and products:
+            combo_fields = ['simple_price', 'simple_description', 'combo_description', 'simple_photo_url', 'combo_photo_url']
+            combo_fields_found = {field: False for field in combo_fields}
+            
+            for product in products:
+                for field in combo_fields:
+                    if field in product:
+                        combo_fields_found[field] = True
+                        value = product[field]
+                        print(f"      - Product '{product['name']}' has {field}: {value}")
+            
+            # Check results
+            all_combo_fields_found = all(combo_fields_found.values())
+            missing_fields = [field for field, found in combo_fields_found.items() if not found]
+            
+            if all_combo_fields_found:
+                print(f"   ✅ TEST 2 PASSED: All combo fields found in Product model")
+            else:
+                print(f"   ⚠️ TEST 2 PARTIAL: Missing combo fields: {missing_fields}")
+                print(f"      Will verify after creating test product...")
+        else:
+            print(f"   ❌ TEST 2 FAILED: Could not check Product model fields")
+            all_tests_passed = False
+        
+        # TEST 3: Criar produto tipo combo com etapas
+        print(f"\n🔍 TEST 3: Criar produto tipo combo com etapas")
+        print(f"   Criar produto com product_type: 'combo', etapas com combo_only: true/false")
+        
+        # First, get some existing products to use as items in order steps
+        existing_products = products if success else []
+        if len(existing_products) < 2:
+            print(f"   ⚠️ Need at least 2 existing products for order step items, found {len(existing_products)}")
+            # Create minimal products for testing if needed
+            if not existing_products:
+                print(f"   Creating minimal products for order step testing...")
+                
+                # Create a simple beverage product
+                beverage_data = {
+                    "name": "Coca-Cola 350ml",
+                    "category": "Bebidas",
+                    "product_type": "produto",
+                    "sale_price": 5.00,
+                    "recipe": []
+                }
+                
+                success_bev, beverage_product = self.run_test(
+                    "Create beverage product for order steps",
+                    "POST",
+                    "products",
+                    200,
+                    data=beverage_data
+                )
+                
+                if success_bev:
+                    existing_products.append(beverage_product)
+                    self.created_products.append(beverage_product['id'])
+                    print(f"      ✅ Created beverage product: {beverage_product['name']}")
+                
+                # Create a simple side product
+                side_data = {
+                    "name": "Batata Frita",
+                    "category": "Acompanhamentos",
+                    "product_type": "produto", 
+                    "sale_price": 8.00,
+                    "recipe": []
+                }
+                
+                success_side, side_product = self.run_test(
+                    "Create side product for order steps",
+                    "POST",
+                    "products",
+                    200,
+                    data=side_data
+                )
+                
+                if success_side:
+                    existing_products.append(side_product)
+                    self.created_products.append(side_product['id'])
+                    print(f"      ✅ Created side product: {side_product['name']}")
+        
+        if len(existing_products) >= 2:
+            # Create combo product with order steps as specified
+            combo_product_data = {
+                "name": "X-Burger Combo",
+                "category": "Sanduíches",
+                "product_type": "combo",
+                "sale_price": 29.90,  # Preço combo
+                "simple_price": 19.90,  # Preço simples
+                "combo_description": "+ Batata + Refrigerante",
+                "simple_description": "Apenas o sanduíche",
+                "simple_photo_url": "https://example.com/xburger-simple.jpg",
+                "combo_photo_url": "https://example.com/xburger-combo.jpg",
+                "recipe": [],
+                "order_steps": [
+                    {
+                        "name": "Escolha sua Bebida",
+                        "calculation_type": "soma",
+                        "min_selections": 1,
+                        "max_selections": 1,
+                        "combo_only": True,  # Esta etapa só aparece para combo
+                        "items": [
+                            {
+                                "product_id": existing_products[0]['id'],
+                                "product_name": existing_products[0]['name'],
+                                "price_override": 0.0  # Incluído no combo
+                            }
+                        ]
+                    },
+                    {
+                        "name": "Adicionais",
+                        "calculation_type": "soma",
+                        "min_selections": 0,
+                        "max_selections": 5,
+                        "combo_only": False,  # Esta etapa aparece para combo e simples
+                        "items": [
+                            {
+                                "product_id": existing_products[1]['id'] if len(existing_products) > 1 else existing_products[0]['id'],
+                                "product_name": existing_products[1]['name'] if len(existing_products) > 1 else existing_products[0]['name'],
+                                "price_override": 3.00  # Adicional pago
+                            }
+                        ]
+                    }
+                ]
+            }
+            
+            success, combo_product = self.run_test(
+                "Create combo product with order steps",
+                "POST",
+                "products",
+                200,
+                data=combo_product_data
+            )
+            
+            if success:
+                created_product_id = combo_product['id']
+                self.created_products.append(created_product_id)
+                print(f"   ✅ Created combo product: {combo_product['name']}")
+                print(f"      - ID: {created_product_id}")
+                print(f"      - Product Type: {combo_product.get('product_type', 'N/A')}")
+                print(f"      - Sale Price (combo): R$ {combo_product.get('sale_price', 0):.2f}")
+                print(f"      - Simple Price: R$ {combo_product.get('simple_price', 0):.2f}")
+                print(f"      - Combo Description: {combo_product.get('combo_description', 'N/A')}")
+                print(f"      - Simple Description: {combo_product.get('simple_description', 'N/A')}")
+                print(f"      - Order Steps: {len(combo_product.get('order_steps', []))}")
+                
+                # Verify order steps structure
+                order_steps = combo_product.get('order_steps', [])
+                for i, step in enumerate(order_steps):
+                    combo_only = step.get('combo_only', 'MISSING')
+                    print(f"         Step {i+1}: '{step.get('name', 'N/A')}' - combo_only: {combo_only}")
+                    print(f"            - min_selections: {step.get('min_selections', 0)}")
+                    print(f"            - max_selections: {step.get('max_selections', 0)}")
+                    print(f"            - items: {len(step.get('items', []))}")
+                
+                print(f"   ✅ TEST 3 PASSED: Combo product created successfully with order steps")
+            else:
+                print(f"   ❌ TEST 3 FAILED: Failed to create combo product")
+                all_tests_passed = False
+        else:
+            print(f"   ❌ TEST 3 FAILED: Not enough existing products to create order steps")
+            all_tests_passed = False
+        
+        # TEST 4: Verificar se o produto foi criado corretamente
+        print(f"\n🔍 TEST 4: Verificar se o produto foi criado corretamente")
+        print(f"   GET /api/products - Verificar se produto criado possui todos os campos")
+        
+        success, updated_products = self.run_test(
+            "Get products to verify created combo product",
+            "GET",
+            "products",
+            200
+        )
+        
+        if success and created_product_id:
+            # Find the created product
+            created_product = None
+            for product in updated_products:
+                if product['id'] == created_product_id:
+                    created_product = product
+                    break
+            
+            if created_product:
+                print(f"   ✅ Found created product: {created_product['name']}")
+                
+                # Verify all required fields
+                required_fields = {
+                    'product_type': 'combo',
+                    'sale_price': 29.90,
+                    'simple_price': 19.90,
+                    'combo_description': '+ Batata + Refrigerante',
+                    'simple_description': 'Apenas o sanduíche'
+                }
+                
+                field_verification = {}
+                for field, expected_value in required_fields.items():
+                    actual_value = created_product.get(field)
+                    field_verification[field] = actual_value == expected_value
+                    
+                    if field_verification[field]:
+                        print(f"      ✅ {field}: {actual_value} (correct)")
+                    else:
+                        print(f"      ❌ {field}: {actual_value} (expected: {expected_value})")
+                
+                # Verify order steps structure
+                order_steps = created_product.get('order_steps', [])
+                print(f"      - Order Steps: {len(order_steps)}")
+                
+                combo_only_verified = True
+                if len(order_steps) >= 2:
+                    # Check first step (should have combo_only: true)
+                    step1 = order_steps[0]
+                    step1_combo_only = step1.get('combo_only')
+                    if step1_combo_only is True:
+                        print(f"         ✅ Step 1 combo_only: {step1_combo_only} (correct)")
+                    else:
+                        print(f"         ❌ Step 1 combo_only: {step1_combo_only} (expected: True)")
+                        combo_only_verified = False
+                    
+                    # Check second step (should have combo_only: false)
+                    step2 = order_steps[1]
+                    step2_combo_only = step2.get('combo_only')
+                    if step2_combo_only is False:
+                        print(f"         ✅ Step 2 combo_only: {step2_combo_only} (correct)")
+                    else:
+                        print(f"         ❌ Step 2 combo_only: {step2_combo_only} (expected: False)")
+                        combo_only_verified = False
+                else:
+                    print(f"         ❌ Expected 2 order steps, found {len(order_steps)}")
+                    combo_only_verified = False
+                
+                # Final verification
+                all_fields_correct = all(field_verification.values()) and combo_only_verified
+                
+                if all_fields_correct:
+                    print(f"   ✅ TEST 4 PASSED: Product created correctly with all required fields")
+                else:
+                    print(f"   ❌ TEST 4 FAILED: Some fields are incorrect")
+                    all_tests_passed = False
+            else:
+                print(f"   ❌ TEST 4 FAILED: Created product not found in products list")
+                all_tests_passed = False
+        else:
+            print(f"   ❌ TEST 4 FAILED: Could not verify created product")
+            all_tests_passed = False
+        
+        # Summary
+        print(f"\n🔍 ORDER STEPS COMBO SYSTEM TESTING SUMMARY:")
+        if all_tests_passed:
+            print(f"   ✅ ALL ORDER STEPS TESTS PASSED")
+            print(f"   ✅ OrderStep model has combo_only field (boolean)")
+            print(f"   ✅ Product model has new combo fields (simple_price, simple_description, combo_description, etc.)")
+            print(f"   ✅ Combo product creation with order steps working")
+            print(f"   ✅ Order steps with combo_only: true/false working correctly")
+            print(f"   ✅ Sistema de Etapas de Pedido 100% operacional conforme especificações")
+        else:
+            print(f"   ❌ SOME ORDER STEPS TESTS FAILED")
+            print(f"   ℹ️ Check individual test results above for details")
+        
+        return all_tests_passed
+
     def test_order_status_templates(self):
         """Test Order Status Notification Templates endpoints as specified in review request"""
         print("\n=== ORDER STATUS TEMPLATES TESTS ===")
