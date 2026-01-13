@@ -2346,23 +2346,23 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
               
               <div className="flex gap-2">
                 {step > 1 && (
-                  <Button variant="outline" onClick={() => setStep(step - 1)} className="flex-1">
+                  <Button variant="outline" onClick={() => setStep(step === 3 ? 1 : step - 1)} className="flex-1">
                     Voltar
                   </Button>
                 )}
                 {step < 4 ? (
                   <Button 
-                    onClick={() => setStep(step + 1)} 
+                    onClick={() => setStep(step === 1 ? 3 : step + 1)} 
                     className="flex-1 bg-orange-500 hover:bg-orange-600"
-                    disabled={step === 1 && cart.length === 0}
+                    disabled={(step === 1 && cart.length === 0) || !selectedCliente}
                   >
-                    Continuar
+                    {!selectedCliente ? "Selecione um cliente" : "Continuar"}
                   </Button>
                 ) : (
                   <Button 
                     onClick={handleSubmit} 
                     className="flex-1 bg-green-600 hover:bg-green-700"
-                    disabled={submitting || !formaPagamento}
+                    disabled={submitting || !formaPagamento || !selectedCliente}
                   >
                     {submitting ? "Criando..." : "Criar Pedido"}
                   </Button>
