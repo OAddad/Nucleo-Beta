@@ -32144,3 +32144,9 @@
 2026-01-13T16:50:43.463350+00:00 | DB_CALL get_all_products | P3 | 2.55ms | success
 2026-01-13T16:50:43.497150+00:00 | DB_CALL get_all_categories | P3 | 0.28ms | success
 2026-01-13T16:50:43.663140+00:00 | DB_CALL get_all_bairros | P3 | 0.33ms | success
+2026-01-13T16:50:50.951640+00:00 | DB_CALL get_all_settings | P3 | 0.32ms | success
+2026-01-13T16:50:54.838671+00:00 | DB_CALL get_all_business_hours | P3 | 1.03ms | success
+2026-01-13T16:50:54.841519+00:00 | DB_CALL get_all_products | P3 | 1.37ms | success
+2026-01-13T16:50:54.843015+00:00 | DB_CALL get_all_settings | P3 | 2.55ms | success
+2026-01-13T16:50:54.843475+00:00 | DB_CALL get_all_categories | P3 | 2.91ms | success
+2026-01-13T16:50:55.061136+00:00 | DB_CALL get_all_bairros | P3 | 0.32ms | success

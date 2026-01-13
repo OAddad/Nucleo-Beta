@@ -265,6 +265,7 @@ export default function Dashboard({ setIsAuthenticated }) {
       { path: "/impulsione/promocoes", label: "Promoções", icon: Gift },
       { path: "/impulsione/cupons", label: "Cupons de Desconto", icon: Ticket },
       { path: "/impulsione/campanhas", label: "Campanhas", icon: Megaphone },
+      { path: "/impulsione/clube", label: "Clube", icon: Crown },
     ]
   };
 
