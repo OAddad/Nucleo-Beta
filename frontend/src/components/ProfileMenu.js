@@ -810,11 +810,10 @@ function MeusPedidosModal({ isOpen, onClose, client, darkMode }) {
 }
 
 // Componente Principal - Menu de Perfil
-export default function ProfileMenu({ client, onLogout, onClientUpdate, darkMode, onToggleTheme }) {
+export default function ProfileMenu({ client, onLogout, onClientUpdate, darkMode, onToggleTheme, onNavigateToPedidos }) {
   const [isOpen, setIsOpen] = useState(false);
   const [showPontuacao, setShowPontuacao] = useState(false);
   const [showEditAccount, setShowEditAccount] = useState(false);
-  const [showPedidos, setShowPedidos] = useState(false);
   const menuRef = useRef(null);
 
   // Fechar menu ao clicar fora
@@ -835,6 +834,13 @@ export default function ProfileMenu({ client, onLogout, onClientUpdate, darkMode
     onLogout();
     toast.success("Você saiu da sua conta");
     setIsOpen(false);
+  };
+
+  const handleNavigateToPedidos = () => {
+    setIsOpen(false);
+    if (onNavigateToPedidos) {
+      onNavigateToPedidos();
+    }
   };
 
   return (
