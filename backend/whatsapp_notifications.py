@@ -45,6 +45,100 @@ def format_phone(phone: str) -> str:
     return phone_clean
 
 
+def generate_order_summary(pedido: dict, settings: dict) -> str:
+    """
+    Gera um resumo completo do pedido para enviar ao cliente.
+    Diferencia entre ENTREGA e RETIRADA.
+    """
+    codigo = pedido.get('codigo') or pedido.get('numero_pedido') or f"#{pedido.get('id', '')[:5].upper()}"
+    tipo_entrega = pedido.get('tipo_entrega', 'delivery')
+    
+    # Formatar itens
+    items = pedido.get('items', [])
+    items_text = ""
+    for item in items:
+        nome = item.get('nome') or item.get('name', 'Item')
+        qtd = item.get('quantidade') or item.get('qty', 1)
+        preco = item.get('preco') or item.get('price', 0)
+        total_item = qtd * preco
+        items_text += f"```{qtd}x {nome}``` R$ {total_item:.2f}\n"
+    
+    # Forma de pagamento
+    forma_pagamento = pedido.get('forma_pagamento', 'Não informado')
+    forma_pagamento_map = {
+        'dinheiro': '💵 Dinheiro',
+        'pix': '📱 PIX',
+        'cartao_credito': '💳 Cartão de Crédito',
+        'cartao_debito': '💳 Cartão de Débito',
+        'cartao': '💳 Cartão'
+    }
+    forma_pagamento_texto = forma_pagamento_map.get(forma_pagamento, forma_pagamento.title())
+    
+    # Troco
+    troco_texto = ""
+    if forma_pagamento == 'dinheiro':
+        troco_precisa = pedido.get('troco_precisa', False)
+        troco_valor = pedido.get('troco_valor')
+        if troco_precisa and troco_valor:
+            total = pedido.get('total', 0)
+            troco_levar = troco_valor - total
+            troco_texto = f"\nTroco para: R$ {troco_valor:.2f}\nTroco a levar: R$ {troco_levar:.2f}"
+    
+    # Total e frete
+    total = pedido.get('total', 0)
+    valor_entrega = pedido.get('valor_entrega', 0)
+    subtotal = total - valor_entrega
+    
+    if tipo_entrega == 'delivery':
+        # ENTREGA
+        endereco_rua = pedido.get('endereco_rua', '')
+        endereco_numero = pedido.get('endereco_numero', '')
+        endereco_bairro = pedido.get('endereco_bairro', '')
+        endereco_complemento = pedido.get('endereco_complemento', '')
+        
+        endereco_completo = endereco_rua
+        if endereco_numero:
+            endereco_completo += f", {endereco_numero}"
+        if endereco_bairro:
+            endereco_completo += f" - {endereco_bairro}"
+        if endereco_complemento:
+            endereco_completo += f" ({endereco_complemento})"
+        
+        message = f"""🛵 *ENTREGA*
+Pedido: *{codigo}*
+
+{items_text}
+📍 *Endereço para entrega:*
+{endereco_completo}
+
+💰 *Forma de pagamento:*
+{forma_pagamento_texto}{troco_texto}
+
+Frete: R$ {valor_entrega:.2f}
+*Total: R$ {total:.2f}*
+
+✅ Seu pedido foi recebido e está sendo preparado!"""
+    else:
+        # RETIRADA
+        endereco_estabelecimento = settings.get('company_address', 'nosso estabelecimento')
+        
+        message = f"""🏪 *RETIRADA*
+Pedido: *{codigo}*
+
+{items_text}
+📍 *Pedido para Retirada no estabelecimento:*
+{endereco_estabelecimento}
+
+💰 *Forma de pagamento:*
+{forma_pagamento_texto}{troco_texto}
+
+*Total: R$ {total:.2f}*
+
+✅ Seu pedido foi recebido e está sendo preparado!"""
+    
+    return message
+
+
 def get_order_message_from_templates(tipo_entrega: str, status: str, variables: dict) -> Optional[str]:
     """Busca a mensagem do banco de dados e aplica as variáveis"""
     return db.get_order_message_for_status(tipo_entrega, status, variables)
