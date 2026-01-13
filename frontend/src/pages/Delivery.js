@@ -1798,11 +1798,7 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
                         <div
                           key={cliente.id}
                           className="p-3 hover:bg-muted cursor-pointer flex justify-between"
-                          onClick={() => {
-                            setSelectedCliente(cliente);
-                            setClienteSearch("");
-                            setShowClienteDropdown(false);
-                          }}
+                          onClick={() => handleSelectCliente(cliente)}
                         >
                           <span className="font-medium">{cliente.nome}</span>
                           <span className="text-muted-foreground">{cliente.telefone}</span>
