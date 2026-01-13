@@ -31998,3 +31998,6 @@
 2026-01-13T16:30:52.993574+00:00 | DB_CALL increment_whatsapp_stat | P3 | 3.81ms | success
 2026-01-13T16:30:53.495223+00:00 | DB_CALL increment_whatsapp_stat | P3 | 2.76ms | success
 2026-01-13T16:30:54.512297+00:00 | DB_CALL increment_whatsapp_stat | P3 | 2.66ms | success
+2026-01-13T16:31:21.880765+00:00 | DB_CALL get_all_settings | P3 | 0.36ms | success
+2026-01-13T16:31:21.884150+00:00 | DB_CALL get_all_pedidos | P3 | 1.88ms | success
+2026-01-13T16:31:21.885946+00:00 | DB_CALL get_all_entregadores | P3 | 2.97ms | success
