@@ -593,7 +593,7 @@ function ClubeAddadTab({ loggedClient, onLogin, onClientUpdate, darkMode, t, clu
           <div className="w-20 h-20 bg-gradient-to-br from-orange-500 to-orange-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
             <Crown className="w-10 h-10 text-white" />
           </div>
-          <h2 className={`text-xl font-bold ${t.text} mb-1`}>Bem-vindo ao {clubeConfig.clube_nome}!</h2>
+          <h2 className={`text-xl font-bold ${t.text} mb-1`}>Bem-vindo ao Clube {clubeConfig.clube_nome}!</h2>
           <p className={`${t.textMuted} text-sm`}>{loggedClient.nome}</p>
         </div>
 
