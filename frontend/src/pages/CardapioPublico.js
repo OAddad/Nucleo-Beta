@@ -682,21 +682,20 @@ function ClubeAddadTab({ loggedClient, onLogin, onClientUpdate, darkMode, t }) {
           LEIA MAIS
         </button>
         
-        <div className="flex gap-3 w-full max-w-xs">
+        <div className="flex items-center justify-center gap-6 w-full max-w-xs">
+          <button 
+            onClick={() => handleWhatsappResponse(false)} 
+            disabled={loading}
+            className="text-red-500 underline text-sm font-medium hover:text-red-600"
+          >
+            Não
+          </button>
           <Button 
             onClick={() => handleWhatsappResponse(true)} 
             disabled={loading}
             className="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold h-12"
           >
             {loading ? '...' : 'SIM'}
-          </Button>
-          <Button 
-            onClick={() => handleWhatsappResponse(false)} 
-            disabled={loading}
-            variant="outline"
-            className="px-6 border-red-400 text-red-500 hover:bg-red-50 h-12"
-          >
-            não
           </Button>
         </div>
       </div>
