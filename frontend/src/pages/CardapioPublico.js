@@ -574,7 +574,7 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode }) {
                   </div>
                   <div>
                     <p className={`font-bold ${t.text}`}>COMBO</p>
-                    <p className={`text-xs ${t.textMuted}`}>{product.name} + Batata + Refrigerante</p>
+                    <p className={`text-xs ${t.textMuted}`}>{product.name} {product.combo_description || '+ Batata + Refrigerante'}</p>
                   </div>
                 </div>
                 <p className="text-lg font-bold text-orange-500">
