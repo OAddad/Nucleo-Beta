@@ -34218,3 +34218,8 @@
 2026-01-14T12:15:55.817632+00:00 | DB_CALL get_user_by_id | P3 | 0.39ms | success
 2026-01-14T12:15:55.818480+00:00 | DB_CALL get_all_products | P3 | 1.73ms | success
 2026-01-14T12:15:55.819910+00:00 | DB_CALL get_all_categories | P3 | 2.06ms | success
+2026-01-14T12:16:08.980802+00:00 | DB_CALL get_all_bairros | P3 | 0.37ms | success
+2026-01-14T12:16:08.989170+00:00 | DB_CALL get_all_business_hours | P3 | 3.0ms | success
+2026-01-14T12:16:08.989695+00:00 | DB_CALL get_all_settings | P3 | 3.21ms | success
+2026-01-14T12:16:08.989972+00:00 | DB_CALL get_all_categories | P3 | 3.09ms | success
+2026-01-14T12:16:08.990882+00:00 | DB_CALL get_all_products | P3 | 1.2ms | success
