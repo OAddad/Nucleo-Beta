@@ -1984,7 +1984,7 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
         selections.forEach(productId => {
           const item = step.items.find(i => i.product_id === productId);
           if (item) {
-            const itemPrice = getItemPrice(item);
+            const itemPrice = getItemPrice(item, step);
             if (itemPrice > 0) {
               basePrice += itemPrice;
             }
