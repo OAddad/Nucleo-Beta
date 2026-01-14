@@ -94,6 +94,33 @@ export default function Delivery() {
     mensagem_rodape: "Obrigado pela preferência!",
   });
   const [empresaConfig, setEmpresaConfig] = useState({});
+  const [impressoras, setImpressoras] = useState([]);
+  const [errosImpressao, setErrosImpressao] = useState({}); // { pedidoId: true }
+
+  // Listener para erros de impressão
+  useEffect(() => {
+    const handlePrintError = (event) => {
+      const { pedidoId } = event.detail;
+      setErrosImpressao(prev => ({ ...prev, [pedidoId]: true }));
+    };
+    
+    const handlePrintSuccess = (event) => {
+      const { pedidoId } = event.detail;
+      setErrosImpressao(prev => {
+        const novo = { ...prev };
+        delete novo[pedidoId];
+        return novo;
+      });
+    };
+    
+    window.addEventListener('printError', handlePrintError);
+    window.addEventListener('printSuccess', handlePrintSuccess);
+    
+    return () => {
+      window.removeEventListener('printError', handlePrintError);
+      window.removeEventListener('printSuccess', handlePrintSuccess);
+    };
+  }, []);
 
   // Carregar dados
   const fetchData = useCallback(async () => {
