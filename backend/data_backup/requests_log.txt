@@ -37530,3 +37530,6 @@
 2026-01-14T16:33:21.053491+00:00 | DB_CALL get_all_settings | P3 | 2.33ms | success
 2026-01-14T16:33:21.054997+00:00 | DB_CALL get_all_pedidos | P3 | 3.69ms | success
 2026-01-14T16:33:21.056828+00:00 | DB_CALL get_all_entregadores | P3 | 3.73ms | success
+2026-01-14T16:34:21.136353+00:00 | DB_CALL get_all_entregadores | P3 | 1.66ms | success
+2026-01-14T16:34:21.136997+00:00 | DB_CALL get_all_settings | P3 | 1.79ms | success
+2026-01-14T16:34:21.138414+00:00 | DB_CALL get_all_pedidos | P3 | 2.4ms | success
