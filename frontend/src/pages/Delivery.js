@@ -25,7 +25,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../components/ui/select";
-import { printPedido, addToPrintQueue } from "./Sistema";
+import { printPedido, addToPrintQueue, printViaUSB } from "./Sistema";
 
 const API = '/api';
 
