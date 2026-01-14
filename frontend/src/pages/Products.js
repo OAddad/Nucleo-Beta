@@ -2469,8 +2469,6 @@ export default function Products() {
             </div>
           </div>
         )}
-          </div>
-        )}
 
         <div className="space-y-3">
           {products.length === 0 ? (
