@@ -39151,3 +39151,6 @@
 2026-01-14T23:03:00.222397+00:00 | DB_CALL get_all_settings | P3 | 0.3ms | success
 2026-01-14T23:03:00.225215+00:00 | DB_CALL get_all_pedidos | P3 | 1.41ms | success
 2026-01-14T23:03:00.227461+00:00 | DB_CALL get_all_entregadores | P3 | 0.19ms | success
+2026-01-14T23:03:05.223938+00:00 | DB_CALL get_all_pedidos | P3 | 1.38ms | success
+2026-01-14T23:03:05.229471+00:00 | DB_CALL get_all_settings | P3 | 1.7ms | success
+2026-01-14T23:03:05.230277+00:00 | DB_CALL get_all_entregadores | P3 | 2.09ms | success
