@@ -36752,3 +36752,7 @@
 2026-01-14T14:32:41.981522+00:00 | DB_CALL get_all_settings | P3 | 0.69ms | success
 2026-01-14T14:32:41.981877+00:00 | DB_CALL get_all_entregadores | P3 | 0.56ms | success
 2026-01-14T14:32:42.323094+00:00 | DB_CALL get_all_settings | P3 | 0.26ms | success
+2026-01-14T14:32:46.977697+00:00 | DB_CALL get_all_settings | P3 | 0.28ms | success
+2026-01-14T14:32:46.980148+00:00 | DB_CALL get_all_pedidos | P3 | 1.25ms | success
+2026-01-14T14:32:46.982358+00:00 | DB_CALL get_all_entregadores | P3 | 0.16ms | success
+2026-01-14T14:32:49.418090+00:00 | DB_CALL set_setting | P3 | 10.55ms | success
