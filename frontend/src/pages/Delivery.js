@@ -6,8 +6,12 @@ import {
   Plus, Minus, Check, Clock, ChefHat, Package, Truck, User, Phone, MapPin,
   ArrowLeft, X, RefreshCw, ToggleLeft, ToggleRight, Bike, ShoppingBag,
   Store, CreditCard, DollarSign, Banknote, Eye, FileText, MessageSquare,
-  Navigation, Calendar, Hash, XCircle, AlertTriangle, Printer, AlertCircle
+  Navigation, Calendar, Hash, XCircle, AlertTriangle, Printer, AlertCircle,
+  Volume2, VolumeX
 } from "lucide-react";
+
+// URL do som de notificação de novo pedido
+const NOTIFICATION_SOUND_URL = "https://customer-assets.emergentagent.com/job_259a1d0e-c2fd-4929-b21c-4e3961988d15/artifacts/e4sh27oo_Notifica%C3%A7%C3%A3o%20Pedido%20.mp3";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
