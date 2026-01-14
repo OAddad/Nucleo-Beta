@@ -36788,3 +36788,6 @@
 2026-01-14T14:33:26.209928+00:00 | DB_CALL get_all_settings | P3 | 0.27ms | success
 2026-01-14T14:33:26.337238+00:00 | DB_CALL get_all_settings | P3 | 3.09ms | success
 2026-01-14T14:33:35.694341+00:00 | DB_CALL get_all_products | P3 | 4.69ms | success
+2026-01-14T14:33:48.953706+00:00 | DB_CALL get_all_pedidos | P3 | 1.74ms | success
+2026-01-14T14:33:48.955589+00:00 | DB_CALL get_all_settings | P3 | 3.4ms | success
+2026-01-14T14:33:48.956449+00:00 | DB_CALL get_all_entregadores | P3 | 0.21ms | success
