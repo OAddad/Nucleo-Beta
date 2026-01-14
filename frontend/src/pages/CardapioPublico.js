@@ -1079,7 +1079,7 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode, allProduc
               onClick={() => setQuantity(Math.max(1, quantity - 1))}
               disabled={quantity <= 1}
             >
-              <Minus className="w-4 h-4" />
+              <Minus className={`w-4 h-4 ${t.text}`} />
             </button>
             <span className={`w-8 text-center font-bold ${t.text}`}>{quantity}</span>
             <button
