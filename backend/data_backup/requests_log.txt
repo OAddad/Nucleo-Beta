@@ -37087,3 +37087,10 @@
 2026-01-14T14:41:57.994921+00:00 | DB_CALL get_all_entregadores | P3 | 0.78ms | success
 2026-01-14T14:41:57.995291+00:00 | DB_CALL get_all_settings | P3 | 0.56ms | success
 2026-01-14T14:43:41.447483+00:00 | DB_CALL get_all_products | P3 | 4.89ms | success
+2026-01-14T14:43:58.213463+00:00 | DB_CALL get_all_settings | P3 | 0.27ms | success
+2026-01-14T14:43:59.044447+00:00 | DB_CALL get_all_settings | P3 | 0.32ms | success
+2026-01-14T14:43:59.806046+00:00 | DB_CALL get_all_settings | P3 | 0.26ms | success
+2026-01-14T14:44:00.147593+00:00 | DB_CALL get_all_settings | P3 | 0.28ms | success
+2026-01-14T14:44:01.579160+00:00 | DB_CALL get_all_settings | P3 | 0.46ms | success
+2026-01-14T14:44:02.684192+00:00 | DB_CALL get_all_settings | P3 | 0.35ms | success
+2026-01-14T14:44:05.466648+00:00 | DB_CALL get_all_products | P3 | 30.64ms | success

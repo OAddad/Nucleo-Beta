@@ -1437,6 +1437,7 @@ function FilaImpressao({ toast }) {
     
     window.addEventListener('addPrintQueue', handleAddQueue);
     return () => window.removeEventListener('addPrintQueue', handleAddQueue);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchImpressoras = async () => {
