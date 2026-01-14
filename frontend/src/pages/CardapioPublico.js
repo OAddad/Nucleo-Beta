@@ -663,8 +663,8 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode, allProduc
                 onClick={() => handleSelectComboType('combo')}
                 className={`w-[65%] flex-shrink-0 rounded-2xl border-2 transition-all text-left overflow-hidden flex flex-col relative ${
                   selectedComboType === 'combo' 
-                    ? 'border-orange-500 bg-orange-50 dark:bg-orange-500/10' 
-                    : `${t.border} ${t.bgCard} hover:border-orange-300`
+                    ? `${t.selectedBorder} ${t.selectedBg}` 
+                    : `${t.border} ${darkMode ? 'bg-zinc-800' : 'bg-white'} ${t.hoverBorder}`
                 }`}
               >
                 {/* Badge Recomendado - Melhorado */}
@@ -675,7 +675,7 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode, allProduc
                 </div>
                 
                 {/* Imagem do Combo */}
-                <div className="w-full aspect-square bg-gradient-to-b from-orange-100 to-orange-200 dark:from-zinc-700 dark:to-zinc-600 pt-8">
+                <div className={`w-full aspect-square pt-8 ${darkMode ? 'bg-gradient-to-b from-zinc-700 to-zinc-800' : 'bg-gradient-to-b from-orange-100 to-orange-200'}`}>
                   {(product.combo_photo_url || product.photo_url) && !imageError ? (
                     <img
                       src={getImageUrl(product.combo_photo_url || product.photo_url)}
@@ -711,7 +711,7 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode, allProduc
               className={`w-full h-12 rounded-full font-bold text-white flex items-center justify-center gap-2 transition-all ${
                 canAdvanceStep() 
                   ? 'bg-orange-500 hover:bg-orange-600' 
-                  : 'bg-gray-300 dark:bg-zinc-600 cursor-not-allowed'
+                  : `${darkMode ? 'bg-zinc-600' : 'bg-gray-300'} cursor-not-allowed`
               }`}
             >
               {/* Se tem etapas relevantes para o tipo selecionado, mostra "PRÓXIMA ETAPA" */}

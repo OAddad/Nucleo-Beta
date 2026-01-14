@@ -35909,3 +35909,4 @@
 2026-01-14T14:18:58.068238+00:00 | DB_CALL get_all_business_hours | P3 | 1.14ms | success
 2026-01-14T14:18:58.069677+00:00 | DB_CALL get_all_products | P3 | 1.01ms | success
 2026-01-14T14:18:58.071418+00:00 | DB_CALL get_all_settings | P3 | 0.2ms | success
+2026-01-14T14:19:04.109189+00:00 | DB_CALL get_all_products | P3 | 0.96ms | success
