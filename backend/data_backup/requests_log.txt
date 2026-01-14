@@ -39869,3 +39869,11 @@
 2026-01-14T23:31:32.667162+00:00 | DB_CALL get_all_products | P3 | 3.63ms | success
 2026-01-14T23:32:36.557392+00:00 | DB_CALL get_all_products | P3 | 3.59ms | success
 2026-01-14T23:32:37.403498+00:00 | DB_CALL get_all_products | P3 | 3.24ms | success
+2026-01-14T23:33:34.716730+00:00 | DB_CALL init_database | P3 | 4.85ms | success
+2026-01-14T23:33:34.718814+00:00 | DB_CALL count_ingredients | P3 | 0.27ms | success
+2026-01-14T23:33:34.719004+00:00 | DB_CALL count_products | P3 | 0.12ms | success
+2026-01-14T23:33:34.719156+00:00 | DB_CALL count_users | P3 | 0.1ms | success
+2026-01-14T23:33:38.245843+00:00 | DB_CALL init_database | P3 | 3.1ms | success
+2026-01-14T23:33:38.247080+00:00 | DB_CALL count_ingredients | P3 | 0.81ms | success
+2026-01-14T23:33:38.247410+00:00 | DB_CALL count_products | P3 | 0.22ms | success
+2026-01-14T23:33:38.247657+00:00 | DB_CALL count_users | P3 | 0.15ms | success
