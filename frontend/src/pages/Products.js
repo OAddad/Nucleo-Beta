@@ -2811,6 +2811,18 @@ export default function Products() {
                 </SelectContent>
               </Select>
 
+              {/* Ficha Técnica */}
+              <Select value={filterFichaTecnica} onValueChange={setFilterFichaTecnica}>
+                <SelectTrigger className="w-36 h-9 bg-white dark:bg-zinc-800">
+                  <SelectValue placeholder="📋 Ficha Técnica" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="todos">📋 Todas</SelectItem>
+                  <SelectItem value="com-ficha">✅ Com Ficha</SelectItem>
+                  <SelectItem value="sem-ficha">❌ Sem Ficha</SelectItem>
+                </SelectContent>
+              </Select>
+
               {/* Separador */}
               <div className="h-8 w-px bg-border hidden sm:block" />
 
@@ -2844,7 +2856,7 @@ export default function Products() {
               </div>
 
               {/* Limpar Filtros */}
-              {(filterPhoto !== "todos" || filterDescription !== "todos" || filterCategory !== "todos" || filterType !== "todos" || filterName || performanceFilter !== "todos") && (
+              {(filterPhoto !== "todos" || filterDescription !== "todos" || filterCategory !== "todos" || filterType !== "todos" || filterName || performanceFilter !== "todos" || filterFichaTecnica !== "todos") && (
                 <Button
                   variant="ghost"
                   size="sm"
@@ -2859,7 +2871,7 @@ export default function Products() {
 
             {/* Resumo dos Resultados */}
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2 text-sm">
+              <div className="flex items-center gap-2 text-sm flex-wrap">
                 <span className="text-muted-foreground">Mostrando</span>
                 <span className="font-bold text-primary">{sortedProducts.length}</span>
                 <span className="text-muted-foreground">de</span>
@@ -2867,7 +2879,7 @@ export default function Products() {
                 <span className="text-muted-foreground">produtos</span>
                 
                 {/* Tags de filtros ativos */}
-                {(filterName || filterType !== "todos" || filterCategory !== "todos") && (
+                {(filterName || filterType !== "todos" || filterCategory !== "todos" || filterFichaTecnica !== "todos") && (
                   <div className="flex items-center gap-1 ml-2">
                     {filterName && (
                       <span className="px-2 py-0.5 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-full text-xs">
