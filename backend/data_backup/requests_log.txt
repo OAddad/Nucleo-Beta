@@ -36702,3 +36702,11 @@
 2026-01-14T14:31:31.973930+00:00 | DB_CALL get_all_pedidos | P3 | 1.84ms | success
 2026-01-14T14:31:31.976780+00:00 | DB_CALL get_all_entregadores | P3 | 2.92ms | success
 2026-01-14T14:31:33.823649+00:00 | DB_CALL get_pedido_by_id | P3 | 0.29ms | success
+2026-01-14T14:31:36.977351+00:00 | DB_CALL get_all_pedidos | P3 | 2.08ms | success
+2026-01-14T14:31:36.979216+00:00 | DB_CALL get_all_entregadores | P3 | 3.31ms | success
+2026-01-14T14:31:39.136253+00:00 | DB_CALL get_pedido_by_id | P3 | 0.3ms | success
+2026-01-14T14:31:41.973810+00:00 | DB_CALL get_all_pedidos | P3 | 1.31ms | success
+2026-01-14T14:31:41.976154+00:00 | DB_CALL get_all_entregadores | P3 | 0.17ms | success
+2026-01-14T14:31:46.425186+00:00 | DB_CALL get_all_pedidos | P3 | 1.99ms | success
+2026-01-14T14:31:46.427445+00:00 | DB_CALL get_all_entregadores | P3 | 0.13ms | success
+2026-01-14T14:31:46.858543+00:00 | DB_CALL get_all_products | P3 | 3.25ms | success
