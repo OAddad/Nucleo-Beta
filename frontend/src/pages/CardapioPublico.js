@@ -2553,6 +2553,19 @@ export default function CardapioPublico({ onAdminLogin }) {
     fetchProducts();
     fetchCategories();
     fetchBusinessHours();
+    
+    // Recarregar produtos quando a janela voltar ao foco (para pegar atualizações)
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        fetchProducts();
+      }
+    };
+    
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
   }, []);
 
   const fetchProducts = async () => {
