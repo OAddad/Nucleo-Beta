@@ -1989,10 +1989,43 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
     return product?.photo_url || null;
   };
 
-  // Confirmar adição do popup
+  // Confirmar adição do popup (com suporte a combo)
   const confirmAddToCart = () => {
     if (selectedProduct) {
-      addToCart(selectedProduct, productQuantity, productObservation.trim());
+      const isCombo = selectedProduct.product_type === 'combo';
+      const finalPrice = isCombo || selectedProduct.order_steps?.length > 0 
+        ? calculateComboPrice() 
+        : (selectedProduct.sale_price || 0);
+      
+      // Construir subitems a partir das seleções
+      const subitems = [];
+      const relevantSteps = getRelevantSteps();
+      Object.entries(stepSelections).forEach(([stepIdx, selections]) => {
+        const step = relevantSteps[parseInt(stepIdx)];
+        if (step?.items) {
+          selections.forEach(productId => {
+            const item = step.items.find(i => i.product_id === productId);
+            if (item) {
+              subitems.push({
+                product_id: item.product_id,
+                nome: item.product_name,
+                name: item.product_name,
+                preco: item.price_override || 0,
+                step_name: step.name
+              });
+            }
+          });
+        }
+      });
+      
+      const productToAdd = {
+        ...selectedProduct,
+        sale_price: finalPrice,
+        combo_type: isCombo ? selectedComboType : null,
+        subitems: subitems.length > 0 ? subitems : undefined
+      };
+      
+      addToCart(productToAdd, productQuantity, productObservation.trim());
       closeProductPopup();
     }
   };
