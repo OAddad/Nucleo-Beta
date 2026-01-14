@@ -520,6 +520,10 @@ export default function Products() {
   const [filterName, setFilterName] = useState(""); // Filtro de busca por nome
   const [filterType, setFilterType] = useState("todos"); // todos, produto, combo, receita
   
+  // Estado para modal de copiar combo
+  const [copyComboOpen, setCopyComboOpen] = useState(false);
+  const [copyComboSearch, setCopyComboSearch] = useState("");
+  
   // Direção da ordenação (asc/desc) para campos com toggle
   const [sortDirection, setSortDirection] = useState({
     cmv: "desc",
