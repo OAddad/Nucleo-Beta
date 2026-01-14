@@ -242,14 +242,23 @@ export default function Delivery() {
     }
   };
 
-  // Imprimir pedido manualmente
-  const handlePrintPedido = (pedido, e) => {
+  // Imprimir pedido manualmente via Print Connector
+  const handlePrintPedido = async (pedido, e) => {
     if (e) e.stopPropagation();
-    // Encontrar impressora padrão
-    const impressoraPadrao = impressoras.find(i => i.padrao && i.ativa) || 
-                              impressoras.find(i => i.ativa);
-    addToPrintQueue(pedido, impressoraPadrao);
-    toast.success("Enviado para fila de impressão");
+    
+    // Tentar imprimir via Print Connector (preferido)
+    const result = await printViaPrintConnector(pedido, { template: 'caixa' });
+    
+    if (result.success) {
+      toast.success("Pedido enviado para impressão");
+    } else if (result.offline) {
+      // Print Connector offline - avisar usuário
+      toast.error("Print Connector offline. Instale o aplicativo em Sistema → Impressão");
+    } else if (result.no_printer) {
+      toast.error("Nenhuma impressora configurada no Print Connector");
+    } else {
+      toast.error(result.error || "Erro ao imprimir");
+    }
   };
 
   // Marcar como pronto
