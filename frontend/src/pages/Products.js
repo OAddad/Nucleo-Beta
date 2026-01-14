@@ -1691,19 +1691,30 @@ export default function Products() {
 
                   <div>
                     <Label htmlFor="productType">Tipo</Label>
-                    <Select 
-                      value={productType} 
-                      onValueChange={setProductType}
-                    >
-                      <SelectTrigger id="productType" className="h-11 mt-1">
-                        <SelectValue placeholder="Selecione o Tipo" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="produto">Produto</SelectItem>
-                        <SelectItem value="combo">Combo</SelectItem>
-                        <SelectItem value="receita">Receita</SelectItem>
-                      </SelectContent>
-                    </Select>
+                    {/* Se estiver editando um combo já salvo, travar o tipo */}
+                    {editMode && productType === "combo" ? (
+                      <div className="mt-1">
+                        <div className="h-11 px-3 flex items-center bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-700 rounded-md">
+                          <span className="text-orange-600 dark:text-orange-400 font-medium">🍟 Combo</span>
+                          <span className="ml-2 text-xs text-muted-foreground">(não pode ser alterado)</span>
+                        </div>
+                      </div>
+                    ) : (
+                      <Select 
+                        value={productType} 
+                        onValueChange={setProductType}
+                        disabled={editMode && productType === "combo"}
+                      >
+                        <SelectTrigger id="productType" className="h-11 mt-1">
+                          <SelectValue placeholder="Selecione o Tipo" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="produto">Produto</SelectItem>
+                          <SelectItem value="combo">Combo</SelectItem>
+                          <SelectItem value="receita">Receita</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    )}
                   </div>
                 </div>
 
