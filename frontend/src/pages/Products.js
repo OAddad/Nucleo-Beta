@@ -612,10 +612,6 @@ export default function Products() {
     }
     
     // Filtro de performance (dos indicadores)
-    if (filterType !== "todos") {
-      filtered = filtered.filter(p => p.product_type === filterType);
-    }
-    
     // Filtro de performance (dos indicadores)
     if (performanceFilter === "sem-foto") {
       filtered = filtered.filter(p => !p.photo_url || p.photo_url.trim() === "");
@@ -660,6 +656,41 @@ export default function Products() {
     setFilterCategory("todos");
     setFilterName("");
     setFilterType("todos");
+    setFilterFichaTecnica("todos");
+  };
+
+  // Função para salvar preço rapidamente
+  const saveQuickPrice = async (productId) => {
+    if (!tempPrice || isNaN(parseFloat(tempPrice))) {
+      setEditingPriceId(null);
+      setTempPrice("");
+      return;
+    }
+    
+    try {
+      const product = products.find(p => p.id === productId);
+      if (!product) return;
+      
+      const updatedData = {
+        ...product,
+        sale_price: parseFloat(tempPrice),
+        recipe: product.recipe || []
+      };
+      
+      await axios.put(`${API}/api/products/${productId}`, updatedData, getAuthHeader());
+      toast.success("Preço atualizado!");
+      fetchProducts();
+    } catch (error) {
+      toast.error("Erro ao atualizar preço");
+    }
+    
+    setEditingPriceId(null);
+    setTempPrice("");
+  };
+
+  // Função para expandir/minimizar produto (apenas um por vez)
+  const toggleProductExpand = (productId) => {
+    setExpandedProductId(prevId => prevId === productId ? null : productId);
   };
 
   // Função para copiar configurações de outro combo
