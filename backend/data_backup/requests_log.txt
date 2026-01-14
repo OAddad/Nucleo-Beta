@@ -38493,3 +38493,12 @@
 2026-01-14T22:46:17.146438+00:00 | DB_CALL register_whatsapp_client | P3 | 5.23ms | success
 2026-01-14T22:46:17.154442+00:00 | DB_CALL process_message_words | P3 | 5.48ms | success
 2026-01-14T22:46:18.354252+00:00 | DB_CALL increment_whatsapp_stat | P3 | 5.25ms | success
+2026-01-14T22:46:21.220865+00:00 | DB_CALL get_all_entregadores | P3 | 0.4ms | success
+2026-01-14T22:46:21.223091+00:00 | DB_CALL get_all_settings | P3 | 1.22ms | success
+2026-01-14T22:46:21.224555+00:00 | DB_CALL get_all_pedidos | P3 | 2.04ms | success
+2026-01-14T22:46:21.226430+00:00 | DB_CALL get_pedido_by_id | P3 | 3.56ms | success
+2026-01-14T22:46:22.611452+00:00 | DB_CALL increment_whatsapp_stat | P3 | 5.99ms | success
+2026-01-14T22:46:26.209529+00:00 | DB_CALL get_all_entregadores | P3 | 1.39ms | success
+2026-01-14T22:46:26.210262+00:00 | DB_CALL get_pedido_by_id | P3 | 1.22ms | success
+2026-01-14T22:46:26.210579+00:00 | DB_CALL get_all_settings | P3 | 1.71ms | success
+2026-01-14T22:46:26.212009+00:00 | DB_CALL get_all_pedidos | P3 | 1.83ms | success
