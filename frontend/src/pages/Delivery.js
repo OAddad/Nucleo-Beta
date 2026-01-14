@@ -1987,9 +1987,9 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
     return basePrice;
   };
   
-  // Obter foto do produto por ID
+  // Obter foto do produto por ID (busca em TODOS os produtos, incluindo insumos)
   const getProductPhoto = (productId) => {
-    const product = products.find(p => p.id === productId);
+    const product = allProductsForPhotos.find(p => p.id === productId);
     return product?.photo_url || null;
   };
 
