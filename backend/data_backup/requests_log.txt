@@ -38869,3 +38869,4 @@
 2026-01-14T22:53:59.115787+00:00 | DB_CALL get_all_products | P3 | 4.06ms | success
 2026-01-14T22:53:59.128756+00:00 | DB_CALL get_user_by_id | P3 | 16.63ms | success
 2026-01-14T22:53:59.129154+00:00 | DB_CALL get_all_categories | P3 | 0.26ms | success
+2026-01-14T22:54:21.338829+00:00 | DB_CALL get_pedido_by_id | P3 | 3.36ms | success
