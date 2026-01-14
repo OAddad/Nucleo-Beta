@@ -1718,6 +1718,35 @@ function CheckoutModal({ open, onClose, cart, cartTotal, client, darkMode, onOrd
       'cash': 'dinheiro'
     };
 
+    // Função para montar resumo das etapas de um item
+    const getItemStepsSummary = (item) => {
+      if (!item.step_selections || !item.order_steps) return [];
+      const summary = [];
+      
+      const relevantSteps = item.order_steps.filter(step => {
+        if (item.combo_type === 'simples') return !step.combo_only;
+        return true;
+      });
+      
+      relevantSteps.forEach((step, index) => {
+        const selectedItems = item.step_selections[index] || [];
+        if (selectedItems.length > 0) {
+          const itemNames = selectedItems.map(itemId => {
+            const stepItem = step.items?.find(i => i.product_id === itemId);
+            return stepItem?.product_name || '';
+          }).filter(Boolean);
+          
+          if (itemNames.length > 0) {
+            summary.push({
+              etapa: step.name,
+              itens: itemNames
+            });
+          }
+        }
+      });
+      return summary;
+    };
+
     // Criar pedido via API (banco de dados)
     const pedidoData = {
       cliente_id: client.id,
@@ -1728,9 +1757,11 @@ function CheckoutModal({ open, onClose, cart, cartTotal, client, darkMode, onOrd
         id: item.id,
         nome: item.name,
         quantidade: item.quantity,
-        preco: item.sale_price,
+        preco: item.final_price || item.sale_price,
         observacao: item.observation || null,
-        photo_url: item.photo_url || null
+        photo_url: item.photo_url || null,
+        combo_type: item.combo_type || null,
+        etapas: getItemStepsSummary(item)
       })),
       total: cartTotal,
       forma_pagamento: paymentMap[paymentMethod],
