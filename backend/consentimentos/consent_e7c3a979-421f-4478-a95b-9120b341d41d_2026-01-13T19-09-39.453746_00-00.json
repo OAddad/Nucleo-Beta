@@ -1,0 +1,12 @@
+{
+  "tipo": "CONSENTIMENTO_WHATSAPP",
+  "versao": "1.0",
+  "cliente_id": "e7c3a979-421f-4478-a95b-9120b341d41d",
+  "nome": "Daniel Santos",
+  "telefone": "34996679808",
+  "email": "danielsantos28031990@gmail.com",
+  "cpf": "09715628656",
+  "data_aceite_utc": "2026-01-13T19:09:39.453746+00:00",
+  "ip_aceite": "N/A",
+  "hash_documento": "91fd0577b04744d814025f1d2a3bc7c9de341a013de929cfe9d405e4d94ec5de"
+}

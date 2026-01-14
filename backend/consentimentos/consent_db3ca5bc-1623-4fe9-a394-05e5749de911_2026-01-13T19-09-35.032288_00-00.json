@@ -1,0 +1,12 @@
+{
+  "tipo": "CONSENTIMENTO_WHATSAPP",
+  "versao": "1.0",
+  "cliente_id": "db3ca5bc-1623-4fe9-a394-05e5749de911",
+  "nome": "Lays Helena",
+  "telefone": "34999657482",
+  "email": "layshbrenda@gmail.com",
+  "cpf": "10331763621",
+  "data_aceite_utc": "2026-01-13T19:09:35.032288+00:00",
+  "ip_aceite": "N/A",
+  "hash_documento": "59941352a3d33f4d2faff8f3e8004a0f1e19cfc9ec3e6c7b4401bcb3084e8e98"
+}
