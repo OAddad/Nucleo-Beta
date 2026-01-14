@@ -522,10 +522,18 @@ export default function Products() {
   const [filterCategory, setFilterCategory] = useState("todos"); // todos ou nome da categoria
   const [filterName, setFilterName] = useState(""); // Filtro de busca por nome
   const [filterType, setFilterType] = useState("todos"); // todos, produto, combo, receita
+  const [filterFichaTecnica, setFilterFichaTecnica] = useState("todos"); // todos, com-ficha, sem-ficha
   
   // Estado para modal de copiar combo
   const [copyComboOpen, setCopyComboOpen] = useState(false);
   const [copyComboSearch, setCopyComboSearch] = useState("");
+  
+  // Estado para edição rápida de preço
+  const [editingPriceId, setEditingPriceId] = useState(null);
+  const [tempPrice, setTempPrice] = useState("");
+  
+  // Estado para controlar qual card está expandido (apenas um por vez)
+  const [expandedProductId, setExpandedProductId] = useState(null);
   
   // Direção da ordenação (asc/desc) para campos com toggle
   const [sortDirection, setSortDirection] = useState({
@@ -546,17 +554,21 @@ export default function Products() {
         total: 0,
         withPhoto: 0,
         withDescription: 0,
+        withFichaTecnica: 0,
         photoPercent: 0,
         descriptionPercent: 0,
+        fichaTecnicaPercent: 0,
         overallPercent: 0
       };
     }
     
     const withPhoto = products.filter(p => p.photo_url && p.photo_url.trim() !== "").length;
     const withDescription = products.filter(p => p.description && p.description.trim() !== "").length;
+    const withFichaTecnica = products.filter(p => p.recipe && p.recipe.length > 0 && p.recipe.some(r => r.ingredient_id)).length;
     
     const photoPercent = Math.round((withPhoto / total) * 100);
     const descriptionPercent = Math.round((withDescription / total) * 100);
+    const fichaTecnicaPercent = Math.round((withFichaTecnica / total) * 100);
     
     // Média ponderada: foto (50%) + descrição (50%)
     const overallPercent = Math.round((photoPercent + descriptionPercent) / 2);
