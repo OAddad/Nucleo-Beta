@@ -35402,3 +35402,11 @@
 2026-01-14T13:49:52.002637+00:00 | DB_CALL get_all_settings | P3 | 8.37ms | success
 2026-01-14T13:49:52.003625+00:00 | DB_CALL get_all_business_hours | P3 | 9.67ms | success
 2026-01-14T13:49:52.004429+00:00 | DB_CALL get_all_products | P3 | 10.13ms | success
+2026-01-14T13:50:40.627813+00:00 | DB_CALL init_database | P3 | 2.75ms | success
+2026-01-14T13:50:40.628367+00:00 | DB_CALL count_ingredients | P3 | 0.28ms | success
+2026-01-14T13:50:40.628557+00:00 | DB_CALL count_products | P3 | 0.12ms | success
+2026-01-14T13:50:40.628711+00:00 | DB_CALL count_users | P3 | 0.1ms | success
+2026-01-14T13:50:48.552654+00:00 | DB_CALL init_database | P3 | 3.35ms | success
+2026-01-14T13:50:48.553244+00:00 | DB_CALL count_ingredients | P3 | 0.3ms | success
+2026-01-14T13:50:48.553456+00:00 | DB_CALL count_products | P3 | 0.15ms | success
+2026-01-14T13:50:48.553618+00:00 | DB_CALL count_users | P3 | 0.11ms | success
