@@ -963,12 +963,12 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode, allProduc
                     )}
                     
                     {/* Foto do Item */}
-                    <div className={`w-full aspect-square rounded-md overflow-hidden mb-1.5 ${isSelected ? 'ring-2 ring-orange-500' : ''}`}>
+                    <div className={`w-full aspect-square rounded-md overflow-hidden mb-1.5 ${isSelected ? 'ring-2 ring-orange-500' : ''} ${isPngImage(itemPhoto) ? (darkMode ? 'bg-zinc-800' : 'bg-white') : ''}`}>
                       {itemPhoto && !hasImageError ? (
                         <img
                           src={getImageUrl(itemPhoto)}
                           alt={item.product_name}
-                          className="w-full h-full object-cover"
+                          className={`w-full h-full ${isPngImage(itemPhoto) ? 'object-contain p-1' : 'object-cover'}`}
                           onError={() => setItemImageErrors(prev => ({ ...prev, [item.product_id]: true }))}
                         />
                       ) : (

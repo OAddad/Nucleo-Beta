@@ -39317,3 +39317,7 @@
 2026-01-14T23:17:34.726769+00:00 | DB_CALL get_all_products | P3 | 64.44ms | success
 2026-01-14T23:17:35.030457+00:00 | DB_CALL get_all_products | P3 | 5.04ms | success
 2026-01-14T23:17:35.652767+00:00 | DB_CALL get_all_products | P3 | 3.37ms | success
+2026-01-14T23:17:39.302816+00:00 | DB_CALL get_all_products | P3 | 3.35ms | success
+2026-01-14T23:17:40.154726+00:00 | DB_CALL get_all_products | P3 | 3.51ms | success
+2026-01-14T23:17:43.870059+00:00 | DB_CALL get_all_products | P3 | 3.28ms | success
+2026-01-14T23:17:44.917633+00:00 | DB_CALL get_all_products | P3 | 3.45ms | success
