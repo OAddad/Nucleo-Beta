@@ -38767,3 +38767,10 @@
 2026-01-14T22:51:34.596789+00:00 | DB_CALL get_all_pedidos | P3 | 3.21ms | success
 2026-01-14T22:51:34.598672+00:00 | DB_CALL get_all_settings | P3 | 3.13ms | success
 2026-01-14T22:51:36.209076+00:00 | DB_CALL get_pedido_by_id | P3 | 0.31ms | success
+2026-01-14T22:51:39.593123+00:00 | DB_CALL get_all_pedidos | P3 | 2.3ms | success
+2026-01-14T22:51:39.595218+00:00 | DB_CALL get_all_settings | P3 | 3.97ms | success
+2026-01-14T22:51:39.595609+00:00 | DB_CALL get_all_entregadores | P3 | 3.73ms | success
+2026-01-14T22:51:41.218962+00:00 | DB_CALL get_pedido_by_id | P3 | 0.28ms | success
+2026-01-14T22:51:44.594410+00:00 | DB_CALL get_all_pedidos | P3 | 2.53ms | success
+2026-01-14T22:51:44.596525+00:00 | DB_CALL get_all_settings | P3 | 3.95ms | success
+2026-01-14T22:51:44.596895+00:00 | DB_CALL get_all_entregadores | P3 | 3.4ms | success
