@@ -768,44 +768,555 @@ function EmpresaTab({ toast }) {
 }
 
 // ==================== ABA IMPRESSÃO ====================
-function ImpressaoTab() {
+function ImpressaoTab({ toast }) {
+  const [config, setConfig] = useState({
+    impressao_automatica: true,
+    mostrar_logo: true,
+    mostrar_endereco_empresa: true,
+    mostrar_telefone_empresa: true,
+    mostrar_data_hora: true,
+    mostrar_codigo_pedido: true,
+    mostrar_cliente_nome: true,
+    mostrar_cliente_telefone: true,
+    mostrar_endereco_entrega: true,
+    mostrar_forma_pagamento: true,
+    mostrar_observacoes: true,
+    largura_papel: 80, // 80mm padrão
+    fonte_tamanho: 12,
+    mensagem_rodape: "Obrigado pela preferência!",
+  });
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [empresaConfig, setEmpresaConfig] = useState({});
+
+  // Carregar configurações
+  useEffect(() => {
+    fetchConfig();
+    fetchEmpresaConfig();
+  }, []);
+
+  const fetchConfig = async () => {
+    try {
+      const response = await fetch(`${API_URL}/api/settings`);
+      const data = await response.json();
+      
+      // Pegar configurações de impressão salvas
+      if (data.impressao_config) {
+        try {
+          const impressaoConfig = JSON.parse(data.impressao_config);
+          setConfig(prev => ({ ...prev, ...impressaoConfig }));
+        } catch (e) {
+          console.log("Usando configurações padrão de impressão");
+        }
+      }
+    } catch (error) {
+      console.error("Erro ao carregar configurações:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchEmpresaConfig = async () => {
+    try {
+      const response = await fetch(`${API_URL}/api/settings`);
+      const data = await response.json();
+      setEmpresaConfig({
+        nome: data.empresa_nome || "Minha Empresa",
+        endereco: data.empresa_endereco || "",
+        telefone: data.empresa_telefone || "",
+        cnpj: data.empresa_cnpj || "",
+      });
+    } catch (error) {
+      console.error("Erro ao carregar dados da empresa:", error);
+    }
+  };
+
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      await fetch(`${API_URL}/api/settings`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          impressao_config: JSON.stringify(config)
+        })
+      });
+      toast({
+        title: "Sucesso!",
+        description: "Configurações de impressão salvas",
+      });
+    } catch (error) {
+      toast({
+        title: "Erro",
+        description: "Erro ao salvar configurações",
+        variant: "destructive"
+      });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleToggle = (field) => {
+    setConfig(prev => ({ ...prev, [field]: !prev[field] }));
+  };
+
+  // Preview do cupom
+  const pedidoExemplo = {
+    codigo: "A001",
+    cliente_nome: "João Silva",
+    cliente_telefone: "(11) 99999-9999",
+    tipo_entrega: "delivery",
+    endereco_rua: "Rua das Flores",
+    endereco_numero: "123",
+    endereco_bairro: "Centro",
+    endereco_complemento: "Apto 45",
+    items: [
+      { nome: "X-Burger", quantidade: 2, preco_unitario: 25.00, observacao: "Sem cebola" },
+      { nome: "Batata Frita G", quantidade: 1, preco_unitario: 15.00 },
+      { nome: "Refrigerante 600ml", quantidade: 2, preco_unitario: 8.00 },
+    ],
+    valor_entrega: 5.00,
+    total: 86.00,
+    forma_pagamento: "Cartão de Crédito",
+    observacao: "Entregar no portão",
+    created_at: new Date().toISOString(),
+  };
+
+  const handleTestPrint = () => {
+    printPedido(pedidoExemplo, config, empresaConfig);
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
+      </div>
+    );
+  }
+
   return (
-    <div className="max-w-2xl mx-auto">
-      <div className="bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-950/30 dark:to-cyan-950/30 rounded-xl border p-8 text-center">
-        <div className="w-16 h-16 rounded-full bg-blue-100 dark:bg-blue-900/50 flex items-center justify-center mx-auto mb-4">
-          <Printer className="w-8 h-8 text-blue-600" />
+    <div className="max-w-6xl mx-auto">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Coluna de Configurações */}
+        <div className="space-y-6">
+          {/* Card Principal */}
+          <div className="bg-card border rounded-xl p-6">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="p-2 rounded-lg bg-blue-100 dark:bg-blue-900/50">
+                <Printer className="w-5 h-5 text-blue-600" />
+              </div>
+              <div>
+                <h2 className="font-bold text-lg">Impressão Térmica</h2>
+                <p className="text-sm text-muted-foreground">Papel 80mm</p>
+              </div>
+            </div>
+
+            {/* Toggle Impressão Automática */}
+            <div className="flex items-center justify-between p-4 bg-blue-50 dark:bg-blue-950/30 rounded-lg mb-6">
+              <div className="flex items-center gap-3">
+                <FileText className="w-5 h-5 text-blue-600" />
+                <div>
+                  <p className="font-medium">Impressão Automática</p>
+                  <p className="text-xs text-muted-foreground">Imprimir ao aceitar pedido</p>
+                </div>
+              </div>
+              <button
+                onClick={() => handleToggle('impressao_automatica')}
+                className={`w-12 h-6 rounded-full transition-colors relative ${
+                  config.impressao_automatica ? 'bg-blue-500' : 'bg-gray-300 dark:bg-gray-600'
+                }`}
+              >
+                <div className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-transform ${
+                  config.impressao_automatica ? 'translate-x-7' : 'translate-x-1'
+                }`} />
+              </button>
+            </div>
+
+            {/* Opções de Exibição */}
+            <div className="space-y-3">
+              <h3 className="font-semibold text-sm text-muted-foreground uppercase tracking-wide">
+                Informações no Cupom
+              </h3>
+              
+              {[
+                { key: 'mostrar_logo', label: 'Logo da Empresa', icon: ImageIcon },
+                { key: 'mostrar_endereco_empresa', label: 'Endereço da Empresa', icon: MapPin },
+                { key: 'mostrar_telefone_empresa', label: 'Telefone da Empresa', icon: Phone },
+                { key: 'mostrar_data_hora', label: 'Data e Hora', icon: Calendar },
+                { key: 'mostrar_codigo_pedido', label: 'Código do Pedido', icon: Hash },
+                { key: 'mostrar_cliente_nome', label: 'Nome do Cliente', icon: Users },
+                { key: 'mostrar_cliente_telefone', label: 'Telefone do Cliente', icon: Phone },
+                { key: 'mostrar_endereco_entrega', label: 'Endereço de Entrega', icon: Map },
+                { key: 'mostrar_forma_pagamento', label: 'Forma de Pagamento', icon: DollarSign },
+                { key: 'mostrar_observacoes', label: 'Observações', icon: FileText },
+              ].map(({ key, label, icon: Icon }) => (
+                <div key={key} className="flex items-center justify-between py-2 border-b last:border-0">
+                  <div className="flex items-center gap-2">
+                    <Icon className="w-4 h-4 text-muted-foreground" />
+                    <span className="text-sm">{label}</span>
+                  </div>
+                  <button
+                    onClick={() => handleToggle(key)}
+                    className={`w-10 h-5 rounded-full transition-colors relative ${
+                      config[key] ? 'bg-green-500' : 'bg-gray-300 dark:bg-gray-600'
+                    }`}
+                  >
+                    <div className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-transform ${
+                      config[key] ? 'translate-x-5' : 'translate-x-0.5'
+                    }`} />
+                  </button>
+                </div>
+              ))}
+            </div>
+
+            {/* Mensagem do Rodapé */}
+            <div className="mt-6">
+              <label className="text-sm font-medium mb-2 block">Mensagem do Rodapé</label>
+              <Input
+                value={config.mensagem_rodape}
+                onChange={(e) => setConfig(prev => ({ ...prev, mensagem_rodape: e.target.value }))}
+                placeholder="Obrigado pela preferência!"
+                maxLength={50}
+              />
+            </div>
+
+            {/* Botões */}
+            <div className="flex gap-3 mt-6">
+              <Button onClick={handleSave} disabled={saving} className="flex-1">
+                {saving ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Save className="w-4 h-4 mr-2" />}
+                Salvar Configurações
+              </Button>
+              <Button variant="outline" onClick={handleTestPrint}>
+                <Eye className="w-4 h-4 mr-2" />
+                Teste
+              </Button>
+            </div>
+          </div>
         </div>
-        <h2 className="text-2xl font-bold text-blue-700 dark:text-blue-300 mb-2">Em Breve</h2>
-        <p className="text-muted-foreground mb-6">
-          Personalize seus cupons fiscais e recibos!
-        </p>
-        
-        <div className="bg-white/50 dark:bg-gray-800/50 rounded-lg p-4 text-left">
-          <h3 className="font-semibold mb-3">O que você poderá fazer:</h3>
-          <ul className="space-y-2 text-sm text-muted-foreground">
-            <li className="flex items-center gap-2">
-              <CheckCircle className="w-4 h-4 text-blue-500" />
-              Personalizar layout do cupom fiscal
-            </li>
-            <li className="flex items-center gap-2">
-              <CheckCircle className="w-4 h-4 text-blue-500" />
-              Adicionar logo nos cupons
-            </li>
-            <li className="flex items-center gap-2">
-              <CheckCircle className="w-4 h-4 text-blue-500" />
-              Configurar informações que aparecem
-            </li>
-            <li className="flex items-center gap-2">
-              <CheckCircle className="w-4 h-4 text-blue-500" />
-              Preview em tempo real
-            </li>
-            <li className="flex items-center gap-2">
-              <CheckCircle className="w-4 h-4 text-blue-500" />
-              Suporte a impressoras térmicas
-            </li>
-          </ul>
+
+        {/* Coluna de Preview */}
+        <div className="lg:sticky lg:top-4 self-start">
+          <div className="bg-card border rounded-xl p-6">
+            <div className="flex items-center gap-2 mb-4">
+              <Eye className="w-5 h-5 text-muted-foreground" />
+              <h3 className="font-semibold">Preview do Cupom</h3>
+            </div>
+            
+            {/* Preview do Cupom - Estilo Térmico */}
+            <div className="bg-white border-2 border-dashed rounded-lg p-4 font-mono text-xs" style={{ maxWidth: '300px', margin: '0 auto' }}>
+              <CupomPreview config={config} pedido={pedidoExemplo} empresa={empresaConfig} />
+            </div>
+          </div>
         </div>
       </div>
     </div>
   );
+}
+
+// Componente de Preview do Cupom
+function CupomPreview({ config, pedido, empresa }) {
+  const dataHora = new Date(pedido.created_at);
+  
+  return (
+    <div className="text-center text-black">
+      {/* Cabeçalho */}
+      {config.mostrar_logo && (
+        <div className="text-lg font-bold mb-1">{empresa.nome || "EMPRESA"}</div>
+      )}
+      {config.mostrar_endereco_empresa && empresa.endereco && (
+        <div className="text-[10px]">{empresa.endereco}</div>
+      )}
+      {config.mostrar_telefone_empresa && empresa.telefone && (
+        <div className="text-[10px]">{empresa.telefone}</div>
+      )}
+      
+      <div className="border-t border-dashed border-gray-400 my-2" />
+      
+      {/* Código e Data */}
+      <div className="flex justify-between text-[10px]">
+        {config.mostrar_codigo_pedido && <span>#{pedido.codigo}</span>}
+        {config.mostrar_data_hora && (
+          <span>{dataHora.toLocaleDateString('pt-BR')} {dataHora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</span>
+        )}
+      </div>
+      
+      <div className="border-t border-dashed border-gray-400 my-2" />
+      
+      {/* Cliente */}
+      {(config.mostrar_cliente_nome || config.mostrar_cliente_telefone) && (
+        <>
+          <div className="text-left">
+            {config.mostrar_cliente_nome && pedido.cliente_nome && (
+              <div className="font-bold">{pedido.cliente_nome}</div>
+            )}
+            {config.mostrar_cliente_telefone && pedido.cliente_telefone && (
+              <div className="text-[10px]">{pedido.cliente_telefone}</div>
+            )}
+          </div>
+          <div className="border-t border-dashed border-gray-400 my-2" />
+        </>
+      )}
+      
+      {/* Endereço de Entrega */}
+      {config.mostrar_endereco_entrega && pedido.tipo_entrega === 'delivery' && (
+        <>
+          <div className="text-left text-[10px]">
+            <div className="font-bold">ENTREGA:</div>
+            <div>{pedido.endereco_rua}, {pedido.endereco_numero}</div>
+            {pedido.endereco_complemento && <div>{pedido.endereco_complemento}</div>}
+            <div>{pedido.endereco_bairro}</div>
+          </div>
+          <div className="border-t border-dashed border-gray-400 my-2" />
+        </>
+      )}
+      
+      {/* Itens */}
+      <div className="text-left">
+        <div className="font-bold text-center mb-1">ITENS DO PEDIDO</div>
+        {pedido.items.map((item, idx) => (
+          <div key={idx} className="mb-1">
+            <div className="flex justify-between">
+              <span>{item.quantidade}x {item.nome}</span>
+              <span>R$ {(item.quantidade * item.preco_unitario).toFixed(2)}</span>
+            </div>
+            {item.observacao && (
+              <div className="text-[9px] text-gray-600 pl-2">→ {item.observacao}</div>
+            )}
+          </div>
+        ))}
+      </div>
+      
+      <div className="border-t border-dashed border-gray-400 my-2" />
+      
+      {/* Totais */}
+      <div className="text-left">
+        {pedido.valor_entrega > 0 && (
+          <div className="flex justify-between text-[10px]">
+            <span>Taxa de Entrega:</span>
+            <span>R$ {pedido.valor_entrega.toFixed(2)}</span>
+          </div>
+        )}
+        <div className="flex justify-between font-bold text-sm mt-1">
+          <span>TOTAL:</span>
+          <span>R$ {pedido.total.toFixed(2)}</span>
+        </div>
+      </div>
+      
+      {/* Forma de Pagamento */}
+      {config.mostrar_forma_pagamento && pedido.forma_pagamento && (
+        <>
+          <div className="border-t border-dashed border-gray-400 my-2" />
+          <div className="text-[10px]">
+            <span className="font-bold">PAGAMENTO: </span>
+            {pedido.forma_pagamento}
+          </div>
+        </>
+      )}
+      
+      {/* Observações */}
+      {config.mostrar_observacoes && pedido.observacao && (
+        <>
+          <div className="border-t border-dashed border-gray-400 my-2" />
+          <div className="text-left text-[10px]">
+            <div className="font-bold">OBS:</div>
+            <div>{pedido.observacao}</div>
+          </div>
+        </>
+      )}
+      
+      {/* Rodapé */}
+      {config.mensagem_rodape && (
+        <>
+          <div className="border-t border-dashed border-gray-400 my-2" />
+          <div className="text-center text-[10px] italic">{config.mensagem_rodape}</div>
+        </>
+      )}
+    </div>
+  );
+}
+
+// Função global para impressão de pedido
+export function printPedido(pedido, config, empresa) {
+  // Criar conteúdo HTML do cupom para impressão
+  const dataHora = new Date(pedido.created_at || new Date());
+  
+  let html = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="UTF-8">
+      <title>Pedido #${pedido.codigo}</title>
+      <style>
+        @page {
+          size: 80mm auto;
+          margin: 0;
+        }
+        * {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+        }
+        body {
+          font-family: 'Courier New', monospace;
+          font-size: 12px;
+          width: 80mm;
+          padding: 5mm;
+          background: white;
+          color: black;
+        }
+        .center { text-align: center; }
+        .left { text-align: left; }
+        .right { text-align: right; }
+        .bold { font-weight: bold; }
+        .small { font-size: 10px; }
+        .large { font-size: 14px; }
+        .divider {
+          border-top: 1px dashed #000;
+          margin: 5px 0;
+        }
+        .row {
+          display: flex;
+          justify-content: space-between;
+        }
+        .item-obs {
+          font-size: 9px;
+          padding-left: 10px;
+          color: #333;
+        }
+        .total-row {
+          font-size: 14px;
+          font-weight: bold;
+          margin-top: 5px;
+        }
+        @media print {
+          body { -webkit-print-color-adjust: exact; }
+        }
+      </style>
+    </head>
+    <body>
+  `;
+
+  // Cabeçalho
+  if (config.mostrar_logo) {
+    html += `<div class="center bold large">${empresa.nome || 'EMPRESA'}</div>`;
+  }
+  if (config.mostrar_endereco_empresa && empresa.endereco) {
+    html += `<div class="center small">${empresa.endereco}</div>`;
+  }
+  if (config.mostrar_telefone_empresa && empresa.telefone) {
+    html += `<div class="center small">${empresa.telefone}</div>`;
+  }
+
+  html += `<div class="divider"></div>`;
+
+  // Código e Data
+  html += `<div class="row small">`;
+  if (config.mostrar_codigo_pedido) {
+    html += `<span class="bold">#${pedido.codigo}</span>`;
+  }
+  if (config.mostrar_data_hora) {
+    html += `<span>${dataHora.toLocaleDateString('pt-BR')} ${dataHora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</span>`;
+  }
+  html += `</div>`;
+
+  html += `<div class="divider"></div>`;
+
+  // Cliente
+  if (config.mostrar_cliente_nome && pedido.cliente_nome) {
+    html += `<div class="bold">${pedido.cliente_nome}</div>`;
+  }
+  if (config.mostrar_cliente_telefone && pedido.cliente_telefone) {
+    html += `<div class="small">${pedido.cliente_telefone}</div>`;
+  }
+
+  // Endereço de Entrega
+  if (config.mostrar_endereco_entrega && pedido.tipo_entrega === 'delivery') {
+    html += `<div class="divider"></div>`;
+    html += `<div class="bold small">ENTREGA:</div>`;
+    html += `<div class="small">${pedido.endereco_rua || ''}, ${pedido.endereco_numero || ''}</div>`;
+    if (pedido.endereco_complemento) {
+      html += `<div class="small">${pedido.endereco_complemento}</div>`;
+    }
+    html += `<div class="small">${pedido.endereco_bairro || ''}</div>`;
+  } else if (pedido.tipo_entrega === 'retirada') {
+    html += `<div class="divider"></div>`;
+    html += `<div class="bold center">*** RETIRADA NO LOCAL ***</div>`;
+  }
+
+  html += `<div class="divider"></div>`;
+
+  // Itens
+  html += `<div class="center bold">ITENS DO PEDIDO</div>`;
+  html += `<div class="divider"></div>`;
+  
+  (pedido.items || []).forEach(item => {
+    const itemTotal = (item.quantidade || 1) * (item.preco_unitario || item.preco || 0);
+    html += `<div class="row">
+      <span>${item.quantidade || 1}x ${item.nome || item.product_name || 'Item'}</span>
+      <span>R$ ${itemTotal.toFixed(2)}</span>
+    </div>`;
+    if (item.observacao) {
+      html += `<div class="item-obs">→ ${item.observacao}</div>`;
+    }
+    // Subitens (personalizações)
+    if (item.subitems && item.subitems.length > 0) {
+      item.subitems.forEach(sub => {
+        html += `<div class="item-obs">  • ${sub.nome || sub.name}${sub.preco > 0 ? ` (+R$ ${sub.preco.toFixed(2)})` : ''}</div>`;
+      });
+    }
+  });
+
+  html += `<div class="divider"></div>`;
+
+  // Totais
+  if (pedido.valor_entrega > 0) {
+    html += `<div class="row small">
+      <span>Taxa de Entrega:</span>
+      <span>R$ ${pedido.valor_entrega.toFixed(2)}</span>
+    </div>`;
+  }
+  html += `<div class="row total-row">
+    <span>TOTAL:</span>
+    <span>R$ ${(pedido.total || 0).toFixed(2)}</span>
+  </div>`;
+
+  // Forma de Pagamento
+  if (config.mostrar_forma_pagamento && pedido.forma_pagamento) {
+    html += `<div class="divider"></div>`;
+    html += `<div class="small"><span class="bold">PAGAMENTO:</span> ${pedido.forma_pagamento}</div>`;
+    if (pedido.troco_precisa && pedido.troco_valor) {
+      html += `<div class="small">Troco para: R$ ${pedido.troco_valor.toFixed(2)}</div>`;
+    }
+  }
+
+  // Observações
+  if (config.mostrar_observacoes && pedido.observacao) {
+    html += `<div class="divider"></div>`;
+    html += `<div class="small bold">OBS:</div>`;
+    html += `<div class="small">${pedido.observacao}</div>`;
+  }
+
+  // Rodapé
+  if (config.mensagem_rodape) {
+    html += `<div class="divider"></div>`;
+    html += `<div class="center small" style="font-style: italic;">${config.mensagem_rodape}</div>`;
+  }
+
+  html += `
+      <script>
+        window.onload = function() {
+          window.print();
+          setTimeout(function() { window.close(); }, 500);
+        };
+      </script>
+    </body>
+    </html>
+  `;
+
+  // Abrir janela de impressão
+  const printWindow = window.open('', '_blank', 'width=400,height=600');
+  if (printWindow) {
+    printWindow.document.write(html);
+    printWindow.document.close();
+  }
 }
