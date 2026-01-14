@@ -36648,3 +36648,4 @@
 2026-01-14T14:29:36.094215+00:00 | DB_CALL get_all_products | P3 | 3.37ms | success
 2026-01-14T14:29:38.209656+00:00 | DB_CALL get_pedido_by_id | P3 | 0.28ms | success
 2026-01-14T14:29:43.213176+00:00 | DB_CALL get_pedido_by_id | P3 | 0.68ms | success
+2026-01-14T14:29:48.223874+00:00 | DB_CALL get_pedido_by_id | P3 | 0.28ms | success
