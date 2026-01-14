@@ -36628,3 +36628,13 @@
 2026-01-14T14:28:41.982366+00:00 | DB_CALL get_all_pedidos | P3 | 1.66ms | success
 2026-01-14T14:28:41.984246+00:00 | DB_CALL get_all_entregadores | P3 | 3.19ms | success
 2026-01-14T14:28:41.985991+00:00 | DB_CALL get_all_settings | P3 | 0.23ms | success
+2026-01-14T14:28:46.006579+00:00 | DB_CALL get_all_products | P3 | 2.9ms | success
+2026-01-14T14:28:46.244407+00:00 | DB_CALL get_all_entregadores | P3 | 0.26ms | success
+2026-01-14T14:28:46.245831+00:00 | DB_CALL get_all_settings | P3 | 0.3ms | success
+2026-01-14T14:28:46.249746+00:00 | DB_CALL get_all_pedidos | P3 | 1.18ms | success
+2026-01-14T14:28:46.639281+00:00 | DB_CALL get_all_settings | P3 | 0.33ms | success
+2026-01-14T14:28:46.972881+00:00 | DB_CALL get_all_settings | P3 | 0.27ms | success
+2026-01-14T14:28:46.974847+00:00 | DB_CALL get_all_pedidos | P3 | 2.76ms | success
+2026-01-14T14:28:46.976616+00:00 | DB_CALL get_all_entregadores | P3 | 2.89ms | success
+2026-01-14T14:28:46.985790+00:00 | DB_CALL get_all_settings | P3 | 0.18ms | success
+2026-01-14T14:28:47.157969+00:00 | DB_CALL get_all_settings | P3 | 0.27ms | success
