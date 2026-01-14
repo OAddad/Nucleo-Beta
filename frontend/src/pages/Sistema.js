@@ -3,7 +3,8 @@ import {
   Settings, Palette, Trash2, Building2, Printer, AlertTriangle, 
   Upload, X, Save, Loader2, CheckCircle, Image as ImageIcon,
   Instagram, Facebook, Mail, Phone, MapPin, Calendar, Hash,
-  Package, ShoppingCart, Users, DollarSign, Map, RefreshCw
+  Package, ShoppingCart, Users, DollarSign, Map, RefreshCw,
+  FileText, Eye, ToggleLeft, ToggleRight
 } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
