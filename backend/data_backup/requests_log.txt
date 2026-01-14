@@ -38170,3 +38170,10 @@
 2026-01-14T17:38:59.931215+00:00 | DB_CALL get_all_pedidos | P3 | 2.44ms | success
 2026-01-14T17:38:59.933073+00:00 | DB_CALL get_all_settings | P3 | 3.1ms | success
 2026-01-14T17:38:59.934001+00:00 | DB_CALL get_all_entregadores | P3 | 0.2ms | success
+2026-01-14T17:39:28.968122+00:00 | DB_CALL get_all_pedidos | P3 | 1.36ms | success
+2026-01-14T17:39:28.971822+00:00 | DB_CALL get_all_settings | P3 | 1.33ms | success
+2026-01-14T17:39:28.972437+00:00 | DB_CALL get_all_settings | P3 | 1.4ms | success
+2026-01-14T17:39:28.972781+00:00 | DB_CALL get_all_entregadores | P3 | 1.6ms | success
+2026-01-14T17:39:29.079937+00:00 | DB_CALL get_all_settings | P3 | 0.29ms | success
+2026-01-14T17:39:30.090498+00:00 | DB_CALL get_all_settings | P3 | 0.29ms | success
+2026-01-14T17:39:30.093236+00:00 | DB_CALL get_all_settings | P3 | 0.19ms | success
