@@ -3243,6 +3243,7 @@ export default function CardapioPublico({ onAdminLogin }) {
         onClose={() => setProductPopupOpen(false)}
         onAddToCart={addToCart}
         darkMode={darkMode}
+        allProducts={products}
       />
       
       {/* Modal de Checkout */}
