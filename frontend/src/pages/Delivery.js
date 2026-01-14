@@ -2039,7 +2039,7 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
                 product_id: item.product_id,
                 nome: item.product_name,
                 name: item.product_name,
-                preco: item.price_override || 0,
+                preco: getItemPrice(item), // Usa preço atualizado do produto
                 step_name: step.name
               });
             }
