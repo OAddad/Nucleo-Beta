@@ -35719,3 +35719,9 @@
 2026-01-14T14:11:10.969517+00:00 | DB_CALL get_all_entregadores | P3 | 3.21ms | success
 2026-01-14T14:11:10.973684+00:00 | DB_CALL get_all_settings | P3 | 0.33ms | success
 2026-01-14T14:11:15.607103+00:00 | DB_CALL get_all_products | P3 | 1.44ms | success
+2026-01-14T14:11:15.983816+00:00 | DB_CALL get_all_settings | P3 | 5.49ms | success
+2026-01-14T14:11:15.991236+00:00 | DB_CALL get_all_pedidos | P3 | 8.84ms | success
+2026-01-14T14:11:16.004481+00:00 | DB_CALL get_all_entregadores | P3 | 21.62ms | success
+2026-01-14T14:11:22.119146+00:00 | DB_CALL get_all_pedidos | P3 | 1.25ms | success
+2026-01-14T14:11:22.123196+00:00 | DB_CALL get_all_entregadores | P3 | 0.57ms | success
+2026-01-14T14:11:22.123667+00:00 | DB_CALL get_all_settings | P3 | 0.84ms | success
