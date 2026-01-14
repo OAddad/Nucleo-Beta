@@ -456,6 +456,12 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode, allProduc
     return prod?.sale_price || 0;
   };
   
+  // Buscar descrição do produto pelo ID
+  const getProductDescription = (productId) => {
+    const prod = allProducts.find(p => p.id === productId);
+    return prod?.description || "";
+  };
+  
   // Obter preço do item (verifica sync_prices da etapa)
   const getItemPrice = (item, step) => {
     // Se a etapa tem sync_prices ativo (ou não definido = default true), usa preço do produto
