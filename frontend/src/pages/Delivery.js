@@ -1350,6 +1350,7 @@ const getImageUrl = (url) => {
 
 function CardapioPopup({ open, onClose, onPedidoCriado }) {
   const [products, setProducts] = useState([]);
+  const [allProductsForPhotos, setAllProductsForPhotos] = useState([]); // Todos os produtos para buscar fotos
   const [categories, setCategories] = useState([]);
   const [clientes, setClientes] = useState([]);
   const [bairros, setBairros] = useState([]);
