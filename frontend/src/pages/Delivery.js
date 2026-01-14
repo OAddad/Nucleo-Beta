@@ -510,7 +510,7 @@ export default function Delivery() {
   }
 
   // Card de Pedido reutilizável
-  const PedidoCard = ({ pedido, showButton, buttonType, onButtonClick, selectable, selected, onSelect }) => {
+  const PedidoCard = ({ pedido, showButton, buttonType, onButtonClick, selectable, selected, onSelect, showPrint }) => {
     const retirada = isRetirada(pedido);
     
     return (
@@ -543,7 +543,18 @@ export default function Delivery() {
             )}
             <span className="font-mono text-xs text-muted-foreground">{pedido.codigo}</span>
           </div>
-          <span className="text-xs text-muted-foreground">{formatTime(pedido.created_at)}</span>
+          <div className="flex items-center gap-2">
+            {showPrint && (
+              <button
+                onClick={(e) => handlePrintPedido(pedido, e)}
+                className="p-1.5 rounded-md hover:bg-muted transition-colors"
+                title="Imprimir"
+              >
+                <Printer className="w-4 h-4 text-muted-foreground hover:text-foreground" />
+              </button>
+            )}
+            <span className="text-xs text-muted-foreground">{formatTime(pedido.created_at)}</span>
+          </div>
         </div>
         
         <p className="font-semibold text-sm truncate">{pedido.cliente_nome || "Cliente"}</p>
