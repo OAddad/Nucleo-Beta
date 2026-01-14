@@ -931,63 +931,64 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode, allProduc
             )}
           </div>
 
-          {/* Itens da Etapa - COM FOTOS */}
-          <div className="p-4 space-y-3 flex-1 overflow-y-auto">
-            {currentStep.items?.map((item) => {
-              const isSelected = selections.includes(item.product_id);
-              const itemPhoto = getProductPhoto(item.product_id);
-              const hasImageError = itemImageErrors[item.product_id];
-              
-              return (
-                <button
-                  key={item.product_id}
-                  onClick={() => toggleItemSelection(currentStepIndex, item.product_id)}
-                  className={`w-full p-3 rounded-xl border-2 transition-all text-left flex items-center gap-3 ${
-                    isSelected 
-                      ? 'border-orange-500 bg-orange-50 dark:bg-orange-500/10' 
-                      : `${t.border} ${t.bgCard} hover:border-orange-300`
-                  }`}
-                >
-                  {/* Foto do Item */}
-                  <div className={`w-16 h-16 rounded-lg overflow-hidden flex-shrink-0 ${isSelected ? 'ring-2 ring-orange-500' : ''}`}>
-                    {itemPhoto && !hasImageError ? (
-                      <img
-                        src={getImageUrl(itemPhoto)}
-                        alt={item.product_name}
-                        className="w-full h-full object-cover"
-                        onError={() => setItemImageErrors(prev => ({ ...prev, [item.product_id]: true }))}
-                      />
-                    ) : (
-                      <div className={`w-full h-full flex items-center justify-center ${isSelected ? 'bg-orange-100 dark:bg-orange-900/30' : 'bg-gray-100 dark:bg-zinc-700'}`}>
-                        <span className="text-2xl">🍽️</span>
+          {/* Itens da Etapa - GRID COM FOTOS */}
+          <div className="p-4 flex-1 overflow-y-auto">
+            <div className="grid grid-cols-2 gap-3">
+              {currentStep.items?.map((item) => {
+                const isSelected = selections.includes(item.product_id);
+                const itemPhoto = getProductPhoto(item.product_id);
+                const hasImageError = itemImageErrors[item.product_id];
+                
+                return (
+                  <button
+                    key={item.product_id}
+                    onClick={() => toggleItemSelection(currentStepIndex, item.product_id)}
+                    className={`relative p-2 rounded-xl border-2 transition-all text-left flex flex-col ${
+                      isSelected 
+                        ? `${t.selectedBorder} ${t.selectedBg}` 
+                        : `${t.border} ${t.bgCard} ${t.hoverBorder}`
+                    }`}
+                  >
+                    {/* Badge de seleção */}
+                    {isSelected && (
+                      <div className="absolute top-2 right-2 w-6 h-6 rounded-full bg-orange-500 flex items-center justify-center z-10 shadow-md">
+                        <Check className="w-4 h-4 text-white" />
                       </div>
                     )}
-                  </div>
-                  
-                  {/* Info do Item */}
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
-                      <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${
-                        isSelected ? 'border-orange-500 bg-orange-500' : 'border-gray-300 dark:border-zinc-500'
-                      }`}>
-                        {isSelected && <Check className="w-3 h-3 text-white" />}
-                      </div>
-                      <span className={`font-medium ${t.text} truncate`}>{item.product_name}</span>
+                    
+                    {/* Foto do Item */}
+                    <div className={`w-full aspect-square rounded-lg overflow-hidden mb-2 ${isSelected ? 'ring-2 ring-orange-500' : ''}`}>
+                      {itemPhoto && !hasImageError ? (
+                        <img
+                          src={getImageUrl(itemPhoto)}
+                          alt={item.product_name}
+                          className="w-full h-full object-cover"
+                          onError={() => setItemImageErrors(prev => ({ ...prev, [item.product_id]: true }))}
+                        />
+                      ) : (
+                        <div className={`w-full h-full flex items-center justify-center ${isSelected ? 'bg-orange-100 dark:bg-orange-900/30' : darkMode ? 'bg-zinc-700' : 'bg-gray-100'}`}>
+                          <span className="text-3xl">🍽️</span>
+                        </div>
+                      )}
                     </div>
-                    {item.price_override > 0 && (
-                      <p className="text-sm text-orange-500 font-semibold mt-1 ml-7">
-                        +R$ {item.price_override.toFixed(2).replace('.', ',')}
-                      </p>
-                    )}
-                    {item.price_override === 0 && (
-                      <p className="text-xs text-green-600 dark:text-green-400 font-medium mt-1 ml-7">
-                        Incluído
-                      </p>
-                    )}
-                  </div>
-                </button>
-              );
-            })}
+                    
+                    {/* Info do Item */}
+                    <div className="flex-1 min-w-0">
+                      <p className={`font-medium text-sm ${t.text} line-clamp-2 leading-tight`}>{item.product_name}</p>
+                      {item.price_override > 0 ? (
+                        <p className="text-sm text-orange-500 font-bold mt-1">
+                          +R$ {item.price_override.toFixed(2).replace('.', ',')}
+                        </p>
+                      ) : (
+                        <p className="text-xs text-green-500 font-bold mt-1 uppercase">
+                          Grátis
+                        </p>
+                      )}
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
           </div>
 
           {/* Footer */}
