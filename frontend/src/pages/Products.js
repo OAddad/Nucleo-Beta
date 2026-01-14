@@ -1156,7 +1156,8 @@ export default function Products() {
       max_selections: 0,
       items: [],
       combo_only: false,  // Se true, etapa só aparece para combo (ex: bebida)
-      default_item_id: null  // ID do item pré-selecionado (opcional)
+      default_item_id: null,  // ID do item pré-selecionado (opcional)
+      sync_prices: true  // Se true, sincroniza preços com PRODUTOS automaticamente
     }]);
   };
 
