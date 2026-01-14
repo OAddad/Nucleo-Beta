@@ -35745,3 +35745,6 @@
 2026-01-14T14:11:47.964791+00:00 | DB_CALL get_all_pedidos | P3 | 1.92ms | success
 2026-01-14T14:11:47.966751+00:00 | DB_CALL get_all_settings | P3 | 2.96ms | success
 2026-01-14T14:11:47.967574+00:00 | DB_CALL get_all_entregadores | P3 | 0.16ms | success
+2026-01-14T14:11:52.964178+00:00 | DB_CALL get_all_pedidos | P3 | 1.24ms | success
+2026-01-14T14:11:52.965962+00:00 | DB_CALL get_all_entregadores | P3 | 3.44ms | success
+2026-01-14T14:11:52.970205+00:00 | DB_CALL get_all_settings | P3 | 0.22ms | success
