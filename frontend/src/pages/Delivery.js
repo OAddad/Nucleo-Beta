@@ -227,14 +227,13 @@ export default function Delivery() {
       await axios.patch(`${API}/pedidos/${pedidoId}/status?status=producao`);
       toast.success("Pedido aceito!");
       
-      // Impressão automática se habilitada
+      // Impressão automática se habilitada - usando fila
       if (impressaoConfig.impressao_automatica) {
-        try {
-          printPedido(pedidoCompleto, impressaoConfig, empresaConfig);
-        } catch (printError) {
-          console.error("Erro ao imprimir:", printError);
-          toast.error("Erro ao imprimir cupom");
-        }
+        // Encontrar impressora padrão ou primeira ativa
+        const impressoraPadrao = impressoras.find(i => i.padrao && i.ativa) || 
+                                  impressoras.find(i => i.ativa);
+        
+        addToPrintQueue(pedidoCompleto, impressoraPadrao);
       }
       
       fetchData();
@@ -246,12 +245,11 @@ export default function Delivery() {
   // Imprimir pedido manualmente
   const handlePrintPedido = (pedido, e) => {
     if (e) e.stopPropagation();
-    try {
-      printPedido(pedido, impressaoConfig, empresaConfig);
-    } catch (error) {
-      console.error("Erro ao imprimir:", error);
-      toast.error("Erro ao imprimir cupom");
-    }
+    // Encontrar impressora padrão
+    const impressoraPadrao = impressoras.find(i => i.padrao && i.ativa) || 
+                              impressoras.find(i => i.ativa);
+    addToPrintQueue(pedido, impressoraPadrao);
+    toast.success("Enviado para fila de impressão");
   };
 
   // Marcar como pronto
