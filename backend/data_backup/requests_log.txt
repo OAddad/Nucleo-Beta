@@ -36745,3 +36745,10 @@
 2026-01-14T14:32:31.976812+00:00 | DB_CALL get_all_entregadores | P3 | 0.97ms | success
 2026-01-14T14:32:31.978440+00:00 | DB_CALL get_all_pedidos | P3 | 2.05ms | success
 2026-01-14T14:32:31.984952+00:00 | DB_CALL get_all_settings | P3 | 0.23ms | success
+2026-01-14T14:32:36.978888+00:00 | DB_CALL get_all_pedidos | P3 | 1.89ms | success
+2026-01-14T14:32:36.981208+00:00 | DB_CALL get_all_entregadores | P3 | 3.35ms | success
+2026-01-14T14:32:36.982106+00:00 | DB_CALL get_all_settings | P3 | 0.19ms | success
+2026-01-14T14:32:41.978442+00:00 | DB_CALL get_all_pedidos | P3 | 1.23ms | success
+2026-01-14T14:32:41.981522+00:00 | DB_CALL get_all_settings | P3 | 0.69ms | success
+2026-01-14T14:32:41.981877+00:00 | DB_CALL get_all_entregadores | P3 | 0.56ms | success
+2026-01-14T14:32:42.323094+00:00 | DB_CALL get_all_settings | P3 | 0.26ms | success
