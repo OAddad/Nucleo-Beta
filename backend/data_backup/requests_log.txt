@@ -39962,3 +39962,17 @@
 2026-01-14T23:38:13.740053+00:00 | DB_CALL get_all_categories | P3 | 0.19ms | success
 2026-01-14T23:38:13.741412+00:00 | DB_CALL get_user_by_id | P3 | 0.23ms | success
 2026-01-14T23:38:13.743859+00:00 | DB_CALL get_all_products | P3 | 2.29ms | success
+2026-01-14T23:38:16.528927+00:00 | DB_CALL get_all_products | P3 | 3.26ms | success
+2026-01-14T23:38:17.031555+00:00 | DB_CALL get_all_products | P3 | 5.41ms | success
+2026-01-14T23:38:18.250321+00:00 | DB_CALL get_all_bairros | P3 | 0.31ms | success
+2026-01-14T23:38:18.255682+00:00 | DB_CALL get_all_products | P3 | 3.54ms | success
+2026-01-14T23:38:18.269781+00:00 | DB_CALL get_all_business_hours | P3 | 16.48ms | success
+2026-01-14T23:38:18.273170+00:00 | DB_CALL get_all_settings | P3 | 3.44ms | success
+2026-01-14T23:38:18.273610+00:00 | DB_CALL get_all_bairros | P3 | 4.26ms | success
+2026-01-14T23:38:18.274895+00:00 | DB_CALL get_all_settings | P3 | 3.55ms | success
+2026-01-14T23:38:18.275259+00:00 | DB_CALL get_all_categories | P3 | 3.82ms | success
+2026-01-14T23:38:18.275593+00:00 | DB_CALL get_all_categories | P3 | 3.49ms | success
+2026-01-14T23:38:18.275904+00:00 | DB_CALL get_all_business_hours | P3 | 3.29ms | success
+2026-01-14T23:38:18.278479+00:00 | DB_CALL get_all_products | P3 | 5.75ms | success
+2026-01-14T23:38:18.548912+00:00 | DB_CALL get_all_products | P3 | 3.33ms | success
+2026-01-14T23:38:18.996932+00:00 | DB_CALL get_all_products | P3 | 3.46ms | success
