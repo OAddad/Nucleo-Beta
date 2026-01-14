@@ -3164,13 +3164,16 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
                             </div>
                             <div className="flex-1 min-w-0">
                               <p className="font-medium text-xs line-clamp-2 leading-tight">{item.product_name}</p>
-                              {item.price_override > 0 ? (
-                                <p className="text-xs text-orange-500 font-bold mt-0.5">
-                                  +R$ {item.price_override.toFixed(2)}
-                                </p>
-                              ) : (
-                                <p className="text-[10px] text-green-500 font-bold mt-0.5 uppercase">Grátis</p>
-                              )}
+                              {(() => {
+                                const itemPrice = getItemPrice(item);
+                                return itemPrice > 0 ? (
+                                  <p className="text-xs text-orange-500 font-bold mt-0.5">
+                                    +R$ {itemPrice.toFixed(2)}
+                                  </p>
+                                ) : (
+                                  <p className="text-[10px] text-green-500 font-bold mt-0.5 uppercase">Grátis</p>
+                                );
+                              })()}
                             </div>
                           </button>
                         );

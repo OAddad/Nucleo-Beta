@@ -39829,3 +39829,5 @@
 2026-01-14T23:30:12.299492+00:00 | DB_CALL get_all_categories | P3 | 0.16ms | success
 2026-01-14T23:30:29.806805+00:00 | DB_CALL get_all_products | P3 | 1.46ms | success
 2026-01-14T23:30:30.083160+00:00 | DB_CALL get_all_products | P3 | 1.41ms | success
+2026-01-14T23:30:34.199478+00:00 | DB_CALL get_all_products | P3 | 1.4ms | success
+2026-01-14T23:30:35.005884+00:00 | DB_CALL get_all_products | P3 | 1.88ms | success
