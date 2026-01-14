@@ -769,27 +769,109 @@ function EmpresaTab({ toast }) {
 }
 
 
+// ==================== PRINT CONNECTOR CONFIG ====================
+const PRINT_CONNECTOR_URL = 'http://127.0.0.1:9100';
+
 // ==================== ABA IMPRESSÃO ====================
 function ImpressaoTab({ toast }) {
-  const [activeSubTab, setActiveSubTab] = useState("config");
+  const [activeSubTab, setActiveSubTab] = useState("connector");
+  const [connectorStatus, setConnectorStatus] = useState(null);
+  const [loading, setLoading] = useState(true);
   
   const subTabs = [
+    { id: "connector", label: "Print Connector", icon: Usb },
     { id: "config", label: "Configurações", icon: Settings },
-    { id: "impressoras", label: "Impressoras", icon: Printer },
     { id: "fila", label: "Fila de Impressão", icon: List },
+    { id: "logs", label: "Logs", icon: FileText },
+    { id: "download", label: "Download App", icon: Package },
   ];
+
+  // Verificar status do Print Connector
+  useEffect(() => {
+    checkConnectorStatus();
+    const interval = setInterval(checkConnectorStatus, 5000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const checkConnectorStatus = async () => {
+    try {
+      const response = await fetch(`${PRINT_CONNECTOR_URL}/health`, {
+        method: 'GET',
+        mode: 'cors',
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setConnectorStatus({ online: true, ...data });
+      } else {
+        setConnectorStatus({ online: false });
+      }
+    } catch (error) {
+      setConnectorStatus({ online: false, error: error.message });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="max-w-6xl mx-auto">
+      {/* Status Banner */}
+      <div className={`mb-6 p-4 rounded-xl border flex items-center justify-between ${
+        loading ? 'bg-gray-50 dark:bg-gray-900 border-gray-200' :
+        connectorStatus?.online 
+          ? 'bg-green-50 dark:bg-green-950/30 border-green-200 dark:border-green-900' 
+          : 'bg-red-50 dark:bg-red-950/30 border-red-200 dark:border-red-900'
+      }`}>
+        <div className="flex items-center gap-3">
+          {loading ? (
+            <Loader2 className="w-5 h-5 animate-spin text-gray-500" />
+          ) : connectorStatus?.online ? (
+            <CheckCircle className="w-5 h-5 text-green-600" />
+          ) : (
+            <XCircle className="w-5 h-5 text-red-600" />
+          )}
+          <div>
+            <p className={`font-semibold ${
+              loading ? 'text-gray-700' :
+              connectorStatus?.online ? 'text-green-700 dark:text-green-400' : 'text-red-700 dark:text-red-400'
+            }`}>
+              {loading ? 'Verificando Print Connector...' :
+               connectorStatus?.online ? 'Print Connector Online' : 'Print Connector Offline'}
+            </p>
+            <p className="text-sm text-muted-foreground">
+              {connectorStatus?.online ? (
+                <>
+                  v{connectorStatus.version} • 
+                  {connectorStatus.printer_connected 
+                    ? ` Impressora: ${connectorStatus.printer_name}` 
+                    : ' Nenhuma impressora conectada'}
+                  {connectorStatus.queue_size > 0 && ` • ${connectorStatus.queue_size} na fila`}
+                </>
+              ) : (
+                'Instale e execute o Núcleo Print Connector para impressão automática'
+              )}
+            </p>
+          </div>
+        </div>
+        <Button 
+          variant="outline" 
+          size="sm" 
+          onClick={checkConnectorStatus}
+          disabled={loading}
+        >
+          <RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+          Verificar
+        </Button>
+      </div>
+
       {/* Sub-abas */}
-      <div className="flex gap-2 mb-6 border-b pb-2">
+      <div className="flex gap-2 mb-6 border-b pb-2 overflow-x-auto">
         {subTabs.map((tab) => {
           const Icon = tab.icon;
           return (
             <button
               key={tab.id}
               onClick={() => setActiveSubTab(tab.id)}
-              className={`px-4 py-2 rounded-lg font-medium text-sm transition-colors flex items-center gap-2 ${
+              className={`px-4 py-2 rounded-lg font-medium text-sm transition-colors flex items-center gap-2 whitespace-nowrap ${
                 activeSubTab === tab.id
                   ? "bg-blue-500 text-white"
                   : "bg-muted hover:bg-muted/80 text-muted-foreground"
@@ -802,9 +884,708 @@ function ImpressaoTab({ toast }) {
         })}
       </div>
 
+      {activeSubTab === "connector" && <PrintConnectorTab toast={toast} connectorStatus={connectorStatus} onRefresh={checkConnectorStatus} />}
       {activeSubTab === "config" && <ConfiguracaoImpressao toast={toast} />}
-      {activeSubTab === "impressoras" && <GerenciarImpressoras toast={toast} />}
-      {activeSubTab === "fila" && <FilaImpressao toast={toast} />}
+      {activeSubTab === "fila" && <FilaImpressaoConnector toast={toast} connectorStatus={connectorStatus} />}
+      {activeSubTab === "logs" && <LogsConnector toast={toast} connectorStatus={connectorStatus} />}
+      {activeSubTab === "download" && <DownloadApp toast={toast} />}
+    </div>
+  );
+}
+
+// ==================== SUB-ABA: PRINT CONNECTOR ====================
+function PrintConnectorTab({ toast, connectorStatus, onRefresh }) {
+  const [printers, setPrinters] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [connecting, setConnecting] = useState(null);
+  const [testing, setTesting] = useState(false);
+
+  useEffect(() => {
+    if (connectorStatus?.online) {
+      fetchPrinters();
+    }
+  }, [connectorStatus?.online]);
+
+  const fetchPrinters = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch(`${PRINT_CONNECTOR_URL}/printers`);
+      if (response.ok) {
+        const data = await response.json();
+        setPrinters(data);
+      }
+    } catch (error) {
+      console.error('Erro ao listar impressoras:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleConnect = async (printer) => {
+    setConnecting(printer.id);
+    try {
+      const response = await fetch(`${PRINT_CONNECTOR_URL}/printers/connect`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          vendorId: printer.vendorId,
+          productId: printer.productId,
+          name: printer.name
+        })
+      });
+      
+      const data = await response.json();
+      
+      if (data.success) {
+        toast({ title: "Sucesso!", description: `${printer.name} definida como padrão` });
+        fetchPrinters();
+        onRefresh();
+      } else {
+        throw new Error(data.error || 'Erro ao conectar');
+      }
+    } catch (error) {
+      toast({ title: "Erro", description: error.message, variant: "destructive" });
+    } finally {
+      setConnecting(null);
+    }
+  };
+
+  const handleTest = async () => {
+    setTesting(true);
+    try {
+      const response = await fetch(`${PRINT_CONNECTOR_URL}/test`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      });
+      
+      const data = await response.json();
+      
+      if (data.success) {
+        toast({ title: "Sucesso!", description: "Página de teste enviada para impressora" });
+      } else {
+        throw new Error(data.error || 'Erro no teste');
+      }
+    } catch (error) {
+      toast({ title: "Erro", description: error.message, variant: "destructive" });
+    } finally {
+      setTesting(false);
+    }
+  };
+
+  if (!connectorStatus?.online) {
+    return (
+      <div className="text-center py-12">
+        <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
+          <XCircle className="w-10 h-10 text-red-500" />
+        </div>
+        <h2 className="text-2xl font-bold mb-2">Print Connector Offline</h2>
+        <p className="text-muted-foreground mb-6 max-w-md mx-auto">
+          O Núcleo Print Connector não está em execução. Baixe e instale o aplicativo para habilitar a impressão automática.
+        </p>
+        <div className="flex gap-3 justify-center">
+          <Button variant="outline" onClick={onRefresh}>
+            <RefreshCw className="w-4 h-4 mr-2" />
+            Verificar Novamente
+          </Button>
+          <Button onClick={() => document.querySelector('[data-tab="download"]')?.click()}>
+            <Package className="w-4 h-4 mr-2" />
+            Baixar Aplicativo
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* Status da Impressora */}
+      <div className="bg-card border rounded-xl p-6">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-3">
+            <div className={`p-3 rounded-xl ${
+              connectorStatus?.printer_connected 
+                ? 'bg-green-100 dark:bg-green-900/30' 
+                : 'bg-yellow-100 dark:bg-yellow-900/30'
+            }`}>
+              <Printer className={`w-6 h-6 ${
+                connectorStatus?.printer_connected ? 'text-green-600' : 'text-yellow-600'
+              }`} />
+            </div>
+            <div>
+              <h3 className="font-semibold text-lg">
+                {connectorStatus?.printer_connected 
+                  ? connectorStatus.printer_name 
+                  : 'Nenhuma Impressora Selecionada'}
+              </h3>
+              <p className="text-sm text-muted-foreground">
+                {connectorStatus?.printer_connected 
+                  ? 'Impressora padrão configurada' 
+                  : 'Selecione uma impressora abaixo'}
+              </p>
+            </div>
+          </div>
+          
+          {connectorStatus?.printer_connected && (
+            <Button onClick={handleTest} disabled={testing}>
+              {testing ? (
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              ) : (
+                <Printer className="w-4 h-4 mr-2" />
+              )}
+              Imprimir Teste
+            </Button>
+          )}
+        </div>
+
+        {/* Info ESC/POS */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4 border-t">
+          <div className="text-center">
+            <p className="text-2xl font-bold text-blue-600">80mm</p>
+            <p className="text-xs text-muted-foreground">Papel</p>
+          </div>
+          <div className="text-center">
+            <p className="text-2xl font-bold text-blue-600">72mm</p>
+            <p className="text-xs text-muted-foreground">Imprimível</p>
+          </div>
+          <div className="text-center">
+            <p className="text-2xl font-bold text-blue-600">203</p>
+            <p className="text-xs text-muted-foreground">DPI</p>
+          </div>
+          <div className="text-center">
+            <p className="text-2xl font-bold text-blue-600">48</p>
+            <p className="text-xs text-muted-foreground">Colunas</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Lista de Impressoras */}
+      <div className="bg-card border rounded-xl p-6">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="font-semibold text-lg">Impressoras Detectadas</h3>
+          <Button variant="outline" size="sm" onClick={fetchPrinters} disabled={loading}>
+            <RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+            Atualizar
+          </Button>
+        </div>
+
+        {loading ? (
+          <div className="flex items-center justify-center py-8">
+            <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
+          </div>
+        ) : printers.length === 0 ? (
+          <div className="text-center py-8 bg-muted/50 rounded-lg">
+            <Usb className="w-10 h-10 mx-auto mb-3 text-muted-foreground" />
+            <p className="font-medium">Nenhuma impressora USB detectada</p>
+            <p className="text-sm text-muted-foreground">
+              Conecte uma impressora térmica via USB
+            </p>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {printers.map((printer) => (
+              <div 
+                key={printer.id} 
+                className={`flex items-center justify-between p-4 rounded-lg border ${
+                  printer.is_default ? 'border-green-500 bg-green-50 dark:bg-green-950/20' : 'bg-muted/30'
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <div className={`p-2 rounded-lg ${
+                    printer.is_default ? 'bg-green-100 dark:bg-green-900/30' : 'bg-muted'
+                  }`}>
+                    <Printer className={`w-5 h-5 ${
+                      printer.is_default ? 'text-green-600' : 'text-muted-foreground'
+                    }`} />
+                  </div>
+                  <div>
+                    <p className="font-medium">{printer.name}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {printer.vendorName} • VID: {printer.vendorId?.toString(16).toUpperCase()} • PID: {printer.productId?.toString(16).toUpperCase()}
+                    </p>
+                  </div>
+                </div>
+                
+                <div className="flex items-center gap-2">
+                  {printer.is_default ? (
+                    <span className="text-xs bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 px-3 py-1 rounded-full font-medium">
+                      Padrão
+                    </span>
+                  ) : (
+                    <Button 
+                      size="sm" 
+                      onClick={() => handleConnect(printer)}
+                      disabled={connecting === printer.id}
+                    >
+                      {connecting === printer.id ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : (
+                        'Selecionar'
+                      )}
+                    </Button>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Instruções */}
+      <div className="bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-900 rounded-xl p-4">
+        <h4 className="font-semibold text-blue-700 dark:text-blue-400 mb-2 flex items-center gap-2">
+          <AlertCircle className="w-4 h-4" />
+          Como funciona
+        </h4>
+        <ul className="text-sm text-blue-600 dark:text-blue-500 space-y-1 list-disc list-inside">
+          <li>O Print Connector detecta impressoras USB automaticamente</li>
+          <li>Selecione a impressora que deseja usar como padrão</li>
+          <li>Pedidos serão impressos automaticamente via ESC/POS</li>
+          <li>Não é necessário popup ou confirmação manual</li>
+          <li>Funciona offline - basta ter o connector rodando</li>
+        </ul>
+      </div>
+    </div>
+  );
+}
+
+// ==================== SUB-ABA: FILA DE IMPRESSÃO (CONNECTOR) ====================
+function FilaImpressaoConnector({ toast, connectorStatus }) {
+  const [queue, setQueue] = useState({ pending: [], completed: [], failed: [], stats: {} });
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (connectorStatus?.online) {
+      fetchQueue();
+      const interval = setInterval(fetchQueue, 3000);
+      return () => clearInterval(interval);
+    }
+  }, [connectorStatus?.online]);
+
+  const fetchQueue = async () => {
+    try {
+      const response = await fetch(`${PRINT_CONNECTOR_URL}/queue`);
+      if (response.ok) {
+        const data = await response.json();
+        setQueue(data);
+      }
+    } catch (error) {
+      console.error('Erro ao buscar fila:', error);
+    }
+  };
+
+  const handleRetry = async (jobId) => {
+    try {
+      const response = await fetch(`${PRINT_CONNECTOR_URL}/queue/retry/${jobId}`, {
+        method: 'POST'
+      });
+      const data = await response.json();
+      if (data.success) {
+        toast({ title: "Job reenviado", description: "O pedido foi adicionado novamente à fila" });
+        fetchQueue();
+      }
+    } catch (error) {
+      toast({ title: "Erro", description: error.message, variant: "destructive" });
+    }
+  };
+
+  const handleRemove = async (jobId) => {
+    try {
+      const response = await fetch(`${PRINT_CONNECTOR_URL}/queue/${jobId}`, {
+        method: 'DELETE'
+      });
+      const data = await response.json();
+      if (data.success) {
+        toast({ title: "Job removido" });
+        fetchQueue();
+      }
+    } catch (error) {
+      toast({ title: "Erro", description: error.message, variant: "destructive" });
+    }
+  };
+
+  const handleClearQueue = async () => {
+    try {
+      const response = await fetch(`${PRINT_CONNECTOR_URL}/queue/clear`, {
+        method: 'POST'
+      });
+      const data = await response.json();
+      if (data.success) {
+        toast({ title: "Fila limpa" });
+        fetchQueue();
+      }
+    } catch (error) {
+      toast({ title: "Erro", description: error.message, variant: "destructive" });
+    }
+  };
+
+  if (!connectorStatus?.online) {
+    return (
+      <div className="text-center py-12">
+        <List className="w-12 h-12 mx-auto mb-4 text-muted-foreground opacity-50" />
+        <p className="text-muted-foreground">Print Connector offline</p>
+      </div>
+    );
+  }
+
+  const { stats } = queue;
+
+  return (
+    <div className="space-y-6">
+      {/* Estatísticas */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="bg-card border rounded-xl p-4 text-center">
+          <p className="text-3xl font-bold text-yellow-600">{stats.pending_count || 0}</p>
+          <p className="text-sm text-muted-foreground">Pendentes</p>
+        </div>
+        <div className="bg-card border rounded-xl p-4 text-center">
+          <p className="text-3xl font-bold text-green-600">{stats.completed_count || 0}</p>
+          <p className="text-sm text-muted-foreground">Concluídos</p>
+        </div>
+        <div className="bg-card border rounded-xl p-4 text-center">
+          <p className="text-3xl font-bold text-red-600">{stats.failed_count || 0}</p>
+          <p className="text-sm text-muted-foreground">Com Erro</p>
+        </div>
+        <div className="bg-card border rounded-xl p-4 text-center">
+          <p className="text-3xl font-bold text-blue-600">
+            {stats.is_processing ? 'Sim' : 'Não'}
+          </p>
+          <p className="text-sm text-muted-foreground">Processando</p>
+        </div>
+      </div>
+
+      {/* Ações */}
+      <div className="flex gap-3">
+        <Button variant="outline" onClick={fetchQueue}>
+          <RefreshCw className="w-4 h-4 mr-2" />
+          Atualizar
+        </Button>
+        {(queue.pending?.length > 0 || queue.failed?.length > 0) && (
+          <Button variant="outline" onClick={handleClearQueue}>
+            <Trash2 className="w-4 h-4 mr-2" />
+            Limpar Fila
+          </Button>
+        )}
+      </div>
+
+      {/* Jobs com Erro */}
+      {queue.failed?.length > 0 && (
+        <div className="bg-card border border-red-200 dark:border-red-900 rounded-xl p-4">
+          <h3 className="font-semibold text-red-700 dark:text-red-400 mb-3 flex items-center gap-2">
+            <XCircle className="w-5 h-5" />
+            Jobs com Erro ({queue.failed.length})
+          </h3>
+          <div className="space-y-2">
+            {queue.failed.map((job) => (
+              <div key={job.id} className="flex items-center justify-between p-3 bg-red-50 dark:bg-red-950/20 rounded-lg">
+                <div>
+                  <p className="font-medium">Pedido #{job.pedido?.codigo || job.id.slice(0, 8)}</p>
+                  <p className="text-xs text-red-600">{job.error}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {job.attempts} tentativas • {new Date(job.failedAt).toLocaleString('pt-BR')}
+                  </p>
+                </div>
+                <div className="flex gap-2">
+                  <Button size="sm" variant="outline" onClick={() => handleRetry(job.id)}>
+                    <RotateCcw className="w-3 h-3 mr-1" />
+                    Tentar
+                  </Button>
+                  <Button size="sm" variant="ghost" onClick={() => handleRemove(job.id)}>
+                    <X className="w-4 h-4" />
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Jobs Pendentes */}
+      {queue.pending?.length > 0 && (
+        <div className="bg-card border rounded-xl p-4">
+          <h3 className="font-semibold mb-3 flex items-center gap-2">
+            <Clock className="w-5 h-5 text-yellow-500" />
+            Na Fila ({queue.pending.length})
+          </h3>
+          <div className="space-y-2">
+            {queue.pending.map((job) => (
+              <div key={job.id} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+                <div>
+                  <p className="font-medium">Pedido #{job.pedido?.codigo || job.id.slice(0, 8)}</p>
+                  <p className="text-xs text-muted-foreground">
+                    Template: {job.template} • {job.copies} cópia(s)
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  {job.status === 'printing' && (
+                    <Loader2 className="w-4 h-4 animate-spin text-blue-500" />
+                  )}
+                  <span className={`text-xs px-2 py-1 rounded-full ${
+                    job.status === 'printing' 
+                      ? 'bg-blue-100 text-blue-700' 
+                      : 'bg-yellow-100 text-yellow-700'
+                  }`}>
+                    {job.status === 'printing' ? 'Imprimindo' : 'Aguardando'}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Jobs Concluídos */}
+      {queue.completed?.length > 0 && (
+        <div className="bg-card border rounded-xl p-4">
+          <h3 className="font-semibold mb-3 flex items-center gap-2">
+            <CheckCircle2 className="w-5 h-5 text-green-500" />
+            Últimos Impressos ({queue.completed.length})
+          </h3>
+          <div className="space-y-2 max-h-60 overflow-y-auto">
+            {queue.completed.map((job) => (
+              <div key={job.id} className="flex items-center justify-between p-3 bg-green-50 dark:bg-green-950/20 rounded-lg">
+                <div>
+                  <p className="font-medium">Pedido #{job.pedido?.codigo || job.id.slice(0, 8)}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {new Date(job.completedAt).toLocaleString('pt-BR')}
+                  </p>
+                </div>
+                <CheckCircle2 className="w-5 h-5 text-green-500" />
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Fila Vazia */}
+      {queue.pending?.length === 0 && queue.failed?.length === 0 && queue.completed?.length === 0 && (
+        <div className="text-center py-12 bg-card border rounded-xl">
+          <List className="w-12 h-12 mx-auto mb-4 text-muted-foreground opacity-50" />
+          <h3 className="font-semibold mb-2">Fila vazia</h3>
+          <p className="text-sm text-muted-foreground">
+            Os pedidos aparecerão aqui quando forem enviados para impressão
+          </p>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ==================== SUB-ABA: LOGS ====================
+function LogsConnector({ toast, connectorStatus }) {
+  const [logs, setLogs] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (connectorStatus?.online) {
+      fetchLogs();
+    }
+  }, [connectorStatus?.online]);
+
+  const fetchLogs = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch(`${PRINT_CONNECTOR_URL}/logs?limit=200`);
+      if (response.ok) {
+        const data = await response.json();
+        setLogs(data);
+      }
+    } catch (error) {
+      console.error('Erro ao buscar logs:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (!connectorStatus?.online) {
+    return (
+      <div className="text-center py-12">
+        <FileText className="w-12 h-12 mx-auto mb-4 text-muted-foreground opacity-50" />
+        <p className="text-muted-foreground">Print Connector offline</p>
+      </div>
+    );
+  }
+
+  const getLevelColor = (level) => {
+    switch (level) {
+      case 'error': return 'text-red-600 bg-red-50 dark:bg-red-950/30';
+      case 'warn': return 'text-yellow-600 bg-yellow-50 dark:bg-yellow-950/30';
+      case 'info': return 'text-blue-600 bg-blue-50 dark:bg-blue-950/30';
+      default: return 'text-gray-600 bg-gray-50 dark:bg-gray-800';
+    }
+  };
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <h3 className="font-semibold">Logs do Print Connector</h3>
+        <Button variant="outline" size="sm" onClick={fetchLogs} disabled={loading}>
+          <RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+          Atualizar
+        </Button>
+      </div>
+
+      <div className="bg-card border rounded-xl overflow-hidden">
+        <div className="max-h-[500px] overflow-y-auto">
+          {logs.length === 0 ? (
+            <div className="p-8 text-center text-muted-foreground">
+              Nenhum log disponível
+            </div>
+          ) : (
+            <table className="w-full text-sm">
+              <thead className="bg-muted/50 sticky top-0">
+                <tr>
+                  <th className="text-left p-3 font-medium">Horário</th>
+                  <th className="text-left p-3 font-medium">Nível</th>
+                  <th className="text-left p-3 font-medium">Mensagem</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y">
+                {logs.map((log, index) => (
+                  <tr key={index} className="hover:bg-muted/30">
+                    <td className="p-3 text-xs text-muted-foreground whitespace-nowrap">
+                      {new Date(log.timestamp).toLocaleString('pt-BR')}
+                    </td>
+                    <td className="p-3">
+                      <span className={`text-xs px-2 py-1 rounded-full font-medium ${getLevelColor(log.level)}`}>
+                        {log.level.toUpperCase()}
+                      </span>
+                    </td>
+                    <td className="p-3 font-mono text-xs">
+                      {log.message}
+                      {log.data && (
+                        <span className="text-muted-foreground ml-2">
+                          {typeof log.data === 'object' ? JSON.stringify(log.data) : log.data}
+                        </span>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ==================== SUB-ABA: DOWNLOAD APP ====================
+function DownloadApp({ toast }) {
+  const [downloading, setDownloading] = useState(false);
+
+  const handleDownload = () => {
+    setDownloading(true);
+    
+    // Criar link para download do arquivo
+    // Em produção, isso seria um link para o arquivo hospedado
+    toast({ 
+      title: "Download", 
+      description: "O arquivo NucleoPrintConnector.exe será gerado. Execute-o após o download." 
+    });
+    
+    // Simular download - em produção seria um link real
+    setTimeout(() => {
+      setDownloading(false);
+      toast({ 
+        title: "Instruções", 
+        description: "Compile o projeto em /app/print-connector usando 'npm run build'" 
+      });
+    }, 1000);
+  };
+
+  return (
+    <div className="max-w-2xl mx-auto space-y-6">
+      {/* Card Principal */}
+      <div className="bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl p-8 text-white text-center">
+        <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-white/20 flex items-center justify-center">
+          <Printer className="w-10 h-10" />
+        </div>
+        <h2 className="text-2xl font-bold mb-2">Núcleo Print Connector</h2>
+        <p className="text-white/80 mb-6">
+          Aplicativo para Windows que habilita impressão automática via ESC/POS
+        </p>
+        <Button 
+          size="lg" 
+          variant="secondary"
+          className="bg-white text-blue-600 hover:bg-white/90"
+          onClick={handleDownload}
+          disabled={downloading}
+        >
+          {downloading ? (
+            <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+          ) : (
+            <Package className="w-5 h-5 mr-2" />
+          )}
+          Baixar para Windows
+        </Button>
+        <p className="text-xs text-white/60 mt-3">
+          Versão 1.0.0 • Windows 10/11 • ~50MB
+        </p>
+      </div>
+
+      {/* Requisitos */}
+      <div className="bg-card border rounded-xl p-6">
+        <h3 className="font-semibold mb-4 flex items-center gap-2">
+          <CheckCircle className="w-5 h-5 text-green-500" />
+          Requisitos
+        </h3>
+        <ul className="space-y-2 text-sm">
+          <li className="flex items-center gap-2">
+            <div className="w-2 h-2 rounded-full bg-green-500" />
+            Windows 10 ou 11
+          </li>
+          <li className="flex items-center gap-2">
+            <div className="w-2 h-2 rounded-full bg-green-500" />
+            Impressora térmica USB (Epson recomendada)
+          </li>
+          <li className="flex items-center gap-2">
+            <div className="w-2 h-2 rounded-full bg-green-500" />
+            Papel 80mm
+          </li>
+        </ul>
+      </div>
+
+      {/* Como instalar */}
+      <div className="bg-card border rounded-xl p-6">
+        <h3 className="font-semibold mb-4 flex items-center gap-2">
+          <Settings className="w-5 h-5 text-blue-500" />
+          Como instalar
+        </h3>
+        <ol className="space-y-3 text-sm">
+          <li className="flex gap-3">
+            <span className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold">1</span>
+            <span>Baixe o arquivo <code className="bg-muted px-1 rounded">NucleoPrintConnector.exe</code></span>
+          </li>
+          <li className="flex gap-3">
+            <span className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold">2</span>
+            <span>Execute o arquivo (pode pedir permissão de administrador)</span>
+          </li>
+          <li className="flex gap-3">
+            <span className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold">3</span>
+            <span>Conecte sua impressora USB</span>
+          </li>
+          <li className="flex gap-3">
+            <span className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold">4</span>
+            <span>Volte aqui e selecione a impressora na aba "Print Connector"</span>
+          </li>
+          <li className="flex gap-3">
+            <span className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold">5</span>
+            <span>Pronto! Impressões serão automáticas</span>
+          </li>
+        </ol>
+      </div>
+
+      {/* Dica */}
+      <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900 rounded-xl p-4">
+        <h4 className="font-semibold text-amber-700 dark:text-amber-400 mb-2 flex items-center gap-2">
+          <AlertTriangle className="w-4 h-4" />
+          Dica
+        </h4>
+        <p className="text-sm text-amber-600 dark:text-amber-500">
+          Para iniciar automaticamente com o Windows, crie um atalho do executável na pasta 
+          <code className="bg-amber-100 dark:bg-amber-900/50 px-1 rounded mx-1">shell:startup</code>
+        </p>
+      </div>
     </div>
   );
 }
