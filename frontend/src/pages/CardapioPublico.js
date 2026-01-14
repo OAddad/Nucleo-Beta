@@ -330,6 +330,12 @@ const getImageUrl = (url) => {
   return url;
 };
 
+// Verifica se a imagem é PNG (para usar fundo transparente do sistema)
+const isPngImage = (url) => {
+  if (!url) return false;
+  return url.toLowerCase().endsWith('.png');
+};
+
 // Função helper para fazer requests com fallback
 const fetchWithFallback = async (endpoint) => {
   try {
