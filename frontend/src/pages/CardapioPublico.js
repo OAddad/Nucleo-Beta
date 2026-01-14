@@ -1019,7 +1019,7 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode, allProduc
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className={`sm:max-w-md p-0 gap-0 overflow-hidden ${t.bg} border-0 rounded-2xl w-[92vw] sm:w-full max-h-[90vh] flex flex-col`}>
         {/* Imagem Quadrada no Topo */}
-        <div className="relative w-full aspect-square bg-gradient-to-b from-orange-100 to-orange-50 dark:from-zinc-800 dark:to-zinc-900">
+        <div className={`relative w-full aspect-square ${darkMode ? 'bg-gradient-to-b from-zinc-800 to-zinc-900' : 'bg-gradient-to-b from-orange-100 to-orange-50'}`}>
           {product.photo_url && !imageError ? (
             <img
               src={getImageUrl(product.photo_url)}
@@ -1063,7 +1063,7 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode, allProduc
               value={observation}
               onChange={(e) => setObservation(e.target.value)}
               placeholder="Ex: sem cebola, molho à parte..."
-              className={`w-full resize-none rounded-xl p-3 text-sm ${t.bgMuted} ${t.text} border-0 focus:ring-2 focus:ring-orange-500 outline-none`}
+              className={`w-full resize-none rounded-xl p-3 text-sm ${darkMode ? 'bg-zinc-800' : 'bg-gray-100'} ${t.text} border-0 focus:ring-2 focus:ring-orange-500 outline-none`}
               maxLength={200}
               rows={2}
             />
@@ -1075,7 +1075,7 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode, allProduc
           {/* Controle de Quantidade - Compacto */}
           <div className={`flex items-center gap-0 ${t.bg} rounded-full border ${t.border} overflow-hidden`}>
             <button
-              className={`w-10 h-10 flex items-center justify-center hover:bg-orange-50 dark:hover:bg-zinc-700 transition-colors ${quantity <= 1 ? 'opacity-30' : ''}`}
+              className={`w-10 h-10 flex items-center justify-center ${darkMode ? 'hover:bg-zinc-700' : 'hover:bg-orange-50'} transition-colors ${quantity <= 1 ? 'opacity-30' : ''}`}
               onClick={() => setQuantity(Math.max(1, quantity - 1))}
               disabled={quantity <= 1}
             >
