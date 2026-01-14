@@ -570,15 +570,17 @@ export default function Products() {
     const descriptionPercent = Math.round((withDescription / total) * 100);
     const fichaTecnicaPercent = Math.round((withFichaTecnica / total) * 100);
     
-    // Média ponderada: foto (50%) + descrição (50%)
+    // Média ponderada: foto (50%) + descrição (50%) - ficha técnica NÃO afeta
     const overallPercent = Math.round((photoPercent + descriptionPercent) / 2);
     
     return {
       total,
       withPhoto,
       withDescription,
+      withFichaTecnica,
       photoPercent,
       descriptionPercent,
+      fichaTecnicaPercent,
       overallPercent
     };
   }, [products]);
@@ -598,6 +600,18 @@ export default function Products() {
     }
     
     // Filtro de tipo de produto
+    if (filterType !== "todos") {
+      filtered = filtered.filter(p => p.product_type === filterType);
+    }
+    
+    // Filtro de ficha técnica
+    if (filterFichaTecnica === "com-ficha") {
+      filtered = filtered.filter(p => p.recipe && p.recipe.length > 0 && p.recipe.some(r => r.ingredient_id));
+    } else if (filterFichaTecnica === "sem-ficha") {
+      filtered = filtered.filter(p => !p.recipe || p.recipe.length === 0 || !p.recipe.some(r => r.ingredient_id));
+    }
+    
+    // Filtro de performance (dos indicadores)
     if (filterType !== "todos") {
       filtered = filtered.filter(p => p.product_type === filterType);
     }
