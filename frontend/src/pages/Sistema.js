@@ -1478,18 +1478,29 @@ function FilaImpressao({ toast }) {
     updateItemStatus(item.id, 'imprimindo');
 
     try {
-      // Simula impressão (em produção, conectar via Web USB ou servidor de impressão)
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Para demonstração, usa window.print() como fallback
       const config = await fetchPrintConfig();
       const empresa = await fetchEmpresaConfig();
       
-      printPedido(item.pedido, config, empresa);
+      // Tentar impressão USB primeiro
+      if ('usb' in navigator && item.impressora?.vendorId) {
+        const success = await printViaUSB(item.pedido, item.impressora, config, empresa);
+        if (success) {
+          updateItemStatus(item.id, 'sucesso');
+          // Notificar sucesso
+          window.dispatchEvent(new CustomEvent('printSuccess', { detail: { pedidoId: item.pedido.id } }));
+          return;
+        }
+      }
       
+      // Fallback para window.print()
+      printPedido(item.pedido, config, empresa);
       updateItemStatus(item.id, 'sucesso');
+      window.dispatchEvent(new CustomEvent('printSuccess', { detail: { pedidoId: item.pedido.id } }));
+      
     } catch (error) {
       updateItemStatus(item.id, 'erro', error.message);
+      // Notificar erro
+      window.dispatchEvent(new CustomEvent('printError', { detail: { pedidoId: item.pedido.id } }));
     }
   };
 
