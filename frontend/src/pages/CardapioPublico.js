@@ -742,16 +742,16 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode, allProduc
             <div className="flex items-center justify-between mb-2">
               <button
                 onClick={() => setComboStep(totalSteps > 0 ? totalSteps : 0)}
-                className={`w-8 h-8 rounded-full ${t.bgMuted} flex items-center justify-center`}
+                className={`w-8 h-8 rounded-full ${darkMode ? 'bg-zinc-700 hover:bg-zinc-600' : 'bg-gray-100 hover:bg-gray-200'} flex items-center justify-center transition-colors`}
               >
-                <ChevronLeft className="w-5 h-5" />
+                <ChevronLeft className={`w-5 h-5 ${t.text}`} />
               </button>
               <span className={`text-sm ${t.textMuted}`}>Resumo do Pedido</span>
               <button
                 onClick={onClose}
-                className={`w-8 h-8 rounded-full ${t.bgMuted} flex items-center justify-center`}
+                className={`w-8 h-8 rounded-full ${darkMode ? 'bg-zinc-700 hover:bg-zinc-600' : 'bg-gray-100 hover:bg-gray-200'} flex items-center justify-center transition-colors`}
               >
-                <X className="w-5 h-5" />
+                <X className={`w-5 h-5 ${t.text}`} />
               </button>
             </div>
             <h2 className={`text-lg font-bold ${t.text} text-center`}>Confirme seu pedido</h2>
@@ -761,7 +761,7 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode, allProduc
           <div className="flex-1 overflow-y-auto p-4 space-y-4">
             {/* Foto e Info do Produto Principal - SEM PREÇO */}
             <div className="flex gap-4 items-center">
-              <div className="w-20 h-20 rounded-xl overflow-hidden bg-orange-50 dark:bg-zinc-700 flex-shrink-0">
+              <div className={`w-20 h-20 rounded-xl overflow-hidden flex-shrink-0 ${darkMode ? 'bg-zinc-700' : 'bg-orange-50'}`}>
                 {(selectedComboType === 'combo' ? (product.combo_photo_url || product.photo_url) : (product.simple_photo_url || product.photo_url)) && !imageError ? (
                   <img
                     src={getImageUrl(selectedComboType === 'combo' ? (product.combo_photo_url || product.photo_url) : (product.simple_photo_url || product.photo_url))}
@@ -784,7 +784,7 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode, allProduc
             </div>
 
             {/* Resumo das Escolhas - COM TIPO E PREÇOS */}
-            <div className={`${t.bgMuted} rounded-xl p-4 space-y-3`}>
+            <div className={`${darkMode ? 'bg-zinc-800' : 'bg-gray-100'} rounded-xl p-4 space-y-3`}>
               <h4 className={`font-semibold text-sm ${t.text} flex items-center gap-2`}>
                 <ClipboardList className="w-4 h-4" />
                 Suas Escolhas
