@@ -36653,3 +36653,8 @@
 2026-01-14T14:29:58.221053+00:00 | DB_CALL get_pedido_by_id | P3 | 0.28ms | success
 2026-01-14T14:30:13.743749+00:00 | DB_CALL get_all_products | P3 | 3.21ms | success
 2026-01-14T14:30:18.647546+00:00 | DB_CALL get_all_products | P3 | 3.22ms | success
+2026-01-14T14:30:35.605383+00:00 | DB_CALL get_all_pedidos | P3 | 1.66ms | success
+2026-01-14T14:30:35.607460+00:00 | DB_CALL get_all_entregadores | P3 | 3.59ms | success
+2026-01-14T14:30:36.690348+00:00 | DB_CALL get_all_entregadores | P3 | 0.47ms | success
+2026-01-14T14:30:36.692550+00:00 | DB_CALL get_all_pedidos | P3 | 1.35ms | success
+2026-01-14T14:30:38.173825+00:00 | DB_CALL get_all_products | P3 | 3.1ms | success
