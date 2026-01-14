@@ -36770,3 +36770,6 @@
 2026-01-14T14:33:06.976309+00:00 | DB_CALL get_all_pedidos | P3 | 2.9ms | success
 2026-01-14T14:33:06.977914+00:00 | DB_CALL get_all_entregadores | P3 | 2.64ms | success
 2026-01-14T14:33:08.031762+00:00 | DB_CALL get_all_settings | P3 | 0.26ms | success
+2026-01-14T14:33:11.975918+00:00 | DB_CALL get_all_settings | P3 | 0.33ms | success
+2026-01-14T14:33:11.978127+00:00 | DB_CALL get_all_pedidos | P3 | 2.82ms | success
+2026-01-14T14:33:11.979813+00:00 | DB_CALL get_all_entregadores | P3 | 2.67ms | success
