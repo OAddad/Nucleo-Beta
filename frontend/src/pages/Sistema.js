@@ -2198,3 +2198,238 @@ export function addToPrintQueue(pedido, impressora = null) {
     detail: { pedido, impressora } 
   }));
 }
+
+// ==================== IMPRESSÃO VIA USB (ESC/POS) ====================
+export async function printViaUSB(pedido, impressora, config, empresa) {
+  if (!('usb' in navigator)) {
+    throw new Error('Web USB não suportado');
+  }
+
+  try {
+    // Buscar dispositivos autorizados
+    const devices = await navigator.usb.getDevices();
+    const device = devices.find(d => 
+      d.vendorId === impressora.vendorId && d.productId === impressora.productId
+    );
+
+    if (!device) {
+      throw new Error('Impressora não encontrada. Reconecte o dispositivo.');
+    }
+
+    // Abrir conexão
+    await device.open();
+    
+    if (device.configuration === null) {
+      await device.selectConfiguration(1);
+    }
+    
+    // Encontrar interface
+    const iface = device.configuration.interfaces.find(i => 
+      i.alternate.interfaceClass === 7
+    ) || device.configuration.interfaces[0];
+    
+    await device.claimInterface(iface.interfaceNumber);
+
+    // Encontrar endpoint de saída
+    const endpoint = iface.alternate.endpoints.find(e => e.direction === 'out');
+    
+    if (!endpoint) {
+      throw new Error('Endpoint de saída não encontrado');
+    }
+
+    // Gerar comandos ESC/POS
+    const commands = generateESCPOSCommands(pedido, impressora, config, empresa);
+    
+    // Enviar para impressora
+    await device.transferOut(endpoint.endpointNumber, commands);
+
+    // Fechar conexão
+    await device.releaseInterface(iface.interfaceNumber);
+    await device.close();
+
+    return true;
+  } catch (error) {
+    console.error('Erro USB:', error);
+    throw error;
+  }
+}
+
+// Gerar comandos ESC/POS para o cupom
+function generateESCPOSCommands(pedido, impressora, config, empresa) {
+  const ESC = 0x1B;
+  const GS = 0x1D;
+  const LF = 0x0A;
+  
+  const encoder = new TextEncoder();
+  let commands = [];
+  
+  // Inicializar impressora
+  commands.push(ESC, 0x40);
+  
+  // Configurar página de código para acentos (CP850 ou CP858)
+  commands.push(ESC, 0x74, 0x02);
+  
+  const addText = (text) => {
+    commands.push(...encoder.encode(text));
+  };
+  
+  const addLine = (text) => {
+    addText(text + '\n');
+  };
+  
+  const center = () => { commands.push(ESC, 0x61, 0x01); };
+  const left = () => { commands.push(ESC, 0x61, 0x00); };
+  const bold = (on) => { commands.push(ESC, 0x45, on ? 0x01 : 0x00); };
+  const doubleSize = (on) => { commands.push(ESC, 0x21, on ? 0x30 : 0x00); };
+  
+  const divider = () => {
+    addLine('-'.repeat(impressora.max_columns || 48));
+  };
+  
+  const dataHora = new Date(pedido.created_at || new Date());
+  
+  // Cabeçalho
+  if (config.mostrar_logo) {
+    center();
+    doubleSize(true);
+    addLine(empresa.nome || 'EMPRESA');
+    doubleSize(false);
+  }
+  
+  if (config.mostrar_endereco_empresa && empresa.endereco) {
+    center();
+    addLine(empresa.endereco);
+  }
+  
+  if (config.mostrar_telefone_empresa && empresa.telefone) {
+    center();
+    addLine(empresa.telefone);
+  }
+  
+  divider();
+  
+  // Código e Data
+  left();
+  const codigo = config.mostrar_codigo_pedido ? `#${pedido.codigo}` : '';
+  const data = config.mostrar_data_hora 
+    ? `${dataHora.toLocaleDateString('pt-BR')} ${dataHora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}`
+    : '';
+  addLine(`${codigo}${' '.repeat(Math.max(1, (impressora.max_columns || 48) - codigo.length - data.length))}${data}`);
+  
+  divider();
+  
+  // Cliente
+  if (config.mostrar_cliente_nome && pedido.cliente_nome) {
+    bold(true);
+    addLine(pedido.cliente_nome);
+    bold(false);
+  }
+  
+  if (config.mostrar_cliente_telefone && pedido.cliente_telefone) {
+    addLine(pedido.cliente_telefone);
+  }
+  
+  // Endereço
+  if (config.mostrar_endereco_entrega && pedido.tipo_entrega === 'delivery') {
+    divider();
+    bold(true);
+    addLine('ENTREGA:');
+    bold(false);
+    addLine(`${pedido.endereco_rua || ''}, ${pedido.endereco_numero || ''}`);
+    if (pedido.endereco_complemento) addLine(pedido.endereco_complemento);
+    addLine(pedido.endereco_bairro || '');
+  } else if (pedido.tipo_entrega === 'retirada' || pedido.tipo_entrega === 'pickup') {
+    divider();
+    center();
+    bold(true);
+    addLine('*** RETIRADA NO LOCAL ***');
+    bold(false);
+    left();
+  }
+  
+  divider();
+  
+  // Itens
+  center();
+  bold(true);
+  addLine('ITENS DO PEDIDO');
+  bold(false);
+  divider();
+  left();
+  
+  (pedido.items || []).forEach(item => {
+    const qtd = item.quantidade || 1;
+    const nome = item.nome || item.product_name || 'Item';
+    const preco = ((item.preco_unitario || item.preco || 0) * qtd).toFixed(2);
+    
+    const itemText = `${qtd}x ${nome}`;
+    const precoText = `R$ ${preco}`;
+    const spaces = Math.max(1, (impressora.max_columns || 48) - itemText.length - precoText.length);
+    
+    addLine(`${itemText}${' '.repeat(spaces)}${precoText}`);
+    
+    if (item.observacao) {
+      addLine(`  -> ${item.observacao}`);
+    }
+    
+    if (item.subitems && item.subitems.length > 0) {
+      item.subitems.forEach(sub => {
+        const subPreco = sub.preco > 0 ? ` (+R$ ${sub.preco.toFixed(2)})` : '';
+        addLine(`  * ${sub.nome || sub.name}${subPreco}`);
+      });
+    }
+  });
+  
+  divider();
+  
+  // Totais
+  if (pedido.valor_entrega > 0) {
+    const taxaText = 'Taxa de Entrega:';
+    const taxaValor = `R$ ${pedido.valor_entrega.toFixed(2)}`;
+    addLine(`${taxaText}${' '.repeat((impressora.max_columns || 48) - taxaText.length - taxaValor.length)}${taxaValor}`);
+  }
+  
+  bold(true);
+  doubleSize(true);
+  const totalText = 'TOTAL:';
+  const totalValor = `R$ ${(pedido.total || 0).toFixed(2)}`;
+  addLine(`${totalText}${' '.repeat(Math.max(1, 24 - totalText.length - totalValor.length))}${totalValor}`);
+  doubleSize(false);
+  bold(false);
+  
+  // Pagamento
+  if (config.mostrar_forma_pagamento && pedido.forma_pagamento) {
+    divider();
+    bold(true);
+    addText('PAGAMENTO: ');
+    bold(false);
+    addLine(pedido.forma_pagamento);
+    
+    if (pedido.troco_precisa && pedido.troco_valor) {
+      addLine(`Troco para: R$ ${pedido.troco_valor.toFixed(2)}`);
+    }
+  }
+  
+  // Observações
+  if (config.mostrar_observacoes && pedido.observacao) {
+    divider();
+    bold(true);
+    addLine('OBS:');
+    bold(false);
+    addLine(pedido.observacao);
+  }
+  
+  // Rodapé
+  if (config.mensagem_rodape) {
+    divider();
+    center();
+    addLine(config.mensagem_rodape);
+    left();
+  }
+  
+  // Espaço e corte
+  addLine('\n\n\n');
+  commands.push(GS, 0x56, 0x00); // Cortar papel
+  
+  return new Uint8Array(commands);
+}
