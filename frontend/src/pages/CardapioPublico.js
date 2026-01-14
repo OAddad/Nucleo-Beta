@@ -351,6 +351,28 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode, allProduc
   const [stepSelections, setStepSelections] = useState({}); // { stepIndex: [itemIds] }
   const [itemImageErrors, setItemImageErrors] = useState({}); // { itemId: true }
 
+  // Função para inicializar seleções com itens padrão
+  const initializeDefaultSelections = (steps, filterComboOnly = false, comboType = null) => {
+    const initialSelections = {};
+    
+    // Filtrar etapas se necessário (para simples, ignorar combo_only)
+    let relevantSteps = steps;
+    if (filterComboOnly && comboType === 'simples') {
+      relevantSteps = steps.filter(step => !step.combo_only);
+    }
+    
+    relevantSteps.forEach((step, index) => {
+      if (step.default_item_id) {
+        const itemExists = step.items?.some(item => item.product_id === step.default_item_id);
+        if (itemExists) {
+          initialSelections[index] = [step.default_item_id];
+        }
+      }
+    });
+    
+    return initialSelections;
+  };
+
   // Reset quando abrir com novo produto
   useEffect(() => {
     if (open && product) {
@@ -361,22 +383,15 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode, allProduc
       setSelectedComboType(null);
       setItemImageErrors({});
       
-      // Para produtos não-combo com etapas, inicializar seleções com itens padrão
+      // Para produtos não-combo com etapas, inicializar seleções com itens padrão imediatamente
       const isComboProduct = product.product_type === 'combo';
       const hasSteps = product.order_steps && product.order_steps.length > 0;
       
       if (!isComboProduct && hasSteps) {
-        const initialSelections = {};
-        product.order_steps.forEach((step, index) => {
-          if (step.default_item_id) {
-            const itemExists = step.items?.some(item => item.product_id === step.default_item_id);
-            if (itemExists) {
-              initialSelections[index] = [step.default_item_id];
-            }
-          }
-        });
+        const initialSelections = initializeDefaultSelections(product.order_steps);
         setStepSelections(initialSelections);
       } else {
+        // Para combos, as seleções serão inicializadas quando o tipo for selecionado
         setStepSelections({});
       }
     }
@@ -388,27 +403,15 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode, allProduc
       const productHasSteps = product.order_steps && product.order_steps.length > 0;
       if (!productHasSteps) return;
       
-      const filteredSteps = product.order_steps.filter(step => {
-        if (selectedComboType === 'simples') {
-          return !step.combo_only;
-        }
-        return true;
-      });
+      // Inicializar com itens padrão considerando o tipo selecionado
+      const initialSelections = initializeDefaultSelections(
+        product.order_steps, 
+        true, // Filtrar combo_only
+        selectedComboType
+      );
       
-      const initialSelections = {};
-      filteredSteps.forEach((step, filteredIndex) => {
-        if (step.default_item_id) {
-          const itemExists = step.items?.some(item => item.product_id === step.default_item_id);
-          if (itemExists) {
-            initialSelections[filteredIndex] = [step.default_item_id];
-          }
-        }
-      });
-      
-      // Só atualizar se houver itens padrão para inicializar
-      if (Object.keys(initialSelections).length > 0) {
-        setStepSelections(prev => ({...prev, ...initialSelections}));
-      }
+      // Sempre definir as seleções (não fazer merge para evitar dados antigos)
+      setStepSelections(initialSelections);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedComboType]);
