@@ -3145,44 +3145,112 @@ export default function CardapioPublico({ onAdminLogin }) {
                 </div>
               ) : (
                 <div className="space-y-2">
-                  {cart.map(item => (
-                    <div key={item.cartItemId || item.id} className={`${t.bgCartItem} rounded-lg p-2 flex gap-2`}>
-                      <div className={`w-12 h-12 ${t.bgMuted} rounded-lg flex-shrink-0 overflow-hidden`}>
-                        {item.photo_url ? (
-                          <img src={getImageUrl(item.photo_url)} alt="" className="w-full h-full object-cover" />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center text-lg">🍽️</div>
+                  {cart.map(item => {
+                    // Montar resumo das etapas selecionadas
+                    const getStepsSummary = () => {
+                      if (!item.step_selections || !item.order_steps) return [];
+                      const summary = [];
+                      
+                      // Filtrar etapas baseado no tipo
+                      const relevantSteps = item.order_steps.filter(step => {
+                        if (item.combo_type === 'simples') return !step.combo_only;
+                        return true;
+                      });
+                      
+                      relevantSteps.forEach((step, index) => {
+                        const selectedItems = item.step_selections[index] || [];
+                        if (selectedItems.length > 0) {
+                          const itemNames = selectedItems.map(itemId => {
+                            const stepItem = step.items?.find(i => i.product_id === itemId);
+                            return stepItem?.product_name || '';
+                          }).filter(Boolean);
+                          
+                          if (itemNames.length > 0) {
+                            summary.push({
+                              stepName: step.name,
+                              items: itemNames
+                            });
+                          }
+                        }
+                      });
+                      return summary;
+                    };
+                    
+                    const stepsSummary = getStepsSummary();
+                    
+                    return (
+                      <div key={item.cartItemId || item.id} className={`${t.bgCartItem} rounded-lg p-2`}>
+                        <div className="flex gap-2">
+                          <div className={`w-12 h-12 ${t.bgMuted} rounded-lg flex-shrink-0 overflow-hidden`}>
+                            {item.photo_url ? (
+                              <img src={getImageUrl(item.photo_url)} alt="" className="w-full h-full object-cover" />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center text-lg">🍽️</div>
+                            )}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-1">
+                              <h4 className={`font-medium ${t.text} text-xs truncate`}>{item.name}</h4>
+                              {item.combo_type && (
+                                <span className={`text-[9px] px-1 py-0.5 rounded ${
+                                  item.combo_type === 'combo' 
+                                    ? 'bg-green-500/20 text-green-400' 
+                                    : 'bg-blue-500/20 text-blue-400'
+                                }`}>
+                                  {item.combo_type === 'combo' ? 'COMBO' : 'SIMPLES'}
+                                </span>
+                              )}
+                            </div>
+                            <p className="text-orange-500 font-semibold text-xs">
+                              R$ {((item.final_price || item.sale_price) * item.quantity).toFixed(2).replace('.', ',')}
+                            </p>
+                            <div className="flex items-center gap-1.5 mt-1">
+                              <button 
+                                onClick={() => updateQuantity(item.cartItemId || item.id, -1)} 
+                                className={`w-5 h-5 ${t.bgMuted} rounded flex items-center justify-center`}
+                              >
+                                <Minus className="w-2.5 h-2.5" />
+                              </button>
+                              <span className={`${t.text} font-medium text-xs w-4 text-center`}>{item.quantity}</span>
+                              <button 
+                                onClick={() => updateQuantity(item.cartItemId || item.id, 1)} 
+                                className={`w-5 h-5 ${t.bgMuted} rounded flex items-center justify-center`}
+                              >
+                                <Plus className="w-2.5 h-2.5" />
+                              </button>
+                              <button 
+                                onClick={() => removeFromCart(item.cartItemId || item.id)} 
+                                className="w-5 h-5 bg-red-500/20 rounded flex items-center justify-center ml-auto"
+                              >
+                                <Trash2 className="w-2.5 h-2.5 text-red-400" />
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        {/* Etapas Selecionadas */}
+                        {stepsSummary.length > 0 && (
+                          <div className={`mt-2 pt-2 border-t ${t.border} space-y-1`}>
+                            {stepsSummary.map((step, idx) => (
+                              <div key={idx} className="flex items-start gap-1">
+                                <span className={`text-[9px] ${t.textMuted} flex-shrink-0`}>{step.stepName}:</span>
+                                <span className={`text-[9px] ${t.text}`}>{step.items.join(', ')}</span>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                        
+                        {/* Observação */}
+                        {item.observation && (
+                          <div className={`mt-2 pt-2 border-t ${t.border}`}>
+                            <p className={`text-[9px] ${t.textMuted} italic`}>
+                              📝 {item.observation}
+                            </p>
+                          </div>
                         )}
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <h4 className={`font-medium ${t.text} text-xs truncate`}>{item.name}</h4>
-                        <p className="text-orange-500 font-semibold text-xs">
-                          R$ {(item.sale_price * item.quantity).toFixed(2).replace('.', ',')}
-                        </p>
-                        <div className="flex items-center gap-1.5 mt-1">
-                          <button 
-                            onClick={() => updateQuantity(item.cartItemId || item.id, -1)} 
-                            className={`w-5 h-5 ${t.bgMuted} rounded flex items-center justify-center`}
-                          >
-                            <Minus className="w-2.5 h-2.5" />
-                          </button>
-                          <span className={`${t.text} font-medium text-xs w-4 text-center`}>{item.quantity}</span>
-                          <button 
-                            onClick={() => updateQuantity(item.cartItemId || item.id, 1)} 
-                            className={`w-5 h-5 ${t.bgMuted} rounded flex items-center justify-center`}
-                          >
-                            <Plus className="w-2.5 h-2.5" />
-                          </button>
-                          <button 
-                            onClick={() => removeFromCart(item.cartItemId || item.id)} 
-                            className="w-5 h-5 bg-red-500/20 rounded flex items-center justify-center ml-auto"
-                          >
-                            <Trash2 className="w-2.5 h-2.5 text-red-400" />
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
             </div>
