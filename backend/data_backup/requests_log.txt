@@ -37344,3 +37344,4 @@
 2026-01-14T16:23:26.336116+00:00 | DB_CALL get_all_products | P3 | 1.33ms | success
 2026-01-14T16:23:29.470779+00:00 | DB_CALL get_all_settings | P3 | 0.27ms | success
 2026-01-14T16:23:38.908186+00:00 | DB_CALL get_all_products | P3 | 1.33ms | success
+2026-01-14T16:23:44.607687+00:00 | DB_CALL get_all_products | P3 | 1.32ms | success
