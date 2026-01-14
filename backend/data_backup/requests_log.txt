@@ -39033,3 +39033,8 @@
 2026-01-14T23:00:04.490413+00:00 | DB_CALL get_all_entregadores | P3 | 0.8ms | success
 2026-01-14T23:00:04.492388+00:00 | DB_CALL get_all_pedidos | P3 | 2.18ms | success
 2026-01-14T23:00:04.494443+00:00 | DB_CALL get_all_settings | P3 | 2.12ms | success
+2026-01-14T23:00:06.211258+00:00 | DB_CALL get_pedido_by_id | P3 | 0.31ms | success
+2026-01-14T23:00:09.493328+00:00 | DB_CALL get_all_pedidos | P3 | 2.41ms | success
+2026-01-14T23:00:09.495285+00:00 | DB_CALL get_all_entregadores | P3 | 4.05ms | success
+2026-01-14T23:00:09.495611+00:00 | DB_CALL get_all_settings | P3 | 3.72ms | success
+2026-01-14T23:00:11.211084+00:00 | DB_CALL get_pedido_by_id | P3 | 0.31ms | success
