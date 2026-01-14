@@ -3126,7 +3126,7 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
                                 <Check className="w-3 h-3 text-white" />
                               </div>
                             )}
-                            <div className={`w-full aspect-square rounded-md overflow-hidden mb-1.5 ${isSelected ? 'ring-2 ring-orange-500' : ''} ${isPngImage(itemPhoto) ? 'bg-background' : ''}`}>
+                            <div className={`w-full aspect-square rounded-md overflow-hidden mb-1.5 ${isSelected ? 'ring-2 ring-orange-500' : ''} ${isPngImage(itemPhoto) ? 'bg-card' : 'bg-muted'}`}>
                               {itemPhoto ? (
                                 <img
                                   src={getImageUrl(itemPhoto)}
