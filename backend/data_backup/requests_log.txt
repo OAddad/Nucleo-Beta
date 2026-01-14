@@ -40069,3 +40069,7 @@
 2026-01-14T23:42:18.555974+00:00 | DB_CALL get_all_products | P3 | 3.59ms | success
 2026-01-14T23:42:45.188809+00:00 | DB_CALL get_all_products | P3 | 3.39ms | success
 2026-01-14T23:42:46.557913+00:00 | DB_CALL get_all_products | P3 | 3.78ms | success
+2026-01-14T23:43:23.691930+00:00 | DB_CALL init_database | P3 | 11.11ms | success
+2026-01-14T23:43:23.694326+00:00 | DB_CALL count_ingredients | P3 | 0.5ms | success
+2026-01-14T23:43:23.694633+00:00 | DB_CALL count_products | P3 | 0.2ms | success
+2026-01-14T23:43:23.697156+00:00 | DB_CALL count_users | P3 | 2.43ms | success

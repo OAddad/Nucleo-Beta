@@ -2008,6 +2008,12 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
     return product?.sale_price || 0;
   };
   
+  // Buscar descrição do produto pelo ID
+  const getProductDescription = (productId) => {
+    const product = allProductsForPhotos.find(p => p.id === productId);
+    return product?.description || "";
+  };
+  
   // Obter preço do item (verifica sync_prices da etapa)
   const getItemPrice = (item, step) => {
     // Se a etapa tem sync_prices ativo (ou não definido = default true), usa preço do produto
