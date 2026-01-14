@@ -984,6 +984,7 @@ export default function Products() {
         recipe_yield: recipeYield ? parseFloat(recipeYield) : null,
         recipe_yield_unit: recipeYieldUnit || null,
         linked_ingredient_id: linkedIngredientId || null,
+        card_order: cardOrder || "combo_first",
       };
 
       if (editMode) {
