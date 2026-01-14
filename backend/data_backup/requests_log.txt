@@ -37010,3 +37010,4 @@
 2026-01-14T14:39:08.175003+00:00 | DB_CALL get_all_settings | P3 | 0.29ms | success
 2026-01-14T14:39:08.179018+00:00 | DB_CALL get_all_settings | P3 | 0.17ms | success
 2026-01-14T14:39:08.345595+00:00 | DB_CALL get_all_settings | P3 | 0.27ms | success
+2026-01-14T14:39:14.315859+00:00 | DB_CALL get_all_products | P3 | 3.32ms | success
