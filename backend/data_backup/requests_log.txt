@@ -35714,3 +35714,8 @@
 2026-01-14T14:11:05.969293+00:00 | DB_CALL get_all_pedidos | P3 | 2.26ms | success
 2026-01-14T14:11:05.973424+00:00 | DB_CALL get_all_entregadores | P3 | 0.19ms | success
 2026-01-14T14:11:07.596640+00:00 | DB_CALL get_all_products | P3 | 1.0ms | success
+2026-01-14T14:11:09.023416+00:00 | DB_CALL get_pedido_by_id | P3 | 0.33ms | success
+2026-01-14T14:11:10.967703+00:00 | DB_CALL get_all_pedidos | P3 | 1.76ms | success
+2026-01-14T14:11:10.969517+00:00 | DB_CALL get_all_entregadores | P3 | 3.21ms | success
+2026-01-14T14:11:10.973684+00:00 | DB_CALL get_all_settings | P3 | 0.33ms | success
+2026-01-14T14:11:15.607103+00:00 | DB_CALL get_all_products | P3 | 1.44ms | success
