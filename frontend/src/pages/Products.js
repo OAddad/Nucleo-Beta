@@ -1831,14 +1831,120 @@ export default function Products() {
                     {productType === "combo" && (
                       <div className="space-y-4">
                         <div className="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-xl p-4 border border-purple-200 dark:border-purple-800">
-                          <div className="flex items-center gap-2 mb-3">
-                            <Package className="w-5 h-5 text-purple-500" />
-                            <h3 className="font-semibold text-purple-700 dark:text-purple-300">Cards de Seleção</h3>
+                          <div className="flex items-center justify-between mb-3">
+                            <div className="flex items-center gap-2">
+                              <Package className="w-5 h-5 text-purple-500" />
+                              <h3 className="font-semibold text-purple-700 dark:text-purple-300">Cards de Seleção</h3>
+                            </div>
+                            {/* Botão Copiar de outro Combo */}
+                            {availableCombos.length > 0 && (
+                              <Button
+                                type="button"
+                                variant="outline"
+                                size="sm"
+                                onClick={() => setCopyComboOpen(true)}
+                                className="text-purple-600 border-purple-300 hover:bg-purple-100 dark:hover:bg-purple-900/30"
+                              >
+                                <Copy className="w-4 h-4 mr-1" />
+                                Copiar de Combo
+                              </Button>
+                            )}
                           </div>
                           <p className="text-xs text-purple-600/70 dark:text-purple-400/70">
                             Configure como os cards SIMPLES e COMBO aparecerão para o cliente escolher.
                           </p>
                         </div>
+
+                        {/* Modal de Copiar Combo */}
+                        <Dialog open={copyComboOpen} onOpenChange={setCopyComboOpen}>
+                          <DialogContent className="sm:max-w-md">
+                            <DialogHeader>
+                              <DialogTitle className="flex items-center gap-2">
+                                <Copy className="w-5 h-5 text-purple-500" />
+                                Copiar de outro Combo
+                              </DialogTitle>
+                            </DialogHeader>
+                            <div className="space-y-4">
+                              <p className="text-sm text-muted-foreground">
+                                Selecione um combo para copiar todas as configurações (preços, descrições, fotos e etapas).
+                              </p>
+                              
+                              {/* Busca */}
+                              <div className="relative">
+                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                                <Input
+                                  value={copyComboSearch}
+                                  onChange={(e) => setCopyComboSearch(e.target.value)}
+                                  placeholder="Buscar combo..."
+                                  className="pl-9"
+                                />
+                              </div>
+                              
+                              {/* Lista de Combos */}
+                              <div className="max-h-64 overflow-y-auto space-y-2">
+                                {availableCombos
+                                  .filter(combo => {
+                                    if (!copyComboSearch) return true;
+                                    return combo.name.toLowerCase().includes(copyComboSearch.toLowerCase());
+                                  })
+                                  .map(combo => (
+                                    <button
+                                      key={combo.id}
+                                      type="button"
+                                      onClick={() => copyFromCombo(combo)}
+                                      className="w-full flex items-center gap-3 p-3 rounded-xl border hover:border-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/20 transition-all text-left"
+                                    >
+                                      {/* Foto */}
+                                      <div className="w-14 h-14 rounded-lg overflow-hidden bg-gray-100 dark:bg-zinc-700 flex-shrink-0">
+                                        {combo.photo_url ? (
+                                          <img 
+                                            src={combo.photo_url.startsWith('http') ? combo.photo_url : `${API}${combo.photo_url}`}
+                                            alt={combo.name}
+                                            className="w-full h-full object-cover"
+                                          />
+                                        ) : (
+                                          <div className="w-full h-full flex items-center justify-center text-2xl">🍟</div>
+                                        )}
+                                      </div>
+                                      
+                                      {/* Info */}
+                                      <div className="flex-1 min-w-0">
+                                        <p className="font-medium truncate">{combo.name}</p>
+                                        <p className="text-xs text-muted-foreground">
+                                          {combo.order_steps?.length || 0} etapa{combo.order_steps?.length !== 1 ? 's' : ''} • 
+                                          R$ {combo.sale_price?.toFixed(2) || '0.00'}
+                                        </p>
+                                        <div className="flex gap-1 mt-1">
+                                          {combo.order_steps?.slice(0, 3).map((step, i) => (
+                                            <span key={i} className="text-[10px] px-1.5 py-0.5 bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 rounded">
+                                              {step.name || `Etapa ${i+1}`}
+                                            </span>
+                                          ))}
+                                          {combo.order_steps?.length > 3 && (
+                                            <span className="text-[10px] text-muted-foreground">+{combo.order_steps.length - 3}</span>
+                                          )}
+                                        </div>
+                                      </div>
+                                      
+                                      {/* Ícone */}
+                                      <Copy className="w-5 h-5 text-purple-400 flex-shrink-0" />
+                                    </button>
+                                  ))
+                                }
+                                
+                                {availableCombos.filter(combo => {
+                                  if (!copyComboSearch) return true;
+                                  return combo.name.toLowerCase().includes(copyComboSearch.toLowerCase());
+                                }).length === 0 && (
+                                  <div className="text-center py-8 text-muted-foreground">
+                                    <Package className="w-10 h-10 mx-auto mb-2 opacity-30" />
+                                    <p className="text-sm">Nenhum combo encontrado</p>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          </DialogContent>
+                        </Dialog>
                         
                         {/* Preview dos Cards lado a lado */}
                         <div className="grid grid-cols-2 gap-4">
