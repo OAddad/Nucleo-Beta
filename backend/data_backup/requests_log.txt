@@ -35772,3 +35772,4 @@
 2026-01-14T14:12:22.965131+00:00 | DB_CALL get_all_pedidos | P3 | 2.07ms | success
 2026-01-14T14:12:22.967452+00:00 | DB_CALL get_all_settings | P3 | 0.26ms | success
 2026-01-14T14:12:23.897378+00:00 | DB_CALL get_all_products | P3 | 0.98ms | success
+2026-01-14T14:12:32.840070+00:00 | DB_CALL get_all_products | P3 | 0.95ms | success
