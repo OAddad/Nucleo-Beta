@@ -37086,3 +37086,4 @@
 2026-01-14T14:41:57.993409+00:00 | DB_CALL get_all_settings | P3 | 3.24ms | success
 2026-01-14T14:41:57.994921+00:00 | DB_CALL get_all_entregadores | P3 | 0.78ms | success
 2026-01-14T14:41:57.995291+00:00 | DB_CALL get_all_settings | P3 | 0.56ms | success
+2026-01-14T14:43:41.447483+00:00 | DB_CALL get_all_products | P3 | 4.89ms | success
