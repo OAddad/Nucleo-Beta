@@ -838,7 +838,7 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode, allProduc
                 value={observation}
                 onChange={(e) => setObservation(e.target.value)}
                 placeholder="Ex: sem cebola, molho à parte, ponto da carne..."
-                className={`w-full resize-none rounded-xl p-3 text-sm ${t.bgMuted} ${t.text} border ${t.border} focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none`}
+                className={`w-full resize-none rounded-xl p-3 text-sm ${darkMode ? 'bg-zinc-700' : 'bg-white'} ${t.text} border ${t.border} focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none`}
                 maxLength={200}
                 rows={3}
               />
@@ -846,15 +846,15 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode, allProduc
             </div>
 
             {/* Quantidade - CENTRALIZADO E MAIS INTUITIVO */}
-            <div className={`${t.bgMuted} rounded-xl p-4`}>
+            <div className={`${darkMode ? 'bg-zinc-800' : 'bg-gray-100'} rounded-xl p-4`}>
               <p className={`text-sm font-medium ${t.text} text-center mb-3`}>Quantidade</p>
               <div className="flex items-center justify-center gap-4">
                 <button
-                  className={`w-12 h-12 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center transition-all active:scale-95 ${quantity <= 1 ? 'opacity-40 cursor-not-allowed' : 'hover:bg-orange-200 dark:hover:bg-orange-900/50'}`}
+                  className={`w-12 h-12 rounded-full ${darkMode ? 'bg-orange-900/30 hover:bg-orange-900/50' : 'bg-orange-100 hover:bg-orange-200'} flex items-center justify-center transition-all active:scale-95 ${quantity <= 1 ? 'opacity-40 cursor-not-allowed' : ''}`}
                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
                   disabled={quantity <= 1}
                 >
-                  <Minus className="w-5 h-5 text-orange-600 dark:text-orange-400" />
+                  <Minus className={`w-5 h-5 ${darkMode ? 'text-orange-400' : 'text-orange-600'}`} />
                 </button>
                 <span className={`text-3xl font-bold ${t.text} w-16 text-center`}>{quantity}</span>
                 <button
