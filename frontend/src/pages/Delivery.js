@@ -184,11 +184,37 @@ export default function Delivery() {
   const handleAceitar = async (pedidoId, e) => {
     if (e) e.stopPropagation();
     try {
+      // Buscar dados completos do pedido antes de aceitar
+      const pedidoRes = await axios.get(`${API}/pedidos/${pedidoId}`);
+      const pedidoCompleto = pedidoRes.data;
+      
       await axios.patch(`${API}/pedidos/${pedidoId}/status?status=producao`);
       toast.success("Pedido aceito!");
+      
+      // Impressão automática se habilitada
+      if (impressaoConfig.impressao_automatica) {
+        try {
+          printPedido(pedidoCompleto, impressaoConfig, empresaConfig);
+        } catch (printError) {
+          console.error("Erro ao imprimir:", printError);
+          toast.error("Erro ao imprimir cupom");
+        }
+      }
+      
       fetchData();
     } catch (error) {
       toast.error("Erro ao aceitar pedido");
+    }
+  };
+
+  // Imprimir pedido manualmente
+  const handlePrintPedido = (pedido, e) => {
+    if (e) e.stopPropagation();
+    try {
+      printPedido(pedido, impressaoConfig, empresaConfig);
+    } catch (error) {
+      console.error("Erro ao imprimir:", error);
+      toast.error("Erro ao imprimir cupom");
     }
   };
 
