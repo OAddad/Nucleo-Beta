@@ -1083,10 +1083,10 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode, allProduc
             </button>
             <span className={`w-8 text-center font-bold ${t.text}`}>{quantity}</span>
             <button
-              className="w-10 h-10 flex items-center justify-center hover:bg-orange-50 dark:hover:bg-zinc-700 transition-colors"
+              className={`w-10 h-10 flex items-center justify-center ${darkMode ? 'hover:bg-zinc-700' : 'hover:bg-orange-50'} transition-colors`}
               onClick={() => setQuantity(quantity + 1)}
             >
-              <Plus className="w-4 h-4" />
+              <Plus className={`w-4 h-4 ${t.text}`} />
             </button>
           </div>
 
