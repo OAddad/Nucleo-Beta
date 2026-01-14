@@ -39026,3 +39026,10 @@
 2026-01-14T22:59:54.493081+00:00 | DB_CALL get_all_pedidos | P3 | 2.96ms | success
 2026-01-14T22:59:54.495055+00:00 | DB_CALL get_all_entregadores | P3 | 3.99ms | success
 2026-01-14T22:59:56.220736+00:00 | DB_CALL get_pedido_by_id | P3 | 0.48ms | success
+2026-01-14T22:59:59.492243+00:00 | DB_CALL get_all_pedidos | P3 | 2.19ms | success
+2026-01-14T22:59:59.494341+00:00 | DB_CALL get_all_settings | P3 | 3.23ms | success
+2026-01-14T22:59:59.495458+00:00 | DB_CALL get_all_entregadores | P3 | 0.21ms | success
+2026-01-14T23:00:01.212048+00:00 | DB_CALL get_pedido_by_id | P3 | 0.29ms | success
+2026-01-14T23:00:04.490413+00:00 | DB_CALL get_all_entregadores | P3 | 0.8ms | success
+2026-01-14T23:00:04.492388+00:00 | DB_CALL get_all_pedidos | P3 | 2.18ms | success
+2026-01-14T23:00:04.494443+00:00 | DB_CALL get_all_settings | P3 | 2.12ms | success
