@@ -1202,7 +1202,7 @@ export default function Products() {
   // Reset página quando filtros mudam
   useEffect(() => {
     setCurrentPage(1);
-  }, [sortBy, filterPhoto, filterDescription, filterCategory, performanceFilter]);
+  }, [sortBy, filterPhoto, filterDescription, filterCategory, performanceFilter, filterName, filterType]);
 
   return (
     <div className="p-8" data-testid="products-page">
