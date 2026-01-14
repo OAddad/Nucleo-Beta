@@ -39084,3 +39084,10 @@
 2026-01-14T23:01:05.220433+00:00 | DB_CALL get_all_entregadores | P3 | 0.37ms | success
 2026-01-14T23:01:05.221365+00:00 | DB_CALL get_all_settings | P3 | 0.17ms | success
 2026-01-14T23:01:06.215763+00:00 | DB_CALL get_pedido_by_id | P3 | 0.37ms | success
+2026-01-14T23:01:10.215185+00:00 | DB_CALL get_all_settings | P3 | 0.28ms | success
+2026-01-14T23:01:10.218411+00:00 | DB_CALL get_all_pedidos | P3 | 1.68ms | success
+2026-01-14T23:01:10.220460+00:00 | DB_CALL get_all_entregadores | P3 | 3.41ms | success
+2026-01-14T23:01:11.210737+00:00 | DB_CALL get_pedido_by_id | P3 | 0.31ms | success
+2026-01-14T23:01:15.273119+00:00 | DB_CALL get_all_entregadores | P3 | 0.27ms | success
+2026-01-14T23:01:15.276106+00:00 | DB_CALL get_all_pedidos | P3 | 2.02ms | success
+2026-01-14T23:01:15.278087+00:00 | DB_CALL get_all_settings | P3 | 3.13ms | success
