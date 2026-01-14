@@ -39071,3 +39071,11 @@
 2026-01-14T23:00:50.218576+00:00 | DB_CALL get_all_pedidos | P3 | 1.3ms | success
 2026-01-14T23:00:50.221466+00:00 | DB_CALL get_all_settings | P3 | 0.34ms | success
 2026-01-14T23:00:50.222646+00:00 | DB_CALL get_all_entregadores | P3 | 0.15ms | success
+2026-01-14T23:00:51.217317+00:00 | DB_CALL get_pedido_by_id | P3 | 0.37ms | success
+2026-01-14T23:00:55.231210+00:00 | DB_CALL get_all_pedidos | P3 | 3.03ms | success
+2026-01-14T23:00:55.233241+00:00 | DB_CALL get_all_entregadores | P3 | 4.35ms | success
+2026-01-14T23:00:55.234142+00:00 | DB_CALL get_all_settings | P3 | 4.06ms | success
+2026-01-14T23:00:56.226351+00:00 | DB_CALL get_pedido_by_id | P3 | 0.29ms | success
+2026-01-14T23:01:00.218298+00:00 | DB_CALL get_all_pedidos | P3 | 1.47ms | success
+2026-01-14T23:01:00.221336+00:00 | DB_CALL get_all_entregadores | P3 | 0.87ms | success
+2026-01-14T23:01:00.221765+00:00 | DB_CALL get_all_settings | P3 | 0.65ms | success
