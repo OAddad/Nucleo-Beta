@@ -36717,3 +36717,9 @@
 2026-01-14T14:31:59.989763+00:00 | DB_CALL get_all_products | P3 | 3.3ms | success
 2026-01-14T14:32:01.982099+00:00 | DB_CALL get_all_entregadores | P3 | 1.08ms | success
 2026-01-14T14:32:01.984753+00:00 | DB_CALL get_all_pedidos | P3 | 1.14ms | success
+2026-01-14T14:32:06.973334+00:00 | DB_CALL get_all_entregadores | P3 | 1.04ms | success
+2026-01-14T14:32:06.976287+00:00 | DB_CALL get_all_pedidos | P3 | 1.25ms | success
+2026-01-14T14:32:11.977376+00:00 | DB_CALL get_all_pedidos | P3 | 1.82ms | success
+2026-01-14T14:32:11.979752+00:00 | DB_CALL get_all_entregadores | P3 | 2.45ms | success
+2026-01-14T14:32:16.973356+00:00 | DB_CALL get_all_pedidos | P3 | 1.4ms | success
+2026-01-14T14:32:16.975529+00:00 | DB_CALL get_all_entregadores | P3 | 0.16ms | success

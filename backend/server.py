@@ -3664,6 +3664,25 @@ async def update_system_settings(settings_data: SystemSettingsUpdate, current_us
     return await get_system_settings()
 
 
+# ========== SETTINGS GENÉRICO (inclui impressão) ==========
+@api_router.get("/settings")
+async def get_all_settings_endpoint():
+    """Retorna TODAS as configurações do sistema (para impressão, empresa, etc.)"""
+    settings = await db_call(sqlite_db.get_all_settings)
+    return settings
+
+@api_router.post("/settings")
+async def update_settings_endpoint(data: dict):
+    """Atualiza configurações genéricas (usado para impressão, etc.)"""
+    for key, value in data.items():
+        if isinstance(value, bool):
+            await db_call(sqlite_db.set_setting, key, "true" if value else "false")
+        else:
+            await db_call(sqlite_db.set_setting, key, str(value))
+    
+    return {"success": True}
+
+
 # ========== BUSINESS HOURS ENDPOINTS ==========
 @api_router.get("/business-hours", response_model=List[BusinessHour])
 async def get_business_hours(current_user: User = Depends(get_current_user)):
