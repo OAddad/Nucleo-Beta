@@ -35785,3 +35785,6 @@
 2026-01-14T14:13:21.011582+00:00 | DB_CALL get_all_entregadores | P3 | 0.9ms | success
 2026-01-14T14:13:21.012021+00:00 | DB_CALL get_all_settings | P3 | 0.77ms | success
 2026-01-14T14:13:27.041459+00:00 | DB_CALL get_user_by_username | P3 | 0.24ms | success
+2026-01-14T14:13:35.894218+00:00 | DB_CALL get_user_by_username | P3 | 0.39ms | success
+2026-01-14T14:13:35.914506+00:00 | DB_CALL get_user_by_id | P3 | 0.18ms | success
+2026-01-14T14:13:35.915453+00:00 | DB_CALL get_all_products | P3 | 0.83ms | success
