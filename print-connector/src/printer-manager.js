@@ -1,296 +1,182 @@
 /**
- * Printer Manager
- * Gerencia detecção e comunicação com impressoras USB
- * Foco em impressoras Epson térmicas 80mm
+ * Printer Manager para Windows
+ * Usa wmic/PowerShell para listar impressoras e RAW printing para ESC/POS
+ * NÃO depende de módulos nativos - funciona como executável standalone
  */
 
-let usb;
-try {
-  usb = require('usb');
-} catch (error) {
-  console.warn('Módulo USB não disponível - modo simulação ativado');
-  usb = null;
-}
-
-// Fabricantes conhecidos de impressoras térmicas
-const THERMAL_PRINTER_VENDORS = {
-  0x04B8: 'Epson',
-  0x0416: 'Winbond (Epson compatível)',
-  0x0483: 'STMicroelectronics',
-  0x0525: 'Netchip',
-  0x0DD4: 'Custom Engineering',
-  0x1504: 'HPRT',
-  0x0FE6: 'ICS Advent',
-  0x1FC9: 'NXP',
-  0x20D1: 'SIMCOM',
-  0x1A86: 'QinHeng (CH340)',
-  0x067B: 'Prolific (PL2303)',
-  0x0456: 'Analog Devices',
-  0x0519: 'Star Micronics',
-  0x04E8: 'Samsung',
-  0x08A6: 'Toshiba TEC',
-  0x0B00: 'Custom'
-};
+const { execSync, exec } = require('child_process');
+const fs = require('fs');
+const path = require('path');
+const os = require('os');
 
 class PrinterManager {
   constructor(logger, config) {
     this.logger = logger;
     this.config = config;
-    this.connectedDevice = null;
+    this.isWindows = os.platform() === 'win32';
   }
   
   /**
-   * Lista todas as impressoras USB detectadas
+   * Lista impressoras instaladas no Windows
    */
   async listPrinters() {
     const printers = [];
     
-    if (!usb) {
-      this.logger.warn('USB não disponível - retornando lista vazia');
-      return printers;
+    if (!this.isWindows) {
+      // Modo simulação para desenvolvimento em Linux
+      this.logger.info('Modo Linux - simulando lista de impressoras');
+      return [{
+        id: 'simulated-1',
+        name: 'Impressora Simulada (Linux)',
+        status: 'online',
+        type: 'simulated'
+      }];
     }
     
     try {
-      const devices = usb.getDeviceList();
+      // Usar PowerShell para listar impressoras
+      const cmd = 'powershell -Command "Get-Printer | Select-Object Name, PrinterStatus, PortName, DriverName | ConvertTo-Json"';
+      const result = execSync(cmd, { encoding: 'utf8', timeout: 10000 });
       
-      for (const device of devices) {
-        const desc = device.deviceDescriptor;
-        const vendorId = desc.idVendor;
-        const productId = desc.idProduct;
-        
-        // Verificar se é um fabricante conhecido de impressoras térmicas
-        // ou se é dispositivo de classe 7 (impressora)
-        const isKnownVendor = THERMAL_PRINTER_VENDORS[vendorId];
-        
-        if (isKnownVendor) {
-          let name = THERMAL_PRINTER_VENDORS[vendorId];
-          let serialNumber = null;
-          
-          try {
-            device.open();
-            
-            // Tentar obter nome do produto
-            if (desc.iProduct) {
-              const productName = await this._getStringDescriptor(device, desc.iProduct);
-              if (productName) name = productName;
-            }
-            
-            // Tentar obter serial
-            if (desc.iSerialNumber) {
-              serialNumber = await this._getStringDescriptor(device, desc.iSerialNumber);
-            }
-            
-            device.close();
-          } catch (e) {
-            // Ignorar erros ao obter detalhes
-          }
-          
+      let parsed = JSON.parse(result);
+      if (!Array.isArray(parsed)) parsed = [parsed];
+      
+      for (const p of parsed) {
+        if (p && p.Name) {
           printers.push({
-            id: `${vendorId.toString(16)}-${productId.toString(16)}`,
-            name: name || `Impressora USB ${vendorId.toString(16).toUpperCase()}`,
-            vendorId,
-            productId,
-            vendorName: THERMAL_PRINTER_VENDORS[vendorId] || 'Desconhecido',
-            serialNumber,
-            status: 'detected'
+            id: p.Name.replace(/\s+/g, '-').toLowerCase(),
+            name: p.Name,
+            port: p.PortName || null,
+            driver: p.DriverName || null,
+            status: p.PrinterStatus === 0 ? 'online' : 'offline',
+            type: 'windows'
           });
         }
       }
     } catch (error) {
       this.logger.error('Erro ao listar impressoras:', error.message);
+      
+      // Fallback: usar wmic
+      try {
+        const wmicResult = execSync('wmic printer get name,status /format:csv', { encoding: 'utf8', timeout: 10000 });
+        const lines = wmicResult.split('\n').filter(l => l.trim() && !l.includes('Node'));
+        
+        for (const line of lines) {
+          const parts = line.split(',');
+          if (parts.length >= 2) {
+            const name = parts[1]?.trim();
+            if (name) {
+              printers.push({
+                id: name.replace(/\s+/g, '-').toLowerCase(),
+                name: name,
+                status: 'unknown',
+                type: 'windows'
+              });
+            }
+          }
+        }
+      } catch (wmicError) {
+        this.logger.error('Erro wmic:', wmicError.message);
+      }
     }
     
     return printers;
   }
   
   /**
-   * Obtém string descriptor do dispositivo USB
+   * Verifica se impressora está disponível
    */
-  _getStringDescriptor(device, index) {
-    return new Promise((resolve) => {
-      try {
-        device.getStringDescriptor(index, (error, data) => {
-          if (error) {
-            resolve(null);
-          } else {
-            resolve(data);
-          }
-        });
-      } catch (e) {
-        resolve(null);
-      }
-    });
-  }
-  
-  /**
-   * Testa conexão com impressora
-   */
-  async testConnection(printer) {
-    if (!usb) {
-      this.logger.warn('USB não disponível - simulando conexão OK');
-      return true;
-    }
+  async isPrinterAvailable(printerName) {
+    if (!this.isWindows) return true; // Simulação
     
     try {
-      const device = usb.findByIds(printer.vendorId, printer.productId);
-      
-      if (!device) {
-        this.logger.error(`Impressora não encontrada: ${printer.name}`);
-        return false;
-      }
-      
-      device.open();
-      
-      // Selecionar configuração
-      if (device.configDescriptor) {
-        try {
-          device.setConfiguration(device.configDescriptor.bConfigurationValue);
-        } catch (e) {
-          // Pode já estar configurado
-        }
-      }
-      
-      device.close();
-      this.logger.info(`Conexão testada com sucesso: ${printer.name}`);
-      return true;
-      
+      const printers = await this.listPrinters();
+      const printer = printers.find(p => p.name === printerName);
+      return printer !== undefined;
     } catch (error) {
-      this.logger.error(`Erro ao testar conexão: ${error.message}`);
+      this.logger.error('Erro ao verificar impressora:', error.message);
       return false;
     }
   }
   
   /**
-   * Verifica status da impressora
+   * Imprime dados RAW (ESC/POS) na impressora
+   * Usa arquivo temporário + comando de impressão RAW do Windows
    */
-  async checkPrinterStatus(printer) {
-    if (!usb) {
-      return { connected: false, status: 'USB não disponível' };
-    }
-    
-    try {
-      const device = usb.findByIds(printer.vendorId, printer.productId);
-      
-      if (!device) {
-        return { connected: false, status: 'Não encontrada' };
-      }
-      
-      return { connected: true, status: 'Conectada' };
-      
-    } catch (error) {
-      return { connected: false, status: error.message };
-    }
-  }
-  
-  /**
-   * Imprime dados raw (ESC/POS) na impressora
-   */
-  async printRaw(printer, data) {
-    if (!usb) {
-      this.logger.warn('USB não disponível - simulando impressão');
-      this.logger.info('Dados que seriam impressos:', data.length, 'bytes');
+  async printRaw(printerName, data) {
+    if (!this.isWindows) {
+      // Modo simulação Linux
+      this.logger.info('Modo Linux - simulando impressão');
+      this.logger.info(`Dados: ${data.length} bytes`);
       return { success: true, simulated: true };
     }
     
-    let device = null;
-    let iface = null;
+    const tempDir = os.tmpdir();
+    const tempFile = path.join(tempDir, `nucleo_print_${Date.now()}.bin`);
     
     try {
-      device = usb.findByIds(printer.vendorId, printer.productId);
+      // Escrever dados binários ESC/POS em arquivo temporário
+      fs.writeFileSync(tempFile, Buffer.from(data));
       
-      if (!device) {
-        throw new Error(`Impressora não encontrada: ${printer.name}`);
-      }
+      // Imprimir usando copy /b para RAW printing
+      // Este método envia bytes diretamente para a impressora sem processamento
+      const printCmd = `copy /b "${tempFile}" "\\\\%COMPUTERNAME%\\${printerName.replace(/"/g, '')}" > nul 2>&1`;
       
-      device.open();
-      
-      // Buscar interface de impressora (classe 7)
-      const config = device.configDescriptor;
-      if (!config) {
-        throw new Error('Configuração do dispositivo não encontrada');
-      }
-      
-      // Encontrar interface
-      for (const ifaceDesc of config.interfaces) {
-        for (const alt of ifaceDesc) {
-          // Classe 7 = Impressora, ou 255 = Vendor Specific
-          if (alt.bInterfaceClass === 7 || alt.bInterfaceClass === 255) {
-            iface = device.interface(alt.bInterfaceNumber);
-            break;
-          }
-        }
-        if (iface) break;
-      }
-      
-      // Se não encontrou por classe, pegar primeira interface
-      if (!iface && config.interfaces.length > 0) {
-        iface = device.interface(0);
-      }
-      
-      if (!iface) {
-        throw new Error('Interface de impressão não encontrada');
-      }
-      
-      // Tentar liberar do kernel (Linux)
-      if (iface.isKernelDriverActive()) {
-        try {
-          iface.detachKernelDriver();
-        } catch (e) {
-          // Ignorar
-        }
-      }
-      
-      iface.claim();
-      
-      // Encontrar endpoint OUT
-      let outEndpoint = null;
-      for (const ep of iface.endpoints) {
-        if (ep.direction === 'out') {
-          outEndpoint = ep;
-          break;
-        }
-      }
-      
-      if (!outEndpoint) {
-        throw new Error('Endpoint de saída não encontrado');
-      }
-      
-      // Enviar dados
-      const buffer = Buffer.from(data);
-      
-      await new Promise((resolve, reject) => {
-        outEndpoint.transfer(buffer, (error) => {
-          if (error) {
-            reject(error);
-          } else {
-            resolve();
-          }
+      try {
+        execSync(printCmd, { 
+          encoding: 'utf8', 
+          timeout: 30000,
+          shell: 'cmd.exe',
+          windowsHide: true
         });
-      });
-      
-      this.logger.info(`Impressão enviada: ${buffer.length} bytes`);
-      
-      // Liberar interface
-      iface.release((err) => {
-        if (err) this.logger.warn('Erro ao liberar interface:', err.message);
-      });
-      
-      device.close();
-      
-      return { success: true };
-      
+        this.logger.info(`Impressão enviada: ${data.length} bytes para ${printerName}`);
+        return { success: true };
+      } catch (copyError) {
+        // Tentar método alternativo via PowerShell
+        this.logger.warn('Fallback para PowerShell RAW print...');
+        
+        const psCmd = `
+          $bytes = [System.IO.File]::ReadAllBytes('${tempFile.replace(/\\/g, '\\\\')}')
+          $printerPath = "\\\\$env:COMPUTERNAME\\${printerName.replace(/'/g, "''")}"
+          $fs = [System.IO.File]::OpenWrite($printerPath)
+          $fs.Write($bytes, 0, $bytes.Length)
+          $fs.Close()
+        `;
+        
+        try {
+          execSync(`powershell -Command "${psCmd.replace(/"/g, '\\"').replace(/\n/g, ' ')}"`, {
+            encoding: 'utf8',
+            timeout: 30000,
+            windowsHide: true
+          });
+          this.logger.info(`Impressão via PowerShell: ${data.length} bytes`);
+          return { success: true };
+        } catch (psError) {
+          // Último fallback: lpr command se disponível
+          try {
+            execSync(`lpr -S 127.0.0.1 -P "${printerName}" "${tempFile}"`, {
+              encoding: 'utf8',
+              timeout: 30000,
+              windowsHide: true
+            });
+            return { success: true };
+          } catch (lprError) {
+            throw new Error(`Falha ao imprimir: ${copyError.message}`);
+          }
+        }
+      }
     } catch (error) {
       this.logger.error(`Erro na impressão: ${error.message}`);
-      
-      // Tentar limpar
-      try {
-        if (iface) iface.release(() => {});
-        if (device) device.close();
-      } catch (e) {
-        // Ignorar
-      }
-      
       return { success: false, error: error.message };
+    } finally {
+      // Limpar arquivo temporário
+      try {
+        if (fs.existsSync(tempFile)) {
+          fs.unlinkSync(tempFile);
+        }
+      } catch (e) {
+        // Ignorar erro de limpeza
+      }
     }
   }
 }

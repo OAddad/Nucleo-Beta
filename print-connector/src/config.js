@@ -1,7 +1,6 @@
 /**
  * Config Manager
- * Gerencia configurações persistentes do Print Connector
- * Salva no userData do sistema
+ * Persiste configurações no userData do Windows
  */
 
 const fs = require('fs');
@@ -10,7 +9,6 @@ const os = require('os');
 
 class Config {
   constructor() {
-    // Diretório de dados do app
     this.configDir = path.join(
       os.platform() === 'win32' 
         ? process.env.APPDATA || path.join(os.homedir(), 'AppData', 'Roaming')
@@ -31,18 +29,16 @@ class Config {
         fs.mkdirSync(this.configDir, { recursive: true });
       }
     } catch (error) {
-      console.error('Erro ao criar diretório de config:', error);
+      console.error('Erro ao criar diretório:', error);
     }
   }
   
   _load() {
     try {
       if (fs.existsSync(this.configFile)) {
-        const content = fs.readFileSync(this.configFile, 'utf8');
-        this.data = JSON.parse(content);
+        this.data = JSON.parse(fs.readFileSync(this.configFile, 'utf8'));
       }
     } catch (error) {
-      console.error('Erro ao carregar config:', error);
       this.data = {};
     }
   }
@@ -66,15 +62,6 @@ class Config {
   
   delete(key) {
     delete this.data[key];
-    this._save();
-  }
-  
-  getAll() {
-    return { ...this.data };
-  }
-  
-  clear() {
-    this.data = {};
     this._save();
   }
 }

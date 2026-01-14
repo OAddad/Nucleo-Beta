@@ -1,16 +1,14 @@
 /**
- * Logger
- * Sistema de logs com persistência em memória
+ * Logger simples com memória
  */
 
 class Logger {
-  constructor(config) {
-    this.config = config;
+  constructor() {
     this.logs = [];
-    this.maxLogs = 500; // Manter últimos 500 logs em memória
+    this.maxLogs = 500;
   }
   
-  _addLog(level, message, data = null) {
+  _add(level, message, data = null) {
     const entry = {
       timestamp: new Date().toISOString(),
       level,
@@ -19,51 +17,26 @@ class Logger {
     };
     
     this.logs.push(entry);
-    
-    // Limitar tamanho
     if (this.logs.length > this.maxLogs) {
       this.logs = this.logs.slice(-this.maxLogs);
     }
     
-    // Console output
     const prefix = `[${entry.timestamp}] [${level.toUpperCase()}]`;
-    switch (level) {
-      case 'error':
-        console.error(prefix, message, data || '');
-        break;
-      case 'warn':
-        console.warn(prefix, message, data || '');
-        break;
-      case 'info':
-        console.info(prefix, message, data || '');
-        break;
-      default:
-        console.log(prefix, message, data || '');
+    if (level === 'error') {
+      console.error(prefix, message, data || '');
+    } else if (level === 'warn') {
+      console.warn(prefix, message, data || '');
+    } else {
+      console.log(prefix, message, data || '');
     }
   }
   
-  info(message, data = null) {
-    this._addLog('info', message, data);
-  }
-  
-  warn(message, data = null) {
-    this._addLog('warn', message, data);
-  }
-  
-  error(message, data = null) {
-    this._addLog('error', message, data);
-  }
-  
-  debug(message, data = null) {
-    this._addLog('debug', message, data);
-  }
+  info(msg, data) { this._add('info', msg, data); }
+  warn(msg, data) { this._add('warn', msg, data); }
+  error(msg, data) { this._add('error', msg, data); }
   
   getLogs(limit = 200) {
     return this.logs.slice(-limit).reverse();
-  }
-  
-  clear() {
-    this.logs = [];
   }
 }
 
