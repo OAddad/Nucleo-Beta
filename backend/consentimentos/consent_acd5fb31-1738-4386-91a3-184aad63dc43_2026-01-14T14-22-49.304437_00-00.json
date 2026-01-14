@@ -1,0 +1,12 @@
+{
+  "tipo": "CONSENTIMENTO_WHATSAPP",
+  "versao": "1.0",
+  "cliente_id": "acd5fb31-1738-4386-91a3-184aad63dc43",
+  "nome": "Thais",
+  "telefone": "34999651065",
+  "email": "farmathaisalmeida@gmail.com",
+  "cpf": "10006673678",
+  "data_aceite_utc": "2026-01-14T14:22:49.304437+00:00",
+  "ip_aceite": "N/A",
+  "hash_documento": "94017dab48944f53bc2cfd660bafb36e7709ac875e5b6c2b6935374e817d519e"
+}
