@@ -35878,3 +35878,4 @@
 2026-01-14T14:18:10.041621+00:00 | DB_CALL get_all_products | P3 | 0.88ms | success
 2026-01-14T14:18:10.043812+00:00 | DB_CALL get_all_business_hours | P3 | 0.53ms | success
 2026-01-14T14:18:10.044224+00:00 | DB_CALL get_all_categories | P3 | 0.63ms | success
+2026-01-14T14:18:20.411597+00:00 | DB_CALL get_all_products | P3 | 1.03ms | success

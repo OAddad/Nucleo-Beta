@@ -821,7 +821,7 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode, allProduc
                       {item.price > 0 ? (
                         <span className="text-sm font-semibold text-orange-500">+R$ {item.price.toFixed(2).replace('.', ',')}</span>
                       ) : (
-                        <span className="text-xs text-green-600 dark:text-green-400 font-medium">Incluído</span>
+                        <span className="text-xs text-green-500 font-bold uppercase">Grátis</span>
                       )}
                     </div>
                   ))}
