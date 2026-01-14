@@ -633,6 +633,52 @@ export default function Products() {
     setFilterType("todos");
   };
 
+  // Função para copiar configurações de outro combo
+  const copyFromCombo = (sourceCombo) => {
+    if (!sourceCombo) return;
+    
+    // Copiar preços e descrições
+    if (sourceCombo.simple_price) setSimplePrice(sourceCombo.simple_price.toString());
+    if (sourceCombo.simple_description) setSimpleDescription(sourceCombo.simple_description);
+    if (sourceCombo.combo_description) setComboDescription(sourceCombo.combo_description);
+    
+    // Copiar fotos (se existirem)
+    if (sourceCombo.simple_photo_url) setSimplePhotoUrl(sourceCombo.simple_photo_url);
+    if (sourceCombo.combo_photo_url) setComboPhotoUrl(sourceCombo.combo_photo_url);
+    
+    // Copiar etapas
+    if (sourceCombo.order_steps && sourceCombo.order_steps.length > 0) {
+      const copiedSteps = sourceCombo.order_steps.map(step => ({
+        name: step.name,
+        calculation_type: step.calculation_type || "soma",
+        min_selections: step.min_selections || 0,
+        max_selections: step.max_selections || 0,
+        combo_only: step.combo_only || false,
+        items: (step.items || []).map(item => ({
+          product_id: item.product_id,
+          product_name: item.product_name,
+          price_override: item.price_override || 0
+        }))
+      }));
+      setOrderSteps(copiedSteps);
+    }
+    
+    // Fechar modal e mostrar toast
+    setCopyComboOpen(false);
+    setCopyComboSearch("");
+    toast.success(`Configurações copiadas de "${sourceCombo.name}"!`);
+  };
+
+  // Obter lista de combos disponíveis para copiar
+  const availableCombos = useMemo(() => {
+    return products.filter(p => 
+      p.product_type === "combo" && 
+      p.id !== currentProductId &&
+      p.order_steps && 
+      p.order_steps.length > 0
+    );
+  }, [products, currentProductId]);
+
   // Auto-marcar insumo e divisível quando o tipo é "receita"
   // Também garantir que a aba ativa seja "ficha" (receitas não têm etapas)
   useEffect(() => {
