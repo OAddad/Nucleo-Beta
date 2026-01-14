@@ -56,6 +56,48 @@ export default function Delivery() {
   const [autoAccept, setAutoAccept] = useState(false);
   const autoAcceptProcessing = useRef(false);
   
+  // Referência para rastrear pedidos anteriores (para detectar novos)
+  const previousPedidosRef = useRef([]);
+  const audioRef = useRef(null);
+  const [soundEnabled, setSoundEnabled] = useState(true);
+  
+  // Inicializar áudio de notificação
+  useEffect(() => {
+    audioRef.current = new Audio(NOTIFICATION_SOUND_URL);
+    audioRef.current.volume = 1.0;
+    
+    // Carregar preferência de som do localStorage
+    const savedSoundPref = localStorage.getItem('delivery_sound_enabled');
+    if (savedSoundPref !== null) {
+      setSoundEnabled(savedSoundPref === 'true');
+    }
+    
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
+    };
+  }, []);
+  
+  // Função para tocar som de notificação
+  const playNotificationSound = useCallback(() => {
+    if (soundEnabled && audioRef.current) {
+      audioRef.current.currentTime = 0;
+      audioRef.current.play().catch(err => {
+        console.log("Erro ao tocar som (interação do usuário necessária):", err);
+      });
+    }
+  }, [soundEnabled]);
+  
+  // Toggle som de notificação
+  const toggleSound = () => {
+    const newValue = !soundEnabled;
+    setSoundEnabled(newValue);
+    localStorage.setItem('delivery_sound_enabled', String(newValue));
+    toast.success(newValue ? "Som de notificação ativado" : "Som de notificação desativado");
+  };
+  
   // Modal de criar entregador
   const [criarEntregadorModalOpen, setCriarEntregadorModalOpen] = useState(false);
   const [novoEntregadorNome, setNovoEntregadorNome] = useState("");
