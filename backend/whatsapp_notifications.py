@@ -49,11 +49,12 @@ def generate_order_summary(pedido: dict, settings: dict) -> str:
     """
     Gera um resumo completo do pedido para enviar ao cliente.
     Diferencia entre ENTREGA e RETIRADA.
+    Inclui etapas selecionadas e observações de cada item.
     """
     codigo = pedido.get('codigo') or pedido.get('numero_pedido') or f"#{pedido.get('id', '')[:5].upper()}"
     tipo_entrega = pedido.get('tipo_entrega', 'delivery')
     
-    # Formatar itens
+    # Formatar itens com etapas e observações
     items = pedido.get('items', [])
     items_text = ""
     for item in items:
@@ -61,7 +62,32 @@ def generate_order_summary(pedido: dict, settings: dict) -> str:
         qtd = item.get('quantidade') or item.get('qty', 1)
         preco = item.get('preco') or item.get('price', 0)
         total_item = qtd * preco
-        items_text += f"```{qtd}x {nome}``` R$ {total_item:.2f}\n"
+        combo_type = item.get('combo_type')
+        
+        # Linha principal do item
+        tipo_badge = ""
+        if combo_type == 'combo':
+            tipo_badge = " (COMBO)"
+        elif combo_type == 'simples':
+            tipo_badge = " (SIMPLES)"
+        
+        items_text += f"```{qtd}x {nome}{tipo_badge}``` R$ {total_item:.2f}\n"
+        
+        # Adicionar etapas selecionadas
+        etapas = item.get('etapas', [])
+        if etapas:
+            for etapa in etapas:
+                etapa_nome = etapa.get('etapa', '')
+                etapa_itens = etapa.get('itens', [])
+                if etapa_itens:
+                    items_text += f"   ↳ {etapa_nome}: {', '.join(etapa_itens)}\n"
+        
+        # Adicionar observação do item
+        observacao = item.get('observacao')
+        if observacao:
+            items_text += f"   📝 _{observacao}_\n"
+        
+        items_text += "\n"
     
     # Forma de pagamento
     forma_pagamento = pedido.get('forma_pagamento', 'Não informado')
