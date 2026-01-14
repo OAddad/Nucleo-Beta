@@ -36779,3 +36779,11 @@
 2026-01-14T14:33:21.988731+00:00 | DB_CALL get_all_settings | P3 | 0.37ms | success
 2026-01-14T14:33:21.992229+00:00 | DB_CALL get_all_pedidos | P3 | 1.25ms | success
 2026-01-14T14:33:21.993862+00:00 | DB_CALL get_all_entregadores | P3 | 3.09ms | success
+2026-01-14T14:33:25.440208+00:00 | DB_CALL get_all_settings | P3 | 1.11ms | success
+2026-01-14T14:33:25.991246+00:00 | DB_CALL get_all_settings | P3 | 0.29ms | success
+2026-01-14T14:33:25.993920+00:00 | DB_CALL get_all_settings | P3 | 0.17ms | success
+2026-01-14T14:33:26.004295+00:00 | DB_CALL get_all_pedidos | P3 | 1.41ms | success
+2026-01-14T14:33:26.007014+00:00 | DB_CALL get_all_entregadores | P3 | 0.54ms | success
+2026-01-14T14:33:26.163171+00:00 | DB_CALL get_all_settings | P3 | 0.28ms | success
+2026-01-14T14:33:26.209928+00:00 | DB_CALL get_all_settings | P3 | 0.27ms | success
+2026-01-14T14:33:26.337238+00:00 | DB_CALL get_all_settings | P3 | 3.09ms | success
