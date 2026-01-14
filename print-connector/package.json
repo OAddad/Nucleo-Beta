@@ -5,7 +5,9 @@
   "main": "src/index.js",
   "bin": "src/index.js",
   "pkg": {
-    "targets": ["node18-win-x64"],
+    "targets": [
+      "node18-win-x64"
+    ],
     "outputPath": "dist",
     "assets": [
       "src/**/*"
@@ -17,15 +19,21 @@
     "build": "pkg . --output dist/NucleoPrintConnector.exe",
     "build:win": "pkg . --targets node18-win-x64 --output dist/NucleoPrintConnector.exe"
   },
-  "keywords": ["printer", "thermal", "pos", "escpos", "epson"],
+  "keywords": [
+    "printer",
+    "thermal",
+    "pos",
+    "escpos",
+    "epson"
+  ],
   "author": "Núcleo",
   "license": "MIT",
   "dependencies": {
+    "conf": "^12.0.0",
     "cors": "^2.8.5",
     "express": "^4.18.2",
     "usb": "^2.11.0",
-    "uuid": "^9.0.0",
-    "conf": "^12.0.0"
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "pkg": "^5.8.1"
