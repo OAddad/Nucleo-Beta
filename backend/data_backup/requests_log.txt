@@ -37242,3 +37242,10 @@
 2026-01-14T14:55:17.587235+00:00 | DB_CALL get_all_settings | P3 | 2.64ms | success
 2026-01-14T14:55:18.836772+00:00 | DB_CALL get_all_settings | P3 | 0.27ms | success
 2026-01-14T14:55:19.993233+00:00 | DB_CALL get_all_settings | P3 | 0.29ms | success
+2026-01-14T14:56:19.013691+00:00 | DB_CALL get_all_products | P3 | 3.21ms | success
+2026-01-14T14:57:45.892295+00:00 | DB_CALL get_all_products | P3 | 4.07ms | success
+2026-01-14T14:59:56.893421+00:00 | DB_CALL get_pedido_by_id | P3 | 0.58ms | success
+2026-01-14T14:59:56.896153+00:00 | DB_CALL get_all_products | P3 | 3.24ms | success
+2026-01-14T14:59:57.340010+00:00 | DB_CALL get_all_products | P3 | 3.09ms | success
+2026-01-14T14:59:58.805898+00:00 | DB_CALL get_pedido_by_id | P3 | 0.29ms | success
+2026-01-14T15:00:05.366121+00:00 | DB_CALL get_all_products | P3 | 2.93ms | success
