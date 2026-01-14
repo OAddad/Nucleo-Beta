@@ -2440,13 +2440,50 @@ export default function Products() {
                                   )}
                                 </div>
 
-                                {/* Lista de Produtos Adicionados - COM FOTOS */}
+                                {/* Lista de Produtos Adicionados - COM FOTOS E ORDENAÇÃO */}
                                 {(step.items || []).length > 0 ? (
                                   <div className="space-y-2">
-                                    <div className="flex items-center justify-between">
+                                    {/* Header com contador e botões de ordenação */}
+                                    <div className="flex items-center justify-between flex-wrap gap-2">
                                       <span className="text-xs font-medium text-muted-foreground">
                                         {step.items.length} {step.items.length === 1 ? 'produto' : 'produtos'} na etapa
                                       </span>
+                                      {/* Botões de Ordenação */}
+                                      <div className="flex items-center gap-1">
+                                        <span className="text-[10px] text-muted-foreground mr-1">Ordenar:</span>
+                                        <button
+                                          type="button"
+                                          onClick={() => sortStepItems(stepIndex, 'asc')}
+                                          className="px-2 py-1 text-[10px] rounded bg-gray-100 dark:bg-zinc-700 hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors"
+                                          title="Ordenar A→Z"
+                                        >
+                                          A→Z
+                                        </button>
+                                        <button
+                                          type="button"
+                                          onClick={() => sortStepItems(stepIndex, 'desc')}
+                                          className="px-2 py-1 text-[10px] rounded bg-gray-100 dark:bg-zinc-700 hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors"
+                                          title="Ordenar Z→A"
+                                        >
+                                          Z→A
+                                        </button>
+                                        <button
+                                          type="button"
+                                          onClick={() => sortStepItemsByPrice(stepIndex, 'asc')}
+                                          className="px-2 py-1 text-[10px] rounded bg-gray-100 dark:bg-zinc-700 hover:bg-green-100 dark:hover:bg-green-900/30 transition-colors"
+                                          title="Ordenar por preço (menor primeiro)"
+                                        >
+                                          R$↑
+                                        </button>
+                                        <button
+                                          type="button"
+                                          onClick={() => sortStepItemsByPrice(stepIndex, 'desc')}
+                                          className="px-2 py-1 text-[10px] rounded bg-gray-100 dark:bg-zinc-700 hover:bg-green-100 dark:hover:bg-green-900/30 transition-colors"
+                                          title="Ordenar por preço (maior primeiro)"
+                                        >
+                                          R$↓
+                                        </button>
+                                      </div>
                                     </div>
                                     <div className="grid gap-2">
                                       {(step.items || []).map((item, itemIndex) => {
