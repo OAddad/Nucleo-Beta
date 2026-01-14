@@ -1472,25 +1472,86 @@ function LogsConnector({ toast, connectorStatus }) {
 // ==================== SUB-ABA: DOWNLOAD APP ====================
 function DownloadApp({ toast }) {
   const [downloading, setDownloading] = useState(false);
+  const [downloadInfo, setDownloadInfo] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  const handleDownload = () => {
-    setDownloading(true);
-    
-    // Criar link para download do arquivo
-    // Em produção, isso seria um link para o arquivo hospedado
-    toast({ 
-      title: "Download", 
-      description: "O arquivo NucleoPrintConnector.exe será gerado. Execute-o após o download." 
-    });
-    
-    // Simular download - em produção seria um link real
-    setTimeout(() => {
-      setDownloading(false);
+  useEffect(() => {
+    fetchDownloadInfo();
+  }, []);
+
+  const fetchDownloadInfo = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch(`${API_URL}/api/print-connector/download`);
+      if (response.ok) {
+        const data = await response.json();
+        setDownloadInfo(data);
+      }
+    } catch (error) {
+      console.error('Erro ao buscar info do download:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDownloadExe = async () => {
+    if (!downloadInfo?.exe_available) {
       toast({ 
-        title: "Instruções", 
-        description: "Compile o projeto em /app/print-connector usando 'npm run build'" 
+        title: "Executável não disponível", 
+        description: "O .exe precisa ser compilado primeiro. Baixe o código fonte.",
+        variant: "destructive"
       });
-    }, 1000);
+      return;
+    }
+    
+    setDownloading(true);
+    try {
+      // Download direto do .exe
+      const link = document.createElement('a');
+      link.href = `${API_URL}/api/print-connector/download/exe`;
+      link.download = 'NucleoPrintConnector.exe';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      toast({ 
+        title: "Download iniciado!", 
+        description: "O arquivo NucleoPrintConnector.exe está sendo baixado." 
+      });
+    } catch (error) {
+      toast({ 
+        title: "Erro no download", 
+        description: error.message,
+        variant: "destructive"
+      });
+    } finally {
+      setDownloading(false);
+    }
+  };
+
+  const handleDownloadSource = async () => {
+    setDownloading(true);
+    try {
+      const link = document.createElement('a');
+      link.href = `${API_URL}/api/print-connector/source`;
+      link.download = 'NucleoPrintConnector-source.zip';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      toast({ 
+        title: "Download iniciado!", 
+        description: "Código fonte sendo baixado. Compile com 'npm run build' no Windows." 
+      });
+    } catch (error) {
+      toast({ 
+        title: "Erro no download", 
+        description: error.message,
+        variant: "destructive"
+      });
+    } finally {
+      setDownloading(false);
+    }
   };
 
   return (
@@ -1504,24 +1565,83 @@ function DownloadApp({ toast }) {
         <p className="text-white/80 mb-6">
           Aplicativo para Windows que habilita impressão automática via ESC/POS
         </p>
-        <Button 
-          size="lg" 
-          variant="secondary"
-          className="bg-white text-blue-600 hover:bg-white/90"
-          onClick={handleDownload}
-          disabled={downloading}
-        >
-          {downloading ? (
-            <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-          ) : (
-            <Package className="w-5 h-5 mr-2" />
+        
+        <div className="flex flex-col sm:flex-row gap-3 justify-center">
+          {/* Botão Download EXE */}
+          <Button 
+            size="lg" 
+            variant="secondary"
+            className={`${downloadInfo?.exe_available 
+              ? 'bg-white text-blue-600 hover:bg-white/90' 
+              : 'bg-white/50 text-blue-600/70 cursor-not-allowed'}`}
+            onClick={handleDownloadExe}
+            disabled={downloading || loading || !downloadInfo?.exe_available}
+          >
+            {downloading ? (
+              <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+            ) : (
+              <Package className="w-5 h-5 mr-2" />
+            )}
+            {downloadInfo?.exe_available ? 'Baixar .EXE' : 'EXE não disponível'}
+          </Button>
+
+          {/* Botão Download Código Fonte */}
+          <Button 
+            size="lg" 
+            variant="secondary"
+            className="bg-white/20 text-white hover:bg-white/30 border border-white/30"
+            onClick={handleDownloadSource}
+            disabled={downloading || loading}
+          >
+            {downloading ? (
+              <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+            ) : (
+              <FileText className="w-5 h-5 mr-2" />
+            )}
+            Baixar Código Fonte
+          </Button>
+        </div>
+        
+        <p className="text-xs text-white/60 mt-4">
+          {loading ? 'Verificando...' : (
+            <>
+              Versão {downloadInfo?.version || '1.0.0'} • {downloadInfo?.platform || 'Windows 10/11'}
+              {!downloadInfo?.exe_available && ' • Compile o código fonte para gerar o .exe'}
+            </>
           )}
-          Baixar para Windows
-        </Button>
-        <p className="text-xs text-white/60 mt-3">
-          Versão 1.0.0 • Windows 10/11 • ~50MB
         </p>
       </div>
+
+      {/* Status do Executável */}
+      {!loading && (
+        <div className={`border rounded-xl p-4 ${
+          downloadInfo?.exe_available 
+            ? 'bg-green-50 dark:bg-green-950/30 border-green-200 dark:border-green-900'
+            : 'bg-yellow-50 dark:bg-yellow-950/30 border-yellow-200 dark:border-yellow-900'
+        }`}>
+          <div className="flex items-center gap-3">
+            {downloadInfo?.exe_available ? (
+              <CheckCircle className="w-5 h-5 text-green-600" />
+            ) : (
+              <AlertTriangle className="w-5 h-5 text-yellow-600" />
+            )}
+            <div>
+              <p className={`font-medium ${
+                downloadInfo?.exe_available ? 'text-green-700 dark:text-green-400' : 'text-yellow-700 dark:text-yellow-400'
+              }`}>
+                {downloadInfo?.exe_available 
+                  ? 'Executável disponível para download' 
+                  : 'Executável não compilado'}
+              </p>
+              <p className="text-sm text-muted-foreground">
+                {downloadInfo?.exe_available 
+                  ? 'Clique em "Baixar .EXE" para fazer o download direto'
+                  : 'Baixe o código fonte e compile no Windows com: npm run build'}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Requisitos */}
       <div className="bg-card border rounded-xl p-6">
@@ -1530,18 +1650,12 @@ function DownloadApp({ toast }) {
           Requisitos
         </h3>
         <ul className="space-y-2 text-sm">
-          <li className="flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-green-500" />
-            Windows 10 ou 11
-          </li>
-          <li className="flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-green-500" />
-            Impressora térmica USB (Epson recomendada)
-          </li>
-          <li className="flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-green-500" />
-            Papel 80mm
-          </li>
+          {(downloadInfo?.requirements || ['Windows 10 ou 11', 'Impressora térmica USB', 'Papel 80mm']).map((req, i) => (
+            <li key={i} className="flex items-center gap-2">
+              <div className="w-2 h-2 rounded-full bg-green-500" />
+              {req}
+            </li>
+          ))}
         </ul>
       </div>
 
@@ -1554,22 +1668,32 @@ function DownloadApp({ toast }) {
         <ol className="space-y-3 text-sm">
           <li className="flex gap-3">
             <span className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold">1</span>
-            <span>Baixe o arquivo <code className="bg-muted px-1 rounded">NucleoPrintConnector.exe</code></span>
+            <span>
+              {downloadInfo?.exe_available 
+                ? 'Clique em "Baixar .EXE" acima'
+                : 'Baixe o código fonte e extraia em uma pasta'}
+            </span>
+          </li>
+          {!downloadInfo?.exe_available && (
+            <li className="flex gap-3">
+              <span className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold">2</span>
+              <span>Abra o terminal na pasta e execute: <code className="bg-muted px-1 rounded">npm install && npm run build</code></span>
+            </li>
+          )}
+          <li className="flex gap-3">
+            <span className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold">{downloadInfo?.exe_available ? 2 : 3}</span>
+            <span>Execute o arquivo <code className="bg-muted px-1 rounded">NucleoPrintConnector.exe</code></span>
           </li>
           <li className="flex gap-3">
-            <span className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold">2</span>
-            <span>Execute o arquivo (pode pedir permissão de administrador)</span>
-          </li>
-          <li className="flex gap-3">
-            <span className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold">3</span>
+            <span className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold">{downloadInfo?.exe_available ? 3 : 4}</span>
             <span>Conecte sua impressora USB</span>
           </li>
           <li className="flex gap-3">
-            <span className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold">4</span>
+            <span className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold">{downloadInfo?.exe_available ? 4 : 5}</span>
             <span>Volte aqui e selecione a impressora na aba "Print Connector"</span>
           </li>
           <li className="flex gap-3">
-            <span className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold">5</span>
+            <span className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold">{downloadInfo?.exe_available ? 5 : 6}</span>
             <span>Pronto! Impressões serão automáticas</span>
           </li>
         </ol>
