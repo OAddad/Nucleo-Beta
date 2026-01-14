@@ -38518,3 +38518,7 @@
 2026-01-14T22:46:41.222540+00:00 | DB_CALL get_all_settings | P3 | 3.4ms | success
 2026-01-14T22:46:41.222904+00:00 | DB_CALL get_all_entregadores | P3 | 4.22ms | success
 2026-01-14T22:46:41.223717+00:00 | DB_CALL get_pedido_by_id | P3 | 0.23ms | success
+2026-01-14T22:46:46.207715+00:00 | DB_CALL get_all_pedidos | P3 | 1.48ms | success
+2026-01-14T22:46:46.210089+00:00 | DB_CALL get_pedido_by_id | P3 | 4.77ms | success
+2026-01-14T22:46:46.210440+00:00 | DB_CALL get_all_settings | P3 | 4.41ms | success
+2026-01-14T22:46:46.210910+00:00 | DB_CALL get_all_entregadores | P3 | 0.95ms | success
