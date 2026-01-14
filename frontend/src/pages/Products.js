@@ -2012,45 +2012,186 @@ export default function Products() {
                             </div>
                           </DialogContent>
                         </Dialog>
+
+                        {/* Seletor de Ordem dos Cards */}
+                        <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-zinc-800 rounded-xl border">
+                          <div className="flex items-center gap-2">
+                            <ArrowUpDown className="w-4 h-4 text-muted-foreground" />
+                            <span className="text-sm font-medium">Ordem dos Cards:</span>
+                          </div>
+                          <div className="flex items-center gap-1 bg-white dark:bg-zinc-700 rounded-lg p-1 border">
+                            <button
+                              type="button"
+                              onClick={() => setCardOrder("combo_first")}
+                              className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
+                                cardOrder === "combo_first" 
+                                  ? "bg-green-500 text-white" 
+                                  : "hover:bg-gray-100 dark:hover:bg-zinc-600"
+                              }`}
+                            >
+                              🍟 Combo Primeiro
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => setCardOrder("simple_first")}
+                              className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
+                                cardOrder === "simple_first" 
+                                  ? "bg-blue-500 text-white" 
+                                  : "hover:bg-gray-100 dark:hover:bg-zinc-600"
+                              }`}
+                            >
+                              🍔 Simples Primeiro
+                            </button>
+                          </div>
+                        </div>
                         
-                        {/* Preview dos Cards lado a lado */}
-                        <div className="grid grid-cols-2 gap-4">
-                          {/* Card SIMPLES */}
-                          <div className="rounded-xl border-2 border-gray-200 dark:border-zinc-700 overflow-hidden bg-white dark:bg-zinc-800">
-                            <div className="bg-gray-100 dark:bg-zinc-700 px-3 py-2">
-                              <span className="text-xs font-bold text-gray-600 dark:text-gray-300">🍔 SIMPLES</span>
-                            </div>
-                            <div className="p-3 space-y-3">
-                              {/* Upload Foto */}
-                              <label className="cursor-pointer block">
-                                <div className="aspect-square rounded-lg border-2 border-dashed border-gray-300 hover:border-purple-400 transition-colors overflow-hidden flex items-center justify-center bg-gray-50 dark:bg-zinc-700">
-                                  {simplePhotoUrl ? (
-                                    <img src={simplePhotoUrl} alt="Simples" className="w-full h-full object-cover" />
-                                  ) : photoUrl ? (
-                                    <img src={photoUrl} alt="Simples" className="w-full h-full object-contain p-4" />
-                                  ) : (
-                                    <div className="text-center">
-                                      <Camera className="w-8 h-8 mx-auto text-gray-400 mb-1" />
-                                      <span className="text-xs text-gray-400">Foto Simples</span>
-                                    </div>
-                                  )}
+                        {/* Preview dos Cards lado a lado - com ordem dinâmica */}
+                        <div className={`grid grid-cols-2 gap-4 ${cardOrder === "simple_first" ? "flex-row-reverse" : ""}`}>
+                          {/* Card que aparece primeiro baseado na ordem */}
+                          {cardOrder === "combo_first" ? (
+                            <>
+                              {/* Card COMBO (primeiro) */}
+                              <div className="rounded-xl border-2 border-green-300 dark:border-green-700 overflow-hidden bg-white dark:bg-zinc-800 relative order-1">
+                                <div className="absolute top-0 left-0 right-0 bg-green-500 text-white text-[10px] font-bold py-1 text-center">
+                                  ⭐ RECOMENDADO
                                 </div>
-                                <input
-                                  type="file"
-                                  accept="image/*"
-                                  className="hidden"
-                                  onChange={async (e) => {
-                                    const file = e.target.files?.[0];
-                                    if (file) {
-                                      const reader = new FileReader();
-                                      reader.onload = (e) => setSimplePhotoUrl(e.target?.result);
-                                      reader.readAsDataURL(file);
-                                    }
-                                  }}
-                                />
-                              </label>
-                              {simplePhotoUrl && (
-                                <button 
+                                <div className="bg-green-100 dark:bg-green-900/30 px-3 py-2 mt-6">
+                                  <span className="text-xs font-bold text-green-700 dark:text-green-300">🍟 COMBO</span>
+                                </div>
+                                <div className="p-3 space-y-3">
+                                  <label className="cursor-pointer block">
+                                    <div className="aspect-square rounded-lg border-2 border-dashed border-gray-300 hover:border-green-400 transition-colors overflow-hidden flex items-center justify-center bg-green-50 dark:bg-zinc-700">
+                                      {comboPhotoUrl ? (
+                                        <img src={comboPhotoUrl} alt="Combo" className="w-full h-full object-cover" />
+                                      ) : photoUrl ? (
+                                        <img src={photoUrl} alt="Combo" className="w-full h-full object-contain p-4" />
+                                      ) : (
+                                        <div className="text-center">
+                                          <Camera className="w-8 h-8 mx-auto text-gray-400 mb-1" />
+                                          <span className="text-xs text-gray-400">Foto Combo</span>
+                                        </div>
+                                      )}
+                                    </div>
+                                    <input type="file" accept="image/*" className="hidden" onChange={async (e) => { const file = e.target.files?.[0]; if (file) { const reader = new FileReader(); reader.onload = (e) => setComboPhotoUrl(e.target?.result); reader.readAsDataURL(file); }}} />
+                                  </label>
+                                  {comboPhotoUrl && <button type="button" onClick={() => setComboPhotoUrl("")} className="text-xs text-red-500 hover:underline w-full text-center">Remover foto</button>}
+                                  <div>
+                                    <Label className="text-xs">Preço (R$)</Label>
+                                    <Input type="number" step="0.01" value={salePrice} onChange={(e) => setSalePrice(e.target.value)} placeholder="35.90" className="mt-1 h-10 text-lg font-bold text-center text-green-600" />
+                                  </div>
+                                  <div>
+                                    <Label className="text-xs">Descrição</Label>
+                                    <Input type="text" value={comboDescription} onChange={(e) => setComboDescription(e.target.value)} placeholder="+ Batata + Refrigerante" className="mt-1 h-9 text-sm" />
+                                  </div>
+                                </div>
+                              </div>
+                              {/* Card SIMPLES (segundo) */}
+                              <div className="rounded-xl border-2 border-gray-200 dark:border-zinc-700 overflow-hidden bg-white dark:bg-zinc-800 order-2">
+                                <div className="bg-gray-100 dark:bg-zinc-700 px-3 py-2">
+                                  <span className="text-xs font-bold text-gray-600 dark:text-gray-300">🍔 SIMPLES</span>
+                                </div>
+                                <div className="p-3 space-y-3">
+                                  <label className="cursor-pointer block">
+                                    <div className="aspect-square rounded-lg border-2 border-dashed border-gray-300 hover:border-purple-400 transition-colors overflow-hidden flex items-center justify-center bg-gray-50 dark:bg-zinc-700">
+                                      {simplePhotoUrl ? (
+                                        <img src={simplePhotoUrl} alt="Simples" className="w-full h-full object-cover" />
+                                      ) : photoUrl ? (
+                                        <img src={photoUrl} alt="Simples" className="w-full h-full object-contain p-4" />
+                                      ) : (
+                                        <div className="text-center">
+                                          <Camera className="w-8 h-8 mx-auto text-gray-400 mb-1" />
+                                          <span className="text-xs text-gray-400">Foto Simples</span>
+                                        </div>
+                                      )}
+                                    </div>
+                                    <input type="file" accept="image/*" className="hidden" onChange={async (e) => { const file = e.target.files?.[0]; if (file) { const reader = new FileReader(); reader.onload = (e) => setSimplePhotoUrl(e.target?.result); reader.readAsDataURL(file); }}} />
+                                  </label>
+                                  {simplePhotoUrl && <button type="button" onClick={() => setSimplePhotoUrl("")} className="text-xs text-red-500 hover:underline w-full text-center">Remover foto</button>}
+                                  <div>
+                                    <Label className="text-xs">Preço (R$)</Label>
+                                    <Input type="number" step="0.01" value={simplePrice} onChange={(e) => setSimplePrice(e.target.value)} placeholder="25.90" className="mt-1 h-10 text-lg font-bold text-center" />
+                                  </div>
+                                  <div>
+                                    <Label className="text-xs">Descrição</Label>
+                                    <Input type="text" value={simpleDescription} onChange={(e) => setSimpleDescription(e.target.value)} placeholder="Apenas o sanduíche" className="mt-1 h-9 text-sm" />
+                                  </div>
+                                </div>
+                              </div>
+                            </>
+                          ) : (
+                            <>
+                              {/* Card SIMPLES (primeiro) */}
+                              <div className="rounded-xl border-2 border-blue-300 dark:border-blue-700 overflow-hidden bg-white dark:bg-zinc-800 relative order-1">
+                                <div className="absolute top-0 left-0 right-0 bg-blue-500 text-white text-[10px] font-bold py-1 text-center">
+                                  ⭐ RECOMENDADO
+                                </div>
+                                <div className="bg-blue-100 dark:bg-blue-900/30 px-3 py-2 mt-6">
+                                  <span className="text-xs font-bold text-blue-700 dark:text-blue-300">🍔 SIMPLES</span>
+                                </div>
+                                <div className="p-3 space-y-3">
+                                  <label className="cursor-pointer block">
+                                    <div className="aspect-square rounded-lg border-2 border-dashed border-gray-300 hover:border-blue-400 transition-colors overflow-hidden flex items-center justify-center bg-blue-50 dark:bg-zinc-700">
+                                      {simplePhotoUrl ? (
+                                        <img src={simplePhotoUrl} alt="Simples" className="w-full h-full object-cover" />
+                                      ) : photoUrl ? (
+                                        <img src={photoUrl} alt="Simples" className="w-full h-full object-contain p-4" />
+                                      ) : (
+                                        <div className="text-center">
+                                          <Camera className="w-8 h-8 mx-auto text-gray-400 mb-1" />
+                                          <span className="text-xs text-gray-400">Foto Simples</span>
+                                        </div>
+                                      )}
+                                    </div>
+                                    <input type="file" accept="image/*" className="hidden" onChange={async (e) => { const file = e.target.files?.[0]; if (file) { const reader = new FileReader(); reader.onload = (e) => setSimplePhotoUrl(e.target?.result); reader.readAsDataURL(file); }}} />
+                                  </label>
+                                  {simplePhotoUrl && <button type="button" onClick={() => setSimplePhotoUrl("")} className="text-xs text-red-500 hover:underline w-full text-center">Remover foto</button>}
+                                  <div>
+                                    <Label className="text-xs">Preço (R$)</Label>
+                                    <Input type="number" step="0.01" value={simplePrice} onChange={(e) => setSimplePrice(e.target.value)} placeholder="25.90" className="mt-1 h-10 text-lg font-bold text-center text-blue-600" />
+                                  </div>
+                                  <div>
+                                    <Label className="text-xs">Descrição</Label>
+                                    <Input type="text" value={simpleDescription} onChange={(e) => setSimpleDescription(e.target.value)} placeholder="Apenas o sanduíche" className="mt-1 h-9 text-sm" />
+                                  </div>
+                                </div>
+                              </div>
+                              {/* Card COMBO (segundo) */}
+                              <div className="rounded-xl border-2 border-gray-200 dark:border-zinc-700 overflow-hidden bg-white dark:bg-zinc-800 order-2">
+                                <div className="bg-gray-100 dark:bg-zinc-700 px-3 py-2">
+                                  <span className="text-xs font-bold text-gray-600 dark:text-gray-300">🍟 COMBO</span>
+                                </div>
+                                <div className="p-3 space-y-3">
+                                  <label className="cursor-pointer block">
+                                    <div className="aspect-square rounded-lg border-2 border-dashed border-gray-300 hover:border-green-400 transition-colors overflow-hidden flex items-center justify-center bg-gray-50 dark:bg-zinc-700">
+                                      {comboPhotoUrl ? (
+                                        <img src={comboPhotoUrl} alt="Combo" className="w-full h-full object-cover" />
+                                      ) : photoUrl ? (
+                                        <img src={photoUrl} alt="Combo" className="w-full h-full object-contain p-4" />
+                                      ) : (
+                                        <div className="text-center">
+                                          <Camera className="w-8 h-8 mx-auto text-gray-400 mb-1" />
+                                          <span className="text-xs text-gray-400">Foto Combo</span>
+                                        </div>
+                                      )}
+                                    </div>
+                                    <input type="file" accept="image/*" className="hidden" onChange={async (e) => { const file = e.target.files?.[0]; if (file) { const reader = new FileReader(); reader.onload = (e) => setComboPhotoUrl(e.target?.result); reader.readAsDataURL(file); }}} />
+                                  </label>
+                                  {comboPhotoUrl && <button type="button" onClick={() => setComboPhotoUrl("")} className="text-xs text-red-500 hover:underline w-full text-center">Remover foto</button>}
+                                  <div>
+                                    <Label className="text-xs">Preço (R$)</Label>
+                                    <Input type="number" step="0.01" value={salePrice} onChange={(e) => setSalePrice(e.target.value)} placeholder="35.90" className="mt-1 h-10 text-lg font-bold text-center" />
+                                  </div>
+                                  <div>
+                                    <Label className="text-xs">Descrição</Label>
+                                    <Input type="text" value={comboDescription} onChange={(e) => setComboDescription(e.target.value)} placeholder="+ Batata + Refrigerante" className="mt-1 h-9 text-sm" />
+                                  </div>
+                                </div>
+                              </div>
+                            </>
+                          )}
+                        </div>
+                      </div>
+                    )} 
                                   type="button"
                                   onClick={() => setSimplePhotoUrl("")}
                                   className="text-xs text-red-500 hover:underline w-full text-center"
