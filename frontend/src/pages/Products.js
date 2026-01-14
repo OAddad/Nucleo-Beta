@@ -2428,6 +2428,19 @@ export default function Products() {
                                   </div>
                                 </div>
                                 <div className="flex items-center gap-2">
+                                  {/* Switch Sincronizar Preços */}
+                                  <button
+                                    type="button"
+                                    onClick={() => updateOrderStep(stepIndex, "sync_prices", !step.sync_prices)}
+                                    className={`text-xs px-2 py-1 rounded-full transition-colors flex items-center gap-1 ${
+                                      step.sync_prices !== false
+                                        ? 'bg-green-500 text-white' 
+                                        : 'bg-gray-200 dark:bg-zinc-600 text-gray-600 dark:text-gray-300 hover:bg-green-100 hover:text-green-600'
+                                    }`}
+                                    title={step.sync_prices !== false ? "Preços sincronizados com Produtos" : "Preços manuais"}
+                                  >
+                                    {step.sync_prices !== false ? '🔗 Auto' : '✏️ Manual'}
+                                  </button>
                                   {productType === "combo" && (
                                     <button
                                       type="button"
