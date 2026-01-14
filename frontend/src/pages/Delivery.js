@@ -546,18 +546,28 @@ export default function Delivery() {
   // Card de Pedido reutilizável
   const PedidoCard = ({ pedido, showButton, buttonType, onButtonClick, selectable, selected, onSelect, showPrint }) => {
     const retirada = isRetirada(pedido);
+    const temErroImpressao = errosImpressao[pedido.id];
     
     return (
       <div 
         onClick={() => handleAbrirDetalhes(pedido)}
-        className={`rounded-lg border p-3 shadow-sm cursor-pointer transition-all hover:shadow-md ${
-          retirada 
-            ? 'bg-amber-50 dark:bg-amber-950/20 border-amber-400 border-2 border-dashed' 
-            : selected 
-              ? 'bg-background border-primary ring-2 ring-primary/20'
-              : 'bg-background hover:border-primary/30'
+        className={`rounded-lg border p-3 shadow-sm cursor-pointer transition-all hover:shadow-md relative ${
+          temErroImpressao
+            ? 'bg-red-50 dark:bg-red-950/20 border-red-400 border-2'
+            : retirada 
+              ? 'bg-amber-50 dark:bg-amber-950/20 border-amber-400 border-2 border-dashed' 
+              : selected 
+                ? 'bg-background border-primary ring-2 ring-primary/20'
+                : 'bg-background hover:border-primary/30'
         }`}
       >
+        {/* Indicador de erro de impressão */}
+        {temErroImpressao && (
+          <div className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-red-500 flex items-center justify-center shadow-md" title="Erro na impressão">
+            <AlertCircle className="w-4 h-4 text-white" />
+          </div>
+        )}
+        
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
             {selectable && !retirada && (
