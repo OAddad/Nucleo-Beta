@@ -884,7 +884,7 @@ function ImpressaoTab({ toast }) {
         })}
       </div>
 
-      {activeSubTab === "connector" && <PrintConnectorTab toast={toast} connectorStatus={connectorStatus} onRefresh={checkConnectorStatus} />}
+      {activeSubTab === "connector" && <PrintConnectorTab toast={toast} connectorStatus={connectorStatus} onRefresh={checkConnectorStatus} onNavigateToDownload={() => setActiveSubTab("download")} />}
       {activeSubTab === "config" && <ConfiguracaoImpressao toast={toast} />}
       {activeSubTab === "fila" && <FilaImpressaoConnector toast={toast} connectorStatus={connectorStatus} />}
       {activeSubTab === "logs" && <LogsConnector toast={toast} connectorStatus={connectorStatus} />}
