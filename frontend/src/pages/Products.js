@@ -568,6 +568,21 @@ export default function Products() {
   const getFilteredProducts = () => {
     let filtered = [...products];
     
+    // Filtro de busca por nome (prioridade alta)
+    if (filterName.trim()) {
+      const searchTerm = filterName.toLowerCase().trim();
+      filtered = filtered.filter(p => 
+        p.name.toLowerCase().includes(searchTerm) ||
+        (p.code && p.code.includes(searchTerm)) ||
+        (p.description && p.description.toLowerCase().includes(searchTerm))
+      );
+    }
+    
+    // Filtro de tipo de produto
+    if (filterType !== "todos") {
+      filtered = filtered.filter(p => p.product_type === filterType);
+    }
+    
     // Filtro de performance (dos indicadores)
     if (performanceFilter === "sem-foto") {
       filtered = filtered.filter(p => !p.photo_url || p.photo_url.trim() === "");
