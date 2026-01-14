@@ -380,6 +380,33 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode, allProduc
     }
   }, [open, product]);
 
+  // Quando o tipo (combo/simples) for selecionado, inicializar seleções com itens padrão
+  useEffect(() => {
+    if (open && product && selectedComboType && hasOrderSteps) {
+      const filteredSteps = product.order_steps.filter(step => {
+        if (selectedComboType === 'simples') {
+          return !step.combo_only;
+        }
+        return true;
+      });
+      
+      const initialSelections = {};
+      filteredSteps.forEach((step, filteredIndex) => {
+        if (step.default_item_id) {
+          const itemExists = step.items?.some(item => item.product_id === step.default_item_id);
+          if (itemExists) {
+            initialSelections[filteredIndex] = [step.default_item_id];
+          }
+        }
+      });
+      
+      // Só atualizar se houver itens padrão para inicializar
+      if (Object.keys(initialSelections).length > 0) {
+        setStepSelections(prev => ({...prev, ...initialSelections}));
+      }
+    }
+  }, [selectedComboType]);
+
   if (!product) return null;
 
   const isCombo = product.product_type === 'combo';
