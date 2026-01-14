@@ -731,9 +731,23 @@ export default function Delivery() {
           <div className={`p-2 sm:p-3 bg-muted/50 border-b`}>
             <div className="flex items-center justify-between mb-2 sm:mb-3">
               <h3 className="font-bold text-xs sm:text-sm">AGUARDANDO ACEITE</h3>
-              <span className="bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400 px-2 py-0.5 rounded-full text-xs font-bold">
-                {getPedidosByStatus('aguardando_aceite').length}
-              </span>
+              <div className="flex items-center gap-2">
+                {/* Botão de som */}
+                <button
+                  onClick={toggleSound}
+                  className={`p-1.5 rounded-lg transition-all ${
+                    soundEnabled 
+                      ? 'bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400' 
+                      : 'bg-gray-100 text-gray-400 dark:bg-gray-800 dark:text-gray-500'
+                  }`}
+                  title={soundEnabled ? "Som ativado - Clique para desativar" : "Som desativado - Clique para ativar"}
+                >
+                  {soundEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
+                </button>
+                <span className="bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400 px-2 py-0.5 rounded-full text-xs font-bold">
+                  {getPedidosByStatus('aguardando_aceite').length}
+                </span>
+              </div>
             </div>
             
             {/* Switch de aceite automático - MAIOR */}
