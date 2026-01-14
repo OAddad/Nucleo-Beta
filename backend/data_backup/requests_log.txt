@@ -38726,3 +38726,11 @@
 2026-01-14T22:51:00.217668+00:00 | DB_CALL get_all_entregadores | P3 | 1.67ms | success
 2026-01-14T22:51:00.219033+00:00 | DB_CALL get_all_pedidos | P3 | 2.73ms | success
 2026-01-14T22:51:01.219929+00:00 | DB_CALL get_pedido_by_id | P3 | 0.31ms | success
+2026-01-14T22:51:05.209100+00:00 | DB_CALL get_all_entregadores | P3 | 0.72ms | success
+2026-01-14T22:51:05.211468+00:00 | DB_CALL get_all_pedidos | P3 | 2.64ms | success
+2026-01-14T22:51:05.213430+00:00 | DB_CALL get_all_settings | P3 | 3.11ms | success
+2026-01-14T22:51:06.213652+00:00 | DB_CALL get_pedido_by_id | P3 | 0.32ms | success
+2026-01-14T22:51:10.220030+00:00 | DB_CALL get_all_settings | P3 | 1.05ms | success
+2026-01-14T22:51:10.221602+00:00 | DB_CALL get_all_pedidos | P3 | 2.47ms | success
+2026-01-14T22:51:10.223493+00:00 | DB_CALL get_all_entregadores | P3 | 4.07ms | success
+2026-01-14T22:51:11.212308+00:00 | DB_CALL get_pedido_by_id | P3 | 0.29ms | success
