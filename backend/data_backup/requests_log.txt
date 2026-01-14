@@ -38815,3 +38815,10 @@
 2026-01-14T22:52:38.507659+00:00 | DB_CALL get_all_products | P3 | 3.25ms | success
 2026-01-14T22:52:41.209992+00:00 | DB_CALL get_pedido_by_id | P3 | 0.3ms | success
 2026-01-14T22:52:44.731621+00:00 | DB_CALL get_all_products | P3 | 4.78ms | success
+2026-01-14T22:52:45.742893+00:00 | DB_CALL get_pedido_by_id | P3 | 0.32ms | success
+2026-01-14T22:52:47.576120+00:00 | DB_CALL get_all_categories | P3 | 1.28ms | success
+2026-01-14T22:52:47.577414+00:00 | DB_CALL get_all_business_hours | P3 | 2.05ms | success
+2026-01-14T22:52:47.580629+00:00 | DB_CALL get_all_products | P3 | 5.15ms | success
+2026-01-14T22:52:47.593684+00:00 | DB_CALL get_all_settings | P3 | 15.28ms | success
+2026-01-14T22:52:47.920336+00:00 | DB_CALL get_all_bairros | P3 | 0.34ms | success
+2026-01-14T22:52:51.216944+00:00 | DB_CALL get_pedido_by_id | P3 | 0.33ms | success
