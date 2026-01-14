@@ -39804,3 +39804,9 @@
 2026-01-14T23:29:47.281156+00:00 | DB_CALL get_all_business_hours | P3 | 17.89ms | success
 2026-01-14T23:29:47.528139+00:00 | DB_CALL get_all_products | P3 | 3.47ms | success
 2026-01-14T23:29:47.990435+00:00 | DB_CALL get_all_products | P3 | 3.42ms | success
+2026-01-14T23:30:01.185697+00:00 | DB_CALL get_user_by_id | P3 | 0.49ms | success
+2026-01-14T23:30:01.191759+00:00 | DB_CALL create_ingredient | P3 | 5.84ms | success
+2026-01-14T23:30:01.199607+00:00 | DB_CALL create_audit_log | P3 | 7.72ms | success
+2026-01-14T23:30:01.199802+00:00 | DB_CALL get_ingredient_by_id | P3 | 0.12ms | success
+2026-01-14T23:30:01.382378+00:00 | DB_CALL get_user_by_id | P3 | 0.27ms | success
+2026-01-14T23:30:01.382880+00:00 | DB_CALL get_all_ingredients | P3 | 0.35ms | success

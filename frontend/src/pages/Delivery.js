@@ -1998,6 +1998,22 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
     const product = allProductsForPhotos.find(p => p.id === productId);
     return product?.photo_url || null;
   };
+  
+  // Buscar preço atual do produto pelo ID (para sincronizar com PRODUTOS)
+  const getProductPrice = (productId) => {
+    const product = allProductsForPhotos.find(p => p.id === productId);
+    return product?.sale_price || 0;
+  };
+  
+  // Obter preço do item (usa price_override se definido, senão busca do produto)
+  const getItemPrice = (item) => {
+    // Se price_override está definido explicitamente como 0, é grátis
+    if (item.price_override === 0) return 0;
+    // Se price_override > 0, usa ele
+    if (item.price_override > 0) return item.price_override;
+    // Senão, busca o preço atual do produto
+    return getProductPrice(item.product_id);
+  };
 
   // Confirmar adição do popup (com suporte a combo)
   const confirmAddToCart = () => {
