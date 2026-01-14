@@ -2491,10 +2491,35 @@ export default function Products() {
                                         return (
                                           <div 
                                             key={itemIndex} 
-                                            className="flex items-center gap-3 p-2 rounded-xl bg-white dark:bg-zinc-800 border hover:border-orange-300 transition-colors group"
+                                            className="flex items-center gap-2 p-2 rounded-xl bg-white dark:bg-zinc-800 border hover:border-orange-300 transition-colors group"
                                           >
+                                            {/* Botões de Mover (para cima/baixo) */}
+                                            <div className="flex flex-col gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                                              <button
+                                                type="button"
+                                                onClick={() => moveStepItem(stepIndex, itemIndex, 'up')}
+                                                disabled={itemIndex === 0}
+                                                className={`p-0.5 rounded hover:bg-gray-200 dark:hover:bg-zinc-600 ${itemIndex === 0 ? 'opacity-30 cursor-not-allowed' : ''}`}
+                                                title="Mover para cima"
+                                              >
+                                                <ArrowUp className="w-3 h-3" />
+                                              </button>
+                                              <button
+                                                type="button"
+                                                onClick={() => moveStepItem(stepIndex, itemIndex, 'down')}
+                                                disabled={itemIndex === step.items.length - 1}
+                                                className={`p-0.5 rounded hover:bg-gray-200 dark:hover:bg-zinc-600 ${itemIndex === step.items.length - 1 ? 'opacity-30 cursor-not-allowed' : ''}`}
+                                                title="Mover para baixo"
+                                              >
+                                                <ArrowDown className="w-3 h-3" />
+                                              </button>
+                                            </div>
+                                            
+                                            {/* Número da Posição */}
+                                            <span className="text-xs text-muted-foreground font-mono w-5 text-center">{itemIndex + 1}</span>
+                                            
                                             {/* Foto do Produto */}
-                                            <div className="w-14 h-14 rounded-lg overflow-hidden bg-gray-100 dark:bg-zinc-700 flex-shrink-0">
+                                            <div className="w-12 h-12 rounded-lg overflow-hidden bg-gray-100 dark:bg-zinc-700 flex-shrink-0">
                                               {itemProduct?.photo_url ? (
                                                 <img 
                                                   src={itemProduct.photo_url.startsWith('http') ? itemProduct.photo_url : `${API}${itemProduct.photo_url}`}
@@ -2503,7 +2528,7 @@ export default function Products() {
                                                   onError={(e) => { e.target.style.display = 'none'; }}
                                                 />
                                               ) : (
-                                                <div className="w-full h-full flex items-center justify-center text-2xl">
+                                                <div className="w-full h-full flex items-center justify-center text-xl">
                                                   🍽️
                                                 </div>
                                               )}
