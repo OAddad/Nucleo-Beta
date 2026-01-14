@@ -2896,6 +2896,11 @@ export default function Products() {
                         {filterCategory}
                       </span>
                     )}
+                    {filterFichaTecnica !== "todos" && (
+                      <span className="px-2 py-0.5 bg-cyan-100 dark:bg-cyan-900/30 text-cyan-700 dark:text-cyan-300 rounded-full text-xs">
+                        {filterFichaTecnica === "com-ficha" ? "✅ Com Ficha" : "❌ Sem Ficha"}
+                      </span>
+                    )}
                   </div>
                 )}
               </div>
@@ -2913,7 +2918,7 @@ export default function Products() {
           ) : (
             <>
             {paginatedProducts.map((product) => {
-              const isExpanded = expandedProducts.has(product.id);
+              const isExpanded = expandedProductId === product.id;
               
               return (
                 <div
@@ -2924,7 +2929,7 @@ export default function Products() {
                   {/* Linha Principal - Sempre Visível */}
                   <div 
                     className="flex items-center px-6 py-4 cursor-pointer hover:bg-muted/30 transition-colors"
-                    onClick={() => toggleProduct(product.id)}
+                    onClick={() => toggleProductExpand(product.id)}
                   >
                     {/* Foto do produto ou placeholder - sem fundo para suportar PNGs transparentes */}
                     <div className="w-16 h-16 rounded-lg border overflow-hidden mr-4 flex-shrink-0 flex items-center justify-center">
