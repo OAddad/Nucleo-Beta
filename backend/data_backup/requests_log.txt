@@ -35639,3 +35639,7 @@
 2026-01-14T13:59:13.172623+00:00 | DB_CALL get_all_categories | P3 | 0.22ms | success
 2026-01-14T13:59:13.351009+00:00 | DB_CALL get_user_by_id | P3 | 2.66ms | success
 2026-01-14T13:59:13.352071+00:00 | DB_CALL get_all_categories | P3 | 0.89ms | success
+2026-01-14T14:02:39.964376+00:00 | DB_CALL init_database | P3 | 66.3ms | success
+2026-01-14T14:02:39.965027+00:00 | DB_CALL count_ingredients | P3 | 0.31ms | success
+2026-01-14T14:02:39.965370+00:00 | DB_CALL count_products | P3 | 0.23ms | success
+2026-01-14T14:02:39.965572+00:00 | DB_CALL count_users | P3 | 0.14ms | success
