@@ -36425,3 +36425,10 @@
 2026-01-14T14:26:21.975337+00:00 | DB_CALL get_all_pedidos | P3 | 3.93ms | success
 2026-01-14T14:26:21.981445+00:00 | DB_CALL get_all_entregadores | P3 | 3.63ms | success
 2026-01-14T14:26:21.982212+00:00 | DB_CALL get_all_settings | P3 | 4.17ms | success
+2026-01-14T14:26:22.077912+00:00 | DB_CALL get_all_products | P3 | 3.47ms | success
+2026-01-14T14:26:26.245686+00:00 | DB_CALL get_all_entregadores | P3 | 0.26ms | success
+2026-01-14T14:26:26.255131+00:00 | DB_CALL get_all_settings | P3 | 0.2ms | success
+2026-01-14T14:26:26.261076+00:00 | DB_CALL get_all_pedidos | P3 | 1.16ms | success
+2026-01-14T14:26:26.981830+00:00 | DB_CALL get_all_pedidos | P3 | 1.61ms | success
+2026-01-14T14:26:26.983855+00:00 | DB_CALL get_all_entregadores | P3 | 3.16ms | success
+2026-01-14T14:26:26.984856+00:00 | DB_CALL get_all_settings | P3 | 0.17ms | success
