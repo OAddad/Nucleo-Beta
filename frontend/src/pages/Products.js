@@ -2280,124 +2280,195 @@ export default function Products() {
           </Dialog>
         </div>
 
-        {/* Filtros de Ordenação e Filtros Manuais */}
+        {/* SEÇÃO DE FILTROS MELHORADA */}
         {products.length > 0 && (
-          <div className="mb-4 space-y-3">
-            <div className="flex flex-wrap items-center gap-3">
-              {/* Ordenar por - Todos os botões com toggle */}
-              <div className="flex items-center gap-2">
-                <Label className="text-sm font-medium whitespace-nowrap">Ordenar:</Label>
-                
-                {/* Botões de ordenação com toggle */}
-                <div className="flex items-center gap-1.5">
-                  <Button
-                    variant={sortBy.startsWith("alfabetica") ? "default" : "outline"}
-                    size="sm"
-                    className="h-9 px-3"
-                    onClick={() => {
-                      if (sortBy === "alfabetica-az") {
-                        setSortBy("alfabetica-za");
-                      } else {
-                        setSortBy("alfabetica-az");
-                      }
-                    }}
+          <div className="mb-6 space-y-4">
+            {/* Barra de Busca Principal */}
+            <div className="relative">
+              <div className="flex items-center gap-2 bg-white dark:bg-zinc-800 rounded-xl border-2 border-gray-200 dark:border-zinc-700 px-4 py-2 focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20 transition-all">
+                <Search className="w-5 h-5 text-muted-foreground" />
+                <Input
+                  value={filterName}
+                  onChange={(e) => setFilterName(e.target.value)}
+                  placeholder="Buscar por nome, código ou descrição..."
+                  className="border-0 bg-transparent focus-visible:ring-0 h-10 text-base placeholder:text-muted-foreground/60"
+                />
+                {filterName && (
+                  <button
+                    onClick={() => setFilterName("")}
+                    className="p-1 hover:bg-gray-100 dark:hover:bg-zinc-700 rounded-full transition-colors"
                   >
-                    Nome {sortBy.startsWith("alfabetica") && (sortBy === "alfabetica-az" ? "A→Z" : "Z→A")}
-                  </Button>
-                  <Button
-                    variant={sortBy.startsWith("cmv") ? "default" : "outline"}
-                    size="sm"
-                    className="h-9 px-3"
-                    onClick={() => handleSortToggle("cmv")}
-                  >
-                    CMV {sortBy.startsWith("cmv") && (sortDirection.cmv === "desc" ? "↓" : "↑")}
-                  </Button>
-                  <Button
-                    variant={sortBy.startsWith("margem") ? "default" : "outline"}
-                    size="sm"
-                    className="h-9 px-3"
-                    onClick={() => handleSortToggle("margem")}
-                  >
-                    Margem {sortBy.startsWith("margem") && (sortDirection.margem === "desc" ? "↓" : "↑")}
-                  </Button>
-                  <Button
-                    variant={sortBy.startsWith("preco") ? "default" : "outline"}
-                    size="sm"
-                    className="h-9 px-3"
-                    onClick={() => handleSortToggle("preco")}
-                  >
-                    Preço {sortBy.startsWith("preco") && (sortDirection.preco === "desc" ? "↓" : "↑")}
-                  </Button>
-                </div>
+                    <X className="w-4 h-4 text-muted-foreground" />
+                  </button>
+                )}
               </div>
-              
-              {/* Separador visual */}
-              <div className="h-8 w-px bg-border" />
-              
-              {/* Filtros */}
-              <div className="flex items-center gap-2">
-                <Label className="text-sm font-medium whitespace-nowrap">Filtrar:</Label>
-                
-                {/* Filtro de Fotos */}
-                <Select value={filterPhoto} onValueChange={setFilterPhoto}>
-                  <SelectTrigger className="w-32">
-                    <SelectValue placeholder="Fotos" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="todos">Todas Fotos</SelectItem>
-                    <SelectItem value="com-foto">Com Foto</SelectItem>
-                    <SelectItem value="sem-foto">Sem Foto</SelectItem>
-                  </SelectContent>
-                </Select>
-                
-                {/* Filtro de Descrição */}
-                <Select value={filterDescription} onValueChange={setFilterDescription}>
-                  <SelectTrigger className="w-36">
-                    <SelectValue placeholder="Descrição" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="todos">Todas Descrições</SelectItem>
-                    <SelectItem value="com-descricao">Com Descrição</SelectItem>
-                    <SelectItem value="sem-descricao">Sem Descrição</SelectItem>
-                  </SelectContent>
-                </Select>
-                
-                {/* Filtro de Categoria */}
-                <Select value={filterCategory} onValueChange={setFilterCategory}>
-                  <SelectTrigger className="w-40">
-                    <SelectValue placeholder="Categoria" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="todos">Todas Categorias</SelectItem>
-                    {categories.map((cat) => (
-                      <SelectItem key={cat.id} value={cat.name}>{cat.name}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+            </div>
+
+            {/* Linha de Filtros Compactos */}
+            <div className="flex flex-wrap items-center gap-3 p-3 bg-gray-50 dark:bg-zinc-800/50 rounded-xl">
+              {/* Tipo de Produto - Pills */}
+              <div className="flex items-center gap-1 bg-white dark:bg-zinc-800 rounded-lg p-1 border">
+                <button
+                  onClick={() => setFilterType("todos")}
+                  className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
+                    filterType === "todos" 
+                      ? "bg-primary text-white" 
+                      : "hover:bg-gray-100 dark:hover:bg-zinc-700"
+                  }`}
+                >
+                  Todos
+                </button>
+                <button
+                  onClick={() => setFilterType("produto")}
+                  className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
+                    filterType === "produto" 
+                      ? "bg-blue-500 text-white" 
+                      : "hover:bg-gray-100 dark:hover:bg-zinc-700"
+                  }`}
+                >
+                  🍔 Produto
+                </button>
+                <button
+                  onClick={() => setFilterType("combo")}
+                  className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
+                    filterType === "combo" 
+                      ? "bg-orange-500 text-white" 
+                      : "hover:bg-gray-100 dark:hover:bg-zinc-700"
+                  }`}
+                >
+                  🍟 Combo
+                </button>
+                <button
+                  onClick={() => setFilterType("receita")}
+                  className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
+                    filterType === "receita" 
+                      ? "bg-purple-500 text-white" 
+                      : "hover:bg-gray-100 dark:hover:bg-zinc-700"
+                  }`}
+                >
+                  🍳 Receita
+                </button>
               </div>
-              
-              {/* Botão limpar filtros */}
-              {(filterPhoto !== "todos" || filterDescription !== "todos" || filterCategory !== "todos" || performanceFilter !== "todos") && (
+
+              {/* Separador */}
+              <div className="h-8 w-px bg-border hidden sm:block" />
+
+              {/* Categoria */}
+              <Select value={filterCategory} onValueChange={setFilterCategory}>
+                <SelectTrigger className="w-40 h-9 bg-white dark:bg-zinc-800">
+                  <SelectValue placeholder="📁 Categoria" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="todos">📁 Todas Categorias</SelectItem>
+                  {categories.map((cat) => (
+                    <SelectItem key={cat.id} value={cat.name}>{cat.name}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              {/* Foto */}
+              <Select value={filterPhoto} onValueChange={setFilterPhoto}>
+                <SelectTrigger className="w-32 h-9 bg-white dark:bg-zinc-800">
+                  <SelectValue placeholder="📷 Foto" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="todos">📷 Todas</SelectItem>
+                  <SelectItem value="com-foto">✅ Com Foto</SelectItem>
+                  <SelectItem value="sem-foto">❌ Sem Foto</SelectItem>
+                </SelectContent>
+              </Select>
+
+              {/* Descrição */}
+              <Select value={filterDescription} onValueChange={setFilterDescription}>
+                <SelectTrigger className="w-36 h-9 bg-white dark:bg-zinc-800">
+                  <SelectValue placeholder="📝 Descrição" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="todos">📝 Todas</SelectItem>
+                  <SelectItem value="com-descricao">✅ Com Descrição</SelectItem>
+                  <SelectItem value="sem-descricao">❌ Sem Descrição</SelectItem>
+                </SelectContent>
+              </Select>
+
+              {/* Separador */}
+              <div className="h-8 w-px bg-border hidden sm:block" />
+
+              {/* Ordenação */}
+              <div className="flex items-center gap-1">
+                <span className="text-xs text-muted-foreground mr-1">Ordenar:</span>
+                <Button
+                  variant={sortBy.startsWith("alfabetica") ? "default" : "outline"}
+                  size="sm"
+                  className="h-8 px-2 text-xs"
+                  onClick={() => setSortBy(sortBy === "alfabetica-az" ? "alfabetica-za" : "alfabetica-az")}
+                >
+                  {sortBy === "alfabetica-az" ? "A→Z" : sortBy === "alfabetica-za" ? "Z→A" : "Nome"}
+                </Button>
+                <Button
+                  variant={sortBy.startsWith("preco") ? "default" : "outline"}
+                  size="sm"
+                  className="h-8 px-2 text-xs"
+                  onClick={() => handleSortToggle("preco")}
+                >
+                  R$ {sortBy.startsWith("preco") && (sortDirection.preco === "desc" ? "↓" : "↑")}
+                </Button>
+                <Button
+                  variant={sortBy.startsWith("cmv") ? "default" : "outline"}
+                  size="sm"
+                  className="h-8 px-2 text-xs"
+                  onClick={() => handleSortToggle("cmv")}
+                >
+                  CMV {sortBy.startsWith("cmv") && (sortDirection.cmv === "desc" ? "↓" : "↑")}
+                </Button>
+              </div>
+
+              {/* Limpar Filtros */}
+              {(filterPhoto !== "todos" || filterDescription !== "todos" || filterCategory !== "todos" || filterType !== "todos" || filterName || performanceFilter !== "todos") && (
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="h-9 text-muted-foreground hover:text-foreground"
+                  className="h-8 text-xs text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
                   onClick={clearAllFilters}
                 >
-                  Limpar filtros
+                  <X className="w-3 h-3 mr-1" />
+                  Limpar
                 </Button>
               )}
             </div>
-            
-            {/* Badge mostrando filtros ativos */}
-            {(filterPhoto !== "todos" || filterDescription !== "todos" || filterCategory !== "todos" || performanceFilter !== "todos") && (
+
+            {/* Resumo dos Resultados */}
+            <div className="flex items-center justify-between">
               <div className="flex items-center gap-2 text-sm">
-                <span className="text-muted-foreground">Mostrando:</span>
-                <span className="font-medium text-primary">
-                  {sortedProducts.length} de {products.length} produto{products.length !== 1 ? "s" : ""}
-                </span>
+                <span className="text-muted-foreground">Mostrando</span>
+                <span className="font-bold text-primary">{sortedProducts.length}</span>
+                <span className="text-muted-foreground">de</span>
+                <span className="font-medium">{products.length}</span>
+                <span className="text-muted-foreground">produtos</span>
+                
+                {/* Tags de filtros ativos */}
+                {(filterName || filterType !== "todos" || filterCategory !== "todos") && (
+                  <div className="flex items-center gap-1 ml-2">
+                    {filterName && (
+                      <span className="px-2 py-0.5 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-full text-xs">
+                        "{filterName}"
+                      </span>
+                    )}
+                    {filterType !== "todos" && (
+                      <span className="px-2 py-0.5 bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 rounded-full text-xs">
+                        {filterType === "produto" ? "🍔 Produto" : filterType === "combo" ? "🍟 Combo" : "🍳 Receita"}
+                      </span>
+                    )}
+                    {filterCategory !== "todos" && (
+                      <span className="px-2 py-0.5 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded-full text-xs">
+                        {filterCategory}
+                      </span>
+                    )}
+                  </div>
+                )}
               </div>
-            )}
+            </div>
+          </div>
+        )}
           </div>
         )}
 
