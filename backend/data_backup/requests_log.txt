@@ -38809,3 +38809,9 @@
 2026-01-14T22:52:16.589024+00:00 | DB_CALL get_all_business_hours | P3 | 21.14ms | success
 2026-01-14T22:52:17.302888+00:00 | DB_CALL get_all_bairros | P3 | 0.36ms | success
 2026-01-14T22:52:21.210171+00:00 | DB_CALL get_pedido_by_id | P3 | 0.29ms | success
+2026-01-14T22:52:26.225268+00:00 | DB_CALL get_pedido_by_id | P3 | 15.33ms | success
+2026-01-14T22:52:36.133475+00:00 | DB_CALL get_all_products | P3 | 3.35ms | success
+2026-01-14T22:52:36.146117+00:00 | DB_CALL get_pedido_by_id | P3 | 14.76ms | success
+2026-01-14T22:52:38.507659+00:00 | DB_CALL get_all_products | P3 | 3.25ms | success
+2026-01-14T22:52:41.209992+00:00 | DB_CALL get_pedido_by_id | P3 | 0.3ms | success
+2026-01-14T22:52:44.731621+00:00 | DB_CALL get_all_products | P3 | 4.78ms | success

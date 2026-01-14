@@ -1876,6 +1876,117 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
     setSelectedProduct(null);
     setProductQuantity(1);
     setProductObservation("");
+    setComboStep(0);
+    setSelectedComboType(null);
+    setStepSelections({});
+  };
+  
+  // Selecionar tipo combo/simples
+  const handleSelectComboType = (type) => {
+    setSelectedComboType(type);
+    if (selectedProduct?.order_steps?.length > 0) {
+      initializeDefaultSelections(selectedProduct.order_steps, true, type);
+    }
+  };
+  
+  // Toggle seleção de item em uma etapa
+  const toggleItemSelection = (stepIndex, productId) => {
+    const step = getRelevantSteps()[stepIndex];
+    if (!step) return;
+    
+    const currentSelections = stepSelections[stepIndex] || [];
+    const isSelected = currentSelections.includes(productId);
+    
+    let newSelections;
+    if (isSelected) {
+      newSelections = currentSelections.filter(id => id !== productId);
+    } else {
+      if (step.max_selections && currentSelections.length >= step.max_selections) {
+        newSelections = [...currentSelections.slice(1), productId];
+      } else {
+        newSelections = [...currentSelections, productId];
+      }
+    }
+    
+    setStepSelections({ ...stepSelections, [stepIndex]: newSelections });
+  };
+  
+  // Obter etapas relevantes baseado no tipo selecionado
+  const getRelevantSteps = () => {
+    if (!selectedProduct?.order_steps) return [];
+    if (selectedComboType === 'simples') {
+      return selectedProduct.order_steps.filter(step => !step.combo_only);
+    }
+    return selectedProduct.order_steps;
+  };
+  
+  // Verificar se pode avançar na etapa atual
+  const canAdvanceComboStep = () => {
+    if (comboStep === 0) {
+      return selectedComboType !== null;
+    }
+    
+    const relevantSteps = getRelevantSteps();
+    if (comboStep > relevantSteps.length) return true;
+    
+    const currentStepIndex = comboStep - 1;
+    const currentStep = relevantSteps[currentStepIndex];
+    if (!currentStep) return true;
+    
+    const selections = stepSelections[currentStepIndex] || [];
+    const minSelections = currentStep.min_selections || 0;
+    
+    return selections.length >= minSelections;
+  };
+  
+  // Avançar para próxima etapa do combo
+  const handleNextComboStep = () => {
+    const relevantSteps = getRelevantSteps();
+    const totalSteps = relevantSteps.length;
+    
+    if (comboStep === 0) {
+      if (totalSteps === 0) {
+        // Sem etapas, vai direto para resumo/adicionar
+        setComboStep(1);
+      } else {
+        setComboStep(1);
+      }
+    } else if (comboStep <= totalSteps) {
+      setComboStep(comboStep + 1);
+    }
+  };
+  
+  // Calcular preço do combo com seleções
+  const calculateComboPrice = () => {
+    if (!selectedProduct) return 0;
+    
+    const isCombo = selectedProduct.product_type === 'combo';
+    const comboPrice = selectedProduct.sale_price || 0;
+    const simplePrice = selectedProduct.simple_price || Math.round(comboPrice * 0.7 * 100) / 100;
+    
+    let basePrice = isCombo ? (selectedComboType === 'combo' ? comboPrice : simplePrice) : selectedProduct.sale_price || 0;
+    
+    // Adicionar preços extras das seleções
+    const relevantSteps = getRelevantSteps();
+    Object.entries(stepSelections).forEach(([stepIdx, selections]) => {
+      const step = relevantSteps[parseInt(stepIdx)];
+      if (step?.items) {
+        selections.forEach(productId => {
+          const item = step.items.find(i => i.product_id === productId);
+          if (item?.price_override > 0) {
+            basePrice += item.price_override;
+          }
+        });
+      }
+    });
+    
+    return basePrice;
+  };
+  
+  // Obter foto do produto por ID
+  const getProductPhoto = (productId) => {
+    const product = products.find(p => p.id === productId);
+    return product?.photo_url || null;
   };
 
   // Confirmar adição do popup
