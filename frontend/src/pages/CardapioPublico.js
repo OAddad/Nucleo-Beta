@@ -351,7 +351,7 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode, allProduc
   const [stepSelections, setStepSelections] = useState({}); // { stepIndex: [itemIds] }
   const [itemImageErrors, setItemImageErrors] = useState({}); // { itemId: true }
 
-  // Reset quando abrir com novo produto
+  // Reset quando abrir com novo produto e inicializar com itens padrão
   useEffect(() => {
     if (open && product) {
       setQuantity(1);
@@ -359,8 +359,24 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode, allProduc
       setImageError(false);
       setComboStep(0);
       setSelectedComboType(null);
-      setStepSelections({});
       setItemImageErrors({});
+      
+      // Inicializar stepSelections com itens padrão (default_item_id) se existirem
+      if (product.order_steps && product.order_steps.length > 0) {
+        const initialSelections = {};
+        product.order_steps.forEach((step, index) => {
+          if (step.default_item_id) {
+            // Verificar se o item padrão existe na lista de itens da etapa
+            const itemExists = step.items?.some(item => item.product_id === step.default_item_id);
+            if (itemExists) {
+              initialSelections[index] = [step.default_item_id];
+            }
+          }
+        });
+        setStepSelections(initialSelections);
+      } else {
+        setStepSelections({});
+      }
     }
   }, [open, product]);
 
