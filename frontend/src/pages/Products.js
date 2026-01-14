@@ -3001,9 +3001,38 @@ export default function Products() {
                         <div className="flex-1 bg-muted/40 rounded-2xl border border-border/50 px-6 py-3 flex items-center justify-between">
                           <div className="text-center flex-1">
                             <div className="text-xs text-muted-foreground mb-1">Preço de Venda</div>
-                            <div className="text-2xl font-bold font-mono">
-                              R${product.sale_price ? product.sale_price.toFixed(2) : "0,00"}
-                            </div>
+                            {/* Edição Rápida de Preço */}
+                            {editingPriceId === product.id ? (
+                              <div className="flex items-center justify-center gap-1" onClick={(e) => e.stopPropagation()}>
+                                <span className="text-lg font-bold">R$</span>
+                                <Input
+                                  type="number"
+                                  step="0.01"
+                                  value={tempPrice}
+                                  onChange={(e) => setTempPrice(e.target.value)}
+                                  onKeyDown={(e) => {
+                                    if (e.key === 'Enter') saveQuickPrice(product.id);
+                                    if (e.key === 'Escape') { setEditingPriceId(null); setTempPrice(""); }
+                                  }}
+                                  onBlur={() => saveQuickPrice(product.id)}
+                                  autoFocus
+                                  className="w-24 h-8 text-center text-lg font-bold font-mono"
+                                />
+                              </div>
+                            ) : (
+                              <div 
+                                className="text-2xl font-bold font-mono cursor-pointer hover:text-primary transition-colors group"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setEditingPriceId(product.id);
+                                  setTempPrice(product.sale_price ? product.sale_price.toString() : "");
+                                }}
+                                title="Clique para editar o preço"
+                              >
+                                R${product.sale_price ? product.sale_price.toFixed(2) : "0,00"}
+                                <Edit className="w-3 h-3 inline-block ml-1 opacity-0 group-hover:opacity-50" />
+                              </div>
+                            )}
                           </div>
                           <div className="w-px h-10 bg-border mx-4"></div>
                           <div className="text-center flex-1">
