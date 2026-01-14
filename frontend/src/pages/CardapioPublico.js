@@ -999,7 +999,7 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode, allProduc
               className={`w-full h-12 rounded-full font-bold text-white flex items-center justify-center gap-2 transition-all ${
                 canAdvanceStep() 
                   ? 'bg-orange-500 hover:bg-orange-600 shadow-lg shadow-orange-500/20' 
-                  : 'bg-gray-300 dark:bg-zinc-600 cursor-not-allowed'
+                  : `${darkMode ? 'bg-zinc-600' : 'bg-gray-300'} cursor-not-allowed`
               }`}
             >
               {comboStep < totalSteps ? (
