@@ -1348,6 +1348,12 @@ const getImageUrl = (url) => {
   return url;
 };
 
+// Verifica se a imagem é PNG (para usar fundo transparente)
+const isPngImage = (url) => {
+  if (!url) return false;
+  return url.toLowerCase().endsWith('.png');
+};
+
 function CardapioPopup({ open, onClose, onPedidoCriado }) {
   const [products, setProducts] = useState([]);
   const [allProductsForPhotos, setAllProductsForPhotos] = useState([]); // Todos os produtos para buscar fotos
