@@ -38779,3 +38779,11 @@
 2026-01-14T22:51:49.593343+00:00 | DB_CALL get_all_settings | P3 | 0.68ms | success
 2026-01-14T22:51:49.594841+00:00 | DB_CALL get_all_pedidos | P3 | 1.91ms | success
 2026-01-14T22:51:51.210893+00:00 | DB_CALL get_pedido_by_id | P3 | 0.44ms | success
+2026-01-14T22:51:54.591534+00:00 | DB_CALL get_all_settings | P3 | 0.25ms | success
+2026-01-14T22:51:54.593293+00:00 | DB_CALL get_all_pedidos | P3 | 2.53ms | success
+2026-01-14T22:51:54.597338+00:00 | DB_CALL get_all_entregadores | P3 | 0.32ms | success
+2026-01-14T22:51:56.212195+00:00 | DB_CALL get_pedido_by_id | P3 | 0.45ms | success
+2026-01-14T22:51:56.676465+00:00 | DB_CALL get_client_addresses | P3 | 3.17ms | success
+2026-01-14T22:51:56.679106+00:00 | DB_CALL get_all_pedidos | P3 | 1.48ms | success
+2026-01-14T22:51:56.870667+00:00 | DB_CALL get_user_by_id | P3 | 0.31ms | success
+2026-01-14T22:51:56.876735+00:00 | DB_CALL get_all_products | P3 | 5.88ms | success
