@@ -37214,3 +37214,4 @@
 2026-01-14T14:52:59.479963+00:00 | DB_CALL get_all_settings | P3 | 0.33ms | success
 2026-01-14T14:53:40.445361+00:00 | DB_CALL get_all_settings | P3 | 0.27ms | success
 2026-01-14T14:53:42.873871+00:00 | DB_CALL get_all_settings | P3 | 0.26ms | success
+2026-01-14T14:53:48.783161+00:00 | DB_CALL get_all_settings | P3 | 0.28ms | success

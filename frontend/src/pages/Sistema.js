@@ -991,19 +991,41 @@ function ConfiguracaoImpressao({ toast }) {
             />
           </div>
 
-          <Button onClick={handleSave} disabled={saving} className="w-full mt-6">
-            {saving ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Save className="w-4 h-4 mr-2" />}
-            Salvar Configurações
-          </Button>
+          <div className="flex gap-3 mt-6">
+            <Button onClick={handleSave} disabled={saving} className="flex-1">
+              {saving ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Save className="w-4 h-4 mr-2" />}
+              Salvar Configurações
+            </Button>
+          </div>
         </div>
       </div>
 
       {/* Preview */}
       <div className="lg:sticky lg:top-4 self-start">
         <div className="bg-card border rounded-xl p-6">
-          <div className="flex items-center gap-2 mb-4">
-            <Eye className="w-5 h-5 text-muted-foreground" />
-            <h3 className="font-semibold">Preview do Cupom</h3>
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <Eye className="w-5 h-5 text-muted-foreground" />
+              <h3 className="font-semibold">Preview do Cupom</h3>
+            </div>
+            <Button 
+              size="sm" 
+              onClick={() => {
+                // Buscar impressora padrão
+                fetchImpressoraPadrao().then(impressora => {
+                  if (impressora) {
+                    addToPrintQueue(pedidoExemplo, impressora);
+                    toast({ title: "Teste enviado!", description: "Verifique a fila de impressão" });
+                  } else {
+                    // Fallback para window.print
+                    printPedido(pedidoExemplo, config, empresaConfig);
+                  }
+                });
+              }}
+            >
+              <Printer className="w-4 h-4 mr-2" />
+              Imprimir Teste
+            </Button>
           </div>
           
           <div className="bg-white border-2 border-dashed rounded-lg p-4 font-mono text-xs" style={{ maxWidth: '300px', margin: '0 auto' }}>
@@ -1013,6 +1035,19 @@ function ConfiguracaoImpressao({ toast }) {
       </div>
     </div>
   );
+}
+
+// Função auxiliar para buscar impressora padrão
+async function fetchImpressoraPadrao() {
+  try {
+    const response = await fetch(`${API_URL}/api/settings`);
+    const data = await response.json();
+    if (data.impressoras) {
+      const impressoras = JSON.parse(data.impressoras);
+      return impressoras.find(i => i.padrao && i.ativa) || impressoras.find(i => i.ativa);
+    }
+  } catch (e) {}
+  return null;
 }
 
 // ==================== SUB-ABA: IMPRESSORAS ====================
