@@ -38177,3 +38177,17 @@
 2026-01-14T17:39:29.079937+00:00 | DB_CALL get_all_settings | P3 | 0.29ms | success
 2026-01-14T17:39:30.090498+00:00 | DB_CALL get_all_settings | P3 | 0.29ms | success
 2026-01-14T17:39:30.093236+00:00 | DB_CALL get_all_settings | P3 | 0.19ms | success
+2026-01-14T20:26:19.050134+00:00 | DB_CALL init_database | P3 | 7.43ms | success
+2026-01-14T20:26:19.051804+00:00 | DB_CALL count_ingredients | P3 | 0.9ms | success
+2026-01-14T20:26:19.052937+00:00 | DB_CALL count_products | P3 | 1.06ms | success
+2026-01-14T20:26:19.053112+00:00 | DB_CALL count_users | P3 | 0.11ms | success
+2026-01-14T22:19:06.370637+00:00 | DB_CALL init_database | P3 | 9.31ms | success
+2026-01-14T22:19:06.374319+00:00 | DB_CALL count_ingredients | P3 | 0.37ms | success
+2026-01-14T22:19:06.374610+00:00 | DB_CALL count_products | P3 | 0.18ms | success
+2026-01-14T22:19:06.374868+00:00 | DB_CALL count_users | P3 | 0.17ms | success
+2026-01-14T22:19:30.213076+00:00 | DB_CALL increment_whatsapp_stat | P3 | 13.96ms | success
+2026-01-14T22:19:36.649773+00:00 | DB_CALL get_all_business_hours | P3 | 0.8ms | success
+2026-01-14T22:19:36.652790+00:00 | DB_CALL get_all_categories | P3 | 3.67ms | success
+2026-01-14T22:19:36.938317+00:00 | DB_CALL get_all_products | P3 | 34.49ms | success
+2026-01-14T22:19:37.656360+00:00 | DB_CALL get_all_settings | P3 | 0.24ms | success
+2026-01-14T22:19:37.794416+00:00 | DB_CALL get_all_bairros | P3 | 3.58ms | success
