@@ -36710,3 +36710,5 @@
 2026-01-14T14:31:46.425186+00:00 | DB_CALL get_all_pedidos | P3 | 1.99ms | success
 2026-01-14T14:31:46.427445+00:00 | DB_CALL get_all_entregadores | P3 | 0.13ms | success
 2026-01-14T14:31:46.858543+00:00 | DB_CALL get_all_products | P3 | 3.25ms | success
+2026-01-14T14:31:51.977260+00:00 | DB_CALL get_all_pedidos | P3 | 3.11ms | success
+2026-01-14T14:31:51.979032+00:00 | DB_CALL get_all_entregadores | P3 | 4.48ms | success
