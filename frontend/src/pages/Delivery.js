@@ -6,7 +6,7 @@ import {
   Plus, Minus, Check, Clock, ChefHat, Package, Truck, User, Phone, MapPin,
   ArrowLeft, X, RefreshCw, ToggleLeft, ToggleRight, Bike, ShoppingBag,
   Store, CreditCard, DollarSign, Banknote, Eye, FileText, MessageSquare,
-  Navigation, Calendar, Hash, XCircle, AlertTriangle, Printer
+  Navigation, Calendar, Hash, XCircle, AlertTriangle, Printer, AlertCircle
 } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
@@ -25,7 +25,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../components/ui/select";
-import { printPedido } from "./Sistema";
+import { printPedido, addToPrintQueue } from "./Sistema";
 
 const API = '/api';
 
