@@ -38549,3 +38549,7 @@
 2026-01-14T22:47:13.288575+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.23ms | success
 2026-01-14T22:47:16.473787+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.28ms | success
 2026-01-14T22:47:18.362643+00:00 | DB_CALL get_whatsapp_stats | P3 | 34.43ms | success
+2026-01-14T22:47:21.212688+00:00 | DB_CALL get_pedido_by_id | P3 | 0.3ms | success
+2026-01-14T22:47:21.404566+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.23ms | success
+2026-01-14T22:47:23.287477+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.22ms | success
+2026-01-14T22:47:26.400049+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.23ms | success
