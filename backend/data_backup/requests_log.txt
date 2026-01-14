@@ -38198,3 +38198,6 @@
 2026-01-14T22:25:47.169808+00:00 | DB_CALL get_whatsapp_stats | P3 | 1.9ms | success
 2026-01-14T22:25:57.028836+00:00 | DB_CALL get_all_settings | P3 | 0.27ms | success
 2026-01-14T22:26:47.762199+00:00 | DB_CALL get_all_settings | P3 | 0.3ms | success
+2026-01-14T22:28:56.808062+00:00 | DB_CALL get_all_settings | P3 | 3.94ms | success
+2026-01-14T22:29:02.321892+00:00 | DB_CALL get_all_settings | P3 | 0.27ms | success
+2026-01-14T22:29:04.334201+00:00 | DB_CALL get_all_settings | P3 | 0.29ms | success
