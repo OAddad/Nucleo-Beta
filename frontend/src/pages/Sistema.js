@@ -955,18 +955,39 @@ function PrintConnectorTab({ toast, connectorStatus, onRefresh, onNavigateToDown
     try {
       const response = await fetch(`${PRINT_CONNECTOR_URL}/test`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' }
+        headers: { 'Content-Type': 'application/json' },
+        mode: 'cors'
       });
+      
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || `Erro HTTP ${response.status}`);
+      }
       
       const data = await response.json();
       
       if (data.success) {
-        toast({ title: "Sucesso!", description: "Página de teste enviada para impressora" });
+        toast({ title: "✅ Sucesso!", description: "Página de teste enviada para impressora" });
       } else {
         throw new Error(data.error || 'Erro no teste');
       }
     } catch (error) {
-      toast({ title: "Erro", description: error.message, variant: "destructive" });
+      console.error('Erro no teste de impressão:', error);
+      
+      // Verificar tipo de erro
+      if (error.name === 'TypeError' && error.message.includes('fetch')) {
+        toast({ 
+          title: "❌ Print Connector inacessível", 
+          description: "Verifique se o NucleoPrintConnector.exe está rodando",
+          variant: "destructive" 
+        });
+      } else {
+        toast({ 
+          title: "❌ Erro no teste", 
+          description: error.message || "Falha ao imprimir teste",
+          variant: "destructive" 
+        });
+      }
     } finally {
       setTesting(false);
     }
