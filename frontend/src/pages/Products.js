@@ -1944,189 +1944,325 @@ export default function Products() {
                   </div>
                 )}
 
-                {/* Conteúdo da aba Etapas */}
+                {/* Conteúdo da aba Etapas - VERSÃO VISUAL MELHORADA */}
                 {activeFormTab === "etapas" && (
                   <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <Label className="text-base">Etapas do Pedido</Label>
-                        <p className="text-xs text-muted-foreground mt-1">
-                          Configure as etapas que o cliente deve seguir ao pedir este produto (adicionais, combos, etc.)
-                        </p>
+                    {/* Header com Preview */}
+                    <div className="bg-gradient-to-r from-orange-50 to-amber-50 dark:from-orange-900/20 dark:to-amber-900/20 rounded-xl p-4 border border-orange-200 dark:border-orange-800">
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center gap-2">
+                          <Layers className="w-5 h-5 text-orange-500" />
+                          <h3 className="font-semibold text-orange-700 dark:text-orange-300">Etapas do Pedido</h3>
+                        </div>
+                        <Button
+                          type="button"
+                          onClick={addOrderStep}
+                          size="sm"
+                          className="bg-orange-500 hover:bg-orange-600 text-white"
+                        >
+                          <Plus className="w-4 h-4 mr-1" />
+                          Nova Etapa
+                        </Button>
                       </div>
-                      <Button
-                        type="button"
-                        onClick={addOrderStep}
-                        variant="outline"
-                        size="sm"
-                      >
-                        <Plus className="w-4 h-4 mr-2" />
-                        Nova Etapa
-                      </Button>
+                      <p className="text-xs text-orange-600/70 dark:text-orange-400/70">
+                        Configure as etapas que o cliente seguirá ao montar o pedido. Ex: Escolha de Bebida, Adicionais, etc.
+                      </p>
                     </div>
 
                     {orderSteps.length === 0 ? (
-                      <div className="bg-muted/50 rounded-lg p-8 text-center border border-dashed">
-                        <p className="text-muted-foreground">Nenhuma etapa configurada</p>
-                        <p className="text-xs text-muted-foreground mt-1">
-                          Clique em "Nova Etapa" para adicionar etapas de pedido
+                      <div className="bg-muted/30 rounded-xl p-12 text-center border-2 border-dashed border-muted-foreground/20">
+                        <Layers className="w-12 h-12 mx-auto text-muted-foreground/30 mb-3" />
+                        <p className="text-muted-foreground font-medium">Nenhuma etapa configurada</p>
+                        <p className="text-xs text-muted-foreground mt-1 mb-4">
+                          Adicione etapas para personalizar o pedido do cliente
                         </p>
+                        <Button
+                          type="button"
+                          onClick={addOrderStep}
+                          variant="outline"
+                          size="sm"
+                        >
+                          <Plus className="w-4 h-4 mr-2" />
+                          Criar Primeira Etapa
+                        </Button>
                       </div>
                     ) : (
                       <div className="space-y-4">
                         {orderSteps.map((step, stepIndex) => (
-                          <div key={stepIndex} className="bg-muted/30 rounded-lg p-4 border space-y-4">
-                            <div className="flex items-start gap-3">
-                              <div className="flex-1 space-y-4">
-                                {/* Linha 1: Nome da Etapa e Tipo */}
-                                <div className="grid grid-cols-2 gap-3">
-                                  <div>
-                                    <Label className="text-xs">Nome da Etapa</Label>
-                                    <Input
-                                      value={step.name}
-                                      onChange={(e) => updateOrderStep(stepIndex, "name", e.target.value)}
-                                      placeholder="Ex: Adicionais, Acompanhamentos"
-                                      className="h-9 mt-1"
-                                    />
-                                  </div>
-                                  <div>
-                                    <Label className="text-xs">Tipo de Cálculo</Label>
-                                    <Select
-                                      value={step.calculation_type || "soma"}
-                                      onValueChange={(value) => updateOrderStep(stepIndex, "calculation_type", value)}
-                                    >
-                                      <SelectTrigger className="h-9 mt-1">
-                                        <SelectValue />
-                                      </SelectTrigger>
-                                      <SelectContent>
-                                        <SelectItem value="soma">Soma</SelectItem>
-                                        <SelectItem value="subtracao">Subtração</SelectItem>
-                                        <SelectItem value="minimo">Mínimo</SelectItem>
-                                        <SelectItem value="medio">Médio</SelectItem>
-                                        <SelectItem value="maximo">Máximo</SelectItem>
-                                      </SelectContent>
-                                    </Select>
-                                  </div>
+                          <div 
+                            key={stepIndex} 
+                            className={`rounded-xl border-2 overflow-hidden transition-all ${
+                              step.combo_only 
+                                ? 'border-purple-300 dark:border-purple-700 bg-purple-50/50 dark:bg-purple-900/10' 
+                                : 'border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-800/50'
+                            }`}
+                          >
+                            {/* Header da Etapa */}
+                            <div className={`px-4 py-3 flex items-center justify-between ${
+                              step.combo_only 
+                                ? 'bg-purple-100 dark:bg-purple-900/30' 
+                                : 'bg-gray-50 dark:bg-zinc-800'
+                            }`}>
+                              <div className="flex items-center gap-3">
+                                <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-white ${
+                                  step.combo_only ? 'bg-purple-500' : 'bg-orange-500'
+                                }`}>
+                                  {stepIndex + 1}
                                 </div>
-
-                                {/* Linha 2: Qtd Mínima e Máxima */}
-                                <div className="grid grid-cols-2 gap-3">
-                                  <div>
-                                    <Label className="text-xs">Quantidade Mínima</Label>
-                                    <Input
-                                      type="number"
-                                      min="0"
-                                      value={step.min_selections || 0}
-                                      onChange={(e) => updateOrderStep(stepIndex, "min_selections", parseInt(e.target.value) || 0)}
-                                      placeholder="0 = sem limite"
-                                      className="h-9 mt-1"
-                                    />
-                                    <p className="text-[10px] text-muted-foreground mt-0.5">0 = sem limitador</p>
-                                  </div>
-                                  <div>
-                                    <Label className="text-xs">Quantidade Máxima</Label>
-                                    <Input
-                                      type="number"
-                                      min="0"
-                                      value={step.max_selections || 0}
-                                      onChange={(e) => updateOrderStep(stepIndex, "max_selections", parseInt(e.target.value) || 0)}
-                                      placeholder="0 = sem limite"
-                                      className="h-9 mt-1"
-                                    />
-                                    <p className="text-[10px] text-muted-foreground mt-0.5">0 = sem limitador</p>
-                                  </div>
-                                </div>
-
-                                {/* Checkbox: Só Combo (para etapas como bebida que só aparecem no combo) */}
-                                <div className="flex items-center gap-2 p-2 rounded-lg bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800">
-                                  <input
-                                    type="checkbox"
-                                    id={`combo_only_${stepIndex}`}
-                                    checked={step.combo_only || false}
-                                    onChange={(e) => updateOrderStep(stepIndex, "combo_only", e.target.checked)}
-                                    className="w-4 h-4 text-orange-500 rounded focus:ring-orange-500"
+                                <div>
+                                  <Input
+                                    value={step.name}
+                                    onChange={(e) => updateOrderStep(stepIndex, "name", e.target.value)}
+                                    placeholder="Nome da Etapa"
+                                    className="h-8 font-semibold border-0 bg-transparent px-0 focus-visible:ring-0 text-base"
                                   />
-                                  <label htmlFor={`combo_only_${stepIndex}`} className="text-xs font-medium text-orange-700 dark:text-orange-300 cursor-pointer">
-                                    Somente Combo - Esta etapa só aparece quando o cliente escolhe o COMBO (ex: Escolha da Bebida)
-                                  </label>
+                                  {step.combo_only && (
+                                    <span className="text-[10px] text-purple-600 dark:text-purple-400 font-medium flex items-center gap-1">
+                                      <span className="w-1.5 h-1.5 rounded-full bg-purple-500"></span>
+                                      Somente COMBO
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <button
+                                  type="button"
+                                  onClick={() => updateOrderStep(stepIndex, "combo_only", !step.combo_only)}
+                                  className={`text-xs px-2 py-1 rounded-full transition-colors ${
+                                    step.combo_only 
+                                      ? 'bg-purple-500 text-white' 
+                                      : 'bg-gray-200 dark:bg-zinc-600 text-gray-600 dark:text-gray-300 hover:bg-purple-100 hover:text-purple-600'
+                                  }`}
+                                >
+                                  {step.combo_only ? '🍟 Só Combo' : '📦 Todos'}
+                                </button>
+                                <Button
+                                  type="button"
+                                  onClick={() => removeOrderStep(stepIndex)}
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-8 w-8 text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </Button>
+                              </div>
+                            </div>
+
+                            {/* Configurações da Etapa */}
+                            <div className="p-4 space-y-4">
+                              {/* Linha de configurações compacta */}
+                              <div className="flex flex-wrap gap-3 items-center">
+                                <div className="flex items-center gap-2 bg-gray-100 dark:bg-zinc-700 rounded-lg px-3 py-2">
+                                  <span className="text-xs text-muted-foreground">Mín:</span>
+                                  <Input
+                                    type="number"
+                                    min="0"
+                                    value={step.min_selections || 0}
+                                    onChange={(e) => updateOrderStep(stepIndex, "min_selections", parseInt(e.target.value) || 0)}
+                                    className="h-7 w-14 text-center border-0 bg-white dark:bg-zinc-600"
+                                  />
+                                </div>
+                                <div className="flex items-center gap-2 bg-gray-100 dark:bg-zinc-700 rounded-lg px-3 py-2">
+                                  <span className="text-xs text-muted-foreground">Máx:</span>
+                                  <Input
+                                    type="number"
+                                    min="0"
+                                    value={step.max_selections || 0}
+                                    onChange={(e) => updateOrderStep(stepIndex, "max_selections", parseInt(e.target.value) || 0)}
+                                    className="h-7 w-14 text-center border-0 bg-white dark:bg-zinc-600"
+                                  />
+                                </div>
+                                <Select
+                                  value={step.calculation_type || "soma"}
+                                  onValueChange={(value) => updateOrderStep(stepIndex, "calculation_type", value)}
+                                >
+                                  <SelectTrigger className="h-9 w-32 text-xs">
+                                    <SelectValue />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="soma">➕ Soma</SelectItem>
+                                    <SelectItem value="subtracao">➖ Subtração</SelectItem>
+                                    <SelectItem value="maximo">⬆️ Máximo</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                                <span className="text-[10px] text-muted-foreground">
+                                  {step.min_selections === 0 && step.max_selections === 0 
+                                    ? "Sem limite de seleção" 
+                                    : step.min_selections === step.max_selections && step.min_selections > 0
+                                      ? `Deve selecionar exatamente ${step.min_selections}`
+                                      : `Selecionar de ${step.min_selections || 0} a ${step.max_selections || '∞'}`
+                                  }
+                                </span>
+                              </div>
+
+                              {/* Busca de Produtos - MELHORADA */}
+                              <div className="relative">
+                                <div className="flex items-center gap-2 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-xl p-3 border border-green-200 dark:border-green-800">
+                                  <Search className="w-4 h-4 text-green-600" />
+                                  <Input
+                                    value={stepProductSearch[stepIndex] || ""}
+                                    onChange={(e) => {
+                                      setStepProductSearch({...stepProductSearch, [stepIndex]: e.target.value});
+                                      setStepSearchOpen({...stepSearchOpen, [stepIndex]: true});
+                                    }}
+                                    onFocus={() => setStepSearchOpen({...stepSearchOpen, [stepIndex]: true})}
+                                    placeholder="🔍 Buscar produto para adicionar..."
+                                    className="h-8 border-0 bg-transparent focus-visible:ring-0 text-sm"
+                                  />
+                                  {stepProductSearch[stepIndex] && (
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        setStepProductSearch({...stepProductSearch, [stepIndex]: ""});
+                                        setStepSearchOpen({...stepSearchOpen, [stepIndex]: false});
+                                      }}
+                                      className="text-gray-400 hover:text-gray-600"
+                                    >
+                                      <X className="w-4 h-4" />
+                                    </button>
+                                  )}
                                 </div>
 
-                                {/* Linha 3: Produtos da Etapa */}
+                                {/* Dropdown de Resultados da Busca */}
+                                {stepSearchOpen[stepIndex] && (
+                                  <div className="absolute z-50 w-full mt-1 bg-white dark:bg-zinc-800 rounded-xl border shadow-xl max-h-64 overflow-y-auto">
+                                    {products
+                                      .filter(p => {
+                                        if (p.id === currentProductId) return false;
+                                        if ((step.items || []).some(item => item.product_id === p.id)) return false;
+                                        const searchTerm = (stepProductSearch[stepIndex] || "").toLowerCase();
+                                        if (!searchTerm) return true;
+                                        return p.name.toLowerCase().includes(searchTerm) || 
+                                               (p.code && p.code.includes(searchTerm));
+                                      })
+                                      .slice(0, 10)
+                                      .map((prod) => (
+                                        <button
+                                          key={prod.id}
+                                          type="button"
+                                          onClick={() => {
+                                            addItemToStep(stepIndex, prod.id);
+                                            setStepProductSearch({...stepProductSearch, [stepIndex]: ""});
+                                            setStepSearchOpen({...stepSearchOpen, [stepIndex]: false});
+                                          }}
+                                          className="w-full flex items-center gap-3 p-2 hover:bg-orange-50 dark:hover:bg-orange-900/20 transition-colors text-left"
+                                        >
+                                          {/* Foto do Produto */}
+                                          <div className="w-12 h-12 rounded-lg overflow-hidden bg-gray-100 dark:bg-zinc-700 flex-shrink-0">
+                                            {prod.photo_url ? (
+                                              <img 
+                                                src={prod.photo_url.startsWith('http') ? prod.photo_url : `${API}${prod.photo_url}`}
+                                                alt={prod.name}
+                                                className="w-full h-full object-cover"
+                                                onError={(e) => { e.target.style.display = 'none'; }}
+                                              />
+                                            ) : (
+                                              <div className="w-full h-full flex items-center justify-center text-xl">
+                                                🍽️
+                                              </div>
+                                            )}
+                                          </div>
+                                          <div className="flex-1 min-w-0">
+                                            <p className="font-medium text-sm truncate">{prod.name}</p>
+                                            <p className="text-xs text-muted-foreground">
+                                              {prod.code && `#${prod.code} • `}
+                                              {prod.sale_price ? `R$ ${prod.sale_price.toFixed(2)}` : 'Sem preço'}
+                                            </p>
+                                          </div>
+                                          <Plus className="w-5 h-5 text-green-500 flex-shrink-0" />
+                                        </button>
+                                      ))
+                                    }
+                                    {products.filter(p => {
+                                      if (p.id === currentProductId) return false;
+                                      if ((step.items || []).some(item => item.product_id === p.id)) return false;
+                                      const searchTerm = (stepProductSearch[stepIndex] || "").toLowerCase();
+                                      if (!searchTerm) return true;
+                                      return p.name.toLowerCase().includes(searchTerm);
+                                    }).length === 0 && (
+                                      <div className="p-4 text-center text-muted-foreground text-sm">
+                                        Nenhum produto encontrado
+                                      </div>
+                                    )}
+                                  </div>
+                                )}
+                              </div>
+
+                              {/* Lista de Produtos Adicionados - COM FOTOS */}
+                              {(step.items || []).length > 0 ? (
                                 <div className="space-y-2">
                                   <div className="flex items-center justify-between">
-                                    <Label className="text-xs">Produtos da Etapa</Label>
+                                    <span className="text-xs font-medium text-muted-foreground">
+                                      {step.items.length} {step.items.length === 1 ? 'produto' : 'produtos'} na etapa
+                                    </span>
                                   </div>
-                                  
-                                  {/* Selector para adicionar produto */}
-                                  <div className="flex gap-2">
-                                    <Select
-                                      onValueChange={(value) => addItemToStep(stepIndex, value)}
-                                    >
-                                      <SelectTrigger className="h-9 flex-1">
-                                        <SelectValue placeholder="Selecione um produto para adicionar" />
-                                      </SelectTrigger>
-                                      <SelectContent>
-                                        {products
-                                          .filter(p => p.id !== currentProductId) // Não incluir o próprio produto
-                                          .map((prod) => (
-                                            <SelectItem key={prod.id} value={prod.id}>
-                                              {prod.code && `#${prod.code} - `}{prod.name} {prod.sale_price ? `(R$ ${prod.sale_price.toFixed(2)})` : ''}
-                                            </SelectItem>
-                                          ))
-                                        }
-                                      </SelectContent>
-                                    </Select>
-                                  </div>
-                                  
-                                  {/* Lista de produtos adicionados */}
-                                  {(step.items || []).length > 0 ? (
-                                    <div className="space-y-2 mt-2">
-                                      {(step.items || []).map((item, itemIndex) => (
-                                        <div key={itemIndex} className="flex gap-2 items-center bg-background p-2 rounded-lg border">
-                                          <div className="flex-1">
-                                            <span className="text-sm font-medium">{item.product_name}</span>
+                                  <div className="grid gap-2">
+                                    {(step.items || []).map((item, itemIndex) => {
+                                      const itemProduct = products.find(p => p.id === item.product_id);
+                                      return (
+                                        <div 
+                                          key={itemIndex} 
+                                          className="flex items-center gap-3 p-2 rounded-xl bg-white dark:bg-zinc-800 border hover:border-orange-300 transition-colors group"
+                                        >
+                                          {/* Foto do Produto */}
+                                          <div className="w-14 h-14 rounded-lg overflow-hidden bg-gray-100 dark:bg-zinc-700 flex-shrink-0">
+                                            {itemProduct?.photo_url ? (
+                                              <img 
+                                                src={itemProduct.photo_url.startsWith('http') ? itemProduct.photo_url : `${API}${itemProduct.photo_url}`}
+                                                alt={item.product_name}
+                                                className="w-full h-full object-cover"
+                                                onError={(e) => { e.target.style.display = 'none'; }}
+                                              />
+                                            ) : (
+                                              <div className="w-full h-full flex items-center justify-center text-2xl">
+                                                🍽️
+                                              </div>
+                                            )}
                                           </div>
-                                          <div className="flex items-center gap-2">
-                                            <Label className="text-xs text-muted-foreground">Preço:</Label>
+                                          
+                                          {/* Info do Produto */}
+                                          <div className="flex-1 min-w-0">
+                                            <p className="font-medium text-sm truncate">{item.product_name}</p>
+                                            <p className="text-xs text-muted-foreground">
+                                              {itemProduct?.code && `#${itemProduct.code}`}
+                                            </p>
+                                          </div>
+                                          
+                                          {/* Preço Override */}
+                                          <div className="flex items-center gap-1">
+                                            <span className="text-xs text-muted-foreground">R$</span>
                                             <Input
                                               type="number"
                                               step="0.01"
                                               value={item.price_override || ""}
                                               onChange={(e) => updateStepItem(stepIndex, itemIndex, "price_override", parseFloat(e.target.value) || 0)}
-                                              placeholder="R$"
-                                              className="h-8 w-24"
+                                              placeholder="0.00"
+                                              className="h-8 w-20 text-center text-sm font-semibold"
                                             />
                                           </div>
+                                          
+                                          {/* Botão Remover */}
                                           <Button
                                             type="button"
                                             onClick={() => removeStepItem(stepIndex, itemIndex)}
                                             variant="ghost"
                                             size="icon"
-                                            className="h-8 w-8 text-destructive hover:text-destructive"
+                                            className="h-8 w-8 text-red-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 opacity-0 group-hover:opacity-100 transition-opacity"
                                           >
-                                            <Trash2 className="w-3 h-3" />
+                                            <Trash2 className="w-4 h-4" />
                                           </Button>
                                         </div>
-                                      ))}
-                                    </div>
-                                  ) : (
-                                    <p className="text-xs text-muted-foreground text-center py-2">
-                                      Nenhum produto adicionado. Selecione produtos acima.
-                                    </p>
-                                  )}
+                                      );
+                                    })}
+                                  </div>
                                 </div>
-                              </div>
-                              
-                              {/* Botão excluir etapa */}
-                              <Button
-                                type="button"
-                                onClick={() => removeOrderStep(stepIndex)}
-                                variant="ghost"
-                                size="icon"
-                                className="text-destructive hover:text-destructive hover:bg-destructive/10"
-                              >
-                                <Trash2 className="w-4 h-4" />
-                              </Button>
+                              ) : (
+                                <div className="text-center py-6 text-muted-foreground">
+                                  <Package className="w-8 h-8 mx-auto mb-2 opacity-30" />
+                                  <p className="text-sm">Nenhum produto adicionado</p>
+                                  <p className="text-xs">Use a busca acima para adicionar produtos</p>
+                                </div>
+                              )}
                             </div>
                           </div>
                         ))}
