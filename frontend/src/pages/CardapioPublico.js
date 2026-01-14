@@ -963,7 +963,7 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode, allProduc
                     )}
                     
                     {/* Foto do Item */}
-                    <div className={`w-full aspect-square rounded-md overflow-hidden mb-1.5 ${isSelected ? 'ring-2 ring-orange-500' : ''} ${isPngImage(itemPhoto) ? (darkMode ? 'bg-zinc-800' : 'bg-white') : ''}`}>
+                    <div className={`w-full aspect-square rounded-md overflow-hidden mb-1.5 ${isSelected ? 'ring-2 ring-orange-500' : ''} ${isPngImage(itemPhoto) ? (darkMode ? 'bg-zinc-700' : 'bg-gray-100') : (darkMode ? 'bg-zinc-800' : 'bg-gray-50')}`}>
                       {itemPhoto && !hasImageError ? (
                         <img
                           src={getImageUrl(itemPhoto)}
