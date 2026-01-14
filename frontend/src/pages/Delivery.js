@@ -177,7 +177,26 @@ export default function Delivery() {
         axios.get(`${API}/settings`)
       ]);
       
-      setPedidos(pedidosRes.data);
+      const novosPedidos = pedidosRes.data;
+      
+      // Verificar se há novos pedidos aguardando aceite
+      const pedidosAguardandoAceiteAtuais = novosPedidos.filter(p => p.status === 'aguardando_aceite');
+      const pedidosAguardandoAceiteAnteriores = previousPedidosRef.current.filter(p => p.status === 'aguardando_aceite');
+      
+      // Encontrar IDs de pedidos novos que não existiam antes
+      const idsAnteriores = new Set(pedidosAguardandoAceiteAnteriores.map(p => p.id));
+      const novosPedidosAceite = pedidosAguardandoAceiteAtuais.filter(p => !idsAnteriores.has(p.id));
+      
+      // Se houver novos pedidos aguardando aceite, tocar o som
+      if (novosPedidosAceite.length > 0 && previousPedidosRef.current.length > 0) {
+        playNotificationSound();
+        console.log(`🔔 Novo(s) pedido(s) detectado(s): ${novosPedidosAceite.map(p => p.codigo).join(', ')}`);
+      }
+      
+      // Atualizar referência de pedidos anteriores
+      previousPedidosRef.current = novosPedidos;
+      
+      setPedidos(novosPedidos);
       setEntregadores(entregadoresRes.data);
       setAutoAccept(settingsRes.data.delivery_auto_accept || false);
       
@@ -211,7 +230,7 @@ export default function Delivery() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [playNotificationSound]);
 
   useEffect(() => {
     fetchData();
