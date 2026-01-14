@@ -384,7 +384,10 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode, allProduc
 
   // Quando o tipo (combo/simples) for selecionado, inicializar seleções com itens padrão
   useEffect(() => {
-    if (open && product && selectedComboType && hasOrderSteps) {
+    if (open && product && selectedComboType) {
+      const productHasSteps = product.order_steps && product.order_steps.length > 0;
+      if (!productHasSteps) return;
+      
       const filteredSteps = product.order_steps.filter(step => {
         if (selectedComboType === 'simples') {
           return !step.combo_only;
@@ -407,6 +410,7 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode, allProduc
         setStepSelections(prev => ({...prev, ...initialSelections}));
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedComboType]);
 
   if (!product) return null;
