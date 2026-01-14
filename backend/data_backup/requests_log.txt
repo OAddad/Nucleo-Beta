@@ -37215,3 +37215,8 @@
 2026-01-14T14:53:40.445361+00:00 | DB_CALL get_all_settings | P3 | 0.27ms | success
 2026-01-14T14:53:42.873871+00:00 | DB_CALL get_all_settings | P3 | 0.26ms | success
 2026-01-14T14:53:48.783161+00:00 | DB_CALL get_all_settings | P3 | 0.28ms | success
+2026-01-14T14:54:02.995722+00:00 | DB_CALL get_all_settings | P3 | 0.26ms | success
+2026-01-14T14:54:03.002895+00:00 | DB_CALL get_all_settings | P3 | 0.36ms | success
+2026-01-14T14:54:03.004277+00:00 | DB_CALL get_all_settings | P3 | 3.88ms | success
+2026-01-14T14:54:03.005311+00:00 | DB_CALL get_all_settings | P3 | 0.17ms | success
+2026-01-14T14:54:04.014197+00:00 | DB_CALL get_all_settings | P3 | 0.28ms | success
