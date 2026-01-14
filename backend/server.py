@@ -1522,6 +1522,7 @@ async def create_product(product_data: ProductCreate, current_user: User = Depen
         "combo_description": product_data.combo_description,
         "simple_photo_url": product_data.simple_photo_url,
         "combo_photo_url": product_data.combo_photo_url,
+        "card_order": product_data.card_order or "combo_first",
         "created_at": created_at.isoformat()
     }
     
