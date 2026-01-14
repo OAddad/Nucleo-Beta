@@ -1003,7 +1003,7 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode, allProduc
                     <div className="flex-1 min-w-0">
                       <p className={`font-medium text-xs ${t.text} line-clamp-2 leading-tight`}>{item.product_name}</p>
                       {(() => {
-                        const itemPrice = getItemPrice(item);
+                        const itemPrice = getItemPrice(item, currentStep);
                         return itemPrice > 0 ? (
                           <p className="text-xs text-orange-500 font-bold mt-0.5">
                             +R$ {itemPrice.toFixed(2).replace('.', ',')}
