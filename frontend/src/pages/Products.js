@@ -706,18 +706,21 @@ export default function Products() {
     if (sourceCombo.simple_photo_url) setSimplePhotoUrl(sourceCombo.simple_photo_url);
     if (sourceCombo.combo_photo_url) setComboPhotoUrl(sourceCombo.combo_photo_url);
     
-    // Copiar etapas
+    // Copiar etapas (com todas as preferências)
     if (sourceCombo.order_steps && sourceCombo.order_steps.length > 0) {
       const copiedSteps = sourceCombo.order_steps.map(step => ({
-        name: step.name,
+        name: step.name || "",
         calculation_type: step.calculation_type || "soma",
         min_selections: step.min_selections || 0,
         max_selections: step.max_selections || 0,
         combo_only: step.combo_only || false,
+        default_item_id: step.default_item_id || null,
+        sync_prices: step.sync_prices !== false, // Copia configuração de sincronização de preços
         items: (step.items || []).map(item => ({
           product_id: item.product_id,
           product_name: item.product_name,
-          price_override: item.price_override || 0
+          price_override: item.price_override || 0,
+          is_default: item.is_default || false
         }))
       }));
       setOrderSteps(copiedSteps);
