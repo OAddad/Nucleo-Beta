@@ -607,9 +607,9 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode, allProduc
             {/* Botão Fechar */}
             <button
               onClick={onClose}
-              className={`absolute top-3 right-3 w-8 h-8 rounded-full ${t.bgMuted} flex items-center justify-center z-10`}
+              className={`absolute top-3 right-3 w-8 h-8 rounded-full ${darkMode ? 'bg-zinc-700 hover:bg-zinc-600' : 'bg-gray-100 hover:bg-gray-200'} flex items-center justify-center z-10 transition-colors`}
             >
-              <X className="w-5 h-5" />
+              <X className={`w-5 h-5 ${t.text}`} />
             </button>
             
             <div className="pr-10">
@@ -629,12 +629,12 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode, allProduc
                 onClick={() => handleSelectComboType('simples')}
                 className={`w-[35%] flex-shrink-0 rounded-xl border-2 transition-all text-left overflow-hidden flex flex-col ${
                   selectedComboType === 'simples' 
-                    ? 'border-orange-500 bg-orange-50 dark:bg-orange-500/10' 
-                    : `${t.border} ${t.bgCard} hover:border-orange-300`
+                    ? `${t.selectedBorder} ${t.selectedBg}` 
+                    : `${t.border} ${darkMode ? 'bg-zinc-800' : 'bg-white'} ${t.hoverBorder}`
                 }`}
               >
                 {/* Imagem do Simples */}
-                <div className="w-full aspect-square bg-gradient-to-b from-orange-50 to-orange-100 dark:from-zinc-800 dark:to-zinc-700">
+                <div className={`w-full aspect-square ${darkMode ? 'bg-gradient-to-b from-zinc-700 to-zinc-800' : 'bg-gradient-to-b from-orange-50 to-orange-100'}`}>
                   {(product.simple_photo_url || product.photo_url) && !imageError ? (
                     <img
                       src={getImageUrl(product.simple_photo_url || product.photo_url)}
