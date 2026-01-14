@@ -2373,6 +2373,7 @@ function CheckoutModal({ open, onClose, cart, cartTotal, client, darkMode, onOrd
 
 export default function CardapioPublico({ onAdminLogin }) {
   const [products, setProducts] = useState([]);
+  const [allProductsForPhotos, setAllProductsForPhotos] = useState([]); // Todos produtos para buscar fotos
   const [categories, setCategories] = useState([]);
   const [businessHours, setBusinessHours] = useState([]);
   const [loading, setLoading] = useState(true);

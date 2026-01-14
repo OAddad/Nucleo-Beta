@@ -39154,3 +39154,7 @@
 2026-01-14T23:03:05.223938+00:00 | DB_CALL get_all_pedidos | P3 | 1.38ms | success
 2026-01-14T23:03:05.229471+00:00 | DB_CALL get_all_settings | P3 | 1.7ms | success
 2026-01-14T23:03:05.230277+00:00 | DB_CALL get_all_entregadores | P3 | 2.09ms | success
+2026-01-14T23:03:21.239290+00:00 | DB_CALL get_pedido_by_id | P3 | 2.86ms | success
+2026-01-14T23:03:21.239834+00:00 | DB_CALL get_all_pedidos | P3 | 2.39ms | success
+2026-01-14T23:03:21.243363+00:00 | DB_CALL get_all_entregadores | P3 | 0.4ms | success
+2026-01-14T23:03:21.243986+00:00 | DB_CALL get_all_settings | P3 | 1.22ms | success
