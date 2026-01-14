@@ -398,23 +398,19 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode, allProduc
   }, [open, product]);
 
   // Quando o tipo (combo/simples) for selecionado, inicializar seleções com itens padrão
-  useEffect(() => {
-    if (open && product && selectedComboType) {
-      const productHasSteps = product.order_steps && product.order_steps.length > 0;
-      if (!productHasSteps) return;
-      
-      // Inicializar com itens padrão considerando o tipo selecionado
+  const handleSelectComboType = (type) => {
+    setSelectedComboType(type);
+    
+    // Inicializar seleções com itens padrão
+    if (product && product.order_steps && product.order_steps.length > 0) {
       const initialSelections = initializeDefaultSelections(
         product.order_steps, 
         true, // Filtrar combo_only
-        selectedComboType
+        type
       );
-      
-      // Sempre definir as seleções (não fazer merge para evitar dados antigos)
       setStepSelections(initialSelections);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedComboType]);
+  };
 
   if (!product) return null;
 
