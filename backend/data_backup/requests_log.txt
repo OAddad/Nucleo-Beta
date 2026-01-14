@@ -35806,3 +35806,6 @@
 2026-01-14T14:15:07.076845+00:00 | DB_CALL get_all_settings | P3 | 1.7ms | success
 2026-01-14T14:15:07.077182+00:00 | DB_CALL get_all_categories | P3 | 1.97ms | success
 2026-01-14T14:15:07.077519+00:00 | DB_CALL get_all_business_hours | P3 | 1.64ms | success
+2026-01-14T14:15:20.969423+00:00 | DB_CALL get_all_pedidos | P3 | 2.79ms | success
+2026-01-14T14:15:20.971250+00:00 | DB_CALL get_all_settings | P3 | 3.74ms | success
+2026-01-14T14:15:20.971519+00:00 | DB_CALL get_all_entregadores | P3 | 3.31ms | success
