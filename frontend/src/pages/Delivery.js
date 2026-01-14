@@ -101,12 +101,29 @@ export default function Delivery() {
       const [pedidosRes, entregadoresRes, settingsRes] = await Promise.all([
         axios.get(`${API}/pedidos`),
         axios.get(`${API}/entregadores`),
-        axios.get(`${API}/system/settings`)
+        axios.get(`${API}/settings`)
       ]);
       
       setPedidos(pedidosRes.data);
       setEntregadores(entregadoresRes.data);
       setAutoAccept(settingsRes.data.delivery_auto_accept || false);
+      
+      // Carregar configurações de impressão
+      if (settingsRes.data.impressao_config) {
+        try {
+          const impConfig = JSON.parse(settingsRes.data.impressao_config);
+          setImpressaoConfig(prev => ({ ...prev, ...impConfig }));
+        } catch (e) {
+          console.log("Usando configurações padrão de impressão");
+        }
+      }
+      
+      // Carregar dados da empresa para impressão
+      setEmpresaConfig({
+        nome: settingsRes.data.empresa_nome || "Minha Empresa",
+        endereco: settingsRes.data.empresa_endereco || "",
+        telefone: settingsRes.data.empresa_telefone || "",
+      });
     } catch (error) {
       console.error("Erro ao carregar dados:", error);
     } finally {

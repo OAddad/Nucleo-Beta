@@ -36645,3 +36645,6 @@
 2026-01-14T14:29:27.966056+00:00 | DB_CALL get_pedidos_by_cliente | P3 | 1.42ms | success
 2026-01-14T14:29:28.194163+00:00 | DB_CALL get_pedido_by_id | P3 | 0.31ms | success
 2026-01-14T14:29:33.232260+00:00 | DB_CALL get_pedido_by_id | P3 | 0.29ms | success
+2026-01-14T14:29:36.094215+00:00 | DB_CALL get_all_products | P3 | 3.37ms | success
+2026-01-14T14:29:38.209656+00:00 | DB_CALL get_pedido_by_id | P3 | 0.28ms | success
+2026-01-14T14:29:43.213176+00:00 | DB_CALL get_pedido_by_id | P3 | 0.68ms | success
