@@ -36763,3 +36763,10 @@
 2026-01-14T14:32:56.989517+00:00 | DB_CALL get_all_pedidos | P3 | 2.74ms | success
 2026-01-14T14:32:56.991179+00:00 | DB_CALL get_all_entregadores | P3 | 2.69ms | success
 2026-01-14T14:32:59.284367+00:00 | DB_CALL get_all_settings | P3 | 0.27ms | success
+2026-01-14T14:33:01.983824+00:00 | DB_CALL get_all_pedidos | P3 | 1.79ms | success
+2026-01-14T14:33:01.985577+00:00 | DB_CALL get_all_settings | P3 | 2.73ms | success
+2026-01-14T14:33:01.987181+00:00 | DB_CALL get_all_entregadores | P3 | 0.18ms | success
+2026-01-14T14:33:06.974248+00:00 | DB_CALL get_all_settings | P3 | 0.38ms | success
+2026-01-14T14:33:06.976309+00:00 | DB_CALL get_all_pedidos | P3 | 2.9ms | success
+2026-01-14T14:33:06.977914+00:00 | DB_CALL get_all_entregadores | P3 | 2.64ms | success
+2026-01-14T14:33:08.031762+00:00 | DB_CALL get_all_settings | P3 | 0.26ms | success
