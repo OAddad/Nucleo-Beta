@@ -2640,10 +2640,15 @@ export default function Products() {
                                     <div className="grid gap-2">
                                       {(step.items || []).map((item, itemIndex) => {
                                         const itemProduct = products.find(p => p.id === item.product_id);
+                                        const isDefaultItem = step.default_item_id === item.product_id;
                                         return (
                                           <div 
                                             key={itemIndex} 
-                                            className="flex items-center gap-2 p-2 rounded-xl bg-white dark:bg-zinc-800 border hover:border-orange-300 transition-colors group"
+                                            className={`flex items-center gap-2 p-2 rounded-xl border transition-colors group ${
+                                              isDefaultItem 
+                                                ? 'bg-green-50 dark:bg-green-900/20 border-green-300 dark:border-green-700' 
+                                                : 'bg-white dark:bg-zinc-800 hover:border-orange-300'
+                                            }`}
                                           >
                                             {/* Botões de Mover (para cima/baixo) */}
                                             <div className="flex flex-col gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -2667,6 +2672,24 @@ export default function Products() {
                                               </button>
                                             </div>
                                             
+                                            {/* Checkbox de Item Padrão */}
+                                            <button
+                                              type="button"
+                                              onClick={() => {
+                                                // Toggle: se já é o padrão, remove; senão, define como padrão
+                                                const newDefaultId = isDefaultItem ? null : item.product_id;
+                                                updateOrderStep(stepIndex, "default_item_id", newDefaultId);
+                                              }}
+                                              className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-all ${
+                                                isDefaultItem 
+                                                  ? 'border-green-500 bg-green-500 text-white' 
+                                                  : 'border-gray-300 dark:border-zinc-500 hover:border-green-400'
+                                              }`}
+                                              title={isDefaultItem ? "Remover como item padrão" : "Definir como item pré-selecionado"}
+                                            >
+                                              {isDefaultItem && <Check className="w-3 h-3" />}
+                                            </button>
+                                            
                                             {/* Número da Posição */}
                                             <span className="text-xs text-muted-foreground font-mono w-5 text-center">{itemIndex + 1}</span>
                                             
@@ -2688,7 +2711,14 @@ export default function Products() {
                                             
                                             {/* Info do Produto */}
                                             <div className="flex-1 min-w-0">
-                                              <p className="font-medium text-sm truncate">{item.product_name}</p>
+                                              <div className="flex items-center gap-1">
+                                                <p className="font-medium text-sm truncate">{item.product_name}</p>
+                                                {isDefaultItem && (
+                                                  <span className="text-[9px] px-1.5 py-0.5 bg-green-500 text-white rounded-full font-medium">
+                                                    PADRÃO
+                                                  </span>
+                                                )}
+                                              </div>
                                               <p className="text-xs text-muted-foreground">
                                                 {itemProduct?.code && `#${itemProduct.code}`}
                                               </p>
