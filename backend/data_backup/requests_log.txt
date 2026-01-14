@@ -40073,3 +40073,5 @@
 2026-01-14T23:43:23.694326+00:00 | DB_CALL count_ingredients | P3 | 0.5ms | success
 2026-01-14T23:43:23.694633+00:00 | DB_CALL count_products | P3 | 0.2ms | success
 2026-01-14T23:43:23.697156+00:00 | DB_CALL count_users | P3 | 2.43ms | success
+2026-01-14T23:43:34.887060+00:00 | DB_CALL get_all_products | P3 | 5.18ms | success
+2026-01-14T23:43:35.238830+00:00 | DB_CALL get_all_products | P3 | 1.82ms | success

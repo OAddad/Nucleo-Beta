@@ -3174,7 +3174,13 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
                               )}
                             </div>
                             <div className="flex-1 min-w-0">
-                              <p className="font-medium text-xs line-clamp-2 leading-tight">{item.product_name}</p>
+                              <p className="font-medium text-xs line-clamp-1 leading-tight">{item.product_name}</p>
+                              {(() => {
+                                const itemDescription = getProductDescription(item.product_id);
+                                return itemDescription ? (
+                                  <p className="text-[10px] text-muted-foreground line-clamp-2 mt-0.5">{itemDescription}</p>
+                                ) : null;
+                              })()}
                               {(() => {
                                 const itemPrice = getItemPrice(item, currentStep);
                                 return itemPrice > 0 ? (
