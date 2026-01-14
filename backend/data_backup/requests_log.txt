@@ -34303,3 +34303,13 @@
 2026-01-14T12:24:33.980385+00:00 | DB_CALL get_all_business_hours | P3 | 7.18ms | success
 2026-01-14T12:24:33.980859+00:00 | DB_CALL get_all_settings | P3 | 8.07ms | success
 2026-01-14T12:24:33.981267+00:00 | DB_CALL get_all_categories | P3 | 8.32ms | success
+2026-01-14T12:25:20.933316+00:00 | DB_CALL get_all_business_hours | P3 | 3.89ms | success
+2026-01-14T12:25:20.947033+00:00 | DB_CALL get_all_settings | P3 | 3.15ms | success
+2026-01-14T12:25:20.947536+00:00 | DB_CALL get_all_bairros | P3 | 3.17ms | success
+2026-01-14T12:25:20.950249+00:00 | DB_CALL get_all_products | P3 | 5.66ms | success
+2026-01-14T12:25:20.961720+00:00 | DB_CALL get_all_categories | P3 | 5.3ms | success
+2026-01-14T12:25:20.969086+00:00 | DB_CALL get_all_categories | P3 | 1.98ms | success
+2026-01-14T12:25:20.974433+00:00 | DB_CALL get_all_business_hours | P3 | 7.0ms | success
+2026-01-14T12:25:20.977504+00:00 | DB_CALL get_all_bairros | P3 | 8.99ms | success
+2026-01-14T12:25:20.978746+00:00 | DB_CALL get_all_settings | P3 | 10.49ms | success
+2026-01-14T12:25:20.982139+00:00 | DB_CALL get_all_products | P3 | 13.55ms | success
