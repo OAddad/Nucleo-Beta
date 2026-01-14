@@ -763,6 +763,7 @@ export default function Delivery() {
                     showButton={true}
                     buttonType="finalizar"
                     onButtonClick={(e) => handleAbrirPagamento(pedido, e)}
+                    showPrint={true}
                   />
                 ) : (
                   <PedidoCard
@@ -772,6 +773,7 @@ export default function Delivery() {
                     selectable={true}
                     selected={pedidosSelecionados.includes(pedido.id)}
                     onSelect={togglePedidoSelecionado}
+                    showPrint={true}
                   />
                 )
               ))
