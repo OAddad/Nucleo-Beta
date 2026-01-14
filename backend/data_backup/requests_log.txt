@@ -38028,3 +38028,6 @@
 2026-01-14T17:27:59.924696+00:00 | DB_CALL get_all_entregadores | P3 | 0.51ms | success
 2026-01-14T17:27:59.927198+00:00 | DB_CALL get_all_pedidos | P3 | 1.61ms | success
 2026-01-14T17:27:59.928984+00:00 | DB_CALL get_all_settings | P3 | 3.18ms | success
+2026-01-14T17:28:59.962258+00:00 | DB_CALL get_all_pedidos | P3 | 2.66ms | success
+2026-01-14T17:28:59.964182+00:00 | DB_CALL get_all_settings | P3 | 3.87ms | success
+2026-01-14T17:28:59.964548+00:00 | DB_CALL get_all_entregadores | P3 | 3.62ms | success

@@ -4624,6 +4624,99 @@ async def delete_company_logo(current_user: User = Depends(get_current_user)):
     return {"success": True, "message": "Logo removida"}
 
 
+# ==================== CONFIGURAÇÕES DE IMPRESSÃO ====================
+
+class PrintConfig(BaseModel):
+    """Configurações do cupom de impressão"""
+    # Cabeçalho
+    mostrar_logo: bool = True
+    empresa_nome: str = ""
+    empresa_endereco: str = ""
+    empresa_cidade: str = ""
+    empresa_telefone: str = ""
+    empresa_cnpj: str = ""
+    empresa_ie: str = ""
+    empresa_im: str = ""
+    
+    # Layout dos itens
+    formato_itens: str = "qtd_preco_item_total"  # ou "qtd_item_total"
+    mostrar_observacoes_item: bool = True
+    mostrar_adicionais: bool = True
+    
+    # Seções
+    mostrar_taxa_entrega: bool = True
+    mostrar_desconto: bool = True
+    mostrar_forma_pagamento: bool = True
+    mostrar_info_entrega: bool = True
+    
+    # Textos
+    titulo_itens: str = "ITENS DO PEDIDO"
+    titulo_info_entrega: str = "Informacoes de Entrega"
+    texto_pagar_entrega: str = "Pagar na entrega"
+    mensagem_rodape: str = "NAO E DOCUMENTO FISCAL"
+    
+    # Template
+    template_cozinha: str = "padrao"  # padrao, simplificado, detalhado
+    template_caixa: str = "padrao"
+
+@api_router.get("/print-config")
+async def get_print_config():
+    """Retorna as configurações de impressão"""
+    try:
+        settings = await db_call(sqlite_db.get_all_settings)
+        
+        # Configurações padrão
+        default_config = PrintConfig().model_dump()
+        
+        # Carregar configurações salvas
+        print_config_str = settings.get("print_config", "{}")
+        try:
+            import json
+            saved_config = json.loads(print_config_str) if print_config_str else {}
+        except:
+            saved_config = {}
+        
+        # Mesclar com padrões
+        config = {**default_config, **saved_config}
+        
+        # Adicionar dados da empresa das settings gerais se não estiverem configurados
+        if not config.get("empresa_nome"):
+            config["empresa_nome"] = settings.get("nome_empresa", "")
+        if not config.get("empresa_endereco"):
+            config["empresa_endereco"] = settings.get("endereco_empresa", "")
+        if not config.get("empresa_telefone"):
+            config["empresa_telefone"] = settings.get("telefone_empresa", "")
+        if not config.get("empresa_cnpj"):
+            config["empresa_cnpj"] = settings.get("cnpj_empresa", "")
+        
+        return config
+    except Exception as e:
+        logger.error(f"Erro ao carregar print config: {e}")
+        return PrintConfig().model_dump()
+
+@api_router.post("/print-config")
+async def save_print_config(config: PrintConfig, current_user: User = Depends(get_current_user)):
+    """Salva as configurações de impressão"""
+    if current_user.role not in ["proprietario", "administrador"]:
+        raise HTTPException(status_code=403, detail="Sem permissão")
+    
+    try:
+        import json
+        config_str = json.dumps(config.model_dump())
+        await db_call(sqlite_db.set_setting, "print_config", config_str)
+        
+        # Também atualizar configurações gerais da empresa
+        await db_call(sqlite_db.set_setting, "nome_empresa", config.empresa_nome)
+        await db_call(sqlite_db.set_setting, "endereco_empresa", config.empresa_endereco)
+        await db_call(sqlite_db.set_setting, "telefone_empresa", config.empresa_telefone)
+        await db_call(sqlite_db.set_setting, "cnpj_empresa", config.empresa_cnpj)
+        
+        return {"success": True, "message": "Configurações salvas"}
+    except Exception as e:
+        logger.error(f"Erro ao salvar print config: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 # ==================== LIMPAR DADOS ====================
 class ClearDataRequest(BaseModel):
     confirmation_word: str
