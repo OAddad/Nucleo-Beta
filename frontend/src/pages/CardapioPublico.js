@@ -360,7 +360,25 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode, allProduc
       setComboStep(0);
       setSelectedComboType(null);
       setItemImageErrors({});
-      setStepSelections({});
+      
+      // Para produtos não-combo com etapas, inicializar seleções com itens padrão
+      const isComboProduct = product.product_type === 'combo';
+      const hasSteps = product.order_steps && product.order_steps.length > 0;
+      
+      if (!isComboProduct && hasSteps) {
+        const initialSelections = {};
+        product.order_steps.forEach((step, index) => {
+          if (step.default_item_id) {
+            const itemExists = step.items?.some(item => item.product_id === step.default_item_id);
+            if (itemExists) {
+              initialSelections[index] = [step.default_item_id];
+            }
+          }
+        });
+        setStepSelections(initialSelections);
+      } else {
+        setStepSelections({});
+      }
     }
   }, [open, product]);
 
