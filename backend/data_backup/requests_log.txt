@@ -37271,3 +37271,8 @@
 2026-01-14T16:01:34.495338+00:00 | DB_CALL get_all_categories | P3 | 0.29ms | success
 2026-01-14T16:01:34.960787+00:00 | DB_CALL get_all_bairros | P3 | 0.55ms | success
 2026-01-14T16:01:38.852110+00:00 | DB_CALL increment_whatsapp_stat | P3 | 5.45ms | success
+2026-01-14T16:03:21.140799+00:00 | DB_CALL get_all_categories | P3 | 2.26ms | success
+2026-01-14T16:03:21.145590+00:00 | DB_CALL get_all_products | P3 | 3.42ms | success
+2026-01-14T16:03:21.158309+00:00 | DB_CALL get_all_settings | P3 | 14.9ms | success
+2026-01-14T16:03:21.159317+00:00 | DB_CALL get_all_business_hours | P3 | 0.26ms | success
+2026-01-14T16:03:22.005493+00:00 | DB_CALL get_all_bairros | P3 | 0.32ms | success

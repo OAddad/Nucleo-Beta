@@ -1,0 +1,33 @@
+{
+  "name": "nucleo-print-connector",
+  "version": "1.0.0",
+  "description": "Núcleo Print Connector - Impressão térmica ESC/POS para PDV",
+  "main": "src/index.js",
+  "bin": "src/index.js",
+  "pkg": {
+    "targets": ["node18-win-x64"],
+    "outputPath": "dist",
+    "assets": [
+      "src/**/*"
+    ]
+  },
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node src/index.js",
+    "build": "pkg . --output dist/NucleoPrintConnector.exe",
+    "build:win": "pkg . --targets node18-win-x64 --output dist/NucleoPrintConnector.exe"
+  },
+  "keywords": ["printer", "thermal", "pos", "escpos", "epson"],
+  "author": "Núcleo",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "usb": "^2.11.0",
+    "uuid": "^9.0.0",
+    "conf": "^12.0.0"
+  },
+  "devDependencies": {
+    "pkg": "^5.8.1"
+  }
+}
