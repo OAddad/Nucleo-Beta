@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo, useRef } from "react";
 import axios from "axios";
 import { toast } from "sonner";
-import { Plus, Trash2, Edit, ChevronDown, ChevronUp, ImageOff, Copy, Download, Camera, FileText, Search, X, ChefHat, Package, GripVertical, Settings2, Eye, Layers, ArrowUp, ArrowDown, ArrowUpDown, SortAsc, SortDesc } from "lucide-react";
+import { Plus, Trash2, Edit, ChevronDown, ChevronUp, ImageOff, Copy, Download, Camera, FileText, Search, X, ChefHat, Package, GripVertical, Settings2, Eye, Layers, ArrowUp, ArrowDown, ArrowUpDown, SortAsc, SortDesc, Check } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
