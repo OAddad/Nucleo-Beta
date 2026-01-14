@@ -1202,8 +1202,6 @@ export default function Products() {
     setOrderSteps(newSteps);
     toast.success(`Itens ordenados por preço ${order === 'asc' ? '↑' : '↓'}`);
   };
-    setOrderSteps(newSteps);
-  };
 
   const addRecipeItem = (type) => {
     if (type === "ingredient") {
