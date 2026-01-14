@@ -1634,7 +1634,8 @@ async def update_product(product_id: str, product_data: ProductCreate, current_u
         "simple_description": product_data.simple_description,
         "combo_description": product_data.combo_description,
         "simple_photo_url": product_data.simple_photo_url,
-        "combo_photo_url": product_data.combo_photo_url
+        "combo_photo_url": product_data.combo_photo_url,
+        "card_order": product_data.card_order or "combo_first"
     }
     
     await db_call(sqlite_db.update_product, product_id, update_data)
