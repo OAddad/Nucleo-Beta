@@ -35689,3 +35689,7 @@
 2026-01-14T14:08:21.899849+00:00 | DB_CALL get_all_categories | P3 | 0.14ms | success
 2026-01-14T14:08:21.900697+00:00 | DB_CALL get_user_by_id | P3 | 0.13ms | success
 2026-01-14T14:08:21.901726+00:00 | DB_CALL get_all_products | P3 | 0.94ms | success
+2026-01-14T14:10:39.234215+00:00 | DB_CALL get_user_by_username | P3 | 0.24ms | success
+2026-01-14T14:10:39.234443+00:00 | DB_CALL get_user_by_username | P3 | 0.1ms | success
+2026-01-14T14:10:39.370188+00:00 | DB_CALL get_all_clientes | P3 | 135.65ms | success
+2026-01-14T14:10:39.911480+00:00 | DB_CALL get_cliente_by_id | P3 | 2.06ms | success
