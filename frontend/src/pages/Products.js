@@ -517,6 +517,8 @@ export default function Products() {
   const [filterPhoto, setFilterPhoto] = useState("todos"); // todos, com-foto, sem-foto
   const [filterDescription, setFilterDescription] = useState("todos"); // todos, com-descricao, sem-descricao
   const [filterCategory, setFilterCategory] = useState("todos"); // todos ou nome da categoria
+  const [filterName, setFilterName] = useState(""); // Filtro de busca por nome
+  const [filterType, setFilterType] = useState("todos"); // todos, produto, combo, receita
   
   // Direção da ordenação (asc/desc) para campos com toggle
   const [sortDirection, setSortDirection] = useState({
