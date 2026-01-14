@@ -1400,6 +1400,11 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
   const [productQuantity, setProductQuantity] = useState(1);
   const [productObservation, setProductObservation] = useState("");
   
+  // Estados para Combo/Order Steps
+  const [comboStep, setComboStep] = useState(0); // 0 = seleção tipo, 1+ = etapas
+  const [selectedComboType, setSelectedComboType] = useState(null); // 'simples' ou 'combo'
+  const [stepSelections, setStepSelections] = useState({});
+  
   // Etapa do checkout
   const [step, setStep] = useState(1); // 1 = Produtos, 2 = Cliente, 3 = Entrega, 4 = Pagamento
   
