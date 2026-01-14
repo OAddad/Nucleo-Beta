@@ -1315,90 +1315,118 @@ function GerenciarImpressoras({ toast }) {
     });
   };
 
-  // Testar impressão real via USB
+  // Testar impressão real via USB ou fallback
   const handleTestarImpressora = async (impressora) => {
-    if (!usbSupported) {
-      toast({ title: "Não suportado", description: "Web USB não disponível", variant: "destructive" });
-      return;
-    }
+    const testePedido = {
+      id: 'teste-' + Date.now(),
+      codigo: "TESTE",
+      cliente_nome: "Teste de Impressão",
+      cliente_telefone: "(00) 00000-0000",
+      tipo_entrega: "retirada",
+      items: [
+        { nome: "Item de Teste 1", quantidade: 2, preco_unitario: 10.00 },
+        { nome: "Item de Teste 2", quantidade: 1, preco_unitario: 15.00, observacao: "Com observação" },
+      ],
+      total: 35.00,
+      forma_pagamento: "Dinheiro",
+      observacao: "Este é um teste de impressão",
+      created_at: new Date().toISOString(),
+    };
 
-    try {
-      // Buscar dispositivos autorizados
-      const devices = await navigator.usb.getDevices();
-      const device = devices.find(d => 
-        d.vendorId === impressora.vendorId && d.productId === impressora.productId
-      );
+    // Se é USB e tem vendorId, tentar impressão direta
+    if (impressora.tipo === 'usb' && impressora.vendorId && 'usb' in navigator) {
+      toast({ title: "Enviando teste...", description: `Para ${impressora.nome}` });
+      
+      try {
+        // Buscar dispositivos autorizados
+        const devices = await navigator.usb.getDevices();
+        const device = devices.find(d => 
+          d.vendorId === impressora.vendorId && d.productId === impressora.productId
+        );
 
-      if (!device) {
+        if (!device) {
+          toast({ 
+            title: "Dispositivo não encontrado", 
+            description: "Clique em 'Buscar Impressoras USB' para reconectar", 
+            variant: "destructive" 
+          });
+          return;
+        }
+
+        // Abrir conexão
+        await device.open();
+        
+        if (device.configuration === null) {
+          await device.selectConfiguration(1);
+        }
+        
+        const iface = device.configuration.interfaces.find(i => 
+          i.alternate.interfaceClass === 7
+        ) || device.configuration.interfaces[0];
+        
+        await device.claimInterface(iface.interfaceNumber);
+
+        const endpoint = iface.alternate.endpoints.find(e => e.direction === 'out');
+
+        if (endpoint) {
+          // Comandos ESC/POS para teste
+          const ESC = 0x1B;
+          const GS = 0x1D;
+          const encoder = new TextEncoder();
+          
+          const commands = new Uint8Array([
+            ESC, 0x40, // Inicializar
+            ESC, 0x61, 0x01, // Centralizar
+            ESC, 0x21, 0x30, // Texto grande
+            ...encoder.encode('=== TESTE ===\n'),
+            ESC, 0x21, 0x00, // Texto normal
+            ...encoder.encode('\n'),
+            ...encoder.encode(`Impressora: ${impressora.nome}\n`),
+            ...encoder.encode(`Papel: ${impressora.paper_width_mm}mm\n`),
+            ...encoder.encode(`DPI: ${impressora.dpi}\n`),
+            ...encoder.encode(`Colunas: ${impressora.max_columns}\n`),
+            ...encoder.encode('--------------------------------\n'),
+            ESC, 0x61, 0x00, // Alinhar esquerda
+            ...encoder.encode('2x Item de Teste 1    R$ 20,00\n'),
+            ...encoder.encode('1x Item de Teste 2    R$ 15,00\n'),
+            ...encoder.encode('  -> Com observacao\n'),
+            ...encoder.encode('--------------------------------\n'),
+            ESC, 0x21, 0x10, // Negrito
+            ...encoder.encode('TOTAL:                R$ 35,00\n'),
+            ESC, 0x21, 0x00, // Normal
+            ...encoder.encode('--------------------------------\n'),
+            ESC, 0x61, 0x01, // Centralizar
+            ...encoder.encode('Impressao OK!\n'),
+            ...encoder.encode(new Date().toLocaleString('pt-BR') + '\n'),
+            ...encoder.encode('\n\n\n'),
+            GS, 0x56, 0x00, // Cortar papel
+          ]);
+
+          await device.transferOut(endpoint.endpointNumber, commands);
+          toast({ title: "Sucesso!", description: "Teste impresso com sucesso!" });
+        }
+
+        await device.releaseInterface(iface.interfaceNumber);
+        await device.close();
+
+      } catch (error) {
+        console.error("Erro no teste USB:", error);
         toast({ 
-          title: "Dispositivo não encontrado", 
-          description: "Clique em 'Buscar Impressoras' para reconectar", 
+          title: "Erro na impressão USB", 
+          description: error.message || "Usando fallback...", 
           variant: "destructive" 
         });
-        return;
+        // Fallback para window.print
+        const config = { mostrar_logo: true, mostrar_data_hora: true, mostrar_codigo_pedido: true, mostrar_cliente_nome: true, mostrar_forma_pagamento: true, mensagem_rodape: "Teste de Impressão" };
+        const empresa = { nome: impressora.nome + " - TESTE" };
+        printPedido(testePedido, config, empresa);
       }
-
-      toast({ title: "Enviando teste...", description: `Para ${impressora.nome}` });
-
-      // Abrir conexão
-      await device.open();
-      
-      // Selecionar configuração
-      if (device.configuration === null) {
-        await device.selectConfiguration(1);
-      }
-      
-      // Encontrar interface de impressora
-      const iface = device.configuration.interfaces.find(i => 
-        i.alternate.interfaceClass === 7 // Classe de impressora
-      ) || device.configuration.interfaces[0];
-      
-      await device.claimInterface(iface.interfaceNumber);
-
-      // Encontrar endpoint de saída
-      const endpoint = iface.alternate.endpoints.find(e => 
-        e.direction === 'out'
-      );
-
-      if (endpoint) {
-        // Comandos ESC/POS para teste
-        const ESC = 0x1B;
-        const GS = 0x1D;
-        const commands = new Uint8Array([
-          ESC, 0x40, // Inicializar impressora
-          ESC, 0x61, 0x01, // Centralizar
-          ESC, 0x21, 0x30, // Texto grande
-          ...new TextEncoder().encode('TESTE DE IMPRESSAO\n'),
-          ESC, 0x21, 0x00, // Texto normal
-          ESC, 0x61, 0x00, // Alinhar esquerda
-          ...new TextEncoder().encode('--------------------------------\n'),
-          ...new TextEncoder().encode(`Impressora: ${impressora.nome}\n`),
-          ...new TextEncoder().encode(`Papel: ${impressora.paper_width_mm}mm\n`),
-          ...new TextEncoder().encode(`DPI: ${impressora.dpi}\n`),
-          ...new TextEncoder().encode(`Colunas: ${impressora.max_columns}\n`),
-          ...new TextEncoder().encode('--------------------------------\n'),
-          ...new TextEncoder().encode('Impressao funcionando!\n'),
-          ...new TextEncoder().encode('\n\n\n'),
-          GS, 0x56, 0x00, // Cortar papel
-        ]);
-
-        await device.transferOut(endpoint.endpointNumber, commands);
-        toast({ title: "Sucesso!", description: "Teste enviado para impressora" });
-      } else {
-        toast({ title: "Erro", description: "Endpoint de saída não encontrado", variant: "destructive" });
-      }
-
-      // Liberar interface e fechar
-      await device.releaseInterface(iface.interfaceNumber);
-      await device.close();
-
-    } catch (error) {
-      console.error("Erro no teste:", error);
-      toast({ 
-        title: "Erro na impressão", 
-        description: error.message || "Não foi possível imprimir", 
-        variant: "destructive" 
-      });
+    } else {
+      // Impressora manual - usar window.print
+      toast({ title: "Abrindo teste...", description: "Será aberta uma janela de impressão" });
+      const config = { mostrar_logo: true, mostrar_data_hora: true, mostrar_codigo_pedido: true, mostrar_cliente_nome: true, mostrar_cliente_telefone: true, mostrar_forma_pagamento: true, mostrar_observacoes: true, mensagem_rodape: "Teste de Impressão - " + impressora.nome };
+      const empresa = { nome: "TESTE DE IMPRESSÃO", endereco: `Impressora: ${impressora.nome}`, telefone: `${impressora.paper_width_mm}mm | ${impressora.dpi} DPI` };
+      printPedido(testePedido, config, empresa);
     }
   };
 
