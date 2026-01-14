@@ -894,7 +894,7 @@ function ImpressaoTab({ toast }) {
 }
 
 // ==================== SUB-ABA: PRINT CONNECTOR ====================
-function PrintConnectorTab({ toast, connectorStatus, onRefresh }) {
+function PrintConnectorTab({ toast, connectorStatus, onRefresh, onNavigateToDownload }) {
   const [printers, setPrinters] = useState([]);
   const [loading, setLoading] = useState(false);
   const [connecting, setConnecting] = useState(null);
@@ -987,7 +987,7 @@ function PrintConnectorTab({ toast, connectorStatus, onRefresh }) {
             <RefreshCw className="w-4 h-4 mr-2" />
             Verificar Novamente
           </Button>
-          <Button onClick={() => document.querySelector('[data-tab="download"]')?.click()}>
+          <Button onClick={onNavigateToDownload}>
             <Package className="w-4 h-4 mr-2" />
             Baixar Aplicativo
           </Button>
