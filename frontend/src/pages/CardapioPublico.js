@@ -2641,7 +2641,7 @@ export default function CardapioPublico({ onAdminLogin }) {
     }).filter(Boolean));
   };
 
-  const cartTotal = useMemo(() => cart.reduce((sum, item) => sum + (item.sale_price * item.quantity), 0), [cart]);
+  const cartTotal = useMemo(() => cart.reduce((sum, item) => sum + ((item.final_price || item.sale_price) * item.quantity), 0), [cart]);
   const cartItemsCount = useMemo(() => cart.reduce((sum, item) => sum + item.quantity, 0), [cart]);
 
   const scrollCategories = (direction) => {

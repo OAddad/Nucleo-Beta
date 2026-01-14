@@ -35372,3 +35372,13 @@
 2026-01-14T13:48:44.588313+00:00 | DB_CALL get_user_by_id | P3 | 0.19ms | success
 2026-01-14T13:48:44.590113+00:00 | DB_CALL get_all_expenses | P3 | 2.41ms | success
 2026-01-14T13:48:44.593259+00:00 | DB_CALL get_all_expense_classifications | P3 | 4.84ms | success
+2026-01-14T13:49:23.989926+00:00 | DB_CALL get_all_settings | P3 | 2.66ms | success
+2026-01-14T13:49:23.990516+00:00 | DB_CALL get_all_bairros | P3 | 2.33ms | success
+2026-01-14T13:49:23.991040+00:00 | DB_CALL get_all_business_hours | P3 | 2.1ms | success
+2026-01-14T13:49:23.991403+00:00 | DB_CALL get_all_categories | P3 | 2.37ms | success
+2026-01-14T13:49:23.992401+00:00 | DB_CALL get_all_products | P3 | 2.73ms | success
+2026-01-14T13:49:24.980567+00:00 | DB_CALL get_all_settings | P3 | 1.54ms | success
+2026-01-14T13:49:24.981122+00:00 | DB_CALL get_all_bairros | P3 | 1.23ms | success
+2026-01-14T13:49:24.981567+00:00 | DB_CALL get_all_categories | P3 | 1.86ms | success
+2026-01-14T13:49:24.982583+00:00 | DB_CALL get_all_products | P3 | 2.26ms | success
+2026-01-14T13:49:24.984477+00:00 | DB_CALL get_all_business_hours | P3 | 0.27ms | success
