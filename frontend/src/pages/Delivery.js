@@ -692,6 +692,7 @@ export default function Delivery() {
                   showButton={true}
                   buttonType="pronto"
                   onButtonClick={(e) => handleMarcarPronto(pedido.id, e)}
+                  showPrint={true}
                 />
               ))
             )}
