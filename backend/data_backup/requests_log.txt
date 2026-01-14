@@ -37527,3 +37527,6 @@
 2026-01-14T16:32:49.977283+00:00 | DB_CALL get_all_products | P3 | 40.69ms | success
 2026-01-14T16:32:50.134505+00:00 | DB_CALL get_all_bairros | P3 | 21.07ms | success
 2026-01-14T16:32:55.735656+00:00 | DB_CALL get_user_by_username | P3 | 3.24ms | success
+2026-01-14T16:33:21.053491+00:00 | DB_CALL get_all_settings | P3 | 2.33ms | success
+2026-01-14T16:33:21.054997+00:00 | DB_CALL get_all_pedidos | P3 | 3.69ms | success
+2026-01-14T16:33:21.056828+00:00 | DB_CALL get_all_entregadores | P3 | 3.73ms | success
