@@ -654,7 +654,7 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode, allProduc
 
               {/* Card COMBO - 65% da largura */}
               <button
-                onClick={() => setSelectedComboType('combo')}
+                onClick={() => handleSelectComboType('combo')}
                 className={`w-[65%] flex-shrink-0 rounded-2xl border-2 transition-all text-left overflow-hidden flex flex-col relative ${
                   selectedComboType === 'combo' 
                     ? 'border-orange-500 bg-orange-50 dark:bg-orange-500/10' 
