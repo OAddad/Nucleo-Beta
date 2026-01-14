@@ -37177,3 +37177,5 @@
 2026-01-14T14:46:39.473398+00:00 | DB_CALL increment_whatsapp_stat | P3 | 8.7ms | success
 2026-01-14T14:46:43.934164+00:00 | DB_CALL increment_whatsapp_stat | P3 | 5.24ms | success
 2026-01-14T14:47:31.165193+00:00 | DB_CALL get_all_products | P3 | 17.56ms | success
+2026-01-14T14:47:43.151811+00:00 | DB_CALL get_all_products | P3 | 3.17ms | success
+2026-01-14T14:47:46.436296+00:00 | DB_CALL get_pedido_by_id | P3 | 0.3ms | success
