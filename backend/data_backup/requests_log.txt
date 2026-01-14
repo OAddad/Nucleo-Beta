@@ -35788,3 +35788,6 @@
 2026-01-14T14:13:35.894218+00:00 | DB_CALL get_user_by_username | P3 | 0.39ms | success
 2026-01-14T14:13:35.914506+00:00 | DB_CALL get_user_by_id | P3 | 0.18ms | success
 2026-01-14T14:13:35.915453+00:00 | DB_CALL get_all_products | P3 | 0.83ms | success
+2026-01-14T14:14:20.978132+00:00 | DB_CALL get_all_entregadores | P3 | 1.23ms | success
+2026-01-14T14:14:20.979549+00:00 | DB_CALL get_all_pedidos | P3 | 2.51ms | success
+2026-01-14T14:14:20.981268+00:00 | DB_CALL get_all_settings | P3 | 3.45ms | success
