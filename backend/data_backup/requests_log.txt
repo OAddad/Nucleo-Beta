@@ -35942,3 +35942,4 @@
 2026-01-14T14:19:25.898027+00:00 | DB_CALL get_all_categories | P3 | 0.74ms | success
 2026-01-14T14:19:25.900877+00:00 | DB_CALL get_all_products | P3 | 2.89ms | success
 2026-01-14T14:19:26.358295+00:00 | DB_CALL get_all_products | P3 | 2.93ms | success
+2026-01-14T14:19:29.481688+00:00 | DB_CALL get_all_products | P3 | 2.94ms | success

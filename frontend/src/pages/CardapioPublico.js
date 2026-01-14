@@ -902,16 +902,16 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode, allProduc
             <div className="flex items-center justify-between mb-2">
               <button
                 onClick={() => setComboStep(comboStep - 1)}
-                className={`w-8 h-8 rounded-full ${t.bgMuted} flex items-center justify-center`}
+                className={`w-8 h-8 rounded-full ${darkMode ? 'bg-zinc-700 hover:bg-zinc-600' : 'bg-gray-100 hover:bg-gray-200'} flex items-center justify-center transition-colors`}
               >
-                <ChevronLeft className="w-5 h-5" />
+                <ChevronLeft className={`w-5 h-5 ${t.text}`} />
               </button>
               <span className={`text-sm ${t.textMuted}`}>Etapa {comboStep} de {totalStepsWithSummary}</span>
               <button
                 onClick={onClose}
-                className={`w-8 h-8 rounded-full ${t.bgMuted} flex items-center justify-center`}
+                className={`w-8 h-8 rounded-full ${darkMode ? 'bg-zinc-700 hover:bg-zinc-600' : 'bg-gray-100 hover:bg-gray-200'} flex items-center justify-center transition-colors`}
               >
-                <X className="w-5 h-5" />
+                <X className={`w-5 h-5 ${t.text}`} />
               </button>
             </div>
             <h2 className={`text-lg font-bold ${t.text} text-center`}>{currentStep.name || `Etapa ${comboStep}`}</h2>
