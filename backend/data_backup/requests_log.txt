@@ -38853,3 +38853,4 @@
 2026-01-14T22:53:06.769221+00:00 | DB_CALL get_user_by_id | P3 | 0.27ms | success
 2026-01-14T22:53:06.769503+00:00 | DB_CALL get_all_categories | P3 | 0.15ms | success
 2026-01-14T22:53:11.214007+00:00 | DB_CALL get_pedido_by_id | P3 | 0.3ms | success
+2026-01-14T22:53:16.212828+00:00 | DB_CALL get_pedido_by_id | P3 | 0.47ms | success
