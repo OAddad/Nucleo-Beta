@@ -37276,3 +37276,13 @@
 2026-01-14T16:03:21.158309+00:00 | DB_CALL get_all_settings | P3 | 14.9ms | success
 2026-01-14T16:03:21.159317+00:00 | DB_CALL get_all_business_hours | P3 | 0.26ms | success
 2026-01-14T16:03:22.005493+00:00 | DB_CALL get_all_bairros | P3 | 0.32ms | success
+2026-01-14T16:09:04.740433+00:00 | DB_CALL get_all_business_hours | P3 | 1.4ms | success
+2026-01-14T16:09:04.740999+00:00 | DB_CALL get_all_categories | P3 | 1.88ms | success
+2026-01-14T16:09:04.741485+00:00 | DB_CALL get_all_settings | P3 | 2.02ms | success
+2026-01-14T16:09:04.748266+00:00 | DB_CALL get_all_products | P3 | 6.0ms | success
+2026-01-14T16:09:04.845572+00:00 | DB_CALL get_all_business_hours | P3 | 2.22ms | success
+2026-01-14T16:09:04.846038+00:00 | DB_CALL get_all_categories | P3 | 2.72ms | success
+2026-01-14T16:09:04.877888+00:00 | DB_CALL get_all_products | P3 | 34.89ms | success
+2026-01-14T16:09:04.890220+00:00 | DB_CALL get_all_settings | P3 | 46.6ms | success
+2026-01-14T16:09:05.196860+00:00 | DB_CALL get_all_bairros | P3 | 0.32ms | success
+2026-01-14T16:09:05.703876+00:00 | DB_CALL get_all_bairros | P3 | 0.22ms | success
