@@ -37662,3 +37662,6 @@
 2026-01-14T16:41:21.055396+00:00 | DB_CALL get_all_pedidos | P3 | 1.96ms | success
 2026-01-14T16:41:21.059491+00:00 | DB_CALL get_all_entregadores | P3 | 1.9ms | success
 2026-01-14T16:41:21.060075+00:00 | DB_CALL get_all_settings | P3 | 2.02ms | success
+2026-01-14T16:42:21.067757+00:00 | DB_CALL get_all_pedidos | P3 | 1.42ms | success
+2026-01-14T16:42:21.071083+00:00 | DB_CALL get_all_entregadores | P3 | 0.68ms | success
+2026-01-14T16:42:21.071575+00:00 | DB_CALL get_all_settings | P3 | 0.95ms | success
