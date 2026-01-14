@@ -864,6 +864,12 @@ export default function Products() {
     setRecipeYield("");
     setRecipeYieldUnit("kg");
     setLinkedIngredientId("");
+    setCardOrder("combo_first");
+    setSimplePrice("");
+    setComboDescription("");
+    setSimpleDescription("");
+    setSimplePhotoUrl("");
+    setComboPhotoUrl("");
   };
 
   const handleEdit = (product) => {
