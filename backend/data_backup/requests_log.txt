@@ -36461,3 +36461,12 @@
 2026-01-14T14:26:48.824657+00:00 | DB_CALL get_all_business_hours | P3 | 0.29ms | success
 2026-01-14T14:26:48.826633+00:00 | DB_CALL get_all_categories | P3 | 0.27ms | success
 2026-01-14T14:26:49.854665+00:00 | DB_CALL get_all_bairros | P3 | 0.31ms | success
+2026-01-14T14:26:51.242623+00:00 | DB_CALL get_all_entregadores | P3 | 0.25ms | success
+2026-01-14T14:26:51.244055+00:00 | DB_CALL get_all_settings | P3 | 0.16ms | success
+2026-01-14T14:26:51.249459+00:00 | DB_CALL get_all_pedidos | P3 | 1.17ms | success
+2026-01-14T14:26:51.971774+00:00 | DB_CALL get_all_settings | P3 | 1.08ms | success
+2026-01-14T14:26:51.972263+00:00 | DB_CALL get_all_entregadores | P3 | 1.04ms | success
+2026-01-14T14:26:51.973442+00:00 | DB_CALL get_all_pedidos | P3 | 1.97ms | success
+2026-01-14T14:26:56.248521+00:00 | DB_CALL get_all_entregadores | P3 | 0.24ms | success
+2026-01-14T14:26:56.262179+00:00 | DB_CALL get_all_settings | P3 | 0.21ms | success
+2026-01-14T14:26:56.267364+00:00 | DB_CALL get_all_pedidos | P3 | 1.16ms | success
