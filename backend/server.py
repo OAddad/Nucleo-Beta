@@ -4710,6 +4710,91 @@ async def clear_locations_data(data: ClearDataRequest, current_user: User = Depe
         raise HTTPException(status_code=500, detail=str(e))
 
 
+# ==================== ENDPOINT DOWNLOAD PRINT CONNECTOR ====================
+
+@api_router.get("/print-connector/download")
+async def download_print_connector():
+    """
+    Retorna informações e link para download do Print Connector
+    Em ambiente de produção, retorna link para o .exe hospedado
+    """
+    # Caminho do projeto print-connector
+    connector_path = Path(__file__).parent.parent / "print-connector"
+    dist_path = connector_path / "dist" / "NucleoPrintConnector.exe"
+    
+    # Verificar se o .exe existe
+    exe_exists = dist_path.exists()
+    
+    return {
+        "name": "Núcleo Print Connector",
+        "version": "1.0.0",
+        "platform": "Windows 10/11 x64",
+        "exe_available": exe_exists,
+        "download_url": "/api/print-connector/download/exe" if exe_exists else None,
+        "build_instructions": {
+            "command": "cd /app/print-connector && npm run build",
+            "output": "dist/NucleoPrintConnector.exe"
+        },
+        "source_available": connector_path.exists(),
+        "requirements": [
+            "Windows 10 ou 11",
+            "Impressora térmica USB (Epson recomendada)",
+            "Papel 80mm"
+        ]
+    }
+
+@api_router.get("/print-connector/download/exe")
+async def download_print_connector_exe():
+    """
+    Download direto do executável NucleoPrintConnector.exe
+    """
+    connector_path = Path(__file__).parent.parent / "print-connector"
+    dist_path = connector_path / "dist" / "NucleoPrintConnector.exe"
+    
+    if not dist_path.exists():
+        raise HTTPException(
+            status_code=404, 
+            detail="Executável não encontrado. Execute 'npm run build' no diretório print-connector primeiro."
+        )
+    
+    return FileResponse(
+        path=str(dist_path),
+        filename="NucleoPrintConnector.exe",
+        media_type="application/octet-stream"
+    )
+
+@api_router.get("/print-connector/source")
+async def download_print_connector_source():
+    """
+    Retorna o código fonte do Print Connector como ZIP
+    """
+    import zipfile
+    import io
+    from fastapi.responses import StreamingResponse
+    
+    connector_path = Path(__file__).parent.parent / "print-connector"
+    
+    if not connector_path.exists():
+        raise HTTPException(status_code=404, detail="Print Connector não encontrado")
+    
+    # Criar ZIP em memória
+    zip_buffer = io.BytesIO()
+    
+    with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zip_file:
+        for file_path in connector_path.rglob('*'):
+            if file_path.is_file() and 'node_modules' not in str(file_path):
+                arcname = file_path.relative_to(connector_path.parent)
+                zip_file.write(file_path, arcname)
+    
+    zip_buffer.seek(0)
+    
+    return StreamingResponse(
+        zip_buffer,
+        media_type="application/zip",
+        headers={"Content-Disposition": "attachment; filename=NucleoPrintConnector-source.zip"}
+    )
+
+
 # Include router APÓS definir todos os endpoints
 app.include_router(api_router)
 
