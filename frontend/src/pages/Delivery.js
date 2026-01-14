@@ -3126,12 +3126,12 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
                                 <Check className="w-3 h-3 text-white" />
                               </div>
                             )}
-                            <div className={`w-full aspect-square rounded-md overflow-hidden mb-1.5 ${isSelected ? 'ring-2 ring-orange-500' : ''}`}>
+                            <div className={`w-full aspect-square rounded-md overflow-hidden mb-1.5 ${isSelected ? 'ring-2 ring-orange-500' : ''} ${isPngImage(itemPhoto) ? 'bg-background' : ''}`}>
                               {itemPhoto ? (
                                 <img
                                   src={getImageUrl(itemPhoto)}
                                   alt={item.product_name}
-                                  className="w-full h-full object-cover"
+                                  className={`w-full h-full ${isPngImage(itemPhoto) ? 'object-contain p-1' : 'object-cover'}`}
                                 />
                               ) : (
                                 <div className={`w-full h-full flex items-center justify-center ${isSelected ? 'bg-orange-100 dark:bg-orange-900/30' : 'bg-muted'}`}>
