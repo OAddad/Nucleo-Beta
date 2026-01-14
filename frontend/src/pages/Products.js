@@ -1734,7 +1734,7 @@ export default function Products() {
                   </div>
                 </div>
 
-                {/* Abas principais: Ficha Técnica e Etapas - Etapas oculta para RECEITA */}
+                {/* Abas principais: Ficha Técnica e Personalização - Personalização oculta para RECEITA */}
                 <div className="flex gap-2 border-b pb-2">
                   <Button
                     type="button"
@@ -1751,7 +1751,7 @@ export default function Products() {
                       onClick={() => setActiveFormTab("etapas")}
                       className="flex-1"
                     >
-                      Etapas (para o cliente pedir)
+                      ✨ Personalização
                     </Button>
                   )}
                 </div>
