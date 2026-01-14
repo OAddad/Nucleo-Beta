@@ -620,7 +620,7 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode, allProduc
             <div className="flex gap-3 items-center">
               {/* Card SIMPLES - 35% da largura */}
               <button
-                onClick={() => setSelectedComboType('simples')}
+                onClick={() => handleSelectComboType('simples')}
                 className={`w-[35%] flex-shrink-0 rounded-xl border-2 transition-all text-left overflow-hidden flex flex-col ${
                   selectedComboType === 'simples' 
                     ? 'border-orange-500 bg-orange-50 dark:bg-orange-500/10' 

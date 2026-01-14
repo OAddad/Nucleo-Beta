@@ -35791,3 +35791,8 @@
 2026-01-14T14:14:20.978132+00:00 | DB_CALL get_all_entregadores | P3 | 1.23ms | success
 2026-01-14T14:14:20.979549+00:00 | DB_CALL get_all_pedidos | P3 | 2.51ms | success
 2026-01-14T14:14:20.981268+00:00 | DB_CALL get_all_settings | P3 | 3.45ms | success
+2026-01-14T14:14:50.470524+00:00 | DB_CALL get_all_bairros | P3 | 1.1ms | success
+2026-01-14T14:14:50.471172+00:00 | DB_CALL get_all_settings | P3 | 1.25ms | success
+2026-01-14T14:14:50.473228+00:00 | DB_CALL get_all_business_hours | P3 | 0.22ms | success
+2026-01-14T14:14:50.879752+00:00 | DB_CALL get_all_categories | P3 | 0.26ms | success
+2026-01-14T14:14:50.883868+00:00 | DB_CALL get_all_products | P3 | 0.89ms | success
