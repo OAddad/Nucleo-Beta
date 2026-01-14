@@ -78,6 +78,23 @@ export default function Delivery() {
   // Modal de novo pedido (cardápio popup)
   const [novoPedidoModalOpen, setNovoPedidoModalOpen] = useState(false);
 
+  // Configurações de impressão
+  const [impressaoConfig, setImpressaoConfig] = useState({
+    impressao_automatica: true,
+    mostrar_logo: true,
+    mostrar_endereco_empresa: true,
+    mostrar_telefone_empresa: true,
+    mostrar_data_hora: true,
+    mostrar_codigo_pedido: true,
+    mostrar_cliente_nome: true,
+    mostrar_cliente_telefone: true,
+    mostrar_endereco_entrega: true,
+    mostrar_forma_pagamento: true,
+    mostrar_observacoes: true,
+    mensagem_rodape: "Obrigado pela preferência!",
+  });
+  const [empresaConfig, setEmpresaConfig] = useState({});
+
   // Carregar dados
   const fetchData = useCallback(async () => {
     try {

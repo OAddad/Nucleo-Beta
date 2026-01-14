@@ -36638,3 +36638,7 @@
 2026-01-14T14:28:46.976616+00:00 | DB_CALL get_all_entregadores | P3 | 2.89ms | success
 2026-01-14T14:28:46.985790+00:00 | DB_CALL get_all_settings | P3 | 0.18ms | success
 2026-01-14T14:28:47.157969+00:00 | DB_CALL get_all_settings | P3 | 0.27ms | success
+2026-01-14T14:29:22.189879+00:00 | DB_CALL get_client_addresses | P3 | 0.35ms | success
+2026-01-14T14:29:27.576466+00:00 | DB_CALL get_all_settings | P3 | 0.25ms | success
+2026-01-14T14:29:27.584518+00:00 | DB_CALL create_pedido | P3 | 7.9ms | success
+2026-01-14T14:29:27.666310+00:00 | DB_CALL update_cliente_pedido_stats | P3 | 81.68ms | success
