@@ -821,10 +821,10 @@ function ImpressaoTab({ toast }) {
       const response = await fetch(`${API_URL}/api/settings`);
       const data = await response.json();
       setEmpresaConfig({
-        nome: data.empresa_nome || "Minha Empresa",
-        endereco: data.empresa_endereco || "",
-        telefone: data.empresa_telefone || "",
-        cnpj: data.empresa_cnpj || "",
+        nome: data.company_name || data.empresa_nome || "Minha Empresa",
+        endereco: data.company_address || data.empresa_endereco || "",
+        telefone: data.company_phone || data.empresa_telefone || "",
+        cnpj: data.company_cnpj || data.empresa_cnpj || "",
       });
     } catch (error) {
       console.error("Erro ao carregar dados da empresa:", error);
