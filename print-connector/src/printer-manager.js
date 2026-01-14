@@ -1,6 +1,6 @@
 /**
  * Printer Manager para Windows
- * Usa wmic/PowerShell para listar impressoras e RAW printing para ESC/POS
+ * Usa PowerShell para listar impressoras e RAW printing para ESC/POS
  * NÃO depende de módulos nativos - funciona como executável standalone
  */
 
@@ -23,7 +23,6 @@ class PrinterManager {
     const printers = [];
     
     if (!this.isWindows) {
-      // Modo simulação para desenvolvimento em Linux
       this.logger.info('Modo Linux - simulando lista de impressoras');
       return [{
         id: 'simulated-1',
@@ -44,7 +43,7 @@ class PrinterManager {
       for (const p of parsed) {
         if (p && p.Name) {
           printers.push({
-            id: p.Name.replace(/\s+/g, '-').toLowerCase(),
+            id: p.Name.replace(/\\s+/g, '-').toLowerCase(),
             name: p.Name,
             port: p.PortName || null,
             driver: p.DriverName || null,
@@ -59,7 +58,7 @@ class PrinterManager {
       // Fallback: usar wmic
       try {
         const wmicResult = execSync('wmic printer get name,status /format:csv', { encoding: 'utf8', timeout: 10000 });
-        const lines = wmicResult.split('\n').filter(l => l.trim() && !l.includes('Node'));
+        const lines = wmicResult.split('\\n').filter(l => l.trim() && !l.includes('Node'));
         
         for (const line of lines) {
           const parts = line.split(',');
@@ -67,7 +66,7 @@ class PrinterManager {
             const name = parts[1]?.trim();
             if (name) {
               printers.push({
-                id: name.replace(/\s+/g, '-').toLowerCase(),
+                id: name.replace(/\\s+/g, '-').toLowerCase(),
                 name: name,
                 status: 'unknown',
                 type: 'windows'
@@ -87,7 +86,7 @@ class PrinterManager {
    * Verifica se impressora está disponível
    */
   async isPrinterAvailable(printerName) {
-    if (!this.isWindows) return true; // Simulação
+    if (!this.isWindows) return true;
     
     try {
       const printers = await this.listPrinters();
@@ -101,11 +100,10 @@ class PrinterManager {
   
   /**
    * Imprime dados RAW (ESC/POS) na impressora
-   * Usa arquivo temporário + comando de impressão RAW do Windows
+   * Usa múltiplos métodos para garantir compatibilidade
    */
   async printRaw(printerName, data) {
     if (!this.isWindows) {
-      // Modo simulação Linux
       this.logger.info('Modo Linux - simulando impressão');
       this.logger.info(`Dados: ${data.length} bytes`);
       return { success: true, simulated: true };
@@ -117,54 +115,183 @@ class PrinterManager {
     try {
       // Escrever dados binários ESC/POS em arquivo temporário
       fs.writeFileSync(tempFile, Buffer.from(data));
+      this.logger.info(`Arquivo temporário criado: ${tempFile}`);
       
-      // Imprimir usando copy /b para RAW printing
-      // Este método envia bytes diretamente para a impressora sem processamento
-      const printCmd = `copy /b "${tempFile}" "\\\\%COMPUTERNAME%\\${printerName.replace(/"/g, '')}" > nul 2>&1`;
-      
+      // Método 1: PowerShell Out-Printer com RAW
       try {
-        execSync(printCmd, { 
-          encoding: 'utf8', 
-          timeout: 30000,
-          shell: 'cmd.exe',
-          windowsHide: true
-        });
-        this.logger.info(`Impressão enviada: ${data.length} bytes para ${printerName}`);
-        return { success: true };
-      } catch (copyError) {
-        // Tentar método alternativo via PowerShell
-        this.logger.warn('Fallback para PowerShell RAW print...');
+        this.logger.info('Tentando impressão via PowerShell RAW...');
         
-        const psCmd = `
-          $bytes = [System.IO.File]::ReadAllBytes('${tempFile.replace(/\\/g, '\\\\')}')
-          $printerPath = "\\\\$env:COMPUTERNAME\\${printerName.replace(/'/g, "''")}"
-          $fs = [System.IO.File]::OpenWrite($printerPath)
-          $fs.Write($bytes, 0, $bytes.Length)
-          $fs.Close()
-        `;
+        // Criar script PowerShell temporário para evitar problemas de escape
+        const psScript = `
+$printerName = "${printerName.replace(/"/g, '`"')}"
+$filePath = "${tempFile.replace(/\\/g, '\\\\')}"
+
+# Obter a porta da impressora
+$printer = Get-Printer -Name $printerName -ErrorAction Stop
+$port = (Get-PrinterPort -Name $printer.PortName -ErrorAction SilentlyContinue).Name
+
+if ($port -like "USB*" -or $port -like "COM*") {
+    # Impressora USB/Serial - usar porta direta
+    $bytes = [System.IO.File]::ReadAllBytes($filePath)
+    
+    # Tentar via .NET
+    Add-Type -AssemblyName System.Drawing
+    $doc = New-Object System.Drawing.Printing.PrintDocument
+    $doc.PrinterSettings.PrinterName = $printerName
+    
+    # Método alternativo: copiar para porta
+    $portPath = "\\\\.\\$port"
+    try {
+        $handle = [System.IO.File]::OpenWrite($portPath)
+        $handle.Write($bytes, 0, $bytes.Length)
+        $handle.Close()
+        Write-Output "SUCCESS"
+    } catch {
+        # Fallback: usar spooler
+        & rundll32 printui.dll,PrintUIEntry /y /n "$printerName"
+        Copy-Item $filePath "\\\\localhost\\$printerName" -Force
+        Write-Output "SUCCESS_SPOOLER"
+    }
+} else {
+    # Impressora de rede ou compartilhada
+    $networkPath = "\\\\$env:COMPUTERNAME\\$printerName"
+    $bytes = [System.IO.File]::ReadAllBytes($filePath)
+    
+    try {
+        # Tentar via compartilhamento de rede
+        [System.IO.File]::WriteAllBytes($networkPath, $bytes)
+        Write-Output "SUCCESS_NETWORK"
+    } catch {
+        # Usar o comando print do Windows
+        & print /d:"$printerName" "$filePath"
+        Write-Output "SUCCESS_PRINT"
+    }
+}
+`;
         
-        try {
-          execSync(`powershell -Command "${psCmd.replace(/"/g, '\\"').replace(/\n/g, ' ')}"`, {
-            encoding: 'utf8',
-            timeout: 30000,
-            windowsHide: true
-          });
-          this.logger.info(`Impressão via PowerShell: ${data.length} bytes`);
-          return { success: true };
-        } catch (psError) {
-          // Último fallback: lpr command se disponível
-          try {
-            execSync(`lpr -S 127.0.0.1 -P "${printerName}" "${tempFile}"`, {
-              encoding: 'utf8',
-              timeout: 30000,
-              windowsHide: true
-            });
-            return { success: true };
-          } catch (lprError) {
-            throw new Error(`Falha ao imprimir: ${copyError.message}`);
-          }
+        const psScriptFile = path.join(tempDir, `nucleo_ps_${Date.now()}.ps1`);
+        fs.writeFileSync(psScriptFile, psScript, 'utf8');
+        
+        const result = execSync(
+          `powershell -ExecutionPolicy Bypass -File "${psScriptFile}"`,
+          { encoding: 'utf8', timeout: 30000, windowsHide: true }
+        );
+        
+        // Limpar script
+        try { fs.unlinkSync(psScriptFile); } catch(e) {}
+        
+        if (result.includes('SUCCESS')) {
+          this.logger.info(`Impressão via PowerShell OK: ${result.trim()}`);
+          return { success: true, method: 'powershell' };
         }
+      } catch (psError) {
+        this.logger.warn('PowerShell falhou:', psError.message);
       }
+      
+      // Método 2: Usar RawPrint via .NET diretamente
+      try {
+        this.logger.info('Tentando RawPrint via .NET...');
+        
+        const rawPrintScript = `
+Add-Type -TypeDefinition @"
+using System;
+using System.Runtime.InteropServices;
+
+public class RawPrint {
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
+    public class DOCINFOA {
+        [MarshalAs(UnmanagedType.LPStr)] public string pDocName;
+        [MarshalAs(UnmanagedType.LPStr)] public string pOutputFile;
+        [MarshalAs(UnmanagedType.LPStr)] public string pDataType;
+    }
+
+    [DllImport("winspool.drv", EntryPoint = "OpenPrinterA", SetLastError = true, CharSet = CharSet.Ansi)]
+    public static extern bool OpenPrinter([MarshalAs(UnmanagedType.LPStr)] string szPrinter, out IntPtr hPrinter, IntPtr pd);
+
+    [DllImport("winspool.drv", EntryPoint = "ClosePrinter", SetLastError = true)]
+    public static extern bool ClosePrinter(IntPtr hPrinter);
+
+    [DllImport("winspool.drv", EntryPoint = "StartDocPrinterA", SetLastError = true, CharSet = CharSet.Ansi)]
+    public static extern bool StartDocPrinter(IntPtr hPrinter, Int32 level, [In, MarshalAs(UnmanagedType.LPStruct)] DOCINFOA di);
+
+    [DllImport("winspool.drv", EntryPoint = "EndDocPrinter", SetLastError = true)]
+    public static extern bool EndDocPrinter(IntPtr hPrinter);
+
+    [DllImport("winspool.drv", EntryPoint = "StartPagePrinter", SetLastError = true)]
+    public static extern bool StartPagePrinter(IntPtr hPrinter);
+
+    [DllImport("winspool.drv", EntryPoint = "EndPagePrinter", SetLastError = true)]
+    public static extern bool EndPagePrinter(IntPtr hPrinter);
+
+    [DllImport("winspool.drv", EntryPoint = "WritePrinter", SetLastError = true)]
+    public static extern bool WritePrinter(IntPtr hPrinter, IntPtr pBytes, Int32 dwCount, out Int32 dwWritten);
+
+    public static bool SendBytesToPrinter(string szPrinterName, byte[] pBytes) {
+        IntPtr hPrinter;
+        DOCINFOA di = new DOCINFOA();
+        di.pDocName = "Nucleo RAW Document";
+        di.pDataType = "RAW";
+
+        if (!OpenPrinter(szPrinterName.Normalize(), out hPrinter, IntPtr.Zero)) return false;
+        if (!StartDocPrinter(hPrinter, 1, di)) { ClosePrinter(hPrinter); return false; }
+        if (!StartPagePrinter(hPrinter)) { EndDocPrinter(hPrinter); ClosePrinter(hPrinter); return false; }
+
+        IntPtr pUnmanagedBytes = Marshal.AllocCoTaskMem(pBytes.Length);
+        Marshal.Copy(pBytes, 0, pUnmanagedBytes, pBytes.Length);
+
+        int dwWritten;
+        bool success = WritePrinter(hPrinter, pUnmanagedBytes, pBytes.Length, out dwWritten);
+
+        Marshal.FreeCoTaskMem(pUnmanagedBytes);
+        EndPagePrinter(hPrinter);
+        EndDocPrinter(hPrinter);
+        ClosePrinter(hPrinter);
+
+        return success;
+    }
+}
+"@ -ErrorAction Stop
+
+$bytes = [System.IO.File]::ReadAllBytes("${tempFile.replace(/\\/g, '\\\\')}")
+$result = [RawPrint]::SendBytesToPrinter("${printerName.replace(/"/g, '`"')}", $bytes)
+if ($result) { Write-Output "SUCCESS_RAW" } else { Write-Output "FAILED" }
+`;
+        
+        const psScriptFile2 = path.join(tempDir, `nucleo_raw_${Date.now()}.ps1`);
+        fs.writeFileSync(psScriptFile2, rawPrintScript, 'utf8');
+        
+        const result = execSync(
+          `powershell -ExecutionPolicy Bypass -File "${psScriptFile2}"`,
+          { encoding: 'utf8', timeout: 30000, windowsHide: true }
+        );
+        
+        try { fs.unlinkSync(psScriptFile2); } catch(e) {}
+        
+        if (result.includes('SUCCESS')) {
+          this.logger.info('Impressão via RawPrint OK');
+          return { success: true, method: 'rawprint' };
+        }
+      } catch (rawError) {
+        this.logger.warn('RawPrint falhou:', rawError.message);
+      }
+      
+      // Método 3: Fallback usando notepad /p (último recurso)
+      try {
+        this.logger.info('Tentando fallback via print command...');
+        execSync(`print /d:"${printerName}" "${tempFile}"`, {
+          encoding: 'utf8',
+          timeout: 30000,
+          windowsHide: true,
+          shell: 'cmd.exe'
+        });
+        this.logger.info('Impressão via print command OK');
+        return { success: true, method: 'print_command' };
+      } catch (printError) {
+        this.logger.warn('Print command falhou:', printError.message);
+      }
+      
+      throw new Error('Todos os métodos de impressão falharam');
+      
     } catch (error) {
       this.logger.error(`Erro na impressão: ${error.message}`);
       return { success: false, error: error.message };
@@ -175,7 +302,7 @@ class PrinterManager {
           fs.unlinkSync(tempFile);
         }
       } catch (e) {
-        // Ignorar erro de limpeza
+        // Ignorar
       }
     }
   }
