@@ -37440,3 +37440,9 @@
 2026-01-14T16:28:39.037291+00:00 | DB_CALL get_all_pedidos | P3 | 1.47ms | success
 2026-01-14T16:28:39.040215+00:00 | DB_CALL get_all_entregadores | P3 | 0.21ms | success
 2026-01-14T16:28:39.040634+00:00 | DB_CALL get_all_settings | P3 | 0.99ms | success
+2026-01-14T16:28:44.043516+00:00 | DB_CALL get_all_settings | P3 | 1.72ms | success
+2026-01-14T16:28:44.045956+00:00 | DB_CALL get_all_entregadores | P3 | 0.42ms | success
+2026-01-14T16:28:44.048533+00:00 | DB_CALL get_all_pedidos | P3 | 2.83ms | success
+2026-01-14T16:28:49.036735+00:00 | DB_CALL get_all_pedidos | P3 | 1.29ms | success
+2026-01-14T16:28:49.039369+00:00 | DB_CALL get_all_entregadores | P3 | 0.26ms | success
+2026-01-14T16:28:49.041887+00:00 | DB_CALL get_all_settings | P3 | 0.18ms | success
