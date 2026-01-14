@@ -2146,6 +2146,99 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
             </div>
           </div>
 
+          {/* COLUNA HISTÓRICO DO CLIENTE - Apenas na etapa 1, lado esquerdo */}
+          {selectedCliente && step === 1 && (
+            <div className="hidden lg:flex w-80 border-r bg-muted/20 flex-col">
+              <div className="p-3 border-b bg-card">
+                <h3 className="font-semibold flex items-center gap-2 text-sm">
+                  <Clock className="w-4 h-4 text-orange-500" /> 
+                  Histórico de {selectedCliente.nome?.split(' ')[0]}
+                </h3>
+              </div>
+              
+              <div className="flex-1 overflow-y-auto p-2 space-y-3">
+                {loadingHistorico ? (
+                  <div className="flex items-center justify-center py-8">
+                    <RefreshCw className="w-5 h-5 animate-spin text-orange-500" />
+                  </div>
+                ) : clienteHistorico.length === 0 ? (
+                  <div className="text-center text-muted-foreground py-8 text-sm">
+                    <FileText className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                    <p>Nenhum pedido anterior</p>
+                  </div>
+                ) : (
+                  clienteHistorico.map((pedido) => (
+                    <div key={pedido.id} className="bg-card border rounded-lg p-2 space-y-2">
+                      {/* Header com data e valor */}
+                      <div className="flex items-center justify-between px-1">
+                        <div className="flex items-center gap-1 text-xs">
+                          <Calendar className="w-3 h-3 text-muted-foreground" />
+                          <span className="text-muted-foreground">
+                            {new Date(pedido.created_at).toLocaleDateString('pt-BR')}
+                          </span>
+                        </div>
+                        <span className="text-orange-600 font-bold text-sm">
+                          R$ {(pedido.total || 0).toFixed(2)}
+                        </span>
+                      </div>
+                      
+                      {/* Endereço */}
+                      {pedido.endereco_rua && (
+                        <div className="flex items-start gap-1 text-xs text-muted-foreground px-1">
+                          <MapPin className="w-3 h-3 mt-0.5 flex-shrink-0" />
+                          <span className="line-clamp-1">
+                            {pedido.endereco_rua}{pedido.endereco_numero ? `, ${pedido.endereco_numero}` : ''}
+                            {pedido.endereco_bairro ? ` - ${pedido.endereco_bairro}` : ''}
+                          </span>
+                        </div>
+                      )}
+                      
+                      {/* Itens em grid de cards quadrados */}
+                      <div className="grid grid-cols-3 gap-1.5 pt-1 border-t">
+                        {pedido.items?.slice(0, 6).map((item, idx) => (
+                          <div key={idx} className="aspect-square relative rounded-lg overflow-hidden bg-muted">
+                            {item.foto_url || item.photo_url ? (
+                              <img 
+                                src={getImageUrl(item.foto_url || item.photo_url)} 
+                                alt={item.nome || item.name}
+                                className="w-full h-full object-cover"
+                                onError={(e) => {
+                                  e.target.style.display = 'none';
+                                  e.target.nextSibling.style.display = 'flex';
+                                }}
+                              />
+                            ) : null}
+                            <div className={`w-full h-full ${item.foto_url || item.photo_url ? 'hidden' : 'flex'} items-center justify-center bg-muted`}>
+                              <Package className="w-6 h-6 text-muted-foreground" />
+                            </div>
+                            {/* Badge de quantidade */}
+                            <div className="absolute bottom-0 left-0 right-0 bg-black/70 text-white text-[10px] px-1 py-0.5 truncate text-center">
+                              {item.quantidade || item.qty || 1}x {(item.nome || item.name)?.split(' ')[0]}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                      {pedido.items?.length > 6 && (
+                        <p className="text-xs text-muted-foreground text-center">
+                          +{pedido.items.length - 6} item(s)
+                        </p>
+                      )}
+                      
+                      {/* Botão Repetir Pedido */}
+                      <button
+                        onClick={() => repetirPedido(pedido)}
+                        className="w-full mt-2 py-1.5 px-2 bg-orange-500 hover:bg-orange-600 text-white text-xs font-medium rounded-lg flex items-center justify-center gap-1 transition-colors"
+                      >
+                        <RefreshCw className="w-3 h-3" />
+                        Repetir Pedido
+                      </button>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+          )}
+
           {/* COLUNA CENTRAL - Conteúdo Principal */}
           <div className="flex-1 overflow-y-auto p-4 bg-background">
             {/* ETAPA 1: PRODUTOS */}
