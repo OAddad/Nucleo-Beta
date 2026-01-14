@@ -449,6 +449,22 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode, allProduc
     const prod = allProducts.find(p => p.id === productId);
     return prod?.photo_url || null;
   };
+  
+  // Buscar preço atual do produto pelo ID (para sincronizar com PRODUTOS)
+  const getProductPrice = (productId) => {
+    const prod = allProducts.find(p => p.id === productId);
+    return prod?.sale_price || 0;
+  };
+  
+  // Obter preço do item (usa price_override se definido, senão busca do produto)
+  const getItemPrice = (item) => {
+    // Se price_override está definido explicitamente como 0, é grátis
+    if (item.price_override === 0) return 0;
+    // Se price_override > 0, usa ele
+    if (item.price_override > 0) return item.price_override;
+    // Senão, busca o preço atual do produto
+    return getProductPrice(item.product_id);
+  };
 
   // Calcular preço total baseado nas seleções das etapas
   const calculateTotalPrice = () => {
@@ -463,15 +479,15 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode, allProduc
           selectedItems.forEach(itemId => {
             const item = step.items?.find(i => i.product_id === itemId);
             if (item) {
-              basePrice += item.price_override || 0;
+              basePrice += getItemPrice(item);
             }
           });
         } else if (step.calculation_type === 'maior') {
           let maxPrice = 0;
           selectedItems.forEach(itemId => {
             const item = step.items?.find(i => i.product_id === itemId);
-            if (item && (item.price_override || 0) > maxPrice) {
-              maxPrice = item.price_override || 0;
+            if (item && getItemPrice(item) > maxPrice) {
+              maxPrice = getItemPrice(item);
             }
           });
           basePrice += maxPrice;
