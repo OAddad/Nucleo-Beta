@@ -39301,3 +39301,5 @@
 2026-01-14T23:15:41.358971+00:00 | DB_CALL get_all_products | P3 | 1.39ms | success
 2026-01-14T23:15:48.358640+00:00 | DB_CALL get_all_products | P3 | 1.37ms | success
 2026-01-14T23:15:49.360976+00:00 | DB_CALL get_all_products | P3 | 1.43ms | success
+2026-01-14T23:17:20.914012+00:00 | DB_CALL get_all_products | P3 | 1.42ms | success
+2026-01-14T23:17:21.762648+00:00 | DB_CALL get_all_products | P3 | 1.38ms | success
