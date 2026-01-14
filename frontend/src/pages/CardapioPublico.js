@@ -932,8 +932,8 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode, allProduc
           </div>
 
           {/* Itens da Etapa - GRID COM FOTOS */}
-          <div className="p-4 flex-1 overflow-y-auto">
-            <div className="grid grid-cols-2 gap-3">
+          <div className="p-3 flex-1 overflow-y-auto">
+            <div className="grid grid-cols-3 gap-2">
               {currentStep.items?.map((item) => {
                 const isSelected = selections.includes(item.product_id);
                 const itemPhoto = getProductPhoto(item.product_id);
@@ -943,7 +943,7 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode, allProduc
                   <button
                     key={item.product_id}
                     onClick={() => toggleItemSelection(currentStepIndex, item.product_id)}
-                    className={`relative p-2 rounded-xl border-2 transition-all text-left flex flex-col ${
+                    className={`relative p-1.5 rounded-lg border-2 transition-all text-left flex flex-col ${
                       isSelected 
                         ? `${t.selectedBorder} ${t.selectedBg}` 
                         : `${t.border} ${t.bgCard} ${t.hoverBorder}`
@@ -951,13 +951,13 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode, allProduc
                   >
                     {/* Badge de seleção */}
                     {isSelected && (
-                      <div className="absolute top-2 right-2 w-6 h-6 rounded-full bg-orange-500 flex items-center justify-center z-10 shadow-md">
-                        <Check className="w-4 h-4 text-white" />
+                      <div className="absolute top-1 right-1 w-5 h-5 rounded-full bg-orange-500 flex items-center justify-center z-10 shadow-md">
+                        <Check className="w-3 h-3 text-white" />
                       </div>
                     )}
                     
                     {/* Foto do Item */}
-                    <div className={`w-full aspect-square rounded-lg overflow-hidden mb-2 ${isSelected ? 'ring-2 ring-orange-500' : ''}`}>
+                    <div className={`w-full aspect-square rounded-md overflow-hidden mb-1.5 ${isSelected ? 'ring-2 ring-orange-500' : ''}`}>
                       {itemPhoto && !hasImageError ? (
                         <img
                           src={getImageUrl(itemPhoto)}
@@ -967,20 +967,20 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode, allProduc
                         />
                       ) : (
                         <div className={`w-full h-full flex items-center justify-center ${isSelected ? 'bg-orange-100 dark:bg-orange-900/30' : darkMode ? 'bg-zinc-700' : 'bg-gray-100'}`}>
-                          <span className="text-3xl">🍽️</span>
+                          <span className="text-2xl">🍽️</span>
                         </div>
                       )}
                     </div>
                     
                     {/* Info do Item */}
                     <div className="flex-1 min-w-0">
-                      <p className={`font-medium text-sm ${t.text} line-clamp-2 leading-tight`}>{item.product_name}</p>
+                      <p className={`font-medium text-xs ${t.text} line-clamp-2 leading-tight`}>{item.product_name}</p>
                       {item.price_override > 0 ? (
-                        <p className="text-sm text-orange-500 font-bold mt-1">
+                        <p className="text-xs text-orange-500 font-bold mt-0.5">
                           +R$ {item.price_override.toFixed(2).replace('.', ',')}
                         </p>
                       ) : (
-                        <p className="text-xs text-green-500 font-bold mt-1 uppercase">
+                        <p className="text-[10px] text-green-500 font-bold mt-0.5 uppercase">
                           Grátis
                         </p>
                       )}
