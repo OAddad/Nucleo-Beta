@@ -38802,3 +38802,10 @@
 2026-01-14T22:52:14.593275+00:00 | DB_CALL get_all_entregadores | P3 | 0.26ms | success
 2026-01-14T22:52:14.594874+00:00 | DB_CALL get_all_settings | P3 | 2.28ms | success
 2026-01-14T22:52:14.597115+00:00 | DB_CALL get_all_pedidos | P3 | 1.36ms | success
+2026-01-14T22:52:16.211252+00:00 | DB_CALL get_pedido_by_id | P3 | 0.31ms | success
+2026-01-14T22:52:16.573471+00:00 | DB_CALL get_all_categories | P3 | 7.59ms | success
+2026-01-14T22:52:16.575723+00:00 | DB_CALL get_all_products | P3 | 8.76ms | success
+2026-01-14T22:52:16.588621+00:00 | DB_CALL get_all_settings | P3 | 14.07ms | success
+2026-01-14T22:52:16.589024+00:00 | DB_CALL get_all_business_hours | P3 | 21.14ms | success
+2026-01-14T22:52:17.302888+00:00 | DB_CALL get_all_bairros | P3 | 0.36ms | success
+2026-01-14T22:52:21.210171+00:00 | DB_CALL get_pedido_by_id | P3 | 0.29ms | success

@@ -1840,6 +1840,35 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
     setSelectedProduct(product);
     setProductQuantity(1);
     setProductObservation("");
+    setComboStep(0);
+    setSelectedComboType(null);
+    setStepSelections({});
+    
+    // Se for produto combo, inicializa no passo 0 (seleção tipo)
+    // Se não for combo mas tiver etapas, inicializa as seleções padrão
+    if (product.product_type !== 'combo' && product.order_steps?.length > 0) {
+      initializeDefaultSelections(product.order_steps);
+    }
+  };
+  
+  // Inicializar seleções padrão para etapas
+  const initializeDefaultSelections = (steps, filterComboOnly = false, comboType = null) => {
+    const newSelections = {};
+    let relevantSteps = steps || [];
+    
+    if (filterComboOnly && comboType === 'simples') {
+      relevantSteps = steps.filter(step => !step.combo_only);
+    }
+    
+    relevantSteps.forEach((step, index) => {
+      const defaultItems = step.items?.filter(item => item.is_default).map(item => item.product_id) || [];
+      if (defaultItems.length > 0) {
+        newSelections[index] = defaultItems;
+      } else {
+        newSelections[index] = [];
+      }
+    });
+    setStepSelections(newSelections);
   };
 
   // Fechar popup do produto
