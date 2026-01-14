@@ -408,6 +408,7 @@ class ProductCreate(BaseModel):
     combo_description: Optional[str] = None  # Descrição do combo (ex: + Batata + Refri)
     simple_photo_url: Optional[str] = None  # Foto do produto simples
     combo_photo_url: Optional[str] = None  # Foto do combo
+    card_order: Optional[str] = "combo_first"  # "combo_first" ou "simple_first"
 
 class Product(BaseModel):
     model_config = ConfigDict(extra="ignore")
@@ -435,6 +436,7 @@ class Product(BaseModel):
     combo_description: Optional[str] = None  # Descrição do combo (ex: + Batata + Refri)
     simple_photo_url: Optional[str] = None  # Foto do produto simples
     combo_photo_url: Optional[str] = None  # Foto do combo
+    card_order: str = "combo_first"  # "combo_first" ou "simple_first"
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 # ========== BUSINESS HOURS MODELS ==========
