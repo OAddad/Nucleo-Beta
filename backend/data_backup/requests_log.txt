@@ -39052,3 +39052,7 @@
 2026-01-14T23:00:25.258977+00:00 | DB_CALL get_all_settings | P3 | 3.97ms | success
 2026-01-14T23:00:25.259316+00:00 | DB_CALL get_all_entregadores | P3 | 3.79ms | success
 2026-01-14T23:00:26.222065+00:00 | DB_CALL get_pedido_by_id | P3 | 0.3ms | success
+2026-01-14T23:00:30.226486+00:00 | DB_CALL get_all_entregadores | P3 | 0.87ms | success
+2026-01-14T23:00:30.228713+00:00 | DB_CALL get_all_pedidos | P3 | 2.46ms | success
+2026-01-14T23:00:30.230741+00:00 | DB_CALL get_all_settings | P3 | 3.01ms | success
+2026-01-14T23:00:31.224334+00:00 | DB_CALL get_pedido_by_id | P3 | 0.31ms | success
