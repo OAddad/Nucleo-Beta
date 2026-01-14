@@ -37321,3 +37321,5 @@
 2026-01-14T16:21:01.461518+00:00 | DB_CALL count_ingredients | P3 | 0.24ms | success
 2026-01-14T16:21:01.461713+00:00 | DB_CALL count_products | P3 | 0.13ms | success
 2026-01-14T16:21:01.461861+00:00 | DB_CALL count_users | P3 | 0.1ms | success
+2026-01-14T16:21:46.309797+00:00 | DB_CALL get_all_settings | P3 | 0.33ms | success
+2026-01-14T16:21:47.086602+00:00 | DB_CALL get_all_settings | P3 | 4.36ms | success
