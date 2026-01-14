@@ -484,15 +484,15 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode, allProduc
           selectedItems.forEach(itemId => {
             const item = step.items?.find(i => i.product_id === itemId);
             if (item) {
-              basePrice += getItemPrice(item);
+              basePrice += getItemPrice(item, step);
             }
           });
         } else if (step.calculation_type === 'maior') {
           let maxPrice = 0;
           selectedItems.forEach(itemId => {
             const item = step.items?.find(i => i.product_id === itemId);
-            if (item && getItemPrice(item) > maxPrice) {
-              maxPrice = getItemPrice(item);
+            if (item && getItemPrice(item, step) > maxPrice) {
+              maxPrice = getItemPrice(item, step);
             }
           });
           basePrice += maxPrice;
