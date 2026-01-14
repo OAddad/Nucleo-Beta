@@ -456,13 +456,18 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode, allProduc
     return prod?.sale_price || 0;
   };
   
-  // Obter preço do item (usa price_override se definido, senão busca do produto)
-  const getItemPrice = (item) => {
+  // Obter preço do item (verifica sync_prices da etapa)
+  const getItemPrice = (item, step) => {
+    // Se a etapa tem sync_prices ativo (ou não definido = default true), usa preço do produto
+    if (step?.sync_prices !== false) {
+      return getProductPrice(item.product_id);
+    }
+    // Se sync_prices está desativado, usa price_override
     // Se price_override está definido explicitamente como 0, é grátis
     if (item.price_override === 0) return 0;
     // Se price_override > 0, usa ele
     if (item.price_override > 0) return item.price_override;
-    // Senão, busca o preço atual do produto
+    // Fallback: busca o preço atual do produto
     return getProductPrice(item.product_id);
   };
 
