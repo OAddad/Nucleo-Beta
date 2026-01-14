@@ -35773,3 +35773,9 @@
 2026-01-14T14:12:22.967452+00:00 | DB_CALL get_all_settings | P3 | 0.26ms | success
 2026-01-14T14:12:23.897378+00:00 | DB_CALL get_all_products | P3 | 0.98ms | success
 2026-01-14T14:12:32.840070+00:00 | DB_CALL get_all_products | P3 | 0.95ms | success
+2026-01-14T14:12:36.962953+00:00 | DB_CALL get_user_by_id | P3 | 0.31ms | success
+2026-01-14T14:12:36.963374+00:00 | DB_CALL get_product_by_id | P3 | 0.23ms | success
+2026-01-14T14:12:36.971027+00:00 | DB_CALL delete_product | P3 | 5.19ms | success
+2026-01-14T14:12:36.977791+00:00 | DB_CALL create_audit_log | P3 | 6.65ms | success
+2026-01-14T14:12:37.156012+00:00 | DB_CALL get_user_by_id | P3 | 0.29ms | success
+2026-01-14T14:12:37.157013+00:00 | DB_CALL get_all_products | P3 | 0.84ms | success
