@@ -1530,16 +1530,21 @@ function GerenciarImpressoras({ toast }) {
                 )}
               </div>
 
+              {/* Botão de Teste Grande */}
+              <Button 
+                size="sm" 
+                className="w-full mb-2 bg-green-600 hover:bg-green-700"
+                onClick={() => handleTestarImpressora(impressora)}
+              >
+                <Printer className="w-4 h-4 mr-2" />
+                Imprimir Teste
+              </Button>
+
               <div className="flex gap-2">
                 <Button size="sm" variant="outline" className="flex-1" onClick={() => handleEdit(impressora)}>
                   <Edit className="w-3 h-3 mr-1" />
                   Editar
                 </Button>
-                {impressora.tipo === 'usb' && (
-                  <Button size="sm" variant="outline" onClick={() => handleTestarImpressora(impressora)}>
-                    <Eye className="w-3 h-3" />
-                  </Button>
-                )}
                 <Button size="sm" variant="outline" className="text-red-500 hover:text-red-600" onClick={() => handleDelete(impressora.id)}>
                   <Trash2 className="w-3 h-3" />
                 </Button>

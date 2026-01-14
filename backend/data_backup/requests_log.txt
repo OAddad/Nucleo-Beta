@@ -37220,3 +37220,6 @@
 2026-01-14T14:54:03.004277+00:00 | DB_CALL get_all_settings | P3 | 3.88ms | success
 2026-01-14T14:54:03.005311+00:00 | DB_CALL get_all_settings | P3 | 0.17ms | success
 2026-01-14T14:54:04.014197+00:00 | DB_CALL get_all_settings | P3 | 0.28ms | success
+2026-01-14T14:54:30.605249+00:00 | DB_CALL get_all_settings | P3 | 0.32ms | success
+2026-01-14T14:54:33.383055+00:00 | DB_CALL get_all_settings | P3 | 0.25ms | success
+2026-01-14T14:54:34.003471+00:00 | DB_CALL get_all_products | P3 | 4.41ms | success
