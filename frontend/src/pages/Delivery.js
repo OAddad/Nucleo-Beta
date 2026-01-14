@@ -120,9 +120,9 @@ export default function Delivery() {
       
       // Carregar dados da empresa para impressão
       setEmpresaConfig({
-        nome: settingsRes.data.empresa_nome || "Minha Empresa",
-        endereco: settingsRes.data.empresa_endereco || "",
-        telefone: settingsRes.data.empresa_telefone || "",
+        nome: settingsRes.data.company_name || settingsRes.data.empresa_nome || "Minha Empresa",
+        endereco: settingsRes.data.company_address || settingsRes.data.empresa_endereco || "",
+        telefone: settingsRes.data.company_phone || settingsRes.data.empresa_telefone || "",
       });
     } catch (error) {
       console.error("Erro ao carregar dados:", error);
