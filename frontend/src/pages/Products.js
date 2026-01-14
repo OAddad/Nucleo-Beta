@@ -1155,7 +1155,8 @@ export default function Products() {
       min_selections: 0,
       max_selections: 0,
       items: [],
-      combo_only: false  // Se true, etapa só aparece para combo (ex: bebida)
+      combo_only: false,  // Se true, etapa só aparece para combo (ex: bebida)
+      default_item_id: null  // ID do item pré-selecionado (opcional)
     }]);
   };
 
