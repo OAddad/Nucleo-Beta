@@ -3182,11 +3182,11 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
               return (
                 <>
                   {selectedProduct.photo_url ? (
-                    <div className="relative aspect-square w-full max-h-[40vh]">
+                    <div className={`relative aspect-square w-full max-h-[40vh] ${isPngImage(selectedProduct.photo_url) ? 'bg-muted' : ''}`}>
                       <img 
                         src={getImageUrl(selectedProduct.photo_url)} 
                         alt={selectedProduct.name}
-                        className="w-full h-full object-cover"
+                        className={`w-full h-full ${isPngImage(selectedProduct.photo_url) ? 'object-contain p-4' : 'object-cover'}`}
                       />
                       <button 
                         onClick={closeProductPopup}
