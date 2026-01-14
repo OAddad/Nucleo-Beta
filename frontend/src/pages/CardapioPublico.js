@@ -342,14 +342,14 @@ const fetchWithFallback = async (endpoint) => {
 };
 
 // Popup de Produto para adicionar ao carrinho
-function ProductPopup({ product, open, onClose, onAddToCart, darkMode }) {
+function ProductPopup({ product, open, onClose, onAddToCart, darkMode, allProducts = [] }) {
   const [imageError, setImageError] = useState(false);
   const [quantity, setQuantity] = useState(1);
   const [observation, setObservation] = useState("");
-  const [comboStep, setComboStep] = useState(0); // 0 = selecionar tipo, 1+ = etapas
+  const [comboStep, setComboStep] = useState(0); // 0 = selecionar tipo, 1+ = etapas, último = resumo
   const [selectedComboType, setSelectedComboType] = useState(null); // 'simples' ou 'combo'
   const [stepSelections, setStepSelections] = useState({}); // { stepIndex: [itemIds] }
-  const [searchTerm, setSearchTerm] = useState("");
+  const [itemImageErrors, setItemImageErrors] = useState({}); // { itemId: true }
 
   // Reset quando abrir com novo produto
   useEffect(() => {
@@ -360,7 +360,7 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode }) {
       setComboStep(0);
       setSelectedComboType(null);
       setStepSelections({});
-      setSearchTerm("");
+      setItemImageErrors({});
     }
   }, [open, product]);
 
@@ -386,6 +386,15 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode }) {
 
   const relevantSteps = getRelevantSteps();
   const totalSteps = relevantSteps.length;
+  // +1 para a etapa de resumo
+  const totalStepsWithSummary = totalSteps + 1;
+  const isOnSummaryStep = comboStep > totalSteps && comboStep > 0;
+
+  // Buscar foto do produto pelo ID
+  const getProductPhoto = (productId) => {
+    const prod = allProducts.find(p => p.id === productId);
+    return prod?.photo_url || null;
+  };
 
   // Calcular preço total baseado nas seleções das etapas
   const calculateTotalPrice = () => {
@@ -427,6 +436,9 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode }) {
       return selectedComboType !== null;
     }
     
+    // Se está na etapa de resumo, sempre pode adicionar
+    if (isOnSummaryStep) return true;
+    
     const currentStepIndex = comboStep - 1;
     const currentStep = relevantSteps[currentStepIndex];
     if (!currentStep) return true;
@@ -441,40 +453,70 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode }) {
   const handleNextStep = () => {
     if (comboStep === 0) {
       if (!hasOrderSteps || relevantSteps.length === 0) {
-        // Ir direto para adicionar se não tem etapas
-        handleAdd();
+        // Ir direto para resumo se não tem etapas
+        setComboStep(1); // Vai para resumo (que será step 1 quando totalSteps = 0)
       } else {
         setComboStep(1);
       }
-    } else if (comboStep < totalSteps) {
-      setComboStep(comboStep + 1);
+    } else if (comboStep <= totalSteps) {
+      setComboStep(comboStep + 1); // Avança para próxima etapa ou resumo
     } else {
-      handleAdd();
+      handleAdd(); // Está no resumo, adiciona ao carrinho
     }
   };
 
-  // Toggle seleção de item
+  // Toggle seleção de item - CORRIGIDO para permitir trocar seleção
   const toggleItemSelection = (stepIndex, itemId) => {
     const step = relevantSteps[stepIndex];
     if (!step) return;
     
     const currentSelections = stepSelections[stepIndex] || [];
     const isSelected = currentSelections.includes(itemId);
+    const maxSelections = step.max_selections || 999;
     
     if (isSelected) {
+      // Desselecionar
       setStepSelections({
         ...stepSelections,
         [stepIndex]: currentSelections.filter(id => id !== itemId)
       });
     } else {
-      const maxSelections = step.max_selections || 999;
-      if (currentSelections.length < maxSelections) {
+      // Selecionar
+      if (maxSelections === 1) {
+        // Se só pode selecionar 1, substitui a seleção anterior
+        setStepSelections({
+          ...stepSelections,
+          [stepIndex]: [itemId]
+        });
+      } else if (currentSelections.length < maxSelections) {
+        // Adiciona à seleção
         setStepSelections({
           ...stepSelections,
           [stepIndex]: [...currentSelections, itemId]
         });
       }
     }
+  };
+
+  // Obter resumo das seleções para a tela de resumo
+  const getSelectionsSummary = () => {
+    const summary = [];
+    relevantSteps.forEach((step, index) => {
+      const selectedItems = stepSelections[index] || [];
+      const itemNames = selectedItems.map(itemId => {
+        const item = step.items?.find(i => i.product_id === itemId);
+        return item?.product_name || '';
+      }).filter(Boolean);
+      
+      if (itemNames.length > 0) {
+        summary.push({
+          stepName: step.name,
+          items: itemNames,
+          stepIndex: index
+        });
+      }
+    });
+    return summary;
   };
 
   const handleAdd = () => {
