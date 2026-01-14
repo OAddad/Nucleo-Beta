@@ -34166,3 +34166,13 @@
 2026-01-14T12:13:20.960836+00:00 | DB_CALL get_all_categories | P3 | 4.55ms | success
 2026-01-14T12:13:20.961364+00:00 | DB_CALL get_all_bairros | P3 | 1.81ms | success
 2026-01-14T12:13:20.962052+00:00 | DB_CALL get_all_business_hours | P3 | 5.88ms | success
+2026-01-14T12:14:25.934375+00:00 | DB_CALL get_all_products | P3 | 1.38ms | success
+2026-01-14T12:14:25.935598+00:00 | DB_CALL get_all_bairros | P3 | 2.41ms | success
+2026-01-14T12:14:25.937356+00:00 | DB_CALL get_all_settings | P3 | 0.2ms | success
+2026-01-14T12:14:25.938682+00:00 | DB_CALL get_all_business_hours | P3 | 0.27ms | success
+2026-01-14T12:14:25.939121+00:00 | DB_CALL get_all_categories | P3 | 0.97ms | success
+2026-01-14T12:14:25.945284+00:00 | DB_CALL get_all_categories | P3 | 0.24ms | success
+2026-01-14T12:14:25.946909+00:00 | DB_CALL get_all_settings | P3 | 0.65ms | success
+2026-01-14T12:14:25.947343+00:00 | DB_CALL get_all_bairros | P3 | 0.64ms | success
+2026-01-14T12:14:25.951428+00:00 | DB_CALL get_all_business_hours | P3 | 0.17ms | success
+2026-01-14T12:14:25.952925+00:00 | DB_CALL get_all_products | P3 | 0.53ms | success
