@@ -1570,6 +1570,13 @@ async def get_products_for_sale(current_user: User = Depends(get_current_user)):
             p["created_at"] = datetime.fromisoformat(p["created_at"].replace('Z', '+00:00'))
     return products
 
+@api_router.get("/public/products/all")
+async def get_all_products_public():
+    """Retorna TODOS os produtos (incluindo insumos) para buscar fotos - público"""
+    products = await db_call(sqlite_db.get_all_products)
+    # Retorna apenas id e photo_url para economizar banda
+    return [{"id": p.get("id"), "photo_url": p.get("photo_url")} for p in products]
+
 @api_router.put("/products/{product_id}", response_model=Product)
 async def update_product(product_id: str, product_data: ProductCreate, current_user: User = Depends(get_current_user)):
     check_role(current_user, ["proprietario", "administrador"])
