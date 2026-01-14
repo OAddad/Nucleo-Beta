@@ -4715,52 +4715,65 @@ async def clear_locations_data(data: ClearDataRequest, current_user: User = Depe
 @api_router.get("/print-connector/download")
 async def download_print_connector():
     """
-    Retorna informações e link para download do Print Connector
-    Em ambiente de produção, retorna link para o .exe hospedado
+    Retorna informações e links para download do Print Connector
     """
-    # Caminho do projeto print-connector
     connector_path = Path(__file__).parent.parent / "print-connector"
-    dist_path = connector_path / "dist" / "NucleoPrintConnector.exe"
-    
-    # Verificar se o .exe existe
-    exe_exists = dist_path.exists()
+    exe_path = connector_path / "dist" / "NucleoPrintConnector.exe"
+    setup_path = connector_path / "NucleoPrintConnector-Setup.zip"
     
     return {
         "name": "Núcleo Print Connector",
         "version": "1.0.0",
         "platform": "Windows 10/11 x64",
-        "exe_available": exe_exists,
-        "download_url": "/api/print-connector/download/exe" if exe_exists else None,
-        "build_instructions": {
-            "command": "cd /app/print-connector && npm run build",
-            "output": "dist/NucleoPrintConnector.exe"
-        },
-        "source_available": connector_path.exists(),
+        "size": "37MB (exe) / 15MB (setup zip)",
+        "exe_available": exe_path.exists(),
+        "setup_available": setup_path.exists(),
+        "download_exe": "/api/print-connector/download/exe" if exe_path.exists() else None,
+        "download_setup": "/api/print-connector/download/setup" if setup_path.exists() else None,
         "requirements": [
-            "Windows 10 ou 11",
+            "Windows 10 ou 11 (64-bit)",
             "Impressora térmica USB (Epson recomendada)",
             "Papel 80mm"
+        ],
+        "features": [
+            "Executável standalone - não precisa de Node.js",
+            "Instalador automático com atalhos",
+            "Opção de iniciar com Windows",
+            "ESC/POS profissional",
+            "Fila de impressão com retry automático"
         ]
     }
 
 @api_router.get("/print-connector/download/exe")
 async def download_print_connector_exe():
     """
-    Download direto do executável NucleoPrintConnector.exe
+    Download direto do NucleoPrintConnector.exe (37MB)
     """
-    connector_path = Path(__file__).parent.parent / "print-connector"
-    dist_path = connector_path / "dist" / "NucleoPrintConnector.exe"
+    exe_path = Path(__file__).parent.parent / "print-connector" / "dist" / "NucleoPrintConnector.exe"
     
-    if not dist_path.exists():
-        raise HTTPException(
-            status_code=404, 
-            detail="Executável não encontrado. Execute 'npm run build' no diretório print-connector primeiro."
-        )
+    if not exe_path.exists():
+        raise HTTPException(status_code=404, detail="Executável não encontrado")
     
     return FileResponse(
-        path=str(dist_path),
+        path=str(exe_path),
         filename="NucleoPrintConnector.exe",
         media_type="application/octet-stream"
+    )
+
+@api_router.get("/print-connector/download/setup")
+async def download_print_connector_setup():
+    """
+    Download do pacote de instalação completo (ZIP com instalador)
+    """
+    setup_path = Path(__file__).parent.parent / "print-connector" / "NucleoPrintConnector-Setup.zip"
+    
+    if not setup_path.exists():
+        raise HTTPException(status_code=404, detail="Setup não encontrado")
+    
+    return FileResponse(
+        path=str(setup_path),
+        filename="NucleoPrintConnector-Setup.zip",
+        media_type="application/zip"
     )
 
 @api_router.get("/print-connector/source")
@@ -4782,7 +4795,7 @@ async def download_print_connector_source():
     
     with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zip_file:
         for file_path in connector_path.rglob('*'):
-            if file_path.is_file() and 'node_modules' not in str(file_path):
+            if file_path.is_file() and 'node_modules' not in str(file_path) and 'dist' not in str(file_path):
                 arcname = file_path.relative_to(connector_path.parent)
                 zip_file.write(file_path, arcname)
     
