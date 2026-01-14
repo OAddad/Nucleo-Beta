@@ -498,20 +498,23 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode, allProduc
     }
   };
 
-  // Obter resumo das seleções para a tela de resumo
+  // Obter resumo das seleções para a tela de resumo - COM PREÇOS
   const getSelectionsSummary = () => {
     const summary = [];
     relevantSteps.forEach((step, index) => {
       const selectedItems = stepSelections[index] || [];
-      const itemNames = selectedItems.map(itemId => {
+      const itemsWithPrices = selectedItems.map(itemId => {
         const item = step.items?.find(i => i.product_id === itemId);
-        return item?.product_name || '';
-      }).filter(Boolean);
+        return {
+          name: item?.product_name || '',
+          price: item?.price_override || 0
+        };
+      }).filter(i => i.name);
       
-      if (itemNames.length > 0) {
+      if (itemsWithPrices.length > 0) {
         summary.push({
           stepName: step.name,
-          items: itemNames,
+          items: itemsWithPrices,
           stepIndex: index
         });
       }
