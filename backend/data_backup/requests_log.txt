@@ -34274,3 +34274,4 @@
 2026-01-14T12:18:38.116926+00:00 | DB_CALL get_all_business_hours | P3 | 1.74ms | success
 2026-01-14T12:18:38.117507+00:00 | DB_CALL get_all_categories | P3 | 0.17ms | success
 2026-01-14T12:18:38.339145+00:00 | DB_CALL get_all_bairros | P3 | 0.31ms | success
+2026-01-14T12:19:34.125694+00:00 | DB_CALL get_database_info | P3 | 0.61ms | success
