@@ -37179,3 +37179,8 @@
 2026-01-14T14:47:31.165193+00:00 | DB_CALL get_all_products | P3 | 17.56ms | success
 2026-01-14T14:47:43.151811+00:00 | DB_CALL get_all_products | P3 | 3.17ms | success
 2026-01-14T14:47:46.436296+00:00 | DB_CALL get_pedido_by_id | P3 | 0.3ms | success
+2026-01-14T14:50:01.215429+00:00 | DB_CALL get_all_settings | P3 | 0.38ms | success
+2026-01-14T14:50:01.216830+00:00 | DB_CALL get_all_settings | P3 | 0.22ms | success
+2026-01-14T14:50:01.995536+00:00 | DB_CALL get_all_settings | P3 | 0.26ms | success
+2026-01-14T14:50:02.006916+00:00 | DB_CALL get_all_settings | P3 | 0.22ms | success
+2026-01-14T14:50:02.169511+00:00 | DB_CALL get_all_settings | P3 | 0.27ms | success

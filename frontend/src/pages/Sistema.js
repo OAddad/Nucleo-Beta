@@ -1020,10 +1020,12 @@ function GerenciarImpressoras({ toast }) {
   const [impressoras, setImpressoras] = useState([]);
   const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
+  const [scanning, setScanning] = useState(false);
+  const [usbSupported, setUsbSupported] = useState(false);
   const [editando, setEditando] = useState(null);
   const [formData, setFormData] = useState({
     nome: "",
-    tipo: "termica",
+    tipo: "usb", // usb, rede, bluetooth
     paper_width_mm: 80,
     printable_width_mm: 72,
     dpi: 203,
@@ -1036,9 +1038,15 @@ function GerenciarImpressoras({ toast }) {
     margin_bottom: 0,
     ativa: true,
     padrao: false,
+    // Info do dispositivo USB
+    vendorId: null,
+    productId: null,
+    deviceName: "",
   });
 
   useEffect(() => {
+    // Verificar se Web USB é suportado
+    setUsbSupported('usb' in navigator);
     fetchImpressoras();
   }, []);
 
@@ -1060,10 +1068,124 @@ function GerenciarImpressoras({ toast }) {
     }
   };
 
+  // Solicitar acesso a dispositivo USB (impressora)
+  const handleRequestUSBDevice = async () => {
+    if (!usbSupported) {
+      toast({ 
+        title: "Não suportado", 
+        description: "Seu navegador não suporta Web USB. Use Chrome ou Edge.", 
+        variant: "destructive" 
+      });
+      return;
+    }
+
+    setScanning(true);
+    try {
+      // Filtros comuns para impressoras térmicas
+      const device = await navigator.usb.requestDevice({
+        filters: [
+          // Impressoras térmicas genéricas
+          { classCode: 7 }, // Classe de impressoras
+          // Fabricantes comuns de impressoras térmicas
+          { vendorId: 0x0483 }, // STMicroelectronics (muitas impressoras térmicas)
+          { vendorId: 0x0525 }, // Netchip
+          { vendorId: 0x04b8 }, // EPSON
+          { vendorId: 0x0416 }, // Winbond (Epson compatível)
+          { vendorId: 0x0dd4 }, // Custom Engineering
+          { vendorId: 0x1504 }, // HPRT
+          { vendorId: 0x0fe6 }, // ICS Advent
+          { vendorId: 0x1fc9 }, // NXP
+          { vendorId: 0x20d1 }, // SIMCOM
+          { vendorId: 0x1a86 }, // QinHeng Electronics (CH340)
+          { vendorId: 0x067b }, // Prolific (PL2303)
+        ]
+      });
+
+      if (device) {
+        // Preencher dados do dispositivo encontrado
+        setFormData(prev => ({
+          ...prev,
+          nome: device.productName || `Impressora USB ${device.vendorId}`,
+          deviceName: device.productName || "Dispositivo USB",
+          vendorId: device.vendorId,
+          productId: device.productId,
+          tipo: "usb",
+        }));
+        setModalOpen(true);
+        
+        toast({ 
+          title: "Dispositivo encontrado!", 
+          description: `${device.productName || 'Impressora USB'} detectada` 
+        });
+      }
+    } catch (error) {
+      if (error.name === 'NotFoundError') {
+        toast({ 
+          title: "Nenhum dispositivo selecionado", 
+          description: "Selecione uma impressora na lista", 
+          variant: "destructive" 
+        });
+      } else {
+        console.error("Erro USB:", error);
+        toast({ 
+          title: "Erro", 
+          description: error.message || "Erro ao acessar dispositivo USB", 
+          variant: "destructive" 
+        });
+      }
+    } finally {
+      setScanning(false);
+    }
+  };
+
+  // Tentar reconectar a dispositivos já autorizados
+  const handleReconnectDevices = async () => {
+    if (!usbSupported) return;
+    
+    setScanning(true);
+    try {
+      const devices = await navigator.usb.getDevices();
+      
+      if (devices.length === 0) {
+        toast({ 
+          title: "Nenhum dispositivo", 
+          description: "Nenhuma impressora autorizada anteriormente" 
+        });
+      } else {
+        toast({ 
+          title: `${devices.length} dispositivo(s) encontrado(s)`, 
+          description: "Dispositivos já autorizados estão disponíveis" 
+        });
+        
+        // Atualizar status de conexão das impressoras cadastradas
+        const impressorasAtualizadas = impressoras.map(imp => {
+          const deviceMatch = devices.find(d => 
+            d.vendorId === imp.vendorId && d.productId === imp.productId
+          );
+          return {
+            ...imp,
+            conectada: !!deviceMatch
+          };
+        });
+        setImpressoras(impressorasAtualizadas);
+      }
+    } catch (error) {
+      console.error("Erro ao reconectar:", error);
+    } finally {
+      setScanning(false);
+    }
+  };
+
   const handleSave = async () => {
+    if (!formData.nome) {
+      toast({ title: "Erro", description: "Digite um nome para a impressora", variant: "destructive" });
+      return;
+    }
+
     const novaImpressora = {
       id: editando?.id || Date.now().toString(),
       ...formData,
+      conectada: false,
     };
 
     let novaLista;
@@ -1115,7 +1237,7 @@ function GerenciarImpressoras({ toast }) {
     setEditando(impressora);
     setFormData({
       nome: impressora.nome,
-      tipo: impressora.tipo,
+      tipo: impressora.tipo || "usb",
       paper_width_mm: impressora.paper_width_mm,
       printable_width_mm: impressora.printable_width_mm,
       dpi: impressora.dpi,
@@ -1128,6 +1250,9 @@ function GerenciarImpressoras({ toast }) {
       margin_bottom: impressora.margin_bottom || 0,
       ativa: impressora.ativa,
       padrao: impressora.padrao,
+      vendorId: impressora.vendorId,
+      productId: impressora.productId,
+      deviceName: impressora.deviceName,
     });
     setModalOpen(true);
   };
@@ -1136,7 +1261,7 @@ function GerenciarImpressoras({ toast }) {
     setEditando(null);
     setFormData({
       nome: "",
-      tipo: "termica",
+      tipo: "usb",
       paper_width_mm: 80,
       printable_width_mm: 72,
       dpi: 203,
@@ -1149,23 +1274,108 @@ function GerenciarImpressoras({ toast }) {
       margin_bottom: 0,
       ativa: true,
       padrao: false,
+      vendorId: null,
+      productId: null,
+      deviceName: "",
     });
   };
 
+  // Testar impressão real via USB
   const handleTestarImpressora = async (impressora) => {
-    toast({ title: "Teste de Impressão", description: `Enviando teste para ${impressora.nome}...` });
-    // Adiciona à fila de impressão
-    const testePedido = {
-      codigo: "TESTE",
-      cliente_nome: "Teste de Impressão",
-      items: [{ nome: "Item de Teste", quantidade: 1, preco_unitario: 0 }],
-      total: 0,
-      created_at: new Date().toISOString(),
-    };
-    
-    window.dispatchEvent(new CustomEvent('addPrintQueue', { 
-      detail: { pedido: testePedido, impressora } 
+    if (!usbSupported) {
+      toast({ title: "Não suportado", description: "Web USB não disponível", variant: "destructive" });
+      return;
+    }
+
+    try {
+      // Buscar dispositivos autorizados
+      const devices = await navigator.usb.getDevices();
+      const device = devices.find(d => 
+        d.vendorId === impressora.vendorId && d.productId === impressora.productId
+      );
+
+      if (!device) {
+        toast({ 
+          title: "Dispositivo não encontrado", 
+          description: "Clique em 'Buscar Impressoras' para reconectar", 
+          variant: "destructive" 
+        });
+        return;
+      }
+
+      toast({ title: "Enviando teste...", description: `Para ${impressora.nome}` });
+
+      // Abrir conexão
+      await device.open();
+      
+      // Selecionar configuração
+      if (device.configuration === null) {
+        await device.selectConfiguration(1);
+      }
+      
+      // Encontrar interface de impressora
+      const iface = device.configuration.interfaces.find(i => 
+        i.alternate.interfaceClass === 7 // Classe de impressora
+      ) || device.configuration.interfaces[0];
+      
+      await device.claimInterface(iface.interfaceNumber);
+
+      // Encontrar endpoint de saída
+      const endpoint = iface.alternate.endpoints.find(e => 
+        e.direction === 'out'
+      );
+
+      if (endpoint) {
+        // Comandos ESC/POS para teste
+        const ESC = 0x1B;
+        const GS = 0x1D;
+        const commands = new Uint8Array([
+          ESC, 0x40, // Inicializar impressora
+          ESC, 0x61, 0x01, // Centralizar
+          ESC, 0x21, 0x30, // Texto grande
+          ...new TextEncoder().encode('TESTE DE IMPRESSAO\n'),
+          ESC, 0x21, 0x00, // Texto normal
+          ESC, 0x61, 0x00, // Alinhar esquerda
+          ...new TextEncoder().encode('--------------------------------\n'),
+          ...new TextEncoder().encode(`Impressora: ${impressora.nome}\n`),
+          ...new TextEncoder().encode(`Papel: ${impressora.paper_width_mm}mm\n`),
+          ...new TextEncoder().encode(`DPI: ${impressora.dpi}\n`),
+          ...new TextEncoder().encode(`Colunas: ${impressora.max_columns}\n`),
+          ...new TextEncoder().encode('--------------------------------\n'),
+          ...new TextEncoder().encode('Impressao funcionando!\n'),
+          ...new TextEncoder().encode('\n\n\n'),
+          GS, 0x56, 0x00, // Cortar papel
+        ]);
+
+        await device.transferOut(endpoint.endpointNumber, commands);
+        toast({ title: "Sucesso!", description: "Teste enviado para impressora" });
+      } else {
+        toast({ title: "Erro", description: "Endpoint de saída não encontrado", variant: "destructive" });
+      }
+
+      // Liberar interface e fechar
+      await device.releaseInterface(iface.interfaceNumber);
+      await device.close();
+
+    } catch (error) {
+      console.error("Erro no teste:", error);
+      toast({ 
+        title: "Erro na impressão", 
+        description: error.message || "Não foi possível imprimir", 
+        variant: "destructive" 
+      });
+    }
+  };
+
+  // Adicionar impressora manualmente (sem USB)
+  const handleAddManual = () => {
+    resetForm();
+    setFormData(prev => ({
+      ...prev,
+      tipo: "manual",
+      nome: "Impressora Manual",
     }));
+    setModalOpen(true);
   };
 
   if (loading) {
@@ -1178,16 +1388,63 @@ function GerenciarImpressoras({ toast }) {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="font-bold text-lg">Impressoras Cadastradas</h2>
-          <p className="text-sm text-muted-foreground">Gerencie suas impressoras térmicas</p>
+      {/* Aviso de suporte */}
+      {!usbSupported && (
+        <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900 rounded-xl p-4 flex items-center gap-3">
+          <AlertTriangle className="w-5 h-5 text-amber-500" />
+          <div>
+            <p className="font-medium text-amber-700 dark:text-amber-400">
+              Web USB não suportado
+            </p>
+            <p className="text-sm text-amber-600 dark:text-amber-500">
+              Use Google Chrome ou Microsoft Edge para conectar impressoras USB diretamente.
+              Alternativamente, configure uma impressora manual.
+            </p>
+          </div>
         </div>
-        <Button onClick={() => { resetForm(); setModalOpen(true); }}>
-          <Plus className="w-4 h-4 mr-2" />
-          Nova Impressora
-        </Button>
+      )}
+
+      {/* Header com botões */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div>
+          <h2 className="font-bold text-lg">Impressoras</h2>
+          <p className="text-sm text-muted-foreground">
+            Conecte impressoras térmicas USB para impressão automática
+          </p>
+        </div>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={handleReconnectDevices} disabled={scanning || !usbSupported}>
+            <RefreshCw className={`w-4 h-4 mr-2 ${scanning ? 'animate-spin' : ''}`} />
+            Reconectar
+          </Button>
+          <Button onClick={handleRequestUSBDevice} disabled={scanning || !usbSupported}>
+            {scanning ? (
+              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+            ) : (
+              <Usb className="w-4 h-4 mr-2" />
+            )}
+            Buscar Impressoras USB
+          </Button>
+          <Button variant="outline" onClick={handleAddManual}>
+            <Plus className="w-4 h-4 mr-2" />
+            Manual
+          </Button>
+        </div>
+      </div>
+
+      {/* Instruções */}
+      <div className="bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-900 rounded-xl p-4">
+        <h3 className="font-semibold text-blue-700 dark:text-blue-400 mb-2 flex items-center gap-2">
+          <Usb className="w-4 h-4" />
+          Como conectar sua impressora
+        </h3>
+        <ol className="text-sm text-blue-600 dark:text-blue-500 space-y-1 list-decimal list-inside">
+          <li>Conecte a impressora térmica via USB no computador</li>
+          <li>Clique em "Buscar Impressoras USB"</li>
+          <li>Selecione sua impressora na lista que aparecerá</li>
+          <li>Configure os parâmetros (papel 80mm, DPI, etc.)</li>
+          <li>Marque como "Padrão" para usar automaticamente</li>
+        </ol>
       </div>
 
       {/* Lista de Impressoras */}
@@ -1196,12 +1453,8 @@ function GerenciarImpressoras({ toast }) {
           <Printer className="w-12 h-12 mx-auto mb-4 text-muted-foreground opacity-50" />
           <h3 className="font-semibold mb-2">Nenhuma impressora cadastrada</h3>
           <p className="text-sm text-muted-foreground mb-4">
-            Cadastre sua primeira impressora térmica para começar
+            Conecte uma impressora USB ou adicione manualmente
           </p>
-          <Button onClick={() => setModalOpen(true)}>
-            <Plus className="w-4 h-4 mr-2" />
-            Cadastrar Impressora
-          </Button>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -1210,24 +1463,36 @@ function GerenciarImpressoras({ toast }) {
               <div className="flex items-start justify-between mb-3">
                 <div className="flex items-center gap-3">
                   <div className={`p-2 rounded-lg ${impressora.ativa ? 'bg-green-100 dark:bg-green-900/30' : 'bg-gray-100 dark:bg-gray-800'}`}>
-                    <Printer className={`w-5 h-5 ${impressora.ativa ? 'text-green-600' : 'text-gray-400'}`} />
+                    {impressora.tipo === 'usb' ? (
+                      <Usb className={`w-5 h-5 ${impressora.ativa ? 'text-green-600' : 'text-gray-400'}`} />
+                    ) : (
+                      <Printer className={`w-5 h-5 ${impressora.ativa ? 'text-green-600' : 'text-gray-400'}`} />
+                    )}
                   </div>
                   <div>
                     <h3 className="font-semibold">{impressora.nome}</h3>
-                    {impressora.padrao && (
-                      <span className="text-xs bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 px-2 py-0.5 rounded-full">
-                        Padrão
+                    <div className="flex items-center gap-2">
+                      {impressora.padrao && (
+                        <span className="text-xs bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 px-2 py-0.5 rounded-full">
+                          Padrão
+                        </span>
+                      )}
+                      <span className="text-xs text-muted-foreground">
+                        {impressora.tipo === 'usb' ? 'USB' : 'Manual'}
                       </span>
-                    )}
+                    </div>
                   </div>
                 </div>
-                <div className={`w-2 h-2 rounded-full ${impressora.ativa ? 'bg-green-500' : 'bg-gray-400'}`} />
+                <div className={`w-2 h-2 rounded-full ${impressora.conectada ? 'bg-green-500' : impressora.ativa ? 'bg-yellow-500' : 'bg-gray-400'}`} 
+                     title={impressora.conectada ? 'Conectada' : impressora.ativa ? 'Ativa' : 'Inativa'} />
               </div>
 
               <div className="space-y-1 text-xs text-muted-foreground mb-4">
                 <p>Papel: {impressora.paper_width_mm}mm × {impressora.printable_width_mm}mm</p>
                 <p>DPI: {impressora.dpi} | Colunas: {impressora.max_columns}</p>
-                <p>Fonte: {impressora.font}</p>
+                {impressora.vendorId && (
+                  <p>VID: {impressora.vendorId.toString(16).toUpperCase()} | PID: {impressora.productId?.toString(16).toUpperCase()}</p>
+                )}
               </div>
 
               <div className="flex gap-2">
@@ -1235,9 +1500,11 @@ function GerenciarImpressoras({ toast }) {
                   <Edit className="w-3 h-3 mr-1" />
                   Editar
                 </Button>
-                <Button size="sm" variant="outline" onClick={() => handleTestarImpressora(impressora)}>
-                  <Eye className="w-3 h-3" />
-                </Button>
+                {impressora.tipo === 'usb' && (
+                  <Button size="sm" variant="outline" onClick={() => handleTestarImpressora(impressora)}>
+                    <Eye className="w-3 h-3" />
+                  </Button>
+                )}
                 <Button size="sm" variant="outline" className="text-red-500 hover:text-red-600" onClick={() => handleDelete(impressora.id)}>
                   <Trash2 className="w-3 h-3" />
                 </Button>
@@ -1258,6 +1525,15 @@ function GerenciarImpressoras({ toast }) {
               </button>
             </div>
 
+            {formData.vendorId && (
+              <div className="bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-900 rounded-lg p-3 mb-4">
+                <p className="text-sm text-green-700 dark:text-green-400 flex items-center gap-2">
+                  <CheckCircle className="w-4 h-4" />
+                  Dispositivo USB detectado: {formData.deviceName}
+                </p>
+              </div>
+            )}
+
             <div className="space-y-4">
               <div>
                 <label className="text-sm font-medium mb-1 block">Nome da Impressora</label>
@@ -1274,7 +1550,7 @@ function GerenciarImpressoras({ toast }) {
                   <Input
                     type="number"
                     value={formData.paper_width_mm}
-                    onChange={(e) => setFormData(prev => ({ ...prev, paper_width_mm: parseInt(e.target.value) }))}
+                    onChange={(e) => setFormData(prev => ({ ...prev, paper_width_mm: parseInt(e.target.value) || 80 }))}
                   />
                 </div>
                 <div>
@@ -1282,7 +1558,7 @@ function GerenciarImpressoras({ toast }) {
                   <Input
                     type="number"
                     value={formData.printable_width_mm}
-                    onChange={(e) => setFormData(prev => ({ ...prev, printable_width_mm: parseInt(e.target.value) }))}
+                    onChange={(e) => setFormData(prev => ({ ...prev, printable_width_mm: parseInt(e.target.value) || 72 }))}
                   />
                 </div>
               </div>
@@ -1293,7 +1569,7 @@ function GerenciarImpressoras({ toast }) {
                   <Input
                     type="number"
                     value={formData.dpi}
-                    onChange={(e) => setFormData(prev => ({ ...prev, dpi: parseInt(e.target.value) }))}
+                    onChange={(e) => setFormData(prev => ({ ...prev, dpi: parseInt(e.target.value) || 203 }))}
                   />
                 </div>
                 <div>
@@ -1301,7 +1577,7 @@ function GerenciarImpressoras({ toast }) {
                   <Input
                     type="number"
                     value={formData.printable_width_px}
-                    onChange={(e) => setFormData(prev => ({ ...prev, printable_width_px: parseInt(e.target.value) }))}
+                    onChange={(e) => setFormData(prev => ({ ...prev, printable_width_px: parseInt(e.target.value) || 576 }))}
                   />
                 </div>
               </div>
@@ -1323,7 +1599,7 @@ function GerenciarImpressoras({ toast }) {
                   <Input
                     type="number"
                     value={formData.max_columns}
-                    onChange={(e) => setFormData(prev => ({ ...prev, max_columns: parseInt(e.target.value) }))}
+                    onChange={(e) => setFormData(prev => ({ ...prev, max_columns: parseInt(e.target.value) || 48 }))}
                   />
                 </div>
               </div>
@@ -1336,7 +1612,7 @@ function GerenciarImpressoras({ toast }) {
                     <Input
                       type="number"
                       value={formData.margin_left}
-                      onChange={(e) => setFormData(prev => ({ ...prev, margin_left: parseInt(e.target.value) }))}
+                      onChange={(e) => setFormData(prev => ({ ...prev, margin_left: parseInt(e.target.value) || 0 }))}
                     />
                   </div>
                   <div>
@@ -1344,7 +1620,7 @@ function GerenciarImpressoras({ toast }) {
                     <Input
                       type="number"
                       value={formData.margin_right}
-                      onChange={(e) => setFormData(prev => ({ ...prev, margin_right: parseInt(e.target.value) }))}
+                      onChange={(e) => setFormData(prev => ({ ...prev, margin_right: parseInt(e.target.value) || 0 }))}
                     />
                   </div>
                   <div>
@@ -1352,7 +1628,7 @@ function GerenciarImpressoras({ toast }) {
                     <Input
                       type="number"
                       value={formData.margin_top}
-                      onChange={(e) => setFormData(prev => ({ ...prev, margin_top: parseInt(e.target.value) }))}
+                      onChange={(e) => setFormData(prev => ({ ...prev, margin_top: parseInt(e.target.value) || 0 }))}
                     />
                   </div>
                   <div>
@@ -1360,13 +1636,13 @@ function GerenciarImpressoras({ toast }) {
                     <Input
                       type="number"
                       value={formData.margin_bottom}
-                      onChange={(e) => setFormData(prev => ({ ...prev, margin_bottom: parseInt(e.target.value) }))}
+                      onChange={(e) => setFormData(prev => ({ ...prev, margin_bottom: parseInt(e.target.value) || 0 }))}
                     />
                   </div>
                 </div>
               </div>
 
-              <div className="flex items-center justify-between py-2">
+              <div className="flex items-center justify-between py-2 border-t">
                 <span className="text-sm">Impressora Ativa</span>
                 <button
                   onClick={() => setFormData(prev => ({ ...prev, ativa: !prev.ativa }))}
