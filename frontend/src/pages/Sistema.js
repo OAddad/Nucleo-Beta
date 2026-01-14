@@ -3282,3 +3282,131 @@ function generateESCPOSCommands(pedido, impressora, config, empresa) {
   
   return new Uint8Array(commands);
 }
+
+// ==================== IMPRESSÃO VIA PRINT CONNECTOR (RECOMENDADO) ====================
+
+/**
+ * Envia pedido para impressão via Print Connector local
+ * Esta é a função principal que deve ser usada para impressão automática
+ * 
+ * @param {Object} pedido - Objeto do pedido
+ * @param {Object} options - Opções de impressão
+ * @param {string} options.template - Template: 'cozinha' ou 'caixa'
+ * @param {number} options.copies - Número de cópias
+ * @param {boolean} options.cut - Se deve cortar o papel
+ * @returns {Promise<{success: boolean, jobId?: string, error?: string}>}
+ */
+export async function printViaPrintConnector(pedido, options = {}) {
+  const { template = 'caixa', copies = 1, cut = true } = options;
+  
+  try {
+    // Verificar se Print Connector está online
+    const healthResponse = await fetch(`${PRINT_CONNECTOR_URL}/health`, {
+      method: 'GET',
+      mode: 'cors',
+    }).catch(() => null);
+    
+    if (!healthResponse || !healthResponse.ok) {
+      return { 
+        success: false, 
+        error: 'Print Connector offline. Instale e execute o aplicativo.',
+        offline: true
+      };
+    }
+    
+    const health = await healthResponse.json();
+    
+    if (!health.printer_connected) {
+      return { 
+        success: false, 
+        error: 'Nenhuma impressora configurada no Print Connector.',
+        no_printer: true
+      };
+    }
+    
+    // Enviar para impressão
+    const response = await fetch(`${PRINT_CONNECTOR_URL}/print`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        pedido,
+        template,
+        copies,
+        cut
+      })
+    });
+    
+    const data = await response.json();
+    
+    if (data.success) {
+      return { 
+        success: true, 
+        jobId: data.jobId,
+        message: data.message
+      };
+    } else {
+      return { 
+        success: false, 
+        error: data.error || 'Erro ao enviar para impressão'
+      };
+    }
+    
+  } catch (error) {
+    console.error('Erro ao imprimir via Print Connector:', error);
+    return { 
+      success: false, 
+      error: error.message || 'Erro de conexão com Print Connector',
+      offline: true
+    };
+  }
+}
+
+/**
+ * Verifica se o Print Connector está disponível
+ * @returns {Promise<{online: boolean, printer_connected: boolean, printer_name: string|null}>}
+ */
+export async function checkPrintConnectorStatus() {
+  try {
+    const response = await fetch(`${PRINT_CONNECTOR_URL}/health`, {
+      method: 'GET',
+      mode: 'cors',
+    });
+    
+    if (response.ok) {
+      const data = await response.json();
+      return {
+        online: true,
+        printer_connected: data.printer_connected,
+        printer_name: data.printer_name,
+        version: data.version,
+        queue_size: data.queue_size
+      };
+    }
+  } catch (error) {
+    // Silencioso - connector offline
+  }
+  
+  return {
+    online: false,
+    printer_connected: false,
+    printer_name: null
+  };
+}
+
+/**
+ * Imprime página de teste no Print Connector
+ * @returns {Promise<{success: boolean, error?: string}>}
+ */
+export async function printTestPage() {
+  try {
+    const response = await fetch(`${PRINT_CONNECTOR_URL}/test`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' }
+    });
+    
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+}
