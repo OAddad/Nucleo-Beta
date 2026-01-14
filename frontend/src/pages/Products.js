@@ -1481,6 +1481,53 @@ export default function Products() {
                     </div>
                   </div>
                 </div>
+                
+                {/* Card de Ficha Técnica - Melhore seu controle financeiro */}
+                <div className="mt-4 p-4 bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 rounded-2xl border border-blue-200 dark:border-blue-800">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="p-3 bg-blue-500 rounded-xl">
+                        <ChefHat className="w-6 h-6 text-white" />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold text-blue-700 dark:text-blue-300">Melhore seu controle financeiro</h3>
+                        <p className="text-sm text-blue-600/70 dark:text-blue-400/70">
+                          Cadastre a ficha técnica dos seus produtos para calcular o CMV corretamente
+                        </p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <div className="flex items-baseline gap-1">
+                        <span className="text-4xl font-bold text-blue-600 dark:text-blue-400">{cardapioStats.withFichaTecnica}</span>
+                        <span className="text-lg text-blue-500">/{cardapioStats.total}</span>
+                      </div>
+                      <p className="text-xs text-blue-600/70 dark:text-blue-400/70">produtos com ficha técnica</p>
+                    </div>
+                  </div>
+                  {cardapioStats.withFichaTecnica < cardapioStats.total && (
+                    <div className="mt-3 flex items-center justify-between">
+                      <p className="text-sm text-blue-600 dark:text-blue-400">
+                        <span className="font-semibold">{cardapioStats.total - cardapioStats.withFichaTecnica}</span> produtos sem ficha técnica
+                      </p>
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        className="border-blue-300 text-blue-600 hover:bg-blue-100 dark:hover:bg-blue-900/30"
+                        onClick={() => {
+                          setFilterFichaTecnica("sem-ficha");
+                          setPerformanceFilter("todos");
+                        }}
+                      >
+                        Ver produtos sem ficha
+                      </Button>
+                    </div>
+                  )}
+                  {cardapioStats.withFichaTecnica === cardapioStats.total && cardapioStats.total > 0 && (
+                    <div className="mt-3 text-center text-sm text-green-600 font-medium">
+                      ✓ Todos os produtos têm ficha técnica cadastrada!
+                    </div>
+                  )}
+                </div>
               </div>
             )}
             
