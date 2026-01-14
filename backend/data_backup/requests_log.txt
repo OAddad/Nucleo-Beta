@@ -35847,3 +35847,4 @@
 2026-01-14T14:16:22.368947+00:00 | DB_CALL get_all_products | P3 | 0.99ms | success
 2026-01-14T14:16:59.189129+00:00 | DB_CALL get_all_products | P3 | 0.95ms | success
 2026-01-14T14:17:25.944572+00:00 | DB_CALL get_all_products | P3 | 0.96ms | success
+2026-01-14T14:17:45.575794+00:00 | DB_CALL get_all_products | P3 | 1.27ms | success

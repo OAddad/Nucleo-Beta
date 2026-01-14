@@ -584,11 +584,17 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode, allProduc
 
   const t = {
     bg: darkMode ? 'bg-zinc-900' : 'bg-white',
-    bgMuted: darkMode ? 'bg-zinc-800' : 'bg-gray-50',
-    bgCard: darkMode ? 'bg-zinc-800' : 'bg-white',
-    text: darkMode ? 'text-white' : 'text-gray-900',
+    bgMuted: darkMode ? 'bg-zinc-800' : 'bg-gray-100',
+    bgCard: darkMode ? 'bg-zinc-800/80' : 'bg-white',
+    bgInput: darkMode ? 'bg-zinc-700' : 'bg-gray-50',
+    text: darkMode ? 'text-zinc-100' : 'text-gray-900',
     textMuted: darkMode ? 'text-zinc-400' : 'text-gray-500',
-    border: darkMode ? 'border-zinc-700' : 'border-gray-200',
+    border: darkMode ? 'border-zinc-600' : 'border-gray-200',
+    // Cores específicas para itens selecionados
+    selectedBg: darkMode ? 'bg-orange-500/20' : 'bg-orange-50',
+    selectedBorder: 'border-orange-500',
+    // Hover states
+    hoverBorder: darkMode ? 'hover:border-orange-400' : 'hover:border-orange-300',
   };
 
   // TELA DE SELEÇÃO COMBO vs SIMPLES (para produtos tipo combo)
