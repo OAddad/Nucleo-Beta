@@ -39158,3 +39158,13 @@
 2026-01-14T23:03:21.239834+00:00 | DB_CALL get_all_pedidos | P3 | 2.39ms | success
 2026-01-14T23:03:21.243363+00:00 | DB_CALL get_all_entregadores | P3 | 0.4ms | success
 2026-01-14T23:03:21.243986+00:00 | DB_CALL get_all_settings | P3 | 1.22ms | success
+2026-01-14T23:03:33.276017+00:00 | DB_CALL get_all_settings | P3 | 9.77ms | success
+2026-01-14T23:03:33.325084+00:00 | DB_CALL get_all_products | P3 | 58.72ms | success
+2026-01-14T23:03:33.431925+00:00 | DB_CALL get_all_categories | P3 | 160.49ms | success
+2026-01-14T23:03:33.432746+00:00 | DB_CALL get_all_categories | P3 | 161.21ms | success
+2026-01-14T23:03:33.462464+00:00 | DB_CALL get_all_settings | P3 | 190.46ms | success
+2026-01-14T23:03:33.465543+00:00 | DB_CALL get_all_products | P3 | 193.28ms | success
+2026-01-14T23:03:33.480511+00:00 | DB_CALL get_all_business_hours | P3 | 207.77ms | success
+2026-01-14T23:03:33.484558+00:00 | DB_CALL get_all_business_hours | P3 | 211.94ms | success
+2026-01-14T23:03:33.728113+00:00 | DB_CALL get_all_bairros | P3 | 2.46ms | success
+2026-01-14T23:03:34.174763+00:00 | DB_CALL get_all_bairros | P3 | 0.35ms | success
