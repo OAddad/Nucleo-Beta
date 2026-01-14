@@ -1159,6 +1159,19 @@ export default function Products() {
     }]);
   };
 
+  // Mover etapa para cima ou para baixo
+  const moveOrderStep = (stepIndex, direction) => {
+    const newSteps = [...orderSteps];
+    const newIndex = direction === 'up' ? stepIndex - 1 : stepIndex + 1;
+    
+    if (newIndex < 0 || newIndex >= newSteps.length) return;
+    
+    // Trocar posições
+    [newSteps[stepIndex], newSteps[newIndex]] = [newSteps[newIndex], newSteps[stepIndex]];
+    setOrderSteps(newSteps);
+    toast.success(`Etapa movida para posição ${newIndex + 1}`);
+  };
+
   const updateOrderStep = (index, field, value) => {
     const newSteps = [...orderSteps];
     newSteps[index] = { ...newSteps[index], [field]: value };
