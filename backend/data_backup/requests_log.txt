@@ -40006,3 +40006,7 @@
 2026-01-14T23:38:55.351862+00:00 | DB_CALL get_all_categories | P3 | 16.26ms | success
 2026-01-14T23:38:56.403433+00:00 | DB_CALL get_all_products | P3 | 3.69ms | success
 2026-01-14T23:38:57.253336+00:00 | DB_CALL get_all_products | P3 | 3.63ms | success
+2026-01-14T23:40:14.401385+00:00 | DB_CALL get_all_products | P3 | 3.23ms | success
+2026-01-14T23:40:14.684158+00:00 | DB_CALL get_all_products | P3 | 3.79ms | success
+2026-01-14T23:40:24.176653+00:00 | DB_CALL get_all_products | P3 | 3.47ms | success
+2026-01-14T23:40:25.024386+00:00 | DB_CALL get_all_products | P3 | 3.35ms | success
