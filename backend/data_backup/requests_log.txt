@@ -36658,3 +36658,12 @@
 2026-01-14T14:30:36.690348+00:00 | DB_CALL get_all_entregadores | P3 | 0.47ms | success
 2026-01-14T14:30:36.692550+00:00 | DB_CALL get_all_pedidos | P3 | 1.35ms | success
 2026-01-14T14:30:38.173825+00:00 | DB_CALL get_all_products | P3 | 3.1ms | success
+2026-01-14T14:30:41.975016+00:00 | DB_CALL get_all_pedidos | P3 | 1.36ms | success
+2026-01-14T14:30:41.977436+00:00 | DB_CALL get_all_entregadores | P3 | 0.17ms | success
+2026-01-14T14:30:45.010193+00:00 | DB_CALL get_user_by_username | P3 | 1.8ms | success
+2026-01-14T14:30:45.010479+00:00 | DB_CALL get_user_by_username | P3 | 0.16ms | success
+2026-01-14T14:30:45.011665+00:00 | DB_CALL get_all_clientes | P3 | 1.09ms | success
+2026-01-14T14:30:45.208835+00:00 | DB_CALL get_cliente_by_id | P3 | 0.26ms | success
+2026-01-14T14:30:45.910315+00:00 | DB_CALL get_client_addresses | P3 | 1.81ms | success
+2026-01-14T14:30:46.977351+00:00 | DB_CALL get_all_pedidos | P3 | 1.29ms | success
+2026-01-14T14:30:46.979855+00:00 | DB_CALL get_all_entregadores | P3 | 0.26ms | success
