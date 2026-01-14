@@ -34422,3 +34422,9 @@
 2026-01-14T12:40:43.009896+00:00 | DB_CALL get_all_pedidos | P3 | 1.27ms | success
 2026-01-14T12:40:43.012746+00:00 | DB_CALL get_all_entregadores | P3 | 4.65ms | success
 2026-01-14T12:40:43.013745+00:00 | DB_CALL get_all_settings | P3 | 0.23ms | success
+2026-01-14T12:40:48.011318+00:00 | DB_CALL get_all_entregadores | P3 | 0.71ms | success
+2026-01-14T12:40:48.012986+00:00 | DB_CALL get_all_pedidos | P3 | 1.95ms | success
+2026-01-14T12:40:48.015673+00:00 | DB_CALL get_all_settings | P3 | 0.25ms | success
+2026-01-14T12:40:53.014175+00:00 | DB_CALL get_all_pedidos | P3 | 2.58ms | success
+2026-01-14T12:40:53.016576+00:00 | DB_CALL get_all_settings | P3 | 4.06ms | success
+2026-01-14T12:40:53.017149+00:00 | DB_CALL get_all_entregadores | P3 | 3.31ms | success

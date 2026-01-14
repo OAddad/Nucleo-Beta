@@ -486,6 +486,10 @@ export default function Products() {
   const [recipeYieldUnit, setRecipeYieldUnit] = useState("kg");
   const [linkedIngredientId, setLinkedIngredientId] = useState("");
   
+  // Estados para busca de produtos nas etapas
+  const [stepProductSearch, setStepProductSearch] = useState({});
+  const [stepSearchOpen, setStepSearchOpen] = useState({});
+  
   // Estados para cadastro rápido de ingrediente
   const [quickIngredientOpen, setQuickIngredientOpen] = useState(false);
   const [quickIngredientName, setQuickIngredientName] = useState("");
