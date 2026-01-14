@@ -1976,15 +1976,18 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
     
     let basePrice = isCombo ? (selectedComboType === 'combo' ? comboPrice : simplePrice) : selectedProduct.sale_price || 0;
     
-    // Adicionar preços extras das seleções
+    // Adicionar preços extras das seleções (usando getItemPrice para sincronizar com PRODUTOS)
     const relevantSteps = getRelevantSteps();
     Object.entries(stepSelections).forEach(([stepIdx, selections]) => {
       const step = relevantSteps[parseInt(stepIdx)];
       if (step?.items) {
         selections.forEach(productId => {
           const item = step.items.find(i => i.product_id === productId);
-          if (item?.price_override > 0) {
-            basePrice += item.price_override;
+          if (item) {
+            const itemPrice = getItemPrice(item);
+            if (itemPrice > 0) {
+              basePrice += itemPrice;
+            }
           }
         });
       }
