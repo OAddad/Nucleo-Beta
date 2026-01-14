@@ -887,6 +887,7 @@ export default function Products() {
     setRecipeYield(product.recipe_yield ? product.recipe_yield.toString() : "");
     setRecipeYieldUnit(product.recipe_yield_unit || "kg");
     setLinkedIngredientId(product.linked_ingredient_id || "");
+    setCardOrder(product.card_order || "combo_first");
     
     // Separar ingredientes e embalagens baseado no item_type
     const ingredients = product.recipe
