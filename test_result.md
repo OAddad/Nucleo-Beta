@@ -556,6 +556,21 @@ backend:
         agent: "testing"
         comment: "✅ CLUBE ADDAD ENDPOINTS TESTING COMPLETED (Jan 13, 2026): Testei os endpoints do CLUBE ADDAD exatamente conforme especificado na review request. RESULTADOS: ✅ STEP 1 PASSED: Login com credenciais Addad/Addad123 funcionando perfeitamente (user role: proprietario). ✅ STEP 2 PASSED: GET /api/clientes encontrou cliente Diego Addad com telefone (34) 9.9965-8914 e membro_clube: 0 inicial. ✅ STEP 3 PASSED: GET /api/public/cliente/{cliente_id}/clube (endpoint público) retorna status do clube sem autenticação - campos membro_clube, aceita_whatsapp, pontuacao presentes. ✅ STEP 4 PASSED: POST /api/public/clube/registrar/{cliente_id} (endpoint público) registra cliente no clube com CPF '123.456.789-00', data_nascimento '1990-01-15', email 'teste@email.com' - membro_clube atualizado para 1. ✅ STEP 5 PASSED: POST /api/public/clube/whatsapp/{cliente_id} (endpoint público) registra consentimento WhatsApp com aceita=true - aceita_whatsapp atualizado para 1. ✅ STEP 6 PASSED: Arquivo de consentimento criado em /app/backend/consentimentos/ com estrutura JSON válida, tipo CONSENTIMENTO_WHATSAPP e hash de segurança. ✅ STEP 7 PASSED: GET /api/clientes (autenticado) retorna campo membro_clube=1 para o cliente testado. ✅ VALIDATION: Todos os endpoints públicos funcionam sem token JWT. Validações de CPF, email e data de nascimento funcionando. Sistema CLUBE ADDAD 100% operacional conforme especificações da review request."
 
+  - task: "Print Connector Endpoints"
+    implemented: true
+    working: true
+    file: "print-connector/src/index.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Print Connector implementado rodando na porta 9100 com endpoints para impressão térmica ESC/POS"
+      - working: true
+        agent: "testing"
+        comment: "✅ PRINT CONNECTOR ENDPOINTS TESTING COMPLETED (Jan 14, 2026): Testei todos os 5 endpoints do Print Connector rodando na porta 9100 exatamente conforme especificado na review request. RESULTADOS: ✅ TEST 1 PASSED: GET /health retorna status 'online', version '1.0.0', printer_connected: false (sem impressora física), queue_size: 0, uptime: 343s, platform: linux. ✅ TEST 2 PASSED: GET /printers retorna array vazio [] (sem impressoras USB conectadas no ambiente de teste - comportamento esperado). ✅ TEST 3 PASSED: GET /queue retorna estrutura completa da fila com pending: [], completed: [], failed: [], stats com contadores zerados e is_processing: false. ✅ TEST 4 PASSED: GET /logs retorna array de logs do sistema com timestamps, levels (info/warn), mensagens das requisições anteriores e inicialização do serviço. ✅ TEST 5 PASSED: GET /config retorna configurações completas: defaultPrinter: null, allowedOrigins array, paperWidth: 80, printableWidth: 72, dpi: 203, maxColumns: 48, codepage: 'CP850'. ✅ SERVIÇO: Print Connector iniciado com sucesso em background na porta 9100, todos os endpoints respondendo corretamente. ✅ TAXA DE SUCESSO: 5/5 testes passaram (100% success rate). Print Connector 100% operacional conforme especificações da review request."
+
 
 frontend:
   - task: "Login Page"
