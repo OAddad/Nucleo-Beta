@@ -2934,91 +2934,356 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
         </div>
       </DialogContent>
 
-      {/* Popup de Produto */}
+      {/* Popup de Produto - COM SUPORTE A COMBO */}
       <Dialog open={!!selectedProduct} onOpenChange={(open) => !open && closeProductPopup()}>
-        <DialogContent className="max-w-md p-0 overflow-hidden">
-          {selectedProduct && (
-            <>
-              {/* Imagem do Produto - QUADRADA */}
-              {selectedProduct.photo_url ? (
-                <div className="relative aspect-square w-full">
-                  <img 
-                    src={getImageUrl(selectedProduct.photo_url)} 
-                    alt={selectedProduct.name}
-                    className="w-full h-full object-cover"
-                  />
-                  <button 
-                    onClick={closeProductPopup}
-                    className="absolute top-3 right-3 bg-black/50 rounded-full p-1.5 text-white hover:bg-black/70"
-                  >
-                    <X className="w-5 h-5" />
-                  </button>
-                </div>
-              ) : (
-                <div className="relative aspect-square w-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center">
-                  <Package className="w-24 h-24 text-white/50" />
-                  <button 
-                    onClick={closeProductPopup}
-                    className="absolute top-3 right-3 bg-black/50 rounded-full p-1.5 text-white hover:bg-black/70"
-                  >
-                    <X className="w-5 h-5" />
-                  </button>
-                </div>
-              )}
-
-              {/* Info do Produto */}
-              <div className="p-4 space-y-4">
-                <div>
-                  <h2 className="text-xl font-bold">{selectedProduct.name}</h2>
-                  <p className="text-2xl font-bold text-orange-600 mt-1">
-                    R$ {(selectedProduct.sale_price || 0).toFixed(2)}
-                  </p>
-                </div>
-
-                {selectedProduct.description && (
-                  <p className="text-muted-foreground">{selectedProduct.description}</p>
-                )}
-
-                {/* Observação */}
-                <div>
-                  <Label>Observação (opcional)</Label>
-                  <Textarea
-                    value={productObservation}
-                    onChange={(e) => setProductObservation(e.target.value)}
-                    placeholder="Ex: Sem cebola, bem passado..."
-                    rows={2}
-                    className="mt-1"
-                  />
-                </div>
-
-                {/* Quantidade e Adicionar */}
-                <div className="flex items-center justify-between pt-4 border-t">
-                  <div className="flex items-center gap-3">
+        <DialogContent className="max-w-md p-0 overflow-hidden max-h-[90vh] flex flex-col">
+          {selectedProduct && (() => {
+            const isCombo = selectedProduct.product_type === 'combo';
+            const hasOrderSteps = selectedProduct.order_steps?.length > 0;
+            const relevantSteps = getRelevantSteps();
+            const totalSteps = relevantSteps.length;
+            const comboPrice = selectedProduct.sale_price || 0;
+            const simplePrice = selectedProduct.simple_price || Math.round(comboPrice * 0.7 * 100) / 100;
+            const isOnSummaryStep = comboStep > totalSteps && comboStep > 0;
+            
+            // TELA 1: Seleção COMBO vs SIMPLES (apenas para produtos tipo combo)
+            if (isCombo && comboStep === 0) {
+              return (
+                <>
+                  <div className="p-4 border-b">
                     <button
-                      onClick={() => setProductQuantity(Math.max(1, productQuantity - 1))}
-                      className="w-10 h-10 rounded-full border-2 border-orange-500 text-orange-500 flex items-center justify-center hover:bg-orange-500 hover:text-white transition-colors"
+                      onClick={closeProductPopup}
+                      className="absolute top-3 right-3 w-8 h-8 rounded-full bg-muted hover:bg-muted/80 flex items-center justify-center z-10"
                     >
-                      <Minus className="w-5 h-5" />
+                      <X className="w-5 h-5" />
                     </button>
-                    <span className="text-xl font-bold w-8 text-center">{productQuantity}</span>
-                    <button
-                      onClick={() => setProductQuantity(productQuantity + 1)}
-                      className="w-10 h-10 rounded-full border-2 border-orange-500 text-orange-500 flex items-center justify-center hover:bg-orange-500 hover:text-white transition-colors"
-                    >
-                      <Plus className="w-5 h-5" />
-                    </button>
+                    <h2 className="text-xl font-bold pr-10">{selectedProduct.name}</h2>
+                    {selectedProduct.description && (
+                      <p className="text-sm text-muted-foreground mt-1">{selectedProduct.description}</p>
+                    )}
+                    <p className="text-xs text-muted-foreground mt-3 font-medium">Escolha como quer seu pedido:</p>
                   </div>
-                  
-                  <Button 
-                    onClick={confirmAddToCart}
-                    className="bg-orange-500 hover:bg-orange-600 px-6"
-                  >
-                    Adicionar R$ {((selectedProduct.sale_price || 0) * productQuantity).toFixed(2)}
-                  </Button>
-                </div>
-              </div>
-            </>
-          )}
+
+                  <div className="p-4">
+                    <div className="flex gap-3 items-stretch">
+                      {/* Card SIMPLES */}
+                      <button
+                        onClick={() => handleSelectComboType('simples')}
+                        className={`w-[35%] rounded-xl border-2 transition-all text-left overflow-hidden flex flex-col ${
+                          selectedComboType === 'simples' 
+                            ? 'border-orange-500 bg-orange-50 dark:bg-orange-950/20' 
+                            : 'border-border bg-card hover:border-orange-300'
+                        }`}
+                      >
+                        <div className="w-full aspect-square bg-gradient-to-b from-muted to-muted/50">
+                          {(selectedProduct.simple_photo_url || selectedProduct.photo_url) ? (
+                            <img
+                              src={getImageUrl(selectedProduct.simple_photo_url || selectedProduct.photo_url)}
+                              alt={selectedProduct.name}
+                              className="w-full h-full object-contain p-2"
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center">
+                              <span className="text-3xl">🍔</span>
+                            </div>
+                          )}
+                        </div>
+                        <div className="p-2 text-center">
+                          <p className="font-bold text-xs">SIMPLES</p>
+                          <p className="text-[9px] text-muted-foreground mt-0.5">{selectedProduct.simple_description || 'Apenas o produto'}</p>
+                          <p className="text-base font-black text-orange-500 mt-1">
+                            R$ {simplePrice.toFixed(2)}
+                          </p>
+                        </div>
+                      </button>
+
+                      {/* Card COMBO */}
+                      <button
+                        onClick={() => handleSelectComboType('combo')}
+                        className={`w-[65%] rounded-xl border-2 transition-all text-left overflow-hidden flex flex-col relative ${
+                          selectedComboType === 'combo' 
+                            ? 'border-orange-500 bg-orange-50 dark:bg-orange-950/20' 
+                            : 'border-border bg-card hover:border-orange-300'
+                        }`}
+                      >
+                        <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-green-500 to-emerald-500 text-white text-xs font-bold py-1.5 text-center z-10">
+                          ★ RECOMENDADO ★
+                        </div>
+                        <div className="w-full aspect-square pt-8 bg-gradient-to-b from-orange-100 to-orange-50 dark:from-orange-900/20 dark:to-orange-900/10">
+                          {(selectedProduct.combo_photo_url || selectedProduct.photo_url) ? (
+                            <img
+                              src={getImageUrl(selectedProduct.combo_photo_url || selectedProduct.photo_url)}
+                              alt={selectedProduct.name}
+                              className="w-full h-full object-contain p-2"
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center">
+                              <span className="text-5xl">🍔</span>
+                            </div>
+                          )}
+                        </div>
+                        <div className="p-3">
+                          <p className="font-bold text-sm">COMBO</p>
+                          <p className="text-[10px] text-muted-foreground mt-0.5 line-clamp-1">
+                            {selectedProduct.combo_description || '+ Batata + Refrigerante'}
+                          </p>
+                          <p className="text-xl font-black text-orange-500 mt-2">
+                            R$ {comboPrice.toFixed(2)}
+                          </p>
+                        </div>
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="p-4 bg-muted/50 border-t mt-auto">
+                    <Button
+                      onClick={handleNextComboStep}
+                      disabled={!canAdvanceComboStep()}
+                      className="w-full h-12 bg-orange-500 hover:bg-orange-600 disabled:bg-muted disabled:text-muted-foreground"
+                    >
+                      {selectedComboType && hasOrderSteps && relevantSteps.length > 0 
+                        ? 'PRÓXIMA ETAPA →' 
+                        : `Adicionar • R$ ${(selectedComboType === 'combo' ? comboPrice : simplePrice).toFixed(2)}`
+                      }
+                    </Button>
+                  </div>
+                </>
+              );
+            }
+            
+            // TELA 2: Etapas de seleção (order_steps)
+            if ((isCombo || hasOrderSteps) && comboStep > 0 && comboStep <= totalSteps) {
+              const currentStepIndex = comboStep - 1;
+              const currentStep = relevantSteps[currentStepIndex];
+              const selections = stepSelections[currentStepIndex] || [];
+              
+              if (!currentStep) {
+                setComboStep(totalSteps + 1);
+                return null;
+              }
+              
+              return (
+                <>
+                  <div className="p-4 border-b">
+                    <div className="flex items-center justify-between mb-2">
+                      <button
+                        onClick={() => setComboStep(comboStep - 1)}
+                        className="w-8 h-8 rounded-full bg-muted hover:bg-muted/80 flex items-center justify-center"
+                      >
+                        <ArrowLeft className="w-5 h-5" />
+                      </button>
+                      <span className="text-sm text-muted-foreground">Etapa {comboStep} de {totalSteps + 1}</span>
+                      <button
+                        onClick={closeProductPopup}
+                        className="w-8 h-8 rounded-full bg-muted hover:bg-muted/80 flex items-center justify-center"
+                      >
+                        <X className="w-5 h-5" />
+                      </button>
+                    </div>
+                    <h2 className="text-lg font-bold text-center">{currentStep.name || `Etapa ${comboStep}`}</h2>
+                    {(currentStep.min_selections > 0 || currentStep.max_selections > 0) && (
+                      <p className="text-xs text-muted-foreground text-center mt-1">
+                        {currentStep.min_selections > 0 && currentStep.max_selections > 0 && currentStep.min_selections === currentStep.max_selections 
+                          ? `Selecione ${currentStep.min_selections} ${currentStep.min_selections === 1 ? 'opção' : 'opções'}`
+                          : currentStep.min_selections > 0 
+                            ? `Selecione no mínimo ${currentStep.min_selections}`
+                            : currentStep.max_selections > 0 
+                              ? `Selecione até ${currentStep.max_selections}`
+                              : 'Selecione suas opções'
+                        }
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="p-3 flex-1 overflow-y-auto">
+                    <div className="grid grid-cols-3 gap-2">
+                      {currentStep.items?.map((item) => {
+                        const isSelected = selections.includes(item.product_id);
+                        const itemPhoto = getProductPhoto(item.product_id);
+                        
+                        return (
+                          <button
+                            key={item.product_id}
+                            onClick={() => toggleItemSelection(currentStepIndex, item.product_id)}
+                            className={`relative p-1.5 rounded-lg border-2 transition-all text-left flex flex-col ${
+                              isSelected 
+                                ? 'border-orange-500 bg-orange-50 dark:bg-orange-950/20' 
+                                : 'border-border bg-card hover:border-orange-300'
+                            }`}
+                          >
+                            {isSelected && (
+                              <div className="absolute top-1 right-1 w-5 h-5 rounded-full bg-orange-500 flex items-center justify-center z-10">
+                                <Check className="w-3 h-3 text-white" />
+                              </div>
+                            )}
+                            <div className={`w-full aspect-square rounded-md overflow-hidden mb-1.5 ${isSelected ? 'ring-2 ring-orange-500' : ''}`}>
+                              {itemPhoto ? (
+                                <img
+                                  src={getImageUrl(itemPhoto)}
+                                  alt={item.product_name}
+                                  className="w-full h-full object-cover"
+                                />
+                              ) : (
+                                <div className={`w-full h-full flex items-center justify-center ${isSelected ? 'bg-orange-100 dark:bg-orange-900/30' : 'bg-muted'}`}>
+                                  <span className="text-2xl">🍽️</span>
+                                </div>
+                              )}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="font-medium text-xs line-clamp-2 leading-tight">{item.product_name}</p>
+                              {item.price_override > 0 ? (
+                                <p className="text-xs text-orange-500 font-bold mt-0.5">
+                                  +R$ {item.price_override.toFixed(2)}
+                                </p>
+                              ) : (
+                                <p className="text-[10px] text-green-500 font-bold mt-0.5 uppercase">Grátis</p>
+                              )}
+                            </div>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  <div className="p-4 bg-muted/50 border-t">
+                    <Button
+                      onClick={handleNextComboStep}
+                      disabled={!canAdvanceComboStep()}
+                      className="w-full h-12 bg-orange-500 hover:bg-orange-600 disabled:bg-muted disabled:text-muted-foreground"
+                    >
+                      {comboStep < totalSteps ? 'PRÓXIMA ETAPA →' : 'FINALIZAR →'}
+                    </Button>
+                  </div>
+                </>
+              );
+            }
+            
+            // TELA 3: Resumo/Finalização (para combos) ou Tela normal (para produtos simples)
+            const showNormalView = !isCombo && !hasOrderSteps;
+            const showSummaryView = (isCombo && isOnSummaryStep) || (hasOrderSteps && comboStep > totalSteps);
+            
+            if (showNormalView || showSummaryView || (!isCombo && hasOrderSteps && comboStep === 0)) {
+              const finalPrice = calculateComboPrice();
+              
+              return (
+                <>
+                  {selectedProduct.photo_url ? (
+                    <div className="relative aspect-square w-full max-h-[40vh]">
+                      <img 
+                        src={getImageUrl(selectedProduct.photo_url)} 
+                        alt={selectedProduct.name}
+                        className="w-full h-full object-cover"
+                      />
+                      <button 
+                        onClick={closeProductPopup}
+                        className="absolute top-3 right-3 bg-black/50 rounded-full p-1.5 text-white hover:bg-black/70"
+                      >
+                        <X className="w-5 h-5" />
+                      </button>
+                      {showSummaryView && (
+                        <button 
+                          onClick={() => setComboStep(totalSteps > 0 ? totalSteps : 0)}
+                          className="absolute top-3 left-3 bg-black/50 rounded-full p-1.5 text-white hover:bg-black/70"
+                        >
+                          <ArrowLeft className="w-5 h-5" />
+                        </button>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="relative aspect-square w-full max-h-[40vh] bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center">
+                      <Package className="w-24 h-24 text-white/50" />
+                      <button 
+                        onClick={closeProductPopup}
+                        className="absolute top-3 right-3 bg-black/50 rounded-full p-1.5 text-white hover:bg-black/70"
+                      >
+                        <X className="w-5 h-5" />
+                      </button>
+                    </div>
+                  )}
+
+                  <div className="p-4 space-y-4 flex-1 overflow-y-auto">
+                    <div>
+                      <h2 className="text-xl font-bold">{selectedProduct.name}</h2>
+                      {isCombo && selectedComboType && (
+                        <span className={`inline-block mt-1 px-2 py-0.5 rounded text-xs font-bold ${
+                          selectedComboType === 'combo' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'
+                        }`}>
+                          {selectedComboType === 'combo' ? '🍟 COMBO' : '🍔 SIMPLES'}
+                        </span>
+                      )}
+                      <p className="text-2xl font-bold text-orange-600 mt-1">
+                        R$ {finalPrice.toFixed(2)}
+                      </p>
+                    </div>
+
+                    {selectedProduct.description && (
+                      <p className="text-muted-foreground">{selectedProduct.description}</p>
+                    )}
+                    
+                    {/* Resumo das seleções */}
+                    {showSummaryView && Object.keys(stepSelections).length > 0 && (
+                      <div className="space-y-2 p-3 bg-muted/50 rounded-lg">
+                        <p className="text-xs font-semibold text-muted-foreground">Suas escolhas:</p>
+                        {relevantSteps.map((step, idx) => {
+                          const selections = stepSelections[idx] || [];
+                          if (selections.length === 0) return null;
+                          return (
+                            <div key={idx} className="text-sm">
+                              <span className="font-medium">{step.name}:</span>{' '}
+                              <span className="text-muted-foreground">
+                                {selections.map(id => {
+                                  const item = step.items?.find(i => i.product_id === id);
+                                  return item?.product_name;
+                                }).filter(Boolean).join(', ')}
+                              </span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+
+                    <div>
+                      <Label>Observação (opcional)</Label>
+                      <Textarea
+                        value={productObservation}
+                        onChange={(e) => setProductObservation(e.target.value)}
+                        placeholder="Ex: Sem cebola, bem passado..."
+                        rows={2}
+                        className="mt-1"
+                      />
+                    </div>
+
+                    <div className="flex items-center justify-between pt-4 border-t">
+                      <div className="flex items-center gap-3">
+                        <button
+                          onClick={() => setProductQuantity(Math.max(1, productQuantity - 1))}
+                          className="w-10 h-10 rounded-full border-2 border-orange-500 text-orange-500 flex items-center justify-center hover:bg-orange-500 hover:text-white transition-colors"
+                        >
+                          <Minus className="w-5 h-5" />
+                        </button>
+                        <span className="text-xl font-bold w-8 text-center">{productQuantity}</span>
+                        <button
+                          onClick={() => setProductQuantity(productQuantity + 1)}
+                          className="w-10 h-10 rounded-full border-2 border-orange-500 text-orange-500 flex items-center justify-center hover:bg-orange-500 hover:text-white transition-colors"
+                        >
+                          <Plus className="w-5 h-5" />
+                        </button>
+                      </div>
+                      
+                      <Button 
+                        onClick={confirmAddToCart}
+                        className="bg-orange-500 hover:bg-orange-600 px-6"
+                      >
+                        Adicionar R$ {(finalPrice * productQuantity).toFixed(2)}
+                      </Button>
+                    </div>
+                  </div>
+                </>
+              );
+            }
+            
+            return null;
+          })()}
         </DialogContent>
       </Dialog>
     </Dialog>
