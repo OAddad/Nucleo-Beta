@@ -37706,3 +37706,13 @@
 2026-01-14T16:43:49.043286+00:00 | DB_CALL get_all_pedidos | P3 | 1.24ms | success
 2026-01-14T16:43:49.045137+00:00 | DB_CALL get_all_settings | P3 | 3.51ms | success
 2026-01-14T16:43:49.048374+00:00 | DB_CALL get_all_entregadores | P3 | 0.32ms | success
+2026-01-14T16:43:54.046602+00:00 | DB_CALL get_all_entregadores | P3 | 1.52ms | success
+2026-01-14T16:43:54.048236+00:00 | DB_CALL get_all_pedidos | P3 | 2.96ms | success
+2026-01-14T16:43:54.077944+00:00 | DB_CALL get_all_settings | P3 | 32.06ms | success
+2026-01-14T16:43:59.041905+00:00 | DB_CALL get_all_settings | P3 | 0.3ms | success
+2026-01-14T16:43:59.045494+00:00 | DB_CALL get_all_entregadores | P3 | 0.55ms | success
+2026-01-14T16:43:59.047575+00:00 | DB_CALL get_all_pedidos | P3 | 2.33ms | success
+2026-01-14T16:44:02.855395+00:00 | DB_CALL init_database | P3 | 2.67ms | success
+2026-01-14T16:44:02.855852+00:00 | DB_CALL count_ingredients | P3 | 0.22ms | success
+2026-01-14T16:44:02.856042+00:00 | DB_CALL count_products | P3 | 0.12ms | success
+2026-01-14T16:44:02.856194+00:00 | DB_CALL count_users | P3 | 0.1ms | success
