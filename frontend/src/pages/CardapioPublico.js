@@ -705,9 +705,9 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode, allProduc
 
           {/* Conteúdo do Resumo */}
           <div className="flex-1 overflow-y-auto p-4 space-y-4">
-            {/* Foto e Info do Produto Principal */}
-            <div className="flex gap-4">
-              <div className="w-24 h-24 rounded-xl overflow-hidden bg-orange-50 dark:bg-zinc-700 flex-shrink-0">
+            {/* Foto e Info do Produto Principal - SEM PREÇO */}
+            <div className="flex gap-4 items-center">
+              <div className="w-20 h-20 rounded-xl overflow-hidden bg-orange-50 dark:bg-zinc-700 flex-shrink-0">
                 {(selectedComboType === 'combo' ? (product.combo_photo_url || product.photo_url) : (product.simple_photo_url || product.photo_url)) && !imageError ? (
                   <img
                     src={getImageUrl(selectedComboType === 'combo' ? (product.combo_photo_url || product.photo_url) : (product.simple_photo_url || product.photo_url))}
@@ -722,32 +722,38 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode, allProduc
                 )}
               </div>
               <div className="flex-1">
-                <h3 className={`font-bold ${t.text}`}>{product.name}</h3>
-                <p className={`text-xs ${t.textMuted} mt-1`}>
-                  {selectedComboType === 'combo' ? 'COMBO' : 'SIMPLES'}
-                </p>
+                <h3 className={`font-bold text-lg ${t.text}`}>{product.name}</h3>
                 {product.description && (
                   <p className={`text-xs ${t.textMuted} mt-1 line-clamp-2`}>{product.description}</p>
                 )}
-                <p className="text-lg font-bold text-orange-500 mt-2">
-                  R$ {(selectedComboType === 'combo' ? comboPrice : simplePrice).toFixed(2).replace('.', ',')}
-                </p>
               </div>
             </div>
 
-            {/* Resumo das Etapas */}
-            {selectionsSummary.length > 0 && (
-              <div className={`${t.bgMuted} rounded-xl p-4 space-y-3`}>
-                <h4 className={`font-semibold text-sm ${t.text} flex items-center gap-2`}>
-                  <ClipboardList className="w-4 h-4" />
-                  Suas Escolhas
-                </h4>
-                {selectionsSummary.map((selection, idx) => (
-                  <div key={idx} className={`flex justify-between items-start py-2 ${idx > 0 ? `border-t ${t.border}` : ''}`}>
-                    <div>
-                      <p className={`text-xs font-medium ${t.textMuted}`}>{selection.stepName}</p>
-                      <p className={`text-sm ${t.text}`}>{selection.items.join(', ')}</p>
-                    </div>
+            {/* Resumo das Escolhas - COM TIPO E PREÇOS */}
+            <div className={`${t.bgMuted} rounded-xl p-4 space-y-3`}>
+              <h4 className={`font-semibold text-sm ${t.text} flex items-center gap-2`}>
+                <ClipboardList className="w-4 h-4" />
+                Suas Escolhas
+              </h4>
+              
+              {/* Tipo selecionado: COMBO ou SIMPLES */}
+              <div className={`flex justify-between items-center py-2 border-b ${t.border}`}>
+                <div>
+                  <p className={`text-xs font-medium ${t.textMuted}`}>Tipo</p>
+                  <p className={`text-sm font-semibold ${t.text}`}>
+                    {selectedComboType === 'combo' ? '🍟 COMBO' : '🍔 SIMPLES'}
+                  </p>
+                </div>
+                <span className="text-sm font-bold text-orange-500">
+                  R$ {(selectedComboType === 'combo' ? comboPrice : simplePrice).toFixed(2).replace('.', ',')}
+                </span>
+              </div>
+              
+              {/* Etapas com itens selecionados */}
+              {selectionsSummary.map((selection, idx) => (
+                <div key={idx} className={`py-2 ${idx < selectionsSummary.length - 1 ? `border-b ${t.border}` : ''}`}>
+                  <div className="flex justify-between items-start mb-1">
+                    <p className={`text-xs font-medium ${t.textMuted}`}>{selection.stepName}</p>
                     <button
                       onClick={() => setComboStep(selection.stepIndex + 1)}
                       className="text-orange-500 text-xs underline"
@@ -755,9 +761,19 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode, allProduc
                       Alterar
                     </button>
                   </div>
-                ))}
-              </div>
-            )}
+                  {selection.items.map((item, itemIdx) => (
+                    <div key={itemIdx} className="flex justify-between items-center">
+                      <p className={`text-sm ${t.text}`}>{item.name}</p>
+                      {item.price > 0 ? (
+                        <span className="text-sm font-semibold text-orange-500">+R$ {item.price.toFixed(2).replace('.', ',')}</span>
+                      ) : (
+                        <span className="text-xs text-green-600 dark:text-green-400 font-medium">Incluído</span>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              ))}
+            </div>
 
             {/* Campo de Observação */}
             <div>
@@ -775,23 +791,23 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode, allProduc
               <p className={`text-xs ${t.textMuted} mt-1 text-right`}>{observation.length}/200</p>
             </div>
 
-            {/* Quantidade */}
-            <div className="flex items-center justify-between">
-              <span className={`font-medium ${t.text}`}>Quantidade</span>
-              <div className={`flex items-center gap-0 ${t.bg} rounded-full border ${t.border} overflow-hidden`}>
+            {/* Quantidade - CENTRALIZADO E MAIS INTUITIVO */}
+            <div className={`${t.bgMuted} rounded-xl p-4`}>
+              <p className={`text-sm font-medium ${t.text} text-center mb-3`}>Quantidade</p>
+              <div className="flex items-center justify-center gap-4">
                 <button
-                  className={`w-10 h-10 flex items-center justify-center hover:bg-orange-50 dark:hover:bg-zinc-700 transition-colors ${quantity <= 1 ? 'opacity-30' : ''}`}
+                  className={`w-12 h-12 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center transition-all active:scale-95 ${quantity <= 1 ? 'opacity-40 cursor-not-allowed' : 'hover:bg-orange-200 dark:hover:bg-orange-900/50'}`}
                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
                   disabled={quantity <= 1}
                 >
-                  <Minus className="w-4 h-4" />
+                  <Minus className="w-5 h-5 text-orange-600 dark:text-orange-400" />
                 </button>
-                <span className={`w-10 text-center font-bold ${t.text}`}>{quantity}</span>
+                <span className={`text-3xl font-bold ${t.text} w-16 text-center`}>{quantity}</span>
                 <button
-                  className="w-10 h-10 flex items-center justify-center hover:bg-orange-50 dark:hover:bg-zinc-700 transition-colors"
+                  className="w-12 h-12 rounded-full bg-orange-500 flex items-center justify-center hover:bg-orange-600 transition-all active:scale-95 shadow-lg shadow-orange-500/30"
                   onClick={() => setQuantity(quantity + 1)}
                 >
-                  <Plus className="w-4 h-4" />
+                  <Plus className="w-5 h-5 text-white" />
                 </button>
               </div>
             </div>
@@ -801,7 +817,7 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode, allProduc
           <div className={`p-4 ${t.bgMuted} border-t ${t.border}`}>
             <button
               onClick={handleAdd}
-              className="w-full h-14 rounded-full bg-orange-500 hover:bg-orange-600 text-white font-bold text-lg flex items-center justify-center gap-2 transition-all shadow-lg shadow-orange-500/20"
+              className="w-full h-14 rounded-full bg-orange-500 hover:bg-orange-600 text-white font-bold text-lg flex items-center justify-center gap-2 transition-all shadow-lg shadow-orange-500/20 active:scale-[0.98]"
             >
               <ShoppingCart className="w-5 h-5" />
               Adicionar • R$ {totalPrice.toFixed(2).replace('.', ',')}
