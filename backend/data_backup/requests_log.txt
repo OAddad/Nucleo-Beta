@@ -37333,3 +37333,10 @@
 2026-01-14T16:23:00.991389+00:00 | DB_CALL count_ingredients | P3 | 0.24ms | success
 2026-01-14T16:23:00.991581+00:00 | DB_CALL count_products | P3 | 0.13ms | success
 2026-01-14T16:23:00.991732+00:00 | DB_CALL count_users | P3 | 0.1ms | success
+2026-01-14T16:23:09.836084+00:00 | DB_CALL get_all_settings | P3 | 2.05ms | success
+2026-01-14T16:23:10.033366+00:00 | DB_CALL get_all_business_hours | P3 | 1.6ms | success
+2026-01-14T16:23:10.034063+00:00 | DB_CALL get_all_settings | P3 | 1.58ms | success
+2026-01-14T16:23:10.034619+00:00 | DB_CALL get_all_categories | P3 | 1.37ms | success
+2026-01-14T16:23:10.039510+00:00 | DB_CALL get_all_products | P3 | 4.94ms | success
+2026-01-14T16:23:10.890700+00:00 | DB_CALL get_all_bairros | P3 | 0.39ms | success
+2026-01-14T16:23:11.034596+00:00 | DB_CALL get_all_settings | P3 | 0.28ms | success
