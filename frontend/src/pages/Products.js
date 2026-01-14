@@ -2741,14 +2741,20 @@ export default function Products() {
                                             {/* Preço Override */}
                                             <div className="flex items-center gap-1">
                                               <span className="text-xs text-muted-foreground">R$</span>
-                                              <Input
-                                                type="number"
-                                                step="0.01"
-                                                value={item.price_override || ""}
-                                                onChange={(e) => updateStepItem(stepIndex, itemIndex, "price_override", parseFloat(e.target.value) || 0)}
-                                                placeholder="0.00"
-                                                className="h-8 w-20 text-center text-sm font-semibold"
-                                              />
+                                              {step.sync_prices !== false ? (
+                                                <div className="h-8 w-20 flex items-center justify-center text-sm font-semibold text-green-600 bg-green-50 dark:bg-green-900/20 rounded border border-green-200 dark:border-green-800">
+                                                  {(itemProduct?.sale_price || 0).toFixed(2)}
+                                                </div>
+                                              ) : (
+                                                <Input
+                                                  type="number"
+                                                  step="0.01"
+                                                  value={item.price_override || ""}
+                                                  onChange={(e) => updateStepItem(stepIndex, itemIndex, "price_override", parseFloat(e.target.value) || 0)}
+                                                  placeholder="0.00"
+                                                  className="h-8 w-20 text-center text-sm font-semibold"
+                                                />
+                                              )}
                                             </div>
                                             
                                             {/* Botão Remover */}
