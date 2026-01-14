@@ -2533,12 +2533,14 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
                                 onClick={() => openProductPopup(product)}
                               >
                                 {product.photo_url ? (
-                                  <img 
-                                    src={getImageUrl(product.photo_url)} 
-                                    alt={product.name}
-                                    className="w-full h-24 object-cover rounded mb-2"
-                                    onError={(e) => e.target.style.display = 'none'}
-                                  />
+                                  <div className={`w-full h-24 rounded mb-2 overflow-hidden ${isPngImage(product.photo_url) ? 'bg-muted' : ''}`}>
+                                    <img 
+                                      src={getImageUrl(product.photo_url)} 
+                                      alt={product.name}
+                                      className={`w-full h-full ${isPngImage(product.photo_url) ? 'object-contain p-1' : 'object-cover'}`}
+                                      onError={(e) => e.target.parentElement.style.display = 'none'}
+                                    />
+                                  </div>
                                 ) : (
                                   <div className="w-full h-24 bg-muted rounded mb-2 flex items-center justify-center">
                                     <Package className="w-8 h-8 text-muted-foreground" />
