@@ -1429,12 +1429,15 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
     try {
       const res = await axios.get(`${API}/products`, getAuthHeader());
       const prods = Array.isArray(res.data) ? res.data : [];
-      // Filtrar produtos que NÃO são insumos (is_insumo = false)
+      // Guardar TODOS os produtos para buscar fotos (incluindo insumos)
+      setAllProductsForPhotos(prods);
+      // Filtrar produtos que NÃO são insumos (is_insumo = false) para exibição no cardápio
       // Insumos são ingredientes/adicionais internos que não aparecem no cardápio
       setProducts(prods.filter(p => !p.is_insumo));
     } catch (error) {
       console.error("Erro ao carregar produtos:", error);
       setProducts([]);
+      setAllProductsForPhotos([]);
     }
   };
 
