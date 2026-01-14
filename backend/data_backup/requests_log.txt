@@ -37234,3 +37234,11 @@
 2026-01-14T14:54:59.998452+00:00 | DB_CALL get_all_settings | P3 | 0.27ms | success
 2026-01-14T14:55:01.859775+00:00 | DB_CALL get_all_settings | P3 | 0.28ms | success
 2026-01-14T14:55:07.866103+00:00 | DB_CALL set_setting | P3 | 5.35ms | success
+2026-01-14T14:55:15.438720+00:00 | DB_CALL get_all_settings | P3 | 0.31ms | success
+2026-01-14T14:55:15.440630+00:00 | DB_CALL get_all_settings | P3 | 0.17ms | success
+2026-01-14T14:55:15.999616+00:00 | DB_CALL get_all_settings | P3 | 0.28ms | success
+2026-01-14T14:55:16.004140+00:00 | DB_CALL get_all_settings | P3 | 1.36ms | success
+2026-01-14T14:55:16.178402+00:00 | DB_CALL get_all_settings | P3 | 0.32ms | success
+2026-01-14T14:55:17.587235+00:00 | DB_CALL get_all_settings | P3 | 2.64ms | success
+2026-01-14T14:55:18.836772+00:00 | DB_CALL get_all_settings | P3 | 0.27ms | success
+2026-01-14T14:55:19.993233+00:00 | DB_CALL get_all_settings | P3 | 0.29ms | success
