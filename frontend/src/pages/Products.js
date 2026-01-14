@@ -625,6 +625,8 @@ export default function Products() {
     setFilterPhoto("todos");
     setFilterDescription("todos");
     setFilterCategory("todos");
+    setFilterName("");
+    setFilterType("todos");
   };
 
   // Auto-marcar insumo e divisível quando o tipo é "receita"
