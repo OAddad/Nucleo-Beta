@@ -145,6 +145,15 @@ export default function Delivery() {
         }
       }
       
+      // Carregar impressoras
+      if (settingsRes.data.impressoras) {
+        try {
+          setImpressoras(JSON.parse(settingsRes.data.impressoras));
+        } catch (e) {
+          setImpressoras([]);
+        }
+      }
+      
       // Carregar dados da empresa para impressão
       setEmpresaConfig({
         nome: settingsRes.data.company_name || settingsRes.data.empresa_nome || "Minha Empresa",
