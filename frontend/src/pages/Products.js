@@ -1141,6 +1141,62 @@ export default function Products() {
     setOrderSteps(newSteps);
   };
 
+  // Mover item para cima ou para baixo na etapa
+  const moveStepItem = (stepIndex, itemIndex, direction) => {
+    const newSteps = [...orderSteps];
+    const items = [...newSteps[stepIndex].items];
+    const newIndex = direction === 'up' ? itemIndex - 1 : itemIndex + 1;
+    
+    if (newIndex < 0 || newIndex >= items.length) return;
+    
+    // Trocar posições
+    [items[itemIndex], items[newIndex]] = [items[newIndex], items[itemIndex]];
+    newSteps[stepIndex].items = items;
+    setOrderSteps(newSteps);
+  };
+
+  // Ordenar itens da etapa alfabeticamente
+  const sortStepItems = (stepIndex, order = 'asc') => {
+    const newSteps = [...orderSteps];
+    const items = [...(newSteps[stepIndex].items || [])];
+    
+    items.sort((a, b) => {
+      const nameA = a.product_name.toLowerCase();
+      const nameB = b.product_name.toLowerCase();
+      if (order === 'asc') {
+        return nameA.localeCompare(nameB);
+      } else {
+        return nameB.localeCompare(nameA);
+      }
+    });
+    
+    newSteps[stepIndex].items = items;
+    setOrderSteps(newSteps);
+    toast.success(`Itens ordenados ${order === 'asc' ? 'A→Z' : 'Z→A'}`);
+  };
+
+  // Ordenar itens por preço
+  const sortStepItemsByPrice = (stepIndex, order = 'asc') => {
+    const newSteps = [...orderSteps];
+    const items = [...(newSteps[stepIndex].items || [])];
+    
+    items.sort((a, b) => {
+      const priceA = a.price_override || 0;
+      const priceB = b.price_override || 0;
+      if (order === 'asc') {
+        return priceA - priceB;
+      } else {
+        return priceB - priceA;
+      }
+    });
+    
+    newSteps[stepIndex].items = items;
+    setOrderSteps(newSteps);
+    toast.success(`Itens ordenados por preço ${order === 'asc' ? '↑' : '↓'}`);
+  };
+    setOrderSteps(newSteps);
+  };
+
   const addRecipeItem = (type) => {
     if (type === "ingredient") {
       setRecipeIngredients([...recipeIngredients, { ingredient_id: "", quantity: "" }]);
