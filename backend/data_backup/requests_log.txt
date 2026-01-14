@@ -40087,3 +40087,5 @@
 2026-01-14T23:44:04.282237+00:00 | DB_CALL get_all_business_hours | P3 | 16.96ms | success
 2026-01-14T23:44:04.366708+00:00 | DB_CALL get_all_products | P3 | 4.44ms | success
 2026-01-14T23:44:05.112543+00:00 | DB_CALL get_all_products | P3 | 4.73ms | success
+2026-01-14T23:44:08.338680+00:00 | DB_CALL get_all_products | P3 | 3.42ms | success
+2026-01-14T23:44:09.184741+00:00 | DB_CALL get_all_products | P3 | 3.33ms | success

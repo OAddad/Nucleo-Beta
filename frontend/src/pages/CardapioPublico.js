@@ -1007,7 +1007,13 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode, allProduc
                     
                     {/* Info do Item */}
                     <div className="flex-1 min-w-0">
-                      <p className={`font-medium text-xs ${t.text} line-clamp-2 leading-tight`}>{item.product_name}</p>
+                      <p className={`font-medium text-xs ${t.text} line-clamp-1 leading-tight`}>{item.product_name}</p>
+                      {(() => {
+                        const itemDescription = getProductDescription(item.product_id);
+                        return itemDescription ? (
+                          <p className={`text-[10px] ${t.textMuted} line-clamp-2 mt-0.5`}>{itemDescription}</p>
+                        ) : null;
+                      })()}
                       {(() => {
                         const itemPrice = getItemPrice(item, currentStep);
                         return itemPrice > 0 ? (
