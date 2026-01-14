@@ -2380,10 +2380,35 @@ export default function Products() {
                                   : 'bg-gray-50 dark:bg-zinc-800'
                               }`}>
                                 <div className="flex items-center gap-3">
-                                  <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-white ${
-                                    step.combo_only ? 'bg-purple-500' : 'bg-orange-500'
-                                  }`}>
-                                    {stepIndex + 1}
+                                  {/* Botões de Mover Etapa + Número */}
+                                  <div className="flex flex-col items-center">
+                                    <button
+                                      type="button"
+                                      onClick={() => moveOrderStep(stepIndex, 'up')}
+                                      disabled={stepIndex === 0}
+                                      className={`p-0.5 rounded hover:bg-white/50 dark:hover:bg-zinc-700 transition-colors ${
+                                        stepIndex === 0 ? 'opacity-30 cursor-not-allowed' : ''
+                                      }`}
+                                      title="Mover etapa para cima"
+                                    >
+                                      <ArrowUp className="w-3.5 h-3.5" />
+                                    </button>
+                                    <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-white ${
+                                      step.combo_only ? 'bg-purple-500' : 'bg-orange-500'
+                                    }`}>
+                                      {stepIndex + 1}
+                                    </div>
+                                    <button
+                                      type="button"
+                                      onClick={() => moveOrderStep(stepIndex, 'down')}
+                                      disabled={stepIndex === orderSteps.length - 1}
+                                      className={`p-0.5 rounded hover:bg-white/50 dark:hover:bg-zinc-700 transition-colors ${
+                                        stepIndex === orderSteps.length - 1 ? 'opacity-30 cursor-not-allowed' : ''
+                                      }`}
+                                      title="Mover etapa para baixo"
+                                    >
+                                      <ArrowDown className="w-3.5 h-3.5" />
+                                    </button>
                                   </div>
                                   <div>
                                     <Input
