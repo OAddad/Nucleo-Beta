@@ -481,6 +481,9 @@ export default function Products() {
   const [currentUser, setCurrentUser] = useState(null);
   const [activeFormTab, setActiveFormTab] = useState("ficha"); // "ficha" ou "etapas"
   
+  // Estado para ordem dos cards (combo primeiro ou simples primeiro)
+  const [cardOrder, setCardOrder] = useState("combo_first"); // "combo_first" ou "simple_first"
+  
   // Estados para campos de receita (rendimento)
   const [recipeYield, setRecipeYield] = useState("");
   const [recipeYieldUnit, setRecipeYieldUnit] = useState("kg");
