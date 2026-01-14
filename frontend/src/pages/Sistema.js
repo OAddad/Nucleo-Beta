@@ -1728,22 +1728,35 @@ function DownloadApp({ toast }) {
 // ==================== SUB-ABA: CONFIGURAÇÕES ====================
 function ConfiguracaoImpressao({ toast }) {
   const [config, setConfig] = useState({
-    impressao_automatica: true,
+    // Cabeçalho da Empresa
     mostrar_logo: true,
-    mostrar_endereco_empresa: true,
-    mostrar_telefone_empresa: true,
-    mostrar_data_hora: true,
-    mostrar_codigo_pedido: true,
-    mostrar_cliente_nome: true,
-    mostrar_cliente_telefone: true,
-    mostrar_endereco_entrega: true,
+    empresa_nome: "",
+    empresa_endereco: "",
+    empresa_cidade: "",
+    empresa_telefone: "",
+    empresa_cnpj: "",
+    empresa_ie: "",
+    empresa_im: "",
+    
+    // Opções de exibição
+    impressao_automatica: true,
+    formato_itens: "qtd_preco_item_total",
+    mostrar_observacoes_item: true,
+    mostrar_adicionais: true,
+    mostrar_taxa_entrega: true,
+    mostrar_desconto: true,
     mostrar_forma_pagamento: true,
-    mostrar_observacoes: true,
-    mensagem_rodape: "Obrigado pela preferência!",
+    mostrar_info_entrega: true,
+    
+    // Textos personalizáveis
+    titulo_itens: "ITENS DO PEDIDO",
+    titulo_info_entrega: "Informacoes de Entrega",
+    texto_pagar_entrega: "Pagar na entrega",
+    mensagem_rodape: "NAO E DOCUMENTO FISCAL",
   });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [empresaConfig, setEmpresaConfig] = useState({});
+  const [activeSection, setActiveSection] = useState("empresa");
 
   useEffect(() => {
     fetchConfig();
@@ -1751,25 +1764,13 @@ function ConfiguracaoImpressao({ toast }) {
 
   const fetchConfig = async () => {
     try {
-      const response = await fetch(`${API_URL}/api/settings`);
-      const data = await response.json();
-      
-      if (data.impressao_config) {
-        try {
-          const impressaoConfig = JSON.parse(data.impressao_config);
-          setConfig(prev => ({ ...prev, ...impressaoConfig }));
-        } catch (e) {
-          console.log("Usando configurações padrão");
-        }
+      const response = await fetch(`${API_URL}/api/print-config`);
+      if (response.ok) {
+        const data = await response.json();
+        setConfig(prev => ({ ...prev, ...data }));
       }
-      
-      setEmpresaConfig({
-        nome: data.company_name || "Minha Empresa",
-        endereco: data.company_address || "",
-        telefone: data.company_phone || "",
-      });
     } catch (error) {
-      console.error("Erro:", error);
+      console.error("Erro ao carregar config:", error);
     } finally {
       setLoading(false);
     }
@@ -1778,23 +1779,36 @@ function ConfiguracaoImpressao({ toast }) {
   const handleSave = async () => {
     setSaving(true);
     try {
-      await fetch(`${API_URL}/api/settings`, {
+      const response = await fetch(`${API_URL}/api/print-config`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ impressao_config: JSON.stringify(config) })
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify(config)
       });
-      toast({ title: "Sucesso!", description: "Configurações salvas" });
+      
+      if (response.ok) {
+        toast({ title: "✅ Salvo!", description: "Configurações de impressão atualizadas" });
+      } else {
+        throw new Error("Erro ao salvar");
+      }
     } catch (error) {
-      toast({ title: "Erro", description: "Erro ao salvar", variant: "destructive" });
+      toast({ title: "Erro", description: "Erro ao salvar configurações", variant: "destructive" });
     } finally {
       setSaving(false);
     }
+  };
+
+  const handleChange = (field, value) => {
+    setConfig(prev => ({ ...prev, [field]: value }));
   };
 
   const handleToggle = (field) => {
     setConfig(prev => ({ ...prev, [field]: !prev[field] }));
   };
 
+  // Pedido exemplo para preview
   const pedidoExemplo = {
     codigo: "A001",
     cliente_nome: "João Silva",
@@ -1808,9 +1822,11 @@ function ConfiguracaoImpressao({ toast }) {
       { nome: "X-Burger", quantidade: 2, preco_unitario: 25.00, observacao: "Sem cebola" },
       { nome: "Batata Frita G", quantidade: 1, preco_unitario: 15.00 },
     ],
+    subtotal: 65.00,
     valor_entrega: 5.00,
     total: 70.00,
     forma_pagamento: "Cartão de Crédito",
+    pagar_na_entrega: true,
     observacao: "Entregar no portão",
     created_at: new Date().toISOString(),
   };
@@ -1823,97 +1839,259 @@ function ConfiguracaoImpressao({ toast }) {
     );
   }
 
+  const sections = [
+    { id: "empresa", label: "Dados da Empresa", icon: Building2 },
+    { id: "layout", label: "Layout do Cupom", icon: FileText },
+    { id: "textos", label: "Textos", icon: Type },
+  ];
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       {/* Configurações */}
-      <div className="space-y-6">
-        <div className="bg-card border rounded-xl p-6">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="p-2 rounded-lg bg-blue-100 dark:bg-blue-900/50">
-              <Settings className="w-5 h-5 text-blue-600" />
-            </div>
-            <div>
-              <h2 className="font-bold text-lg">Configurações do Cupom</h2>
-              <p className="text-sm text-muted-foreground">Defina o que aparece no cupom</p>
-            </div>
-          </div>
-
-          {/* Toggle Impressão Automática */}
-          <div className="flex items-center justify-between p-4 bg-blue-50 dark:bg-blue-950/30 rounded-lg mb-6">
-            <div className="flex items-center gap-3">
-              <Printer className="w-5 h-5 text-blue-600" />
-              <div>
-                <p className="font-medium">Impressão Automática</p>
-                <p className="text-xs text-muted-foreground">Imprimir ao aceitar pedido</p>
-              </div>
-            </div>
+      <div className="space-y-4">
+        {/* Tabs de seções */}
+        <div className="flex gap-2 overflow-x-auto pb-2">
+          {sections.map(({ id, label, icon: Icon }) => (
             <button
-              onClick={() => handleToggle('impressao_automatica')}
-              className={`w-12 h-6 rounded-full transition-colors relative ${
-                config.impressao_automatica ? 'bg-blue-500' : 'bg-gray-300 dark:bg-gray-600'
+              key={id}
+              onClick={() => setActiveSection(id)}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${
+                activeSection === id
+                  ? "bg-blue-500 text-white"
+                  : "bg-muted hover:bg-muted/80 text-muted-foreground"
               }`}
             >
-              <div className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-transform ${
-                config.impressao_automatica ? 'translate-x-7' : 'translate-x-1'
-              }`} />
+              <Icon className="w-4 h-4" />
+              {label}
             </button>
-          </div>
+          ))}
+        </div>
 
-          {/* Opções */}
-          <div className="space-y-2">
-            <h3 className="font-semibold text-sm text-muted-foreground uppercase tracking-wide mb-3">
-              Informações no Cupom
+        {/* Seção: Dados da Empresa */}
+        {activeSection === "empresa" && (
+          <div className="bg-card border rounded-xl p-6 space-y-4">
+            <h3 className="font-bold text-lg flex items-center gap-2">
+              <Building2 className="w-5 h-5 text-blue-500" />
+              Dados da Empresa (Cabeçalho do Cupom)
             </h3>
             
-            {[
-              { key: 'mostrar_logo', label: 'Nome da Empresa', icon: Building2 },
-              { key: 'mostrar_endereco_empresa', label: 'Endereço da Empresa', icon: MapPin },
-              { key: 'mostrar_telefone_empresa', label: 'Telefone da Empresa', icon: Phone },
-              { key: 'mostrar_data_hora', label: 'Data e Hora', icon: Calendar },
-              { key: 'mostrar_codigo_pedido', label: 'Código do Pedido', icon: Hash },
-              { key: 'mostrar_cliente_nome', label: 'Nome do Cliente', icon: Users },
-              { key: 'mostrar_cliente_telefone', label: 'Telefone do Cliente', icon: Phone },
-              { key: 'mostrar_endereco_entrega', label: 'Endereço de Entrega', icon: Map },
-              { key: 'mostrar_forma_pagamento', label: 'Forma de Pagamento', icon: DollarSign },
-              { key: 'mostrar_observacoes', label: 'Observações', icon: FileText },
-            ].map(({ key, label, icon: Icon }) => (
-              <div key={key} className="flex items-center justify-between py-2 border-b last:border-0">
+            <div className="space-y-4">
+              <div>
+                <label className="text-sm font-medium mb-1 block">Nome da Empresa *</label>
+                <Input
+                  value={config.empresa_nome}
+                  onChange={(e) => handleChange('empresa_nome', e.target.value)}
+                  placeholder="Point do Addad"
+                />
+              </div>
+              
+              <div>
+                <label className="text-sm font-medium mb-1 block">Endereço</label>
+                <Input
+                  value={config.empresa_endereco}
+                  onChange={(e) => handleChange('empresa_endereco', e.target.value)}
+                  placeholder="Av. Joaquim Ribeiro, 411 - Centro"
+                />
+              </div>
+              
+              <div>
+                <label className="text-sm font-medium mb-1 block">Cidade/Estado</label>
+                <Input
+                  value={config.empresa_cidade}
+                  onChange={(e) => handleChange('empresa_cidade', e.target.value)}
+                  placeholder="Santa Vitória - MG"
+                />
+              </div>
+              
+              <div>
+                <label className="text-sm font-medium mb-1 block">Telefone</label>
+                <Input
+                  value={config.empresa_telefone}
+                  onChange={(e) => handleChange('empresa_telefone', e.target.value)}
+                  placeholder="(34) 9.9672-7535"
+                />
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="text-sm font-medium mb-1 block">CNPJ</label>
+                  <Input
+                    value={config.empresa_cnpj}
+                    onChange={(e) => handleChange('empresa_cnpj', e.target.value)}
+                    placeholder="00.000.000/0001-00"
+                  />
+                </div>
+                <div>
+                  <label className="text-sm font-medium mb-1 block">Insc. Estadual</label>
+                  <Input
+                    value={config.empresa_ie}
+                    onChange={(e) => handleChange('empresa_ie', e.target.value)}
+                    placeholder="0000000000000"
+                  />
+                </div>
+              </div>
+              
+              <div>
+                <label className="text-sm font-medium mb-1 block">Insc. Municipal</label>
+                <Input
+                  value={config.empresa_im}
+                  onChange={(e) => handleChange('empresa_im', e.target.value)}
+                  placeholder="00000000000"
+                />
+              </div>
+              
+              <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
                 <div className="flex items-center gap-2">
-                  <Icon className="w-4 h-4 text-muted-foreground" />
-                  <span className="text-sm">{label}</span>
+                  <ImageIcon className="w-4 h-4 text-muted-foreground" />
+                  <span className="text-sm">Mostrar Logo no Cupom</span>
                 </div>
                 <button
-                  onClick={() => handleToggle(key)}
+                  onClick={() => handleToggle('mostrar_logo')}
                   className={`w-10 h-5 rounded-full transition-colors relative ${
-                    config[key] ? 'bg-green-500' : 'bg-gray-300 dark:bg-gray-600'
+                    config.mostrar_logo ? 'bg-green-500' : 'bg-gray-300 dark:bg-gray-600'
                   }`}
                 >
                   <div className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-transform ${
-                    config[key] ? 'translate-x-5' : 'translate-x-0.5'
+                    config.mostrar_logo ? 'translate-x-5' : 'translate-x-0.5'
                   }`} />
                 </button>
               </div>
-            ))}
+            </div>
           </div>
+        )}
 
-          {/* Mensagem Rodapé */}
-          <div className="mt-6">
-            <label className="text-sm font-medium mb-2 block">Mensagem do Rodapé</label>
-            <Input
-              value={config.mensagem_rodape}
-              onChange={(e) => setConfig(prev => ({ ...prev, mensagem_rodape: e.target.value }))}
-              placeholder="Obrigado pela preferência!"
-              maxLength={50}
-            />
+        {/* Seção: Layout do Cupom */}
+        {activeSection === "layout" && (
+          <div className="bg-card border rounded-xl p-6 space-y-4">
+            <h3 className="font-bold text-lg flex items-center gap-2">
+              <FileText className="w-5 h-5 text-blue-500" />
+              Layout do Cupom
+            </h3>
+            
+            {/* Formato dos Itens */}
+            <div>
+              <label className="text-sm font-medium mb-2 block">Formato dos Itens</label>
+              <div className="grid grid-cols-1 gap-2">
+                <label className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer ${
+                  config.formato_itens === 'qtd_preco_item_total' ? 'border-blue-500 bg-blue-50 dark:bg-blue-950/30' : 'border-gray-200'
+                }`}>
+                  <input
+                    type="radio"
+                    name="formato_itens"
+                    checked={config.formato_itens === 'qtd_preco_item_total'}
+                    onChange={() => handleChange('formato_itens', 'qtd_preco_item_total')}
+                    className="text-blue-500"
+                  />
+                  <div>
+                    <p className="font-medium text-sm">QTD x PREÇO - ITEM - TOTAL</p>
+                    <p className="text-xs text-muted-foreground font-mono">2 x 25,00  X-Burger  R$50,00</p>
+                  </div>
+                </label>
+                <label className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer ${
+                  config.formato_itens === 'qtd_item_total' ? 'border-blue-500 bg-blue-50 dark:bg-blue-950/30' : 'border-gray-200'
+                }`}>
+                  <input
+                    type="radio"
+                    name="formato_itens"
+                    checked={config.formato_itens === 'qtd_item_total'}
+                    onChange={() => handleChange('formato_itens', 'qtd_item_total')}
+                    className="text-blue-500"
+                  />
+                  <div>
+                    <p className="font-medium text-sm">QTD x ITEM - TOTAL</p>
+                    <p className="text-xs text-muted-foreground font-mono">2x X-Burger         R$50,00</p>
+                  </div>
+                </label>
+              </div>
+            </div>
+            
+            {/* Toggles */}
+            <div className="space-y-2 pt-4 border-t">
+              <h4 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Seções do Cupom</h4>
+              
+              {[
+                { key: 'impressao_automatica', label: 'Impressão Automática', desc: 'Imprimir ao aceitar pedido' },
+                { key: 'mostrar_observacoes_item', label: 'Observações dos Itens', desc: 'Ex: Sem cebola, bem passado' },
+                { key: 'mostrar_adicionais', label: 'Adicionais', desc: 'Mostrar adicionais dos itens' },
+                { key: 'mostrar_taxa_entrega', label: 'Taxa de Entrega', desc: 'Exibir valor da entrega' },
+                { key: 'mostrar_desconto', label: 'Descontos', desc: 'Exibir descontos aplicados' },
+                { key: 'mostrar_forma_pagamento', label: 'Forma de Pagamento', desc: 'Exibir como vai pagar' },
+                { key: 'mostrar_info_entrega', label: 'Informações de Entrega', desc: 'Cliente, telefone, endereço' },
+              ].map(({ key, label, desc }) => (
+                <div key={key} className="flex items-center justify-between py-2">
+                  <div>
+                    <p className="text-sm font-medium">{label}</p>
+                    <p className="text-xs text-muted-foreground">{desc}</p>
+                  </div>
+                  <button
+                    onClick={() => handleToggle(key)}
+                    className={`w-10 h-5 rounded-full transition-colors relative ${
+                      config[key] ? 'bg-green-500' : 'bg-gray-300 dark:bg-gray-600'
+                    }`}
+                  >
+                    <div className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-transform ${
+                      config[key] ? 'translate-x-5' : 'translate-x-0.5'
+                    }`} />
+                  </button>
+                </div>
+              ))}
+            </div>
           </div>
+        )}
 
-          <div className="flex gap-3 mt-6">
-            <Button onClick={handleSave} disabled={saving} className="flex-1">
-              {saving ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Save className="w-4 h-4 mr-2" />}
-              Salvar Configurações
-            </Button>
+        {/* Seção: Textos */}
+        {activeSection === "textos" && (
+          <div className="bg-card border rounded-xl p-6 space-y-4">
+            <h3 className="font-bold text-lg flex items-center gap-2">
+              <Type className="w-5 h-5 text-blue-500" />
+              Textos Personalizados
+            </h3>
+            
+            <div className="space-y-4">
+              <div>
+                <label className="text-sm font-medium mb-1 block">Título da Seção de Itens</label>
+                <Input
+                  value={config.titulo_itens}
+                  onChange={(e) => handleChange('titulo_itens', e.target.value)}
+                  placeholder="ITENS DO PEDIDO"
+                />
+              </div>
+              
+              <div>
+                <label className="text-sm font-medium mb-1 block">Título de Informações de Entrega</label>
+                <Input
+                  value={config.titulo_info_entrega}
+                  onChange={(e) => handleChange('titulo_info_entrega', e.target.value)}
+                  placeholder="Informacoes de Entrega"
+                />
+              </div>
+              
+              <div>
+                <label className="text-sm font-medium mb-1 block">Texto "Pagar na Entrega"</label>
+                <Input
+                  value={config.texto_pagar_entrega}
+                  onChange={(e) => handleChange('texto_pagar_entrega', e.target.value)}
+                  placeholder="Pagar na entrega"
+                />
+              </div>
+              
+              <div>
+                <label className="text-sm font-medium mb-1 block">Mensagem do Rodapé</label>
+                <Input
+                  value={config.mensagem_rodape}
+                  onChange={(e) => handleChange('mensagem_rodape', e.target.value)}
+                  placeholder="NAO E DOCUMENTO FISCAL"
+                />
+              </div>
+            </div>
           </div>
-        </div>
+        )}
+
+        {/* Botão Salvar */}
+        <Button onClick={handleSave} disabled={saving} className="w-full" size="lg">
+          {saving ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Save className="w-4 h-4 mr-2" />}
+          Salvar Configurações
+        </Button>
       </div>
 
       {/* Preview */}
@@ -1926,17 +2104,26 @@ function ConfiguracaoImpressao({ toast }) {
             </div>
             <Button 
               size="sm" 
-              onClick={() => {
-                // Buscar impressora padrão
-                fetchImpressoraPadrao().then(impressora => {
-                  if (impressora) {
-                    addToPrintQueue(pedidoExemplo, impressora);
-                    toast({ title: "Teste enviado!", description: "Verifique a fila de impressão" });
-                  } else {
-                    // Fallback para window.print
-                    printPedido(pedidoExemplo, config, empresaConfig);
-                  }
-                });
+              onClick={async () => {
+                // Enviar para Print Connector
+                const pedidoComConfig = {
+                  ...pedidoExemplo,
+                  empresa_nome: config.empresa_nome,
+                  empresa_endereco: config.empresa_endereco,
+                  empresa_cidade: config.empresa_cidade,
+                  empresa_telefone: config.empresa_telefone,
+                  empresa_cnpj: config.empresa_cnpj,
+                  empresa_ie: config.empresa_ie,
+                  empresa_im: config.empresa_im,
+                  mensagem_rodape: config.mensagem_rodape,
+                };
+                
+                const result = await printViaPrintConnector(pedidoComConfig, { template: 'caixa' });
+                if (result.success) {
+                  toast({ title: "✅ Enviado!", description: "Teste enviado para impressora" });
+                } else {
+                  toast({ title: "Erro", description: result.error || "Print Connector offline", variant: "destructive" });
+                }
               }}
             >
               <Printer className="w-4 h-4 mr-2" />
@@ -1944,8 +2131,89 @@ function ConfiguracaoImpressao({ toast }) {
             </Button>
           </div>
           
-          <div className="bg-white border-2 border-dashed rounded-lg p-4 font-mono text-xs" style={{ maxWidth: '300px', margin: '0 auto' }}>
-            <CupomPreview config={config} pedido={pedidoExemplo} empresa={empresaConfig} />
+          {/* Preview Visual */}
+          <div className="bg-white dark:bg-gray-900 border-2 border-dashed rounded-lg p-4 font-mono text-xs overflow-auto" style={{ maxWidth: '320px', margin: '0 auto' }}>
+            <div className="text-center space-y-1">
+              {config.mostrar_logo && <div className="text-muted-foreground">[LOGO]</div>}
+              <div className="font-bold text-sm">{config.empresa_nome || "Nome da Empresa"}</div>
+              {config.empresa_endereco && <div>{config.empresa_endereco}</div>}
+              {config.empresa_cidade && <div>{config.empresa_cidade}</div>}
+              {config.empresa_telefone && <div>TEL: {config.empresa_telefone}</div>}
+              {config.empresa_cnpj && <div>CNPJ: {config.empresa_cnpj}</div>}
+              {config.empresa_ie && <div>IE: {config.empresa_ie}</div>}
+              {config.empresa_im && <div>IM: {config.empresa_im}</div>}
+            </div>
+            
+            <div className="border-t border-dashed my-2" />
+            
+            <div className="flex justify-between">
+              <span>#{pedidoExemplo.codigo}</span>
+              <span>{new Date().toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' })}</span>
+            </div>
+            
+            <div className="border-t border-dashed my-2" />
+            
+            <div className="text-center font-bold">{config.titulo_itens}</div>
+            {config.formato_itens === 'qtd_preco_item_total' && (
+              <div className="text-[10px] text-muted-foreground">QTD PRECO    ITEM         TOTAL</div>
+            )}
+            
+            <div className="border-t border-dashed my-1" />
+            
+            {pedidoExemplo.items.map((item, i) => (
+              <div key={i}>
+                {config.formato_itens === 'qtd_preco_item_total' ? (
+                  <div>{item.quantidade} x {item.preco_unitario.toFixed(2).padStart(5)}  {item.nome.substring(0, 12).padEnd(12)} R${(item.quantidade * item.preco_unitario).toFixed(2)}</div>
+                ) : (
+                  <div className="flex justify-between">
+                    <span>{item.quantidade}x {item.nome}</span>
+                    <span>R${(item.quantidade * item.preco_unitario).toFixed(2)}</span>
+                  </div>
+                )}
+                {config.mostrar_observacoes_item && item.observacao && (
+                  <div className="text-muted-foreground pl-2">- {item.observacao}</div>
+                )}
+              </div>
+            ))}
+            
+            <div className="border-t border-dashed my-2" />
+            
+            {config.mostrar_taxa_entrega && pedidoExemplo.valor_entrega > 0 && (
+              <div className="flex justify-between">
+                <span>Taxa de Entrega:</span>
+                <span>R$ {pedidoExemplo.valor_entrega.toFixed(2)}</span>
+              </div>
+            )}
+            
+            <div className="border-t border-dashed my-2" />
+            
+            <div className="flex justify-between font-bold">
+              <span>TOTAL:</span>
+              <span>R$ {pedidoExemplo.total.toFixed(2)}</span>
+            </div>
+            
+            <div className="border-t border-dashed my-2" />
+            
+            {config.mostrar_forma_pagamento && (
+              <>
+                <div className="text-center">-- {config.texto_pagar_entrega} --</div>
+                <div>PAGAMENTO: {pedidoExemplo.forma_pagamento}</div>
+                <div className="border-t border-dashed my-2" />
+              </>
+            )}
+            
+            {config.mostrar_info_entrega && (
+              <>
+                <div className="text-center font-bold">-- {config.titulo_info_entrega} --</div>
+                <div>CLIENTE: {pedidoExemplo.cliente_nome}</div>
+                <div>TEL: {pedidoExemplo.cliente_telefone}</div>
+                <div>END: {pedidoExemplo.endereco_rua}, {pedidoExemplo.endereco_numero}</div>
+                <div>{pedidoExemplo.endereco_complemento}, {pedidoExemplo.endereco_bairro}</div>
+                <div className="border-b border-double my-2" />
+              </>
+            )}
+            
+            <div className="text-center font-bold">{config.mensagem_rodape}</div>
           </div>
         </div>
       </div>
