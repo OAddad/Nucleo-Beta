@@ -2576,9 +2576,18 @@ export default function CardapioPublico({ onAdminLogin }) {
     try {
       const data = await fetchWithFallback('/public/products');
       setProducts(Array.isArray(data) ? data : []);
+      // Buscar TODOS os produtos para fotos (incluindo insumos)
+      try {
+        const allData = await fetchWithFallback('/public/products/all');
+        setAllProductsForPhotos(Array.isArray(allData) ? allData : []);
+      } catch (e) {
+        // Fallback: usar os produtos normais
+        setAllProductsForPhotos(Array.isArray(data) ? data : []);
+      }
     } catch (error) {
       console.error("Erro ao carregar produtos:", error);
       setProducts([]);
+      setAllProductsForPhotos([]);
     } finally {
       setLoading(false);
     }

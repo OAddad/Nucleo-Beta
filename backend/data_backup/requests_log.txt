@@ -39168,3 +39168,7 @@
 2026-01-14T23:03:33.484558+00:00 | DB_CALL get_all_business_hours | P3 | 211.94ms | success
 2026-01-14T23:03:33.728113+00:00 | DB_CALL get_all_bairros | P3 | 2.46ms | success
 2026-01-14T23:03:34.174763+00:00 | DB_CALL get_all_bairros | P3 | 0.35ms | success
+2026-01-14T23:03:54.145341+00:00 | DB_CALL init_database | P3 | 7.15ms | success
+2026-01-14T23:03:54.147562+00:00 | DB_CALL count_ingredients | P3 | 1.88ms | success
+2026-01-14T23:03:54.147816+00:00 | DB_CALL count_products | P3 | 0.16ms | success
+2026-01-14T23:03:54.147964+00:00 | DB_CALL count_users | P3 | 0.09ms | success
