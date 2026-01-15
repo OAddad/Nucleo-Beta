@@ -2254,10 +2254,13 @@ function ConfiguracaoImpressao({ toast }) {
             
             <div className="border-t border-dashed border-gray-400 my-2" />
             
-            {/* ===== CÓDIGO E DATA NA MESMA LINHA ===== */}
-            <div className="flex justify-between items-center mb-2">
-              <span className="text-lg font-bold">#{pedidoExemplo.codigo}</span>
-              <span className="text-[10px]">{new Date().toLocaleDateString('pt-BR')}, {new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</span>
+            {/* ===== CÓDIGO DO PEDIDO (3x MAIOR, NEGRITO, CENTRALIZADO) ===== */}
+            <div className="text-center mb-1">
+              <span className="text-2xl font-bold">#{pedidoExemplo.codigo}</span>
+            </div>
+            {/* ===== DATA/HORA (alinhada à direita) ===== */}
+            <div className="text-right text-[10px] mb-2">
+              {new Date().toLocaleDateString('pt-BR')}, {new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
             </div>
             
             <div className="border-t border-dashed border-gray-400 my-2" />

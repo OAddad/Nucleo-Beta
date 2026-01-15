@@ -46277,3 +46277,10 @@
 2026-01-15T15:54:16.381652+00:00 | DB_CALL get_all_categories | P3 | 92.72ms | success
 2026-01-15T15:54:16.385443+00:00 | DB_CALL get_all_business_hours | P3 | 96.29ms | success
 2026-01-15T15:54:16.405365+00:00 | DB_CALL get_all_settings | P3 | 0.3ms | success
+2026-01-15T15:54:17.682027+00:00 | DB_CALL get_all_products | P3 | 19.29ms | success
+2026-01-15T15:54:17.903477+00:00 | DB_CALL get_all_bairros | P3 | 1.45ms | success
+2026-01-15T15:54:18.021163+00:00 | DB_CALL get_all_products | P3 | 70.29ms | success
+2026-01-15T15:54:19.213070+00:00 | DB_CALL get_all_products | P3 | 20.77ms | success
+2026-01-15T15:54:24.641080+00:00 | DB_CALL get_all_settings | P3 | 0.29ms | success
+2026-01-15T15:54:25.497437+00:00 | DB_CALL get_all_settings | P3 | 0.98ms | success
+2026-01-15T15:54:25.498011+00:00 | DB_CALL get_all_settings | P3 | 0.88ms | success
