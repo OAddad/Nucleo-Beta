@@ -42225,3 +42225,6 @@
 2026-01-15T01:30:29.290414+00:00 | DB_CALL get_all_settings | P3 | 1.5ms | success
 2026-01-15T01:30:29.291160+00:00 | DB_CALL get_all_entregadores | P3 | 1.61ms | success
 2026-01-15T01:30:29.294022+00:00 | DB_CALL get_all_pedidos | P3 | 4.14ms | success
+2026-01-15T01:30:34.287300+00:00 | DB_CALL get_all_entregadores | P3 | 0.49ms | success
+2026-01-15T01:30:34.287814+00:00 | DB_CALL get_all_settings | P3 | 1.75ms | success
+2026-01-15T01:30:34.289780+00:00 | DB_CALL get_all_pedidos | P3 | 3.16ms | success
