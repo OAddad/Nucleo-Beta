@@ -3284,112 +3284,123 @@ function FilaImpressao({ toast }) {
 // ==================== COMPONENTE PREVIEW DO CUPOM ====================
 function CupomPreview({ config, pedido, empresa }) {
   const dataHora = new Date(pedido.created_at);
+  const dataStr = dataHora.toLocaleDateString('pt-BR');
+  const horaStr = dataHora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+  const codigoPedido = String(pedido.codigo || '00001').padStart(5, '0');
   
   return (
-    <div className="text-center text-black">
-      {config.mostrar_logo && (
-        <div className="text-lg font-bold mb-1">{empresa.nome || "EMPRESA"}</div>
-      )}
-      {config.mostrar_endereco_empresa && empresa.endereco && (
-        <div className="text-[10px]">{empresa.endereco}</div>
-      )}
-      {config.mostrar_telefone_empresa && empresa.telefone && (
-        <div className="text-[10px]">{empresa.telefone}</div>
-      )}
-      
-      <div className="border-t border-dashed border-gray-400 my-2" />
-      
-      <div className="flex justify-between text-[10px]">
-        {config.mostrar_codigo_pedido && <span>#{pedido.codigo}</span>}
-        {config.mostrar_data_hora && (
-          <span>{dataHora.toLocaleDateString('pt-BR')} {dataHora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</span>
+    <div className="font-mono text-black text-[11px] leading-tight">
+      {/* ===== CABEÇALHO ===== */}
+      <div className="text-center mb-2">
+        {config.mostrar_logo && (
+          <div className="text-[10px] text-gray-500 mb-1">[LOGO]</div>
+        )}
+        <div className="text-sm font-bold uppercase">{empresa.nome || "Nome da Empresa"}</div>
+        {empresa.slogan && (
+          <div className="text-[10px] text-gray-600">{empresa.slogan}</div>
+        )}
+        {empresa.endereco && (
+          <div className="text-[10px]">{empresa.endereco}</div>
+        )}
+        {empresa.cnpj && (
+          <div className="text-[10px]">CNPJ: {empresa.cnpj}</div>
         )}
       </div>
       
       <div className="border-t border-dashed border-gray-400 my-2" />
       
-      {(config.mostrar_cliente_nome || config.mostrar_cliente_telefone) && (
-        <>
-          <div className="text-left">
-            {config.mostrar_cliente_nome && pedido.cliente_nome && (
-              <div className="font-bold">{pedido.cliente_nome}</div>
-            )}
-            {config.mostrar_cliente_telefone && pedido.cliente_telefone && (
-              <div className="text-[10px]">{pedido.cliente_telefone}</div>
-            )}
-          </div>
-          <div className="border-t border-dashed border-gray-400 my-2" />
-        </>
-      )}
+      {/* ===== NÚMERO DO PEDIDO E DATA ===== */}
+      <div className="flex justify-between items-center mb-2">
+        <span className="text-lg font-bold">#{codigoPedido}</span>
+        <span className="text-[10px] text-right">{dataStr}, {horaStr}</span>
+      </div>
       
-      {config.mostrar_endereco_entrega && pedido.tipo_entrega === 'delivery' && (
-        <>
-          <div className="text-left text-[10px]">
-            <div className="font-bold">ENTREGA:</div>
-            <div>{pedido.endereco_rua}, {pedido.endereco_numero}</div>
-            {pedido.endereco_complemento && <div>{pedido.endereco_complemento}</div>}
-            <div>{pedido.endereco_bairro}</div>
-          </div>
-          <div className="border-t border-dashed border-gray-400 my-2" />
-        </>
-      )}
+      {/* ===== ITENS DO PEDIDO ===== */}
+      <div className="border-t border-dashed border-gray-400 my-2" />
+      <div className="text-center font-bold mb-1">-- ITENS DO PEDIDO --</div>
+      <div className="text-[9px] flex justify-between border-b border-gray-300 pb-1 mb-1">
+        <span>QTD  PREÇO  ITEM</span>
+        <span>TOTAL</span>
+      </div>
       
-      <div className="text-left">
-        <div className="font-bold text-center mb-1">ITENS DO PEDIDO</div>
+      <div className="mb-2">
         {pedido.items.map((item, idx) => (
           <div key={idx} className="mb-1">
             <div className="flex justify-between">
-              <span>{item.quantidade}x {item.nome}</span>
-              <span>R$ {(item.quantidade * item.preco_unitario).toFixed(2)}</span>
+              <span>{item.quantidade} x {item.preco_unitario.toFixed(2)} {item.nome}</span>
+              <span>R${(item.quantidade * item.preco_unitario).toFixed(2)}</span>
             </div>
             {item.observacao && (
-              <div className="text-[9px] text-gray-600 pl-2">→ {item.observacao}</div>
+              <div className="text-[9px] text-gray-600 pl-2">- {item.observacao}</div>
             )}
           </div>
         ))}
       </div>
       
+      {/* ===== SUBTOTAIS ===== */}
       <div className="border-t border-dashed border-gray-400 my-2" />
       
-      <div className="text-left">
-        {pedido.valor_entrega > 0 && (
-          <div className="flex justify-between text-[10px]">
-            <span>Taxa de Entrega:</span>
-            <span>R$ {pedido.valor_entrega.toFixed(2)}</span>
-          </div>
-        )}
-        <div className="flex justify-between font-bold text-sm mt-1">
-          <span>TOTAL:</span>
-          <span>R$ {pedido.total.toFixed(2)}</span>
+      {pedido.valor_entrega > 0 && (
+        <div className="flex justify-between text-[10px]">
+          <span>Taxa de Entrega:</span>
+          <span>R$ {pedido.valor_entrega.toFixed(2)}</span>
         </div>
+      )}
+      
+      <div className="flex justify-between font-bold">
+        <span>TOTAL:</span>
+        <span>R$ {pedido.total.toFixed(2)}</span>
       </div>
       
-      {config.mostrar_forma_pagamento && pedido.forma_pagamento && (
+      {/* ===== SEÇÃO DE PAGAMENTO ===== */}
+      <div className="border-t border-dashed border-gray-400 my-2" />
+      <div className="text-center">
+        <div className="font-bold mb-1">-- PAGAR NA ENTREGA --</div>
+        <div className="text-base font-bold">TOTAL ....... R${pedido.total.toFixed(2).replace('.', ',')}</div>
+        {pedido.forma_pagamento && (
+          <div className="text-[10px]">PAGAMENTO: {pedido.forma_pagamento}</div>
+        )}
+      </div>
+      
+      {/* ===== INFORMAÇÕES DE ENTREGA ===== */}
+      {pedido.tipo_entrega === 'delivery' && (
         <>
           <div className="border-t border-dashed border-gray-400 my-2" />
-          <div className="text-[10px]">
-            <span className="font-bold">PAGAMENTO: </span>
-            {pedido.forma_pagamento}
+          <div className="text-center font-bold mb-1">-- INFORMAÇÕES DE ENTREGA --</div>
+          <div className="text-left text-[10px]">
+            {pedido.cliente_nome && <div><span className="font-bold">CLIENTE:</span> {pedido.cliente_nome}</div>}
+            {pedido.cliente_telefone && <div><span className="font-bold">TEL:</span> {pedido.cliente_telefone}</div>}
+            {pedido.endereco_rua && <div><span className="font-bold">END:</span> {pedido.endereco_rua}{pedido.endereco_numero ? ', ' + pedido.endereco_numero : ''}</div>}
+            {pedido.endereco_bairro && <div><span className="font-bold">BAIRRO:</span> {pedido.endereco_bairro}</div>}
+            {pedido.endereco_complemento && <div><span className="font-bold">REF:</span> {pedido.endereco_complemento}</div>}
           </div>
         </>
       )}
       
+      {pedido.tipo_entrega === 'retirada' && (
+        <>
+          <div className="border-t border-dashed border-gray-400 my-2" />
+          <div className="text-center font-bold mb-1">-- RETIRADA NO LOCAL --</div>
+          <div className="text-center text-[10px]">
+            {pedido.cliente_nome && <div>CLIENTE: {pedido.cliente_nome}</div>}
+            {pedido.cliente_telefone && <div>TEL: {pedido.cliente_telefone}</div>}
+          </div>
+        </>
+      )}
+      
+      {/* ===== OBSERVAÇÕES ===== */}
       {config.mostrar_observacoes && pedido.observacao && (
         <>
           <div className="border-t border-dashed border-gray-400 my-2" />
-          <div className="text-left text-[10px]">
-            <div className="font-bold">OBS:</div>
-            <div>{pedido.observacao}</div>
-          </div>
+          <div className="text-[10px]"><span className="font-bold">OBS:</span> {pedido.observacao}</div>
         </>
       )}
       
-      {config.mensagem_rodape && (
-        <>
-          <div className="border-t border-dashed border-gray-400 my-2" />
-          <div className="text-center text-[10px] italic">{config.mensagem_rodape}</div>
-        </>
-      )}
+      {/* ===== RODAPÉ ===== */}
+      <div className="border-t-2 border-gray-800 my-2" />
+      <div className="text-center font-bold text-[10px]">
+        {config.mensagem_rodape || 'NÃO É DOCUMENTO FISCAL'}
+      </div>
     </div>
   );
 }
