@@ -384,7 +384,7 @@ class PrintQueue {
       escpos.text(`TROCO PARA: R$ ${pedido.troco_valor.toFixed(2)}`);
     }
     
-    // ===== INFORMAÇÕES DE ENTREGA =====
+    // ===== INFORMAÇÕES DE ENTREGA (NEGRITO, 2x MAIOR, COM QUEBRA DE LINHA) =====
     if (pedido.tipo_entrega === 'delivery') {
       escpos
         .separator()
@@ -392,38 +392,50 @@ class PrintQueue {
         .setBold(true)
         .text('-- INFORMACOES DE ENTREGA --')
         .setBold(false)
-        .align('left');
+        .align('left')
+        .setTextSize(2, 2)
+        .setBold(true);
       
       if (pedido.cliente_nome) {
-        escpos.text(`CLIENTE: ${pedido.cliente_nome}`);
+        escpos.wrapText(`CLIENTE: ${pedido.cliente_nome}`);
       }
       if (pedido.cliente_telefone) {
         escpos.text(`TEL: ${pedido.cliente_telefone}`);
       }
       if (pedido.endereco_rua) {
-        const endereco = `${pedido.endereco_rua}${pedido.endereco_numero ? ', ' + pedido.endereco_numero : ''}`;
-        escpos.text(`END: ${endereco}`);
+        const enderecoCompleto = `END: ${pedido.endereco_rua}${pedido.endereco_numero ? ', ' + pedido.endereco_numero : ''}`;
+        escpos.wrapText(enderecoCompleto);
       }
       if (pedido.endereco_bairro) {
-        escpos.text(`BAIRRO: ${pedido.endereco_bairro}`);
+        escpos.wrapText(`BAIRRO: ${pedido.endereco_bairro}`);
       }
       if (pedido.endereco_complemento) {
-        escpos.text(`REF: ${pedido.endereco_complemento}`);
+        escpos.wrapText(`REF: ${pedido.endereco_complemento}`);
       }
+      
+      escpos
+        .setBold(false)
+        .setTextSize(1, 1);
     } else if (pedido.tipo_entrega === 'retirada' || pedido.tipo_entrega === 'pickup') {
       escpos
         .separator()
         .align('center')
         .setBold(true)
         .text('-- RETIRADA NO LOCAL --')
-        .setBold(false);
+        .setBold(false)
+        .setTextSize(2, 2)
+        .setBold(true);
       
       if (pedido.cliente_nome) {
-        escpos.text(`CLIENTE: ${pedido.cliente_nome}`);
+        escpos.wrapText(`CLIENTE: ${pedido.cliente_nome}`);
       }
       if (pedido.cliente_telefone) {
         escpos.text(`TEL: ${pedido.cliente_telefone}`);
       }
+      
+      escpos
+        .setBold(false)
+        .setTextSize(1, 1);
     }
     
     // ===== OBSERVAÇÕES =====
