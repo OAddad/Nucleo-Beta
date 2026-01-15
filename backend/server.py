@@ -2816,6 +2816,9 @@ class PedidoItemCreate(BaseModel):
     preco: float = 0
     observacao: Optional[str] = None
     photo_url: Optional[str] = None
+    subitems: Optional[List[dict]] = []  # Itens das etapas selecionados
+    etapas: Optional[List[dict]] = []  # Formato alternativo de etapas
+    combo_type: Optional[str] = None  # 'combo' ou 'simples'
 
 
 class PedidoCreate(BaseModel):
