@@ -46144,3 +46144,5 @@
 2026-01-15T15:37:44.528373+00:00 | DB_CALL get_all_products | P3 | 14.69ms | success
 2026-01-15T15:38:00.297379+00:00 | DB_CALL get_all_products | P3 | 29.36ms | success
 2026-01-15T15:38:01.729718+00:00 | DB_CALL get_all_products | P3 | 46.19ms | success
+2026-01-15T15:38:18.395392+00:00 | DB_CALL get_all_products | P3 | 22.63ms | success
+2026-01-15T15:38:19.040144+00:00 | DB_CALL get_all_products | P3 | 14.29ms | success
