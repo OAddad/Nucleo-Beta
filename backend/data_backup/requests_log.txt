@@ -44672,3 +44672,11 @@
 2026-01-15T12:46:07.058643+00:00 | DB_CALL get_all_pedidos | P3 | 2.72ms | success
 2026-01-15T12:46:07.060698+00:00 | DB_CALL get_all_entregadores | P3 | 3.92ms | success
 2026-01-15T12:46:07.060982+00:00 | DB_CALL get_all_settings | P3 | 3.43ms | success
+2026-01-15T12:46:11.793461+00:00 | DB_CALL get_all_products | P3 | 8.98ms | success
+2026-01-15T12:46:12.051083+00:00 | DB_CALL get_all_pedidos | P3 | 2.15ms | success
+2026-01-15T12:46:12.053259+00:00 | DB_CALL get_all_entregadores | P3 | 3.56ms | success
+2026-01-15T12:46:12.053546+00:00 | DB_CALL get_all_settings | P3 | 4.26ms | success
+2026-01-15T12:46:13.333808+00:00 | DB_CALL get_all_products | P3 | 9.28ms | success
+2026-01-15T12:46:17.056322+00:00 | DB_CALL get_all_entregadores | P3 | 1.15ms | success
+2026-01-15T12:46:17.057915+00:00 | DB_CALL get_all_pedidos | P3 | 2.21ms | success
+2026-01-15T12:46:17.059816+00:00 | DB_CALL get_all_settings | P3 | 3.73ms | success
