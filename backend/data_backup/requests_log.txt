@@ -43367,3 +43367,5 @@
 2026-01-15T01:57:45.420989+00:00 | DB_CALL get_all_products | P3 | 2.48ms | success
 2026-01-15T01:57:45.705832+00:00 | DB_CALL get_user_by_username | P3 | 0.26ms | success
 2026-01-15T01:57:45.732166+00:00 | DB_CALL get_all_pedidos | P3 | 1.47ms | success
+2026-01-15T01:57:46.199217+00:00 | DB_CALL get_all_products | P3 | 2.5ms | success
+2026-01-15T01:57:46.493439+00:00 | DB_CALL get_all_products | P3 | 2.43ms | success
