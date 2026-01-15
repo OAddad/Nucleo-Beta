@@ -42811,3 +42811,11 @@
 2026-01-15T01:47:44.576534+00:00 | DB_CALL get_all_pedidos | P3 | 1.45ms | success
 2026-01-15T01:47:44.579935+00:00 | DB_CALL get_all_settings | P3 | 0.25ms | success
 2026-01-15T01:47:44.580381+00:00 | DB_CALL get_all_entregadores | P3 | 1.16ms | success
+2026-01-15T01:47:49.584455+00:00 | DB_CALL get_all_entregadores | P3 | 1.19ms | success
+2026-01-15T01:47:49.585225+00:00 | DB_CALL get_all_settings | P3 | 1.72ms | success
+2026-01-15T01:47:49.586938+00:00 | DB_CALL get_all_pedidos | P3 | 2.62ms | success
+2026-01-15T01:47:52.069489+00:00 | DB_CALL get_all_products | P3 | 2.7ms | success
+2026-01-15T01:47:53.267897+00:00 | DB_CALL get_all_products | P3 | 22.06ms | success
+2026-01-15T01:47:54.669584+00:00 | DB_CALL get_all_pedidos | P3 | 2.41ms | success
+2026-01-15T01:47:54.671941+00:00 | DB_CALL get_all_settings | P3 | 4.13ms | success
+2026-01-15T01:47:54.672526+00:00 | DB_CALL get_all_entregadores | P3 | 4.55ms | success
