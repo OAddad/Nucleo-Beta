@@ -951,6 +951,7 @@ export default function Products() {
     setPhotoUrl(product.photo_url || "");
     setIsInsumo(product.is_insumo || false);
     setIsDivisible(product.is_divisible || false);
+    setIsAvailable(product.available !== false); // Default true
     setOrderSteps(product.order_steps || []);
     setRecipeYield(product.recipe_yield ? product.recipe_yield.toString() : "");
     setRecipeYieldUnit(product.recipe_yield_unit || "kg");
