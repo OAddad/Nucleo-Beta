@@ -2256,10 +2256,10 @@ function ConfiguracaoImpressao({ toast }) {
             
             {/* ===== CÓDIGO DO PEDIDO (3x MAIOR, NEGRITO, CENTRALIZADO) ===== */}
             <div className="text-center mb-1">
-              <span className="text-2xl font-bold">#{pedidoExemplo.codigo}</span>
+              <span className="text-3xl font-bold">#{pedidoExemplo.codigo}</span>
             </div>
-            {/* ===== DATA/HORA (alinhada à direita) ===== */}
-            <div className="text-right text-[10px] mb-2">
+            {/* ===== DATA/HORA (CENTRALIZADA) ===== */}
+            <div className="text-center text-[10px] mb-2">
               {new Date().toLocaleDateString('pt-BR')}, {new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
             </div>
             
