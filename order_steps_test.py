@@ -10,7 +10,7 @@ import time
 
 def test_order_steps_readonly():
     """Test Order Steps functionality by examining existing products (read-only)"""
-    base_url = "https://visual-receipt.preview.emergentagent.com"
+    base_url = "https://menu-toggle-update.preview.emergentagent.com"
     
     print("🚀 Order Steps Feature Test (Read-Only Analysis)")
     print("=" * 60)
