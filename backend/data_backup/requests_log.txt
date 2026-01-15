@@ -43347,3 +43347,6 @@
 2026-01-15T01:56:27.245928+00:00 | DB_CALL get_user_by_username | P3 | 0.34ms | success
 2026-01-15T01:56:27.274492+00:00 | DB_CALL get_all_bairros | P3 | 0.33ms | success
 2026-01-15T01:56:28.029964+00:00 | DB_CALL increment_whatsapp_stat | P3 | 2.78ms | success
+2026-01-15T01:56:46.061326+00:00 | DB_CALL get_all_products | P3 | 3.99ms | success
+2026-01-15T01:56:46.932875+00:00 | DB_CALL get_all_products | P3 | 2.46ms | success
+2026-01-15T01:56:48.451696+00:00 | DB_CALL get_all_ruas | P3 | 0.37ms | success
