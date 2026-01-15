@@ -40611,3 +40611,4 @@
 2026-01-15T00:09:06.268296+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.25ms | success
 2026-01-15T00:09:14.243838+00:00 | DB_CALL increment_whatsapp_stat | P3 | 6.29ms | success
 2026-01-15T00:09:21.279480+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.33ms | success
+2026-01-15T00:09:48.405408+00:00 | DB_CALL get_all_products | P3 | 7.1ms | success
