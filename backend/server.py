@@ -4625,12 +4625,14 @@ async def upload_company_logo(file: UploadFile = File(...), current_user: User =
         settings = await db_call(sqlite_db.get_all_settings)
         old_logo = settings.get("logo_url")
         if old_logo:
-            old_path = Path(__file__).parent / old_logo.lstrip("/")
+            # Remove o prefixo /api se existir para encontrar o arquivo
+            old_logo_path = old_logo.replace("/api/", "/").lstrip("/")
+            old_path = Path(__file__).parent / old_logo_path
             if old_path.exists():
                 old_path.unlink()
         
-        # Salvar URL da nova logo
-        logo_url = f"/uploads/company/{filename}"
+        # Salvar URL da nova logo com prefixo /api
+        logo_url = f"/api/uploads/company/{filename}"
         await db_call(sqlite_db.set_setting, "logo_url", logo_url)
         
         return {"success": True, "logo_url": logo_url}
