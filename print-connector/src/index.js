@@ -153,6 +153,87 @@ app.post('/printers/connect', async (req, res) => {
 });
 
 /**
+ * POST /printers/sector
+ * Configura impressora para um setor específico
+ * Setores: caixa, cozinha, bar, etc. (extensível)
+ */
+app.post('/printers/sector', async (req, res) => {
+  try {
+    const { name, sector } = req.body;
+    
+    if (!name || !sector) {
+      return res.status(400).json({ 
+        success: false, 
+        error: 'Nome da impressora e setor são obrigatórios' 
+      });
+    }
+    
+    // Verificar se impressora existe
+    const available = await printerManager.isPrinterAvailable(name);
+    
+    if (!available) {
+      return res.status(404).json({ 
+        success: false, 
+        error: 'Impressora não encontrada ou offline' 
+      });
+    }
+    
+    // Buscar configurações de setores existentes
+    const sectorPrinters = config.get('sectorPrinters', {});
+    
+    // Salvar impressora para o setor
+    sectorPrinters[sector] = {
+      name,
+      configuredAt: new Date().toISOString()
+    };
+    config.set('sectorPrinters', sectorPrinters);
+    logger.info(`Impressora "${name}" configurada para setor "${sector}"`);
+    
+    res.json({ 
+      success: true, 
+      message: `Impressora configurada para ${sector}`,
+      sector,
+      printer: sectorPrinters[sector]
+    });
+  } catch (error) {
+    logger.error('Erro em /printers/sector:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+/**
+ * GET /printers/sectors
+ * Lista impressoras configuradas por setor
+ */
+app.get('/printers/sectors', (req, res) => {
+  const sectorPrinters = config.get('sectorPrinters', {});
+  res.json(sectorPrinters);
+});
+
+/**
+ * DELETE /printers/sector/:sector
+ * Remove configuração de impressora de um setor
+ */
+app.delete('/printers/sector/:sector', (req, res) => {
+  try {
+    const { sector } = req.params;
+    const sectorPrinters = config.get('sectorPrinters', {});
+    
+    if (sectorPrinters[sector]) {
+      delete sectorPrinters[sector];
+      config.set('sectorPrinters', sectorPrinters);
+      logger.info(`Impressora removida do setor "${sector}"`);
+      res.json({ success: true, message: `Impressora removida do setor ${sector}` });
+    } else {
+      res.status(404).json({ success: false, error: 'Setor não encontrado' });
+    }
+  } catch (error) {
+    logger.error('Erro ao remover setor:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+/**
  * POST /print
  * Imprime pedido automaticamente (sem popup)
  */
