@@ -43643,3 +43643,11 @@
 2026-01-15T02:11:28.675431+00:00 | DB_CALL get_user_by_username | P3 | 0.77ms | success
 2026-01-15T02:11:28.702350+00:00 | DB_CALL get_user_by_id | P3 | 0.6ms | success
 2026-01-15T02:11:28.706238+00:00 | DB_CALL get_all_products | P3 | 3.7ms | success
+2026-01-15T02:12:31.367105+00:00 | DB_CALL get_all_products | P3 | 41.01ms | success
+2026-01-15T02:12:32.269478+00:00 | DB_CALL get_all_products | P3 | 2.42ms | success
+2026-01-15T02:12:34.485979+00:00 | DB_CALL get_all_categories | P3 | 13.69ms | success
+2026-01-15T02:12:34.486649+00:00 | DB_CALL get_all_business_hours | P3 | 14.12ms | success
+2026-01-15T02:12:34.566564+00:00 | DB_CALL get_all_products | P3 | 93.89ms | success
+2026-01-15T02:12:34.587071+00:00 | DB_CALL get_all_settings | P3 | 107.99ms | success
+2026-01-15T02:12:35.428009+00:00 | DB_CALL get_all_products | P3 | 4.65ms | success
+2026-01-15T02:12:35.901023+00:00 | DB_CALL get_all_bairros | P3 | 262.24ms | success
