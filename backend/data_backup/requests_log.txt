@@ -43353,3 +43353,13 @@
 2026-01-15T01:56:49.623182+00:00 | DB_CALL get_all_bairros | P3 | 0.35ms | success
 2026-01-15T01:56:55.570770+00:00 | DB_CALL increment_whatsapp_stat | P3 | 1.78ms | success
 2026-01-15T01:57:24.423747+00:00 | DB_CALL get_user_by_username | P3 | 0.3ms | success
+2026-01-15T01:57:33.140487+00:00 | DB_CALL get_user_by_username | P3 | 0.25ms | success
+2026-01-15T01:57:33.168342+00:00 | DB_CALL get_user_by_id | P3 | 0.25ms | success
+2026-01-15T01:57:33.170751+00:00 | DB_CALL recalculate_all_cliente_stats | P3 | 2.25ms | success
+2026-01-15T01:57:33.171243+00:00 | DB_CALL get_all_clientes | P3 | 0.38ms | success
+2026-01-15T01:57:33.329156+00:00 | DB_CALL get_client_addresses | P3 | 0.29ms | success
+2026-01-15T01:57:33.331567+00:00 | DB_CALL get_client_addresses | P3 | 0.22ms | success
+2026-01-15T01:57:33.333528+00:00 | DB_CALL get_client_addresses | P3 | 0.18ms | success
+2026-01-15T01:57:33.335351+00:00 | DB_CALL get_client_addresses | P3 | 0.2ms | success
+2026-01-15T01:57:33.337150+00:00 | DB_CALL get_client_addresses | P3 | 0.19ms | success
+2026-01-15T01:57:33.338873+00:00 | DB_CALL get_client_addresses | P3 | 0.19ms | success
