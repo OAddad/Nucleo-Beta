@@ -240,6 +240,15 @@ class PrintQueue {
     const empresa = job.empresa || {};
     const config = job.config || {};
     
+    // DEBUG - Log dos dados recebidos
+    console.log('=== DEBUG IMPRESSAO ===');
+    console.log('job.empresa:', JSON.stringify(job.empresa));
+    console.log('empresa.nome:', empresa.nome);
+    console.log('empresa.slogan:', empresa.slogan);
+    console.log('empresa.endereco:', empresa.endereco);
+    console.log('empresa.cnpj:', empresa.cnpj);
+    console.log('========================');
+    
     // ===== CABEÇALHO CENTRALIZADO =====
     escpos.align('center');
     
@@ -250,28 +259,29 @@ class PrintQueue {
       .setTextSize(1, 1);
     
     // ===== NOME DA EMPRESA =====
+    const nomeEmpresa = empresa.nome || pedido.empresa_nome || 'NOME DA EMPRESA';
     escpos
       .setTextSize(2, 1)
       .setBold(true)
-      .text(empresa.nome || pedido.empresa_nome || 'NOME DA EMPRESA')
+      .text(nomeEmpresa)
       .setBold(false)
       .setTextSize(1, 1);
     
-    // Slogan - SEMPRE imprime
+    // Slogan - SEMPRE imprime se existir
     const slogan = empresa.slogan || pedido.empresa_slogan || '';
-    if (slogan) {
+    if (slogan && slogan.trim() !== '') {
       escpos.text(slogan);
     }
     
-    // Endereço - SEMPRE imprime
+    // Endereço - SEMPRE imprime se existir
     const endereco = empresa.endereco || pedido.empresa_endereco || '';
-    if (endereco) {
+    if (endereco && endereco.trim() !== '') {
       escpos.text(endereco);
     }
     
-    // CNPJ - SEMPRE imprime
+    // CNPJ - SEMPRE imprime se existir
     const cnpj = empresa.cnpj || pedido.empresa_cnpj || '';
-    if (cnpj) {
+    if (cnpj && cnpj.trim() !== '') {
       escpos.text(`CNPJ: ${cnpj}`);
     }
     
