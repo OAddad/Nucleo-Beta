@@ -911,15 +911,21 @@ function PrintConnectorTab({ toast, connectorStatus, onRefresh, onNavigateToDown
     if (connectorStatus?.online) {
       fetchPrinters();
     }
-    fetchEmpresaData();
   }, [connectorStatus?.online]);
+
+  // Buscar dados da empresa ao montar o componente
+  useEffect(() => {
+    fetchEmpresaData();
+  }, []);
 
   // Buscar dados da empresa
   const fetchEmpresaData = async () => {
     try {
+      console.log('Buscando dados da empresa...');
       const response = await fetch(`${API_URL}/api/company/settings`);
       if (response.ok) {
         const data = await response.json();
+        console.log('Dados da empresa recebidos:', data);
         setEmpresaData({
           nome: data.company_name || "Nome da Empresa",
           slogan: data.slogan || "",
