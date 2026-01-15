@@ -1785,6 +1785,35 @@ export default function Products() {
                     </button>
                   </div>
 
+                  {/* Switch Disponível para Compra */}
+                  <div className="flex items-center justify-between p-4 bg-muted/50 rounded-lg border">
+                    <div>
+                      <Label htmlFor="isAvailable" className="text-sm font-medium">
+                        Disponível para Compra
+                      </Label>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Se desativado, aparece como "INDISPONÍVEL" no cardápio
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      role="switch"
+                      aria-checked={isAvailable}
+                      onClick={() => setIsAvailable(!isAvailable)}
+                      className={`
+                        relative inline-flex h-6 w-11 items-center rounded-full transition-colors flex-shrink-0
+                        ${isAvailable ? 'bg-green-500' : 'bg-red-400'}
+                      `}
+                    >
+                      <span
+                        className={`
+                          inline-block h-4 w-4 transform rounded-full bg-white transition-transform
+                          ${isAvailable ? 'translate-x-6' : 'translate-x-1'}
+                        `}
+                      />
+                    </button>
+                  </div>
+
                   {/* Switch Divisível */}
                   <div className="flex items-center justify-between p-4 bg-muted/50 rounded-lg border">
                     <div>
