@@ -450,6 +450,12 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode, allProduc
     return prod?.photo_url || null;
   };
   
+  // Verificar se produto está disponível (available)
+  const isProductAvailable = (productId) => {
+    const prod = allProducts.find(p => p.id === productId);
+    return prod?.available !== false;
+  };
+  
   // Buscar preço atual do produto pelo ID (para sincronizar com PRODUTOS)
   const getProductPrice = (productId) => {
     const prod = allProducts.find(p => p.id === productId);
