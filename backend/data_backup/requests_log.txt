@@ -45902,3 +45902,4 @@
 2026-01-15T15:00:42.062760+00:00 | DB_CALL get_all_products | P3 | 15.36ms | success
 2026-01-15T15:00:42.662507+00:00 | DB_CALL get_all_products | P3 | 17.18ms | success
 2026-01-15T15:01:11.172178+00:00 | DB_CALL get_all_settings | P3 | 0.29ms | success
+2026-01-15T15:01:27.070168+00:00 | DB_CALL get_all_settings | P3 | 0.31ms | success
