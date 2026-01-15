@@ -43946,3 +43946,12 @@
 2026-01-15T12:29:46.468395+00:00 | DB_CALL get_all_products | P3 | 2.86ms | success
 2026-01-15T12:29:46.618161+00:00 | DB_CALL get_all_bairros | P3 | 53.57ms | success
 2026-01-15T12:29:52.268224+00:00 | DB_CALL get_user_by_username | P3 | 1.17ms | success
+2026-01-15T12:30:08.022958+00:00 | DB_CALL get_all_categories | P3 | 4.57ms | success
+2026-01-15T12:30:08.023778+00:00 | DB_CALL get_all_settings | P3 | 5.2ms | success
+2026-01-15T12:30:08.030335+00:00 | DB_CALL get_all_products | P3 | 11.63ms | success
+2026-01-15T12:30:08.050157+00:00 | DB_CALL get_all_business_hours | P3 | 21.69ms | success
+2026-01-15T12:30:08.241420+00:00 | DB_CALL get_all_products | P3 | 2.95ms | success
+2026-01-15T12:30:08.337982+00:00 | DB_CALL get_all_bairros | P3 | 0.35ms | success
+2026-01-15T12:30:12.055504+00:00 | DB_CALL get_all_pedidos | P3 | 1.71ms | success
+2026-01-15T12:30:12.058947+00:00 | DB_CALL get_all_settings | P3 | 0.87ms | success
+2026-01-15T12:30:12.059359+00:00 | DB_CALL get_all_entregadores | P3 | 0.66ms | success
