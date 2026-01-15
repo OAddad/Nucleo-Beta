@@ -149,35 +149,138 @@ class PrintQueue {
     
     escpos.initialize().setCodepage('CP850');
     
-    if (template === 'cozinha') {
-      return this._buildCozinhaTemplate(escpos, pedido, job);
+    if (template === 'cozinha' || template === 'preparo') {
+      return this._buildPreparoTemplate(escpos, pedido, job);
     }
     return this._buildCaixaTemplate(escpos, pedido, job);
   }
   
-  _buildCozinhaTemplate(escpos, pedido, job) {
-    // COZINHA - Layout simplificado para produção
+  // ==================== CUPOM DE PREPARO ====================
+  // Mostra: CÓDIGO, HORA, ITENS, OBSERVAÇÃO, Nome do cliente
+  _buildPreparoTemplate(escpos, pedido, job) {
+    escpos.align('center');
+    
+    // ===== TÍTULO =====
     escpos
-      .align('center')
       .setTextSize(2, 2)
       .setBold(true)
-      .text('** COZINHA **')
+      .text('** PREPARO **')
       .setBold(false)
       .setTextSize(1, 1)
       .newLine();
     
-    // Código bem grande
-    if (pedido.codigo) {
+    // ===== CÓDIGO DO PEDIDO (BEM GRANDE) =====
+    const codigoPedido = String(pedido.codigo || '00001').padStart(5, '0');
+    escpos
+      .setTextSize(3, 3)
+      .setBold(true)
+      .text(`#${codigoPedido}`)
+      .setBold(false)
+      .setTextSize(1, 1);
+    
+    // ===== HORA =====
+    const dataHora = new Date(pedido.created_at || Date.now());
+    const horaStr = dataHora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+    escpos
+      .setTextSize(2, 2)
+      .text(horaStr)
+      .setTextSize(1, 1);
+    
+    escpos.separator();
+    
+    // ===== NOME DO CLIENTE =====
+    if (pedido.cliente_nome) {
       escpos
-        .setTextSize(3, 3)
+        .align('center')
+        .setTextSize(1, 2)
         .setBold(true)
-        .text(`#${pedido.codigo}`)
+        .text(`CLIENTE: ${pedido.cliente_nome}`)
         .setBold(false)
         .setTextSize(1, 1);
     }
     
-    // Tipo entrega destacado
-    if (pedido.tipo_entrega) {
+    escpos.separator();
+    
+    // ===== ITENS =====
+    escpos
+      .align('center')
+      .setBold(true)
+      .text('-- ITENS --')
+      .setBold(false)
+      .align('left')
+      .newLine();
+    
+    if (pedido.items && pedido.items.length > 0) {
+      for (const item of pedido.items) {
+        const qtd = item.quantidade || 1;
+        const nome = item.nome || item.product_name || 'Item';
+        const tipo = item.tipo_combo || item.tipo || ''; // combo/simples
+        
+        // Item com quantidade grande
+        escpos
+          .setTextSize(2, 2)
+          .setBold(true)
+          .text(`${qtd}x ${nome}`)
+          .setBold(false)
+          .setTextSize(1, 1);
+        
+        // Tipo (combo/simples) se existir
+        if (tipo) {
+          escpos.text(`   [${tipo.toUpperCase()}]`);
+        }
+        
+        // Observação do item (destacada)
+        if (item.observacao) {
+          escpos
+            .setTextSize(1, 2)
+            .setBold(true)
+            .text(`   >>> ${item.observacao}`)
+            .setBold(false)
+            .setTextSize(1, 1);
+        }
+        
+        // Adicionais/Subitems
+        if (item.adicionais && item.adicionais.length > 0) {
+          for (const add of item.adicionais) {
+            escpos.text(`   + ${add.nome}`);
+          }
+        }
+        if (item.subitems && item.subitems.length > 0) {
+          for (const sub of item.subitems) {
+            escpos.text(`   + ${sub.nome || sub.name}`);
+          }
+        }
+        
+        escpos.newLine();
+      }
+    }
+    
+    escpos.separator();
+    
+    // ===== OBSERVAÇÃO GERAL (BEM DESTACADA) =====
+    if (pedido.observacao) {
+      escpos
+        .align('center')
+        .setTextSize(1, 2)
+        .setBold(true)
+        .text('!!! OBSERVACAO !!!')
+        .setBold(false)
+        .align('left')
+        .wrapText(pedido.observacao, 48)
+        .setTextSize(1, 1)
+        .separator();
+    }
+    
+    // ===== RODAPÉ =====
+    escpos
+      .align('center')
+      .text(new Date().toLocaleString('pt-BR'));
+    
+    if (job.cut !== false) escpos.cut();
+    return escpos.build();
+  }
+  
+  // ==================== CUPOM DE ENTREGA/CAIXA ====================
       escpos
         .newLine()
         .setTextSize(2, 2)

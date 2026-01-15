@@ -46716,3 +46716,7 @@
 2026-01-15T16:27:57.290636+00:00 | DB_CALL get_all_categories | P3 | 0.14ms | success
 2026-01-15T16:27:57.463441+00:00 | DB_CALL get_user_by_id | P3 | 0.27ms | success
 2026-01-15T16:27:57.463706+00:00 | DB_CALL get_all_categories | P3 | 0.13ms | success
+2026-01-15T16:28:15.289681+00:00 | DB_CALL get_all_entregadores | P3 | 0.28ms | success
+2026-01-15T16:28:15.292348+00:00 | DB_CALL get_pedido_by_id | P3 | 0.94ms | success
+2026-01-15T16:28:15.294095+00:00 | DB_CALL get_all_pedidos | P3 | 2.36ms | success
+2026-01-15T16:28:15.296342+00:00 | DB_CALL get_all_settings | P3 | 4.27ms | success
