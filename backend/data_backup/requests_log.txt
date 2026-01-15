@@ -42833,3 +42833,9 @@
 2026-01-15T01:48:01.495717+00:00 | DB_CALL get_all_pedidos | P3 | 1.5ms | success
 2026-01-15T01:48:01.498000+00:00 | DB_CALL get_all_entregadores | P3 | 4.3ms | success
 2026-01-15T01:48:01.500385+00:00 | DB_CALL get_all_settings | P3 | 0.43ms | success
+2026-01-15T01:48:06.489332+00:00 | DB_CALL get_all_settings | P3 | 0.54ms | success
+2026-01-15T01:48:06.491717+00:00 | DB_CALL get_all_pedidos | P3 | 1.45ms | success
+2026-01-15T01:48:06.494481+00:00 | DB_CALL get_all_entregadores | P3 | 0.27ms | success
+2026-01-15T01:48:11.484592+00:00 | DB_CALL get_all_pedidos | P3 | 2.86ms | success
+2026-01-15T01:48:11.486766+00:00 | DB_CALL get_all_settings | P3 | 4.04ms | success
+2026-01-15T01:48:11.487155+00:00 | DB_CALL get_all_entregadores | P3 | 3.93ms | success

@@ -3212,7 +3212,14 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
                 )}
                 {step < 4 ? (
                   <Button 
-                    onClick={() => setStep(step === 1 ? 3 : step + 1)} 
+                    onClick={() => {
+                      // Se estiver na etapa 3 (Entrega) e for delivery, verifica endereço
+                      if (step === 3 && tipoEntrega === "delivery" && !endereco.rua) {
+                        toast.error("Selecione um endereço de entrega primeiro");
+                        return;
+                      }
+                      setStep(step === 1 ? 3 : step + 1);
+                    }} 
                     className="flex-1 bg-orange-500 hover:bg-orange-600"
                     disabled={(step === 1 && cart.length === 0) || !selectedCliente}
                   >
