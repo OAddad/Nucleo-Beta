@@ -44572,3 +44572,9 @@
 2026-01-15T12:42:19.758138+00:00 | DB_CALL get_all_categories | P3 | 0.13ms | success
 2026-01-15T12:42:20.746406+00:00 | DB_CALL get_all_products | P3 | 6.05ms | success
 2026-01-15T12:42:20.957058+00:00 | DB_CALL get_all_bairros | P3 | 4.6ms | success
+2026-01-15T12:42:42.918598+00:00 | DB_CALL get_all_settings | P3 | 2.52ms | success
+2026-01-15T12:42:42.926709+00:00 | DB_CALL get_all_products | P3 | 9.37ms | success
+2026-01-15T12:42:42.950711+00:00 | DB_CALL get_all_categories | P3 | 33.31ms | success
+2026-01-15T12:42:42.951148+00:00 | DB_CALL get_all_business_hours | P3 | 32.95ms | success
+2026-01-15T12:42:43.035448+00:00 | DB_CALL get_all_products | P3 | 28.46ms | success
+2026-01-15T12:42:43.080742+00:00 | DB_CALL get_all_bairros | P3 | 0.34ms | success
