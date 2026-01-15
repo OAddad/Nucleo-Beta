@@ -41449,3 +41449,7 @@
 2026-01-15T00:41:45.328314+00:00 | DB_CALL get_all_products | P3 | 2.57ms | success
 2026-01-15T00:41:55.709117+00:00 | DB_CALL get_all_products | P3 | 3.98ms | success
 2026-01-15T00:44:28.531543+00:00 | DB_CALL increment_whatsapp_stat | P3 | 7.46ms | success
+2026-01-15T00:53:55.167005+00:00 | DB_CALL init_database | P3 | 81.46ms | success
+2026-01-15T00:53:55.167645+00:00 | DB_CALL count_ingredients | P3 | 0.27ms | success
+2026-01-15T00:53:55.167856+00:00 | DB_CALL count_products | P3 | 0.12ms | success
+2026-01-15T00:53:55.168008+00:00 | DB_CALL count_users | P3 | 0.1ms | success
