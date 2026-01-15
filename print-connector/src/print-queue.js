@@ -396,21 +396,22 @@ class PrintQueue {
         .setTextSize(2, 2)
         .setBold(true);
       
+      // Com texto 2x, cada caractere ocupa 2 colunas, então maxLen = 24
       if (pedido.cliente_nome) {
-        escpos.wrapText(`CLIENTE: ${pedido.cliente_nome}`);
+        escpos.wrapText(`CLIENTE: ${pedido.cliente_nome}`, 24);
       }
       if (pedido.cliente_telefone) {
-        escpos.text(`TEL: ${pedido.cliente_telefone}`);
+        escpos.wrapText(`TEL: ${pedido.cliente_telefone}`, 24);
       }
       if (pedido.endereco_rua) {
         const enderecoCompleto = `END: ${pedido.endereco_rua}${pedido.endereco_numero ? ', ' + pedido.endereco_numero : ''}`;
-        escpos.wrapText(enderecoCompleto);
+        escpos.wrapText(enderecoCompleto, 24);
       }
       if (pedido.endereco_bairro) {
-        escpos.wrapText(`BAIRRO: ${pedido.endereco_bairro}`);
+        escpos.wrapText(`BAIRRO: ${pedido.endereco_bairro}`, 24);
       }
       if (pedido.endereco_complemento) {
-        escpos.wrapText(`REF: ${pedido.endereco_complemento}`);
+        escpos.wrapText(`REF: ${pedido.endereco_complemento}`, 24);
       }
       
       escpos
@@ -427,10 +428,10 @@ class PrintQueue {
         .setBold(true);
       
       if (pedido.cliente_nome) {
-        escpos.wrapText(`CLIENTE: ${pedido.cliente_nome}`);
+        escpos.wrapText(`CLIENTE: ${pedido.cliente_nome}`, 24);
       }
       if (pedido.cliente_telefone) {
-        escpos.text(`TEL: ${pedido.cliente_telefone}`);
+        escpos.wrapText(`TEL: ${pedido.cliente_telefone}`, 24);
       }
       
       escpos
