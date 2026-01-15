@@ -47279,3 +47279,7 @@
 2026-01-15T16:45:42.386063+00:00 | DB_CALL get_all_products | P3 | 23.24ms | success
 2026-01-15T16:45:43.293206+00:00 | DB_CALL get_all_products | P3 | 23.73ms | success
 2026-01-15T16:45:50.010090+00:00 | DB_CALL get_all_products | P3 | 30.0ms | success
+2026-01-15T16:49:02.922719+00:00 | DB_CALL init_database | P3 | 81.28ms | success
+2026-01-15T16:49:02.923796+00:00 | DB_CALL count_ingredients | P3 | 0.71ms | success
+2026-01-15T16:49:02.924039+00:00 | DB_CALL count_products | P3 | 0.16ms | success
+2026-01-15T16:49:02.924205+00:00 | DB_CALL count_users | P3 | 0.1ms | success
