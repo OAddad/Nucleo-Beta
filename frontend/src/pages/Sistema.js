@@ -1855,24 +1855,24 @@ function ConfiguracaoImpressao({ toast }) {
 
   // Pedido exemplo para preview
   const pedidoExemplo = {
-    codigo: "A001",
+    codigo: "00001",
     cliente_nome: "João Silva",
-    cliente_telefone: "(11) 99999-9999",
+    cliente_telefone: "(11) 9.9999-9999",
     tipo_entrega: "delivery",
     endereco_rua: "Rua das Flores",
     endereco_numero: "123",
     endereco_bairro: "Centro",
-    endereco_complemento: "Apto 45",
+    endereco_complemento: "Casa azul - Meio do quarteirão",
     items: [
       { nome: "X-Burger", quantidade: 2, preco_unitario: 25.00, observacao: "Sem cebola" },
-      { nome: "Batata Frita G", quantidade: 1, preco_unitario: 15.00 },
+      { nome: "Batata Frita", quantidade: 1, preco_unitario: 15.00 },
     ],
     subtotal: 65.00,
     valor_entrega: 5.00,
     total: 70.00,
     forma_pagamento: "Cartão de Crédito",
     pagar_na_entrega: true,
-    observacao: "Entregar no portão",
+    observacao: "",
     created_at: new Date().toISOString(),
   };
 
