@@ -42213,3 +42213,6 @@
 2026-01-15T01:30:09.282222+00:00 | DB_CALL get_all_settings | P3 | 0.31ms | success
 2026-01-15T01:30:09.284272+00:00 | DB_CALL get_all_entregadores | P3 | 0.77ms | success
 2026-01-15T01:30:09.285863+00:00 | DB_CALL get_all_pedidos | P3 | 1.79ms | success
+2026-01-15T01:30:14.282563+00:00 | DB_CALL get_all_pedidos | P3 | 1.37ms | success
+2026-01-15T01:30:14.286095+00:00 | DB_CALL get_all_settings | P3 | 0.26ms | success
+2026-01-15T01:30:14.286650+00:00 | DB_CALL get_all_entregadores | P3 | 1.4ms | success
