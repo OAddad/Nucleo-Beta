@@ -2362,7 +2362,14 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
                 2. Entrega
               </button>
               <button 
-                onClick={() => setStep(4)} 
+                onClick={() => {
+                  if (tipoEntrega === "delivery" && !endereco.rua) {
+                    toast.error("Selecione um endereço de entrega primeiro");
+                    setStep(3);
+                    return;
+                  }
+                  setStep(4);
+                }} 
                 disabled={!selectedCliente}
                 className={`px-2 sm:px-3 py-1 sm:py-1.5 rounded cursor-pointer transition-all hover:opacity-80 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap ${step === 4 ? 'bg-orange-500 text-white' : 'bg-muted text-muted-foreground'}`}
               >
