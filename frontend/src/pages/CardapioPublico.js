@@ -305,7 +305,7 @@ function OrderTrackingScreen({ pedido: pedidoInicial, onClose, darkMode, company
       {/* Card WhatsApp Fixo no Bottom */}
       <div className="fixed bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 to-transparent">
         <a
-          href="https://web.whatsapp.com/"
+          href={getWhatsAppLink()}
           target="_blank"
           rel="noopener noreferrer"
           className="block max-w-2xl mx-auto"
@@ -315,7 +315,7 @@ function OrderTrackingScreen({ pedido: pedidoInicial, onClose, darkMode, company
               <MessageCircle className="w-10 h-10" />
               <div className="text-center">
                 <h3 className="font-bold text-xl">Acompanhar meu pedido via WhatsApp</h3>
-                <p className="text-white/80 text-sm">Clique para abrir o WhatsApp</p>
+                <p className="text-white/80 text-sm">Clique para enviar mensagem</p>
               </div>
             </div>
           </div>
