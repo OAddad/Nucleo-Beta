@@ -2330,7 +2330,8 @@ function GerenciarImpressoras({ toast }) {
     slogan: "",
     endereco: "",
     cnpj: "",
-    telefone: ""
+    telefone: "",
+    logo_url: ""
   });
   const [formData, setFormData] = useState({
     nome: "",
