@@ -2199,89 +2199,90 @@ function ConfiguracaoImpressao({ toast }) {
             </Button>
           </div>
           
-          {/* Preview Visual */}
-          <div className="bg-white dark:bg-gray-900 border-2 border-dashed rounded-lg p-4 font-mono text-xs overflow-auto" style={{ maxWidth: '320px', margin: '0 auto' }}>
-            <div className="text-center space-y-1">
-              {config.mostrar_logo && <div className="text-muted-foreground">[LOGO]</div>}
-              <div className="font-bold text-sm">{config.empresa_nome || "Nome da Empresa"}</div>
-              {config.empresa_endereco && <div>{config.empresa_endereco}</div>}
-              {config.empresa_cidade && <div>{config.empresa_cidade}</div>}
-              {config.empresa_telefone && <div>TEL: {config.empresa_telefone}</div>}
-              {config.empresa_cnpj && <div>CNPJ: {config.empresa_cnpj}</div>}
-              {config.empresa_ie && <div>IE: {config.empresa_ie}</div>}
-              {config.empresa_im && <div>IM: {config.empresa_im}</div>}
+          {/* Preview Visual - Modelo do Cupom */}
+          <div className="bg-white dark:bg-gray-900 border-2 border-dashed rounded-lg p-4 font-mono text-[11px] overflow-auto" style={{ maxWidth: '320px', margin: '0 auto' }}>
+            {/* ===== CABEÇALHO ===== */}
+            <div className="text-center mb-2">
+              {config.mostrar_logo && <div className="text-[10px] text-gray-400 mb-1">[LOGO]</div>}
+              <div className="font-bold text-sm uppercase">{config.empresa_nome || "Nome da Empresa"}</div>
+              {config.empresa_slogan && <div className="text-[10px] text-gray-600">{config.empresa_slogan}</div>}
+              {config.empresa_endereco && <div className="text-[10px]">{config.empresa_endereco}</div>}
+              {config.empresa_cnpj && <div className="text-[10px]">CNPJ: {config.empresa_cnpj}</div>}
             </div>
             
-            <div className="border-t border-dashed my-2" />
+            <div className="border-t border-dashed border-gray-400 my-2" />
             
-            <div className="flex justify-between">
-              <span>#{pedidoExemplo.codigo}</span>
-              <span>{new Date().toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' })}</span>
+            {/* ===== CÓDIGO E DATA NA MESMA LINHA ===== */}
+            <div className="flex justify-between items-center mb-2">
+              <span className="text-lg font-bold">#{pedidoExemplo.codigo}</span>
+              <span className="text-[10px]">{new Date().toLocaleDateString('pt-BR')}, {new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</span>
             </div>
             
-            <div className="border-t border-dashed my-2" />
+            <div className="border-t border-dashed border-gray-400 my-2" />
             
-            <div className="text-center font-bold">{config.titulo_itens}</div>
-            {config.formato_itens === 'qtd_preco_item_total' && (
-              <div className="text-[10px] text-muted-foreground">QTD PRECO    ITEM         TOTAL</div>
-            )}
-            
-            <div className="border-t border-dashed my-1" />
+            {/* ===== ITENS DO PEDIDO ===== */}
+            <div className="text-center font-bold mb-1">-- ITENS DO PEDIDO --</div>
+            <div className="text-[9px] flex justify-between border-b border-gray-300 pb-1 mb-1">
+              <span>QTD  PREÇO  ITEM</span>
+              <span>TOTAL</span>
+            </div>
             
             {pedidoExemplo.items.map((item, i) => (
-              <div key={i}>
-                {config.formato_itens === 'qtd_preco_item_total' ? (
-                  <div>{item.quantidade} x {item.preco_unitario.toFixed(2).padStart(5)}  {item.nome.substring(0, 12).padEnd(12)} R${(item.quantidade * item.preco_unitario).toFixed(2)}</div>
-                ) : (
-                  <div className="flex justify-between">
-                    <span>{item.quantidade}x {item.nome}</span>
-                    <span>R${(item.quantidade * item.preco_unitario).toFixed(2)}</span>
-                  </div>
-                )}
+              <div key={i} className="mb-1">
+                <div className="flex justify-between">
+                  <span>{item.quantidade} x {item.preco_unitario.toFixed(2)} {item.nome}</span>
+                  <span>R${(item.quantidade * item.preco_unitario).toFixed(2)}</span>
+                </div>
                 {config.mostrar_observacoes_item && item.observacao && (
-                  <div className="text-muted-foreground pl-2">- {item.observacao}</div>
+                  <div className="text-[9px] text-gray-600 pl-2">- {item.observacao}</div>
                 )}
               </div>
             ))}
             
-            <div className="border-t border-dashed my-2" />
+            <div className="border-t border-dashed border-gray-400 my-2" />
             
+            {/* ===== SUBTOTAIS ===== */}
             {config.mostrar_taxa_entrega && pedidoExemplo.valor_entrega > 0 && (
-              <div className="flex justify-between">
+              <div className="flex justify-between text-[10px]">
                 <span>Taxa de Entrega:</span>
                 <span>R$ {pedidoExemplo.valor_entrega.toFixed(2)}</span>
               </div>
             )}
-            
-            <div className="border-t border-dashed my-2" />
             
             <div className="flex justify-between font-bold">
               <span>TOTAL:</span>
               <span>R$ {pedidoExemplo.total.toFixed(2)}</span>
             </div>
             
-            <div className="border-t border-dashed my-2" />
+            <div className="border-t border-dashed border-gray-400 my-2" />
             
+            {/* ===== SEÇÃO DE PAGAMENTO ===== */}
             {config.mostrar_forma_pagamento && (
-              <>
-                <div className="text-center">-- {config.texto_pagar_entrega} --</div>
-                <div>PAGAMENTO: {pedidoExemplo.forma_pagamento}</div>
-                <div className="border-t border-dashed my-2" />
-              </>
+              <div className="text-center mb-2">
+                <div className="font-bold mb-1">-- PAGAR NA ENTREGA --</div>
+                <div className="text-base font-bold">TOTAL ....... R${pedidoExemplo.total.toFixed(2).replace('.', ',')}</div>
+                <div className="text-[10px]">PAGAMENTO: {pedidoExemplo.forma_pagamento}</div>
+              </div>
             )}
             
+            {/* ===== INFORMAÇÕES DE ENTREGA ===== */}
             {config.mostrar_info_entrega && (
               <>
-                <div className="text-center font-bold">-- {config.titulo_info_entrega} --</div>
-                <div>CLIENTE: {pedidoExemplo.cliente_nome}</div>
-                <div>TEL: {pedidoExemplo.cliente_telefone}</div>
-                <div>END: {pedidoExemplo.endereco_rua}, {pedidoExemplo.endereco_numero}</div>
-                <div>{pedidoExemplo.endereco_complemento}, {pedidoExemplo.endereco_bairro}</div>
-                <div className="border-b border-double my-2" />
+                <div className="border-t border-dashed border-gray-400 my-2" />
+                <div className="text-center font-bold mb-1">-- INFORMAÇÕES DE ENTREGA --</div>
+                <div className="text-[10px]">
+                  <div><span className="font-bold">CLIENTE:</span> {pedidoExemplo.cliente_nome}</div>
+                  <div><span className="font-bold">TEL:</span> {pedidoExemplo.cliente_telefone}</div>
+                  <div><span className="font-bold">END:</span> {pedidoExemplo.endereco_rua}, {pedidoExemplo.endereco_numero}</div>
+                  <div><span className="font-bold">BAIRRO:</span> {pedidoExemplo.endereco_bairro}</div>
+                  <div><span className="font-bold">REF:</span> {pedidoExemplo.endereco_complemento}</div>
+                </div>
               </>
             )}
             
-            <div className="text-center font-bold">{config.mensagem_rodape}</div>
+            {/* ===== RODAPÉ ===== */}
+            <div className="border-t-2 border-gray-800 my-2" />
+            <div className="text-center font-bold text-[10px]">{config.mensagem_rodape}</div>
           </div>
         </div>
       </div>
