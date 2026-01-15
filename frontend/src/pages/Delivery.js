@@ -338,6 +338,59 @@ export default function Delivery() {
     }
   };
 
+  // Voltar etapa do pedido
+  const handleVoltarEtapa = async (pedido, e) => {
+    if (e) e.stopPropagation();
+    
+    // Definir mapeamento de etapa anterior
+    const etapaAnterior = {
+      // aguardando_aceite: não pode voltar (não mostrar botão)
+      // producao: não pode voltar (não mostrar botão)
+      'pronto': 'producao',
+      'na_bag': 'pronto',
+      'em_rota': 'na_bag',
+      'concluido': 'em_rota'
+    };
+    
+    const novaEtapa = etapaAnterior[pedido.status];
+    if (!novaEtapa) {
+      toast.error("Não é possível voltar desta etapa");
+      return;
+    }
+    
+    try {
+      // Atualizar status no backend
+      await axios.patch(`${API}/pedidos/${pedido.id}/status?status=${novaEtapa}`);
+      
+      // Enviar mensagem via WhatsApp se tiver telefone
+      if (pedido.cliente_telefone) {
+        const etapaLabel = statusConfig[novaEtapa]?.label || novaEtapa;
+        const mensagem = `🧾 Atualização pedido *nº ${pedido.codigo}*\n> Correção, voltamos para a etapa: ${etapaLabel}`;
+        
+        try {
+          await axios.post(`${API}/whatsapp/send`, {
+            phone: pedido.cliente_telefone,
+            message: mensagem
+          });
+        } catch (whatsappError) {
+          console.log("Erro ao enviar WhatsApp (não crítico):", whatsappError);
+        }
+      }
+      
+      toast.success(`Pedido voltou para: ${statusConfig[novaEtapa]?.label}`);
+      fetchData();
+    } catch (error) {
+      toast.error("Erro ao voltar etapa do pedido");
+      console.error(error);
+    }
+  };
+  
+  // Verificar se pedido pode voltar etapa
+  const podeVoltarEtapa = (status) => {
+    // Não pode voltar de: aguardando_aceite, producao, cancelado
+    return !['aguardando_aceite', 'producao', 'cancelado'].includes(status);
+  };
+
   // Abrir página do entregador
   const handleAbrirEntregador = (entregador) => {
     // Navegar para página de detalhes do entregador (melhor para mobile)
