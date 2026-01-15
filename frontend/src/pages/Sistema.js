@@ -2735,14 +2735,14 @@ function GerenciarImpressoras({ toast }) {
         });
         // Fallback para window.print
         const config = { mostrar_logo: true, mostrar_data_hora: true, mostrar_codigo_pedido: true, mostrar_cliente_nome: true, mostrar_cliente_telefone: true, mostrar_endereco_entrega: true, mostrar_forma_pagamento: true, mostrar_observacoes: true, mensagem_rodape: "NÃO É DOCUMENTO FISCAL" };
-        const empresa = { nome: empresaData.nome, slogan: empresaData.slogan, endereco: empresaData.endereco, cnpj: empresaData.cnpj };
+        const empresa = { nome: empresaData.nome, slogan: empresaData.slogan, endereco: empresaData.endereco, cnpj: empresaData.cnpj, logo_url: empresaData.logo_url };
         printPedido(testePedido, config, empresa);
       }
     } else {
       // Impressora manual - usar window.print
       toast({ title: "Abrindo teste...", description: "Será aberta uma janela de impressão" });
       const config = { mostrar_logo: true, mostrar_data_hora: true, mostrar_codigo_pedido: true, mostrar_cliente_nome: true, mostrar_cliente_telefone: true, mostrar_endereco_entrega: true, mostrar_forma_pagamento: true, mostrar_observacoes: true, mensagem_rodape: "NÃO É DOCUMENTO FISCAL" };
-      const empresa = { nome: empresaData.nome, slogan: empresaData.slogan, endereco: empresaData.endereco, cnpj: empresaData.cnpj };
+      const empresa = { nome: empresaData.nome, slogan: empresaData.slogan, endereco: empresaData.endereco, cnpj: empresaData.cnpj, logo_url: empresaData.logo_url };
       printPedido(testePedido, config, empresa);
     }
   };

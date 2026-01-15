@@ -46188,3 +46188,13 @@
 2026-01-15T15:40:18.295526+00:00 | DB_CALL get_user_by_id | P3 | 0.3ms | success
 2026-01-15T15:40:18.295821+00:00 | DB_CALL get_all_settings | P3 | 0.16ms | success
 2026-01-15T15:40:18.307597+00:00 | DB_CALL set_setting | P3 | 11.61ms | success
+2026-01-15T15:40:22.268218+00:00 | DB_CALL get_all_settings | P3 | 0.4ms | success
+2026-01-15T15:40:22.390527+00:00 | DB_CALL get_all_settings | P3 | 0.36ms | success
+2026-01-15T15:40:22.441616+00:00 | DB_CALL get_all_settings | P3 | 0.45ms | success
+2026-01-15T15:40:23.922846+00:00 | DB_CALL get_user_by_id | P3 | 0.38ms | success
+2026-01-15T15:40:23.978639+00:00 | DB_CALL get_all_settings | P3 | 0.75ms | success
+2026-01-15T15:40:23.982309+00:00 | DB_CALL set_setting | P3 | 3.51ms | success
+2026-01-15T15:40:25.940780+00:00 | DB_CALL get_all_settings | P3 | 1.65ms | success
+2026-01-15T15:40:25.941554+00:00 | DB_CALL get_all_settings | P3 | 1.54ms | success
+2026-01-15T15:40:32.997148+00:00 | DB_CALL get_all_products | P3 | 20.29ms | success
+2026-01-15T15:40:33.604570+00:00 | DB_CALL get_all_products | P3 | 19.42ms | success
