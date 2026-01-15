@@ -629,6 +629,14 @@ def init_database():
         except:
             pass  # Coluna já existe
         
+        # Migração: Adicionar coluna available na tabela products (disponível para compra)
+        try:
+            cursor.execute("ALTER TABLE products ADD COLUMN available INTEGER DEFAULT 1")
+            conn.commit()
+            print("[DATABASE] Coluna available adicionada em products")
+        except:
+            pass  # Coluna já existe
+        
         # Migração: Adicionar coluna pontuacao na tabela clientes
         try:
             cursor.execute("ALTER TABLE clientes ADD COLUMN pontuacao INTEGER DEFAULT 0")
