@@ -46370,3 +46370,9 @@
 2026-01-15T16:03:12.153239+00:00 | DB_CALL get_all_settings | P3 | 0.9ms | success
 2026-01-15T16:03:12.153753+00:00 | DB_CALL get_all_settings | P3 | 1.13ms | success
 2026-01-15T16:03:12.329788+00:00 | DB_CALL get_all_settings | P3 | 0.29ms | success
+2026-01-15T16:03:20.784210+00:00 | DB_CALL get_all_settings | P3 | 0.32ms | success
+2026-01-15T16:03:20.784780+00:00 | DB_CALL get_all_settings | P3 | 1.25ms | success
+2026-01-15T16:03:20.956588+00:00 | DB_CALL get_all_settings | P3 | 0.35ms | success
+2026-01-15T16:03:21.154360+00:00 | DB_CALL get_all_settings | P3 | 0.27ms | success
+2026-01-15T16:03:21.154892+00:00 | DB_CALL get_all_settings | P3 | 1.37ms | success
+2026-01-15T16:03:21.330218+00:00 | DB_CALL get_all_settings | P3 | 0.29ms | success
