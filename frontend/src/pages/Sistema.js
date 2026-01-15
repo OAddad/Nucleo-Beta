@@ -1805,6 +1805,7 @@ function ConfiguracaoImpressao({ toast }) {
 
   useEffect(() => {
     fetchConfig();
+    fetchCompanySettings();
   }, []);
 
   const fetchConfig = async () => {
@@ -1818,6 +1819,27 @@ function ConfiguracaoImpressao({ toast }) {
       console.error("Erro ao carregar config:", error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  // Buscar dados da empresa de CONFIGURAÇÃO -> EMPRESA
+  const fetchCompanySettings = async () => {
+    try {
+      const response = await fetch(`${API_URL}/api/company/settings`);
+      if (response.ok) {
+        const data = await response.json();
+        // Atualizar config com dados da empresa
+        setConfig(prev => ({
+          ...prev,
+          empresa_nome: data.company_name || prev.empresa_nome,
+          empresa_slogan: data.slogan || prev.empresa_slogan,
+          empresa_endereco: data.address || prev.empresa_endereco,
+          empresa_cnpj: data.cnpj || prev.empresa_cnpj,
+          empresa_telefone: data.phone || prev.empresa_telefone,
+        }));
+      }
+    } catch (error) {
+      console.error("Erro ao carregar dados da empresa:", error);
     }
   };
 
