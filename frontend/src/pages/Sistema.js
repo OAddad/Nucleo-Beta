@@ -3519,6 +3519,13 @@ export function printPedido(pedido, config, empresa) {
           border-bottom: 1px dashed #000;
           margin-bottom: 8px;
         }
+        .header .logo-img {
+          height: 120px;
+          max-width: 100%;
+          object-fit: contain;
+          margin: 0 auto 8px auto;
+          display: block;
+        }
         .header .logo-placeholder {
           font-size: 10px;
           color: #666;
