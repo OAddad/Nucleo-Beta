@@ -388,6 +388,7 @@ class OrderStep(BaseModel):
     items: List[OrderStepItem] = []
     combo_only: bool = False  # Se True, essa etapa só aparece para combo (ex: bebida)
     default_item_id: Optional[str] = None  # ID do item que vem pré-selecionado (opcional)
+    sync_prices: bool = True  # Se True, sincroniza preços com PRODUTOS automaticamente
 
 class ProductCreate(BaseModel):
     name: str
