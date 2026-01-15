@@ -46128,3 +46128,7 @@
 2026-01-15T15:37:07.136130+00:00 | DB_CALL get_all_settings | P3 | 0.18ms | success
 2026-01-15T15:37:07.310922+00:00 | DB_CALL get_all_settings | P3 | 0.29ms | success
 2026-01-15T15:37:07.312544+00:00 | DB_CALL get_all_settings | P3 | 0.16ms | success
+2026-01-15T15:37:14.134345+00:00 | DB_CALL get_all_settings | P3 | 1.12ms | success
+2026-01-15T15:37:14.134927+00:00 | DB_CALL get_all_settings | P3 | 1.03ms | success
+2026-01-15T15:37:14.309797+00:00 | DB_CALL get_all_settings | P3 | 0.26ms | success
+2026-01-15T15:37:14.322914+00:00 | DB_CALL get_all_settings | P3 | 0.23ms | success
