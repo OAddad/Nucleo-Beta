@@ -977,26 +977,30 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode, allProduc
                 const isSelected = selections.includes(item.product_id);
                 const itemPhoto = getProductPhoto(item.product_id);
                 const hasImageError = itemImageErrors[item.product_id];
+                const itemAvailable = isProductAvailable(item.product_id);
                 
                 return (
                   <button
                     key={item.product_id}
-                    onClick={() => toggleItemSelection(currentStepIndex, item.product_id)}
+                    onClick={() => itemAvailable && toggleItemSelection(currentStepIndex, item.product_id)}
+                    disabled={!itemAvailable}
                     className={`relative p-1.5 rounded-lg border-2 transition-all text-left flex flex-col ${
-                      isSelected 
-                        ? `${t.selectedBorder} ${t.selectedBg}` 
-                        : `${t.border} ${t.bgCard} ${t.hoverBorder}`
+                      !itemAvailable
+                        ? `${darkMode ? 'border-zinc-600 bg-zinc-800' : 'border-gray-300 bg-gray-100'} opacity-60 cursor-not-allowed`
+                        : isSelected 
+                          ? `${t.selectedBorder} ${t.selectedBg}` 
+                          : `${t.border} ${t.bgCard} ${t.hoverBorder}`
                     }`}
                   >
                     {/* Badge de seleção */}
-                    {isSelected && (
+                    {isSelected && itemAvailable && (
                       <div className="absolute top-1 right-1 w-5 h-5 rounded-full bg-orange-500 flex items-center justify-center z-10 shadow-md">
                         <Check className="w-3 h-3 text-white" />
                       </div>
                     )}
                     
                     {/* Foto do Item */}
-                    <div className={`w-full aspect-square rounded-md overflow-hidden mb-1.5 ${isSelected ? 'ring-2 ring-orange-500' : ''} ${isPngImage(itemPhoto) ? (darkMode ? 'bg-zinc-700' : 'bg-gray-100') : (darkMode ? 'bg-zinc-800' : 'bg-gray-50')}`}>
+                    <div className={`w-full aspect-square rounded-md overflow-hidden mb-1.5 relative ${isSelected ? 'ring-2 ring-orange-500' : ''} ${isPngImage(itemPhoto) ? (darkMode ? 'bg-zinc-700' : 'bg-gray-100') : (darkMode ? 'bg-zinc-800' : 'bg-gray-50')} ${!itemAvailable ? 'grayscale' : ''}`}>
                       {itemPhoto && !hasImageError ? (
                         <img
                           src={getImageUrl(itemPhoto)}
@@ -1009,11 +1013,16 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode, allProduc
                           <span className="text-2xl">🍽️</span>
                         </div>
                       )}
+                      {!itemAvailable && (
+                        <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                          <span className="text-white text-[10px] font-bold bg-red-500 px-1.5 py-0.5 rounded">INDISPONÍVEL</span>
+                        </div>
+                      )}
                     </div>
                     
                     {/* Info do Item */}
                     <div className="flex-1 min-w-0">
-                      <p className={`font-medium text-xs ${t.text} line-clamp-1 leading-tight`}>{item.product_name}</p>
+                      <p className={`font-medium text-xs ${t.text} line-clamp-1 leading-tight ${!itemAvailable ? 'line-through opacity-60' : ''}`}>{item.product_name}</p>
                       {(() => {
                         const itemDescription = getProductDescription(item.product_id);
                         return itemDescription ? (
@@ -1022,6 +1031,9 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode, allProduc
                       })()}
                       {(() => {
                         const itemPrice = getItemPrice(item, currentStep);
+                        if (!itemAvailable) {
+                          return <p className="text-[10px] text-red-500 font-bold mt-0.5">Indisponível</p>;
+                        }
                         return itemPrice > 0 ? (
                           <p className="text-xs text-orange-500 font-bold mt-0.5">
                             +R$ {itemPrice.toFixed(2).replace('.', ',')}
