@@ -158,7 +158,7 @@ app.post('/printers/connect', async (req, res) => {
  */
 app.post('/print', async (req, res) => {
   try {
-    const { pedido, template = 'cozinha', copies = 1, cut = true } = req.body;
+    const { pedido, template = 'cozinha', copies = 1, cut = true, empresa = {}, config: printConfig = {} } = req.body;
     
     if (!pedido) {
       return res.status(400).json({ 
@@ -175,7 +175,11 @@ app.post('/print', async (req, res) => {
       });
     }
     
-    // Criar job de impressão
+    // Log dos dados recebidos para debug
+    logger.info(`Dados empresa recebidos: ${JSON.stringify(empresa)}`);
+    logger.info(`Dados config recebidos: ${JSON.stringify(printConfig)}`);
+    
+    // Criar job de impressão com empresa e config
     const jobId = uuidv4();
     const job = {
       id: jobId,
@@ -183,6 +187,8 @@ app.post('/print', async (req, res) => {
       template,
       copies,
       cut,
+      empresa,
+      config: printConfig,
       printer: defaultPrinter,
       status: 'pending',
       createdAt: new Date().toISOString(),
