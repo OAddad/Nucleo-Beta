@@ -43369,3 +43369,5 @@
 2026-01-15T01:57:45.732166+00:00 | DB_CALL get_all_pedidos | P3 | 1.47ms | success
 2026-01-15T01:57:46.199217+00:00 | DB_CALL get_all_products | P3 | 2.5ms | success
 2026-01-15T01:57:46.493439+00:00 | DB_CALL get_all_products | P3 | 2.43ms | success
+2026-01-15T01:58:09.247802+00:00 | DB_CALL get_all_products | P3 | 2.45ms | success
+2026-01-15T01:58:09.809836+00:00 | DB_CALL get_all_products | P3 | 2.42ms | success

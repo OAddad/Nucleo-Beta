@@ -1636,13 +1636,43 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
     }
   };
 
-  // Buscar endereços salvos do cliente (da tabela client_addresses)
+  // Buscar endereços salvos do cliente (da tabela client_addresses + pedidos anteriores)
   const fetchClienteEnderecos = async (clienteId) => {
     try {
-      const res = await axios.get(`${API}/client-addresses/${clienteId}`, getAuthHeader());
-      const enderecos = Array.isArray(res.data) ? res.data : [];
-      // Converter para formato usado no componente
-      const enderecosMapeados = enderecos.map(end => ({
+      // 1. Buscar endereços salvos
+      const resEnderecos = await axios.get(`${API}/client-addresses/${clienteId}`, getAuthHeader());
+      const enderecosSalvos = Array.isArray(resEnderecos.data) ? resEnderecos.data : [];
+      
+      // 2. Buscar endereços dos pedidos anteriores
+      const resPedidos = await axios.get(`${API}/pedidos?cliente_id=${clienteId}`, getAuthHeader());
+      const pedidos = Array.isArray(resPedidos.data) ? resPedidos.data : [];
+      
+      // Extrair endereços únicos dos pedidos
+      const enderecosDosPedidos = [];
+      const enderecosVistos = new Set();
+      
+      pedidos.forEach(pedido => {
+        if (pedido.endereco_rua && pedido.tipo_entrega === 'delivery') {
+          const chave = `${pedido.endereco_rua}-${pedido.endereco_numero}-${pedido.endereco_bairro}`.toLowerCase();
+          if (!enderecosVistos.has(chave)) {
+            enderecosVistos.add(chave);
+            enderecosDosPedidos.push({
+              id: `pedido-${pedido.id}`,
+              label: pedido.endereco_label || 'Pedido anterior',
+              rua: pedido.endereco_rua || '',
+              numero: pedido.endereco_numero || '',
+              bairro: pedido.endereco_bairro || '',
+              complemento: pedido.endereco_complemento || '',
+              referencia: '',
+              cep: pedido.endereco_cep || '',
+              fromPedido: true
+            });
+          }
+        }
+      });
+      
+      // Converter endereços salvos para formato usado no componente
+      const enderecosMapeados = enderecosSalvos.map(end => ({
         id: end.id,
         label: end.label || 'Endereço',
         rua: end.endereco || '',
@@ -1652,7 +1682,17 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
         referencia: '',
         cep: end.cep || ''
       }));
-      setEnderecosSalvos(enderecosMapeados);
+      
+      // Filtrar endereços de pedidos que já existem nos salvos
+      const enderecosPedidosFiltrados = enderecosDosPedidos.filter(epd => {
+        const chavePedido = `${epd.rua}-${epd.numero}-${epd.bairro}`.toLowerCase();
+        return !enderecosMapeados.some(es => 
+          `${es.rua}-${es.numero}-${es.bairro}`.toLowerCase() === chavePedido
+        );
+      });
+      
+      // Combinar: primeiro os salvos, depois os de pedidos anteriores
+      setEnderecosSalvos([...enderecosMapeados, ...enderecosPedidosFiltrados]);
     } catch (error) {
       console.error("Erro ao carregar endereços:", error);
       setEnderecosSalvos([]);
