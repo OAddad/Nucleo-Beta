@@ -46198,3 +46198,10 @@
 2026-01-15T15:40:25.941554+00:00 | DB_CALL get_all_settings | P3 | 1.54ms | success
 2026-01-15T15:40:32.997148+00:00 | DB_CALL get_all_products | P3 | 20.29ms | success
 2026-01-15T15:40:33.604570+00:00 | DB_CALL get_all_products | P3 | 19.42ms | success
+2026-01-15T15:40:37.152432+00:00 | DB_CALL get_all_settings | P3 | 10.47ms | success
+2026-01-15T15:40:37.157170+00:00 | DB_CALL get_all_settings | P3 | 8.82ms | success
+2026-01-15T15:40:37.331975+00:00 | DB_CALL get_all_settings | P3 | 0.31ms | success
+2026-01-15T15:40:37.367858+00:00 | DB_CALL get_all_settings | P3 | 6.83ms | success
+2026-01-15T15:40:39.636764+00:00 | DB_CALL get_all_products | P3 | 14.54ms | success
+2026-01-15T15:40:40.984939+00:00 | DB_CALL get_all_products | P3 | 24.59ms | success
+2026-01-15T15:41:04.712558+00:00 | DB_CALL get_all_products | P3 | 36.56ms | success
