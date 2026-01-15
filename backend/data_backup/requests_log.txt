@@ -42412,3 +42412,5 @@
 2026-01-15T01:37:36.864497+00:00 | DB_CALL get_all_products | P3 | 2.48ms | success
 2026-01-15T01:38:33.110117+00:00 | DB_CALL get_all_products | P3 | 2.68ms | success
 2026-01-15T01:38:33.930827+00:00 | DB_CALL get_all_products | P3 | 2.46ms | success
+2026-01-15T01:38:51.395264+00:00 | DB_CALL get_all_products | P3 | 2.48ms | success
+2026-01-15T01:38:52.257734+00:00 | DB_CALL get_all_products | P3 | 2.44ms | success
