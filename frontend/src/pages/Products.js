@@ -3054,6 +3054,23 @@ export default function Products() {
                     className="flex items-center px-6 py-4 cursor-pointer hover:bg-muted/30 transition-colors"
                     onClick={() => toggleProductExpand(product.id)}
                   >
+                    {/* Switch Disponível - ao lado esquerdo */}
+                    <button
+                      onClick={(e) => toggleProductAvailability(product, e)}
+                      className={`
+                        relative inline-flex h-5 w-9 items-center rounded-full transition-colors flex-shrink-0 mr-3
+                        ${product.available !== false ? 'bg-green-500' : 'bg-red-400'}
+                      `}
+                      title={product.available !== false ? "Disponível - clique para desativar" : "Indisponível - clique para ativar"}
+                    >
+                      <span
+                        className={`
+                          inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform shadow-sm
+                          ${product.available !== false ? 'translate-x-5' : 'translate-x-0.5'}
+                        `}
+                      />
+                    </button>
+                    
                     {/* Foto do produto ou placeholder - sem fundo para suportar PNGs transparentes */}
                     <div className="w-16 h-16 rounded-lg border overflow-hidden mr-4 flex-shrink-0 flex items-center justify-center">
                       <ProductThumbnail photoUrl={product.photo_url} name={product.name} />
