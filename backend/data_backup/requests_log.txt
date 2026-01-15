@@ -46408,3 +46408,10 @@
 2026-01-15T16:13:12.630447+00:00 | DB_CALL get_all_categories | P3 | 86.21ms | success
 2026-01-15T16:13:13.921835+00:00 | DB_CALL get_all_products | P3 | 18.31ms | success
 2026-01-15T16:13:14.136251+00:00 | DB_CALL get_all_bairros | P3 | 0.33ms | success
+2026-01-15T16:14:18.073686+00:00 | DB_CALL get_all_settings | P3 | 3.53ms | success
+2026-01-15T16:14:18.074239+00:00 | DB_CALL get_all_settings | P3 | 3.59ms | success
+2026-01-15T16:14:18.159299+00:00 | DB_CALL get_all_settings | P3 | 0.29ms | success
+2026-01-15T16:14:18.182068+00:00 | DB_CALL get_all_settings | P3 | 0.25ms | success
+2026-01-15T16:14:18.248831+00:00 | DB_CALL get_all_settings | P3 | 0.29ms | success
+2026-01-15T16:14:18.354366+00:00 | DB_CALL get_all_settings | P3 | 0.3ms | success
+2026-01-15T16:14:21.931269+00:00 | DB_CALL get_all_settings | P3 | 0.33ms | success
