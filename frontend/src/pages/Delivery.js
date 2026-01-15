@@ -1939,15 +1939,17 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
 
   // Adicionar ao carrinho
   const addToCart = (product, quantity = 1, observation = "") => {
-    // Se tem observação, sempre adiciona como novo item
-    if (observation) {
+    // Se tem observação ou subitems/etapas, sempre adiciona como novo item (não agrupa)
+    const hasCustomization = observation || (product.subitems && product.subitems.length > 0) || (product.etapas && product.etapas.length > 0);
+    
+    if (hasCustomization) {
       setCart([...cart, { ...product, quantity, observation }]);
     } else {
-      // Sem observação, agrupa por id
-      const existing = cart.find(item => item.id === product.id && !item.observation);
+      // Sem personalização, agrupa por id
+      const existing = cart.find(item => item.id === product.id && !item.observation && (!item.subitems || item.subitems.length === 0));
       if (existing) {
         setCart(cart.map(item => 
-          item.id === product.id && !item.observation
+          item.id === product.id && !item.observation && (!item.subitems || item.subitems.length === 0)
             ? { ...item, quantity: item.quantity + quantity }
             : item
         ));
