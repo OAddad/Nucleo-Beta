@@ -73,9 +73,24 @@ def generate_order_summary(pedido: dict, settings: dict) -> str:
         
         items_text += f"```{qtd}x {nome}{tipo_badge}``` R$ {total_item:.2f}\n"
         
-        # Adicionar etapas selecionadas
+        # Adicionar subitems (formato Delivery)
+        subitems = item.get('subitems', [])
+        if subitems:
+            # Agrupar subitems por step_name
+            by_step = {}
+            for sub in subitems:
+                step_name = sub.get('step_name', 'Opção')
+                sub_nome = sub.get('nome') or sub.get('name', '')
+                if step_name not in by_step:
+                    by_step[step_name] = []
+                by_step[step_name].append(sub_nome)
+            
+            for step_name, sub_names in by_step.items():
+                items_text += f"   ↳ {step_name}: {', '.join(sub_names)}\n"
+        
+        # Adicionar etapas selecionadas (formato CardapioPublico)
         etapas = item.get('etapas', [])
-        if etapas:
+        if etapas and not subitems:  # Só mostra etapas se não tiver subitems
             for etapa in etapas:
                 etapa_nome = etapa.get('etapa', '')
                 etapa_itens = etapa.get('itens', [])
