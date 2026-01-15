@@ -399,6 +399,7 @@ class ProductCreate(BaseModel):
     recipe: List[RecipeIngredient]
     is_insumo: Optional[bool] = False
     is_divisible: Optional[bool] = False
+    available: Optional[bool] = True  # Disponível para compra
     order_steps: Optional[List[OrderStep]] = []
     linked_ingredient_id: Optional[str] = None  # ID do ingrediente linkado (para receitas)
     recipe_yield: Optional[float] = None  # Rendimento da receita (quantidade produzida)
@@ -426,6 +427,7 @@ class Product(BaseModel):
     profit_margin: Optional[float] = None
     is_insumo: bool = False
     is_divisible: bool = False
+    available: bool = True  # Disponível para compra
     order_steps: List[OrderStep] = []
     linked_ingredient_id: Optional[str] = None  # ID do ingrediente linkado (para receitas)
     recipe_yield: Optional[float] = None  # Rendimento da receita (quantidade produzida)
