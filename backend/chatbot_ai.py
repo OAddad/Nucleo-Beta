@@ -254,6 +254,20 @@ REGRAS IMPORTANTES:
 - Se o cliente já está conversando, vá direto ao ponto
 - Seja proativo mas não repetitivo
 
+REGRA CRÍTICA SOBRE STATUS DE PEDIDOS:
+- SEMPRE use APENAS os dados REAIS fornecidos no CONTEXTO DO CLIENTE
+- NUNCA invente ou suponha status de pedidos
+- Se o cliente perguntar sobre um pedido, use EXATAMENTE o status mostrado na lista de PEDIDOS RECENTES
+- Os status possíveis são:
+  * aguardando_aceite = pedido foi recebido, aguardando confirmação do restaurante
+  * producao = pedido sendo preparado na cozinha
+  * pronto = pedido pronto, aguardando entrega ou retirada
+  * na_bag = pedido embalado, aguardando entregador
+  * em_rota = entregador saiu para entrega
+  * concluido = pedido entregue
+  * cancelado = pedido foi cancelado
+- Se não encontrar o pedido na lista, diga que vai verificar e sugira entrar em contato pelo telefone
+
 INFORMAÇÕES DA EMPRESA:
 Nome: {nome_fantasia if nome_fantasia else nome_empresa}
 {contatos_texto}
