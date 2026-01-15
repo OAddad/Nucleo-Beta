@@ -746,18 +746,16 @@ export default function Delivery() {
         <p className="font-bold text-primary text-sm mb-2">R$ {(pedido.total || 0).toFixed(2)}</p>
         
         {showButton && (
-          <div className="flex gap-2">
-            {/* Botão Voltar Etapa - só aparece se pode voltar */}
+          <div className="flex gap-2 items-center">
+            {/* Botão Voltar Etapa - discreto */}
             {podeVoltarEtapa(pedido.status) && (
-              <Button 
-                size="sm" 
-                variant="outline"
-                className="flex-shrink-0"
+              <button 
                 onClick={(e) => handleVoltarEtapa(pedido, e)}
+                className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
                 title="Voltar etapa"
               >
                 <Undo2 className="w-4 h-4" />
-              </Button>
+              </button>
             )}
             <Button 
               size="sm" 
@@ -771,16 +769,14 @@ export default function Delivery() {
           </div>
         )}
         
-        {/* Botão Voltar quando não tem outro botão mas pode voltar */}
+        {/* Botão Voltar discreto quando não tem outro botão */}
         {!showButton && podeVoltarEtapa(pedido.status) && (
-          <Button 
-            size="sm" 
-            variant="outline"
-            className="w-full"
+          <button 
             onClick={(e) => handleVoltarEtapa(pedido, e)}
+            className="w-full flex items-center justify-center gap-1 py-1.5 text-xs text-muted-foreground hover:text-foreground hover:bg-muted rounded-md transition-colors"
           >
-            <Undo2 className="w-4 h-4 mr-1" /> Voltar Etapa
-          </Button>
+            <Undo2 className="w-3 h-3" /> Voltar
+          </button>
         )}
       </div>
     );
