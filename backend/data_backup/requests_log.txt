@@ -42444,3 +42444,10 @@
 2026-01-15T01:41:11.150655+00:00 | DB_CALL update_product | P3 | 3.15ms | success
 2026-01-15T01:41:11.152549+00:00 | DB_CALL create_audit_log | P3 | 1.79ms | success
 2026-01-15T01:41:11.152827+00:00 | DB_CALL get_product_by_id | P3 | 0.19ms | success
+2026-01-15T01:41:13.387913+00:00 | DB_CALL get_user_by_id | P3 | 0.27ms | success
+2026-01-15T01:41:13.389080+00:00 | DB_CALL get_total_pontuacao | P3 | 0.98ms | success
+2026-01-15T01:41:13.389243+00:00 | DB_CALL get_user_by_id | P3 | 0.64ms | success
+2026-01-15T01:41:13.390279+00:00 | DB_CALL recalculate_all_cliente_stats | P3 | 0.88ms | success
+2026-01-15T01:41:13.390477+00:00 | DB_CALL count_clientes | P3 | 1.3ms | success
+2026-01-15T01:41:13.392424+00:00 | DB_CALL get_all_clientes | P3 | 2.01ms | success
+2026-01-15T01:41:20.220489+00:00 | DB_CALL get_user_by_username | P3 | 0.28ms | success
