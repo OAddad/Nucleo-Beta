@@ -1902,6 +1902,39 @@ def update_cliente_pedido_stats(cliente_id: str, order_value: float) -> Optional
         return get_cliente_by_id(cliente_id)
 
 
+def add_pontos_clube(cliente_id: str, valor_pedido: float, pontos_por_real: float) -> Optional[Dict]:
+    """Adiciona pontos do clube ao cliente baseado no valor do pedido"""
+    with db_lock:
+        conn = get_connection()
+        cursor = conn.cursor()
+        
+        # Buscar cliente atual
+        cliente = get_cliente_by_id(cliente_id)
+        if not cliente:
+            return None
+        
+        # Verificar se é membro do clube
+        if not cliente.get('membro_clube'):
+            return cliente
+        
+        # Calcular pontos: valor * pontos_por_real (arredondado para baixo)
+        pontos_ganhos = int(valor_pedido * pontos_por_real)
+        
+        if pontos_ganhos <= 0:
+            return cliente
+        
+        # Atualizar pontuação
+        nova_pontuacao = (cliente.get('pontuacao') or 0) + pontos_ganhos
+        
+        cursor.execute('''
+            UPDATE clientes SET pontuacao = ? WHERE id = ?
+        ''', (nova_pontuacao, cliente_id))
+        conn.commit()
+        
+        print(f"[CLUBE] Cliente {cliente.get('nome')} ganhou {pontos_ganhos} pontos (total: {nova_pontuacao})")
+        
+        return get_cliente_by_id(cliente_id)
+
 
 def recalculate_all_cliente_stats() -> int:
     """Recalcula estatísticas de todos os clientes baseado nos pedidos reais"""
