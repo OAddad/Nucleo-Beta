@@ -30,8 +30,10 @@ function OrderTrackingScreen({ pedido: pedidoInicial, onClose, darkMode, company
     const cleanPhone = (companyPhone || '').replace(/\D/g, '');
     // Adicionar código do país se não tiver
     const phoneWithCountry = cleanPhone.startsWith('55') ? cleanPhone : `55${cleanPhone}`;
+    // Código do pedido (remover # se já tiver para evitar duplicação)
+    const codigoPedido = (pedido?.codigo || '').replace(/^#/, '');
     // Mensagem pré-definida
-    const message = encodeURIComponent(`Gostaria de acompanhar o pedido #${pedido?.codigo || ''}`);
+    const message = encodeURIComponent(`Gostaria de acompanhar o pedido #${codigoPedido}`);
     return `https://wa.me/${phoneWithCountry}?text=${message}`;
   };
   
