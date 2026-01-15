@@ -46107,3 +46107,9 @@
 2026-01-15T15:35:18.138066+00:00 | DB_CALL get_all_settings | P3 | 0.98ms | success
 2026-01-15T15:35:18.309321+00:00 | DB_CALL get_all_settings | P3 | 0.3ms | success
 2026-01-15T15:35:18.336504+00:00 | DB_CALL get_all_settings | P3 | 0.35ms | success
+2026-01-15T15:35:58.179167+00:00 | DB_CALL get_all_settings | P3 | 2.67ms | success
+2026-01-15T15:35:58.202929+00:00 | DB_CALL get_all_products | P3 | 25.47ms | success
+2026-01-15T15:35:58.281631+00:00 | DB_CALL get_all_business_hours | P3 | 103.93ms | success
+2026-01-15T15:35:58.282243+00:00 | DB_CALL get_all_categories | P3 | 104.52ms | success
+2026-01-15T15:35:58.282808+00:00 | DB_CALL get_all_settings | P3 | 99.09ms | success
+2026-01-15T15:35:58.412988+00:00 | DB_CALL get_all_settings | P3 | 0.29ms | success
