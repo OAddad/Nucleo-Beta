@@ -46253,3 +46253,11 @@
 2026-01-15T15:49:13.016715+00:00 | DB_CALL get_all_settings | P3 | 0.2ms | success
 2026-01-15T15:49:35.462147+00:00 | DB_CALL get_all_settings | P3 | 0.29ms | success
 2026-01-15T15:49:35.465269+00:00 | DB_CALL get_all_settings | P3 | 0.24ms | success
+2026-01-15T15:52:48.782203+00:00 | DB_CALL get_all_settings | P3 | 0.28ms | success
+2026-01-15T15:52:48.790488+00:00 | DB_CALL get_all_settings | P3 | 0.28ms | success
+2026-01-15T15:52:48.824953+00:00 | DB_CALL get_all_settings | P3 | 0.89ms | success
+2026-01-15T15:52:48.825542+00:00 | DB_CALL get_all_settings | P3 | 1.02ms | success
+2026-01-15T15:52:49.004020+00:00 | DB_CALL get_all_settings | P3 | 2.99ms | success
+2026-01-15T15:52:49.007634+00:00 | DB_CALL get_all_settings | P3 | 7.18ms | success
+2026-01-15T15:52:51.033776+00:00 | DB_CALL get_all_products | P3 | 396.98ms | success
+2026-01-15T15:52:52.411127+00:00 | DB_CALL get_all_products | P3 | 18.9ms | success

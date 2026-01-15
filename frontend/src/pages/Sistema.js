@@ -1012,10 +1012,11 @@ function PrintConnectorTab({ toast, connectorStatus, onRefresh, onNavigateToDown
           copies: 1,
           cut: true,
           empresa: {
-            nome: connectorStatus?.company_name || "Nome da Empresa",
-            slogan: "Slogan da Empresa",
-            endereco: "ENDEREÇO DA EMPRESA",
-            cnpj: "00.000.000/0001-00"
+            nome: empresaData.nome,
+            slogan: empresaData.slogan,
+            endereco: empresaData.endereco,
+            cnpj: empresaData.cnpj,
+            logo_url: empresaData.logo_url
           },
           config: {
             mostrar_logo: true,
