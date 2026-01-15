@@ -1822,7 +1822,11 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
         novosItens.push({
           ...produtoAtual,
           quantity: item.quantidade || item.qty || 1,
-          observation: item.observacao || ""
+          observation: item.observacao || "",
+          subitems: item.subitems || [],
+          etapas: item.etapas || [],
+          combo_type: item.combo_type || null,
+          sale_price: item.preco || produtoAtual.sale_price || 0
         });
       } else {
         // Se o produto não existe mais, adiciona com os dados do histórico
@@ -1832,7 +1836,10 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
           sale_price: item.preco || 0,
           photo_url: item.photo_url || item.foto_url,
           quantity: item.quantidade || item.qty || 1,
-          observation: item.observacao || ""
+          observation: item.observacao || "",
+          subitems: item.subitems || [],
+          etapas: item.etapas || [],
+          combo_type: item.combo_type || null
         });
       }
     }
