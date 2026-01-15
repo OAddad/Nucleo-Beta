@@ -46099,3 +46099,7 @@
 2026-01-15T15:32:47.605811+00:00 | DB_CALL get_all_products | P3 | 16.51ms | success
 2026-01-15T15:32:52.919031+00:00 | DB_CALL get_all_products | P3 | 14.62ms | success
 2026-01-15T15:32:54.292171+00:00 | DB_CALL get_all_products | P3 | 16.61ms | success
+2026-01-15T15:35:05.138429+00:00 | DB_CALL get_all_settings | P3 | 1.28ms | success
+2026-01-15T15:35:05.145444+00:00 | DB_CALL get_all_settings | P3 | 1.88ms | success
+2026-01-15T15:35:05.328357+00:00 | DB_CALL get_all_settings | P3 | 1.67ms | success
+2026-01-15T15:35:05.354056+00:00 | DB_CALL get_all_settings | P3 | 2.74ms | success
