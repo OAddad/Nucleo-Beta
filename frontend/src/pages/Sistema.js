@@ -1002,6 +1002,11 @@ function PrintConnectorTab({ toast, connectorStatus, onRefresh, onNavigateToDown
         created_at: new Date().toISOString(),
       };
 
+      // DEBUG - Log dos dados da empresa
+      console.log('=== DEBUG DADOS EMPRESA ===');
+      console.log('empresaData:', empresaData);
+      console.log('===========================');
+
       const response = await fetch(`${PRINT_CONNECTOR_URL}/print`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
