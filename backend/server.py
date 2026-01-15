@@ -1515,6 +1515,7 @@ async def create_product(product_data: ProductCreate, current_user: User = Depen
         "profit_margin": profit_margin,
         "is_insumo": product_data.is_insumo,
         "is_divisible": product_data.is_divisible,
+        "available": product_data.available if product_data.available is not None else True,
         "order_steps": order_steps_list,
         "linked_ingredient_id": product_data.linked_ingredient_id,
         "recipe_yield": product_data.recipe_yield,
