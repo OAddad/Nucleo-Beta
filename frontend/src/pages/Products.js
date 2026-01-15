@@ -3198,8 +3198,25 @@ export default function Products() {
                         </div>
                       )}
 
-                      {/* Seta expandir */}
-                      <div className="flex-shrink-0 w-8 flex justify-center">
+                      {/* Switch de Disponibilidade + Seta expandir */}
+                      <div className="flex-shrink-0 flex items-center gap-3">
+                        {/* Switch Disponível */}
+                        <button
+                          onClick={(e) => toggleProductAvailability(product, e)}
+                          className={`
+                            relative inline-flex h-5 w-9 items-center rounded-full transition-colors flex-shrink-0
+                            ${product.available !== false ? 'bg-green-500' : 'bg-red-400'}
+                          `}
+                          title={product.available !== false ? "Disponível - clique para desativar" : "Indisponível - clique para ativar"}
+                        >
+                          <span
+                            className={`
+                              inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform shadow-sm
+                              ${product.available !== false ? 'translate-x-5' : 'translate-x-0.5'}
+                            `}
+                          />
+                        </button>
+                        {/* Seta expandir */}
                         {isExpanded ? (
                           <ChevronUp className="w-5 h-5 text-muted-foreground" strokeWidth={1.5} />
                         ) : (
