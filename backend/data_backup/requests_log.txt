@@ -42204,3 +42204,6 @@
 2026-01-15T01:29:55.439415+00:00 | DB_CALL get_all_products | P3 | 4.86ms | success
 2026-01-15T01:29:55.539776+00:00 | DB_CALL get_all_products | P3 | 4.34ms | success
 2026-01-15T01:29:56.307633+00:00 | DB_CALL get_all_products | P3 | 3.19ms | success
+2026-01-15T01:29:59.286050+00:00 | DB_CALL get_all_entregadores | P3 | 0.35ms | success
+2026-01-15T01:29:59.288411+00:00 | DB_CALL get_all_settings | P3 | 0.51ms | success
+2026-01-15T01:29:59.290103+00:00 | DB_CALL get_all_pedidos | P3 | 2.07ms | success
