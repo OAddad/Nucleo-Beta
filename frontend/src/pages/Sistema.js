@@ -1813,56 +1813,23 @@ function DownloadApp({ toast }) {
 // ==================== SUB-ABA: CONFIGURAÇÕES ====================
 function ConfiguracaoImpressao({ toast }) {
   const [config, setConfig] = useState({
-    // Cabeçalho da Empresa
-    mostrar_logo: true,
     empresa_nome: "",
     empresa_slogan: "",
     empresa_logo_url: "",
     empresa_endereco: "",
-    empresa_cidade: "",
-    empresa_telefone: "",
     empresa_cnpj: "",
-    empresa_ie: "",
-    empresa_im: "",
-    
-    // Opções de exibição
-    impressao_automatica: true,
-    formato_itens: "qtd_preco_item_total",
-    mostrar_observacoes_item: true,
-    mostrar_adicionais: true,
-    mostrar_taxa_entrega: true,
-    mostrar_desconto: true,
-    mostrar_forma_pagamento: true,
-    mostrar_info_entrega: true,
-    
-    // Textos personalizáveis
-    titulo_itens: "ITENS DO PEDIDO",
-    titulo_info_entrega: "Informacoes de Entrega",
-    texto_pagar_entrega: "Pagar na entrega",
     mensagem_rodape: "NAO E DOCUMENTO FISCAL",
   });
   const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-  const [activeSection, setActiveSection] = useState("empresa");
+  const [testingEntrega, setTestingEntrega] = useState(false);
+  const [testingPreparo, setTestingPreparo] = useState(false);
+
+  // Estado para controlar qual aba de preview está ativa
+  const [previewTab, setPreviewTab] = useState("entrega");
 
   useEffect(() => {
-    fetchConfig();
     fetchCompanySettings();
   }, []);
-
-  const fetchConfig = async () => {
-    try {
-      const response = await fetch(`${API_URL}/api/print-config`);
-      if (response.ok) {
-        const data = await response.json();
-        setConfig(prev => ({ ...prev, ...data }));
-      }
-    } catch (error) {
-      console.error("Erro ao carregar config:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   // Buscar dados da empresa de CONFIGURAÇÃO -> EMPRESA
   const fetchCompanySettings = async () => {
@@ -1870,52 +1837,20 @@ function ConfiguracaoImpressao({ toast }) {
       const response = await fetch(`${API_URL}/api/company/settings`);
       if (response.ok) {
         const data = await response.json();
-        // Atualizar config com dados da empresa
         setConfig(prev => ({
           ...prev,
-          empresa_nome: data.company_name || prev.empresa_nome,
-          empresa_slogan: data.slogan || prev.empresa_slogan,
-          empresa_endereco: data.address || prev.empresa_endereco,
-          empresa_cnpj: data.cnpj || prev.empresa_cnpj,
-          empresa_telefone: data.phone || prev.empresa_telefone,
-          empresa_logo_url: data.logo_url || prev.empresa_logo_url,
+          empresa_nome: data.company_name || "Nome da Empresa",
+          empresa_slogan: data.slogan || "",
+          empresa_endereco: data.address || "",
+          empresa_cnpj: data.cnpj || "",
+          empresa_logo_url: data.logo_url || "",
         }));
       }
     } catch (error) {
       console.error("Erro ao carregar dados da empresa:", error);
-    }
-  };
-
-  const handleSave = async () => {
-    setSaving(true);
-    try {
-      const response = await fetch(`${API_URL}/api/print-config`, {
-        method: "POST",
-        headers: { 
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${localStorage.getItem('token')}`
-        },
-        body: JSON.stringify(config)
-      });
-      
-      if (response.ok) {
-        toast({ title: "✅ Salvo!", description: "Configurações de impressão atualizadas" });
-      } else {
-        throw new Error("Erro ao salvar");
-      }
-    } catch (error) {
-      toast({ title: "Erro", description: "Erro ao salvar configurações", variant: "destructive" });
     } finally {
-      setSaving(false);
+      setLoading(false);
     }
-  };
-
-  const handleChange = (field, value) => {
-    setConfig(prev => ({ ...prev, [field]: value }));
-  };
-
-  const handleToggle = (field) => {
-    setConfig(prev => ({ ...prev, [field]: !prev[field] }));
   };
 
   // Pedido exemplo para preview
@@ -1941,8 +1876,72 @@ function ConfiguracaoImpressao({ toast }) {
     created_at: new Date().toISOString(),
   };
 
-  // Estado para controlar qual aba de preview está ativa
-  const [previewTab, setPreviewTab] = useState("entrega");
+  // Função para testar impressão
+  const handleTestarImpressao = async (tipo) => {
+    const isEntrega = tipo === 'entrega';
+    if (isEntrega) setTestingEntrega(true);
+    else setTestingPreparo(true);
+
+    try {
+      const response = await fetch(`${PRINT_CONNECTOR_URL}/print`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        mode: 'cors',
+        body: JSON.stringify({
+          pedido: pedidoExemplo,
+          template: isEntrega ? 'caixa' : 'preparo',
+          copies: 1,
+          cut: true,
+          sector: isEntrega ? 'caixa' : 'cozinha',
+          empresa: {
+            nome: config.empresa_nome,
+            slogan: config.empresa_slogan,
+            endereco: config.empresa_endereco,
+            cnpj: config.empresa_cnpj,
+            logo_url: config.empresa_logo_url
+          },
+          config: {
+            mensagem_rodape: config.mensagem_rodape || "NÃO É DOCUMENTO FISCAL"
+          }
+        })
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || `Erro HTTP ${response.status}`);
+      }
+      
+      const data = await response.json();
+      
+      if (data.success) {
+        toast({ 
+          title: "✅ Sucesso!", 
+          description: `Cupom de ${isEntrega ? 'Entrega' : 'Preparo'} enviado para impressora` 
+        });
+      } else {
+        throw new Error(data.error || 'Erro no teste');
+      }
+    } catch (error) {
+      console.error('Erro no teste de impressão:', error);
+      
+      if (error.name === 'TypeError' && error.message.includes('fetch')) {
+        toast({ 
+          title: "❌ Print Connector inacessível", 
+          description: "Verifique se o NucleoPrintConnector.exe está rodando",
+          variant: "destructive" 
+        });
+      } else {
+        toast({ 
+          title: "❌ Erro no teste", 
+          description: error.message || "Falha ao imprimir teste",
+          variant: "destructive" 
+        });
+      }
+    } finally {
+      if (isEntrega) setTestingEntrega(false);
+      else setTestingPreparo(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -1955,69 +1954,157 @@ function ConfiguracaoImpressao({ toast }) {
   return (
     <div className="space-y-6">
       {/* Abas de Preview */}
-      <div className="flex gap-2 border-b pb-2">
-        <Button
-          variant={previewTab === "entrega" ? "default" : "outline"}
+      <div className="flex gap-2 border-b pb-4">
+        <button
           onClick={() => setPreviewTab("entrega")}
-          className="flex items-center gap-2"
+          className={`flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-all ${
+            previewTab === "entrega" 
+              ? "bg-blue-500 text-white shadow-lg" 
+              : "bg-muted hover:bg-muted/80 text-muted-foreground"
+          }`}
         >
-          <Receipt className="w-4 h-4" />
+          <Receipt className="w-5 h-5" />
           Cupom de Entrega
-        </Button>
-        <Button
-          variant={previewTab === "preparo" ? "default" : "outline"}
+        </button>
+        <button
           onClick={() => setPreviewTab("preparo")}
-          className="flex items-center gap-2"
+          className={`flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-all ${
+            previewTab === "preparo" 
+              ? "bg-orange-500 text-white shadow-lg" 
+              : "bg-muted hover:bg-muted/80 text-muted-foreground"
+          }`}
         >
-          <ChefHat className="w-4 h-4" />
+          <ChefHat className="w-5 h-5" />
           Cupom de Preparo
-        </Button>
+        </button>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Preview do Cupom */}
-        <div className="space-y-4">
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-lg flex items-center gap-2">
-                <Eye className="w-5 h-5 text-blue-500" />
-                Preview - {previewTab === "entrega" ? "Cupom de Entrega" : "Cupom de Preparo"}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="bg-white dark:bg-gray-900 border-2 border-dashed rounded-lg p-4 font-mono text-[11px] overflow-auto" style={{ maxWidth: '320px', margin: '0 auto' }}>
-                {previewTab === "entrega" ? (
-                  <CupomEntregaPreview config={config} pedido={pedidoExemplo} />
-                ) : (
-                  <CupomPreparoPreview pedido={pedidoExemplo} />
-                )}
-              </div>
-            </CardContent>
-          </Card>
+        <div className="bg-card border rounded-xl p-6">
+          <h3 className="font-semibold text-lg mb-4 flex items-center gap-2">
+            <Eye className="w-5 h-5 text-blue-500" />
+            Preview - {previewTab === "entrega" ? "Cupom de Entrega" : "Cupom de Preparo"}
+          </h3>
+          <p className="text-sm text-muted-foreground mb-4">
+            {previewTab === "entrega" 
+              ? "Este cupom é impresso no CAIXA e entregue ao cliente/entregador."
+              : "Este cupom é impresso na COZINHA para preparação do pedido."
+            }
+          </p>
+          <div className="bg-white dark:bg-gray-900 border-2 border-dashed rounded-lg p-4 font-mono text-[11px] overflow-auto" style={{ maxWidth: '320px', margin: '0 auto' }}>
+            {previewTab === "entrega" ? (
+              <CupomEntregaPreview config={config} pedido={pedidoExemplo} />
+            ) : (
+              <CupomPreparoPreview pedido={pedidoExemplo} />
+            )}
+          </div>
         </div>
 
-        {/* Botões de Teste */}
+        {/* Informações e Botão de Teste */}
         <div className="space-y-4">
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-lg flex items-center gap-2">
-                <Printer className="w-5 h-5 text-green-500" />
-                Testar Impressão
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <p className="text-sm text-muted-foreground">
-                Clique no botão abaixo para imprimir um cupom de teste na impressora configurada.
-              </p>
-              <Button
-                onClick={() => handleTestarImpressora({ nome: "Teste", tipo: "manual" })}
-                className="w-full"
-              >
+          {/* Descrição do Cupom */}
+          <div className={`border rounded-xl p-6 ${
+            previewTab === "entrega" 
+              ? "bg-blue-50 dark:bg-blue-950/30 border-blue-200 dark:border-blue-900" 
+              : "bg-orange-50 dark:bg-orange-950/30 border-orange-200 dark:border-orange-900"
+          }`}>
+            <h3 className={`font-semibold text-lg mb-3 flex items-center gap-2 ${
+              previewTab === "entrega" ? "text-blue-700 dark:text-blue-400" : "text-orange-700 dark:text-orange-400"
+            }`}>
+              {previewTab === "entrega" ? (
+                <>
+                  <Receipt className="w-5 h-5" />
+                  Cupom de Entrega (Caixa)
+                </>
+              ) : (
+                <>
+                  <ChefHat className="w-5 h-5" />
+                  Cupom de Preparo (Cozinha)
+                </>
+              )}
+            </h3>
+            
+            {previewTab === "entrega" ? (
+              <ul className="space-y-2 text-sm">
+                <li className="flex items-start gap-2">
+                  <div className="w-2 h-2 rounded-full bg-blue-500 mt-1.5 flex-shrink-0" />
+                  <span>Impresso na impressora do <strong>CAIXA</strong></span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <div className="w-2 h-2 rounded-full bg-blue-500 mt-1.5 flex-shrink-0" />
+                  <span>Contém dados da empresa, itens com preços e valores</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <div className="w-2 h-2 rounded-full bg-blue-500 mt-1.5 flex-shrink-0" />
+                  <span>Informações completas de entrega e pagamento</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <div className="w-2 h-2 rounded-full bg-blue-500 mt-1.5 flex-shrink-0" />
+                  <span>Entregue ao cliente ou entregador</span>
+                </li>
+              </ul>
+            ) : (
+              <ul className="space-y-2 text-sm">
+                <li className="flex items-start gap-2">
+                  <div className="w-2 h-2 rounded-full bg-orange-500 mt-1.5 flex-shrink-0" />
+                  <span>Impresso na impressora da <strong>COZINHA</strong></span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <div className="w-2 h-2 rounded-full bg-orange-500 mt-1.5 flex-shrink-0" />
+                  <span>Mostra apenas: <strong>CÓDIGO, HORA, ITENS, OBSERVAÇÕES</strong></span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <div className="w-2 h-2 rounded-full bg-orange-500 mt-1.5 flex-shrink-0" />
+                  <span>Observações destacadas para atenção do cozinheiro</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <div className="w-2 h-2 rounded-full bg-orange-500 mt-1.5 flex-shrink-0" />
+                  <span>Nome do cliente para identificação</span>
+                </li>
+              </ul>
+            )}
+          </div>
+
+          {/* Botão de Teste */}
+          <div className="bg-card border rounded-xl p-6">
+            <h3 className="font-semibold text-lg mb-3 flex items-center gap-2">
+              <Printer className="w-5 h-5 text-green-500" />
+              Testar Impressão
+            </h3>
+            <p className="text-sm text-muted-foreground mb-4">
+              Imprima um cupom de teste para verificar se está configurado corretamente.
+            </p>
+            <Button
+              onClick={() => handleTestarImpressao(previewTab)}
+              disabled={previewTab === "entrega" ? testingEntrega : testingPreparo}
+              className={`w-full ${
+                previewTab === "entrega" 
+                  ? "bg-blue-500 hover:bg-blue-600" 
+                  : "bg-orange-500 hover:bg-orange-600"
+              }`}
+            >
+              {(previewTab === "entrega" ? testingEntrega : testingPreparo) ? (
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              ) : (
                 <Printer className="w-4 h-4 mr-2" />
-                Imprimir Teste - {previewTab === "entrega" ? "Cupom de Entrega" : "Cupom de Preparo"}
-              </Button>
-            </CardContent>
-          </Card>
+              )}
+              Imprimir Teste - {previewTab === "entrega" ? "Cupom de Entrega" : "Cupom de Preparo"}
+            </Button>
+          </div>
+
+          {/* Dica sobre setores */}
+          <div className="bg-yellow-50 dark:bg-yellow-950/30 border border-yellow-200 dark:border-yellow-900 rounded-xl p-4">
+            <h4 className="font-semibold text-yellow-700 dark:text-yellow-400 mb-2 flex items-center gap-2">
+              <AlertCircle className="w-4 h-4" />
+              Dica: Configuração de Impressoras
+            </h4>
+            <p className="text-sm text-yellow-600 dark:text-yellow-500">
+              Na aba "Print Connector", você pode configurar impressoras diferentes para cada setor 
+              (Caixa, Cozinha, Bar, etc). Assim o cupom de entrega vai para uma impressora e 
+              o cupom de preparo vai para outra automaticamente.
+            </p>
+          </div>
         </div>
       </div>
     </div>
