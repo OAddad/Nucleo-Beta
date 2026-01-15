@@ -40516,3 +40516,7 @@
 2026-01-15T00:02:10.467282+00:00 | DB_CALL get_all_bairros | P3 | 5.28ms | success
 2026-01-15T00:02:25.089761+00:00 | DB_CALL get_all_products | P3 | 10.66ms | success
 2026-01-15T00:02:25.805372+00:00 | DB_CALL get_all_products | P3 | 2.39ms | success
+2026-01-15T00:04:06.444389+00:00 | DB_CALL get_all_products | P3 | 13.51ms | success
+2026-01-15T00:04:07.525389+00:00 | DB_CALL get_all_products | P3 | 2.17ms | success
+2026-01-15T00:04:08.129482+00:00 | DB_CALL get_all_products | P3 | 2.23ms | success
+2026-01-15T00:04:09.004440+00:00 | DB_CALL get_all_products | P3 | 3.41ms | success
