@@ -43016,3 +43016,6 @@
 2026-01-15T01:50:44.763441+00:00 | DB_CALL get_all_settings | P3 | 0.27ms | success
 2026-01-15T01:50:44.763867+00:00 | DB_CALL get_all_keyword_responses | P3 | 0.57ms | success
 2026-01-15T01:50:48.448219+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.61ms | success
+2026-01-15T01:50:50.359526+00:00 | DB_CALL get_all_products | P3 | 6.24ms | success
+2026-01-15T01:50:51.220593+00:00 | DB_CALL get_all_products | P3 | 2.33ms | success
+2026-01-15T01:50:54.317322+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.22ms | success
