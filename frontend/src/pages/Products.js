@@ -1099,18 +1099,27 @@ export default function Products() {
     setDeleteDialogOpen(true);
   };
 
-  // Função para alternar disponibilidade do produto rapidamente
+  // Função para alternar disponibilidade do produto rapidamente (otimista)
   const toggleProductAvailability = async (product, e) => {
     e.stopPropagation();
+    const newAvailability = product.available === false ? true : false;
+    
+    // Atualização otimista - muda na tela IMEDIATAMENTE
+    setProducts(prev => prev.map(p => 
+      p.id === product.id ? { ...p, available: newAvailability } : p
+    ));
+    
+    // Atualiza no backend em background
     try {
-      const newAvailability = product.available === false ? true : false;
       await axios.put(`${API}/products/${product.id}`, {
         ...product,
         available: newAvailability
       }, getAuthHeader());
-      toast.success(newAvailability ? "Produto disponível!" : "Produto indisponível!");
-      fetchProducts();
     } catch (error) {
+      // Se falhar, reverte a mudança
+      setProducts(prev => prev.map(p => 
+        p.id === product.id ? { ...p, available: !newAvailability } : p
+      ));
       toast.error("Erro ao atualizar disponibilidade");
     }
   };
