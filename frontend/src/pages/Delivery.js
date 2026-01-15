@@ -2654,33 +2654,56 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
                             <span className="text-sm text-muted-foreground font-normal">({uncategorized.length})</span>
                           </h3>
                           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-                            {uncategorized.map(product => (
-                              <div 
-                                key={product.id}
-                                className="border rounded-lg p-3 hover:border-orange-500 cursor-pointer transition-all bg-card"
-                                onClick={() => openProductPopup(product)}
-                              >
-                                {product.photo_url ? (
-                                  <div className={`w-full h-24 rounded mb-2 overflow-hidden ${isPngImage(product.photo_url) ? 'bg-muted' : ''}`}>
-                                    <img 
-                                      src={getImageUrl(product.photo_url)} 
-                                      alt={product.name}
-                                      className={`w-full h-full ${isPngImage(product.photo_url) ? 'object-contain p-1' : 'object-cover'}`}
-                                      onError={(e) => e.target.parentElement.style.display = 'none'}
-                                    />
-                                  </div>
-                                ) : (
-                                  <div className="w-full h-24 bg-muted rounded mb-2 flex items-center justify-center">
-                                    <Package className="w-8 h-8 text-muted-foreground" />
-                                  </div>
-                                )}
-                                <h4 className="font-medium text-sm truncate">{product.name}</h4>
-                                {product.description && (
-                                  <p className="text-xs text-muted-foreground line-clamp-2 mb-1">{product.description}</p>
-                                )}
-                                <p className="text-orange-600 font-bold">R$ {(product.sale_price || 0).toFixed(2)}</p>
-                              </div>
-                            ))}
+                            {uncategorized.map(product => {
+                              const isUnavailable = product.available === false;
+                              return (
+                                <div 
+                                  key={product.id}
+                                  className={`border rounded-lg p-3 transition-all bg-card ${
+                                    isUnavailable 
+                                      ? 'opacity-60 cursor-not-allowed border-gray-300' 
+                                      : 'hover:border-orange-500 cursor-pointer'
+                                  }`}
+                                  onClick={() => !isUnavailable && openProductPopup(product)}
+                                >
+                                  {product.photo_url ? (
+                                    <div className={`w-full h-24 rounded mb-2 overflow-hidden relative ${isPngImage(product.photo_url) ? 'bg-muted' : ''}`}>
+                                      <img 
+                                        src={getImageUrl(product.photo_url)} 
+                                        alt={product.name}
+                                        className={`w-full h-full ${isPngImage(product.photo_url) ? 'object-contain p-1' : 'object-cover'} ${isUnavailable ? 'grayscale' : ''}`}
+                                        onError={(e) => e.target.parentElement.style.display = 'none'}
+                                      />
+                                      {isUnavailable && (
+                                        <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                                          <span className="bg-red-500 text-white text-[10px] font-bold px-2 py-1 rounded-full uppercase">
+                                            Indisponível
+                                          </span>
+                                        </div>
+                                      )}
+                                    </div>
+                                  ) : (
+                                    <div className={`w-full h-24 bg-muted rounded mb-2 flex items-center justify-center relative ${isUnavailable ? 'grayscale' : ''}`}>
+                                      <Package className="w-8 h-8 text-muted-foreground" />
+                                      {isUnavailable && (
+                                        <div className="absolute inset-0 bg-black/40 flex items-center justify-center rounded">
+                                          <span className="bg-red-500 text-white text-[10px] font-bold px-2 py-1 rounded-full uppercase">
+                                            Indisponível
+                                          </span>
+                                        </div>
+                                      )}
+                                    </div>
+                                  )}
+                                  <h4 className="font-medium text-sm truncate">{product.name}</h4>
+                                  {product.description && (
+                                    <p className="text-xs text-muted-foreground line-clamp-2 mb-1">{product.description}</p>
+                                  )}
+                                  <p className={`font-bold ${isUnavailable ? 'text-gray-400 line-through' : 'text-orange-600'}`}>
+                                    R$ {(product.sale_price || 0).toFixed(2)}
+                                  </p>
+                                </div>
+                              );
+                            })}
                           </div>
                         </div>
                       );
