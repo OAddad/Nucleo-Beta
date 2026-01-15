@@ -3534,6 +3534,7 @@ export default function CardapioPublico({ onAdminLogin }) {
           pedido={currentOrder}
           onClose={() => setTrackingOpen(false)}
           darkMode={darkMode}
+          companyPhone={companySettings.phone}
         />
       )}
     </div>

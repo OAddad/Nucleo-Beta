@@ -41937,3 +41937,9 @@
 2026-01-15T01:25:31.651496+00:00 | DB_CALL get_all_bairros | P3 | 0.36ms | success
 2026-01-15T01:25:32.113011+00:00 | DB_CALL get_all_products | P3 | 2.77ms | success
 2026-01-15T01:25:32.443418+00:00 | DB_CALL get_all_products | P3 | 2.63ms | success
+2026-01-15T01:25:38.912849+00:00 | DB_CALL get_all_products | P3 | 3.46ms | success
+2026-01-15T01:25:38.927824+00:00 | DB_CALL get_all_settings | P3 | 16.78ms | success
+2026-01-15T01:25:38.929792+00:00 | DB_CALL get_all_business_hours | P3 | 0.57ms | success
+2026-01-15T01:25:38.930388+00:00 | DB_CALL get_all_categories | P3 | 1.49ms | success
+2026-01-15T01:25:39.836428+00:00 | DB_CALL get_all_products | P3 | 2.95ms | success
+2026-01-15T01:25:40.101023+00:00 | DB_CALL get_all_bairros | P3 | 0.39ms | success
