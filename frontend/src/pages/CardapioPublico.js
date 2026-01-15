@@ -3079,9 +3079,23 @@ export default function CardapioPublico({ onAdminLogin }) {
                               {product.description && (
                                 <p className={`${t.textMuted} text-[11px] lg:text-xs line-clamp-2 mb-1.5 leading-relaxed`}>{product.description}</p>
                               )}
-                              <span className={`font-bold text-sm lg:text-base ${isUnavailable ? 'text-gray-400 line-through' : 'text-orange-500'}`}>
-                                R$ {product.sale_price?.toFixed(2).replace('.', ',')}
-                              </span>
+                              {/* Preço - Mostra dois preços se for combo */}
+                              {product.product_type === 'combo' && product.simple_price ? (
+                                <div className={`flex flex-col gap-0.5 ${isUnavailable ? 'opacity-50' : ''}`}>
+                                  <span className={`text-xs lg:text-sm ${isUnavailable ? 'text-gray-400' : 'text-orange-500'}`}>
+                                    <span className="font-bold">R$ {product.simple_price?.toFixed(2).replace('.', ',')}</span>
+                                    <span className={`${t.textMuted} ml-1`}>simples</span>
+                                  </span>
+                                  <span className={`text-xs lg:text-sm ${isUnavailable ? 'text-gray-400' : 'text-orange-500'}`}>
+                                    <span className="font-bold">R$ {product.sale_price?.toFixed(2).replace('.', ',')}</span>
+                                    <span className={`${t.textMuted} ml-1`}>combo</span>
+                                  </span>
+                                </div>
+                              ) : (
+                                <span className={`font-bold text-sm lg:text-base ${isUnavailable ? 'text-gray-400 line-through' : 'text-orange-500'}`}>
+                                  R$ {product.sale_price?.toFixed(2).replace('.', ',')}
+                                </span>
+                              )}
                             </div>
                           </div>
                         );

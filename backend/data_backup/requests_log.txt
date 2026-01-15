@@ -44369,3 +44369,12 @@
 2026-01-15T12:38:12.052868+00:00 | DB_CALL get_all_entregadores | P3 | 0.92ms | success
 2026-01-15T12:38:12.054669+00:00 | DB_CALL get_all_pedidos | P3 | 2.21ms | success
 2026-01-15T12:38:12.058224+00:00 | DB_CALL get_all_settings | P3 | 0.25ms | success
+2026-01-15T12:38:41.125138+00:00 | DB_CALL get_all_settings | P3 | 0.39ms | success
+2026-01-15T12:38:41.127609+00:00 | DB_CALL get_all_pedidos | P3 | 1.37ms | success
+2026-01-15T12:38:41.132744+00:00 | DB_CALL get_all_entregadores | P3 | 0.23ms | success
+2026-01-15T12:38:45.051033+00:00 | DB_CALL get_all_settings | P3 | 1.55ms | success
+2026-01-15T12:38:45.052930+00:00 | DB_CALL get_all_pedidos | P3 | 3.01ms | success
+2026-01-15T12:38:45.054917+00:00 | DB_CALL get_all_entregadores | P3 | 4.26ms | success
+2026-01-15T12:38:50.052987+00:00 | DB_CALL get_all_pedidos | P3 | 2.31ms | success
+2026-01-15T12:38:50.055347+00:00 | DB_CALL get_all_entregadores | P3 | 3.47ms | success
+2026-01-15T12:38:50.056432+00:00 | DB_CALL get_all_settings | P3 | 0.23ms | success
