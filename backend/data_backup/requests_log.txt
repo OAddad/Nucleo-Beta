@@ -46020,3 +46020,12 @@
 2026-01-15T15:23:50.167098+00:00 | DB_CALL get_all_bairros | P3 | 0.33ms | success
 2026-01-15T15:23:51.112518+00:00 | DB_CALL get_all_products | P3 | 19.95ms | success
 2026-01-15T15:23:52.444882+00:00 | DB_CALL get_all_products | P3 | 15.44ms | success
+2026-01-15T15:24:12.271628+00:00 | DB_CALL get_all_categories | P3 | 12.57ms | success
+2026-01-15T15:24:12.277161+00:00 | DB_CALL get_all_business_hours | P3 | 15.16ms | success
+2026-01-15T15:24:12.305577+00:00 | DB_CALL get_all_products | P3 | 43.47ms | success
+2026-01-15T15:24:12.421941+00:00 | DB_CALL get_all_settings | P3 | 133.53ms | success
+2026-01-15T15:24:12.734352+00:00 | DB_CALL get_all_products | P3 | 33.15ms | success
+2026-01-15T15:24:12.836123+00:00 | DB_CALL get_all_bairros | P3 | 0.46ms | success
+2026-01-15T15:24:18.310298+00:00 | DB_CALL get_all_products | P3 | 53.11ms | success
+2026-01-15T15:24:19.661022+00:00 | DB_CALL get_all_products | P3 | 14.61ms | success
+2026-01-15T15:24:19.912616+00:00 | DB_CALL get_user_by_username | P3 | 0.29ms | success
