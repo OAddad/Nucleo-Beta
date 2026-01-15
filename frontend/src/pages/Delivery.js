@@ -2939,7 +2939,7 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
                         <SelectContent>
                           {bairros.map(b => (
                             <SelectItem key={b.id} value={b.nome}>
-                              {b.nome} - R$ {(b.taxa_entrega || 0).toFixed(2)}
+                              {b.nome} - R$ {(b.valor_entrega || b.taxa_entrega || 0).toFixed(2)}
                             </SelectItem>
                           ))}
                         </SelectContent>
