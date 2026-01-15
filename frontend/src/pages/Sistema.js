@@ -964,6 +964,68 @@ function PrintConnectorTab({ toast, connectorStatus, onRefresh, onNavigateToDown
     }
   };
 
+  // Buscar impressoras configuradas por setor
+  const fetchSectorPrinters = async () => {
+    try {
+      const response = await fetch(`${PRINT_CONNECTOR_URL}/printers/sectors`);
+      if (response.ok) {
+        const data = await response.json();
+        setSectorPrinters(data);
+      }
+    } catch (error) {
+      console.error('Erro ao buscar setores:', error);
+    }
+  };
+
+  // Configurar impressora para um setor
+  const handleConfigureSector = async (printer, sectorId) => {
+    setConfiguringSector(`${printer.id}-${sectorId}`);
+    try {
+      const response = await fetch(`${PRINT_CONNECTOR_URL}/printers/sector`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: printer.name,
+          sector: sectorId
+        })
+      });
+      
+      const data = await response.json();
+      
+      if (data.success) {
+        const sectorName = availableSectors.find(s => s.id === sectorId)?.name || sectorId;
+        toast({ title: "Sucesso!", description: `${printer.name} configurada para ${sectorName}` });
+        fetchSectorPrinters();
+      } else {
+        throw new Error(data.error || 'Erro ao configurar setor');
+      }
+    } catch (error) {
+      toast({ title: "Erro", description: error.message, variant: "destructive" });
+    } finally {
+      setConfiguringSector(null);
+    }
+  };
+
+  // Remover impressora de um setor
+  const handleRemoveSector = async (sectorId) => {
+    try {
+      const response = await fetch(`${PRINT_CONNECTOR_URL}/printers/sector/${sectorId}`, {
+        method: 'DELETE'
+      });
+      
+      const data = await response.json();
+      
+      if (data.success) {
+        toast({ title: "Removido", description: `Impressora removida do setor` });
+        fetchSectorPrinters();
+      } else {
+        throw new Error(data.error || 'Erro ao remover');
+      }
+    } catch (error) {
+      toast({ title: "Erro", description: error.message, variant: "destructive" });
+    }
+  };
+
   const handleConnect = async (printer) => {
     setConnecting(printer.id);
     try {
