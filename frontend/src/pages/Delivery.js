@@ -1686,7 +1686,7 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
     // Buscar taxa do bairro
     const bairro = bairros.find(b => b.nome === end.bairro);
     if (bairro) {
-      setTaxaEntrega(bairro.taxa_entrega || 0);
+      setTaxaEntrega(bairro.valor_entrega || bairro.taxa_entrega || 0);
     }
   };
 
@@ -2222,7 +2222,7 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
     if (endereco.bairro && tipoEntrega === "delivery") {
       const bairro = bairros.find(b => b.nome.toLowerCase() === endereco.bairro.toLowerCase());
       if (bairro) {
-        setTaxaEntrega(bairro.taxa_entrega || 0);
+        setTaxaEntrega(bairro.valor_entrega || bairro.taxa_entrega || 0);
       }
     }
   }, [endereco.bairro, bairros, tipoEntrega]);
