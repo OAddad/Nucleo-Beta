@@ -1229,7 +1229,7 @@ def update_product(product_id: str, data: Dict) -> Optional[Dict]:
                 name = ?, description = ?, category = ?, product_type = ?,
                 sale_price = ?, simple_price = ?, combo_description = ?, simple_description = ?,
                 simple_photo_url = ?, combo_photo_url = ?, photo_url = ?, recipe = ?, cmv = ?, profit_margin = ?,
-                is_insumo = ?, is_divisible = ?, order_steps = ?,
+                is_insumo = ?, is_divisible = ?, available = ?, order_steps = ?,
                 linked_ingredient_id = ?, recipe_yield = ?, recipe_yield_unit = ?, unit_cost = ?
             WHERE id = ?
         ''', (data.get('name', current['name']), data.get('description', current.get('description')),
@@ -1244,6 +1244,7 @@ def update_product(product_id: str, data: Dict) -> Optional[Dict]:
               data.get('profit_margin', current.get('profit_margin')),
               1 if data.get('is_insumo', current.get('is_insumo')) else 0,
               1 if data.get('is_divisible', current.get('is_divisible')) else 0,
+              1 if data.get('available', current.get('available', True)) else 0,
               json.dumps(data.get('order_steps', current.get('order_steps', []))),
               data.get('linked_ingredient_id', current.get('linked_ingredient_id')),
               data.get('recipe_yield', current.get('recipe_yield')),
