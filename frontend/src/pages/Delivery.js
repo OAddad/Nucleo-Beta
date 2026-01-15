@@ -3052,51 +3052,81 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
                 <p className="text-center text-muted-foreground py-4 sm:py-8 text-sm">Carrinho vazio</p>
               ) : (
                 cart.map((item, index) => (
-                  <div key={`${item.id}-${index}`} className="bg-card p-2 rounded-lg border flex gap-2">
-                    {/* Foto quadrada do produto */}
-                    <div className="w-12 h-12 sm:w-16 sm:h-16 flex-shrink-0 rounded-lg overflow-hidden bg-muted">
-                      {item.photo_url ? (
-                        <img 
-                          src={getImageUrl(item.photo_url)} 
-                          alt={item.name}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-orange-400 to-orange-500">
-                          <Package className="w-5 h-5 sm:w-6 sm:h-6 text-white/70" />
-                        </div>
-                      )}
-                    </div>
-                    
-                    {/* Info e controles */}
-                    <div className="flex-1 min-w-0 flex flex-col justify-between">
-                      <div>
-                        <p className="font-medium text-sm truncate">{item.name}</p>
-                        <p className="text-orange-600 text-sm font-semibold">R$ {(item.sale_price || 0).toFixed(2)}</p>
-                        {item.observation && (
-                          <p className="text-[10px] text-muted-foreground truncate">📝 {item.observation}</p>
+                  <div key={`${item.id}-${index}`} className="bg-card p-2 rounded-lg border">
+                    <div className="flex gap-2">
+                      {/* Foto quadrada do produto */}
+                      <div className="w-12 h-12 sm:w-16 sm:h-16 flex-shrink-0 rounded-lg overflow-hidden bg-muted">
+                        {item.photo_url ? (
+                          <img 
+                            src={getImageUrl(item.photo_url)} 
+                            alt={item.name}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-orange-400 to-orange-500">
+                            <Package className="w-5 h-5 sm:w-6 sm:h-6 text-white/70" />
+                          </div>
                         )}
                       </div>
-                      <div className="flex items-center gap-1">
-                        <button 
-                          onClick={() => removeFromCart(item.id, index)}
-                          className="w-6 h-6 rounded bg-muted hover:bg-red-100 hover:text-red-600 flex items-center justify-center text-sm"
-                        >
-                          -
-                        </button>
-                        <span className="w-6 text-center font-medium text-sm">{item.quantity}</span>
-                        <button 
-                          onClick={() => {
-                            const newCart = [...cart];
-                            newCart[index] = { ...newCart[index], quantity: newCart[index].quantity + 1 };
-                            setCart(newCart);
-                          }}
-                          className="w-6 h-6 rounded bg-orange-500 hover:bg-orange-600 text-white flex items-center justify-center text-sm"
-                        >
-                          +
-                        </button>
+                      
+                      {/* Info e controles */}
+                      <div className="flex-1 min-w-0 flex flex-col justify-between">
+                        <div>
+                          <p className="font-medium text-sm truncate">{item.name}</p>
+                          {item.combo_type && (
+                            <span className="text-[10px] text-orange-500 font-medium">({item.combo_type === 'combo' ? 'Combo' : 'Simples'})</span>
+                          )}
+                          <p className="text-orange-600 text-sm font-semibold">R$ {(item.sale_price || 0).toFixed(2)}</p>
+                          {item.observation && (
+                            <p className="text-[10px] text-muted-foreground truncate">📝 {item.observation}</p>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <button 
+                            onClick={() => removeFromCart(item.id, index)}
+                            className="w-6 h-6 rounded bg-muted hover:bg-red-100 hover:text-red-600 flex items-center justify-center text-sm"
+                          >
+                            -
+                          </button>
+                          <span className="w-6 text-center font-medium text-sm">{item.quantity}</span>
+                          <button 
+                            onClick={() => {
+                              const newCart = [...cart];
+                              newCart[index] = { ...newCart[index], quantity: newCart[index].quantity + 1 };
+                              setCart(newCart);
+                            }}
+                            className="w-6 h-6 rounded bg-orange-500 hover:bg-orange-600 text-white flex items-center justify-center text-sm"
+                          >
+                            +
+                          </button>
+                        </div>
                       </div>
                     </div>
+                    {/* Subitems/Variações das Etapas no Carrinho */}
+                    {item.subitems && item.subitems.length > 0 && (
+                      <div className="mt-1.5 pt-1.5 border-t border-muted/50 space-y-0.5">
+                        {item.subitems.map((sub, subIdx) => (
+                          <p key={subIdx} className="text-[10px] text-muted-foreground flex items-center gap-1 pl-1">
+                            <span className="text-orange-400">•</span>
+                            {sub.step_name && <span className="opacity-70">{sub.step_name}:</span>}
+                            <span>{sub.nome || sub.name}</span>
+                            {(sub.preco > 0) && <span className="text-orange-500">(+R$ {sub.preco.toFixed(2)})</span>}
+                          </p>
+                        ))}
+                      </div>
+                    )}
+                    {/* Etapas (formato alternativo) */}
+                    {(!item.subitems || item.subitems.length === 0) && item.etapas && item.etapas.length > 0 && (
+                      <div className="mt-1.5 pt-1.5 border-t border-muted/50 space-y-0.5">
+                        {item.etapas.map((etapa, etapaIdx) => (
+                          <p key={etapaIdx} className="text-[10px] text-muted-foreground flex items-center gap-1 pl-1">
+                            <span className="text-orange-400">•</span>
+                            <span className="opacity-70">{etapa.etapa}:</span>
+                            <span>{etapa.itens?.join(', ')}</span>
+                          </p>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 ))
               )}
