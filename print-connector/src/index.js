@@ -236,10 +236,11 @@ app.delete('/printers/sector/:sector', (req, res) => {
 /**
  * POST /print
  * Imprime pedido automaticamente (sem popup)
+ * Suporta impressão por setor: sector = 'caixa' | 'cozinha' | etc
  */
 app.post('/print', async (req, res) => {
   try {
-    const { pedido, template = 'cozinha', copies = 1, cut = true, empresa = {}, config: printConfig = {} } = req.body;
+    const { pedido, template = 'cozinha', copies = 1, cut = true, empresa = {}, config: printConfig = {}, sector = null } = req.body;
     
     if (!pedido) {
       return res.status(400).json({ 
@@ -248,17 +249,34 @@ app.post('/print', async (req, res) => {
       });
     }
     
-    const defaultPrinter = config.get('defaultPrinter');
-    if (!defaultPrinter) {
+    // Determinar impressora: por setor ou padrão
+    let selectedPrinter = null;
+    
+    if (sector) {
+      // Buscar impressora do setor específico
+      const sectorPrinters = config.get('sectorPrinters', {});
+      if (sectorPrinters[sector]) {
+        selectedPrinter = sectorPrinters[sector];
+        logger.info(`Usando impressora do setor "${sector}": ${selectedPrinter.name}`);
+      }
+    }
+    
+    // Se não encontrou impressora por setor, usa a padrão
+    if (!selectedPrinter) {
+      selectedPrinter = config.get('defaultPrinter');
+    }
+    
+    if (!selectedPrinter) {
       return res.status(400).json({ 
         success: false, 
-        error: 'Nenhuma impressora padrão configurada' 
+        error: 'Nenhuma impressora configurada' 
       });
     }
     
     // Log dos dados recebidos para debug
     logger.info(`Dados empresa recebidos: ${JSON.stringify(empresa)}`);
     logger.info(`Dados config recebidos: ${JSON.stringify(printConfig)}`);
+    logger.info(`Setor: ${sector || 'padrão'}, Impressora: ${selectedPrinter.name}`);
     
     // Criar job de impressão com empresa e config
     const jobId = uuidv4();
@@ -270,7 +288,8 @@ app.post('/print', async (req, res) => {
       cut,
       empresa,
       config: printConfig,
-      printer: defaultPrinter,
+      sector: sector || 'default',
+      printer: selectedPrinter,
       status: 'pending',
       createdAt: new Date().toISOString(),
       attempts: 0
