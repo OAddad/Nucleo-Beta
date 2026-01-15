@@ -498,7 +498,14 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode, allProduc
 
   // Calcular preço total baseado nas seleções das etapas
   const calculateTotalPrice = () => {
-    let basePrice = selectedComboType === 'combo' ? comboPrice : simplePrice;
+    // Para produtos normais (não combo), usa sale_price diretamente
+    // Para combos, usa comboPrice ou simplePrice baseado na seleção
+    let basePrice;
+    if (!isCombo) {
+      basePrice = comboPrice; // comboPrice = product.sale_price
+    } else {
+      basePrice = selectedComboType === 'combo' ? comboPrice : simplePrice;
+    }
     
     // Adicionar preços das etapas se houver
     if (hasOrderSteps) {
