@@ -46068,3 +46068,8 @@
 2026-01-15T15:31:05.391705+00:00 | DB_CALL get_all_settings | P3 | 0.29ms | success
 2026-01-15T15:31:28.184632+00:00 | DB_CALL get_all_products | P3 | 26.8ms | success
 2026-01-15T15:31:29.592728+00:00 | DB_CALL get_all_products | P3 | 14.35ms | success
+2026-01-15T15:31:48.970832+00:00 | DB_CALL get_all_settings | P3 | 0.29ms | success
+2026-01-15T15:31:49.033121+00:00 | DB_CALL get_all_business_hours | P3 | 1.18ms | success
+2026-01-15T15:31:49.039754+00:00 | DB_CALL get_all_settings | P3 | 1.32ms | success
+2026-01-15T15:31:49.051604+00:00 | DB_CALL get_all_categories | P3 | 0.31ms | success
+2026-01-15T15:31:49.073023+00:00 | DB_CALL get_all_products | P3 | 19.38ms | success
