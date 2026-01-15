@@ -2269,6 +2269,7 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
           observacao: item.observation || "",
           photo_url: item.photo_url || null,
           subitems: item.subitems || [],
+          etapas: item.etapas || [],
           combo_type: item.combo_type || null
         })),
         total: total,
