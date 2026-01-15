@@ -2311,6 +2311,13 @@ function GerenciarImpressoras({ toast }) {
   const [scanning, setScanning] = useState(false);
   const [usbSupported, setUsbSupported] = useState(false);
   const [editando, setEditando] = useState(null);
+  const [empresaData, setEmpresaData] = useState({
+    nome: "Nome da Empresa",
+    slogan: "",
+    endereco: "",
+    cnpj: "",
+    telefone: ""
+  });
   const [formData, setFormData] = useState({
     nome: "",
     tipo: "usb", // usb, rede, bluetooth
@@ -2336,7 +2343,27 @@ function GerenciarImpressoras({ toast }) {
     // Verificar se Web USB é suportado
     setUsbSupported('usb' in navigator);
     fetchImpressoras();
+    fetchEmpresaData();
   }, []);
+
+  // Buscar dados da empresa de CONFIGURAÇÃO -> EMPRESA
+  const fetchEmpresaData = async () => {
+    try {
+      const response = await fetch(`${API_URL}/api/company/settings`);
+      if (response.ok) {
+        const data = await response.json();
+        setEmpresaData({
+          nome: data.company_name || "Nome da Empresa",
+          slogan: data.slogan || "",
+          endereco: data.address || "",
+          cnpj: data.cnpj || "",
+          telefone: data.phone || ""
+        });
+      }
+    } catch (error) {
+      console.error("Erro ao carregar dados da empresa:", error);
+    }
+  };
 
   const fetchImpressoras = async () => {
     try {
