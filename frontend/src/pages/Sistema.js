@@ -1837,6 +1837,7 @@ function ConfiguracaoImpressao({ toast }) {
           empresa_endereco: data.address || prev.empresa_endereco,
           empresa_cnpj: data.cnpj || prev.empresa_cnpj,
           empresa_telefone: data.phone || prev.empresa_telefone,
+          empresa_logo_url: data.logo_url || prev.empresa_logo_url,
         }));
       }
     } catch (error) {
