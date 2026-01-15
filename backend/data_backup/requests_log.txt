@@ -46844,3 +46844,4 @@
 2026-01-15T16:33:28.299945+00:00 | DB_CALL get_all_settings | P3 | 4.38ms | success
 2026-01-15T16:33:28.300956+00:00 | DB_CALL get_all_settings | P3 | 0.19ms | success
 2026-01-15T16:33:28.536508+00:00 | DB_CALL get_all_settings | P3 | 0.29ms | success
+2026-01-15T16:34:15.301587+00:00 | DB_CALL get_pedido_by_id | P3 | 0.65ms | success
