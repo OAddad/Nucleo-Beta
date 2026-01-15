@@ -45967,3 +45967,9 @@
 2026-01-15T15:19:32.660234+00:00 | DB_CALL get_all_products | P3 | 15.12ms | success
 2026-01-15T15:19:37.377169+00:00 | DB_CALL get_all_products | P3 | 14.62ms | success
 2026-01-15T15:19:38.718503+00:00 | DB_CALL get_all_products | P3 | 14.07ms | success
+2026-01-15T15:20:25.595615+00:00 | DB_CALL get_all_products | P3 | 15.01ms | success
+2026-01-15T15:20:29.884350+00:00 | DB_CALL get_all_products | P3 | 18.18ms | success
+2026-01-15T15:20:41.962378+00:00 | DB_CALL get_all_products | P3 | 14.38ms | success
+2026-01-15T15:20:43.314071+00:00 | DB_CALL get_all_products | P3 | 16.04ms | success
+2026-01-15T15:20:44.842371+00:00 | DB_CALL get_all_products | P3 | 15.55ms | success
+2026-01-15T15:20:46.162119+00:00 | DB_CALL get_all_products | P3 | 15.33ms | success
