@@ -45927,3 +45927,4 @@
 2026-01-15T15:05:11.183407+00:00 | DB_CALL get_all_business_hours | P3 | 96.52ms | success
 2026-01-15T15:05:11.312912+00:00 | DB_CALL get_all_products | P3 | 20.19ms | success
 2026-01-15T15:05:11.350746+00:00 | DB_CALL get_all_bairros | P3 | 2.04ms | success
+2026-01-15T15:06:22.594217+00:00 | DB_CALL get_all_settings | P3 | 1.44ms | success
