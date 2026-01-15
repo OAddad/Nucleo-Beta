@@ -44722,3 +44722,10 @@
 2026-01-15T12:47:27.058037+00:00 | DB_CALL get_all_pedidos | P3 | 1.47ms | success
 2026-01-15T12:47:27.061380+00:00 | DB_CALL get_all_entregadores | P3 | 0.69ms | success
 2026-01-15T12:47:27.061783+00:00 | DB_CALL get_all_settings | P3 | 0.6ms | success
+2026-01-15T12:47:32.066386+00:00 | DB_CALL get_all_pedidos | P3 | 2.5ms | success
+2026-01-15T12:47:32.068668+00:00 | DB_CALL get_all_settings | P3 | 4.09ms | success
+2026-01-15T12:47:32.069015+00:00 | DB_CALL get_all_entregadores | P3 | 4.27ms | success
+2026-01-15T12:47:37.062429+00:00 | DB_CALL get_all_pedidos | P3 | 1.45ms | success
+2026-01-15T12:47:37.093865+00:00 | DB_CALL get_all_settings | P3 | 0.28ms | success
+2026-01-15T12:47:37.095542+00:00 | DB_CALL get_all_entregadores | P3 | 0.2ms | success
+2026-01-15T12:47:40.095477+00:00 | DB_CALL get_all_products | P3 | 9.46ms | success
