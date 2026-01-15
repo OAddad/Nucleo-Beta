@@ -43303,3 +43303,6 @@
 2026-01-15T01:55:38.755184+00:00 | DB_CALL get_all_pedidos | P3 | 2.52ms | success
 2026-01-15T01:55:39.067099+00:00 | DB_CALL get_user_by_id | P3 | 0.32ms | success
 2026-01-15T01:55:39.075005+00:00 | DB_CALL get_all_products | P3 | 7.71ms | success
+2026-01-15T01:55:43.108549+00:00 | DB_CALL get_all_settings | P3 | 0.34ms | success
+2026-01-15T01:55:43.110396+00:00 | DB_CALL get_all_pedidos | P3 | 2.9ms | success
+2026-01-15T01:55:43.112507+00:00 | DB_CALL get_all_entregadores | P3 | 4.56ms | success
