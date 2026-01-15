@@ -43156,3 +43156,17 @@
 2026-01-15T01:53:04.831910+00:00 | DB_CALL get_all_settings | P3 | 0.92ms | success
 2026-01-15T01:53:04.834307+00:00 | DB_CALL get_all_pedidos | P3 | 2.72ms | success
 2026-01-15T01:53:04.837081+00:00 | DB_CALL get_all_entregadores | P3 | 3.93ms | success
+2026-01-15T01:53:10.747602+00:00 | DB_CALL init_database | P3 | 2.94ms | success
+2026-01-15T01:53:10.748184+00:00 | DB_CALL count_ingredients | P3 | 0.24ms | success
+2026-01-15T01:53:10.748374+00:00 | DB_CALL count_products | P3 | 0.12ms | success
+2026-01-15T01:53:10.748523+00:00 | DB_CALL count_users | P3 | 0.1ms | success
+2026-01-15T01:53:10.752358+00:00 | DB_CALL get_all_pedidos | P3 | 2.3ms | success
+2026-01-15T01:53:10.755238+00:00 | DB_CALL get_all_settings | P3 | 4.92ms | success
+2026-01-15T01:53:10.755652+00:00 | DB_CALL get_all_entregadores | P3 | 5.19ms | success
+2026-01-15T01:53:14.811787+00:00 | DB_CALL get_all_settings | P3 | 0.33ms | success
+2026-01-15T01:53:14.815325+00:00 | DB_CALL get_all_pedidos | P3 | 1.3ms | success
+2026-01-15T01:53:14.817938+00:00 | DB_CALL get_all_entregadores | P3 | 4.35ms | success
+2026-01-15T01:53:18.303167+00:00 | DB_CALL init_database | P3 | 2.94ms | success
+2026-01-15T01:53:18.303723+00:00 | DB_CALL count_ingredients | P3 | 0.26ms | success
+2026-01-15T01:53:18.303934+00:00 | DB_CALL count_products | P3 | 0.14ms | success
+2026-01-15T01:53:18.304088+00:00 | DB_CALL count_users | P3 | 0.1ms | success
