@@ -1099,6 +1099,22 @@ export default function Products() {
     setDeleteDialogOpen(true);
   };
 
+  // Função para alternar disponibilidade do produto rapidamente
+  const toggleProductAvailability = async (product, e) => {
+    e.stopPropagation();
+    try {
+      const newAvailability = product.available === false ? true : false;
+      await axios.put(`${API}/products/${product.id}`, {
+        ...product,
+        available: newAvailability
+      }, getAuthHeader());
+      toast.success(newAvailability ? "Produto disponível!" : "Produto indisponível!");
+      fetchProducts();
+    } catch (error) {
+      toast.error("Erro ao atualizar disponibilidade");
+    }
+  };
+
   // Função para abrir o dialog de duplicação
   const openDuplicateDialog = (product) => {
     setProductToDuplicate(product);
