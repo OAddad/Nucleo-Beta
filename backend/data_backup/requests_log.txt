@@ -41447,3 +41447,4 @@
 2026-01-15T00:41:40.645664+00:00 | DB_CALL get_user_by_id | P3 | 0.32ms | success
 2026-01-15T00:41:40.646038+00:00 | DB_CALL get_all_categories | P3 | 0.22ms | success
 2026-01-15T00:41:45.328314+00:00 | DB_CALL get_all_products | P3 | 2.57ms | success
+2026-01-15T00:41:55.709117+00:00 | DB_CALL get_all_products | P3 | 3.98ms | success
