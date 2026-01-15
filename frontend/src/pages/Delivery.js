@@ -3271,23 +3271,27 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
                       {currentStep.items?.map((item) => {
                         const isSelected = selections.includes(item.product_id);
                         const itemPhoto = getProductPhoto(item.product_id);
+                        const itemAvailable = isProductAvailable(item.product_id);
                         
                         return (
                           <button
                             key={item.product_id}
-                            onClick={() => toggleItemSelection(currentStepIndex, item.product_id)}
+                            onClick={() => itemAvailable && toggleItemSelection(currentStepIndex, item.product_id)}
+                            disabled={!itemAvailable}
                             className={`relative p-1.5 rounded-lg border-2 transition-all text-left flex flex-col ${
-                              isSelected 
-                                ? 'border-orange-500 bg-orange-50 dark:bg-orange-950/20' 
-                                : 'border-border bg-card hover:border-orange-300'
+                              !itemAvailable
+                                ? 'border-gray-300 bg-gray-100 dark:bg-gray-800 opacity-60 cursor-not-allowed'
+                                : isSelected 
+                                  ? 'border-orange-500 bg-orange-50 dark:bg-orange-950/20' 
+                                  : 'border-border bg-card hover:border-orange-300'
                             }`}
                           >
-                            {isSelected && (
+                            {isSelected && itemAvailable && (
                               <div className="absolute top-1 right-1 w-5 h-5 rounded-full bg-orange-500 flex items-center justify-center z-10">
                                 <Check className="w-3 h-3 text-white" />
                               </div>
                             )}
-                            <div className={`w-full aspect-square rounded-md overflow-hidden mb-1.5 ${isSelected ? 'ring-2 ring-orange-500' : ''} ${isPngImage(itemPhoto) ? 'bg-card' : 'bg-muted'}`}>
+                            <div className={`w-full aspect-square rounded-md overflow-hidden mb-1.5 relative ${isSelected ? 'ring-2 ring-orange-500' : ''} ${isPngImage(itemPhoto) ? 'bg-card' : 'bg-muted'} ${!itemAvailable ? 'grayscale' : ''}`}>
                               {itemPhoto ? (
                                 <img
                                   src={getImageUrl(itemPhoto)}
@@ -3299,9 +3303,14 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
                                   <span className="text-2xl">🍽️</span>
                                 </div>
                               )}
+                              {!itemAvailable && (
+                                <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                                  <span className="text-white text-[10px] font-bold bg-red-500 px-1.5 py-0.5 rounded">INDISPONÍVEL</span>
+                                </div>
+                              )}
                             </div>
                             <div className="flex-1 min-w-0">
-                              <p className="font-medium text-xs line-clamp-1 leading-tight">{item.product_name}</p>
+                              <p className={`font-medium text-xs line-clamp-1 leading-tight ${!itemAvailable ? 'text-gray-400 line-through' : ''}`}>{item.product_name}</p>
                               {(() => {
                                 const itemDescription = getProductDescription(item.product_id);
                                 return itemDescription ? (
@@ -3310,6 +3319,9 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
                               })()}
                               {(() => {
                                 const itemPrice = getItemPrice(item, currentStep);
+                                if (!itemAvailable) {
+                                  return <p className="text-[10px] text-red-500 font-bold mt-0.5">Indisponível</p>;
+                                }
                                 return itemPrice > 0 ? (
                                   <p className="text-xs text-orange-500 font-bold mt-0.5">
                                     +R$ {itemPrice.toFixed(2)}
