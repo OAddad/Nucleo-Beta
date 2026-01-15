@@ -1132,15 +1132,15 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode, allProduc
           </div>
           
           {/* Preço Destacado */}
-          {product.product_type === 'combo' && product.simple_price ? (
-            <div className="flex items-center gap-6 mb-5">
+          {product.product_type === 'combo' ? (
+            <div className="flex justify-center items-start gap-8 mb-5">
               <div className="flex flex-col items-center">
-                <span className={`text-sm ${t.textMuted}`}>Individual</span>
-                <span className="text-xl font-bold text-orange-500">R$ {product.simple_price?.toFixed(2).replace('.', ',')}</span>
+                <span className={`text-xs font-medium ${t.textMuted} uppercase tracking-wide mb-1`}>Individual</span>
+                <span className="text-2xl font-bold text-orange-500">R$ {(product.simple_price || Math.round((product.sale_price || 0) * 0.7 * 100) / 100).toFixed(2).replace('.', ',')}</span>
               </div>
               <div className="flex flex-col items-center">
-                <span className={`text-sm ${t.textMuted}`}>Combo</span>
-                <span className="text-xl font-bold text-orange-500">R$ {(product.sale_price || 0).toFixed(2).replace('.', ',')}</span>
+                <span className={`text-xs font-medium ${t.textMuted} uppercase tracking-wide mb-1`}>Combo</span>
+                <span className="text-2xl font-bold text-orange-500">R$ {(product.sale_price || 0).toFixed(2).replace('.', ',')}</span>
               </div>
             </div>
           ) : (
