@@ -2621,16 +2621,32 @@ function GerenciarImpressoras({ toast }) {
             ...encoder.encode(`Colunas: ${impressora.max_columns}\n`),
             ...encoder.encode('--------------------------------\n'),
             ESC, 0x61, 0x00, // Alinhar esquerda
-            ...encoder.encode('2x Item de Teste 1    R$ 20,00\n'),
-            ...encoder.encode('1x Item de Teste 2    R$ 15,00\n'),
-            ...encoder.encode('  -> Com observacao\n'),
+            ...encoder.encode('-- ITENS DO PEDIDO --\n'),
+            ...encoder.encode('2 x 25.00 X-Burger       R$50,00\n'),
+            ...encoder.encode('  - Sem cebola\n'),
+            ...encoder.encode('1 x 15.00 Batata Frita   R$15,00\n'),
             ...encoder.encode('--------------------------------\n'),
+            ...encoder.encode('Taxa de Entrega:          R$5,00\n'),
             ESC, 0x21, 0x10, // Negrito
-            ...encoder.encode('TOTAL:                R$ 35,00\n'),
+            ...encoder.encode('TOTAL:                   R$70,00\n'),
             ESC, 0x21, 0x00, // Normal
             ...encoder.encode('--------------------------------\n'),
             ESC, 0x61, 0x01, // Centralizar
-            ...encoder.encode('Impressao OK!\n'),
+            ...encoder.encode('-- PAGAR NA ENTREGA --\n'),
+            ESC, 0x21, 0x30, // Negrito + Dupla altura
+            ...encoder.encode('TOTAL ....... R$70,00\n'),
+            ESC, 0x21, 0x00, // Normal
+            ...encoder.encode('PAGAMENTO: Cartao de Credito\n'),
+            ...encoder.encode('--------------------------------\n'),
+            ...encoder.encode('-- INFO ENTREGA --\n'),
+            ESC, 0x61, 0x00, // Alinhar esquerda
+            ...encoder.encode('CLIENTE: Joao Silva\n'),
+            ...encoder.encode('TEL: (11) 9.9999-9999\n'),
+            ...encoder.encode('END: Rua das Flores, 123\n'),
+            ...encoder.encode('REF: Casa azul\n'),
+            ESC, 0x61, 0x01, // Centralizar
+            ...encoder.encode('================================\n'),
+            ...encoder.encode('NAO E DOCUMENTO FISCAL\n'),
             ...encoder.encode(new Date().toLocaleString('pt-BR') + '\n'),
             ...encoder.encode('\n\n\n'),
             GS, 0x56, 0x00, // Cortar papel
@@ -2651,15 +2667,15 @@ function GerenciarImpressoras({ toast }) {
           variant: "destructive" 
         });
         // Fallback para window.print
-        const config = { mostrar_logo: true, mostrar_data_hora: true, mostrar_codigo_pedido: true, mostrar_cliente_nome: true, mostrar_forma_pagamento: true, mensagem_rodape: "Teste de Impressão" };
-        const empresa = { nome: impressora.nome + " - TESTE" };
+        const config = { mostrar_logo: true, mostrar_data_hora: true, mostrar_codigo_pedido: true, mostrar_cliente_nome: true, mostrar_cliente_telefone: true, mostrar_endereco_entrega: true, mostrar_forma_pagamento: true, mostrar_observacoes: true, mensagem_rodape: "NÃO É DOCUMENTO FISCAL" };
+        const empresa = { nome: "Nome da Empresa", slogan: "Slogan", endereco: "ENDEREÇO", cnpj: "00.000.000/0001-00" };
         printPedido(testePedido, config, empresa);
       }
     } else {
       // Impressora manual - usar window.print
       toast({ title: "Abrindo teste...", description: "Será aberta uma janela de impressão" });
-      const config = { mostrar_logo: true, mostrar_data_hora: true, mostrar_codigo_pedido: true, mostrar_cliente_nome: true, mostrar_cliente_telefone: true, mostrar_forma_pagamento: true, mostrar_observacoes: true, mensagem_rodape: "Teste de Impressão - " + impressora.nome };
-      const empresa = { nome: "TESTE DE IMPRESSÃO", endereco: `Impressora: ${impressora.nome}`, telefone: `${impressora.paper_width_mm}mm | ${impressora.dpi} DPI` };
+      const config = { mostrar_logo: true, mostrar_data_hora: true, mostrar_codigo_pedido: true, mostrar_cliente_nome: true, mostrar_cliente_telefone: true, mostrar_endereco_entrega: true, mostrar_forma_pagamento: true, mostrar_observacoes: true, mensagem_rodape: "NÃO É DOCUMENTO FISCAL" };
+      const empresa = { nome: "Nome da Empresa", slogan: "Slogan", endereco: "ENDEREÇO DA EMPRESA", cnpj: "00.000.000/0001-00" };
       printPedido(testePedido, config, empresa);
     }
   };
