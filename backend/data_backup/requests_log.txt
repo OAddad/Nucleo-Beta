@@ -43640,3 +43640,6 @@
 2026-01-15T02:10:07.108573+00:00 | DB_CALL get_all_products | P3 | 2.26ms | success
 2026-01-15T02:10:20.980700+00:00 | DB_CALL get_all_products | P3 | 4.48ms | success
 2026-01-15T02:10:21.866276+00:00 | DB_CALL get_all_products | P3 | 2.35ms | success
+2026-01-15T02:11:28.675431+00:00 | DB_CALL get_user_by_username | P3 | 0.77ms | success
+2026-01-15T02:11:28.702350+00:00 | DB_CALL get_user_by_id | P3 | 0.6ms | success
+2026-01-15T02:11:28.706238+00:00 | DB_CALL get_all_products | P3 | 3.7ms | success
