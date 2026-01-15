@@ -287,12 +287,12 @@ class PrintQueue {
       .setBold(false)
       .setTextSize(1, 1);
     
-    // ===== DATA/HORA (centralizada, tamanho normal, alinhada à direita) =====
+    // ===== DATA/HORA (CENTRALIZADA abaixo do código) =====
     const dataHora = new Date(pedido.created_at || Date.now());
     const dataStr = dataHora.toLocaleDateString('pt-BR');
     const horaStr = dataHora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
     escpos
-      .align('right')
+      .align('center')
       .text(`${dataStr}, ${horaStr}`)
       .align('left');
     
