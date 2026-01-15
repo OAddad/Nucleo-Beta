@@ -5,7 +5,8 @@ import {
   Instagram, Facebook, Mail, Phone, MapPin, Calendar, Hash,
   Package, ShoppingCart, Users, DollarSign, Map, RefreshCw,
   FileText, Eye, ToggleLeft, ToggleRight, Plus, Edit, Clock,
-  AlertCircle, CheckCircle2, XCircle, RotateCcw, List, Usb, Type
+  AlertCircle, CheckCircle2, XCircle, RotateCcw, List, Usb, Type,
+  Receipt, ChefHat
 } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
