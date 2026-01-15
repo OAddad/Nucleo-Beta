@@ -2468,7 +2468,8 @@ export default function CardapioPublico({ onAdminLogin }) {
     company_name: "Núcleo",
     slogan: "O Centro da sua Gestão",
     logo_url: null,
-    fantasy_name: ""
+    fantasy_name: "",
+    phone: ""
   });
 
   // State para controlar header visível em mobile
