@@ -953,10 +953,55 @@ function PrintConnectorTab({ toast, connectorStatus, onRefresh, onNavigateToDown
   const handleTest = async () => {
     setTesting(true);
     try {
-      const response = await fetch(`${PRINT_CONNECTOR_URL}/test`, {
+      // Criar pedido de teste completo igual à aba de Configuração
+      const testePedido = {
+        id: 'teste-' + Date.now(),
+        codigo: "00001",
+        cliente_nome: "João Silva",
+        cliente_telefone: "(11) 9.9999-9999",
+        tipo_entrega: "delivery",
+        endereco_rua: "Rua das Flores",
+        endereco_numero: "123",
+        endereco_bairro: "Centro",
+        endereco_complemento: "Casa azul - Meio do quarteirão",
+        items: [
+          { nome: "X-Burger", quantidade: 2, preco_unitario: 25.00, observacao: "Sem cebola" },
+          { nome: "Batata Frita", quantidade: 1, preco_unitario: 15.00 },
+        ],
+        valor_entrega: 5.00,
+        total: 70.00,
+        forma_pagamento: "Cartão de Crédito",
+        observacao: "",
+        created_at: new Date().toISOString(),
+      };
+
+      const response = await fetch(`${PRINT_CONNECTOR_URL}/print`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        mode: 'cors'
+        mode: 'cors',
+        body: JSON.stringify({
+          pedido: testePedido,
+          template: 'caixa',
+          copies: 1,
+          cut: true,
+          empresa: {
+            nome: connectorStatus?.company_name || "Nome da Empresa",
+            slogan: "Slogan da Empresa",
+            endereco: "ENDEREÇO DA EMPRESA",
+            cnpj: "00.000.000/0001-00"
+          },
+          config: {
+            mostrar_logo: true,
+            mostrar_data_hora: true,
+            mostrar_codigo_pedido: true,
+            mostrar_cliente_nome: true,
+            mostrar_cliente_telefone: true,
+            mostrar_endereco_entrega: true,
+            mostrar_forma_pagamento: true,
+            mostrar_observacoes: true,
+            mensagem_rodape: "NÃO É DOCUMENTO FISCAL"
+          }
+        })
       });
       
       if (!response.ok) {
@@ -967,7 +1012,7 @@ function PrintConnectorTab({ toast, connectorStatus, onRefresh, onNavigateToDown
       const data = await response.json();
       
       if (data.success) {
-        toast({ title: "✅ Sucesso!", description: "Página de teste enviada para impressora" });
+        toast({ title: "✅ Sucesso!", description: "Pedido de teste enviado para impressora" });
       } else {
         throw new Error(data.error || 'Erro no teste');
       }
