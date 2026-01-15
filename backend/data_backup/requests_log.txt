@@ -41543,3 +41543,7 @@
 2026-01-15T01:11:50.904148+00:00 | DB_CALL get_user_by_id | P3 | 0.27ms | success
 2026-01-15T01:11:50.906526+00:00 | DB_CALL get_all_products | P3 | 2.21ms | success
 2026-01-15T01:11:51.021979+00:00 | DB_CALL get_user_by_id | P3 | 0.29ms | success
+2026-01-15T01:12:45.805558+00:00 | DB_CALL init_database | P3 | 4.9ms | success
+2026-01-15T01:12:45.806164+00:00 | DB_CALL count_ingredients | P3 | 0.27ms | success
+2026-01-15T01:12:45.806380+00:00 | DB_CALL count_products | P3 | 0.13ms | success
+2026-01-15T01:12:45.806522+00:00 | DB_CALL count_users | P3 | 0.09ms | success
