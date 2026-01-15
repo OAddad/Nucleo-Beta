@@ -40514,3 +40514,5 @@
 2026-01-15T00:02:09.435210+00:00 | DB_CALL get_all_settings | P3 | 0.32ms | success
 2026-01-15T00:02:10.267059+00:00 | DB_CALL get_all_products | P3 | 8.67ms | success
 2026-01-15T00:02:10.467282+00:00 | DB_CALL get_all_bairros | P3 | 5.28ms | success
+2026-01-15T00:02:25.089761+00:00 | DB_CALL get_all_products | P3 | 10.66ms | success
+2026-01-15T00:02:25.805372+00:00 | DB_CALL get_all_products | P3 | 2.39ms | success
