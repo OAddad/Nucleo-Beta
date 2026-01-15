@@ -41962,3 +41962,5 @@
 2026-01-15T01:25:48.769152+00:00 | DB_CALL get_all_products | P3 | 2.69ms | success
 2026-01-15T01:25:49.021969+00:00 | DB_CALL get_all_products | P3 | 2.59ms | success
 2026-01-15T01:25:49.925376+00:00 | DB_CALL get_user_by_username | P3 | 80.39ms | success
+2026-01-15T01:25:55.866558+00:00 | DB_CALL get_user_by_username | P3 | 79.31ms | success
+2026-01-15T01:25:55.866915+00:00 | DB_CALL get_user_by_username | P3 | 0.23ms | success

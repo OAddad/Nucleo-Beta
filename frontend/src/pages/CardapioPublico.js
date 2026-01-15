@@ -20,9 +20,20 @@ const MotoIcon = ({ className }) => (
 );
 
 // Componente de Acompanhamento de Pedido
-function OrderTrackingScreen({ pedido: pedidoInicial, onClose, darkMode }) {
+function OrderTrackingScreen({ pedido: pedidoInicial, onClose, darkMode, companyPhone }) {
   const [currentStatus, setCurrentStatus] = useState('enviado');
   const [pedido, setPedido] = useState(pedidoInicial);
+  
+  // Gerar link do WhatsApp com mensagem de acompanhamento
+  const getWhatsAppLink = () => {
+    // Limpar telefone (remover caracteres não numéricos)
+    const cleanPhone = (companyPhone || '').replace(/\D/g, '');
+    // Adicionar código do país se não tiver
+    const phoneWithCountry = cleanPhone.startsWith('55') ? cleanPhone : `55${cleanPhone}`;
+    // Mensagem pré-definida
+    const message = encodeURIComponent(`Gostaria de acompanhar o pedido #${pedido?.codigo || ''}`);
+    return `https://wa.me/${phoneWithCountry}?text=${message}`;
+  };
   
   // Polling para atualizar status do pedido a cada 5 segundos
   useEffect(() => {
