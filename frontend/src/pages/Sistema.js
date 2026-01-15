@@ -2205,7 +2205,18 @@ function ConfiguracaoImpressao({ toast }) {
           <div className="bg-white dark:bg-gray-900 border-2 border-dashed rounded-lg p-4 font-mono text-[11px] overflow-auto" style={{ maxWidth: '320px', margin: '0 auto' }}>
             {/* ===== CABEÇALHO ===== */}
             <div className="text-center mb-2">
-              {config.mostrar_logo && <div className="text-[10px] text-gray-400 mb-1">[LOGO]</div>}
+              {config.mostrar_logo && (
+                config.empresa_logo_url ? (
+                  <img 
+                    src={`${API_URL}${config.empresa_logo_url}`} 
+                    alt="Logo" 
+                    className="h-12 mx-auto mb-2 object-contain"
+                    onError={(e) => { e.target.style.display = 'none'; }}
+                  />
+                ) : (
+                  <div className="text-[10px] text-gray-400 mb-1">[LOGO]</div>
+                )
+              )}
               <div className="font-bold text-sm uppercase">{config.empresa_nome || "Nome da Empresa"}</div>
               {config.empresa_slogan && <div className="text-[10px] text-gray-600">{config.empresa_slogan}</div>}
               {config.empresa_endereco && <div className="text-[10px]">{config.empresa_endereco}</div>}
