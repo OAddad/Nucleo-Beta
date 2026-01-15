@@ -46178,3 +46178,5 @@
 2026-01-15T15:39:50.308350+00:00 | DB_CALL get_all_settings | P3 | 0.29ms | success
 2026-01-15T15:39:51.029397+00:00 | DB_CALL get_all_products | P3 | 18.05ms | success
 2026-01-15T15:39:52.374152+00:00 | DB_CALL get_all_products | P3 | 14.44ms | success
+2026-01-15T15:39:59.716708+00:00 | DB_CALL get_all_products | P3 | 14.62ms | success
+2026-01-15T15:40:01.054776+00:00 | DB_CALL get_all_products | P3 | 13.94ms | success
