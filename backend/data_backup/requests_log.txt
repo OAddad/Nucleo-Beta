@@ -46132,3 +46132,4 @@
 2026-01-15T15:37:14.134927+00:00 | DB_CALL get_all_settings | P3 | 1.03ms | success
 2026-01-15T15:37:14.309797+00:00 | DB_CALL get_all_settings | P3 | 0.26ms | success
 2026-01-15T15:37:14.322914+00:00 | DB_CALL get_all_settings | P3 | 0.23ms | success
+2026-01-15T15:37:26.182377+00:00 | DB_CALL get_all_products | P3 | 18.71ms | success
