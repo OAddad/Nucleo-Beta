@@ -2117,18 +2117,16 @@ function CupomEntregaPreview({ config, pedido }) {
     <>
       {/* CABEÇALHO */}
       <div className="text-center mb-2">
-        {config.mostrar_logo && (
-          config.empresa_logo_url ? (
-            <img 
-              src={`${API_URL}${config.empresa_logo_url}`} 
-              alt="Logo" 
-              className="mx-auto mb-2 object-contain"
-              style={{ height: '120px' }}
-              onError={(e) => { e.target.style.display = 'none'; }}
-            />
-          ) : (
-            <div className="text-[10px] text-gray-400 mb-1">[LOGO]</div>
-          )
+        {config.empresa_logo_url ? (
+          <img 
+            src={`${API_URL}${config.empresa_logo_url}`} 
+            alt="Logo" 
+            className="mx-auto mb-2 object-contain"
+            style={{ height: '120px' }}
+            onError={(e) => { e.target.style.display = 'none'; }}
+          />
+        ) : (
+          <div className="text-[10px] text-gray-400 mb-1">[LOGO]</div>
         )}
         <div className="font-bold text-sm uppercase">{config.empresa_nome || "Nome da Empresa"}</div>
         {config.empresa_slogan && <div className="text-[10px] text-gray-600">{config.empresa_slogan}</div>}
