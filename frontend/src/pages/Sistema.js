@@ -1277,7 +1277,7 @@ function PrintConnectorTab({ toast, connectorStatus, onRefresh, onNavigateToDown
                   <div>
                     <p className="font-medium">{printer.name}</p>
                     <p className="text-xs text-muted-foreground">
-                      {printer.vendorName} • VID: {printer.vendorId?.toString(16).toUpperCase()} • PID: {printer.productId?.toString(16).toUpperCase()}
+                      {printer.driver || printer.vendorName || 'Impressora'} • {printer.port || 'USB'}
                     </p>
                   </div>
                 </div>
@@ -1307,6 +1307,88 @@ function PrintConnectorTab({ toast, connectorStatus, onRefresh, onNavigateToDown
         )}
       </div>
 
+      {/* Impressoras por Setor */}
+      {printers.length > 0 && (
+        <div className="bg-card border rounded-xl p-6">
+          <h3 className="font-semibold text-lg mb-4 flex items-center gap-2">
+            <Settings className="w-5 h-5 text-purple-500" />
+            Impressoras por Setor
+          </h3>
+          <p className="text-sm text-muted-foreground mb-4">
+            Configure impressoras diferentes para cada setor. O cupom de entrega vai para o caixa, e o cupom de preparo vai para a cozinha.
+          </p>
+
+          <div className="grid md:grid-cols-2 gap-4">
+            {availableSectors.map((sector) => {
+              const Icon = sector.icon;
+              const sectorPrinter = sectorPrinters[sector.id];
+              const colorClasses = sector.color === 'blue' 
+                ? 'border-blue-200 bg-blue-50 dark:bg-blue-950/20 dark:border-blue-900'
+                : 'border-orange-200 bg-orange-50 dark:bg-orange-950/20 dark:border-orange-900';
+              const iconClasses = sector.color === 'blue' ? 'text-blue-600' : 'text-orange-600';
+              const badgeClasses = sector.color === 'blue'
+                ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
+                : 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400';
+
+              return (
+                <div 
+                  key={sector.id}
+                  className={`p-4 rounded-lg border ${sectorPrinter ? colorClasses : 'bg-muted/30'}`}
+                >
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className={`p-2 rounded-lg ${sectorPrinter ? badgeClasses : 'bg-muted'}`}>
+                      <Icon className={`w-5 h-5 ${sectorPrinter ? iconClasses : 'text-muted-foreground'}`} />
+                    </div>
+                    <div>
+                      <p className="font-semibold">{sector.name}</p>
+                      <p className="text-xs text-muted-foreground">{sector.description}</p>
+                    </div>
+                  </div>
+
+                  {sectorPrinter ? (
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <CheckCircle className="w-4 h-4 text-green-500" />
+                        <span className="text-sm font-medium">{sectorPrinter.name}</span>
+                      </div>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => handleRemoveSector(sector.id)}
+                        className="text-red-500 hover:text-red-600 hover:bg-red-50"
+                      >
+                        <X className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  ) : (
+                    <div>
+                      <p className="text-xs text-muted-foreground mb-2">Selecione uma impressora:</p>
+                      <div className="flex flex-wrap gap-2">
+                        {printers.map((printer) => (
+                          <Button
+                            key={printer.id}
+                            size="sm"
+                            variant="outline"
+                            onClick={() => handleConfigureSector(printer, sector.id)}
+                            disabled={configuringSector === `${printer.id}-${sector.id}`}
+                            className="text-xs"
+                          >
+                            {configuringSector === `${printer.id}-${sector.id}` ? (
+                              <Loader2 className="w-3 h-3 animate-spin mr-1" />
+                            ) : null}
+                            {printer.name.length > 20 ? printer.name.substring(0, 20) + '...' : printer.name}
+                          </Button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
       {/* Instruções */}
       <div className="bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-900 rounded-xl p-4">
         <h4 className="font-semibold text-blue-700 dark:text-blue-400 mb-2 flex items-center gap-2">
@@ -1314,8 +1396,8 @@ function PrintConnectorTab({ toast, connectorStatus, onRefresh, onNavigateToDown
           Como funciona
         </h4>
         <ul className="text-sm text-blue-600 dark:text-blue-500 space-y-1 list-disc list-inside">
-          <li>O Print Connector detecta impressoras USB automaticamente</li>
-          <li>Selecione a impressora que deseja usar como padrão</li>
+          <li>O Print Connector detecta impressoras instaladas no Windows</li>
+          <li>Configure impressoras diferentes para Caixa (entrega) e Cozinha (preparo)</li>
           <li>Pedidos serão impressos automaticamente via ESC/POS</li>
           <li>Não é necessário popup ou confirmação manual</li>
           <li>Funciona offline - basta ter o connector rodando</li>
