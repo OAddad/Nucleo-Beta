@@ -2210,7 +2210,8 @@ function ConfiguracaoImpressao({ toast }) {
                   <img 
                     src={`${API_URL}${config.empresa_logo_url}`} 
                     alt="Logo" 
-                    className="h-12 mx-auto mb-2 object-contain"
+                    className="h-30 mx-auto mb-2 object-contain"
+                    style={{ height: '120px' }}
                     onError={(e) => { e.target.style.display = 'none'; }}
                   />
                 ) : (
