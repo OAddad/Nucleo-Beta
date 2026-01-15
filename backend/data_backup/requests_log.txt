@@ -46360,3 +46360,7 @@
 2026-01-15T16:01:56.345826+00:00 | DB_CALL get_all_products | P3 | 14.46ms | success
 2026-01-15T16:01:57.689842+00:00 | DB_CALL get_all_products | P3 | 16.4ms | success
 2026-01-15T16:01:57.819342+00:00 | DB_CALL get_all_settings | P3 | 0.33ms | success
+2026-01-15T16:02:16.690929+00:00 | DB_CALL get_all_products | P3 | 15.8ms | success
+2026-01-15T16:02:17.289091+00:00 | DB_CALL get_all_products | P3 | 15.02ms | success
+2026-01-15T16:02:24.600853+00:00 | DB_CALL get_all_products | P3 | 13.65ms | success
+2026-01-15T16:02:25.943126+00:00 | DB_CALL get_all_products | P3 | 19.6ms | success
