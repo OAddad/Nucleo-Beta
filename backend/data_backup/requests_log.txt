@@ -46480,3 +46480,11 @@
 2026-01-15T16:17:12.684877+00:00 | DB_CALL get_all_settings | P3 | 8.99ms | success
 2026-01-15T16:17:12.687023+00:00 | DB_CALL get_all_entregadores | P3 | 1.44ms | success
 2026-01-15T16:17:14.534546+00:00 | DB_CALL increment_whatsapp_stat | P3 | 5.92ms | success
+2026-01-15T16:17:15.523534+00:00 | DB_CALL get_pedido_by_id | P3 | 0.46ms | success
+2026-01-15T16:17:17.112476+00:00 | DB_CALL get_all_settings | P3 | 0.58ms | success
+2026-01-15T16:17:17.114015+00:00 | DB_CALL get_all_entregadores | P3 | 1.94ms | success
+2026-01-15T16:17:17.116691+00:00 | DB_CALL get_all_pedidos | P3 | 3.29ms | success
+2026-01-15T16:17:22.109775+00:00 | DB_CALL get_all_settings | P3 | 0.38ms | success
+2026-01-15T16:17:22.112099+00:00 | DB_CALL get_all_pedidos | P3 | 3.05ms | success
+2026-01-15T16:17:22.114155+00:00 | DB_CALL get_all_entregadores | P3 | 3.26ms | success
+2026-01-15T16:17:24.593582+00:00 | DB_CALL increment_whatsapp_stat | P3 | 2.44ms | success
