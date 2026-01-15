@@ -2953,7 +2953,9 @@ async def create_pedido(data: PedidoCreate):
         if data.modulo == 'Cardapio' or data.modulo == 'CardapioPublico':
             try:
                 pontos_por_real = float(settings.get('pontos_por_real', '1') or '1')
-                await db_call(sqlite_db.add_pontos_clube, data.cliente_id, data.total, pontos_por_real)
+                # Calcular valor dos produtos (total - frete)
+                valor_produtos = data.total - (data.valor_entrega or 0)
+                await db_call(sqlite_db.add_pontos_clube, data.cliente_id, valor_produtos, pontos_por_real)
             except Exception as e:
                 print(f"[CLUBE] Erro ao adicionar pontos: {e}")
     
