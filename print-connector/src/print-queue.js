@@ -440,61 +440,6 @@ class PrintQueue {
     if (job.cut !== false) escpos.cut();
     return escpos.build();
   }
-        .align('center')
-        .setTextSize(1, 2)
-        .text('Informacoes para Entrega')
-        .setTextSize(1, 1)
-        .align('left')
-        .newLine();
-      
-      if (pedido.cliente_nome) {
-        escpos.text(`Cliente: ${pedido.cliente_nome}`);
-      }
-      
-      if (pedido.cliente_telefone) {
-        escpos.text(`Telefone: ${pedido.cliente_telefone}`);
-      }
-      
-      // Endereço completo
-      if (pedido.endereco_rua) {
-        let endereco = `Endereco: ${pedido.endereco_rua}`;
-        if (pedido.endereco_numero) endereco += `, No ${pedido.endereco_numero}`;
-        escpos.wrapText(endereco);
-        
-        if (pedido.endereco_bairro) {
-          escpos.text(`-${pedido.endereco_bairro}`);
-        }
-        
-        if (pedido.endereco_complemento) {
-          escpos.text(pedido.endereco_complemento);
-        }
-        
-        if (pedido.endereco_referencia) {
-          escpos.text(`Ref: ${pedido.endereco_referencia}`);
-        }
-      }
-    }
-    
-    // ===== OBSERVAÇÃO GERAL =====
-    if (pedido.observacao) {
-      escpos
-        .separator()
-        .setBold(true)
-        .text('Observacoes:')
-        .setBold(false)
-        .wrapText(pedido.observacao);
-    }
-    
-    // ===== RODAPÉ =====
-    escpos
-      .separator()
-      .align('center')
-      .text(pedido.mensagem_rodape || 'NAO E DOCUMENTO FISCAL')
-      .newLine();
-    
-    if (job.cut !== false) escpos.cut();
-    return escpos.build();
-  }
   
   _delay(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));

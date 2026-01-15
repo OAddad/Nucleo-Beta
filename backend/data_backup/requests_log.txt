@@ -45963,3 +45963,7 @@
 2026-01-15T15:17:53.136608+00:00 | DB_CALL get_all_settings | P3 | 0.2ms | success
 2026-01-15T15:17:53.355653+00:00 | DB_CALL get_all_settings | P3 | 0.99ms | success
 2026-01-15T15:17:53.356187+00:00 | DB_CALL get_all_settings | P3 | 0.94ms | success
+2026-01-15T15:19:28.617561+00:00 | DB_CALL get_all_products | P3 | 17.49ms | success
+2026-01-15T15:19:32.660234+00:00 | DB_CALL get_all_products | P3 | 15.12ms | success
+2026-01-15T15:19:37.377169+00:00 | DB_CALL get_all_products | P3 | 14.62ms | success
+2026-01-15T15:19:38.718503+00:00 | DB_CALL get_all_products | P3 | 14.07ms | success
