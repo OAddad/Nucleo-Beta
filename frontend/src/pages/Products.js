@@ -1049,6 +1049,7 @@ export default function Products() {
         recipe: allRecipe,
         is_insumo: isInsumo,
         is_divisible: isDivisible,
+        available: isAvailable,
         order_steps: orderSteps,
         recipe_yield: recipeYield ? parseFloat(recipeYield) : null,
         recipe_yield_unit: recipeYieldUnit || null,
