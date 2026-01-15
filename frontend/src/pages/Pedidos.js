@@ -862,6 +862,18 @@ export default function Pedidos() {
                           ))}
                         </div>
                       )}
+                      {/* Etapas (formato alternativo do CardapioPublico) */}
+                      {(!item.subitems || item.subitems.length === 0) && item.etapas && item.etapas.length > 0 && (
+                        <div className="mt-2 ml-3 pt-2 border-t border-muted space-y-1">
+                          {item.etapas.map((etapa, etapaIdx) => (
+                            <p key={etapaIdx} className="text-xs text-muted-foreground flex items-center gap-1">
+                              <span className="text-orange-400">•</span>
+                              <span className="text-muted-foreground/70">{etapa.etapa}:</span>
+                              <span>{etapa.itens?.join(', ')}</span>
+                            </p>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>

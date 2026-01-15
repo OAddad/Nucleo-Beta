@@ -42313,3 +42313,5 @@
 2026-01-15T01:35:07.119926+00:00 | DB_CALL get_user_by_id | P3 | 0.31ms | success
 2026-01-15T01:35:07.120318+00:00 | DB_CALL get_ingredient_by_id | P3 | 0.22ms | success
 2026-01-15T01:35:07.122112+00:00 | DB_CALL get_purchases_by_ingredient | P3 | 1.7ms | success
+2026-01-15T01:35:25.479897+00:00 | DB_CALL get_all_products | P3 | 3.58ms | success
+2026-01-15T01:35:26.190140+00:00 | DB_CALL get_all_products | P3 | 2.65ms | success
