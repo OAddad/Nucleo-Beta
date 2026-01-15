@@ -1181,6 +1181,7 @@ def get_product_by_id(product_id: str) -> Optional[Dict]:
                 p['order_steps'] = []
             p['is_insumo'] = bool(p['is_insumo'])
             p['is_divisible'] = bool(p['is_divisible'])
+            p['available'] = bool(p.get('available', 1))
             return p
         return None
 
