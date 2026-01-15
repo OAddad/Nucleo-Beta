@@ -1133,14 +1133,14 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode, allProduc
           
           {/* Preço Destacado */}
           {product.product_type === 'combo' && product.simple_price ? (
-            <div className="flex flex-col gap-1 mb-5">
-              <div className="flex items-baseline gap-2">
+            <div className="flex items-center gap-6 mb-5">
+              <div className="flex flex-col items-center">
+                <span className={`text-sm ${t.textMuted}`}>Individual</span>
                 <span className="text-xl font-bold text-orange-500">R$ {product.simple_price?.toFixed(2).replace('.', ',')}</span>
-                <span className={`text-sm ${t.textMuted}`}>simples</span>
               </div>
-              <div className="flex items-baseline gap-2">
+              <div className="flex flex-col items-center">
+                <span className={`text-sm ${t.textMuted}`}>Combo</span>
                 <span className="text-xl font-bold text-orange-500">R$ {(product.sale_price || 0).toFixed(2).replace('.', ',')}</span>
-                <span className={`text-sm ${t.textMuted}`}>combo</span>
               </div>
             </div>
           ) : (
