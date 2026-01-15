@@ -235,99 +235,107 @@ class PrintQueue {
   }
   
   _buildCaixaTemplate(escpos, pedido, job) {
-    // CAIXA/ENTREGA - Layout estilo cupom profissional
+    // ===== LAYOUT SEGUINDO ESBOÇO DO CLIENTE =====
+    // Obtém dados da empresa do job ou do pedido
+    const empresa = job.empresa || {};
+    const config = job.config || {};
     
-    // ===== CABEÇALHO =====
+    // ===== [LOGO] =====
     escpos.align('center');
-    
-    // Nome da empresa
-    if (pedido.empresa_nome) {
-      escpos
-        .setTextSize(2, 2)
-        .setBold(true)
-        .text(pedido.empresa_nome)
-        .setBold(false)
-        .setTextSize(1, 1);
+    if (config.mostrar_logo) {
+      escpos.text('[LOGO]');
     }
     
-    // Slogan (se houver)
-    if (pedido.empresa_slogan) {
-      escpos.text(pedido.empresa_slogan);
+    // ===== NOME DA EMPRESA =====
+    escpos
+      .setTextSize(2, 1)
+      .setBold(true)
+      .text(empresa.nome || pedido.empresa_nome || 'NOME DA EMPRESA')
+      .setBold(false)
+      .setTextSize(1, 1);
+    
+    // Slogan
+    if (empresa.slogan || pedido.empresa_slogan) {
+      escpos.text(empresa.slogan || pedido.empresa_slogan);
     }
     
     // Endereço
-    if (pedido.empresa_endereco) {
-      escpos.text(pedido.empresa_endereco);
+    if (empresa.endereco || pedido.empresa_endereco) {
+      escpos.text(empresa.endereco || pedido.empresa_endereco);
     }
     
     // CNPJ
-    if (pedido.empresa_cnpj) {
-      escpos.text(`CNPJ: ${pedido.empresa_cnpj}`);
-    }
-    
-    // Cidade
-    if (pedido.empresa_cidade) {
-      escpos.text(pedido.empresa_cidade);
-    }
-    
-    // Data e Pedido na mesma linha
-    escpos.align('left');
-    const dataStr = new Date(pedido.created_at || Date.now()).toLocaleString('pt-BR');
-    const pedidoStr = pedido.codigo ? `Pedido: ${pedido.codigo}` : '';
-    if (pedidoStr) {
-      escpos.columns(`Data: ${dataStr}`, pedidoStr);
-    } else {
-      escpos.text(`Data: ${dataStr}`);
+    if (empresa.cnpj || pedido.empresa_cnpj) {
+      escpos.text(`CNPJ: ${empresa.cnpj || pedido.empresa_cnpj}`);
     }
     
     escpos.separator();
     
-    // ===== TÍTULO DO RELATÓRIO =====
-    let tituloRelatorio = 'Relatorio';
-    if (pedido.tipo_entrega === 'delivery') {
-      tituloRelatorio = 'Relatorio para Entrega';
-    } else if (pedido.tipo_entrega === 'retirada') {
-      tituloRelatorio = 'Relatorio para Retirada';
-    } else if (pedido.tipo_entrega === 'mesa') {
-      tituloRelatorio = `Relatorio Mesa ${pedido.mesa || ''}`;
-    }
+    // ===== NÚMERO DO PEDIDO E DATA =====
+    const dataHora = new Date(pedido.created_at || Date.now());
+    const dataStr = dataHora.toLocaleDateString('pt-BR');
+    const horaStr = dataHora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+    const codigoPedido = String(pedido.codigo || '00001').padStart(5, '0');
     
+    escpos.align('left');
     escpos
+      .setTextSize(2, 2)
+      .setBold(true)
+      .text(`#${codigoPedido}`)
+      .setBold(false)
+      .setTextSize(1, 1);
+    
+    escpos.align('right');
+    escpos.text(`${dataStr}, ${horaStr}`);
+    escpos.align('left');
+    
+    // ===== ITENS DO PEDIDO =====
+    escpos
+      .separator()
       .align('center')
-      .setTextSize(1, 2)
-      .text(tituloRelatorio)
-      .setTextSize(1, 1)
+      .setBold(true)
+      .text('-- ITENS DO PEDIDO --')
+      .setBold(false)
       .align('left');
     
-    // ===== CABEÇALHO DA TABELA =====
-    escpos.text('Descricao              Preco Qtd  Total');
+    // Cabeçalho da tabela
+    escpos.text('QTD  PRECO  ITEM                TOTAL');
     escpos.separator();
     
-    // ===== ITENS =====
+    // Itens
+    let subtotalItens = 0;
     if (pedido.items && pedido.items.length > 0) {
       for (const item of pedido.items) {
-        const nome = (item.nome || '').substring(0, 22).padEnd(22);
-        const preco = (item.preco_unitario || 0).toFixed(2).padStart(6);
-        const qtd = String(item.quantidade || 1).padStart(3);
-        const total = ((item.preco_unitario || 0) * (item.quantidade || 1)).toFixed(2).padStart(6);
+        const qtd = item.quantidade || 1;
+        const precoUnit = item.preco_unitario || item.preco || 0;
+        const itemTotal = qtd * precoUnit;
+        subtotalItens += itemTotal;
         
-        escpos.text(`${nome}${preco}${qtd}${total}`);
+        const qtdStr = String(qtd);
+        const precoStr = precoUnit.toFixed(2);
+        const nomeStr = (item.nome || item.product_name || 'Item').substring(0, 18);
+        const totalStr = `R$${itemTotal.toFixed(2)}`;
+        
+        escpos.text(`${qtdStr} x ${precoStr} ${nomeStr}`);
+        escpos.align('right').text(totalStr).align('left');
         
         // Observação do item
         if (item.observacao) {
-          escpos.text(`  -> ${item.observacao}`);
+          escpos.text(`  - ${item.observacao}`);
         }
         
-        // Adicionais
+        // Subitens/Adicionais
+        if (item.subitems && item.subitems.length > 0) {
+          for (const sub of item.subitems) {
+            const subNome = sub.nome || sub.name;
+            const subPreco = sub.preco > 0 ? ` (+R$${sub.preco.toFixed(2)})` : '';
+            escpos.text(`  + ${subNome}${subPreco}`);
+          }
+        }
         if (item.adicionais && item.adicionais.length > 0) {
           for (const add of item.adicionais) {
-            if (add.preco && add.preco > 0) {
-              const addNome = `  + ${add.nome}`.substring(0, 22).padEnd(22);
-              const addPreco = add.preco.toFixed(2).padStart(6);
-              escpos.text(`${addNome}${addPreco}  1${addPreco}`);
-            } else {
-              escpos.text(`  + ${add.nome}`);
-            }
+            const addPreco = add.preco > 0 ? ` (+R$${add.preco.toFixed(2)})` : '';
+            escpos.text(`  + ${add.nome}${addPreco}`);
           }
         }
       }
@@ -335,69 +343,103 @@ class PrintQueue {
     
     escpos.separator();
     
-    // ===== TOTAIS =====
-    const pontilhado = (label, valor) => {
-      const pontos = '.'.repeat(Math.max(2, 38 - label.length - valor.length));
-      return `${label}${pontos}${valor}`;
-    };
-    
-    if (pedido.subtotal) {
-      escpos.text(pontilhado('Produtos', `R$ ${pedido.subtotal.toFixed(2)}`));
-    }
-    
+    // ===== SUBTOTAIS =====
     if (pedido.valor_entrega && pedido.valor_entrega > 0) {
-      escpos.text(pontilhado('Entrega', `R$ ${pedido.valor_entrega.toFixed(2)}`));
+      escpos.columns('Taxa de Entrega:', `R$ ${pedido.valor_entrega.toFixed(2)}`);
     }
     
     if (pedido.desconto && pedido.desconto > 0) {
-      escpos.text(pontilhado('Desconto', `-R$ ${pedido.desconto.toFixed(2)}`));
+      escpos.columns('Desconto:', `-R$ ${pedido.desconto.toFixed(2)}`);
     }
     
-    // TOTAL destacado
     escpos
-      .newLine()
-      .setTextSize(1, 2)
       .setBold(true)
-      .text(pontilhado('Total', `R$ ${(pedido.total || 0).toFixed(2)}`))
+      .columns('TOTAL:', `R$ ${(pedido.total || 0).toFixed(2)}`)
+      .setBold(false);
+    
+    // ===== SEÇÃO DE PAGAMENTO =====
+    escpos
+      .separator()
+      .align('center')
+      .setBold(true)
+      .text('-- PAGAR NA ENTREGA --')
+      .setBold(false)
+      .newLine()
+      .setTextSize(2, 2)
+      .setBold(true)
+      .text(`TOTAL ....... R$${(pedido.total || 0).toFixed(2).replace('.', ',')}`)
       .setBold(false)
       .setTextSize(1, 1);
     
-    // ===== FORMA DE PAGAMENTO =====
     if (pedido.forma_pagamento) {
-      escpos.separator();
+      escpos.text(`PAGAMENTO: ${pedido.forma_pagamento}`);
+    }
+    
+    if (pedido.troco_precisa && pedido.troco_valor) {
+      escpos.text(`TROCO PARA: R$ ${pedido.troco_valor.toFixed(2)}`);
+    }
+    
+    // ===== INFORMAÇÕES DE ENTREGA =====
+    if (pedido.tipo_entrega === 'delivery') {
       escpos
+        .separator()
         .align('center')
-        .text(`-- ${pedido.pagar_na_entrega ? 'Pagar na entrega' : 'Pagamento'} --`)
+        .setBold(true)
+        .text('-- INFORMACOES DE ENTREGA --')
+        .setBold(false)
         .align('left');
       
-      escpos.text(pontilhado(pedido.forma_pagamento, `R$ ${(pedido.total || 0).toFixed(2)}`));
+      if (pedido.cliente_nome) {
+        escpos.text(`CLIENTE: ${pedido.cliente_nome}`);
+      }
+      if (pedido.cliente_telefone) {
+        escpos.text(`TEL: ${pedido.cliente_telefone}`);
+      }
+      if (pedido.endereco_rua) {
+        const endereco = `${pedido.endereco_rua}${pedido.endereco_numero ? ', ' + pedido.endereco_numero : ''}`;
+        escpos.text(`END: ${endereco}`);
+      }
+      if (pedido.endereco_bairro) {
+        escpos.text(`BAIRRO: ${pedido.endereco_bairro}`);
+      }
+      if (pedido.endereco_complemento) {
+        escpos.text(`REF: ${pedido.endereco_complemento}`);
+      }
+    } else if (pedido.tipo_entrega === 'retirada' || pedido.tipo_entrega === 'pickup') {
+      escpos
+        .separator()
+        .align('center')
+        .setBold(true)
+        .text('-- RETIRADA NO LOCAL --')
+        .setBold(false);
       
-      if (pedido.troco_para && pedido.troco_para > 0) {
-        escpos.text(pontilhado('Troco para', `R$ ${pedido.troco_para.toFixed(2)}`));
-        const troco = pedido.troco_para - (pedido.total || 0);
-        if (troco > 0) {
-          escpos.text(pontilhado('Troco', `R$ ${troco.toFixed(2)}`));
-        }
+      if (pedido.cliente_nome) {
+        escpos.text(`CLIENTE: ${pedido.cliente_nome}`);
+      }
+      if (pedido.cliente_telefone) {
+        escpos.text(`TEL: ${pedido.cliente_telefone}`);
       }
     }
     
-    // A Pagar
-    escpos
-      .setTextSize(1, 2)
-      .setBold(true)
-      .text(pontilhado('A Pagar', `R$ ${(pedido.total || 0).toFixed(2)}`))
-      .setBold(false)
-      .setTextSize(1, 1);
-    
-    // Entregador
-    if (pedido.entregador) {
-      escpos.align('right').text(`Entregador(a): ${pedido.entregador}`).align('left');
+    // ===== OBSERVAÇÕES =====
+    if (pedido.observacao) {
+      escpos.separator();
+      escpos.align('left').text(`OBS: ${pedido.observacao}`);
     }
     
-    // ===== INFORMAÇÕES PARA ENTREGA =====
-    if (pedido.tipo_entrega === 'delivery' || pedido.cliente_nome) {
-      escpos
-        .separator()
+    // ===== RODAPÉ =====
+    escpos
+      .newLine()
+      .align('center')
+      .text('================================')
+      .setBold(true)
+      .text(config.mensagem_rodape || 'NAO E DOCUMENTO FISCAL')
+      .setBold(false);
+    
+    // Corte
+    if (job.cut !== false) escpos.cut();
+    return escpos.build();
+  }
         .align('center')
         .setTextSize(1, 2)
         .text('Informacoes para Entrega')
