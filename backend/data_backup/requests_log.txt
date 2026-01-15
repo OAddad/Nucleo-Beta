@@ -46103,3 +46103,7 @@
 2026-01-15T15:35:05.145444+00:00 | DB_CALL get_all_settings | P3 | 1.88ms | success
 2026-01-15T15:35:05.328357+00:00 | DB_CALL get_all_settings | P3 | 1.67ms | success
 2026-01-15T15:35:05.354056+00:00 | DB_CALL get_all_settings | P3 | 2.74ms | success
+2026-01-15T15:35:18.137549+00:00 | DB_CALL get_all_settings | P3 | 0.92ms | success
+2026-01-15T15:35:18.138066+00:00 | DB_CALL get_all_settings | P3 | 0.98ms | success
+2026-01-15T15:35:18.309321+00:00 | DB_CALL get_all_settings | P3 | 0.3ms | success
+2026-01-15T15:35:18.336504+00:00 | DB_CALL get_all_settings | P3 | 0.35ms | success
