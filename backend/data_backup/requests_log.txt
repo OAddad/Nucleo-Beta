@@ -43008,3 +43008,11 @@
 2026-01-15T01:50:41.292043+00:00 | DB_CALL get_all_settings | P3 | 0.32ms | success
 2026-01-15T01:50:41.293928+00:00 | DB_CALL get_all_pedidos | P3 | 2.73ms | success
 2026-01-15T01:50:41.296686+00:00 | DB_CALL get_all_entregadores | P3 | 0.25ms | success
+2026-01-15T01:50:43.450630+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.35ms | success
+2026-01-15T01:50:44.758916+00:00 | DB_CALL get_user_by_id | P3 | 0.38ms | success
+2026-01-15T01:50:44.759286+00:00 | DB_CALL get_all_order_status_templates | P3 | 0.21ms | success
+2026-01-15T01:50:44.763035+00:00 | DB_CALL get_user_by_id | P3 | 0.25ms | success
+2026-01-15T01:50:44.763216+00:00 | DB_CALL get_user_by_id | P3 | 0.99ms | success
+2026-01-15T01:50:44.763441+00:00 | DB_CALL get_all_settings | P3 | 0.27ms | success
+2026-01-15T01:50:44.763867+00:00 | DB_CALL get_all_keyword_responses | P3 | 0.57ms | success
+2026-01-15T01:50:48.448219+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.61ms | success
