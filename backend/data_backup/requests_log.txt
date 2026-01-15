@@ -46764,3 +46764,7 @@
 2026-01-15T16:30:15.303601+00:00 | DB_CALL get_all_settings | P3 | 0.22ms | success
 2026-01-15T16:30:56.155615+00:00 | DB_CALL get_all_products | P3 | 20.78ms | success
 2026-01-15T16:30:57.534225+00:00 | DB_CALL get_all_products | P3 | 15.76ms | success
+2026-01-15T16:31:15.498730+00:00 | DB_CALL get_all_pedidos | P3 | 2.48ms | success
+2026-01-15T16:31:15.501174+00:00 | DB_CALL get_pedido_by_id | P3 | 5.25ms | success
+2026-01-15T16:31:15.501532+00:00 | DB_CALL get_all_entregadores | P3 | 4.88ms | success
+2026-01-15T16:31:15.502495+00:00 | DB_CALL get_all_settings | P3 | 0.21ms | success
