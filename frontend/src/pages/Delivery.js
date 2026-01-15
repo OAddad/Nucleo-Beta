@@ -1123,18 +1123,36 @@ export default function Delivery() {
                 <div className="space-y-2">
                   {pedidoDetalhes.items && pedidoDetalhes.items.length > 0 ? (
                     pedidoDetalhes.items.map((item, index) => (
-                      <div key={index} className="flex justify-between items-start py-1 border-b border-muted last:border-0">
-                        <div className="flex-1">
+                      <div key={index} className="py-2 border-b border-muted last:border-0">
+                        <div className="flex justify-between items-start">
+                          <div className="flex-1">
+                            <p className="text-sm font-medium">
+                              {item.quantidade || item.qty || 1}x {item.nome || item.name}
+                            </p>
+                            {item.combo_type && (
+                              <span className="text-xs text-orange-500 font-medium">({item.combo_type === 'combo' ? 'Combo' : 'Simples'})</span>
+                            )}
+                          </div>
                           <p className="text-sm font-medium">
-                            {item.quantidade || item.qty || 1}x {item.nome || item.name}
+                            R$ {((item.preco_unitario || item.preco || item.price || 0) * (item.quantidade || item.qty || 1)).toFixed(2)}
                           </p>
-                          {item.observacao && (
-                            <p className="text-xs text-muted-foreground">Obs: {item.observacao}</p>
-                          )}
                         </div>
-                        <p className="text-sm font-medium">
-                          R$ {((item.preco_unitario || item.preco || item.price || 0) * (item.quantidade || item.qty || 1)).toFixed(2)}
-                        </p>
+                        {/* Subitems/Variações */}
+                        {item.subitems && item.subitems.length > 0 && (
+                          <div className="mt-1 ml-3 space-y-0.5">
+                            {item.subitems.map((sub, subIdx) => (
+                              <p key={subIdx} className="text-xs text-muted-foreground flex items-center gap-1">
+                                <span className="text-orange-400">•</span>
+                                {sub.step_name && <span className="text-muted-foreground/70">{sub.step_name}:</span>}
+                                <span>{sub.nome || sub.name}</span>
+                                {(sub.preco > 0) && <span className="text-orange-500">(+R$ {sub.preco.toFixed(2)})</span>}
+                              </p>
+                            ))}
+                          </div>
+                        )}
+                        {item.observacao && (
+                          <p className="text-xs text-muted-foreground mt-1 ml-3">Obs: {item.observacao}</p>
+                        )}
                       </div>
                     ))
                   ) : (
