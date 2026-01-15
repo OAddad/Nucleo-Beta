@@ -1132,9 +1132,22 @@ function ProductPopup({ product, open, onClose, onAddToCart, darkMode, allProduc
           </div>
           
           {/* Preço Destacado */}
-          <div className="text-2xl font-bold text-orange-500 mb-5">
-            R$ {(product.sale_price || 0).toFixed(2).replace('.', ',')}
-          </div>
+          {product.product_type === 'combo' && product.simple_price ? (
+            <div className="flex flex-col gap-1 mb-5">
+              <div className="flex items-baseline gap-2">
+                <span className="text-xl font-bold text-orange-500">R$ {product.simple_price?.toFixed(2).replace('.', ',')}</span>
+                <span className={`text-sm ${t.textMuted}`}>simples</span>
+              </div>
+              <div className="flex items-baseline gap-2">
+                <span className="text-xl font-bold text-orange-500">R$ {(product.sale_price || 0).toFixed(2).replace('.', ',')}</span>
+                <span className={`text-sm ${t.textMuted}`}>combo</span>
+              </div>
+            </div>
+          ) : (
+            <div className="text-2xl font-bold text-orange-500 mb-5">
+              R$ {(product.sale_price || 0).toFixed(2).replace('.', ',')}
+            </div>
+          )}
 
           {/* Campo de Observação - Compacto */}
           <div>

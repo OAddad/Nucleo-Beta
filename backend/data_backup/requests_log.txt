@@ -44414,3 +44414,9 @@
 2026-01-15T12:39:15.166533+00:00 | DB_CALL get_user_by_id | P3 | 1.12ms | success
 2026-01-15T12:39:15.168356+00:00 | DB_CALL get_all_categories | P3 | 1.75ms | success
 2026-01-15T12:39:15.418644+00:00 | DB_CALL get_all_products | P3 | 252.13ms | success
+2026-01-15T12:39:20.045609+00:00 | DB_CALL get_all_entregadores | P3 | 0.29ms | success
+2026-01-15T12:39:20.048730+00:00 | DB_CALL get_all_pedidos | P3 | 1.9ms | success
+2026-01-15T12:39:20.050948+00:00 | DB_CALL get_all_settings | P3 | 3.53ms | success
+2026-01-15T12:39:25.052042+00:00 | DB_CALL get_all_settings | P3 | 0.93ms | success
+2026-01-15T12:39:25.054879+00:00 | DB_CALL get_all_pedidos | P3 | 3.09ms | success
+2026-01-15T12:39:25.057108+00:00 | DB_CALL get_all_entregadores | P3 | 3.52ms | success
