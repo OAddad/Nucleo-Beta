@@ -2372,7 +2372,8 @@ function GerenciarImpressoras({ toast }) {
           slogan: data.slogan || "",
           endereco: data.address || "",
           cnpj: data.cnpj || "",
-          telefone: data.phone || ""
+          telefone: data.phone || "",
+          logo_url: data.logo_url || ""
         });
       }
     } catch (error) {
