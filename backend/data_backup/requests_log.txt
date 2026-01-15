@@ -46205,3 +46205,11 @@
 2026-01-15T15:40:39.636764+00:00 | DB_CALL get_all_products | P3 | 14.54ms | success
 2026-01-15T15:40:40.984939+00:00 | DB_CALL get_all_products | P3 | 24.59ms | success
 2026-01-15T15:41:04.712558+00:00 | DB_CALL get_all_products | P3 | 36.56ms | success
+2026-01-15T15:41:06.066246+00:00 | DB_CALL get_all_products | P3 | 27.33ms | success
+2026-01-15T15:41:52.075388+00:00 | DB_CALL get_all_products | P3 | 15.31ms | success
+2026-01-15T15:41:55.874342+00:00 | DB_CALL get_all_products | P3 | 21.03ms | success
+2026-01-15T15:42:00.640234+00:00 | DB_CALL get_all_products | P3 | 21.5ms | success
+2026-01-15T15:42:02.034105+00:00 | DB_CALL get_all_products | P3 | 31.14ms | success
+2026-01-15T15:42:02.335847+00:00 | DB_CALL get_all_products | P3 | 31.42ms | success
+2026-01-15T15:42:03.685624+00:00 | DB_CALL get_all_products | P3 | 20.55ms | success
+2026-01-15T15:42:13.801247+00:00 | DB_CALL get_all_products | P3 | 43.34ms | success
