@@ -3579,20 +3579,20 @@ export function printPedido(pedido, config, empresa) {
         }
         
         .pedido-info {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
+          text-align: center;
           margin: 10px 0;
           padding: 6px 0;
           border-bottom: 1px dashed #000;
         }
         .pedido-codigo {
-          font-size: 22px;
+          font-size: 32px;
           font-weight: bold;
+          display: block;
         }
         .pedido-data {
           font-size: 11px;
           text-align: right;
+          display: block;
         }
         
         .section-title {
