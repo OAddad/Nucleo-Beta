@@ -899,12 +899,39 @@ function PrintConnectorTab({ toast, connectorStatus, onRefresh, onNavigateToDown
   const [loading, setLoading] = useState(false);
   const [connecting, setConnecting] = useState(null);
   const [testing, setTesting] = useState(false);
+  const [empresaData, setEmpresaData] = useState({
+    nome: "Nome da Empresa",
+    slogan: "",
+    endereco: "",
+    cnpj: "",
+    logo_url: ""
+  });
 
   useEffect(() => {
     if (connectorStatus?.online) {
       fetchPrinters();
     }
+    fetchEmpresaData();
   }, [connectorStatus?.online]);
+
+  // Buscar dados da empresa
+  const fetchEmpresaData = async () => {
+    try {
+      const response = await fetch(`${API_URL}/api/company/settings`);
+      if (response.ok) {
+        const data = await response.json();
+        setEmpresaData({
+          nome: data.company_name || "Nome da Empresa",
+          slogan: data.slogan || "",
+          endereco: data.address || "",
+          cnpj: data.cnpj || "",
+          logo_url: data.logo_url || ""
+        });
+      }
+    } catch (error) {
+      console.error("Erro ao carregar dados da empresa:", error);
+    }
+  };
 
   const fetchPrinters = async () => {
     setLoading(true);
