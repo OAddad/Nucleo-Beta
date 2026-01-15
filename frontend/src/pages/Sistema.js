@@ -3331,6 +3331,8 @@ function CupomPreview({ config, pedido, empresa }) {
 // ==================== FUNÇÃO DE IMPRESSÃO ====================
 export function printPedido(pedido, config, empresa) {
   const dataHora = new Date(pedido.created_at || new Date());
+  const dataStr = dataHora.toLocaleDateString('pt-BR');
+  const horaStr = dataHora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
   
   let html = `
     <!DOCTYPE html>
@@ -3342,300 +3344,163 @@ export function printPedido(pedido, config, empresa) {
         @page { size: 80mm auto; margin: 0; }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-          font-family: 'Segoe UI', 'Arial', sans-serif;
+          font-family: 'Courier New', 'Lucida Console', monospace;
           font-size: 12px;
           width: 80mm;
-          padding: 4mm;
+          padding: 3mm;
           background: white;
-          color: #1a1a1a;
-          line-height: 1.4;
+          color: #000;
+          line-height: 1.3;
         }
         
-        /* Cabeçalho da empresa */
-        .header-box {
-          border: 2px solid #000;
-          border-radius: 8px;
-          padding: 10px 8px;
-          margin-bottom: 10px;
-          background: linear-gradient(to bottom, #f8f8f8, #fff);
+        .center { text-align: center; }
+        .left { text-align: left; }
+        .right { text-align: right; }
+        .bold { font-weight: bold; }
+        .small { font-size: 10px; }
+        .large { font-size: 14px; }
+        .xlarge { font-size: 18px; }
+        .xxlarge { font-size: 22px; }
+        
+        .separator { 
+          border-top: 1px dashed #000; 
+          margin: 6px 0; 
         }
-        .empresa-nome {
-          font-size: 18px;
-          font-weight: 800;
+        .separator-double { 
+          border-top: 2px solid #000; 
+          margin: 8px 0; 
+        }
+        
+        .header {
           text-align: center;
-          letter-spacing: 1px;
-          text-transform: uppercase;
+          padding-bottom: 8px;
+          border-bottom: 1px dashed #000;
+          margin-bottom: 8px;
+        }
+        .header .logo-placeholder {
+          font-size: 10px;
+          color: #666;
           margin-bottom: 4px;
         }
-        .empresa-info {
+        .header .empresa-nome {
+          font-size: 16px;
+          font-weight: bold;
+          text-transform: uppercase;
+        }
+        .header .slogan {
           font-size: 10px;
-          text-align: center;
+          color: #444;
+        }
+        .header .endereco, .header .cnpj {
+          font-size: 10px;
           color: #444;
         }
         
-        /* Box do código do pedido */
-        .pedido-box {
+        .pedido-info {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          border: 2px solid #000;
-          border-radius: 6px;
-          padding: 8px 10px;
-          margin-bottom: 10px;
-          background: #000;
-          color: #fff;
+          margin: 10px 0;
+          padding: 6px 0;
+          border-bottom: 1px dashed #000;
         }
         .pedido-codigo {
-          font-size: 16px;
-          font-weight: 800;
-          letter-spacing: 1px;
+          font-size: 22px;
+          font-weight: bold;
         }
         .pedido-data {
           font-size: 11px;
           text-align: right;
         }
         
-        /* Seções */
-        .section {
-          margin-bottom: 10px;
-        }
         .section-title {
-          font-size: 11px;
-          font-weight: 700;
-          text-transform: uppercase;
-          letter-spacing: 0.5px;
-          padding: 4px 8px;
-          background: #f0f0f0;
-          border-left: 4px solid #000;
-          margin-bottom: 6px;
-        }
-        .section-content {
-          padding: 0 8px;
-        }
-        
-        /* Divisores elaborados */
-        .divider-double {
-          border: none;
-          height: 3px;
-          background: linear-gradient(to right, transparent, #000 10%, #000 90%, transparent);
-          margin: 10px 0;
-        }
-        .divider-dots {
-          border: none;
-          height: 1px;
-          background: repeating-linear-gradient(to right, #000 0px, #000 4px, transparent 4px, transparent 8px);
-          margin: 8px 0;
-        }
-        .divider-wave {
           text-align: center;
-          font-size: 8px;
-          letter-spacing: 2px;
-          color: #666;
-          margin: 8px 0;
-        }
-        
-        /* Cliente */
-        .cliente-box {
-          border: 1px solid #ddd;
-          border-radius: 6px;
-          padding: 8px;
-          margin-bottom: 10px;
-          background: #fafafa;
-        }
-        .cliente-nome {
-          font-size: 13px;
-          font-weight: 700;
-        }
-        .cliente-telefone {
+          font-weight: bold;
           font-size: 11px;
-          color: #555;
+          margin: 8px 0 6px 0;
         }
         
-        /* Endereço */
-        .endereco-box {
-          border: 1px dashed #999;
-          border-radius: 6px;
-          padding: 8px;
-          margin-bottom: 10px;
-          background: #fff9e6;
-        }
-        .endereco-label {
-          font-size: 10px;
-          font-weight: 700;
-          color: #996600;
-          margin-bottom: 4px;
-          text-transform: uppercase;
-        }
-        .endereco-text {
-          font-size: 11px;
-        }
-        
-        /* Retirada */
-        .retirada-box {
-          border: 2px dashed #000;
-          border-radius: 6px;
-          padding: 10px;
-          margin-bottom: 10px;
-          text-align: center;
-          background: #e8f5e9;
-        }
-        .retirada-text {
-          font-size: 13px;
-          font-weight: 800;
-          text-transform: uppercase;
-          letter-spacing: 1px;
-        }
-        
-        /* Itens */
-        .itens-box {
-          border: 1px solid #ddd;
-          border-radius: 6px;
-          overflow: hidden;
-          margin-bottom: 10px;
-        }
         .itens-header {
-          background: #333;
-          color: #fff;
-          padding: 6px 10px;
-          font-size: 11px;
-          font-weight: 700;
-          text-transform: uppercase;
-          text-align: center;
-          letter-spacing: 1px;
-        }
-        .itens-list {
-          padding: 8px;
-        }
-        .item-row {
           display: flex;
           justify-content: space-between;
-          padding: 6px 0;
-          border-bottom: 1px dotted #ddd;
-        }
-        .item-row:last-child {
-          border-bottom: none;
-        }
-        .item-qtd {
-          font-weight: 700;
-          background: #000;
-          color: #fff;
-          padding: 2px 6px;
-          border-radius: 4px;
           font-size: 10px;
-          margin-right: 6px;
+          font-weight: bold;
+          border-bottom: 1px solid #000;
+          padding-bottom: 2px;
+          margin-bottom: 4px;
         }
-        .item-nome {
-          flex: 1;
-          font-size: 11px;
+        
+        .item-row {
+          margin-bottom: 4px;
         }
-        .item-preco {
-          font-weight: 600;
+        .item-linha {
+          display: flex;
+          justify-content: space-between;
           font-size: 11px;
         }
         .item-obs {
-          font-size: 9px;
-          padding: 2px 0 2px 28px;
-          color: #666;
-          font-style: italic;
+          font-size: 10px;
+          padding-left: 10px;
+          color: #444;
         }
         .item-sub {
           font-size: 9px;
-          padding: 1px 0 1px 28px;
+          padding-left: 10px;
           color: #555;
         }
         
-        /* Total */
-        .total-box {
-          border: 3px solid #000;
-          border-radius: 8px;
-          overflow: hidden;
-          margin-bottom: 10px;
-        }
         .subtotal-row {
           display: flex;
           justify-content: space-between;
-          padding: 6px 10px;
           font-size: 11px;
-          background: #f5f5f5;
-          border-bottom: 1px solid #ddd;
-        }
-        .total-row {
-          display: flex;
-          justify-content: space-between;
-          padding: 10px;
-          background: #000;
-          color: #fff;
-        }
-        .total-label {
-          font-size: 16px;
-          font-weight: 800;
-          text-transform: uppercase;
-        }
-        .total-valor {
-          font-size: 18px;
-          font-weight: 800;
+          margin: 2px 0;
         }
         
-        /* Pagamento */
-        .pagamento-box {
-          border: 1px solid #ddd;
-          border-radius: 6px;
-          padding: 8px;
-          margin-bottom: 10px;
-          background: #f0fff0;
-        }
-        .pagamento-label {
-          font-size: 10px;
-          font-weight: 700;
-          color: #006600;
-          text-transform: uppercase;
-        }
-        .pagamento-forma {
-          font-size: 12px;
-          font-weight: 600;
-        }
-        .pagamento-troco {
-          font-size: 10px;
-          color: #555;
-          margin-top: 2px;
-        }
-        
-        /* Observações */
-        .obs-box {
-          border: 1px solid #ffcc00;
-          border-radius: 6px;
-          padding: 8px;
-          margin-bottom: 10px;
-          background: #fffde7;
-        }
-        .obs-label {
-          font-size: 10px;
-          font-weight: 700;
-          color: #cc9900;
-          text-transform: uppercase;
-          margin-bottom: 2px;
-        }
-        .obs-text {
-          font-size: 11px;
-        }
-        
-        /* Rodapé */
-        .footer-box {
+        .total-section {
           text-align: center;
-          padding: 8px;
-          border-top: 2px solid #000;
-          margin-top: 10px;
+          margin: 10px 0;
+          padding: 10px 0;
+          border-top: 1px dashed #000;
+          border-bottom: 1px dashed #000;
         }
-        .footer-text {
-          font-size: 10px;
-          color: #666;
-          font-style: italic;
-        }
-        .footer-thanks {
+        .pagar-entrega {
           font-size: 12px;
-          font-weight: 700;
-          margin-top: 6px;
-          letter-spacing: 1px;
+          font-weight: bold;
+          margin-bottom: 6px;
+        }
+        .total-grande {
+          font-size: 20px;
+          font-weight: bold;
+          margin: 4px 0;
+        }
+        .pagamento-info {
+          font-size: 11px;
+        }
+        
+        .entrega-section {
+          margin: 10px 0;
+          padding: 8px 0;
+        }
+        .info-label {
+          font-weight: bold;
+          font-size: 11px;
+        }
+        .info-valor {
+          font-size: 11px;
+        }
+        .info-row {
+          margin: 2px 0;
+        }
+        
+        .footer {
+          text-align: center;
+          margin-top: 10px;
+          padding-top: 8px;
+          border-top: 2px solid #000;
+        }
+        .footer-msg {
+          font-size: 10px;
+          font-weight: bold;
         }
         
         @media print { 
@@ -3646,114 +3511,138 @@ export function printPedido(pedido, config, empresa) {
     <body>
   `;
 
-  // Cabeçalho da empresa
-  html += `<div class="header-box">`;
+  // ========== CABEÇALHO ==========
+  html += `<div class="header">`;
   if (config.mostrar_logo) {
-    html += `<div class="empresa-nome">${empresa.nome || 'EMPRESA'}</div>`;
+    html += `<div class="logo-placeholder">[LOGO]</div>`;
   }
-  if (config.mostrar_endereco_empresa && empresa.endereco) {
-    html += `<div class="empresa-info">${empresa.endereco}</div>`;
+  html += `<div class="empresa-nome">${empresa.nome || 'Nome da Empresa'}</div>`;
+  if (empresa.slogan) {
+    html += `<div class="slogan">${empresa.slogan}</div>`;
   }
-  if (config.mostrar_telefone_empresa && empresa.telefone) {
-    html += `<div class="empresa-info">${empresa.telefone}</div>`;
+  if (empresa.endereco) {
+    html += `<div class="endereco">${empresa.endereco}</div>`;
   }
-  html += `</div>`;
-
-  // Box do código do pedido
-  html += `<div class="pedido-box">`;
-  if (config.mostrar_codigo_pedido) {
-    html += `<div class="pedido-codigo">PEDIDO #${pedido.codigo}</div>`;
-  }
-  if (config.mostrar_data_hora) {
-    html += `<div class="pedido-data">${dataHora.toLocaleDateString('pt-BR')}<br/>${dataHora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</div>`;
+  if (empresa.cnpj) {
+    html += `<div class="cnpj">CNPJ: ${empresa.cnpj}</div>`;
   }
   html += `</div>`;
 
-  // Cliente
-  if ((config.mostrar_cliente_nome && pedido.cliente_nome) || (config.mostrar_cliente_telefone && pedido.cliente_telefone)) {
-    html += `<div class="cliente-box">`;
-    if (config.mostrar_cliente_nome && pedido.cliente_nome) {
-      html += `<div class="cliente-nome">${pedido.cliente_nome}</div>`;
-    }
-    if (config.mostrar_cliente_telefone && pedido.cliente_telefone) {
-      html += `<div class="cliente-telefone">${pedido.cliente_telefone}</div>`;
-    }
-    html += `</div>`;
-  }
+  // ========== NÚMERO DO PEDIDO E DATA ==========
+  html += `<div class="pedido-info">`;
+  html += `<div class="pedido-codigo">#${String(pedido.codigo).padStart(5, '0')}</div>`;
+  html += `<div class="pedido-data">${dataStr}, ${horaStr}</div>`;
+  html += `</div>`;
 
-  // Endereço de entrega ou Retirada
-  if (config.mostrar_endereco_entrega && pedido.tipo_entrega === 'delivery') {
-    html += `<div class="endereco-box">`;
-    html += `<div class="endereco-label">ENDEREÇO DE ENTREGA</div>`;
-    html += `<div class="endereco-text">${pedido.endereco_rua || ''}, ${pedido.endereco_numero || ''}</div>`;
-    if (pedido.endereco_complemento) {
-      html += `<div class="endereco-text">${pedido.endereco_complemento}</div>`;
-    }
-    html += `<div class="endereco-text"><strong>${pedido.endereco_bairro || ''}</strong></div>`;
-    html += `</div>`;
-  } else if (pedido.tipo_entrega === 'retirada' || pedido.tipo_entrega === 'pickup') {
-    html += `<div class="retirada-box">`;
-    html += `<div class="retirada-text">RETIRADA NO LOCAL</div>`;
-    html += `</div>`;
-  }
-
-  // Itens do pedido
-  html += `<div class="itens-box">`;
-  html += `<div class="itens-header">ITENS DO PEDIDO</div>`;
-  html += `<div class="itens-list">`;
+  // ========== ITENS DO PEDIDO ==========
+  html += `<div class="section-title">-- ITENS DO PEDIDO --</div>`;
+  html += `<div class="itens-header">`;
+  html += `<span>QTD  PREÇO  ITEM</span>`;
+  html += `<span>TOTAL</span>`;
+  html += `</div>`;
   
+  let subtotalItens = 0;
   (pedido.items || []).forEach(item => {
-    const itemTotal = (item.quantidade || 1) * (item.preco_unitario || item.preco || 0);
+    const qtd = item.quantidade || 1;
+    const precoUnit = item.preco_unitario || item.preco || 0;
+    const itemTotal = qtd * precoUnit;
+    subtotalItens += itemTotal;
+    
     html += `<div class="item-row">`;
-    html += `<span><span class="item-qtd">${item.quantidade || 1}x</span><span class="item-nome">${item.nome || item.product_name || 'Item'}</span></span>`;
-    html += `<span class="item-preco">R$ ${itemTotal.toFixed(2)}</span>`;
+    html += `<div class="item-linha">`;
+    html += `<span>${qtd} x ${precoUnit.toFixed(2)} ${item.nome || item.product_name || 'Item'}</span>`;
+    html += `<span>R$${itemTotal.toFixed(2)}</span>`;
     html += `</div>`;
+    
     if (item.observacao) {
-      html += `<div class="item-obs">→ ${item.observacao}</div>`;
+      html += `<div class="item-obs">- ${item.observacao}</div>`;
     }
     if (item.subitems && item.subitems.length > 0) {
       item.subitems.forEach(sub => {
-        html += `<div class="item-sub">• ${sub.nome || sub.name}${sub.preco > 0 ? ` (+R$ ${sub.preco.toFixed(2)})` : ''}</div>`;
+        const subTexto = sub.nome || sub.name;
+        const subPreco = sub.preco > 0 ? ` (+R$${sub.preco.toFixed(2)})` : '';
+        html += `<div class="item-sub">+ ${subTexto}${subPreco}</div>`;
       });
     }
+    html += `</div>`;
   });
-  
-  html += `</div></div>`;
 
-  // Total
-  html += `<div class="total-box">`;
+  // ========== SUBTOTAIS ==========
+  html += `<div class="separator"></div>`;
+  
   if (pedido.valor_entrega > 0) {
-    html += `<div class="subtotal-row"><span>Taxa de Entrega</span><span>R$ ${pedido.valor_entrega.toFixed(2)}</span></div>`;
+    html += `<div class="subtotal-row">`;
+    html += `<span>Taxa de Entrega:</span>`;
+    html += `<span>R$ ${pedido.valor_entrega.toFixed(2)}</span>`;
+    html += `</div>`;
   }
-  html += `<div class="total-row"><span class="total-label">TOTAL</span><span class="total-valor">R$ ${(pedido.total || 0).toFixed(2)}</span></div>`;
+  
+  if (pedido.desconto > 0) {
+    html += `<div class="subtotal-row">`;
+    html += `<span>Desconto:</span>`;
+    html += `<span>-R$ ${pedido.desconto.toFixed(2)}</span>`;
+    html += `</div>`;
+  }
+  
+  html += `<div class="subtotal-row bold">`;
+  html += `<span>TOTAL:</span>`;
+  html += `<span>R$ ${(pedido.total || 0).toFixed(2)}</span>`;
   html += `</div>`;
 
-  // Pagamento
-  if (config.mostrar_forma_pagamento && pedido.forma_pagamento) {
-    html += `<div class="pagamento-box">`;
-    html += `<div class="pagamento-label">FORMA DE PAGAMENTO</div>`;
-    html += `<div class="pagamento-forma">${pedido.forma_pagamento}</div>`;
-    if (pedido.troco_precisa && pedido.troco_valor) {
-      html += `<div class="pagamento-troco">Troco para: R$ ${pedido.troco_valor.toFixed(2)}</div>`;
+  // ========== SEÇÃO DE PAGAMENTO ==========
+  html += `<div class="total-section">`;
+  html += `<div class="pagar-entrega">-- PAGAR NA ENTREGA --</div>`;
+  html += `<div class="total-grande">TOTAL ....... R$${(pedido.total || 0).toFixed(2).replace('.', ',')}</div>`;
+  if (pedido.forma_pagamento) {
+    html += `<div class="pagamento-info">PAGAMENTO: ${pedido.forma_pagamento}</div>`;
+  }
+  if (pedido.troco_precisa && pedido.troco_valor) {
+    html += `<div class="pagamento-info">TROCO PARA: R$ ${pedido.troco_valor.toFixed(2)}</div>`;
+  }
+  html += `</div>`;
+
+  // ========== INFORMAÇÕES DE ENTREGA ==========
+  if (pedido.tipo_entrega === 'delivery') {
+    html += `<div class="section-title">-- INFORMAÇÕES DE ENTREGA --</div>`;
+    html += `<div class="entrega-section">`;
+    
+    if (pedido.cliente_nome) {
+      html += `<div class="info-row"><span class="info-label">CLIENTE:</span> <span class="info-valor">${pedido.cliente_nome}</span></div>`;
     }
+    if (pedido.cliente_telefone) {
+      html += `<div class="info-row"><span class="info-label">TEL:</span> <span class="info-valor">${pedido.cliente_telefone}</span></div>`;
+    }
+    if (pedido.endereco_rua) {
+      html += `<div class="info-row"><span class="info-label">END:</span> <span class="info-valor">${pedido.endereco_rua}${pedido.endereco_numero ? ', ' + pedido.endereco_numero : ''}</span></div>`;
+    }
+    if (pedido.endereco_bairro) {
+      html += `<div class="info-row"><span class="info-label">BAIRRO:</span> <span class="info-valor">${pedido.endereco_bairro}</span></div>`;
+    }
+    if (pedido.endereco_complemento) {
+      html += `<div class="info-row"><span class="info-label">REF:</span> <span class="info-valor">${pedido.endereco_complemento}</span></div>`;
+    }
+    
     html += `</div>`;
+  } else if (pedido.tipo_entrega === 'retirada' || pedido.tipo_entrega === 'pickup') {
+    html += `<div class="section-title">-- RETIRADA NO LOCAL --</div>`;
+    if (pedido.cliente_nome) {
+      html += `<div class="info-row center"><span class="info-label">CLIENTE:</span> ${pedido.cliente_nome}</div>`;
+    }
+    if (pedido.cliente_telefone) {
+      html += `<div class="info-row center"><span class="info-label">TEL:</span> ${pedido.cliente_telefone}</div>`;
+    }
   }
 
-  // Observações
-  if (config.mostrar_observacoes && pedido.observacao) {
-    html += `<div class="obs-box">`;
-    html += `<div class="obs-label">OBSERVAÇÕES</div>`;
-    html += `<div class="obs-text">${pedido.observacao}</div>`;
-    html += `</div>`;
+  // ========== OBSERVAÇÕES ==========
+  if (pedido.observacao) {
+    html += `<div class="separator"></div>`;
+    html += `<div class="info-row"><span class="info-label">OBS:</span> ${pedido.observacao}</div>`;
   }
 
-  // Rodapé
-  html += `<div class="footer-box">`;
-  if (config.mensagem_rodape) {
-    html += `<div class="footer-text">${config.mensagem_rodape}</div>`;
-  }
-  html += `<div class="footer-thanks">OBRIGADO PELA PREFERÊNCIA!</div>`;
-  html += `<div class="divider-wave">◆ ◆ ◆ ◆ ◆</div>`;
+  // ========== RODAPÉ ==========
+  html += `<div class="footer">`;
+  html += `<div class="separator-double"></div>`;
+  html += `<div class="footer-msg">${config.mensagem_rodape || 'NÃO É DOCUMENTO FISCAL'}</div>`;
   html += `</div>`;
 
   html += `
