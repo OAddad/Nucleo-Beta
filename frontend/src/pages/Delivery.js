@@ -2238,7 +2238,9 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
           quantidade: item.quantity,
           preco: item.sale_price || 0,
           observacao: item.observation || "",
-          photo_url: item.photo_url || null
+          photo_url: item.photo_url || null,
+          subitems: item.subitems || [],
+          combo_type: item.combo_type || null
         })),
         total: total,
         forma_pagamento: formaPagamento,
