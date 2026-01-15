@@ -43375,3 +43375,5 @@
 2026-01-15T01:58:14.884174+00:00 | DB_CALL get_all_bairros | P3 | 0.36ms | success
 2026-01-15T01:58:21.396036+00:00 | DB_CALL get_user_by_id | P3 | 1.08ms | success
 2026-01-15T01:58:21.396666+00:00 | DB_CALL get_user_by_id | P3 | 1.04ms | success
+2026-01-15T01:58:34.475486+00:00 | DB_CALL get_all_products | P3 | 6.28ms | success
+2026-01-15T01:58:35.380905+00:00 | DB_CALL get_all_products | P3 | 5.01ms | success
