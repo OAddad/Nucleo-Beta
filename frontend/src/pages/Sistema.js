@@ -3662,7 +3662,9 @@ export function printPedido(pedido, config, empresa) {
 
   // ========== CABEÇALHO ==========
   html += `<div class="header">`;
-  if (config.mostrar_logo) {
+  if (config.mostrar_logo && empresa.logo_url) {
+    html += `<img src="${empresa.logo_url}" class="logo-img" alt="Logo" onerror="this.style.display='none'" />`;
+  } else if (config.mostrar_logo) {
     html += `<div class="logo-placeholder">[LOGO]</div>`;
   }
   html += `<div class="empresa-nome">${empresa.nome || 'Nome da Empresa'}</div>`;
