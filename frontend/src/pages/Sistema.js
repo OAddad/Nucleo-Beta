@@ -897,8 +897,10 @@ function ImpressaoTab({ toast }) {
 // ==================== SUB-ABA: PRINT CONNECTOR ====================
 function PrintConnectorTab({ toast, connectorStatus, onRefresh, onNavigateToDownload }) {
   const [printers, setPrinters] = useState([]);
+  const [sectorPrinters, setSectorPrinters] = useState({});
   const [loading, setLoading] = useState(false);
   const [connecting, setConnecting] = useState(null);
+  const [configuringSector, setConfiguringSector] = useState(null);
   const [testing, setTesting] = useState(false);
   const [empresaData, setEmpresaData] = useState({
     nome: "Nome da Empresa",
@@ -908,9 +910,16 @@ function PrintConnectorTab({ toast, connectorStatus, onRefresh, onNavigateToDown
     logo_url: ""
   });
 
+  // Setores disponíveis para configuração
+  const availableSectors = [
+    { id: 'caixa', name: 'Caixa', icon: Receipt, description: 'Cupom de Entrega', color: 'blue' },
+    { id: 'cozinha', name: 'Cozinha', icon: ChefHat, description: 'Cupom de Preparo', color: 'orange' },
+  ];
+
   useEffect(() => {
     if (connectorStatus?.online) {
       fetchPrinters();
+      fetchSectorPrinters();
     }
   }, [connectorStatus?.online]);
 
