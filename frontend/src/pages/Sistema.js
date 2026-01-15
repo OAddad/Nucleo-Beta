@@ -1928,17 +1928,20 @@ function ConfiguracaoImpressao({ toast }) {
     endereco_bairro: "Centro",
     endereco_complemento: "Casa azul - Meio do quarteirão",
     items: [
-      { nome: "X-Burger", quantidade: 2, preco_unitario: 25.00, observacao: "Sem cebola" },
-      { nome: "Batata Frita", quantidade: 1, preco_unitario: 15.00 },
+      { nome: "X-Burger", quantidade: 2, preco_unitario: 25.00, observacao: "Sem cebola", tipo_combo: "combo" },
+      { nome: "Batata Frita", quantidade: 1, preco_unitario: 15.00, tipo_combo: "simples" },
     ],
     subtotal: 65.00,
     valor_entrega: 5.00,
     total: 70.00,
     forma_pagamento: "Cartão de Crédito",
     pagar_na_entrega: true,
-    observacao: "",
+    observacao: "Entregar rápido",
     created_at: new Date().toISOString(),
   };
+
+  // Estado para controlar qual aba de preview está ativa
+  const [previewTab, setPreviewTab] = useState("entrega");
 
   if (loading) {
     return (
@@ -1948,16 +1951,75 @@ function ConfiguracaoImpressao({ toast }) {
     );
   }
 
-  const sections = [
-    { id: "empresa", label: "Dados da Empresa", icon: Building2 },
-    { id: "layout", label: "Layout do Cupom", icon: FileText },
-    { id: "textos", label: "Textos", icon: Type },
-  ];
-
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      {/* Configurações */}
-      <div className="space-y-4">
+    <div className="space-y-6">
+      {/* Abas de Preview */}
+      <div className="flex gap-2 border-b pb-2">
+        <Button
+          variant={previewTab === "entrega" ? "default" : "outline"}
+          onClick={() => setPreviewTab("entrega")}
+          className="flex items-center gap-2"
+        >
+          <Receipt className="w-4 h-4" />
+          Cupom de Entrega
+        </Button>
+        <Button
+          variant={previewTab === "preparo" ? "default" : "outline"}
+          onClick={() => setPreviewTab("preparo")}
+          className="flex items-center gap-2"
+        >
+          <ChefHat className="w-4 h-4" />
+          Cupom de Preparo
+        </Button>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Preview do Cupom */}
+        <div className="space-y-4">
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Eye className="w-5 h-5 text-blue-500" />
+                Preview - {previewTab === "entrega" ? "Cupom de Entrega" : "Cupom de Preparo"}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="bg-white dark:bg-gray-900 border-2 border-dashed rounded-lg p-4 font-mono text-[11px] overflow-auto" style={{ maxWidth: '320px', margin: '0 auto' }}>
+                {previewTab === "entrega" ? (
+                  <CupomEntregaPreview config={config} pedido={pedidoExemplo} />
+                ) : (
+                  <CupomPreparoPreview pedido={pedidoExemplo} />
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Botões de Teste */}
+        <div className="space-y-4">
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Printer className="w-5 h-5 text-green-500" />
+                Testar Impressão
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p className="text-sm text-muted-foreground">
+                Clique no botão abaixo para imprimir um cupom de teste na impressora configurada.
+              </p>
+              <Button
+                onClick={() => handleTestarImpressora({ nome: "Teste", tipo: "manual" })}
+                className="w-full"
+              >
+                <Printer className="w-4 h-4 mr-2" />
+                Imprimir Teste - {previewTab === "entrega" ? "Cupom de Entrega" : "Cupom de Preparo"}
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    </div>
         {/* Tabs de seções */}
         <div className="flex gap-2 overflow-x-auto pb-2">
           {sections.map(({ id, label, icon: Icon }) => (
