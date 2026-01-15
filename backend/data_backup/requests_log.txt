@@ -40775,3 +40775,9 @@
 2026-01-15T00:19:42.246969+00:00 | DB_CALL get_all_settings | P3 | 0.65ms | success
 2026-01-15T00:19:42.249270+00:00 | DB_CALL get_all_pedidos | P3 | 2.57ms | success
 2026-01-15T00:19:42.251357+00:00 | DB_CALL get_all_entregadores | P3 | 3.26ms | success
+2026-01-15T00:19:47.274047+00:00 | DB_CALL get_all_pedidos | P3 | 2.85ms | success
+2026-01-15T00:19:47.276237+00:00 | DB_CALL get_all_settings | P3 | 4.08ms | success
+2026-01-15T00:19:47.276597+00:00 | DB_CALL get_all_entregadores | P3 | 3.96ms | success
+2026-01-15T00:19:53.256179+00:00 | DB_CALL get_all_settings | P3 | 0.98ms | success
+2026-01-15T00:19:53.257849+00:00 | DB_CALL get_all_pedidos | P3 | 1.96ms | success
+2026-01-15T00:19:53.259976+00:00 | DB_CALL get_all_entregadores | P3 | 4.33ms | success
