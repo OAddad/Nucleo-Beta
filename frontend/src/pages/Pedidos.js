@@ -805,44 +805,63 @@ export default function Pedidos() {
                 </h4>
                 <div className="space-y-3">
                   {selectedPedido.items?.map((item, index) => (
-                    <div key={index} className="bg-muted/30 rounded-xl p-3 flex items-center gap-3">
-                      {/* Foto do item */}
-                      <div className="w-16 h-16 rounded-lg bg-muted flex-shrink-0 overflow-hidden">
-                        {item.photo_url ? (
-                          <img 
-                            src={item.photo_url.startsWith('/uploads') ? `/api${item.photo_url}` : item.photo_url} 
-                            alt={item.name} 
-                            className="w-full h-full object-cover" 
-                          />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center">
-                            <Package className="w-6 h-6 text-muted-foreground" />
+                    <div key={index} className="bg-muted/30 rounded-xl p-3">
+                      <div className="flex items-center gap-3">
+                        {/* Foto do item */}
+                        <div className="w-16 h-16 rounded-lg bg-muted flex-shrink-0 overflow-hidden">
+                          {item.photo_url ? (
+                            <img 
+                              src={item.photo_url.startsWith('/uploads') ? `/api${item.photo_url}` : item.photo_url} 
+                              alt={item.name} 
+                              className="w-full h-full object-cover" 
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center">
+                              <Package className="w-6 h-6 text-muted-foreground" />
+                            </div>
+                          )}
+                        </div>
+                        
+                        {/* Info do item */}
+                        <div className="flex-1 min-w-0">
+                          <p className="font-medium">{item.name || item.nome}</p>
+                          {item.combo_type && (
+                            <span className="text-xs text-orange-500 font-medium">({item.combo_type === 'combo' ? 'Combo' : 'Simples'})</span>
+                          )}
+                          {item.observation && (
+                            <p className="text-xs text-muted-foreground mt-0.5">📝 {item.observation}</p>
+                          )}
+                          <div className="flex items-center gap-2 mt-1">
+                            <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded">
+                              Qtd: {item.quantity || item.quantidade}
+                            </span>
+                            <span className="text-xs text-muted-foreground">
+                              R$ {(item.sale_price || item.preco || 0).toFixed(2)} cada
+                            </span>
                           </div>
-                        )}
-                      </div>
-                      
-                      {/* Info do item */}
-                      <div className="flex-1 min-w-0">
-                        <p className="font-medium">{item.name || item.nome}</p>
-                        {item.observation && (
-                          <p className="text-xs text-muted-foreground mt-0.5">📝 {item.observation}</p>
-                        )}
-                        <div className="flex items-center gap-2 mt-1">
-                          <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded">
-                            Qtd: {item.quantity || item.quantidade}
-                          </span>
-                          <span className="text-xs text-muted-foreground">
-                            R$ {(item.sale_price || item.preco || 0).toFixed(2)} cada
-                          </span>
+                        </div>
+                        
+                        {/* Subtotal */}
+                        <div className="text-right">
+                          <p className="font-bold text-primary">
+                            R$ {(((item.sale_price || item.preco || 0) * (item.quantity || item.quantidade || 1))).toFixed(2)}
+                          </p>
                         </div>
                       </div>
                       
-                      {/* Subtotal */}
-                      <div className="text-right">
-                        <p className="font-bold text-primary">
-                          R$ {(((item.sale_price || item.preco || 0) * (item.quantity || item.quantidade || 1))).toFixed(2)}
-                        </p>
-                      </div>
+                      {/* Subitems/Variações das Etapas */}
+                      {item.subitems && item.subitems.length > 0 && (
+                        <div className="mt-2 ml-3 pt-2 border-t border-muted space-y-1">
+                          {item.subitems.map((sub, subIdx) => (
+                            <p key={subIdx} className="text-xs text-muted-foreground flex items-center gap-1">
+                              <span className="text-orange-400">•</span>
+                              {sub.step_name && <span className="text-muted-foreground/70">{sub.step_name}:</span>}
+                              <span>{sub.nome || sub.name}</span>
+                              {(sub.preco > 0) && <span className="text-orange-500">(+R$ {sub.preco.toFixed(2)})</span>}
+                            </p>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
