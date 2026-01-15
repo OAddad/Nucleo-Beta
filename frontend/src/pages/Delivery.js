@@ -746,14 +746,40 @@ export default function Delivery() {
         <p className="font-bold text-primary text-sm mb-2">R$ {(pedido.total || 0).toFixed(2)}</p>
         
         {showButton && (
+          <div className="flex gap-2">
+            {/* Botão Voltar Etapa - só aparece se pode voltar */}
+            {podeVoltarEtapa(pedido.status) && (
+              <Button 
+                size="sm" 
+                variant="outline"
+                className="flex-shrink-0"
+                onClick={(e) => handleVoltarEtapa(pedido, e)}
+                title="Voltar etapa"
+              >
+                <Undo2 className="w-4 h-4" />
+              </Button>
+            )}
+            <Button 
+              size="sm" 
+              className="flex-1"
+              onClick={(e) => onButtonClick && onButtonClick(e)}
+            >
+              {buttonType === 'aceitar' && <><Check className="w-4 h-4 mr-1" /> Aceitar</>}
+              {buttonType === 'pronto' && <><Package className="w-4 h-4 mr-1" /> Pronto</>}
+              {buttonType === 'finalizar' && <><DollarSign className="w-4 h-4 mr-1" /> Finalizar</>}
+            </Button>
+          </div>
+        )}
+        
+        {/* Botão Voltar quando não tem outro botão mas pode voltar */}
+        {!showButton && podeVoltarEtapa(pedido.status) && (
           <Button 
             size="sm" 
+            variant="outline"
             className="w-full"
-            onClick={(e) => onButtonClick && onButtonClick(e)}
+            onClick={(e) => handleVoltarEtapa(pedido, e)}
           >
-            {buttonType === 'aceitar' && <><Check className="w-4 h-4 mr-1" /> Aceitar</>}
-            {buttonType === 'pronto' && <><Package className="w-4 h-4 mr-1" /> Pronto</>}
-            {buttonType === 'finalizar' && <><DollarSign className="w-4 h-4 mr-1" /> Finalizar</>}
+            <Undo2 className="w-4 h-4 mr-1" /> Voltar Etapa
           </Button>
         )}
       </div>
