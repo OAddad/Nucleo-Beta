@@ -42422,3 +42422,8 @@
 2026-01-15T01:39:56.806570+00:00 | DB_CALL count_ingredients | P3 | 0.23ms | success
 2026-01-15T01:39:56.806749+00:00 | DB_CALL count_products | P3 | 0.12ms | success
 2026-01-15T01:39:56.806903+00:00 | DB_CALL count_users | P3 | 0.1ms | success
+2026-01-15T01:40:53.124789+00:00 | DB_CALL get_all_products | P3 | 7.35ms | success
+2026-01-15T01:40:54.250786+00:00 | DB_CALL get_all_products | P3 | 2.3ms | success
+2026-01-15T01:41:00.107807+00:00 | DB_CALL get_user_by_username | P3 | 0.34ms | success
+2026-01-15T01:41:00.130818+00:00 | DB_CALL get_user_by_id | P3 | 0.39ms | success
+2026-01-15T01:41:00.133332+00:00 | DB_CALL get_all_products | P3 | 2.32ms | success
