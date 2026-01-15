@@ -384,7 +384,7 @@ class PrintQueue {
       escpos.text(`TROCO PARA: R$ ${pedido.troco_valor.toFixed(2)}`);
     }
     
-    // ===== INFORMAÇÕES DE ENTREGA (NEGRITO, 2x MAIOR, COM QUEBRA DE LINHA) =====
+    // ===== INFORMAÇÕES DE ENTREGA (NEGRITO, ALTURA 2x, COM QUEBRA DE LINHA) =====
     if (pedido.tipo_entrega === 'delivery') {
       escpos
         .separator()
@@ -393,25 +393,25 @@ class PrintQueue {
         .text('-- INFORMACOES DE ENTREGA --')
         .setBold(false)
         .align('left')
-        .setTextSize(2, 2)
+        .setTextSize(1, 2)
         .setBold(true);
       
-      // Com texto 2x, cada caractere ocupa 2 colunas, então maxLen = 24
+      // Com texto altura 2x, usar 48 colunas (largura normal)
       if (pedido.cliente_nome) {
-        escpos.wrapText(`CLIENTE: ${pedido.cliente_nome}`, 24);
+        escpos.wrapText(`CLIENTE: ${pedido.cliente_nome}`, 48);
       }
       if (pedido.cliente_telefone) {
-        escpos.wrapText(`TEL: ${pedido.cliente_telefone}`, 24);
+        escpos.wrapText(`TEL: ${pedido.cliente_telefone}`, 48);
       }
       if (pedido.endereco_rua) {
         const enderecoCompleto = `END: ${pedido.endereco_rua}${pedido.endereco_numero ? ', ' + pedido.endereco_numero : ''}`;
-        escpos.wrapText(enderecoCompleto, 24);
+        escpos.wrapText(enderecoCompleto, 48);
       }
       if (pedido.endereco_bairro) {
-        escpos.wrapText(`BAIRRO: ${pedido.endereco_bairro}`, 24);
+        escpos.wrapText(`BAIRRO: ${pedido.endereco_bairro}`, 48);
       }
       if (pedido.endereco_complemento) {
-        escpos.wrapText(`REF: ${pedido.endereco_complemento}`, 24);
+        escpos.wrapText(`REF: ${pedido.endereco_complemento}`, 48);
       }
       
       escpos
@@ -424,14 +424,14 @@ class PrintQueue {
         .setBold(true)
         .text('-- RETIRADA NO LOCAL --')
         .setBold(false)
-        .setTextSize(2, 2)
+        .setTextSize(1, 2)
         .setBold(true);
       
       if (pedido.cliente_nome) {
-        escpos.wrapText(`CLIENTE: ${pedido.cliente_nome}`, 24);
+        escpos.wrapText(`CLIENTE: ${pedido.cliente_nome}`, 48);
       }
       if (pedido.cliente_telefone) {
-        escpos.wrapText(`TEL: ${pedido.cliente_telefone}`, 24);
+        escpos.wrapText(`TEL: ${pedido.cliente_telefone}`, 48);
       }
       
       escpos
