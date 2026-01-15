@@ -2138,10 +2138,13 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
       
       // Construir subitems a partir das seleções
       const subitems = [];
+      const etapas = []; // Formato resumido para exibição
       const relevantSteps = getRelevantSteps();
+      
       Object.entries(stepSelections).forEach(([stepIdx, selections]) => {
         const step = relevantSteps[parseInt(stepIdx)];
-        if (step?.items) {
+        if (step?.items && selections.length > 0) {
+          const stepItemNames = [];
           selections.forEach(productId => {
             const item = step.items.find(i => i.product_id === productId);
             if (item) {
@@ -2152,8 +2155,15 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
                 preco: getItemPrice(item, step), // Usa preço atualizado do produto
                 step_name: step.name
               });
+              stepItemNames.push(item.product_name);
             }
           });
+          if (stepItemNames.length > 0) {
+            etapas.push({
+              etapa: step.name,
+              itens: stepItemNames
+            });
+          }
         }
       });
       
@@ -2161,7 +2171,8 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
         ...selectedProduct,
         sale_price: finalPrice,
         combo_type: isCombo ? selectedComboType : null,
-        subitems: subitems.length > 0 ? subitems : undefined
+        subitems: subitems.length > 0 ? subitems : undefined,
+        etapas: etapas.length > 0 ? etapas : undefined
       };
       
       addToCart(productToAdd, productQuantity, productObservation.trim());
