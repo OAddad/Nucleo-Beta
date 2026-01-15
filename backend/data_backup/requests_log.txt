@@ -46242,3 +46242,5 @@
 2026-01-15T15:44:11.491892+00:00 | DB_CALL get_all_settings | P3 | 0.18ms | success
 2026-01-15T15:44:33.936794+00:00 | DB_CALL get_all_products | P3 | 17.48ms | success
 2026-01-15T15:44:37.999565+00:00 | DB_CALL get_all_products | P3 | 14.71ms | success
+2026-01-15T15:46:53.716632+00:00 | DB_CALL get_all_products | P3 | 16.24ms | success
+2026-01-15T15:46:57.729431+00:00 | DB_CALL get_all_products | P3 | 13.45ms | success

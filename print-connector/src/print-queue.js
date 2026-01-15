@@ -240,8 +240,10 @@ class PrintQueue {
     const empresa = job.empresa || {};
     const config = job.config || {};
     
-    // ===== [LOGO] =====
+    // ===== CABEÇALHO CENTRALIZADO =====
     escpos.align('center');
+    
+    // Logo (texto placeholder - impressoras térmicas não suportam imagens facilmente)
     if (config.mostrar_logo) {
       escpos.text('[LOGO]');
     }
@@ -271,23 +273,15 @@ class PrintQueue {
     
     escpos.separator();
     
-    // ===== NÚMERO DO PEDIDO E DATA =====
+    // ===== NÚMERO DO PEDIDO E DATA NA MESMA LINHA =====
     const dataHora = new Date(pedido.created_at || Date.now());
     const dataStr = dataHora.toLocaleDateString('pt-BR');
     const horaStr = dataHora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
     const codigoPedido = String(pedido.codigo || '00001').padStart(5, '0');
     
+    // Código à esquerda, data à direita - NA MESMA LINHA
     escpos.align('left');
-    escpos
-      .setTextSize(2, 2)
-      .setBold(true)
-      .text(`#${codigoPedido}`)
-      .setBold(false)
-      .setTextSize(1, 1);
-    
-    escpos.align('right');
-    escpos.text(`${dataStr}, ${horaStr}`);
-    escpos.align('left');
+    escpos.columns(`#${codigoPedido}`, `${dataStr}, ${horaStr}`);
     
     // ===== ITENS DO PEDIDO =====
     escpos
@@ -299,7 +293,7 @@ class PrintQueue {
       .align('left');
     
     // Cabeçalho da tabela
-    escpos.text('QTD  PRECO  ITEM                TOTAL');
+    escpos.columns('QTD  PRECO  ITEM', 'TOTAL');
     escpos.separator();
     
     // Itens
@@ -313,11 +307,131 @@ class PrintQueue {
         
         const qtdStr = String(qtd);
         const precoStr = precoUnit.toFixed(2);
-        const nomeStr = (item.nome || item.product_name || 'Item').substring(0, 18);
+        const nomeStr = (item.nome || item.product_name || 'Item').substring(0, 16);
         const totalStr = `R$${itemTotal.toFixed(2)}`;
         
-        escpos.text(`${qtdStr} x ${precoStr} ${nomeStr}`);
-        escpos.align('right').text(totalStr).align('left');
+        // Item e total na mesma linha
+        escpos.columns(`${qtdStr} x ${precoStr} ${nomeStr}`, totalStr);
+        
+        // Observação do item
+        if (item.observacao) {
+          escpos.text(`  - ${item.observacao}`);
+        }
+        
+        // Subitens/Adicionais
+        if (item.subitems && item.subitems.length > 0) {
+          for (const sub of item.subitems) {
+            const subNome = sub.nome || sub.name;
+            const subPreco = sub.preco > 0 ? ` (+R$${sub.preco.toFixed(2)})` : '';
+            escpos.text(`  + ${subNome}${subPreco}`);
+          }
+        }
+        if (item.adicionais && item.adicionais.length > 0) {
+          for (const add of item.adicionais) {
+            const addPreco = add.preco > 0 ? ` (+R$${add.preco.toFixed(2)})` : '';
+            escpos.text(`  + ${add.nome}${addPreco}`);
+          }
+        }
+      }
+    }
+    
+    escpos.separator();
+    
+    // ===== SUBTOTAIS =====
+    if (pedido.valor_entrega && pedido.valor_entrega > 0) {
+      escpos.columns('Taxa de Entrega:', `R$ ${pedido.valor_entrega.toFixed(2)}`);
+    }
+    
+    if (pedido.desconto && pedido.desconto > 0) {
+      escpos.columns('Desconto:', `-R$ ${pedido.desconto.toFixed(2)}`);
+    }
+    
+    escpos
+      .setBold(true)
+      .columns('TOTAL:', `R$ ${(pedido.total || 0).toFixed(2)}`)
+      .setBold(false);
+    
+    // ===== SEÇÃO DE PAGAMENTO =====
+    escpos
+      .separator()
+      .align('center')
+      .setBold(true)
+      .text('-- PAGAR NA ENTREGA --')
+      .newLine()
+      .setTextSize(2, 2)
+      .text(`TOTAL ..... R$${(pedido.total || 0).toFixed(2).replace('.', ',')}`)
+      .setTextSize(1, 1)
+      .setBold(false);
+    
+    if (pedido.forma_pagamento) {
+      escpos.text(`PAGAMENTO: ${pedido.forma_pagamento}`);
+    }
+    
+    if (pedido.troco_precisa && pedido.troco_valor) {
+      escpos.text(`TROCO PARA: R$ ${pedido.troco_valor.toFixed(2)}`);
+    }
+    
+    // ===== INFORMAÇÕES DE ENTREGA =====
+    if (pedido.tipo_entrega === 'delivery') {
+      escpos
+        .separator()
+        .align('center')
+        .setBold(true)
+        .text('-- INFORMACOES DE ENTREGA --')
+        .setBold(false)
+        .align('left');
+      
+      if (pedido.cliente_nome) {
+        escpos.text(`CLIENTE: ${pedido.cliente_nome}`);
+      }
+      if (pedido.cliente_telefone) {
+        escpos.text(`TEL: ${pedido.cliente_telefone}`);
+      }
+      if (pedido.endereco_rua) {
+        const endereco = `${pedido.endereco_rua}${pedido.endereco_numero ? ', ' + pedido.endereco_numero : ''}`;
+        escpos.text(`END: ${endereco}`);
+      }
+      if (pedido.endereco_bairro) {
+        escpos.text(`BAIRRO: ${pedido.endereco_bairro}`);
+      }
+      if (pedido.endereco_complemento) {
+        escpos.text(`REF: ${pedido.endereco_complemento}`);
+      }
+    } else if (pedido.tipo_entrega === 'retirada' || pedido.tipo_entrega === 'pickup') {
+      escpos
+        .separator()
+        .align('center')
+        .setBold(true)
+        .text('-- RETIRADA NO LOCAL --')
+        .setBold(false);
+      
+      if (pedido.cliente_nome) {
+        escpos.text(`CLIENTE: ${pedido.cliente_nome}`);
+      }
+      if (pedido.cliente_telefone) {
+        escpos.text(`TEL: ${pedido.cliente_telefone}`);
+      }
+    }
+    
+    // ===== OBSERVAÇÕES =====
+    if (pedido.observacao) {
+      escpos.separator();
+      escpos.align('left').text(`OBS: ${pedido.observacao}`);
+    }
+    
+    // ===== RODAPÉ =====
+    escpos
+      .newLine()
+      .align('center')
+      .doubleSeparator()
+      .setBold(true)
+      .text(config.mensagem_rodape || 'NAO E DOCUMENTO FISCAL')
+      .setBold(false);
+    
+    // Corte
+    if (job.cut !== false) escpos.cut();
+    return escpos.build();
+  }
         
         // Observação do item
         if (item.observacao) {
