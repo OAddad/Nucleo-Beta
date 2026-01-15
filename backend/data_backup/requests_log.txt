@@ -40651,3 +40651,4 @@
 2026-01-15T00:15:25.392199+00:00 | DB_CALL get_all_products | P3 | 3.77ms | success
 2026-01-15T00:15:26.260909+00:00 | DB_CALL get_all_products | P3 | 2.34ms | success
 2026-01-15T00:16:21.283116+00:00 | DB_CALL get_whatsapp_stats | P3 | 0.23ms | success
+2026-01-15T00:16:35.609070+00:00 | DB_CALL get_all_pedidos | P3 | 13.1ms | success
