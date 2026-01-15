@@ -473,6 +473,7 @@ export default function Products() {
   const [photoFile, setPhotoFile] = useState(null);
   const [isInsumo, setIsInsumo] = useState(false);
   const [isDivisible, setIsDivisible] = useState(false);
+  const [isAvailable, setIsAvailable] = useState(true); // Disponível para compra
   const [recipeIngredients, setRecipeIngredients] = useState([{ ingredient_id: "", quantity: "" }]);
   const [recipePackaging, setRecipePackaging] = useState([{ ingredient_id: "", quantity: "" }]);
   const [orderSteps, setOrderSteps] = useState([]);
