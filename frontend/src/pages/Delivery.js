@@ -7,7 +7,7 @@ import {
   ArrowLeft, X, RefreshCw, ToggleLeft, ToggleRight, Bike, ShoppingBag,
   Store, CreditCard, DollarSign, Banknote, Eye, FileText, MessageSquare,
   Navigation, Calendar, Hash, XCircle, AlertTriangle, Printer, AlertCircle,
-  Volume2, VolumeX
+  Volume2, VolumeX, Undo2
 } from "lucide-react";
 
 // URL do som de notificação de novo pedido
