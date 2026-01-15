@@ -43616,3 +43616,11 @@
 2026-01-15T02:04:41.279564+00:00 | DB_CALL get_all_products | P3 | 4.53ms | success
 2026-01-15T02:04:45.360029+00:00 | DB_CALL get_all_products | P3 | 4.3ms | success
 2026-01-15T02:04:46.178823+00:00 | DB_CALL get_all_products | P3 | 4.22ms | success
+2026-01-15T02:05:05.221238+00:00 | DB_CALL init_database | P3 | 3.4ms | success
+2026-01-15T02:05:05.221770+00:00 | DB_CALL count_ingredients | P3 | 0.23ms | success
+2026-01-15T02:05:05.221976+00:00 | DB_CALL count_products | P3 | 0.14ms | success
+2026-01-15T02:05:05.222130+00:00 | DB_CALL count_users | P3 | 0.1ms | success
+2026-01-15T02:05:12.512584+00:00 | DB_CALL init_database | P3 | 2.95ms | success
+2026-01-15T02:05:12.513159+00:00 | DB_CALL count_ingredients | P3 | 0.25ms | success
+2026-01-15T02:05:12.513361+00:00 | DB_CALL count_products | P3 | 0.13ms | success
+2026-01-15T02:05:12.513510+00:00 | DB_CALL count_users | P3 | 0.1ms | success
