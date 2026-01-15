@@ -42637,3 +42637,8 @@
 2026-01-15T01:44:57.285669+00:00 | DB_CALL get_all_pedidos | P3 | 2.13ms | success
 2026-01-15T01:44:57.287868+00:00 | DB_CALL get_all_settings | P3 | 3.42ms | success
 2026-01-15T01:44:57.288977+00:00 | DB_CALL get_all_entregadores | P3 | 0.21ms | success
+2026-01-15T01:45:21.295913+00:00 | DB_CALL get_all_settings | P3 | 1.5ms | success
+2026-01-15T01:45:21.297629+00:00 | DB_CALL get_all_pedidos | P3 | 2.79ms | success
+2026-01-15T01:45:21.299646+00:00 | DB_CALL get_all_entregadores | P3 | 4.1ms | success
+2026-01-15T01:45:31.569798+00:00 | DB_CALL get_all_products | P3 | 4.4ms | success
+2026-01-15T01:45:32.466766+00:00 | DB_CALL get_all_products | P3 | 2.46ms | success

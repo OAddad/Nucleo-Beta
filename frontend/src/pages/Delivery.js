@@ -2543,34 +2543,74 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
                         </div>
                       )}
                       
-                      {/* Itens em grid de cards quadrados */}
-                      <div className="grid grid-cols-3 gap-1.5 pt-1 border-t">
-                        {pedido.items?.slice(0, 6).map((item, idx) => (
-                          <div key={idx} className="aspect-square relative rounded-lg overflow-hidden bg-muted">
-                            {item.foto_url || item.photo_url ? (
-                              <img 
-                                src={getImageUrl(item.foto_url || item.photo_url)} 
-                                alt={item.nome || item.name}
-                                className="w-full h-full object-cover"
-                                onError={(e) => {
-                                  e.target.style.display = 'none';
-                                  e.target.nextSibling.style.display = 'flex';
-                                }}
-                              />
-                            ) : null}
-                            <div className={`w-full h-full ${item.foto_url || item.photo_url ? 'hidden' : 'flex'} items-center justify-center bg-muted`}>
-                              <Package className="w-6 h-6 text-muted-foreground" />
+                      {/* Itens com detalhes de personalização */}
+                      <div className="pt-1 border-t space-y-1.5">
+                        {pedido.items?.slice(0, 4).map((item, idx) => (
+                          <div key={idx} className="bg-muted/50 rounded-lg p-1.5">
+                            <div className="flex items-center gap-2">
+                              {/* Mini foto */}
+                              <div className="w-8 h-8 rounded overflow-hidden bg-muted flex-shrink-0">
+                                {item.foto_url || item.photo_url ? (
+                                  <img 
+                                    src={getImageUrl(item.foto_url || item.photo_url)} 
+                                    alt={item.nome || item.name}
+                                    className="w-full h-full object-cover"
+                                  />
+                                ) : (
+                                  <div className="w-full h-full flex items-center justify-center">
+                                    <Package className="w-4 h-4 text-muted-foreground" />
+                                  </div>
+                                )}
+                              </div>
+                              {/* Info do item */}
+                              <div className="flex-1 min-w-0">
+                                <p className="text-xs font-medium truncate">
+                                  {item.quantidade || item.qty || 1}x {item.nome || item.name}
+                                </p>
+                                {item.combo_type && (
+                                  <span className="text-[9px] text-orange-500">({item.combo_type === 'combo' ? 'Combo' : 'Simples'})</span>
+                                )}
+                              </div>
+                              <span className="text-xs font-semibold text-orange-600">
+                                R$ {((item.preco || 0) * (item.quantidade || 1)).toFixed(2)}
+                              </span>
                             </div>
-                            {/* Badge de quantidade */}
-                            <div className="absolute bottom-0 left-0 right-0 bg-black/70 text-white text-[10px] px-1 py-0.5 truncate text-center">
-                              {item.quantidade || item.qty || 1}x {(item.nome || item.name)?.split(' ')[0]}
-                            </div>
+                            {/* Subitems/Personalizações */}
+                            {item.subitems && item.subitems.length > 0 && (
+                              <div className="mt-1 pl-10 space-y-0.5">
+                                {item.subitems.slice(0, 3).map((sub, subIdx) => (
+                                  <p key={subIdx} className="text-[9px] text-muted-foreground flex items-center gap-0.5">
+                                    <span className="text-orange-400">•</span>
+                                    {sub.step_name && <span className="opacity-70">{sub.step_name}:</span>}
+                                    <span className="truncate">{sub.nome || sub.name}</span>
+                                  </p>
+                                ))}
+                                {item.subitems.length > 3 && (
+                                  <p className="text-[9px] text-muted-foreground">+{item.subitems.length - 3} mais...</p>
+                                )}
+                              </div>
+                            )}
+                            {/* Etapas (formato alternativo) */}
+                            {(!item.subitems || item.subitems.length === 0) && item.etapas && item.etapas.length > 0 && (
+                              <div className="mt-1 pl-10 space-y-0.5">
+                                {item.etapas.slice(0, 3).map((etapa, etapaIdx) => (
+                                  <p key={etapaIdx} className="text-[9px] text-muted-foreground flex items-center gap-0.5">
+                                    <span className="text-orange-400">•</span>
+                                    <span className="opacity-70">{etapa.etapa}:</span>
+                                    <span className="truncate">{etapa.itens?.join(', ')}</span>
+                                  </p>
+                                ))}
+                                {item.etapas.length > 3 && (
+                                  <p className="text-[9px] text-muted-foreground">+{item.etapas.length - 3} mais...</p>
+                                )}
+                              </div>
+                            )}
                           </div>
                         ))}
                       </div>
-                      {pedido.items?.length > 6 && (
+                      {pedido.items?.length > 4 && (
                         <p className="text-xs text-muted-foreground text-center">
-                          +{pedido.items.length - 6} item(s)
+                          +{pedido.items.length - 4} item(s)
                         </p>
                       )}
                       
