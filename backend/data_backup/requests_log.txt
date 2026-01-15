@@ -42192,3 +42192,6 @@
 2026-01-15T01:29:43.388808+00:00 | DB_CALL get_all_pedidos | P3 | 2.35ms | success
 2026-01-15T01:29:43.391222+00:00 | DB_CALL get_all_settings | P3 | 4.31ms | success
 2026-01-15T01:29:43.391646+00:00 | DB_CALL get_all_entregadores | P3 | 4.21ms | success
+2026-01-15T01:29:48.385405+00:00 | DB_CALL get_all_settings | P3 | 1.24ms | success
+2026-01-15T01:29:48.386006+00:00 | DB_CALL get_all_entregadores | P3 | 1.49ms | success
+2026-01-15T01:29:48.387423+00:00 | DB_CALL get_all_pedidos | P3 | 2.29ms | success
