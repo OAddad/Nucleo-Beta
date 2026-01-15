@@ -244,9 +244,10 @@ class PrintQueue {
     escpos.align('center');
     
     // Logo (texto placeholder - impressoras térmicas não suportam imagens facilmente)
-    if (config.mostrar_logo) {
-      escpos.text('[LOGO]');
-    }
+    escpos
+      .setTextSize(2, 2)
+      .text('[LOGO]')
+      .setTextSize(1, 1);
     
     // ===== NOME DA EMPRESA =====
     escpos
@@ -256,32 +257,44 @@ class PrintQueue {
       .setBold(false)
       .setTextSize(1, 1);
     
-    // Slogan
-    if (empresa.slogan || pedido.empresa_slogan) {
-      escpos.text(empresa.slogan || pedido.empresa_slogan);
+    // Slogan - SEMPRE imprime
+    const slogan = empresa.slogan || pedido.empresa_slogan || '';
+    if (slogan) {
+      escpos.text(slogan);
     }
     
-    // Endereço
-    if (empresa.endereco || pedido.empresa_endereco) {
-      escpos.text(empresa.endereco || pedido.empresa_endereco);
+    // Endereço - SEMPRE imprime
+    const endereco = empresa.endereco || pedido.empresa_endereco || '';
+    if (endereco) {
+      escpos.text(endereco);
     }
     
-    // CNPJ
-    if (empresa.cnpj || pedido.empresa_cnpj) {
-      escpos.text(`CNPJ: ${empresa.cnpj || pedido.empresa_cnpj}`);
+    // CNPJ - SEMPRE imprime
+    const cnpj = empresa.cnpj || pedido.empresa_cnpj || '';
+    if (cnpj) {
+      escpos.text(`CNPJ: ${cnpj}`);
     }
     
     escpos.separator();
     
-    // ===== NÚMERO DO PEDIDO E DATA NA MESMA LINHA =====
+    // ===== NÚMERO DO PEDIDO (3x MAIOR E NEGRITO) =====
+    const codigoPedido = String(pedido.codigo || '00001').padStart(5, '0');
+    escpos
+      .align('center')
+      .setTextSize(3, 3)
+      .setBold(true)
+      .text(`#${codigoPedido}`)
+      .setBold(false)
+      .setTextSize(1, 1);
+    
+    // ===== DATA/HORA (centralizada, tamanho normal, alinhada à direita) =====
     const dataHora = new Date(pedido.created_at || Date.now());
     const dataStr = dataHora.toLocaleDateString('pt-BR');
     const horaStr = dataHora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-    const codigoPedido = String(pedido.codigo || '00001').padStart(5, '0');
-    
-    // Código à esquerda, data à direita - NA MESMA LINHA
-    escpos.align('left');
-    escpos.columns(`#${codigoPedido}`, `${dataStr}, ${horaStr}`);
+    escpos
+      .align('right')
+      .text(`${dataStr}, ${horaStr}`)
+      .align('left');
     
     // ===== ITENS DO PEDIDO =====
     escpos
