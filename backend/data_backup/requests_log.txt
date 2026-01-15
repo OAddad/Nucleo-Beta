@@ -41018,3 +41018,7 @@
 2026-01-15T00:28:40.080416+00:00 | DB_CALL get_all_products | P3 | 2.42ms | success
 2026-01-15T00:28:47.566587+00:00 | DB_CALL increment_whatsapp_stat | P3 | 6.23ms | success
 2026-01-15T00:28:47.956433+00:00 | DB_CALL increment_whatsapp_stat | P3 | 5.34ms | success
+2026-01-15T00:30:44.228217+00:00 | DB_CALL init_database | P3 | 10.15ms | success
+2026-01-15T00:30:44.230412+00:00 | DB_CALL count_ingredients | P3 | 0.28ms | success
+2026-01-15T00:30:44.230631+00:00 | DB_CALL count_products | P3 | 0.13ms | success
+2026-01-15T00:30:44.230790+00:00 | DB_CALL count_users | P3 | 0.11ms | success
