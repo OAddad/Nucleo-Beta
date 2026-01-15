@@ -42195,3 +42195,12 @@
 2026-01-15T01:29:48.385405+00:00 | DB_CALL get_all_settings | P3 | 1.24ms | success
 2026-01-15T01:29:48.386006+00:00 | DB_CALL get_all_entregadores | P3 | 1.49ms | success
 2026-01-15T01:29:48.387423+00:00 | DB_CALL get_all_pedidos | P3 | 2.29ms | success
+2026-01-15T01:29:53.385553+00:00 | DB_CALL get_all_settings | P3 | 0.34ms | success
+2026-01-15T01:29:53.389023+00:00 | DB_CALL get_all_pedidos | P3 | 4.27ms | success
+2026-01-15T01:29:53.393597+00:00 | DB_CALL get_all_entregadores | P3 | 8.89ms | success
+2026-01-15T01:29:54.178012+00:00 | DB_CALL get_all_products | P3 | 6.81ms | success
+2026-01-15T01:29:54.681894+00:00 | DB_CALL get_all_products | P3 | 2.48ms | success
+2026-01-15T01:29:54.910688+00:00 | DB_CALL get_all_products | P3 | 2.93ms | success
+2026-01-15T01:29:55.439415+00:00 | DB_CALL get_all_products | P3 | 4.86ms | success
+2026-01-15T01:29:55.539776+00:00 | DB_CALL get_all_products | P3 | 4.34ms | success
+2026-01-15T01:29:56.307633+00:00 | DB_CALL get_all_products | P3 | 3.19ms | success
