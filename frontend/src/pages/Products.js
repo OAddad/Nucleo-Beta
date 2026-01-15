@@ -916,6 +916,7 @@ export default function Products() {
     setPhotoFile(null);
     setIsInsumo(false);
     setIsDivisible(false);
+    setIsAvailable(true);
     setRecipeIngredients([{ ingredient_id: "", quantity: "" }]);
     setRecipePackaging([{ ingredient_id: "", quantity: "" }]);
     setOrderSteps([]);
