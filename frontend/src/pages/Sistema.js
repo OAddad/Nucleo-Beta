@@ -2310,17 +2310,17 @@ function ConfiguracaoImpressao({ toast }) {
               </div>
             )}
             
-            {/* ===== INFORMAÇÕES DE ENTREGA ===== */}
+            {/* ===== INFORMAÇÕES DE ENTREGA (NEGRITO, 2x MAIOR) ===== */}
             {config.mostrar_info_entrega && (
               <>
                 <div className="border-t border-dashed border-gray-400 my-2" />
                 <div className="text-center font-bold mb-1">-- INFORMAÇÕES DE ENTREGA --</div>
-                <div className="text-[10px]">
-                  <div><span className="font-bold">CLIENTE:</span> {pedidoExemplo.cliente_nome}</div>
-                  <div><span className="font-bold">TEL:</span> {pedidoExemplo.cliente_telefone}</div>
-                  <div><span className="font-bold">END:</span> {pedidoExemplo.endereco_rua}, {pedidoExemplo.endereco_numero}</div>
-                  <div><span className="font-bold">BAIRRO:</span> {pedidoExemplo.endereco_bairro}</div>
-                  <div><span className="font-bold">REF:</span> {pedidoExemplo.endereco_complemento}</div>
+                <div className="text-sm font-bold break-words">
+                  <div className="mb-1">CLIENTE: {pedidoExemplo.cliente_nome}</div>
+                  <div className="mb-1">TEL: {pedidoExemplo.cliente_telefone}</div>
+                  <div className="mb-1">END: {pedidoExemplo.endereco_rua}, {pedidoExemplo.endereco_numero}</div>
+                  <div className="mb-1">BAIRRO: {pedidoExemplo.endereco_bairro}</div>
+                  <div className="mb-1">REF: {pedidoExemplo.endereco_complemento}</div>
                 </div>
               </>
             )}
