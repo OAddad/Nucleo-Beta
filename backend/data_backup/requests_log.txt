@@ -46244,3 +46244,12 @@
 2026-01-15T15:44:37.999565+00:00 | DB_CALL get_all_products | P3 | 14.71ms | success
 2026-01-15T15:46:53.716632+00:00 | DB_CALL get_all_products | P3 | 16.24ms | success
 2026-01-15T15:46:57.729431+00:00 | DB_CALL get_all_products | P3 | 13.45ms | success
+2026-01-15T15:48:26.023143+00:00 | DB_CALL get_all_products | P3 | 15.92ms | success
+2026-01-15T15:48:30.064262+00:00 | DB_CALL get_all_products | P3 | 15.43ms | success
+2026-01-15T15:48:45.184382+00:00 | DB_CALL get_all_settings | P3 | 0.3ms | success
+2026-01-15T15:49:02.205285+00:00 | DB_CALL get_all_settings | P3 | 0.33ms | success
+2026-01-15T15:49:02.207447+00:00 | DB_CALL get_all_settings | P3 | 0.23ms | success
+2026-01-15T15:49:13.013951+00:00 | DB_CALL get_all_settings | P3 | 0.32ms | success
+2026-01-15T15:49:13.016715+00:00 | DB_CALL get_all_settings | P3 | 0.2ms | success
+2026-01-15T15:49:35.462147+00:00 | DB_CALL get_all_settings | P3 | 0.29ms | success
+2026-01-15T15:49:35.465269+00:00 | DB_CALL get_all_settings | P3 | 0.24ms | success
