@@ -2077,6 +2077,12 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
     return product?.photo_url || null;
   };
   
+  // Verificar se produto está disponível (available)
+  const isProductAvailable = (productId) => {
+    const product = allProductsForPhotos.find(p => p.id === productId);
+    return product?.available !== false;
+  };
+  
   // Buscar preço atual do produto pelo ID (para sincronizar com PRODUTOS)
   const getProductPrice = (productId) => {
     const product = allProductsForPhotos.find(p => p.id === productId);
