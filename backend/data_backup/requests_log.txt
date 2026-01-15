@@ -46170,3 +46170,11 @@
 2026-01-15T15:39:33.147476+00:00 | DB_CALL get_all_settings | P3 | 1.04ms | success
 2026-01-15T15:39:33.321898+00:00 | DB_CALL get_all_settings | P3 | 0.29ms | success
 2026-01-15T15:39:33.329483+00:00 | DB_CALL get_all_settings | P3 | 0.21ms | success
+2026-01-15T15:39:47.460911+00:00 | DB_CALL get_all_products | P3 | 23.9ms | success
+2026-01-15T15:39:48.811822+00:00 | DB_CALL get_all_products | P3 | 14.93ms | success
+2026-01-15T15:39:49.510368+00:00 | DB_CALL get_all_settings | P3 | 0.82ms | success
+2026-01-15T15:39:49.510926+00:00 | DB_CALL get_all_settings | P3 | 1.12ms | success
+2026-01-15T15:39:49.681631+00:00 | DB_CALL get_all_settings | P3 | 0.29ms | success
+2026-01-15T15:39:50.308350+00:00 | DB_CALL get_all_settings | P3 | 0.29ms | success
+2026-01-15T15:39:51.029397+00:00 | DB_CALL get_all_products | P3 | 18.05ms | success
+2026-01-15T15:39:52.374152+00:00 | DB_CALL get_all_products | P3 | 14.44ms | success
