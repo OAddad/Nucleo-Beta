@@ -1157,6 +1157,7 @@ def get_all_products() -> List[Dict]:
                 p['order_steps'] = []
             p['is_insumo'] = bool(p['is_insumo'])
             p['is_divisible'] = bool(p['is_divisible'])
+            p['available'] = bool(p.get('available', 1))
             products.append(p)
         
         return products
