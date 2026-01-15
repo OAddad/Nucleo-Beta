@@ -2548,17 +2548,22 @@ function GerenciarImpressoras({ toast }) {
   const handleTestarImpressora = async (impressora) => {
     const testePedido = {
       id: 'teste-' + Date.now(),
-      codigo: "TESTE",
-      cliente_nome: "Teste de Impressão",
-      cliente_telefone: "(00) 00000-0000",
-      tipo_entrega: "retirada",
+      codigo: "00001",
+      cliente_nome: "João Silva",
+      cliente_telefone: "(11) 9.9999-9999",
+      tipo_entrega: "delivery",
+      endereco_rua: "Rua das Flores",
+      endereco_numero: "123",
+      endereco_bairro: "Centro",
+      endereco_complemento: "Casa azul - Meio do quarteirão",
       items: [
-        { nome: "Item de Teste 1", quantidade: 2, preco_unitario: 10.00 },
-        { nome: "Item de Teste 2", quantidade: 1, preco_unitario: 15.00, observacao: "Com observação" },
+        { nome: "X-Burger", quantidade: 2, preco_unitario: 25.00, observacao: "Sem cebola" },
+        { nome: "Batata Frita", quantidade: 1, preco_unitario: 15.00 },
       ],
-      total: 35.00,
-      forma_pagamento: "Dinheiro",
-      observacao: "Este é um teste de impressão",
+      valor_entrega: 5.00,
+      total: 70.00,
+      forma_pagamento: "Cartão de Crédito",
+      observacao: "",
       created_at: new Date().toISOString(),
     };
 

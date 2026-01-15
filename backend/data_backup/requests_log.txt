@@ -45951,3 +45951,7 @@
 2026-01-15T15:16:25.137175+00:00 | DB_CALL get_all_settings | P3 | 0.23ms | success
 2026-01-15T15:16:25.369507+00:00 | DB_CALL get_all_settings | P3 | 1.2ms | success
 2026-01-15T15:16:25.370052+00:00 | DB_CALL get_all_settings | P3 | 1.25ms | success
+2026-01-15T15:17:16.127540+00:00 | DB_CALL get_all_settings | P3 | 0.38ms | success
+2026-01-15T15:17:16.138169+00:00 | DB_CALL get_all_settings | P3 | 0.26ms | success
+2026-01-15T15:17:16.317628+00:00 | DB_CALL get_all_settings | P3 | 0.29ms | success
+2026-01-15T15:17:16.335184+00:00 | DB_CALL get_all_settings | P3 | 0.27ms | success
