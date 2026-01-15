@@ -2021,393 +2021,175 @@ function ConfiguracaoImpressao({ toast }) {
         </div>
       </div>
     </div>
-        {/* Tabs de seções */}
-        <div className="flex gap-2 overflow-x-auto pb-2">
-          {sections.map(({ id, label, icon: Icon }) => (
-            <button
-              key={id}
-              onClick={() => setActiveSection(id)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${
-                activeSection === id
-                  ? "bg-blue-500 text-white"
-                  : "bg-muted hover:bg-muted/80 text-muted-foreground"
-              }`}
-            >
-              <Icon className="w-4 h-4" />
-              {label}
-            </button>
-          ))}
-        </div>
-
-        {/* Seção: Dados da Empresa */}
-        {activeSection === "empresa" && (
-          <div className="bg-card border rounded-xl p-6 space-y-4">
-            <h3 className="font-bold text-lg flex items-center gap-2">
-              <Building2 className="w-5 h-5 text-blue-500" />
-              Dados da Empresa (Cabeçalho do Cupom)
-            </h3>
-            
-            <div className="space-y-4">
-              <div>
-                <label className="text-sm font-medium mb-1 block">Nome da Empresa *</label>
-                <Input
-                  value={config.empresa_nome}
-                  onChange={(e) => handleChange('empresa_nome', e.target.value)}
-                  placeholder="Point do Addad"
-                />
-              </div>
-              
-              <div>
-                <label className="text-sm font-medium mb-1 block">Endereço</label>
-                <Input
-                  value={config.empresa_endereco}
-                  onChange={(e) => handleChange('empresa_endereco', e.target.value)}
-                  placeholder="Av. Joaquim Ribeiro, 411 - Centro"
-                />
-              </div>
-              
-              <div>
-                <label className="text-sm font-medium mb-1 block">Cidade/Estado</label>
-                <Input
-                  value={config.empresa_cidade}
-                  onChange={(e) => handleChange('empresa_cidade', e.target.value)}
-                  placeholder="Santa Vitória - MG"
-                />
-              </div>
-              
-              <div>
-                <label className="text-sm font-medium mb-1 block">Telefone</label>
-                <Input
-                  value={config.empresa_telefone}
-                  onChange={(e) => handleChange('empresa_telefone', e.target.value)}
-                  placeholder="(34) 9.9672-7535"
-                />
-              </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="text-sm font-medium mb-1 block">CNPJ</label>
-                  <Input
-                    value={config.empresa_cnpj}
-                    onChange={(e) => handleChange('empresa_cnpj', e.target.value)}
-                    placeholder="00.000.000/0001-00"
-                  />
-                </div>
-                <div>
-                  <label className="text-sm font-medium mb-1 block">Insc. Estadual</label>
-                  <Input
-                    value={config.empresa_ie}
-                    onChange={(e) => handleChange('empresa_ie', e.target.value)}
-                    placeholder="0000000000000"
-                  />
-                </div>
-              </div>
-              
-              <div>
-                <label className="text-sm font-medium mb-1 block">Insc. Municipal</label>
-                <Input
-                  value={config.empresa_im}
-                  onChange={(e) => handleChange('empresa_im', e.target.value)}
-                  placeholder="00000000000"
-                />
-              </div>
-              
-              <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
-                <div className="flex items-center gap-2">
-                  <ImageIcon className="w-4 h-4 text-muted-foreground" />
-                  <span className="text-sm">Mostrar Logo no Cupom</span>
-                </div>
-                <button
-                  onClick={() => handleToggle('mostrar_logo')}
-                  className={`w-10 h-5 rounded-full transition-colors relative ${
-                    config.mostrar_logo ? 'bg-green-500' : 'bg-gray-300 dark:bg-gray-600'
-                  }`}
-                >
-                  <div className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-transform ${
-                    config.mostrar_logo ? 'translate-x-5' : 'translate-x-0.5'
-                  }`} />
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Seção: Layout do Cupom */}
-        {activeSection === "layout" && (
-          <div className="bg-card border rounded-xl p-6 space-y-4">
-            <h3 className="font-bold text-lg flex items-center gap-2">
-              <FileText className="w-5 h-5 text-blue-500" />
-              Layout do Cupom
-            </h3>
-            
-            {/* Formato dos Itens */}
-            <div>
-              <label className="text-sm font-medium mb-2 block">Formato dos Itens</label>
-              <div className="grid grid-cols-1 gap-2">
-                <label className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer ${
-                  config.formato_itens === 'qtd_preco_item_total' ? 'border-blue-500 bg-blue-50 dark:bg-blue-950/30' : 'border-gray-200'
-                }`}>
-                  <input
-                    type="radio"
-                    name="formato_itens"
-                    checked={config.formato_itens === 'qtd_preco_item_total'}
-                    onChange={() => handleChange('formato_itens', 'qtd_preco_item_total')}
-                    className="text-blue-500"
-                  />
-                  <div>
-                    <p className="font-medium text-sm">QTD x PREÇO - ITEM - TOTAL</p>
-                    <p className="text-xs text-muted-foreground font-mono">2 x 25,00  X-Burger  R$50,00</p>
-                  </div>
-                </label>
-                <label className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer ${
-                  config.formato_itens === 'qtd_item_total' ? 'border-blue-500 bg-blue-50 dark:bg-blue-950/30' : 'border-gray-200'
-                }`}>
-                  <input
-                    type="radio"
-                    name="formato_itens"
-                    checked={config.formato_itens === 'qtd_item_total'}
-                    onChange={() => handleChange('formato_itens', 'qtd_item_total')}
-                    className="text-blue-500"
-                  />
-                  <div>
-                    <p className="font-medium text-sm">QTD x ITEM - TOTAL</p>
-                    <p className="text-xs text-muted-foreground font-mono">2x X-Burger         R$50,00</p>
-                  </div>
-                </label>
-              </div>
-            </div>
-            
-            {/* Toggles */}
-            <div className="space-y-2 pt-4 border-t">
-              <h4 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Seções do Cupom</h4>
-              
-              {[
-                { key: 'impressao_automatica', label: 'Impressão Automática', desc: 'Imprimir ao aceitar pedido' },
-                { key: 'mostrar_observacoes_item', label: 'Observações dos Itens', desc: 'Ex: Sem cebola, bem passado' },
-                { key: 'mostrar_adicionais', label: 'Adicionais', desc: 'Mostrar adicionais dos itens' },
-                { key: 'mostrar_taxa_entrega', label: 'Taxa de Entrega', desc: 'Exibir valor da entrega' },
-                { key: 'mostrar_desconto', label: 'Descontos', desc: 'Exibir descontos aplicados' },
-                { key: 'mostrar_forma_pagamento', label: 'Forma de Pagamento', desc: 'Exibir como vai pagar' },
-                { key: 'mostrar_info_entrega', label: 'Informações de Entrega', desc: 'Cliente, telefone, endereço' },
-              ].map(({ key, label, desc }) => (
-                <div key={key} className="flex items-center justify-between py-2">
-                  <div>
-                    <p className="text-sm font-medium">{label}</p>
-                    <p className="text-xs text-muted-foreground">{desc}</p>
-                  </div>
-                  <button
-                    onClick={() => handleToggle(key)}
-                    className={`w-10 h-5 rounded-full transition-colors relative ${
-                      config[key] ? 'bg-green-500' : 'bg-gray-300 dark:bg-gray-600'
-                    }`}
-                  >
-                    <div className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-transform ${
-                      config[key] ? 'translate-x-5' : 'translate-x-0.5'
-                    }`} />
-                  </button>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Seção: Textos */}
-        {activeSection === "textos" && (
-          <div className="bg-card border rounded-xl p-6 space-y-4">
-            <h3 className="font-bold text-lg flex items-center gap-2">
-              <Type className="w-5 h-5 text-blue-500" />
-              Textos Personalizados
-            </h3>
-            
-            <div className="space-y-4">
-              <div>
-                <label className="text-sm font-medium mb-1 block">Título da Seção de Itens</label>
-                <Input
-                  value={config.titulo_itens}
-                  onChange={(e) => handleChange('titulo_itens', e.target.value)}
-                  placeholder="ITENS DO PEDIDO"
-                />
-              </div>
-              
-              <div>
-                <label className="text-sm font-medium mb-1 block">Título de Informações de Entrega</label>
-                <Input
-                  value={config.titulo_info_entrega}
-                  onChange={(e) => handleChange('titulo_info_entrega', e.target.value)}
-                  placeholder="Informacoes de Entrega"
-                />
-              </div>
-              
-              <div>
-                <label className="text-sm font-medium mb-1 block">Texto "Pagar na Entrega"</label>
-                <Input
-                  value={config.texto_pagar_entrega}
-                  onChange={(e) => handleChange('texto_pagar_entrega', e.target.value)}
-                  placeholder="Pagar na entrega"
-                />
-              </div>
-              
-              <div>
-                <label className="text-sm font-medium mb-1 block">Mensagem do Rodapé</label>
-                <Input
-                  value={config.mensagem_rodape}
-                  onChange={(e) => handleChange('mensagem_rodape', e.target.value)}
-                  placeholder="NAO E DOCUMENTO FISCAL"
-                />
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Botão Salvar */}
-        <Button onClick={handleSave} disabled={saving} className="w-full" size="lg">
-          {saving ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Save className="w-4 h-4 mr-2" />}
-          Salvar Configurações
-        </Button>
-      </div>
-
-      {/* Preview */}
-      <div className="lg:sticky lg:top-4 self-start">
-        <div className="bg-card border rounded-xl p-6">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2">
-              <Eye className="w-5 h-5 text-muted-foreground" />
-              <h3 className="font-semibold">Preview do Cupom</h3>
-            </div>
-            <Button 
-              size="sm" 
-              onClick={async () => {
-                // Enviar para Print Connector
-                const pedidoComConfig = {
-                  ...pedidoExemplo,
-                  empresa_nome: config.empresa_nome,
-                  empresa_endereco: config.empresa_endereco,
-                  empresa_cidade: config.empresa_cidade,
-                  empresa_telefone: config.empresa_telefone,
-                  empresa_cnpj: config.empresa_cnpj,
-                  empresa_ie: config.empresa_ie,
-                  empresa_im: config.empresa_im,
-                  mensagem_rodape: config.mensagem_rodape,
-                };
-                
-                const result = await printViaPrintConnector(pedidoComConfig, { template: 'caixa' });
-                if (result.success) {
-                  toast({ title: "✅ Enviado!", description: "Teste enviado para impressora" });
-                } else {
-                  toast({ title: "Erro", description: result.error || "Print Connector offline", variant: "destructive" });
-                }
-              }}
-            >
-              <Printer className="w-4 h-4 mr-2" />
-              Imprimir Teste
-            </Button>
-          </div>
-          
-          {/* Preview Visual - Modelo do Cupom */}
-          <div className="bg-white dark:bg-gray-900 border-2 border-dashed rounded-lg p-4 font-mono text-[11px] overflow-auto" style={{ maxWidth: '320px', margin: '0 auto' }}>
-            {/* ===== CABEÇALHO ===== */}
-            <div className="text-center mb-2">
-              {config.mostrar_logo && (
-                config.empresa_logo_url ? (
-                  <img 
-                    src={`${API_URL}${config.empresa_logo_url}`} 
-                    alt="Logo" 
-                    className="h-30 mx-auto mb-2 object-contain"
-                    style={{ height: '120px' }}
-                    onError={(e) => { e.target.style.display = 'none'; }}
-                  />
-                ) : (
-                  <div className="text-[10px] text-gray-400 mb-1">[LOGO]</div>
-                )
-              )}
-              <div className="font-bold text-sm uppercase">{config.empresa_nome || "Nome da Empresa"}</div>
-              {config.empresa_slogan && <div className="text-[10px] text-gray-600">{config.empresa_slogan}</div>}
-              {config.empresa_endereco && <div className="text-[10px]">{config.empresa_endereco}</div>}
-              {config.empresa_cnpj && <div className="text-[10px]">CNPJ: {config.empresa_cnpj}</div>}
-            </div>
-            
-            <div className="border-t border-dashed border-gray-400 my-2" />
-            
-            {/* ===== CÓDIGO DO PEDIDO (3x MAIOR, NEGRITO, CENTRALIZADO) ===== */}
-            <div className="text-center mb-1">
-              <span className="text-3xl font-bold">#{pedidoExemplo.codigo}</span>
-            </div>
-            {/* ===== DATA/HORA (CENTRALIZADA) ===== */}
-            <div className="text-center text-[10px] mb-2">
-              {new Date().toLocaleDateString('pt-BR')}, {new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
-            </div>
-            
-            <div className="border-t border-dashed border-gray-400 my-2" />
-            
-            {/* ===== ITENS DO PEDIDO ===== */}
-            <div className="text-center font-bold mb-1">-- ITENS DO PEDIDO --</div>
-            <div className="text-[9px] flex justify-between border-b border-gray-300 pb-1 mb-1">
-              <span>QTD  PREÇO  ITEM</span>
-              <span>TOTAL</span>
-            </div>
-            
-            {pedidoExemplo.items.map((item, i) => (
-              <div key={i} className="mb-1">
-                <div className="flex justify-between">
-                  <span>{item.quantidade} x {item.preco_unitario.toFixed(2)} {item.nome}</span>
-                  <span>R${(item.quantidade * item.preco_unitario).toFixed(2)}</span>
-                </div>
-                {config.mostrar_observacoes_item && item.observacao && (
-                  <div className="text-[9px] text-gray-600 pl-2">- {item.observacao}</div>
-                )}
-              </div>
-            ))}
-            
-            <div className="border-t border-dashed border-gray-400 my-2" />
-            
-            {/* ===== SUBTOTAIS ===== */}
-            {config.mostrar_taxa_entrega && pedidoExemplo.valor_entrega > 0 && (
-              <div className="flex justify-between text-[10px]">
-                <span>Taxa de Entrega:</span>
-                <span>R$ {pedidoExemplo.valor_entrega.toFixed(2)}</span>
-              </div>
-            )}
-            
-            <div className="flex justify-between font-bold">
-              <span>TOTAL:</span>
-              <span>R$ {pedidoExemplo.total.toFixed(2)}</span>
-            </div>
-            
-            <div className="border-t border-dashed border-gray-400 my-2" />
-            
-            {/* ===== SEÇÃO DE PAGAMENTO ===== */}
-            {config.mostrar_forma_pagamento && (
-              <div className="text-center mb-2">
-                <div className="font-bold mb-1">-- PAGAR NA ENTREGA --</div>
-                <div className="text-base font-bold">TOTAL ....... R${pedidoExemplo.total.toFixed(2).replace('.', ',')}</div>
-                <div className="text-[10px]">PAGAMENTO: {pedidoExemplo.forma_pagamento}</div>
-              </div>
-            )}
-            
-            {/* ===== INFORMAÇÕES DE ENTREGA (NEGRITO, 2x MAIOR) ===== */}
-            {config.mostrar_info_entrega && (
-              <>
-                <div className="border-t border-dashed border-gray-400 my-2" />
-                <div className="text-center font-bold mb-1">-- INFORMAÇÕES DE ENTREGA --</div>
-                <div className="text-sm font-bold break-words">
-                  <div className="mb-1">CLIENTE: {pedidoExemplo.cliente_nome}</div>
-                  <div className="mb-1">TEL: {pedidoExemplo.cliente_telefone}</div>
-                  <div className="mb-1">END: {pedidoExemplo.endereco_rua}, {pedidoExemplo.endereco_numero}</div>
-                  <div className="mb-1">BAIRRO: {pedidoExemplo.endereco_bairro}</div>
-                  <div className="mb-1">REF: {pedidoExemplo.endereco_complemento}</div>
-                </div>
-              </>
-            )}
-            
-            {/* ===== RODAPÉ ===== */}
-            <div className="border-t-2 border-gray-800 my-2" />
-            <div className="text-center font-bold text-[10px]">{config.mensagem_rodape}</div>
-          </div>
-        </div>
-      </div>
-    </div>
   );
 }
+
+// ==================== COMPONENTE: Preview Cupom de Entrega ====================
+function CupomEntregaPreview({ config, pedido }) {
+  return (
+    <>
+      {/* CABEÇALHO */}
+      <div className="text-center mb-2">
+        {config.mostrar_logo && (
+          config.empresa_logo_url ? (
+            <img 
+              src={`${API_URL}${config.empresa_logo_url}`} 
+              alt="Logo" 
+              className="mx-auto mb-2 object-contain"
+              style={{ height: '120px' }}
+              onError={(e) => { e.target.style.display = 'none'; }}
+            />
+          ) : (
+            <div className="text-[10px] text-gray-400 mb-1">[LOGO]</div>
+          )
+        )}
+        <div className="font-bold text-sm uppercase">{config.empresa_nome || "Nome da Empresa"}</div>
+        {config.empresa_slogan && <div className="text-[10px] text-gray-600">{config.empresa_slogan}</div>}
+        {config.empresa_endereco && <div className="text-[10px]">{config.empresa_endereco}</div>}
+        {config.empresa_cnpj && <div className="text-[10px]">CNPJ: {config.empresa_cnpj}</div>}
+      </div>
+      
+      <div className="border-t border-dashed border-gray-400 my-2" />
+      
+      {/* CÓDIGO DO PEDIDO */}
+      <div className="text-center mb-1">
+        <span className="text-3xl font-bold">#{pedido.codigo}</span>
+      </div>
+      {/* DATA/HORA */}
+      <div className="text-center text-[10px] mb-2">
+        {new Date().toLocaleDateString('pt-BR')}, {new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+      </div>
+      
+      <div className="border-t border-dashed border-gray-400 my-2" />
+      
+      {/* ITENS DO PEDIDO */}
+      <div className="text-center font-bold mb-1">-- ITENS DO PEDIDO --</div>
+      <div className="text-[9px] flex justify-between border-b border-gray-300 pb-1 mb-1">
+        <span>QTD  PREÇO  ITEM</span>
+        <span>TOTAL</span>
+      </div>
+      
+      {pedido.items.map((item, i) => (
+        <div key={i} className="mb-1">
+          <div className="flex justify-between">
+            <span>{item.quantidade} x {item.preco_unitario.toFixed(2)} {item.nome}</span>
+            <span>R${(item.quantidade * item.preco_unitario).toFixed(2)}</span>
+          </div>
+          {item.observacao && (
+            <div className="text-[9px] text-gray-600 pl-2">- {item.observacao}</div>
+          )}
+        </div>
+      ))}
+      
+      <div className="border-t border-dashed border-gray-400 my-2" />
+      
+      {/* SUBTOTAIS */}
+      {pedido.valor_entrega > 0 && (
+        <div className="flex justify-between text-[10px]">
+          <span>Taxa de Entrega:</span>
+          <span>R$ {pedido.valor_entrega.toFixed(2)}</span>
+        </div>
+      )}
+      
+      <div className="flex justify-between font-bold">
+        <span>TOTAL:</span>
+        <span>R$ {pedido.total.toFixed(2)}</span>
+      </div>
+      
+      <div className="border-t border-dashed border-gray-400 my-2" />
+      
+      {/* PAGAMENTO */}
+      <div className="text-center mb-2">
+        <div className="font-bold mb-1">-- PAGAR NA ENTREGA --</div>
+        <div className="text-base font-bold">TOTAL ....... R${pedido.total.toFixed(2).replace('.', ',')}</div>
+        <div className="text-[10px]">PAGAMENTO: {pedido.forma_pagamento}</div>
+      </div>
+      
+      {/* INFORMAÇÕES DE ENTREGA */}
+      <div className="border-t border-dashed border-gray-400 my-2" />
+      <div className="text-center font-bold mb-1">-- INFORMAÇÕES DE ENTREGA --</div>
+      <div className="text-sm font-bold break-words">
+        <div className="mb-1">CLIENTE: {pedido.cliente_nome}</div>
+        <div className="mb-1">TEL: {pedido.cliente_telefone}</div>
+        <div className="mb-1">END: {pedido.endereco_rua}, {pedido.endereco_numero}</div>
+        <div className="mb-1">BAIRRO: {pedido.endereco_bairro}</div>
+        <div className="mb-1">REF: {pedido.endereco_complemento}</div>
+      </div>
+      
+      {/* RODAPÉ */}
+      <div className="border-t-2 border-gray-800 my-2" />
+      <div className="text-center font-bold text-[10px]">{config.mensagem_rodape || "NÃO É DOCUMENTO FISCAL"}</div>
+    </>
+  );
+}
+
+// ==================== COMPONENTE: Preview Cupom de Preparo ====================
+function CupomPreparoPreview({ pedido }) {
+  return (
+    <>
+      {/* TÍTULO */}
+      <div className="text-center mb-2">
+        <div className="text-xl font-bold">** PREPARO **</div>
+      </div>
+      
+      {/* CÓDIGO DO PEDIDO */}
+      <div className="text-center mb-1">
+        <span className="text-4xl font-bold">#{pedido.codigo}</span>
+      </div>
+      
+      {/* HORA */}
+      <div className="text-center text-2xl font-bold mb-2">
+        {new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+      </div>
+      
+      <div className="border-t border-dashed border-gray-400 my-2" />
+      
+      {/* NOME DO CLIENTE */}
+      <div className="text-center text-lg font-bold mb-2">
+        CLIENTE: {pedido.cliente_nome}
+      </div>
+      
+      <div className="border-t border-dashed border-gray-400 my-2" />
+      
+      {/* ITENS */}
+      <div className="text-center font-bold mb-2">-- ITENS --</div>
+      
+      {pedido.items.map((item, i) => (
+        <div key={i} className="mb-3">
+          <div className="text-lg font-bold">
+            {item.quantidade}x {item.nome}
+          </div>
+          {item.tipo_combo && (
+            <div className="text-[10px] text-gray-600">[{item.tipo_combo.toUpperCase()}]</div>
+          )}
+          {item.observacao && (
+            <div className="text-sm font-bold text-orange-600">
+              &gt;&gt;&gt; {item.observacao}
+            </div>
+          )}
+        </div>
+      ))}
+      
+      <div className="border-t border-dashed border-gray-400 my-2" />
+      
+      {/* OBSERVAÇÃO GERAL */}
+      {pedido.observacao && (
+        <>
+          <div className="text-center font-bold text-orange-600">!!! OBSERVAÇÃO !!!</div>
+          <div className="text-sm">{pedido.observacao}</div>
+          <div className="border-t border-dashed border-gray-400 my-2" />
+        </>
+      )}
+      
+      {/* RODAPÉ */}
+      <div className="text-center text-[10px]">
+        {new Date().toLocaleString('pt-BR')}
+      </div>
+    </>
+  );
+}
+
+const API_URL_CONST = API_URL;
 
 // Função auxiliar para buscar impressora padrão
 async function fetchImpressoraPadrao() {
