@@ -46054,3 +46054,7 @@
 2026-01-15T15:27:57.043795+00:00 | DB_CALL register_whatsapp_client | P3 | 2.45ms | success
 2026-01-15T15:27:57.053228+00:00 | DB_CALL process_message_words | P3 | 3.94ms | success
 2026-01-15T15:28:02.548932+00:00 | DB_CALL increment_whatsapp_stat | P3 | 2.14ms | success
+2026-01-15T15:30:26.136579+00:00 | DB_CALL get_all_settings | P3 | 0.82ms | success
+2026-01-15T15:30:26.137171+00:00 | DB_CALL get_all_settings | P3 | 1.15ms | success
+2026-01-15T15:30:26.344851+00:00 | DB_CALL get_all_settings | P3 | 0.32ms | success
+2026-01-15T15:30:26.358489+00:00 | DB_CALL get_all_settings | P3 | 0.31ms | success

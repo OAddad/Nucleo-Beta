@@ -1776,6 +1776,7 @@ function ConfiguracaoImpressao({ toast }) {
     // Cabeçalho da Empresa
     mostrar_logo: true,
     empresa_nome: "",
+    empresa_slogan: "",
     empresa_endereco: "",
     empresa_cidade: "",
     empresa_telefone: "",
