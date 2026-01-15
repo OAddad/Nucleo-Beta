@@ -42799,3 +42799,9 @@
 2026-01-15T01:47:24.589991+00:00 | DB_CALL get_all_pedidos | P3 | 4.98ms | success
 2026-01-15T01:47:24.593190+00:00 | DB_CALL get_all_settings | P3 | 7.37ms | success
 2026-01-15T01:47:26.929478+00:00 | DB_CALL increment_whatsapp_stat | P3 | 1.85ms | success
+2026-01-15T01:47:29.597051+00:00 | DB_CALL get_all_entregadores | P3 | 0.72ms | success
+2026-01-15T01:47:29.599019+00:00 | DB_CALL get_all_pedidos | P3 | 2.18ms | success
+2026-01-15T01:47:29.603315+00:00 | DB_CALL get_all_settings | P3 | 0.51ms | success
+2026-01-15T01:47:35.291521+00:00 | DB_CALL get_all_settings | P3 | 1.34ms | success
+2026-01-15T01:47:35.294213+00:00 | DB_CALL get_all_pedidos | P3 | 4.53ms | success
+2026-01-15T01:47:35.296278+00:00 | DB_CALL get_all_entregadores | P3 | 5.59ms | success
