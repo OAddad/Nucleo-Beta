@@ -281,62 +281,6 @@ class PrintQueue {
   }
   
   // ==================== CUPOM DE ENTREGA/CAIXA ====================
-      escpos
-        .newLine()
-        .setTextSize(2, 2)
-        .setInverse(true)
-        .text(` ${pedido.tipo_entrega.toUpperCase()} `)
-        .setInverse(false)
-        .setTextSize(1, 1);
-    }
-    
-    escpos.newLine().separator().align('left');
-    
-    // Itens
-    if (pedido.items && pedido.items.length > 0) {
-      for (const item of pedido.items) {
-        escpos
-          .setTextSize(2, 2)
-          .setBold(true)
-          .text(`${item.quantidade}x ${item.nome}`)
-          .setBold(false)
-          .setTextSize(1, 1);
-        
-        if (item.observacao) {
-          escpos.setTextSize(1, 2).text(`  -> ${item.observacao}`).setTextSize(1, 1);
-        }
-        if (item.adicionais) {
-          for (const add of item.adicionais) {
-            escpos.text(`  + ${add.nome}`);
-          }
-        }
-        escpos.newLine();
-      }
-    }
-    
-    escpos.separator();
-    
-    // Observação geral
-    if (pedido.observacao) {
-      escpos
-        .setTextSize(1, 2)
-        .setBold(true)
-        .text('OBS:')
-        .setBold(false)
-        .wrapText(pedido.observacao)
-        .setTextSize(1, 1)
-        .separator();
-    }
-    
-    // Horário
-    escpos
-      .align('center')
-      .text(new Date().toLocaleString('pt-BR'));
-    
-    if (job.cut !== false) escpos.cut();
-    return escpos.build();
-  }
-  
   _buildCaixaTemplate(escpos, pedido, job) {
     // ===== LAYOUT SEGUINDO ESBOÇO DO CLIENTE =====
     // Obtém dados da empresa do job ou do pedido
