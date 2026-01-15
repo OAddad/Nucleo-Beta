@@ -1575,10 +1575,10 @@ async def get_products_for_sale(current_user: User = Depends(get_current_user)):
 
 @api_router.get("/public/products/all")
 async def get_all_products_public():
-    """Retorna TODOS os produtos (incluindo insumos) para buscar fotos, preços e descrições - público"""
+    """Retorna TODOS os produtos (incluindo insumos) para buscar fotos, preços, descrições e disponibilidade - público"""
     products = await db_call(sqlite_db.get_all_products)
-    # Retorna id, photo_url, sale_price e description para sincronização
-    return [{"id": p.get("id"), "photo_url": p.get("photo_url"), "sale_price": p.get("sale_price", 0), "description": p.get("description", "")} for p in products]
+    # Retorna id, photo_url, sale_price, description e available para sincronização
+    return [{"id": p.get("id"), "photo_url": p.get("photo_url"), "sale_price": p.get("sale_price", 0), "description": p.get("description", ""), "available": p.get("available", True)} for p in products]
 
 @api_router.put("/products/{product_id}", response_model=Product)
 async def update_product(product_id: str, product_data: ProductCreate, current_user: User = Depends(get_current_user)):
