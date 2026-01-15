@@ -43624,3 +43624,6 @@
 2026-01-15T02:05:12.513159+00:00 | DB_CALL count_ingredients | P3 | 0.25ms | success
 2026-01-15T02:05:12.513361+00:00 | DB_CALL count_products | P3 | 0.13ms | success
 2026-01-15T02:05:12.513510+00:00 | DB_CALL count_users | P3 | 0.1ms | success
+2026-01-15T02:05:22.305415+00:00 | DB_CALL get_user_by_username | P3 | 0.35ms | success
+2026-01-15T02:05:22.331951+00:00 | DB_CALL get_user_by_id | P3 | 0.36ms | success
+2026-01-15T02:05:22.339051+00:00 | DB_CALL get_all_products | P3 | 6.92ms | success
