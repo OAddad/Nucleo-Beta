@@ -1716,6 +1716,15 @@ async def serve_product_image(filename: str):
     return FileResponse(file_path)
 
 
+@api_router.get("/uploads/company/{filename}")
+async def serve_company_image(filename: str):
+    """Servir imagens da empresa (logo)"""
+    file_path = Path(f"/app/backend/uploads/company/{filename}")
+    if not file_path.exists():
+        raise HTTPException(status_code=404, detail="Image not found")
+    return FileResponse(file_path)
+
+
 @api_router.delete("/products/{product_id}")
 async def delete_product(product_id: str, current_user: User = Depends(get_current_user)):
     check_role(current_user, ["proprietario", "administrador"])

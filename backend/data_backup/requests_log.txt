@@ -45864,3 +45864,4 @@
 2026-01-15T14:55:00.865640+00:00 | DB_CALL get_all_products | P3 | 14.71ms | success
 2026-01-15T14:55:16.957657+00:00 | DB_CALL get_all_products | P3 | 22.59ms | success
 2026-01-15T14:55:17.563225+00:00 | DB_CALL get_all_products | P3 | 14.86ms | success
+2026-01-15T14:55:22.744366+00:00 | DB_CALL get_all_settings | P3 | 0.29ms | success
