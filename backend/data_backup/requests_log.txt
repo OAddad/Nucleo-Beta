@@ -46400,3 +46400,11 @@
 2026-01-15T16:10:07.929087+00:00 | DB_CALL get_all_settings | P3 | 0.27ms | success
 2026-01-15T16:10:36.244848+00:00 | DB_CALL get_all_settings | P3 | 0.79ms | success
 2026-01-15T16:10:36.245428+00:00 | DB_CALL get_all_settings | P3 | 1.08ms | success
+2026-01-15T16:11:37.694007+00:00 | DB_CALL get_all_products | P3 | 18.52ms | success
+2026-01-15T16:11:41.765863+00:00 | DB_CALL get_all_products | P3 | 15.53ms | success
+2026-01-15T16:13:12.559649+00:00 | DB_CALL get_all_products | P3 | 16.54ms | success
+2026-01-15T16:13:12.629524+00:00 | DB_CALL get_all_settings | P3 | 85.74ms | success
+2026-01-15T16:13:12.630029+00:00 | DB_CALL get_all_business_hours | P3 | 85.89ms | success
+2026-01-15T16:13:12.630447+00:00 | DB_CALL get_all_categories | P3 | 86.21ms | success
+2026-01-15T16:13:13.921835+00:00 | DB_CALL get_all_products | P3 | 18.31ms | success
+2026-01-15T16:13:14.136251+00:00 | DB_CALL get_all_bairros | P3 | 0.33ms | success
