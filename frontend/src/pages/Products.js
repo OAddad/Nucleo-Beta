@@ -3063,14 +3063,14 @@ export default function Products() {
                         toggleProductAvailability(product, e);
                       }}
                       className={`
-                        relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-300 ease-in-out flex-shrink-0 mr-3 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500
+                        relative inline-flex h-6 w-11 items-center rounded-full flex-shrink-0 mr-3 focus:outline-none
                         ${product.available !== false ? 'bg-green-500' : 'bg-red-400'}
                       `}
                       title={product.available !== false ? "Disponível - clique para desativar" : "Indisponível - clique para ativar"}
                     >
                       <span
                         className={`
-                          inline-block h-4 w-4 transform rounded-full bg-white shadow-md transition-transform duration-300 ease-in-out
+                          inline-block h-4 w-4 rounded-full bg-white shadow-md
                           ${product.available !== false ? 'translate-x-6' : 'translate-x-1'}
                         `}
                       />
