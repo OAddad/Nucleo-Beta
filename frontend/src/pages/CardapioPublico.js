@@ -3000,38 +3000,53 @@ export default function CardapioPublico({ onAdminLogin }) {
                     <div 
                       className="flex lg:grid gap-3 overflow-x-auto lg:overflow-visible pb-2 lg:pb-0 snap-x snap-mandatory lg:snap-none scrollbar-hide lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 lg:gap-4"
                     >
-                      {categoryProducts.map(product => (
-                        <div 
-                          key={product.id} 
-                          className={`${t.bgCard} rounded-xl overflow-hidden border ${t.border} cursor-pointer snap-start flex-shrink-0 lg:flex-shrink hover:shadow-lg transition-shadow cardapio-item-mobile`}
-                          onClick={() => openProductPopup(product)}
-                        >
-                          {/* Imagem */}
-                          <div className={`aspect-square lg:aspect-[4/3] ${t.bgMuted} relative overflow-hidden`}>
-                            {product.photo_url ? (
-                              <img 
-                                src={getImageUrl(product.photo_url)} 
-                                alt={product.name} 
-                                className="w-full h-full object-cover" 
-                              />
-                            ) : (
-                              <div className="w-full h-full flex items-center justify-center">
-                                <span className="text-2xl lg:text-3xl">🍽️</span>
-                              </div>
-                            )}
+                      {categoryProducts.map(product => {
+                        const isUnavailable = product.available === false;
+                        return (
+                          <div 
+                            key={product.id} 
+                            className={`${t.bgCard} rounded-xl overflow-hidden border ${t.border} snap-start flex-shrink-0 lg:flex-shrink transition-all cardapio-item-mobile ${
+                              isUnavailable 
+                                ? 'opacity-60 cursor-not-allowed' 
+                                : 'cursor-pointer hover:shadow-lg'
+                            }`}
+                            onClick={() => !isUnavailable && openProductPopup(product)}
+                          >
+                            {/* Imagem */}
+                            <div className={`aspect-square lg:aspect-[4/3] ${t.bgMuted} relative overflow-hidden`}>
+                              {product.photo_url ? (
+                                <img 
+                                  src={getImageUrl(product.photo_url)} 
+                                  alt={product.name} 
+                                  className={`w-full h-full object-cover ${isUnavailable ? 'grayscale' : ''}`}
+                                />
+                              ) : (
+                                <div className="w-full h-full flex items-center justify-center">
+                                  <span className="text-2xl lg:text-3xl">🍽️</span>
+                                </div>
+                              )}
+                              {/* Badge INDISPONÍVEL */}
+                              {isUnavailable && (
+                                <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                                  <span className="bg-red-500 text-white text-xs font-bold px-3 py-1.5 rounded-full uppercase">
+                                    Indisponível
+                                  </span>
+                                </div>
+                              )}
+                            </div>
+                            {/* Info */}
+                            <div className="p-2.5 lg:p-3">
+                              <h3 className={`font-semibold ${t.text} text-sm lg:text-base line-clamp-1 lg:line-clamp-2 leading-tight mb-1`}>{product.name}</h3>
+                              {product.description && (
+                                <p className={`${t.textMuted} text-[11px] lg:text-xs line-clamp-2 mb-1.5 leading-relaxed`}>{product.description}</p>
+                              )}
+                              <span className={`font-bold text-sm lg:text-base ${isUnavailable ? 'text-gray-400 line-through' : 'text-orange-500'}`}>
+                                R$ {product.sale_price?.toFixed(2).replace('.', ',')}
+                              </span>
+                            </div>
                           </div>
-                          {/* Info */}
-                          <div className="p-2.5 lg:p-3">
-                            <h3 className={`font-semibold ${t.text} text-sm lg:text-base line-clamp-1 lg:line-clamp-2 leading-tight mb-1`}>{product.name}</h3>
-                            {product.description && (
-                              <p className={`${t.textMuted} text-[11px] lg:text-xs line-clamp-2 mb-1.5 leading-relaxed`}>{product.description}</p>
-                            )}
-                            <span className="text-orange-500 font-bold text-sm lg:text-base">
-                              R$ {product.sale_price?.toFixed(2).replace('.', ',')}
-                            </span>
-                          </div>
-                        </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   </div>
                 ))
