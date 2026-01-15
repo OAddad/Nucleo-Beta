@@ -2900,8 +2900,8 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
                     {/* Endereços Salvos do Cliente */}
                     {enderecosSalvos.length > 0 && (
                       <div className="space-y-2">
-                        <Label className="text-sm font-medium text-green-600">Endereços salvos do cliente:</Label>
-                        <div className="grid gap-2">
+                        <Label className="text-sm font-medium text-green-600">Endereços do cliente:</Label>
+                        <div className="grid gap-2 max-h-48 overflow-y-auto">
                           {enderecosSalvos.map((end) => (
                             <button
                               key={end.id}
@@ -2916,6 +2916,9 @@ function CardapioPopup({ open, onClose, onPedidoCriado }) {
                               <div className="flex items-center gap-2 mb-1">
                                 <MapPin className="w-4 h-4 text-green-500" />
                                 <span className="font-medium text-sm">{end.label}</span>
+                                {end.fromPedido && (
+                                  <span className="text-[10px] bg-orange-100 text-orange-600 px-1.5 py-0.5 rounded">Pedido anterior</span>
+                                )}
                                 {enderecoSelecionado === end.id && (
                                   <Check className="w-4 h-4 text-green-500 ml-auto" />
                                 )}

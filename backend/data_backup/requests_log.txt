@@ -43371,3 +43371,7 @@
 2026-01-15T01:57:46.493439+00:00 | DB_CALL get_all_products | P3 | 2.43ms | success
 2026-01-15T01:58:09.247802+00:00 | DB_CALL get_all_products | P3 | 2.45ms | success
 2026-01-15T01:58:09.809836+00:00 | DB_CALL get_all_products | P3 | 2.42ms | success
+2026-01-15T01:58:13.413284+00:00 | DB_CALL get_all_ruas | P3 | 0.36ms | success
+2026-01-15T01:58:14.884174+00:00 | DB_CALL get_all_bairros | P3 | 0.36ms | success
+2026-01-15T01:58:21.396036+00:00 | DB_CALL get_user_by_id | P3 | 1.08ms | success
+2026-01-15T01:58:21.396666+00:00 | DB_CALL get_user_by_id | P3 | 1.04ms | success
