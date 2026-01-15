@@ -44701,3 +44701,9 @@
 2026-01-15T12:46:52.054533+00:00 | DB_CALL get_all_settings | P3 | 0.31ms | success
 2026-01-15T12:46:52.055942+00:00 | DB_CALL get_all_entregadores | P3 | 0.25ms | success
 2026-01-15T12:46:52.063769+00:00 | DB_CALL get_all_pedidos | P3 | 1.35ms | success
+2026-01-15T12:46:57.051640+00:00 | DB_CALL get_all_pedidos | P3 | 1.83ms | success
+2026-01-15T12:46:57.053688+00:00 | DB_CALL get_all_entregadores | P3 | 3.54ms | success
+2026-01-15T12:46:57.056012+00:00 | DB_CALL get_all_settings | P3 | 0.27ms | success
+2026-01-15T12:47:02.055822+00:00 | DB_CALL get_all_entregadores | P3 | 0.27ms | success
+2026-01-15T12:47:02.057029+00:00 | DB_CALL get_all_settings | P3 | 0.17ms | success
+2026-01-15T12:47:02.064100+00:00 | DB_CALL get_all_pedidos | P3 | 1.3ms | success
