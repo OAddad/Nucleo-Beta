@@ -2150,24 +2150,47 @@ function RespostasAutomaticasTab({ toast }) {
         alertAudioRef.current.pause();
         alertAudioRef.current = null;
       }
+      if (alertIntervalRef.current) {
+        clearInterval(alertIntervalRef.current);
+        alertIntervalRef.current = null;
+      }
     };
   }, [isAlertPlaying]);
   
-  // Função para tocar o som de alerta em loop
+  // Ref para o intervalo do loop de som
+  const alertIntervalRef = useRef(null);
+  
+  // Função para tocar o som de alerta com intervalo de 5 segundos
   const playAlertSound = () => {
-    if (alertAudioRef.current) return; // Já está tocando
+    if (alertAudioRef.current || alertIntervalRef.current) return; // Já está tocando
     
-    const audio = new Audio(`${API_URL}/api/sounds/cliente-esperando`);
-    audio.loop = true;
-    audio.volume = 0.7;
-    
-    audio.play().then(() => {
-      setIsAlertPlaying(true);
+    const playOnce = () => {
+      const audio = new Audio(`${API_URL}/api/sounds/cliente-esperando`);
+      audio.volume = 0.7;
       alertAudioRef.current = audio;
-    }).catch(err => {
-      console.error("Erro ao tocar som de alerta:", err);
-      // Pode falhar devido a políticas de autoplay do navegador
-    });
+      
+      audio.play().then(() => {
+        setIsAlertPlaying(true);
+      }).catch(err => {
+        console.error("Erro ao tocar som de alerta:", err);
+      });
+      
+      // Quando o áudio terminar, aguardar 5 segundos e tocar novamente
+      audio.onended = () => {
+        alertAudioRef.current = null;
+      };
+    };
+    
+    // Tocar imediatamente
+    playOnce();
+    
+    // Configurar intervalo para tocar a cada 5 segundos após o som terminar
+    // O som tem ~2 segundos + 5 segundos de pausa = ~7 segundos entre inícios
+    alertIntervalRef.current = setInterval(() => {
+      if (!alertAudioRef.current && waitingQueue.length > 0) {
+        playOnce();
+      }
+    }, 7000); // Intervalo total considerando duração do som
   };
   
   // Função para parar o som de alerta
@@ -2177,7 +2200,42 @@ function RespostasAutomaticasTab({ toast }) {
       alertAudioRef.current.currentTime = 0;
       alertAudioRef.current = null;
     }
+    if (alertIntervalRef.current) {
+      clearInterval(alertIntervalRef.current);
+      alertIntervalRef.current = null;
+    }
     setIsAlertPlaying(false);
+  };
+  
+  // Função para ignorar cliente (remover da fila)
+  const ignoreClient = async (phone) => {
+    try {
+      const token = localStorage.getItem("token");
+      await fetch(`${API_URL}/api/chatbot/waiting-queue/${phone}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      // Atualizar lista local
+      setWaitingQueue(prev => prev.filter(c => c.phone !== phone));
+      // Se não há mais clientes, parar o som
+      if (waitingQueue.length <= 1) {
+        stopAlertSound();
+      }
+    } catch (error) {
+      console.error("Erro ao ignorar cliente:", error);
+    }
+  };
+  
+  // Função para ignorar todos os clientes
+  const ignoreAllClients = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      await fetch(`${API_URL}/api/chatbot/waiting-queue/clear`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setWaitingQueue([]);
+      stopAlertSound();
   };
 
   // Fetch Respostas
