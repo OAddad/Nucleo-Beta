@@ -3924,6 +3924,7 @@ async def whatsapp_toggle_auto_reply(current_user: User = Depends(get_current_us
 
 # ==================== CHATBOT AI PROCESSING ====================
 import chatbot_ai
+import audio_service
 
 class ChatbotProcessMessage(BaseModel):
     phone: str
