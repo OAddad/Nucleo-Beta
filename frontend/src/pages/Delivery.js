@@ -7,7 +7,7 @@ import {
   ArrowLeft, X, RefreshCw, ToggleLeft, ToggleRight, Bike, ShoppingBag,
   Store, CreditCard, DollarSign, Banknote, Eye, FileText, MessageSquare,
   Navigation, Calendar, Hash, XCircle, AlertTriangle, Printer, AlertCircle,
-  Volume2, VolumeX, Undo2
+  Volume2, VolumeX, Undo2, Receipt, ChevronDown
 } from "lucide-react";
 
 // URL do som de notificação de novo pedido
@@ -29,9 +29,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../components/ui/select";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+} from "../components/ui/dropdown-menu";
 import { printPedido, addToPrintQueue, printViaUSB, printViaPrintConnector, checkPrintConnectorStatus } from "./Sistema";
 
 const API = '/api';
+const PRINT_CONNECTOR_URL = 'http://localhost:3456';
 
 const getAuthHeader = () => ({
   headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
