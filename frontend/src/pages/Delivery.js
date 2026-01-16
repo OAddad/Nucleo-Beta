@@ -306,37 +306,135 @@ export default function Delivery() {
       await axios.patch(`${API}/pedidos/${pedidoId}/status?status=producao`);
       toast.success("Pedido aceito!");
       
-      // Impressão automática se habilitada - usando fila
-      if (impressaoConfig.impressao_automatica) {
-        // Encontrar impressora padrão ou primeira ativa
-        const impressoraPadrao = impressoras.find(i => i.padrao && i.ativa) || 
-                                  impressoras.find(i => i.ativa);
-        
-        addToPrintQueue(pedidoCompleto, impressoraPadrao);
-      }
-      
       fetchData();
     } catch (error) {
       toast.error("Erro ao aceitar pedido");
     }
   };
 
-  // Imprimir pedido manualmente via Print Connector
+  // Função para imprimir via Print Connector local (usa XMLHttpRequest para evitar erro de clonagem)
+  const enviarParaPrintConnector = (pedido, tipo, empresaData = {}) => {
+    return new Promise((resolve) => {
+      const template = tipo === 'entrega' ? 'caixa' : 'preparo';
+      const sector = tipo === 'entrega' ? 'caixa' : 'cozinha';
+      
+      const xhr = new XMLHttpRequest();
+      xhr.open('POST', `${PRINT_CONNECTOR_URL}/print`, true);
+      xhr.setRequestHeader('Content-Type', 'application/json');
+      xhr.timeout = 10000;
+      
+      xhr.onload = function() {
+        if (xhr.status === 200) {
+          try {
+            const data = JSON.parse(xhr.responseText);
+            resolve({ success: data.success, error: data.error });
+          } catch (e) {
+            resolve({ success: false, error: 'Erro ao parsear resposta' });
+          }
+        } else {
+          resolve({ success: false, error: `Erro HTTP ${xhr.status}` });
+        }
+      };
+      
+      xhr.onerror = function() {
+        resolve({ success: false, offline: true, error: 'Print Connector offline' });
+      };
+      
+      xhr.ontimeout = function() {
+        resolve({ success: false, offline: true, error: 'Timeout' });
+      };
+      
+      const payload = {
+        pedido: {
+          id: pedido.id,
+          codigo: pedido.codigo,
+          cliente_nome: pedido.cliente_nome,
+          cliente_telefone: pedido.cliente_telefone,
+          tipo_entrega: pedido.tipo_entrega,
+          endereco_rua: pedido.endereco_rua,
+          endereco_numero: pedido.endereco_numero,
+          endereco_bairro: pedido.endereco_bairro,
+          endereco_complemento: pedido.endereco_complemento,
+          items: pedido.items || [],
+          total: pedido.total,
+          valor_entrega: pedido.valor_entrega,
+          forma_pagamento: pedido.forma_pagamento,
+          troco_precisa: pedido.troco_precisa,
+          troco_valor: pedido.troco_valor,
+          observacao: pedido.observacao,
+          created_at: pedido.created_at
+        },
+        template,
+        sector,
+        copies: 1,
+        cut: true,
+        empresa: tipo === 'entrega' ? empresaData : {},
+        config: tipo === 'entrega' ? { mensagem_rodape: 'NAO E DOCUMENTO FISCAL' } : {}
+      };
+      
+      try {
+        xhr.send(JSON.stringify(payload));
+      } catch (e) {
+        resolve({ success: false, offline: true, error: 'Erro ao enviar' });
+      }
+    });
+  };
+
+  // 🖨️ Impressão automática de novo pedido (entrega + preparo)
+  const imprimirPedidoAutomatico = async (pedido, settings) => {
+    const empresaData = {
+      nome: settings?.company_name || empresaConfig.nome || 'Empresa',
+      endereco: settings?.company_address || empresaConfig.endereco || '',
+      cnpj: settings?.cnpj || '',
+      slogan: settings?.slogan || '',
+      logo_url: settings?.logo_url || ''
+    };
+    
+    // Imprimir Cupom de Entrega
+    const resultEntrega = await enviarParaPrintConnector(pedido, 'entrega', empresaData);
+    if (resultEntrega.success) {
+      console.log(`✅ Cupom de Entrega impresso - Pedido #${pedido.codigo}`);
+    } else if (!resultEntrega.offline) {
+      console.log(`❌ Erro Cupom de Entrega: ${resultEntrega.error}`);
+    }
+    
+    // Imprimir Cupom de Preparo
+    const resultPreparo = await enviarParaPrintConnector(pedido, 'preparo', {});
+    if (resultPreparo.success) {
+      console.log(`✅ Cupom de Preparo impresso - Pedido #${pedido.codigo}`);
+    } else if (!resultPreparo.offline) {
+      console.log(`❌ Erro Cupom de Preparo: ${resultPreparo.error}`);
+    }
+  };
+
+  // Imprimir 2ª via
+  const handlePrint2Via = async (pedido, tipo, e) => {
+    if (e) e.stopPropagation();
+    
+    const result = await enviarParaPrintConnector(pedido, tipo, empresaConfig);
+    
+    if (result.success) {
+      toast.success(`2ª via do ${tipo === 'entrega' ? 'Cupom de Entrega' : 'Cupom de Preparo'} enviada`);
+    } else if (result.offline) {
+      toast.error("Print Connector offline. Verifique se o aplicativo está rodando.");
+    } else {
+      toast.error(result.error || "Erro ao imprimir 2ª via");
+    }
+  };
+
+  // Imprimir pedido manualmente (ambos cupons)
   const handlePrintPedido = async (pedido, e) => {
     if (e) e.stopPropagation();
     
-    // Tentar imprimir via Print Connector (preferido)
-    const result = await printViaPrintConnector(pedido, { template: 'caixa' });
+    const resultEntrega = await enviarParaPrintConnector(pedido, 'entrega', empresaConfig);
+    const resultPreparo = await enviarParaPrintConnector(pedido, 'preparo', {});
     
-    if (result.success) {
-      toast.success("Pedido enviado para impressão");
-    } else if (result.offline) {
-      // Print Connector offline - avisar usuário
-      toast.error("Print Connector offline. Instale o aplicativo em Sistema → Impressão");
-    } else if (result.no_printer) {
-      toast.error("Nenhuma impressora configurada no Print Connector");
+    if (resultEntrega.success && resultPreparo.success) {
+      toast.success("Cupons enviados para impressão");
+    } else if (resultEntrega.offline || resultPreparo.offline) {
+      toast.error("Print Connector offline. Verifique se o aplicativo está rodando.");
     } else {
-      toast.error(result.error || "Erro ao imprimir");
+      toast.error("Erro ao imprimir cupons");
     }
   };
 
