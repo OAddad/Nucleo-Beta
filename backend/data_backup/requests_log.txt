@@ -47691,3 +47691,7 @@
 2026-01-16T14:14:56.519464+00:00 | DB_CALL get_all_products | P3 | 24.86ms | success
 2026-01-16T14:15:00.320238+00:00 | DB_CALL get_all_products | P3 | 25.92ms | success
 2026-01-16T14:15:03.131442+00:00 | DB_CALL get_all_products | P3 | 24.75ms | success
+2026-01-16T14:15:28.097838+00:00 | DB_CALL get_all_settings | P3 | 0.27ms | success
+2026-01-16T14:15:28.269631+00:00 | DB_CALL get_all_settings | P3 | 0.3ms | success
+2026-01-16T14:15:28.377318+00:00 | DB_CALL get_all_settings | P3 | 0.31ms | success
+2026-01-16T14:15:28.553930+00:00 | DB_CALL get_all_settings | P3 | 0.26ms | success
