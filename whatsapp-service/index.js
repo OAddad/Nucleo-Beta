@@ -480,8 +480,18 @@ async function connectToWhatsApp() {
               const aiResponse = await getAIResponse(from, messageContent, msg.pushName);
               
               // Se aiResponse é null, significa que o bot está pausado ou houve erro
-              if (aiResponse) {
-                await sendMessageWithTyping(from, aiResponse);
+              if (aiResponse && aiResponse.text) {
+                // Se tem áudio, enviar como áudio
+                if (aiResponse.audio_base64) {
+                  const audioSent = await sendAudioWithRecording(from, aiResponse.audio_base64);
+                  if (!audioSent) {
+                    // Se falhou o áudio, envia como texto
+                    await sendMessageWithTyping(from, aiResponse.text);
+                  }
+                } else {
+                  // Enviar como texto
+                  await sendMessageWithTyping(from, aiResponse.text);
+                }
               } else {
                 console.log(`[WhatsApp] Bot pausado ou sem resposta para ${from}`);
               }
