@@ -209,6 +209,10 @@ def pause_bot_for_phone(phone: str) -> str:
     """Pausa o bot para este telefone e retorna a mensagem de pausa"""
     duration = get_bot_pause_duration()
     human_intervention_pauses[phone] = datetime.now(timezone.utc) + timedelta(minutes=duration)
+    
+    # Remover da fila de espera quando atendente intervém
+    remove_from_waiting_queue(phone)
+    
     # Substituir [TEMPO] pela duração na mensagem
     message = get_bot_pause_message()
     message = re.sub(r'\[TEMPO\]', str(duration), message, flags=re.IGNORECASE)
