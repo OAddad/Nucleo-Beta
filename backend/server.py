@@ -78,6 +78,94 @@ def start_whatsapp_service():
 start_whatsapp_service()
 # ================================================================
 
+# ==================== SISTEMA DE IMPRESSÃO AUTOMÁTICA ====================
+async def enviar_impressao_automatica(pedido: dict, settings: dict):
+    """Envia pedido para impressão automática (entrega + preparo)"""
+    try:
+        # Verificar se impressão automática está habilitada
+        impressao_automatica = settings.get('impressao_automatica', 'true').lower() == 'true'
+        if not impressao_automatica:
+            print(f"[PRINT] Impressão automática desabilitada")
+            return
+        
+        # URL do Print Connector (configurável nas settings)
+        print_connector_url = settings.get('print_connector_url', 'http://localhost:3456')
+        
+        # Buscar dados da empresa
+        empresa_data = {
+            'nome': settings.get('company_name', 'Nome da Empresa'),
+            'slogan': settings.get('slogan', ''),
+            'endereco': settings.get('address', ''),
+            'cnpj': settings.get('cnpj', ''),
+            'logo_url': settings.get('logo_url', '')
+        }
+        
+        # Preparar dados do pedido para impressão
+        pedido_print = {
+            'id': pedido.get('id'),
+            'codigo': pedido.get('codigo'),
+            'cliente_nome': pedido.get('cliente_nome'),
+            'cliente_telefone': pedido.get('cliente_telefone'),
+            'tipo_entrega': pedido.get('tipo_entrega'),
+            'endereco_rua': pedido.get('endereco_rua'),
+            'endereco_numero': pedido.get('endereco_numero'),
+            'endereco_bairro': pedido.get('endereco_bairro'),
+            'endereco_complemento': pedido.get('endereco_complemento'),
+            'items': pedido.get('items', []),
+            'total': pedido.get('total', 0),
+            'valor_entrega': pedido.get('valor_entrega', 0),
+            'forma_pagamento': pedido.get('forma_pagamento'),
+            'troco_precisa': pedido.get('troco_precisa'),
+            'troco_valor': pedido.get('troco_valor'),
+            'observacao': pedido.get('observacao'),
+            'created_at': pedido.get('created_at')
+        }
+        
+        async with httpx.AsyncClient(timeout=10.0) as client:
+            # 1. Imprimir Cupom de Entrega (setor: caixa)
+            try:
+                response = await client.post(
+                    f"{print_connector_url}/print",
+                    json={
+                        'pedido': pedido_print,
+                        'template': 'caixa',
+                        'sector': 'caixa',
+                        'copies': 1,
+                        'cut': True,
+                        'empresa': empresa_data,
+                        'config': {'mensagem_rodape': 'NAO E DOCUMENTO FISCAL'}
+                    }
+                )
+                if response.status_code == 200:
+                    print(f"[PRINT] ✅ Cupom de Entrega enviado - Pedido #{pedido.get('codigo')}")
+                else:
+                    print(f"[PRINT] ❌ Erro Cupom de Entrega: {response.text}")
+            except Exception as e:
+                print(f"[PRINT] ❌ Erro ao enviar Cupom de Entrega: {e}")
+            
+            # 2. Imprimir Cupom de Preparo (setor: cozinha)
+            try:
+                response = await client.post(
+                    f"{print_connector_url}/print",
+                    json={
+                        'pedido': pedido_print,
+                        'template': 'preparo',
+                        'sector': 'cozinha',
+                        'copies': 1,
+                        'cut': True
+                    }
+                )
+                if response.status_code == 200:
+                    print(f"[PRINT] ✅ Cupom de Preparo enviado - Pedido #{pedido.get('codigo')}")
+                else:
+                    print(f"[PRINT] ❌ Erro Cupom de Preparo: {response.text}")
+            except Exception as e:
+                print(f"[PRINT] ❌ Erro ao enviar Cupom de Preparo: {e}")
+                
+    except Exception as e:
+        print(f"[PRINT] ❌ Erro geral na impressão automática: {e}")
+# =========================================================================
+
 app = FastAPI()
 api_router = APIRouter(prefix="/api")
 security = HTTPBearer()
