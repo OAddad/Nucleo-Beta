@@ -580,8 +580,15 @@ def format_context_for_llm(context: Dict[str, Any]) -> str:
     return "\n".join(parts) if parts else "Cliente não identificado no sistema."
 
 
-async def process_message(phone: str, message: str, push_name: str = "") -> str:
-    """Processa uma mensagem e retorna a resposta da IA"""
+async def process_message(phone: str, message: str, push_name: str = "", for_audio_response: bool = False) -> str:
+    """Processa uma mensagem e retorna a resposta da IA
+    
+    Args:
+        phone: Número do telefone
+        message: Mensagem do usuário
+        push_name: Nome do usuário no WhatsApp
+        for_audio_response: Se True, gera resposta no formato de fala humana para TTS
+    """
     
     try:
         # Buscar ou criar conversa
