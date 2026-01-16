@@ -47969,3 +47969,6 @@
 2026-01-16T14:32:54.974533+00:00 | DB_CALL get_all_settings | P3 | 0.74ms | success
 2026-01-16T14:32:54.975118+00:00 | DB_CALL get_all_entregadores | P3 | 0.9ms | success
 2026-01-16T14:32:54.977750+00:00 | DB_CALL get_all_pedidos | P3 | 1.43ms | success
+2026-01-16T14:32:59.988865+00:00 | DB_CALL get_all_pedidos | P3 | 2.92ms | success
+2026-01-16T14:32:59.991046+00:00 | DB_CALL get_all_entregadores | P3 | 4.39ms | success
+2026-01-16T14:32:59.991355+00:00 | DB_CALL get_all_settings | P3 | 4.16ms | success
