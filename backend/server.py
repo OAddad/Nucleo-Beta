@@ -3957,12 +3957,63 @@ async def chatbot_process_message(data: ChatbotProcessMessage):
         if chatbot_ai.is_bot_paused_for_phone(data.phone):
             return {"success": True, "response": None, "bot_paused": True, "message": "Bot pausado - atendimento humano em andamento"}
         
-        # Se é uma mensagem de mídia do cliente (não texto), apenas registrar mas não processar com IA
+        # Se é uma mensagem de áudio do cliente, processar com transcrição + IA + TTS
         msg_type = (data.message_type or "text").lower()
+        if msg_type in ["audio", "ptt", "voice"]:
+            # Verificar se há URL ou base64 do áudio
+            audio_url = getattr(data, 'audio_url', None)
+            audio_base64 = getattr(data, 'audio_base64', None)
+            
+            if audio_url or audio_base64:
+                # Processar áudio completo (transcrição + IA + TTS)
+                settings = await db_call(sqlite_db.get_all_settings)
+                respond_with_audio = settings.get('audio_response_enabled', 'true') == 'true'
+                
+                result = await chatbot_ai.process_audio_message(
+                    phone=data.phone,
+                    audio_url=audio_url,
+                    audio_base64=audio_base64,
+                    push_name=data.push_name or "",
+                    respond_with_audio=respond_with_audio
+                )
+                
+                if result["success"]:
+                    # Verificar se a transcrição pede atendimento humano
+                    if result["transcription"] and chatbot_ai.check_human_assistance_request(result["transcription"]):
+                        chatbot_ai.add_to_waiting_queue(data.phone, data.push_name or "", result["transcription"])
+                        response = chatbot_ai.get_human_assistance_response()
+                        # Gerar áudio da resposta
+                        audio_result = await chatbot_ai.generate_audio_response(response)
+                        return {
+                            "success": True,
+                            "response": response,
+                            "response_audio_base64": audio_result.get("audio_base64"),
+                            "response_audio_url": audio_result.get("audio_url"),
+                            "transcription": result["transcription"],
+                            "bot_paused": False,
+                            "waiting_for_human": True,
+                            "alert_sound": True
+                        }
+                    
+                    return {
+                        "success": True,
+                        "response": result["response_text"],
+                        "response_audio_base64": result["response_audio_base64"],
+                        "response_audio_url": result["response_audio_url"],
+                        "transcription": result["transcription"],
+                        "bot_paused": False
+                    }
+                else:
+                    return {"success": False, "error": result["error"], "bot_paused": False}
+            else:
+                # Áudio sem dados - apenas registrar
+                logger.info(f"Áudio recebido de {data.phone} sem dados para transcrição")
+                return {"success": True, "response": None, "bot_paused": False, "message": "Áudio recebido - envie audio_url ou audio_base64 para transcrição"}
+        
+        # Se é outro tipo de mídia (imagem, vídeo, etc.), apenas registrar
         if msg_type not in ["text", ""]:
-            # Mensagem de mídia do cliente - registrar mas não responder automaticamente
             logger.info(f"Mensagem de mídia recebida ({msg_type}) de {data.phone} - não processada pela IA")
-            return {"success": True, "response": None, "bot_paused": False, "message": f"Mídia ({msg_type}) recebida - IA responde apenas mensagens de texto"}
+            return {"success": True, "response": None, "bot_paused": False, "message": f"Mídia ({msg_type}) recebida - IA responde apenas texto e áudio"}
         
         # Verificar se o cliente está pedindo atendimento humano
         if chatbot_ai.check_human_assistance_request(data.message):
@@ -3971,12 +4022,23 @@ async def chatbot_process_message(data: ChatbotProcessMessage):
             
             # Retornar mensagem de aguarde
             response = chatbot_ai.get_human_assistance_response()
+            
+            # Verificar se deve responder com áudio também
+            settings = await db_call(sqlite_db.get_all_settings)
+            respond_with_audio = settings.get('audio_response_enabled', 'true') == 'true'
+            
+            response_audio = None
+            if respond_with_audio:
+                audio_result = await chatbot_ai.generate_audio_response(response)
+                response_audio = audio_result.get("audio_base64") if audio_result.get("success") else None
+            
             return {
                 "success": True, 
-                "response": response, 
+                "response": response,
+                "response_audio_base64": response_audio,
                 "bot_paused": False,
-                "waiting_for_human": True,  # Indica que cliente está aguardando atendente
-                "alert_sound": True  # Indica que deve tocar som de alerta
+                "waiting_for_human": True,
+                "alert_sound": True
             }
         
         # Processar analytics de palavras (não bloqueia se falhar)
@@ -3990,9 +4052,26 @@ async def chatbot_process_message(data: ChatbotProcessMessage):
             message=data.message,
             push_name=data.push_name or ""
         )
-        return {"success": True, "response": response, "bot_paused": False}
+        
+        # Verificar se deve responder com áudio também
+        settings = await db_call(sqlite_db.get_all_settings)
+        respond_with_audio = settings.get('audio_response_enabled', 'true') == 'true'
+        
+        response_audio = None
+        if respond_with_audio and response:
+            audio_result = await chatbot_ai.generate_audio_response(response)
+            response_audio = audio_result.get("audio_base64") if audio_result.get("success") else None
+        
+        return {
+            "success": True, 
+            "response": response, 
+            "response_audio_base64": response_audio,
+            "bot_paused": False
+        }
     except Exception as e:
         logger.error(f"Erro no chatbot: {e}")
+        import traceback
+        traceback.print_exc()
         return {"success": False, "response": "Desculpe, ocorreu um erro. Tente novamente."}
 
 
