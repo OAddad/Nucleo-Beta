@@ -47283,3 +47283,7 @@
 2026-01-15T16:49:02.923796+00:00 | DB_CALL count_ingredients | P3 | 0.71ms | success
 2026-01-15T16:49:02.924039+00:00 | DB_CALL count_products | P3 | 0.16ms | success
 2026-01-15T16:49:02.924205+00:00 | DB_CALL count_users | P3 | 0.1ms | success
+2026-01-16T13:25:46.459634+00:00 | DB_CALL init_database | P3 | 5.25ms | success
+2026-01-16T13:25:46.461274+00:00 | DB_CALL count_ingredients | P3 | 0.3ms | success
+2026-01-16T13:25:46.461538+00:00 | DB_CALL count_products | P3 | 0.19ms | success
+2026-01-16T13:25:46.461684+00:00 | DB_CALL count_users | P3 | 0.1ms | success
