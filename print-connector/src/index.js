@@ -411,8 +411,7 @@ app.get('/config', (req, res) => {
     printableWidth: 72,
     dpi: 203,
     maxColumns: 48,
-    codepage: 'CP850',
-    networkEnabled: true
+    codepage: 'CP850'
   });
 });
 
