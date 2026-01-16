@@ -1,0 +1,240 @@
+"""
+Serviço de Áudio para ChatBot WhatsApp
+- Speech-to-Text (STT) usando OpenAI Whisper
+- Text-to-Speech (TTS) usando OpenAI TTS
+"""
+import os
+import base64
+import tempfile
+import uuid
+from typing import Optional, Tuple
+from dotenv import load_dotenv
+
+load_dotenv()
+
+# Importar integrações de áudio
+try:
+    from emergentintegrations.llm.openai import OpenAISpeechToText, OpenAITextToSpeech
+    AUDIO_AVAILABLE = True
+except ImportError:
+    AUDIO_AVAILABLE = False
+    print("[AUDIO SERVICE] emergentintegrations não disponível para áudio")
+
+# Configuração
+EMERGENT_LLM_KEY = os.environ.get("EMERGENT_LLM_KEY", "")
+
+# Diretório para arquivos de áudio temporários
+AUDIO_DIR = "/app/backend/audio_files"
+os.makedirs(AUDIO_DIR, exist_ok=True)
+
+
+async def transcribe_audio(audio_data: bytes, file_extension: str = "ogg") -> Tuple[bool, str]:
+    """
+    Transcreve áudio para texto usando OpenAI Whisper.
+    
+    Args:
+        audio_data: Bytes do arquivo de áudio
+        file_extension: Extensão do arquivo (ogg, mp3, wav, etc.)
+    
+    Returns:
+        Tuple (sucesso: bool, texto_ou_erro: str)
+    """
+    if not AUDIO_AVAILABLE or not EMERGENT_LLM_KEY:
+        return False, "Serviço de transcrição não disponível"
+    
+    try:
+        # Criar arquivo temporário com o áudio
+        temp_filename = f"{uuid.uuid4()}.{file_extension}"
+        temp_path = os.path.join(AUDIO_DIR, temp_filename)
+        
+        with open(temp_path, "wb") as f:
+            f.write(audio_data)
+        
+        # Inicializar STT
+        stt = OpenAISpeechToText(api_key=EMERGENT_LLM_KEY)
+        
+        # Transcrever
+        with open(temp_path, "rb") as audio_file:
+            response = await stt.transcribe(
+                file=audio_file,
+                model="whisper-1",
+                response_format="json",
+                language="pt"  # Português
+            )
+        
+        # Limpar arquivo temporário
+        try:
+            os.remove(temp_path)
+        except:
+            pass
+        
+        return True, response.text
+        
+    except Exception as e:
+        print(f"[AUDIO SERVICE] Erro na transcrição: {e}")
+        return False, f"Erro ao transcrever áudio: {str(e)}"
+
+
+async def transcribe_audio_from_base64(audio_base64: str, file_extension: str = "ogg") -> Tuple[bool, str]:
+    """
+    Transcreve áudio de uma string base64.
+    
+    Args:
+        audio_base64: String base64 do áudio
+        file_extension: Extensão do arquivo
+    
+    Returns:
+        Tuple (sucesso: bool, texto_ou_erro: str)
+    """
+    try:
+        # Remover prefixo data:audio/... se existir
+        if "," in audio_base64:
+            audio_base64 = audio_base64.split(",")[1]
+        
+        audio_data = base64.b64decode(audio_base64)
+        return await transcribe_audio(audio_data, file_extension)
+    except Exception as e:
+        return False, f"Erro ao decodificar áudio: {str(e)}"
+
+
+async def transcribe_audio_from_url(audio_url: str) -> Tuple[bool, str]:
+    """
+    Transcreve áudio de uma URL.
+    
+    Args:
+        audio_url: URL do arquivo de áudio
+    
+    Returns:
+        Tuple (sucesso: bool, texto_ou_erro: str)
+    """
+    try:
+        import httpx
+        
+        async with httpx.AsyncClient(timeout=60.0) as client:
+            response = await client.get(audio_url)
+            response.raise_for_status()
+            
+            # Detectar extensão do arquivo
+            content_type = response.headers.get("content-type", "audio/ogg")
+            if "opus" in content_type or "ogg" in content_type:
+                ext = "ogg"
+            elif "mp3" in content_type or "mpeg" in content_type:
+                ext = "mp3"
+            elif "wav" in content_type:
+                ext = "wav"
+            elif "m4a" in content_type:
+                ext = "m4a"
+            else:
+                ext = "ogg"  # Default para WhatsApp
+            
+            return await transcribe_audio(response.content, ext)
+            
+    except Exception as e:
+        return False, f"Erro ao baixar áudio: {str(e)}"
+
+
+async def generate_speech(text: str, voice: str = "nova") -> Tuple[bool, Optional[bytes], str]:
+    """
+    Gera áudio a partir de texto usando OpenAI TTS.
+    
+    Args:
+        text: Texto para converter em áudio
+        voice: Voz a usar (alloy, ash, coral, echo, fable, nova, onyx, sage, shimmer)
+    
+    Returns:
+        Tuple (sucesso: bool, audio_bytes: Optional[bytes], mensagem: str)
+    """
+    if not AUDIO_AVAILABLE or not EMERGENT_LLM_KEY:
+        return False, None, "Serviço de TTS não disponível"
+    
+    if not text or len(text.strip()) == 0:
+        return False, None, "Texto vazio"
+    
+    # Limitar texto a 4096 caracteres
+    if len(text) > 4096:
+        text = text[:4096]
+    
+    try:
+        # Inicializar TTS
+        tts = OpenAITextToSpeech(api_key=EMERGENT_LLM_KEY)
+        
+        # Gerar áudio
+        audio_bytes = await tts.generate_speech(
+            text=text,
+            model="tts-1",  # Modelo mais rápido para respostas em tempo real
+            voice=voice,
+            response_format="mp3",
+            speed=1.0
+        )
+        
+        return True, audio_bytes, "Áudio gerado com sucesso"
+        
+    except Exception as e:
+        print(f"[AUDIO SERVICE] Erro na geração de áudio: {e}")
+        return False, None, f"Erro ao gerar áudio: {str(e)}"
+
+
+async def generate_speech_base64(text: str, voice: str = "nova") -> Tuple[bool, Optional[str], str]:
+    """
+    Gera áudio em base64 a partir de texto.
+    
+    Args:
+        text: Texto para converter em áudio
+        voice: Voz a usar
+    
+    Returns:
+        Tuple (sucesso: bool, audio_base64: Optional[str], mensagem: str)
+    """
+    success, audio_bytes, message = await generate_speech(text, voice)
+    
+    if success and audio_bytes:
+        audio_base64 = base64.b64encode(audio_bytes).decode("utf-8")
+        return True, audio_base64, message
+    
+    return success, None, message
+
+
+async def save_audio_file(audio_bytes: bytes, filename: str = None) -> str:
+    """
+    Salva áudio em arquivo e retorna o caminho.
+    
+    Args:
+        audio_bytes: Bytes do áudio
+        filename: Nome do arquivo (opcional)
+    
+    Returns:
+        Caminho do arquivo salvo
+    """
+    if not filename:
+        filename = f"{uuid.uuid4()}.mp3"
+    
+    filepath = os.path.join(AUDIO_DIR, filename)
+    
+    with open(filepath, "wb") as f:
+        f.write(audio_bytes)
+    
+    return filepath
+
+
+def get_audio_url(filename: str) -> str:
+    """
+    Retorna a URL para acessar um arquivo de áudio.
+    """
+    return f"/api/audio/{filename}"
+
+
+# Vozes disponíveis com descrições
+AVAILABLE_VOICES = {
+    "alloy": "Neutra e equilibrada",
+    "ash": "Clara e articulada", 
+    "coral": "Calorosa e amigável",
+    "echo": "Suave e calma",
+    "fable": "Expressiva, boa para histórias",
+    "nova": "Energética e animada",
+    "onyx": "Profunda e autoritária",
+    "sage": "Sábia e ponderada",
+    "shimmer": "Brilhante e alegre"
+}
+
+# Voz padrão do chatbot
+DEFAULT_VOICE = "nova"
