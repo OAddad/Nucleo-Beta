@@ -4208,6 +4208,58 @@ async def get_audio_status():
     }
 
 
+# ==================== FILA DE ESPERA POR ATENDIMENTO HUMANO ====================
+
+@api_router.get("/chatbot/waiting-queue")
+async def get_waiting_queue():
+    """
+    Retorna a lista de clientes aguardando atendimento humano.
+    Usado pelo frontend para tocar o som de alerta.
+    """
+    queue = chatbot_ai.get_waiting_queue()
+    return {
+        "success": True,
+        "queue": queue,
+        "count": len(queue),
+        "has_waiting": len(queue) > 0
+    }
+
+
+@api_router.delete("/chatbot/waiting-queue/{phone}")
+async def remove_from_waiting_queue(phone: str, current_user: User = Depends(get_current_user)):
+    """Remove um cliente da fila de espera manualmente"""
+    removed = chatbot_ai.remove_from_waiting_queue(phone)
+    return {"success": removed}
+
+
+@api_router.post("/chatbot/waiting-queue/clear")
+async def clear_waiting_queue(current_user: User = Depends(get_current_user)):
+    """Limpa toda a fila de espera"""
+    if current_user.role not in ["proprietario", "administrador"]:
+        raise HTTPException(status_code=403, detail="Sem permissão")
+    
+    chatbot_ai.waiting_for_human.clear()
+    return {"success": True}
+
+
+# Endpoint para servir o som de alerta
+@api_router.get("/sounds/cliente-esperando")
+async def get_waiting_sound():
+    """Serve o arquivo de som do alerta de cliente esperando"""
+    from fastapi.responses import FileResponse
+    
+    filepath = "/app/backend/static/sounds/cliente_esperando.mp3"
+    
+    if not os.path.exists(filepath):
+        raise HTTPException(status_code=404, detail="Som não encontrado")
+    
+    return FileResponse(
+        filepath,
+        media_type="audio/mpeg",
+        filename="cliente_esperando.mp3"
+    )
+
+
 # Endpoint para servir arquivos de áudio gerados
 @api_router.get("/audio/{filename}")
 async def serve_audio_file(filename: str):
