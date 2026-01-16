@@ -372,8 +372,10 @@ def make_text_natural_for_speech(text: str) -> str:
     if random.random() < 0.4:
         text = re.sub(r'\bpara\b', 'pra', text, count=2, flags=re.IGNORECASE)
     
-    # Limpar espaços extras
+    # Limpar espaços e pausas extras
+    text = re.sub(r'\.{4,}', '...', text)  # Máximo de 3 pontos
     text = re.sub(r'\s+', ' ', text).strip()
+    text = re.sub(r'\s*\.\.\.\s*', '... ', text)  # Espaço após pausas
     
     return text
 
