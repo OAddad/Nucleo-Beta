@@ -2365,6 +2365,10 @@ function CupomEntregaPreview({ config, pedido }) {
 function CupomPreparoPreview({ pedido }) {
   return (
     <>
+      {/* 2 ESPAÇOS NO INÍCIO */}
+      <div className="h-4" />
+      <div className="h-4" />
+      
       {/* TÍTULO */}
       <div className="text-center mb-2">
         <div className="text-xl font-bold">** PREPARO **</div>
@@ -2392,21 +2396,58 @@ function CupomPreparoPreview({ pedido }) {
       {/* ITENS */}
       <div className="text-center font-bold mb-2">-- ITENS --</div>
       
-      {pedido.items.map((item, i) => (
-        <div key={i} className="mb-3">
-          <div className="text-lg font-bold">
-            {item.quantidade}x {item.nome}
-          </div>
-          {item.tipo_combo && (
-            <div className="text-[10px] text-gray-600">[{item.tipo_combo.toUpperCase()}]</div>
-          )}
-          {item.observacao && (
-            <div className="text-sm font-bold text-orange-600">
-              &gt;&gt;&gt; {item.observacao}
+      {pedido.items.map((item, i) => {
+        const isCombo = item.tipo_combo?.toLowerCase() === 'combo';
+        return (
+          <div key={i} className="mb-1">
+            {/* Item principal com tipo ao lado */}
+            <div className="text-lg font-bold">
+              {item.quantidade}x {item.nome}{isCombo ? ' -> COMBO' : ''}
             </div>
-          )}
-        </div>
-      ))}
+            
+            {/* Subitems do combo (bebidas, acompanhamentos) */}
+            {isCombo && item.subitems && item.subitems.map((sub, j) => (
+              <div key={`sub-${j}`}>
+                <div className="text-sm ml-4">-&gt; {sub.nome || sub.name}</div>
+                {sub.observacao && (
+                  <div className="text-sm font-bold text-orange-600 ml-8">
+                    &gt;&gt;&gt; {sub.observacao}
+                  </div>
+                )}
+              </div>
+            ))}
+            
+            {/* Adicionais */}
+            {isCombo && item.adicionais && item.adicionais.map((add, j) => (
+              <div key={`add-${j}`}>
+                <div className="text-sm ml-4">-&gt; {add.nome}</div>
+                {add.observacao && (
+                  <div className="text-sm font-bold text-orange-600 ml-8">
+                    &gt;&gt;&gt; {add.observacao}
+                  </div>
+                )}
+              </div>
+            ))}
+            
+            {/* Tipo SIMPLES */}
+            {!isCombo && item.tipo_combo && (
+              <div className="text-[10px] text-gray-600">[{item.tipo_combo.toUpperCase()}]</div>
+            )}
+            
+            {/* Observação do item principal */}
+            {item.observacao && (
+              <div className="text-sm font-bold text-orange-600 ml-8">
+                &gt;&gt;&gt; {item.observacao}
+              </div>
+            )}
+            
+            {/* Linha separadora entre itens */}
+            {i < pedido.items.length - 1 && (
+              <div className="text-gray-400 text-xs my-1">--------------------------</div>
+            )}
+          </div>
+        );
+      })}
       
       <div className="border-t border-dashed border-gray-400 my-2" />
       
