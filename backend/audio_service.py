@@ -173,6 +173,9 @@ async def generate_speech(text: str, voice: str = "nova") -> Tuple[bool, Optiona
     if not text or len(text.strip()) == 0:
         return False, None, "Texto vazio"
     
+    # Tornar o texto mais natural para fala
+    text = make_text_natural_for_speech(text)
+    
     # Limitar texto a 4096 caracteres
     if len(text) > 4096:
         text = text[:4096]
