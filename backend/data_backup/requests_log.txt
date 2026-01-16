@@ -48044,3 +48044,7 @@
 2026-01-16T14:34:34.988295+00:00 | DB_CALL get_all_settings | P3 | 1.39ms | success
 2026-01-16T14:34:34.989872+00:00 | DB_CALL get_all_pedidos | P3 | 2.23ms | success
 2026-01-16T14:34:35.392885+00:00 | DB_CALL get_all_products | P3 | 27.87ms | success
+2026-01-16T14:34:37.590319+00:00 | DB_CALL get_all_products | P3 | 23.91ms | success
+2026-01-16T14:34:39.975475+00:00 | DB_CALL get_all_settings | P3 | 0.64ms | success
+2026-01-16T14:34:39.975986+00:00 | DB_CALL get_all_entregadores | P3 | 0.82ms | success
+2026-01-16T14:34:39.978732+00:00 | DB_CALL get_all_pedidos | P3 | 1.37ms | success
