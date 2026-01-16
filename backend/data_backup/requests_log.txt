@@ -47695,3 +47695,4 @@
 2026-01-16T14:15:28.269631+00:00 | DB_CALL get_all_settings | P3 | 0.3ms | success
 2026-01-16T14:15:28.377318+00:00 | DB_CALL get_all_settings | P3 | 0.31ms | success
 2026-01-16T14:15:28.553930+00:00 | DB_CALL get_all_settings | P3 | 0.26ms | success
+2026-01-16T14:16:36.407035+00:00 | DB_CALL get_all_products | P3 | 26.14ms | success
