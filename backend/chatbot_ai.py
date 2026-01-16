@@ -665,7 +665,8 @@ async def process_message(phone: str, message: str, push_name: str = "", for_aud
         session_id = f"whatsapp_{phone}"
         
         # Sempre recriar a instância para garantir prompt atualizado
-        system_prompt = get_system_prompt()
+        # Se for resposta de áudio, usar prompt com instruções de fala humana
+        system_prompt = get_system_prompt(for_audio_response=for_audio_response)
         chat_instances[session_id] = LlmChat(
             api_key=EMERGENT_LLM_KEY,
             session_id=session_id,
@@ -690,6 +691,11 @@ HISTÓRICO DA CONVERSA (continue naturalmente, NÃO repita saudações):
 ---
 """
         
+        # Instruções adicionais para resposta de áudio
+        audio_instruction = ""
+        if for_audio_response:
+            audio_instruction = "\nIMPORTANTE: Esta resposta será convertida em ÁUDIO. Escreva como FALA HUMANA, não como texto. Números por extenso, pausas com reticências, linguagem coloquial."
+        
         # Construir mensagem com contexto
         full_message = f"""{history_text}CONTEXTO DO CLIENTE:
 {context_text}
@@ -697,7 +703,7 @@ HISTÓRICO DA CONVERSA (continue naturalmente, NÃO repita saudações):
 MENSAGEM ATUAL DO CLIENTE:
 {message}
 
-INSTRUÇÕES: Responda de forma natural e direta. Se já cumprimentou antes, NÃO cumprimente novamente."""
+INSTRUÇÕES: Responda de forma natural e direta. Se já cumprimentou antes, NÃO cumprimente novamente.{audio_instruction}"""
         
         # Enviar para LLM
         user_message = UserMessage(text=full_message)
