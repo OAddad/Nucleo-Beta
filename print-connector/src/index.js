@@ -416,76 +416,26 @@ app.get('/config', (req, res) => {
   });
 });
 
-/**
- * GET /network-info
- * Informações de rede para conectar de outras máquinas
- */
-app.get('/network-info', (req, res) => {
-  const networkInterfaces = os.networkInterfaces();
-  const addresses = [];
-  
-  for (const [name, nets] of Object.entries(networkInterfaces)) {
-    for (const net of nets) {
-      // Apenas IPv4 e não localhost
-      if (net.family === 'IPv4' && !net.internal) {
-        addresses.push({
-          interface: name,
-          ip: net.ip || net.address,
-          url: `http://${net.ip || net.address}:${PORT}`
-        });
-      }
-    }
-  }
-  
-  res.json({
-    hostname: os.hostname(),
-    port: PORT,
-    addresses,
-    instructions: [
-      "Para imprimir de outras máquinas na rede:",
-      "1. Use um dos endereços IP acima",
-      "2. Configure o PRINT_CONNECTOR_URL no sistema web",
-      "3. Certifique-se que o firewall permite a porta " + PORT
-    ]
-  });
-});
-
 // ==================== INICIALIZAÇÃO ====================
 
-// Escuta em 0.0.0.0 para aceitar conexões de qualquer IP na rede
-const server = app.listen(PORT, '0.0.0.0', () => {
-  const networkInterfaces = os.networkInterfaces();
-  let localIP = 'localhost';
-  
-  for (const nets of Object.values(networkInterfaces)) {
-    for (const net of nets) {
-      if (net.family === 'IPv4' && !net.internal) {
-        localIP = net.ip || net.address;
-        break;
-      }
-    }
-  }
-  
+// Escuta apenas em localhost (127.0.0.1)
+const server = app.listen(PORT, '127.0.0.1', () => {
   console.log(`
 ╔══════════════════════════════════════════════════════════╗
 ║       NÚCLEO PRINT CONNECTOR v${VERSION}                  ║
 ╠══════════════════════════════════════════════════════════╣
-║  🌐 Acesso Local:  http://127.0.0.1:${PORT}                ║
-║  🌐 Acesso Rede:   http://${localIP}:${PORT}               ║
-║                                                          ║
-║  Status: ONLINE - Aceitando conexões de qualquer máquina ║
+║  🖨️  Servidor: http://127.0.0.1:${PORT}                    ║
+║  Status: ONLINE                                          ║
 ║                                                          ║
 ║  Endpoints:                                              ║
-║    GET  /health       - Status do serviço                ║
-║    GET  /printers     - Listar impressoras               ║
-║    GET  /network-info - Info de rede                     ║
+║    GET  /health          - Status do serviço             ║
+║    GET  /printers        - Listar impressoras            ║
 ║    POST /printers/sector - Configurar por setor          ║
-║    POST /print        - Imprimir pedido                  ║
+║    POST /print           - Imprimir pedido               ║
 ╚══════════════════════════════════════════════════════════╝
   `);
   
-  logger.info(`Print Connector iniciado na porta ${PORT} (0.0.0.0)`);
-  logger.info(`Acesso de rede: http://${localIP}:${PORT}`);
+  logger.info(`Print Connector iniciado na porta ${PORT}`);
   printQueue.startProcessing();
   
   const defaultPrinter = config.get('defaultPrinter');
