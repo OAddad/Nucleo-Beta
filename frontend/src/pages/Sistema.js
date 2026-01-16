@@ -1976,13 +1976,73 @@ function ConfiguracaoImpressao({ toast }) {
   const [loading, setLoading] = useState(true);
   const [testingEntrega, setTestingEntrega] = useState(false);
   const [testingPreparo, setTestingPreparo] = useState(false);
+  
+  // Estado para impressoras e setores
+  const [printers, setPrinters] = useState([]);
+  const [sectorPrinters, setSectorPrinters] = useState({});
+  const [savingSector, setSavingSector] = useState(null);
 
   // Estado para controlar qual aba de preview está ativa
   const [previewTab, setPreviewTab] = useState("entrega");
 
   useEffect(() => {
     fetchCompanySettings();
+    fetchPrinters();
+    fetchSectorPrinters();
   }, []);
+
+  // Buscar impressoras do Print Connector
+  const fetchPrinters = async () => {
+    try {
+      const response = await fetch(`${PRINT_CONNECTOR_URL}/printers`);
+      if (response.ok) {
+        const data = await response.json();
+        setPrinters(data);
+      }
+    } catch (error) {
+      console.error("Erro ao carregar impressoras:", error);
+    }
+  };
+
+  // Buscar configuração de setores
+  const fetchSectorPrinters = async () => {
+    try {
+      const response = await fetch(`${PRINT_CONNECTOR_URL}/printers/sectors`);
+      if (response.ok) {
+        const data = await response.json();
+        setSectorPrinters(data);
+      }
+    } catch (error) {
+      console.error("Erro ao carregar setores:", error);
+    }
+  };
+
+  // Salvar impressora para um setor
+  const handleSaveSector = async (sector, printerName) => {
+    if (!printerName) return;
+    
+    setSavingSector(sector);
+    try {
+      const response = await fetch(`${PRINT_CONNECTOR_URL}/printers/sector`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: printerName, sector })
+      });
+      
+      const data = await response.json();
+      
+      if (data.success) {
+        toast({ title: "✅ Salvo!", description: `Impressora configurada para ${sector === 'caixa' ? 'Cupom de Entrega' : 'Cupom de Preparo'}` });
+        fetchSectorPrinters();
+      } else {
+        throw new Error(data.error || 'Erro ao salvar');
+      }
+    } catch (error) {
+      toast({ title: "Erro", description: error.message, variant: "destructive" });
+    } finally {
+      setSavingSector(null);
+    }
+  };
 
   // Buscar dados da empresa de CONFIGURAÇÃO -> EMPRESA
   const fetchCompanySettings = async () => {
