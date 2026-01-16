@@ -2842,6 +2842,50 @@ function RespostasAutomaticasTab({ toast }) {
                 </div>
               </div>
 
+              {/* Card de Alerta - Pedido de Atendimento Humano */}
+              <div className="bg-card border rounded-xl p-4">
+                <div className="flex items-start gap-3 mb-4">
+                  <div className="p-2 rounded-lg bg-red-100 dark:bg-red-900/30">
+                    <Bell className="w-5 h-5 text-red-600" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold">Alerta de Atendimento Humano</h3>
+                    <p className="text-sm text-muted-foreground">Quando cliente pedir para falar com humano</p>
+                  </div>
+                </div>
+                
+                {/* Indicador de palavras-chave que ativam */}
+                <div className="mb-4 p-3 bg-red-50 dark:bg-red-950/30 rounded-lg border border-red-200 dark:border-red-800">
+                  <p className="text-xs font-medium text-red-700 dark:text-red-300 mb-2">
+                    🔊 Som de alerta toca em loop quando cliente diz coisas como:
+                  </p>
+                  <div className="flex flex-wrap gap-1">
+                    {["falar com atendente", "quero humano", "falar com pessoa", "atendimento humano", "preciso de ajuda"].map(kw => (
+                      <span key={kw} className="px-2 py-0.5 bg-white dark:bg-gray-800 rounded text-xs">
+                        "{kw}"
+                      </span>
+                    ))}
+                    <span className="px-2 py-0.5 bg-red-200 dark:bg-red-800 rounded text-xs font-medium">
+                      + outras variações
+                    </span>
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <div>
+                    <Label>Mensagem para o Cliente</Label>
+                    <Textarea 
+                      placeholder="Ex: Entendi! Vou chamar um atendente humano..."
+                      rows={2}
+                      value={botSettings.human_assistance_message || "Entendi! Vou chamar um atendente humano para te ajudar. Por favor, aguarde um momento... 🙋‍♂️"}
+                      onChange={(e) => { setBotSettings(prev => ({...prev, human_assistance_message: e.target.value})); }}
+                      className="mt-1"
+                    />
+                    <p className="text-xs text-muted-foreground mt-1">Mensagem enviada ao cliente enquanto aguarda atendente</p>
+                  </div>
+                </div>
+              </div>
+
               {/* Card de Áudio do ChatBot */}
               <div className="bg-card border rounded-xl p-4">
                 <div className="flex items-start gap-3 mb-4">
