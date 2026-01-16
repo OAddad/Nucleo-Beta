@@ -3064,6 +3064,11 @@ async def create_pedido(data: PedidoCreate):
             delay_seconds=None  # Usa o delay do template
         )
     
+    # 🖨️ IMPRESSÃO AUTOMÁTICA - Imprimir cupom de entrega e preparo
+    if pedido:
+        import asyncio
+        asyncio.create_task(enviar_impressao_automatica(pedido, settings))
+    
     return pedido
 
 
