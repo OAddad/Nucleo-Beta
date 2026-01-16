@@ -2102,6 +2102,83 @@ function RespostasAutomaticasTab({ toast }) {
   // State para controle de visualização
   const [activeSection, setActiveSection] = useState("respostas"); // respostas, notificacoes ou configuracoes
   const [previewMessage, setPreviewMessage] = useState("");
+  
+  // States para Sistema de Alerta de Atendimento Humano
+  const [waitingQueue, setWaitingQueue] = useState([]);
+  const [isAlertPlaying, setIsAlertPlaying] = useState(false);
+  const alertAudioRef = useRef(null);
+  
+  // Monitorar fila de clientes aguardando atendimento humano
+  useEffect(() => {
+    let isMounted = true;
+    
+    const checkWaitingQueue = async () => {
+      if (!isMounted) return;
+      
+      try {
+        const res = await fetch(`${API_URL}/api/chatbot/waiting-queue`);
+        const data = await res.json();
+        
+        if (!isMounted) return;
+        
+        if (data.success) {
+          setWaitingQueue(data.queue || []);
+          
+          // Se há clientes esperando e o alerta não está tocando, iniciar
+          if (data.has_waiting && !isAlertPlaying) {
+            playAlertSound();
+          }
+          // Se não há mais clientes esperando, parar o alerta
+          else if (!data.has_waiting && isAlertPlaying) {
+            stopAlertSound();
+          }
+        }
+      } catch (error) {
+        console.error("Erro ao verificar fila de espera:", error);
+      }
+    };
+    
+    // Verificar a cada 3 segundos
+    checkWaitingQueue();
+    const interval = setInterval(checkWaitingQueue, 3000);
+    
+    return () => {
+      isMounted = false;
+      clearInterval(interval);
+      // Parar o som ao desmontar
+      if (alertAudioRef.current) {
+        alertAudioRef.current.pause();
+        alertAudioRef.current = null;
+      }
+    };
+  }, [isAlertPlaying]);
+  
+  // Função para tocar o som de alerta em loop
+  const playAlertSound = () => {
+    if (alertAudioRef.current) return; // Já está tocando
+    
+    const audio = new Audio(`${API_URL}/api/sounds/cliente-esperando`);
+    audio.loop = true;
+    audio.volume = 0.7;
+    
+    audio.play().then(() => {
+      setIsAlertPlaying(true);
+      alertAudioRef.current = audio;
+    }).catch(err => {
+      console.error("Erro ao tocar som de alerta:", err);
+      // Pode falhar devido a políticas de autoplay do navegador
+    });
+  };
+  
+  // Função para parar o som de alerta
+  const stopAlertSound = () => {
+    if (alertAudioRef.current) {
+      alertAudioRef.current.pause();
+      alertAudioRef.current.currentTime = 0;
+      alertAudioRef.current = null;
+    }
+    setIsAlertPlaying(false);
+  };
 
   // Fetch Respostas
   const fetchResponses = useCallback(async () => {
