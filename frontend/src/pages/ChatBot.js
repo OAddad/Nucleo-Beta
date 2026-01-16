@@ -2236,6 +2236,9 @@ function RespostasAutomaticasTab({ toast }) {
       });
       setWaitingQueue([]);
       stopAlertSound();
+    } catch (error) {
+      console.error("Erro ao ignorar todos:", error);
+    }
   };
 
   // Fetch Respostas
