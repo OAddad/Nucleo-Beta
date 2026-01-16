@@ -158,8 +158,14 @@ class PrintQueue {
   // ==================== CUPOM DE PREPARO ====================
   // Mostra: CÓDIGO, HORA, ITENS, OBSERVAÇÃO, Nome do cliente
   _buildPreparoTemplate(escpos, pedido, job) {
-    // ===== 2 LINHAS EM BRANCO NO INÍCIO =====
+    // ===== 8 LINHAS EM BRANCO NO INÍCIO =====
     escpos
+      .newLine()
+      .newLine()
+      .newLine()
+      .newLine()
+      .newLine()
+      .newLine()
       .newLine()
       .newLine();
     
