@@ -1977,12 +1977,72 @@ function ConfiguracaoImpressao({ toast }) {
   const [testingEntrega, setTestingEntrega] = useState(false);
   const [testingPreparo, setTestingPreparo] = useState(false);
 
+  // Estado para impressoras e setores
+  const [printers, setPrinters] = useState([]);
+  const [sectorPrinters, setSectorPrinters] = useState({});
+  const [savingSector, setSavingSector] = useState(null);
+
   // Estado para controlar qual aba de preview está ativa
   const [previewTab, setPreviewTab] = useState("entrega");
 
   useEffect(() => {
     fetchCompanySettings();
+    fetchPrinters();
+    fetchSectorPrinters();
   }, []);
+
+  // Buscar impressoras do Print Connector
+  const fetchPrinters = async () => {
+    try {
+      const response = await fetch(`${PRINT_CONNECTOR_URL}/printers`);
+      if (response.ok) {
+        const data = await response.json();
+        setPrinters(data);
+      }
+    } catch (error) {
+      console.error("Erro ao carregar impressoras:", error);
+    }
+  };
+
+  // Buscar configuração de setores
+  const fetchSectorPrinters = async () => {
+    try {
+      const response = await fetch(`${PRINT_CONNECTOR_URL}/printers/sectors`);
+      if (response.ok) {
+        const data = await response.json();
+        setSectorPrinters(data);
+      }
+    } catch (error) {
+      console.error("Erro ao carregar setores:", error);
+    }
+  };
+
+  // Salvar impressora para um setor
+  const handleSaveSector = async (sector, printerName) => {
+    if (!printerName) return;
+    
+    setSavingSector(sector);
+    try {
+      const response = await fetch(`${PRINT_CONNECTOR_URL}/printers/sector`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: printerName, sector })
+      });
+      
+      const data = await response.json();
+      
+      if (data.success) {
+        toast({ title: "✅ Salvo!", description: `Impressora configurada para ${sector === 'caixa' ? 'Cupom de Entrega' : 'Cupom de Preparo'}` });
+        fetchSectorPrinters();
+      } else {
+        throw new Error(data.error || 'Erro ao salvar');
+      }
+    } catch (error) {
+      toast({ title: "Erro", description: error.message, variant: "destructive" });
+    } finally {
+      setSavingSector(null);
+    }
+  };
 
   // Buscar dados da empresa de CONFIGURAÇÃO -> EMPRESA
   const fetchCompanySettings = async () => {
@@ -2042,6 +2102,18 @@ function ConfiguracaoImpressao({ toast }) {
   // Função para testar impressão
   const handleTestarImpressao = async (tipo) => {
     const isEntrega = tipo === 'entrega';
+    const sector = isEntrega ? 'caixa' : 'cozinha';
+    
+    // Verificar se tem impressora configurada
+    if (!sectorPrinters[sector]) {
+      toast({ 
+        title: "⚠️ Impressora não configurada", 
+        description: `Selecione uma impressora para ${isEntrega ? 'Cupom de Entrega' : 'Cupom de Preparo'}`,
+        variant: "destructive" 
+      });
+      return;
+    }
+    
     if (isEntrega) setTestingEntrega(true);
     else setTestingPreparo(true);
 
@@ -2055,7 +2127,7 @@ function ConfiguracaoImpressao({ toast }) {
           template: isEntrega ? 'caixa' : 'preparo',
           copies: 1,
           cut: true,
-          sector: isEntrega ? 'caixa' : 'cozinha',
+          sector: sector,
           empresa: {
             nome: config.empresa_nome,
             slogan: config.empresa_slogan,
