@@ -314,23 +314,38 @@ export default function Delivery() {
     }
   };
 
-  // Imprimir pedido manualmente via Print Connector
+  // Imprimir 2ª via via API do backend
+  const handlePrint2Via = async (pedido, tipo, e) => {
+    if (e) e.stopPropagation();
+    
+    try {
+      const response = await axios.post(
+        `${API}/pedidos/${pedido.id}/imprimir`,
+        { tipo },
+        getAuthHeader()
+      );
+      
+      if (response.data.success) {
+        toast.success(`2ª via do ${tipo === 'entrega' ? 'Cupom de Entrega' : 'Cupom de Preparo'} enviada`);
+      } else {
+        toast.error(response.data.message || "Erro ao imprimir");
+      }
+    } catch (error) {
+      if (error.response?.status === 503) {
+        toast.error("Print Connector offline. Verifique se o aplicativo está rodando.");
+      } else {
+        toast.error(error.response?.data?.detail || "Erro ao imprimir 2ª via");
+      }
+    }
+  };
+
+  // Imprimir pedido manualmente via Print Connector (ambos cupons)
   const handlePrintPedido = async (pedido, e) => {
     if (e) e.stopPropagation();
     
-    // Tentar imprimir via Print Connector (preferido)
-    const result = await printViaPrintConnector(pedido, { template: 'caixa' });
-    
-    if (result.success) {
-      toast.success("Pedido enviado para impressão");
-    } else if (result.offline) {
-      // Print Connector offline - avisar usuário
-      toast.error("Print Connector offline. Instale o aplicativo em Sistema → Impressão");
-    } else if (result.no_printer) {
-      toast.error("Nenhuma impressora configurada no Print Connector");
-    } else {
-      toast.error(result.error || "Erro ao imprimir");
-    }
+    // Imprimir ambos os cupons
+    handlePrint2Via(pedido, 'entrega', null);
+    handlePrint2Via(pedido, 'preparo', null);
   };
 
   // Marcar como pronto
