@@ -2082,13 +2082,14 @@ function ConfiguracaoImpressao({ toast }) {
         quantidade: 2, 
         preco_unitario: 25.00, 
         observacao: "Sem cebola", 
-        tipo_combo: "combo",
-        subitems: [
-          { nome: "Coca Cola 310ml" },
-          { nome: "Batata Individual", observacao: "Bem crocante" }
+        combo_type: "combo",
+        etapas: [
+          { etapa: 'BEBIDA', itens: ['Coca Cola 310ml'] },
+          { etapa: 'Batata', itens: ['Batata Individual'] },
+          { etapa: 'ADICIONAIS', itens: ['ADC - Alface'] }
         ]
       },
-      { nome: "Batata Frita", quantidade: 1, preco_unitario: 15.00, tipo_combo: "simples" },
+      { nome: "Batata Frita", quantidade: 1, preco_unitario: 15.00, combo_type: "" },
     ],
     subtotal: 65.00,
     valor_entrega: 5.00,
