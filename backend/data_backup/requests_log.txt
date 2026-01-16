@@ -48659,3 +48659,4 @@
 2026-01-16T14:44:43.443743+00:00 | DB_CALL get_pedido_by_id | P3 | 0.31ms | success
 2026-01-16T14:44:45.057591+00:00 | DB_CALL get_all_settings | P3 | 0.33ms | success
 2026-01-16T14:44:48.447794+00:00 | DB_CALL get_pedido_by_id | P3 | 0.32ms | success
+2026-01-16T14:44:53.443947+00:00 | DB_CALL get_pedido_by_id | P3 | 0.32ms | success
