@@ -2226,7 +2226,7 @@ function ConfiguracaoImpressao({ toast }) {
 
         {/* Informações e Botão de Teste */}
         <div className="space-y-4">
-          {/* Descrição do Cupom */}
+          {/* SELEÇÃO DE IMPRESSORA */}
           <div className={`border rounded-xl p-6 ${
             previewTab === "entrega" 
               ? "bg-blue-50 dark:bg-blue-950/30 border-blue-200 dark:border-blue-900" 
@@ -2235,57 +2235,47 @@ function ConfiguracaoImpressao({ toast }) {
             <h3 className={`font-semibold text-lg mb-3 flex items-center gap-2 ${
               previewTab === "entrega" ? "text-blue-700 dark:text-blue-400" : "text-orange-700 dark:text-orange-400"
             }`}>
-              {previewTab === "entrega" ? (
-                <>
-                  <Receipt className="w-5 h-5" />
-                  Cupom de Entrega (Caixa)
-                </>
-              ) : (
-                <>
-                  <ChefHat className="w-5 h-5" />
-                  Cupom de Preparo (Cozinha)
-                </>
-              )}
+              <Printer className="w-5 h-5" />
+              {previewTab === "entrega" ? "Impressora do Caixa (Entrega)" : "Impressora da Cozinha (Preparo)"}
             </h3>
             
-            {previewTab === "entrega" ? (
-              <ul className="space-y-2 text-sm">
-                <li className="flex items-start gap-2">
-                  <div className="w-2 h-2 rounded-full bg-blue-500 mt-1.5 flex-shrink-0" />
-                  <span>Impresso na impressora do <strong>CAIXA</strong></span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <div className="w-2 h-2 rounded-full bg-blue-500 mt-1.5 flex-shrink-0" />
-                  <span>Contém dados da empresa, itens com preços e valores</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <div className="w-2 h-2 rounded-full bg-blue-500 mt-1.5 flex-shrink-0" />
-                  <span>Informações completas de entrega e pagamento</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <div className="w-2 h-2 rounded-full bg-blue-500 mt-1.5 flex-shrink-0" />
-                  <span>Entregue ao cliente ou entregador</span>
-                </li>
-              </ul>
+            <p className="text-sm text-muted-foreground mb-3">
+              {previewTab === "entrega" 
+                ? "Selecione qual impressora vai imprimir o Cupom de Entrega:"
+                : "Selecione qual impressora vai imprimir o Cupom de Preparo:"
+              }
+            </p>
+
+            {printers.length === 0 ? (
+              <div className="text-sm text-muted-foreground bg-muted/50 rounded-lg p-3">
+                <p className="flex items-center gap-2">
+                  <AlertCircle className="w-4 h-4" />
+                  Nenhuma impressora detectada. Verifique se o Print Connector está rodando.
+                </p>
+              </div>
             ) : (
-              <ul className="space-y-2 text-sm">
-                <li className="flex items-start gap-2">
-                  <div className="w-2 h-2 rounded-full bg-orange-500 mt-1.5 flex-shrink-0" />
-                  <span>Impresso na impressora da <strong>COZINHA</strong></span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <div className="w-2 h-2 rounded-full bg-orange-500 mt-1.5 flex-shrink-0" />
-                  <span>Mostra apenas: <strong>CÓDIGO, HORA, ITENS, OBSERVAÇÕES</strong></span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <div className="w-2 h-2 rounded-full bg-orange-500 mt-1.5 flex-shrink-0" />
-                  <span>Observações destacadas para atenção do cozinheiro</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <div className="w-2 h-2 rounded-full bg-orange-500 mt-1.5 flex-shrink-0" />
-                  <span>Nome do cliente para identificação</span>
-                </li>
-              </ul>
+              <div className="space-y-3">
+                <select
+                  value={sectorPrinters[previewTab === "entrega" ? "caixa" : "cozinha"]?.name || ""}
+                  onChange={(e) => handleSaveSector(previewTab === "entrega" ? "caixa" : "cozinha", e.target.value)}
+                  disabled={savingSector}
+                  className="w-full p-3 rounded-lg border bg-background text-foreground focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                >
+                  <option value="">-- Selecione uma impressora --</option>
+                  {printers.map((printer) => (
+                    <option key={printer.id} value={printer.name}>
+                      {printer.name} {printer.status === 'online' ? '✓' : ''}
+                    </option>
+                  ))}
+                </select>
+                
+                {sectorPrinters[previewTab === "entrega" ? "caixa" : "cozinha"] && (
+                  <div className="flex items-center gap-2 text-sm text-green-600 dark:text-green-400">
+                    <CheckCircle className="w-4 h-4" />
+                    <span>Configurado: <strong>{sectorPrinters[previewTab === "entrega" ? "caixa" : "cozinha"]?.name}</strong></span>
+                  </div>
+                )}
+              </div>
             )}
           </div>
 
@@ -2300,7 +2290,7 @@ function ConfiguracaoImpressao({ toast }) {
             </p>
             <Button
               onClick={() => handleTestarImpressao(previewTab)}
-              disabled={previewTab === "entrega" ? testingEntrega : testingPreparo}
+              disabled={(previewTab === "entrega" ? testingEntrega : testingPreparo) || !sectorPrinters[previewTab === "entrega" ? "caixa" : "cozinha"]}
               className={`w-full ${
                 previewTab === "entrega" 
                   ? "bg-blue-500 hover:bg-blue-600" 
@@ -2314,6 +2304,11 @@ function ConfiguracaoImpressao({ toast }) {
               )}
               Imprimir Teste - {previewTab === "entrega" ? "Cupom de Entrega" : "Cupom de Preparo"}
             </Button>
+            {!sectorPrinters[previewTab === "entrega" ? "caixa" : "cozinha"] && (
+              <p className="text-xs text-muted-foreground mt-2 text-center">
+                Selecione uma impressora acima para testar
+              </p>
+            )}
           </div>
 
           {/* Dica sobre setores */}
