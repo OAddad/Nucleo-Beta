@@ -48747,3 +48747,6 @@
 2026-01-16T14:46:32.776291+00:00 | DB_CALL get_user_by_id | P3 | 0.35ms | success
 2026-01-16T14:46:32.776615+00:00 | DB_CALL get_pedido_by_id | P3 | 0.15ms | success
 2026-01-16T14:46:32.776811+00:00 | DB_CALL get_all_settings | P3 | 0.13ms | success
+2026-01-16T14:46:34.385990+00:00 | DB_CALL get_pedido_by_id | P3 | 0.37ms | success
+2026-01-16T14:46:39.385004+00:00 | DB_CALL get_pedido_by_id | P3 | 0.31ms | success
+2026-01-16T14:46:44.377633+00:00 | DB_CALL get_pedido_by_id | P3 | 0.31ms | success
