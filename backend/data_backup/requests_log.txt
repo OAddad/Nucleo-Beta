@@ -47291,3 +47291,13 @@
 2026-01-16T13:26:09.303773+00:00 | DB_CALL get_all_categories | P3 | 2.14ms | success
 2026-01-16T13:26:09.308270+00:00 | DB_CALL get_all_business_hours | P3 | 5.88ms | success
 2026-01-16T13:26:09.720211+00:00 | DB_CALL get_all_products | P3 | 417.7ms | success
+2026-01-16T13:26:19.793328+00:00 | DB_CALL get_all_categories | P3 | 0.44ms | success
+2026-01-16T13:26:19.820729+00:00 | DB_CALL get_all_products | P3 | 25.86ms | success
+2026-01-16T13:26:19.961441+00:00 | DB_CALL get_all_settings | P3 | 166.08ms | success
+2026-01-16T13:26:19.961878+00:00 | DB_CALL get_all_business_hours | P3 | 165.35ms | success
+2026-01-16T13:26:20.909798+00:00 | DB_CALL get_all_products | P3 | 29.16ms | success
+2026-01-16T13:26:21.006264+00:00 | DB_CALL get_all_settings | P3 | 0.85ms | success
+2026-01-16T13:26:21.010493+00:00 | DB_CALL get_all_categories | P3 | 0.24ms | success
+2026-01-16T13:26:21.017067+00:00 | DB_CALL get_all_business_hours | P3 | 0.23ms | success
+2026-01-16T13:26:21.105444+00:00 | DB_CALL get_all_products | P3 | 24.32ms | success
+2026-01-16T13:26:21.254256+00:00 | DB_CALL get_all_bairros | P3 | 5.82ms | success
