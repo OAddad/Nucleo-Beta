@@ -48666,3 +48666,12 @@
 2026-01-16T14:45:03.410781+00:00 | DB_CALL get_all_settings | P3 | 3.82ms | success
 2026-01-16T14:45:03.443521+00:00 | DB_CALL get_pedido_by_id | P3 | 0.28ms | success
 2026-01-16T14:45:08.446237+00:00 | DB_CALL get_pedido_by_id | P3 | 0.31ms | success
+2026-01-16T14:45:10.685783+00:00 | DB_CALL get_all_products | P3 | 23.85ms | success
+2026-01-16T14:45:11.419199+00:00 | DB_CALL get_all_pedidos | P3 | 1.76ms | success
+2026-01-16T14:45:11.422436+00:00 | DB_CALL get_all_entregadores | P3 | 0.24ms | success
+2026-01-16T14:45:11.422803+00:00 | DB_CALL get_all_settings | P3 | 0.83ms | success
+2026-01-16T14:45:12.460770+00:00 | DB_CALL get_all_products | P3 | 25.05ms | success
+2026-01-16T14:45:12.707928+00:00 | DB_CALL get_all_pedidos | P3 | 2.08ms | success
+2026-01-16T14:45:12.710157+00:00 | DB_CALL get_all_entregadores | P3 | 3.51ms | success
+2026-01-16T14:45:12.711525+00:00 | DB_CALL get_all_settings | P3 | 0.19ms | success
+2026-01-16T14:45:14.382414+00:00 | DB_CALL get_pedido_by_id | P3 | 0.35ms | success
