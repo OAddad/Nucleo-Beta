@@ -2429,7 +2429,13 @@ function CupomEntregaPreview({ config, pedido }) {
 function CupomPreparoPreview({ pedido }) {
   return (
     <>
-      {/* 2 ESPAÇOS NO INÍCIO */}
+      {/* 8 ESPAÇOS NO INÍCIO */}
+      <div className="h-4" />
+      <div className="h-4" />
+      <div className="h-4" />
+      <div className="h-4" />
+      <div className="h-4" />
+      <div className="h-4" />
       <div className="h-4" />
       <div className="h-4" />
       
@@ -2461,7 +2467,7 @@ function CupomPreparoPreview({ pedido }) {
       <div className="text-center font-bold mb-2">-- ITENS --</div>
       
       {pedido.items.map((item, i) => {
-        const isCombo = item.tipo_combo?.toLowerCase() === 'combo';
+        const isCombo = (item.combo_type || item.tipo_combo || '').toLowerCase() === 'combo';
         return (
           <div key={i} className="mb-1">
             {/* Item principal com tipo ao lado */}
@@ -2469,28 +2475,25 @@ function CupomPreparoPreview({ pedido }) {
               {item.quantidade}x {item.nome}{isCombo ? ' -> COMBO' : ''}
             </div>
             
-            {/* Subitems do combo (bebidas, acompanhamentos) */}
+            {/* Etapas do combo (bebidas, batatas, adicionais) */}
+            {isCombo && item.etapas && item.etapas.map((etapa, j) => (
+              etapa.itens && etapa.itens.map((subItem, k) => (
+                <div key={`etapa-${j}-${k}`} className="text-lg font-bold ml-2">
+                  -&gt; {subItem}
+                </div>
+              ))
+            ))}
+            
+            {/* Fallback: Subitems antigo */}
             {isCombo && item.subitems && item.subitems.map((sub, j) => (
-              <div key={`sub-${j}`} className="text-sm ml-4">
-                -&gt; {sub.nome || sub.name}
+              <div key={`sub-${j}`} className="text-lg font-bold ml-2">
+                -&gt; {sub.nome || sub.name || sub}
               </div>
             ))}
-            
-            {/* Adicionais */}
-            {isCombo && item.adicionais && item.adicionais.map((add, j) => (
-              <div key={`add-${j}`} className="text-sm ml-4">
-                -&gt; {add.nome}
-              </div>
-            ))}
-            
-            {/* Tipo SIMPLES */}
-            {!isCombo && item.tipo_combo && (
-              <div className="text-[10px] text-gray-600">[{item.tipo_combo.toUpperCase()}]</div>
-            )}
             
             {/* Observação do item principal */}
             {item.observacao && (
-              <div className="text-sm font-bold text-orange-600 ml-8">
+              <div className="text-sm font-bold text-orange-600 ml-4">
                 &gt;&gt;&gt; {item.observacao}
               </div>
             )}
