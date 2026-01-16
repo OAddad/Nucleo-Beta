@@ -29,6 +29,7 @@ Sistema completo de gestão para restaurantes com módulos de delivery, cardápi
 - **Pausa por Intervenção Humana** - bot pausa quando atendente humano envia qualquer tipo de mensagem
 - **🎤 Entende áudios (STT)** - Transcrição via OpenAI Whisper
 - **🔊 Responde com áudio (TTS)** - 9 vozes disponíveis via OpenAI TTS
+- **🚨 Sistema de Alerta** - Som em loop quando cliente pede atendimento humano
 
 ### 4. Sistema de Impressão
 - Suporte a múltiplas impressoras por setor
@@ -38,15 +39,20 @@ Sistema completo de gestão para restaurantes com módulos de delivery, cardápi
 
 ## Changelog Recente
 
+### 2025-01-16 - Sistema de Alerta de Atendimento Humano
+- **Implementado**: Som de alerta tocando em loop quando cliente pede atendente
+- **Implementado**: Banner visual vermelho pulsante com lista de clientes aguardando
+- **Implementado**: Parada automática do som quando atendente responde
+- **Palavras-chave detectadas**: "falar com atendente", "quero humano", "preciso de ajuda", etc.
+- **Novos endpoints**: `/api/chatbot/waiting-queue`, `/api/sounds/cliente-esperando`
+
 ### 2025-01-16 - ChatBot com Suporte a Áudio
 - **Implementado**: Speech-to-Text usando OpenAI Whisper
 - **Implementado**: Text-to-Speech usando OpenAI TTS
 - **Novos endpoints**: `/api/chatbot/process-audio`, `/api/chatbot/text-to-speech`, `/api/chatbot/voices`
-- **Novo arquivo**: `/app/backend/audio_service.py`
-- **UI**: Configuração de voz do chatbot na página de Configurações BOT
 
 ### 2025-01-16 - Melhoria na Pausa por Intervenção Humana
-- **Implementado**: Bot agora pausa quando funcionário envia qualquer tipo de mídia
+- **Implementado**: Bot pausa quando funcionário envia qualquer tipo de mídia
 - **Tipos suportados**: text, audio, image, video, gif, sticker, document
 
 ## Backlog / Tarefas Pendentes
@@ -60,52 +66,35 @@ Sistema completo de gestão para restaurantes com módulos de delivery, cardápi
 - [ ] Testar reimpressão de 2ª via
 
 ### P2 - Baixa Prioridade
+- [ ] Notificações push no navegador para clientes aguardando
 - [ ] Refatorar URL do Print Connector para constante compartilhada
 
 ## Arquivos de Referência
 
 ### ChatBot e Áudio
-- `/app/backend/chatbot_ai.py` - Lógica de IA, pausa do bot e funções de áudio
+- `/app/backend/chatbot_ai.py` - Lógica de IA, pausa do bot, fila de espera e funções de áudio
 - `/app/backend/audio_service.py` - Serviço STT (Whisper) e TTS (OpenAI)
 - `/app/backend/server.py` - Endpoints de API
-- `/app/frontend/src/pages/ChatBot.js` - Interface do ChatBot
+- `/app/frontend/src/pages/ChatBot.js` - Interface do ChatBot com banner de alerta
+- `/app/backend/static/sounds/cliente_esperando.mp3` - Som de alerta
 
 ### Impressão
 - `/app/print-connector/src/print-queue.js` - Templates de cupons
 - `/app/print-connector/src/index.js` - API do Print Connector
 
-## API de Áudio
+## API de Fila de Espera
 
-### Processar Áudio (STT + IA + TTS)
+### Listar Clientes Aguardando
 ```bash
-POST /api/chatbot/process-audio
-{
-  "phone": "5511999998888",
-  "audio_base64": "...",  # ou audio_url
-  "push_name": "Cliente",
-  "respond_with_audio": true
-}
+GET /api/chatbot/waiting-queue
 ```
+Retorna: `{ queue: [...], count: N, has_waiting: bool }`
 
-### Text-to-Speech
+### Som de Alerta
 ```bash
-POST /api/chatbot/text-to-speech
-{
-  "text": "Olá, como posso ajudar?",
-  "voice": "nova"
-}
+GET /api/sounds/cliente-esperando
 ```
-
-### Vozes Disponíveis
-- `nova` - Energética e animada (padrão)
-- `alloy` - Neutra e equilibrada
-- `echo` - Suave e calma
-- `fable` - Expressiva
-- `onyx` - Profunda e autoritária
-- `shimmer` - Brilhante e alegre
-- `ash` - Clara e articulada
-- `coral` - Calorosa e amigável
-- `sage` - Sábia e ponderada
+Retorna: Arquivo MP3
 
 ## Credenciais de Teste
 - **Login**: admin
