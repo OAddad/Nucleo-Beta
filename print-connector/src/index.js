@@ -168,16 +168,6 @@ app.post('/printers/sector', async (req, res) => {
       });
     }
     
-    // Verificar se impressora existe
-    const available = await printerManager.isPrinterAvailable(name);
-    
-    if (!available) {
-      return res.status(404).json({ 
-        success: false, 
-        error: 'Impressora não encontrada ou offline' 
-      });
-    }
-    
     // Buscar configurações de setores existentes
     const sectorPrinters = config.get('sectorPrinters', {});
     
