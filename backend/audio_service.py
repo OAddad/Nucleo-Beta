@@ -156,6 +156,75 @@ async def transcribe_audio_from_url(audio_url: str) -> Tuple[bool, str]:
         return False, f"Erro ao baixar áudio: {str(e)}"
 
 
+def make_text_natural_for_speech(text: str) -> str:
+    """
+    Transforma o texto para soar mais natural quando falado.
+    Adiciona pausas, hesitações e torna mais conversacional.
+    
+    Args:
+        text: Texto original
+    
+    Returns:
+        Texto modificado para fala natural
+    """
+    import random
+    import re
+    
+    if not text:
+        return text
+    
+    # Remover emojis (TTS não lê bem)
+    text = re.sub(r'[^\w\s\.\,\!\?\:\;\-\(\)\"\'\@\#\$\%\&\*\/\\àáâãäåçèéêëìíîïñòóôõöùúûüýÿÀÁÂÃÄÅÇÈÉÊËÌÍÎÏÑÒÓÔÕÖÙÚÛÜÝ]', '', text)
+    
+    # Remover formatação do WhatsApp
+    text = re.sub(r'\*([^*]+)\*', r'\1', text)  # *negrito*
+    text = re.sub(r'_([^_]+)_', r'\1', text)    # _itálico_
+    text = re.sub(r'~([^~]+)~', r'\1', text)    # ~riscado~
+    
+    # Lista de hesitações naturais para inserir ocasionalmente
+    hesitations = ["hmm, ", "então, ", "bom, ", "olha, ", "ah, ", "é, "]
+    
+    # Lista de conectores naturais
+    connectors = [" né, ", " sabe, ", " tá, ", " viu, "]
+    
+    # Dividir em sentenças
+    sentences = re.split(r'([.!?])', text)
+    result = []
+    
+    for i, part in enumerate(sentences):
+        if part in '.!?':
+            result.append(part)
+            continue
+            
+        if not part.strip():
+            continue
+        
+        sentence = part.strip()
+        
+        # Adicionar hesitação no início de algumas frases (30% de chance)
+        if i > 0 and random.random() < 0.3 and len(sentence) > 20:
+            sentence = random.choice(hesitations) + sentence[0].lower() + sentence[1:]
+        
+        # Adicionar pausa após vírgulas longas
+        sentence = re.sub(r',\s*', ', ... ', sentence, count=1) if random.random() < 0.2 else sentence
+        
+        result.append(sentence)
+    
+    text = ''.join(result)
+    
+    # Adicionar pausas naturais (reticências = pausa no TTS)
+    text = re.sub(r'\.\s+', '. ... ', text, count=2)  # Pausa entre frases
+    
+    # Substituir alguns "você" por "cê" para soar mais natural (50% de chance)
+    if random.random() < 0.5:
+        text = re.sub(r'\bvocê\b', 'cê', text, count=1, flags=re.IGNORECASE)
+    
+    # Limpar espaços extras
+    text = re.sub(r'\s+', ' ', text).strip()
+    
+    return text
+
+
 async def generate_speech(text: str, voice: str = "nova") -> Tuple[bool, Optional[bytes], str]:
     """
     Gera áudio a partir de texto usando OpenAI TTS.
