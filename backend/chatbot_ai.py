@@ -1,12 +1,13 @@
 """
 Serviço de IA para ChatBot WhatsApp
 Integração com LLM para respostas humanizadas e contextuais
+Suporte a áudio: STT (Whisper) e TTS (OpenAI)
 """
 import os
 import json
 import re
 from datetime import datetime, timezone, timedelta
-from typing import Optional, Dict, List, Any
+from typing import Optional, Dict, List, Any, Tuple
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -18,6 +19,14 @@ try:
 except ImportError:
     LLM_AVAILABLE = False
     print("[CHATBOT AI] emergentintegrations não disponível")
+
+# Importar serviço de áudio
+try:
+    import audio_service
+    AUDIO_AVAILABLE = audio_service.AUDIO_AVAILABLE
+except ImportError:
+    AUDIO_AVAILABLE = False
+    print("[CHATBOT AI] audio_service não disponível")
 
 import database as db
 
