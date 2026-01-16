@@ -48006,3 +48006,10 @@
 2026-01-16T14:33:49.972521+00:00 | DB_CALL get_all_entregadores | P3 | 0.6ms | success
 2026-01-16T14:33:49.974708+00:00 | DB_CALL get_all_pedidos | P3 | 2.4ms | success
 2026-01-16T14:33:49.976673+00:00 | DB_CALL get_all_settings | P3 | 3.07ms | success
+2026-01-16T14:33:54.591099+00:00 | DB_CALL init_database | P3 | 3.11ms | success
+2026-01-16T14:33:54.591581+00:00 | DB_CALL count_ingredients | P3 | 0.23ms | success
+2026-01-16T14:33:54.591759+00:00 | DB_CALL count_products | P3 | 0.12ms | success
+2026-01-16T14:33:54.591899+00:00 | DB_CALL count_users | P3 | 0.09ms | success
+2026-01-16T14:33:54.982247+00:00 | DB_CALL get_all_settings | P3 | 1.14ms | success
+2026-01-16T14:33:54.982880+00:00 | DB_CALL get_all_entregadores | P3 | 1.09ms | success
+2026-01-16T14:33:54.985140+00:00 | DB_CALL get_all_pedidos | P3 | 1.53ms | success
