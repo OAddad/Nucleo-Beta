@@ -356,8 +356,9 @@ def make_text_natural_for_speech(text: str) -> str:
     text = ''.join(result)
     
     # Adicionar pausas naturais (reticências = pausa no TTS)
-    text = re.sub(r'\.\s+', '... ', text)  # Pausa entre frases
-    text = re.sub(r',\s*', ', ', text)  # Pausa leve após vírgulas
+    text = re.sub(r'\.\s*', '... ', text)  # Pausa entre frases
+    text = re.sub(r'!\s*', '!... ', text)  # Pausa após exclamação
+    text = re.sub(r'\?\s*', '?... ', text)  # Pausa após pergunta
     
     # Substituir alguns "você" por "cê" para soar mais natural (40% de chance)
     if random.random() < 0.4:
