@@ -2093,7 +2093,9 @@ function RespostasAutomaticasTab({ toast }) {
   const [botSettings, setBotSettings] = useState({
     bot_pause_message: "",
     bot_pause_duration: 15,
-    chatbot_name: "Ana"
+    chatbot_name: "Ana",
+    chatbot_voice: "nova",
+    audio_response_enabled: true
   });
   const [savingSettings, setSavingSettings] = useState(false);
   
