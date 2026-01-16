@@ -738,13 +738,33 @@ export default function Delivery() {
           </div>
           <div className="flex items-center gap-2">
             {showPrint && (
-              <button
-                onClick={(e) => handlePrintPedido(pedido, e)}
-                className="p-1.5 rounded-md hover:bg-muted transition-colors"
-                title="Imprimir"
-              >
-                <Printer className="w-4 h-4 text-muted-foreground hover:text-foreground" />
-              </button>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button
+                    onClick={(e) => e.stopPropagation()}
+                    className="p-1.5 rounded-md hover:bg-muted transition-colors flex items-center gap-0.5"
+                    title="Opções de Impressão"
+                  >
+                    <Printer className="w-4 h-4 text-muted-foreground hover:text-foreground" />
+                    <ChevronDown className="w-3 h-3 text-muted-foreground" />
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48">
+                  <DropdownMenuItem onClick={(e) => handlePrintPedido(pedido, e)}>
+                    <Printer className="w-4 h-4 mr-2" />
+                    Imprimir Ambos
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={(e) => handlePrint2Via(pedido, 'entrega', e)}>
+                    <Receipt className="w-4 h-4 mr-2 text-blue-500" />
+                    2ª Via - Entrega
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={(e) => handlePrint2Via(pedido, 'preparo', e)}>
+                    <ChefHat className="w-4 h-4 mr-2 text-orange-500" />
+                    2ª Via - Preparo
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             )}
             <span className="text-xs text-muted-foreground">{formatTime(pedido.created_at)}</span>
           </div>
