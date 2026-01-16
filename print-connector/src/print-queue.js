@@ -158,6 +158,11 @@ class PrintQueue {
   // ==================== CUPOM DE PREPARO ====================
   // Mostra: CÓDIGO, HORA, ITENS, OBSERVAÇÃO, Nome do cliente
   _buildPreparoTemplate(escpos, pedido, job) {
+    // ===== 2 LINHAS EM BRANCO NO INÍCIO =====
+    escpos
+      .newLine()
+      .newLine();
+    
     escpos.align('center');
     
     // ===== TÍTULO =====
@@ -211,47 +216,75 @@ class PrintQueue {
       .newLine();
     
     if (pedido.items && pedido.items.length > 0) {
-      for (const item of pedido.items) {
+      for (let i = 0; i < pedido.items.length; i++) {
+        const item = pedido.items[i];
         const qtd = item.quantidade || 1;
         const nome = item.nome || item.product_name || 'Item';
         const tipo = item.tipo_combo || item.tipo || ''; // combo/simples
+        const isCombo = tipo.toLowerCase() === 'combo';
         
-        // Item com quantidade grande
+        // Item com quantidade grande + tipo ao lado
         escpos
           .setTextSize(2, 2)
           .setBold(true)
-          .text(`${qtd}x ${nome}`)
+          .text(`${qtd}x ${nome}${isCombo ? ' -> COMBO' : ''}`)
           .setBold(false)
           .setTextSize(1, 1);
         
-        // Tipo (combo/simples) se existir
-        if (tipo) {
-          escpos.text(`   [${tipo.toUpperCase()}]`);
+        // Se for combo, mostrar subitems/bebidas com hierarquia
+        if (isCombo) {
+          // Subitems do combo (bebidas, acompanhamentos)
+          if (item.subitems && item.subitems.length > 0) {
+            for (const sub of item.subitems) {
+              const subNome = sub.nome || sub.name;
+              escpos.text(`     -> ${subNome}`);
+              // Observação do subitem
+              if (sub.observacao) {
+                escpos
+                  .setTextSize(1, 2)
+                  .setBold(true)
+                  .text(`           >>> ${sub.observacao}`)
+                  .setBold(false)
+                  .setTextSize(1, 1);
+              }
+            }
+          }
+          // Adicionais do combo
+          if (item.adicionais && item.adicionais.length > 0) {
+            for (const add of item.adicionais) {
+              escpos.text(`     -> ${add.nome}`);
+              // Observação do adicional
+              if (add.observacao) {
+                escpos
+                  .setTextSize(1, 2)
+                  .setBold(true)
+                  .text(`           >>> ${add.observacao}`)
+                  .setBold(false)
+                  .setTextSize(1, 1);
+              }
+            }
+          }
+        } else {
+          // Não é combo - mostrar tipo se existir
+          if (tipo && tipo.toLowerCase() !== 'combo') {
+            escpos.text(`[${tipo.toUpperCase()}]`);
+          }
         }
         
-        // Observação do item (destacada)
+        // Observação do item principal (destacada)
         if (item.observacao) {
           escpos
             .setTextSize(1, 2)
             .setBold(true)
-            .text(`   >>> ${item.observacao}`)
+            .text(`           >>> ${item.observacao}`)
             .setBold(false)
             .setTextSize(1, 1);
         }
         
-        // Adicionais/Subitems
-        if (item.adicionais && item.adicionais.length > 0) {
-          for (const add of item.adicionais) {
-            escpos.text(`   + ${add.nome}`);
-          }
+        // Linha separadora entre itens (exceto no último)
+        if (i < pedido.items.length - 1) {
+          escpos.text('--------------------------');
         }
-        if (item.subitems && item.subitems.length > 0) {
-          for (const sub of item.subitems) {
-            escpos.text(`   + ${sub.nome || sub.name}`);
-          }
-        }
-        
-        escpos.newLine();
       }
     }
     
