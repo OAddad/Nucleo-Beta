@@ -3963,8 +3963,10 @@ async def chatbot_process_message(data: ChatbotProcessMessage):
         msg_type = (data.message_type or "text").lower()
         if msg_type in ["audio", "ptt", "voice"]:
             # Verificar se há URL ou base64 do áudio
-            audio_url = getattr(data, 'audio_url', None)
-            audio_base64 = getattr(data, 'audio_base64', None)
+            audio_url = data.audio_url
+            audio_base64 = data.audio_base64
+            
+            logger.info(f"[AUDIO] Recebido áudio de {data.phone}, tipo={msg_type}, has_url={bool(audio_url)}, has_base64={bool(audio_base64)}, base64_len={len(audio_base64) if audio_base64 else 0}")
             
             if audio_url or audio_base64:
                 # Processar áudio completo (transcrição + IA + TTS)
