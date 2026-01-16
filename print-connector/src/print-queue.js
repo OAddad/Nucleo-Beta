@@ -481,8 +481,23 @@ class PrintQueue {
       escpos.text(`PAGAMENTO: ${pedido.forma_pagamento}`);
     }
     
+    // Se precisa de troco, mostrar o valor para troco E o troco calculado
     if (pedido.troco_precisa && pedido.troco_valor) {
-      escpos.text(`TROCO PARA: R$ ${pedido.troco_valor.toFixed(2)}`);
+      const trocoValor = parseFloat(pedido.troco_valor) || 0;
+      const total = parseFloat(pedido.total) || 0;
+      const trocoCalculado = trocoValor - total;
+      
+      escpos.text(`TROCO PARA: R$ ${trocoValor.toFixed(2).replace('.', ',')}`);
+      
+      // Mostrar o troco calculado em negrito e tamanho grande
+      if (trocoCalculado > 0) {
+        escpos
+          .setTextSize(2, 2)
+          .setBold(true)
+          .text(`TROCO ..... R$${trocoCalculado.toFixed(2).replace('.', ',')}`)
+          .setBold(false)
+          .setTextSize(1, 1);
+      }
     }
     
     // ===== INFORMAÇÕES DE ENTREGA (NEGRITO, ALTURA 2x, COM QUEBRA DE LINHA) =====
