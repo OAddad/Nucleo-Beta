@@ -47313,3 +47313,8 @@
 2026-01-16T13:26:47.360078+00:00 | DB_CALL count_products | P3 | 0.15ms | success
 2026-01-16T13:26:47.360250+00:00 | DB_CALL count_users | P3 | 0.1ms | success
 2026-01-16T13:27:00.019578+00:00 | DB_CALL get_all_settings | P3 | 0.34ms | success
+2026-01-16T13:27:22.279392+00:00 | DB_CALL get_all_products | P3 | 29.62ms | success
+2026-01-16T13:27:24.078853+00:00 | DB_CALL get_all_products | P3 | 23.2ms | success
+2026-01-16T13:27:26.554466+00:00 | DB_CALL increment_whatsapp_stat | P3 | 3.99ms | success
+2026-01-16T13:27:27.029667+00:00 | DB_CALL increment_whatsapp_stat | P3 | 2.7ms | success
+2026-01-16T13:27:27.282007+00:00 | DB_CALL increment_whatsapp_stat | P3 | 2.24ms | success
