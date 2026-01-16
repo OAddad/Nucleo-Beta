@@ -47589,3 +47589,5 @@
 2026-01-16T13:56:42.774077+00:00 | DB_CALL register_whatsapp_client | P3 | 2.15ms | success
 2026-01-16T13:56:42.779197+00:00 | DB_CALL process_message_words | P3 | 2.88ms | success
 2026-01-16T13:56:46.443872+00:00 | DB_CALL increment_whatsapp_stat | P3 | 2.0ms | success
+2026-01-16T13:56:51.197068+00:00 | DB_CALL get_all_products | P3 | 25.17ms | success
+2026-01-16T13:56:52.982381+00:00 | DB_CALL get_all_products | P3 | 25.31ms | success
