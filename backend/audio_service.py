@@ -262,15 +262,29 @@ def format_phone_for_speech(match) -> str:
     # Remover caracteres não numéricos
     digits = ''.join(filter(str.isdigit, phone))
     
-    # Falar dígito por dígito com pausas
-    result = []
-    for i, digit in enumerate(digits):
-        digit_words = ["zero", "um", "dois", "três", "quatro", "cinco", "seis", "sete", "oito", "nove"]
-        result.append(digit_words[int(digit)])
-        # Adicionar pausa a cada 2-3 dígitos
-        if i in [1, 4, 8] and i < len(digits) - 1:
-            result.append("...")
+    digit_words = ["zero", "um", "dois", "três", "quatro", "cinco", "seis", "sete", "oito", "nove"]
     
+    # Se for DDD + número, formatar como "trinta e quatro, nove nove seis sete dois..."
+    if len(digits) >= 10:
+        ddd = digits[:2]
+        numero = digits[2:]
+        
+        # DDD como número
+        ddd_num = int(ddd)
+        ddd_text = number_to_words(ddd_num)
+        
+        # Número dígito por dígito
+        num_parts = []
+        for i, digit in enumerate(numero):
+            num_parts.append(digit_words[int(digit)])
+            # Pausa a cada 4-5 dígitos
+            if i == 4:
+                num_parts.append(",")
+        
+        return ddd_text + ", " + " ".join(num_parts)
+    
+    # Número simples - falar dígito por dígito
+    result = [digit_words[int(d)] for d in digits]
     return " ".join(result)
 
 
