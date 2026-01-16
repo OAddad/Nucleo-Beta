@@ -47785,3 +47785,5 @@
 2026-01-16T14:25:30.581733+00:00 | DB_CALL get_all_settings | P3 | 160.87ms | success
 2026-01-16T14:25:30.582184+00:00 | DB_CALL get_all_categories | P3 | 155.23ms | success
 2026-01-16T14:25:30.582582+00:00 | DB_CALL get_all_business_hours | P3 | 155.25ms | success
+2026-01-16T14:25:32.234356+00:00 | DB_CALL get_all_products | P3 | 24.27ms | success
+2026-01-16T14:25:32.444950+00:00 | DB_CALL get_all_bairros | P3 | 0.33ms | success
