@@ -48152,3 +48152,11 @@
 2026-01-16T14:35:50.709524+00:00 | DB_CALL get_all_settings | P3 | 177.17ms | success
 2026-01-16T14:35:50.709900+00:00 | DB_CALL get_all_business_hours | P3 | 177.33ms | success
 2026-01-16T14:35:50.740724+00:00 | DB_CALL get_all_products | P3 | 207.2ms | success
+2026-01-16T14:35:50.877667+00:00 | DB_CALL get_all_categories | P3 | 344.07ms | success
+2026-01-16T14:35:50.878266+00:00 | DB_CALL get_all_business_hours | P3 | 340.69ms | success
+2026-01-16T14:35:50.878647+00:00 | DB_CALL get_all_settings | P3 | 328.09ms | success
+2026-01-16T14:35:50.883127+00:00 | DB_CALL get_all_settings | P3 | 0.33ms | success
+2026-01-16T14:35:51.665614+00:00 | DB_CALL get_all_products | P3 | 30.81ms | success
+2026-01-16T14:35:51.885550+00:00 | DB_CALL get_all_bairros | P3 | 0.41ms | success
+2026-01-16T14:35:52.393229+00:00 | DB_CALL get_all_products | P3 | 26.6ms | success
+2026-01-16T14:35:53.012998+00:00 | DB_CALL get_all_bairros | P3 | 0.32ms | success
