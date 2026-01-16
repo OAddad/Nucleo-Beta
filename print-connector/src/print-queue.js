@@ -226,8 +226,8 @@ class PrintQueue {
         const item = pedido.items[i];
         const qtd = item.quantidade || 1;
         const nome = item.nome || item.product_name || 'Item';
-        const tipo = item.tipo_combo || item.tipo || ''; // combo/simples
-        const isCombo = tipo.toLowerCase() === 'combo';
+        const tipo = item.combo_type || item.tipo_combo || item.tipo || '';
+        const isCombo = tipo && tipo.toLowerCase() === 'combo';
         
         // Item com quantidade grande + tipo ao lado
         escpos
@@ -237,35 +237,46 @@ class PrintQueue {
           .setBold(false)
           .setTextSize(1, 1);
         
-        // Se for combo, mostrar subitems/bebidas com hierarquia (MESMO TAMANHO E NEGRITO)
-        if (isCombo) {
-          // Subitems do combo (bebidas, acompanhamentos)
-          if (item.subitems && item.subitems.length > 0) {
-            for (const sub of item.subitems) {
-              const subNome = sub.nome || sub.name;
-              escpos
-                .setTextSize(2, 2)
-                .setBold(true)
-                .text(`  -> ${subNome}`)
-                .setBold(false)
-                .setTextSize(1, 1);
+        // Se for combo, mostrar etapas (bebidas, batatas, adicionais)
+        if (isCombo && item.etapas && item.etapas.length > 0) {
+          for (const etapa of item.etapas) {
+            // Cada etapa tem um array de itens
+            if (etapa.itens && etapa.itens.length > 0) {
+              for (const subItem of etapa.itens) {
+                escpos
+                  .setTextSize(2, 2)
+                  .setBold(true)
+                  .text(`  -> ${subItem}`)
+                  .setBold(false)
+                  .setTextSize(1, 1);
+              }
             }
           }
-          // Adicionais do combo
-          if (item.adicionais && item.adicionais.length > 0) {
-            for (const add of item.adicionais) {
-              escpos
-                .setTextSize(2, 2)
-                .setBold(true)
-                .text(`  -> ${add.nome}`)
-                .setBold(false)
-                .setTextSize(1, 1);
-            }
+        }
+        
+        // Fallback: subitems antigo (para compatibilidade)
+        if (isCombo && item.subitems && item.subitems.length > 0) {
+          for (const sub of item.subitems) {
+            const subNome = sub.nome || sub.name || sub;
+            escpos
+              .setTextSize(2, 2)
+              .setBold(true)
+              .text(`  -> ${subNome}`)
+              .setBold(false)
+              .setTextSize(1, 1);
           }
-        } else {
-          // Não é combo - mostrar tipo se existir
-          if (tipo && tipo.toLowerCase() !== 'combo') {
-            escpos.text(`[${tipo.toUpperCase()}]`);
+        }
+        
+        // Fallback: adicionais antigo (para compatibilidade)
+        if (item.adicionais && item.adicionais.length > 0) {
+          for (const add of item.adicionais) {
+            const addNome = add.nome || add.name || add;
+            escpos
+              .setTextSize(2, 2)
+              .setBold(true)
+              .text(`  -> ${addNome}`)
+              .setBold(false)
+              .setTextSize(1, 1);
           }
         }
         
@@ -274,7 +285,7 @@ class PrintQueue {
           escpos
             .setTextSize(1, 2)
             .setBold(true)
-            .text(`           >>> ${item.observacao}`)
+            .text(`      >>> ${item.observacao}`)
             .setBold(false)
             .setTextSize(1, 1);
         }
