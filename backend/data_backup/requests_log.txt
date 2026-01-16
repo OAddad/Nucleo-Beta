@@ -48742,3 +48742,8 @@
 2026-01-16T14:46:22.653278+00:00 | DB_CALL get_all_products | P3 | 25.48ms | success
 2026-01-16T14:46:24.380406+00:00 | DB_CALL get_all_pedidos | P3 | 1.93ms | success
 2026-01-16T14:46:24.382415+00:00 | DB_CALL get_pedido_by_id | P3 | 3.78ms | success
+2026-01-16T14:46:29.375817+00:00 | DB_CALL get_pedido_by_id | P3 | 0.32ms | success
+2026-01-16T14:46:32.707344+00:00 | DB_CALL get_user_by_username | P3 | 0.32ms | success
+2026-01-16T14:46:32.776291+00:00 | DB_CALL get_user_by_id | P3 | 0.35ms | success
+2026-01-16T14:46:32.776615+00:00 | DB_CALL get_pedido_by_id | P3 | 0.15ms | success
+2026-01-16T14:46:32.776811+00:00 | DB_CALL get_all_settings | P3 | 0.13ms | success
