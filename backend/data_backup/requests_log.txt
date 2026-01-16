@@ -48723,3 +48723,4 @@
 2026-01-16T14:45:36.810594+00:00 | DB_CALL get_all_products | P3 | 25.57ms | success
 2026-01-16T14:45:38.187022+00:00 | DB_CALL get_all_products | P3 | 25.12ms | success
 2026-01-16T14:45:39.381635+00:00 | DB_CALL get_pedido_by_id | P3 | 0.33ms | success
+2026-01-16T14:45:44.389442+00:00 | DB_CALL get_pedido_by_id | P3 | 0.3ms | success
