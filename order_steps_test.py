@@ -10,7 +10,7 @@ import time
 
 def test_order_steps_readonly():
     """Test Order Steps functionality by examining existing products (read-only)"""
-    base_url = "https://print-manager-31.preview.emergentagent.com"
+    base_url = "https://print-system-2.preview.emergentagent.com"
     
     print("🚀 Order Steps Feature Test (Read-Only Analysis)")
     print("=" * 60)
