@@ -838,10 +838,12 @@ async def process_audio_message(
         print(f"[CHATBOT AI] Áudio transcrito: {transcription[:100]}...")
         
         # 2. PROCESSAR COM A IA (usando a mensagem transcrita)
+        # IMPORTANTE: for_audio_response=True para gerar texto no formato de fala humana
         response_text = await process_message(
             phone=phone,
             message=transcription,
-            push_name=push_name
+            push_name=push_name,
+            for_audio_response=respond_with_audio  # Gera texto humanizado se for responder com áudio
         )
         result["response_text"] = response_text
         
@@ -851,8 +853,11 @@ async def process_audio_message(
             settings = db.get_all_settings()
             voice = settings.get('chatbot_voice', audio_service.DEFAULT_VOICE)
             
+            # O texto já está no formato de fala humana, apenas limpar emojis/formatação
+            clean_text = audio_service.clean_text_for_tts(response_text)
+            
             success, audio_base64_response, msg = await audio_service.generate_speech_base64(
-                text=response_text,
+                text=clean_text,
                 voice=voice
             )
             
