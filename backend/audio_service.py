@@ -427,9 +427,10 @@ def make_text_natural_for_speech(text: str) -> str:
 async def generate_speech(text: str, voice: str = "nova") -> Tuple[bool, Optional[bytes], str]:
     """
     Gera áudio a partir de texto usando OpenAI TTS.
+    O texto já deve vir no formato de fala humana do LLM.
     
     Args:
-        text: Texto para converter em áudio
+        text: Texto para converter em áudio (já humanizado pelo LLM)
         voice: Voz a usar (alloy, ash, coral, echo, fable, nova, onyx, sage, shimmer)
     
     Returns:
@@ -441,8 +442,9 @@ async def generate_speech(text: str, voice: str = "nova") -> Tuple[bool, Optiona
     if not text or len(text.strip()) == 0:
         return False, None, "Texto vazio"
     
-    # Tornar o texto mais natural para fala
-    text = make_text_natural_for_speech(text)
+    # Apenas limpar o texto (emojis, formatação) - NÃO transformar
+    # O LLM já gera texto no formato de fala humana
+    text = clean_text_for_tts(text)
     
     # Limitar texto a 4096 caracteres
     if len(text) > 4096:
