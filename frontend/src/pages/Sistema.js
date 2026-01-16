@@ -1976,73 +1976,13 @@ function ConfiguracaoImpressao({ toast }) {
   const [loading, setLoading] = useState(true);
   const [testingEntrega, setTestingEntrega] = useState(false);
   const [testingPreparo, setTestingPreparo] = useState(false);
-  
-  // Estado para impressoras e setores
-  const [printers, setPrinters] = useState([]);
-  const [sectorPrinters, setSectorPrinters] = useState({});
-  const [savingSector, setSavingSector] = useState(null);
 
   // Estado para controlar qual aba de preview está ativa
   const [previewTab, setPreviewTab] = useState("entrega");
 
   useEffect(() => {
     fetchCompanySettings();
-    fetchPrinters();
-    fetchSectorPrinters();
   }, []);
-
-  // Buscar impressoras do Print Connector
-  const fetchPrinters = async () => {
-    try {
-      const response = await fetch(`${PRINT_CONNECTOR_URL}/printers`);
-      if (response.ok) {
-        const data = await response.json();
-        setPrinters(data);
-      }
-    } catch (error) {
-      console.error("Erro ao carregar impressoras:", error);
-    }
-  };
-
-  // Buscar configuração de setores
-  const fetchSectorPrinters = async () => {
-    try {
-      const response = await fetch(`${PRINT_CONNECTOR_URL}/printers/sectors`);
-      if (response.ok) {
-        const data = await response.json();
-        setSectorPrinters(data);
-      }
-    } catch (error) {
-      console.error("Erro ao carregar setores:", error);
-    }
-  };
-
-  // Salvar impressora para um setor
-  const handleSaveSector = async (sector, printerName) => {
-    if (!printerName) return;
-    
-    setSavingSector(sector);
-    try {
-      const response = await fetch(`${PRINT_CONNECTOR_URL}/printers/sector`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: printerName, sector })
-      });
-      
-      const data = await response.json();
-      
-      if (data.success) {
-        toast({ title: "✅ Salvo!", description: `Impressora configurada para ${sector === 'caixa' ? 'Cupom de Entrega' : 'Cupom de Preparo'}` });
-        fetchSectorPrinters();
-      } else {
-        throw new Error(data.error || 'Erro ao salvar');
-      }
-    } catch (error) {
-      toast({ title: "Erro", description: error.message, variant: "destructive" });
-    } finally {
-      setSavingSector(null);
-    }
-  };
 
   // Buscar dados da empresa de CONFIGURAÇÃO -> EMPRESA
   const fetchCompanySettings = async () => {
@@ -2226,7 +2166,7 @@ function ConfiguracaoImpressao({ toast }) {
 
         {/* Informações e Botão de Teste */}
         <div className="space-y-4">
-          {/* SELEÇÃO DE IMPRESSORA */}
+          {/* Descrição do Cupom */}
           <div className={`border rounded-xl p-6 ${
             previewTab === "entrega" 
               ? "bg-blue-50 dark:bg-blue-950/30 border-blue-200 dark:border-blue-900" 
@@ -2235,47 +2175,57 @@ function ConfiguracaoImpressao({ toast }) {
             <h3 className={`font-semibold text-lg mb-3 flex items-center gap-2 ${
               previewTab === "entrega" ? "text-blue-700 dark:text-blue-400" : "text-orange-700 dark:text-orange-400"
             }`}>
-              <Printer className="w-5 h-5" />
-              {previewTab === "entrega" ? "Impressora do Caixa (Entrega)" : "Impressora da Cozinha (Preparo)"}
+              {previewTab === "entrega" ? (
+                <>
+                  <Receipt className="w-5 h-5" />
+                  Cupom de Entrega (Caixa)
+                </>
+              ) : (
+                <>
+                  <ChefHat className="w-5 h-5" />
+                  Cupom de Preparo (Cozinha)
+                </>
+              )}
             </h3>
             
-            <p className="text-sm text-muted-foreground mb-3">
-              {previewTab === "entrega" 
-                ? "Selecione qual impressora vai imprimir o Cupom de Entrega:"
-                : "Selecione qual impressora vai imprimir o Cupom de Preparo:"
-              }
-            </p>
-
-            {printers.length === 0 ? (
-              <div className="text-sm text-muted-foreground bg-muted/50 rounded-lg p-3">
-                <p className="flex items-center gap-2">
-                  <AlertCircle className="w-4 h-4" />
-                  Nenhuma impressora detectada. Verifique se o Print Connector está rodando.
-                </p>
-              </div>
+            {previewTab === "entrega" ? (
+              <ul className="space-y-2 text-sm">
+                <li className="flex items-start gap-2">
+                  <div className="w-2 h-2 rounded-full bg-blue-500 mt-1.5 flex-shrink-0" />
+                  <span>Impresso na impressora do <strong>CAIXA</strong></span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <div className="w-2 h-2 rounded-full bg-blue-500 mt-1.5 flex-shrink-0" />
+                  <span>Contém dados da empresa, itens com preços e valores</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <div className="w-2 h-2 rounded-full bg-blue-500 mt-1.5 flex-shrink-0" />
+                  <span>Informações completas de entrega e pagamento</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <div className="w-2 h-2 rounded-full bg-blue-500 mt-1.5 flex-shrink-0" />
+                  <span>Entregue ao cliente ou entregador</span>
+                </li>
+              </ul>
             ) : (
-              <div className="space-y-3">
-                <select
-                  value={sectorPrinters[previewTab === "entrega" ? "caixa" : "cozinha"]?.name || ""}
-                  onChange={(e) => handleSaveSector(previewTab === "entrega" ? "caixa" : "cozinha", e.target.value)}
-                  disabled={savingSector}
-                  className="w-full p-3 rounded-lg border bg-background text-foreground focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                >
-                  <option value="">-- Selecione uma impressora --</option>
-                  {printers.map((printer) => (
-                    <option key={printer.id} value={printer.name}>
-                      {printer.name} {printer.status === 'online' ? '✓' : ''}
-                    </option>
-                  ))}
-                </select>
-                
-                {sectorPrinters[previewTab === "entrega" ? "caixa" : "cozinha"] && (
-                  <div className="flex items-center gap-2 text-sm text-green-600 dark:text-green-400">
-                    <CheckCircle className="w-4 h-4" />
-                    <span>Configurado: <strong>{sectorPrinters[previewTab === "entrega" ? "caixa" : "cozinha"]?.name}</strong></span>
-                  </div>
-                )}
-              </div>
+              <ul className="space-y-2 text-sm">
+                <li className="flex items-start gap-2">
+                  <div className="w-2 h-2 rounded-full bg-orange-500 mt-1.5 flex-shrink-0" />
+                  <span>Impresso na impressora da <strong>COZINHA</strong></span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <div className="w-2 h-2 rounded-full bg-orange-500 mt-1.5 flex-shrink-0" />
+                  <span>Mostra apenas: <strong>CÓDIGO, HORA, ITENS, OBSERVAÇÕES</strong></span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <div className="w-2 h-2 rounded-full bg-orange-500 mt-1.5 flex-shrink-0" />
+                  <span>Observações destacadas para atenção do cozinheiro</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <div className="w-2 h-2 rounded-full bg-orange-500 mt-1.5 flex-shrink-0" />
+                  <span>Nome do cliente para identificação</span>
+                </li>
+              </ul>
             )}
           </div>
 
@@ -2290,7 +2240,7 @@ function ConfiguracaoImpressao({ toast }) {
             </p>
             <Button
               onClick={() => handleTestarImpressao(previewTab)}
-              disabled={(previewTab === "entrega" ? testingEntrega : testingPreparo) || !sectorPrinters[previewTab === "entrega" ? "caixa" : "cozinha"]}
+              disabled={previewTab === "entrega" ? testingEntrega : testingPreparo}
               className={`w-full ${
                 previewTab === "entrega" 
                   ? "bg-blue-500 hover:bg-blue-600" 
@@ -2304,11 +2254,6 @@ function ConfiguracaoImpressao({ toast }) {
               )}
               Imprimir Teste - {previewTab === "entrega" ? "Cupom de Entrega" : "Cupom de Preparo"}
             </Button>
-            {!sectorPrinters[previewTab === "entrega" ? "caixa" : "cozinha"] && (
-              <p className="text-xs text-muted-foreground mt-2 text-center">
-                Selecione uma impressora acima para testar
-              </p>
-            )}
           </div>
 
           {/* Dica sobre setores */}
@@ -2430,13 +2375,7 @@ function CupomEntregaPreview({ config, pedido }) {
 function CupomPreparoPreview({ pedido }) {
   return (
     <>
-      {/* 8 ESPAÇOS NO INÍCIO */}
-      <div className="h-4" />
-      <div className="h-4" />
-      <div className="h-4" />
-      <div className="h-4" />
-      <div className="h-4" />
-      <div className="h-4" />
+      {/* 2 ESPAÇOS NO INÍCIO */}
       <div className="h-4" />
       <div className="h-4" />
       
@@ -2476,16 +2415,16 @@ function CupomPreparoPreview({ pedido }) {
               {item.quantidade}x {item.nome}{isCombo ? ' -> COMBO' : ''}
             </div>
             
-            {/* Subitems do combo (bebidas, acompanhamentos) - MESMO TAMANHO */}
+            {/* Subitems do combo (bebidas, acompanhamentos) */}
             {isCombo && item.subitems && item.subitems.map((sub, j) => (
-              <div key={`sub-${j}`} className="text-lg font-bold ml-2">
+              <div key={`sub-${j}`} className="text-sm ml-4">
                 -&gt; {sub.nome || sub.name}
               </div>
             ))}
             
-            {/* Adicionais - MESMO TAMANHO */}
+            {/* Adicionais */}
             {isCombo && item.adicionais && item.adicionais.map((add, j) => (
-              <div key={`add-${j}`} className="text-lg font-bold ml-2">
+              <div key={`add-${j}`} className="text-sm ml-4">
                 -&gt; {add.nome}
               </div>
             ))}

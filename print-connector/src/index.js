@@ -406,7 +406,6 @@ app.get('/logs', (req, res) => {
 app.get('/config', (req, res) => {
   res.json({
     defaultPrinter: config.get('defaultPrinter'),
-    sectorPrinters: config.get('sectorPrinters', {}),
     paperWidth: 80,
     printableWidth: 72,
     dpi: 203,
@@ -417,21 +416,21 @@ app.get('/config', (req, res) => {
 
 // ==================== INICIALIZAÇÃO ====================
 
-// Escuta apenas em localhost (127.0.0.1)
 const server = app.listen(PORT, '127.0.0.1', () => {
   console.log(`
-╔══════════════════════════════════════════════════════════╗
-║       NÚCLEO PRINT CONNECTOR v${VERSION}                  ║
-╠══════════════════════════════════════════════════════════╣
-║  🖨️  Servidor: http://127.0.0.1:${PORT}                    ║
-║  Status: ONLINE                                          ║
-║                                                          ║
-║  Endpoints:                                              ║
-║    GET  /health          - Status do serviço             ║
-║    GET  /printers        - Listar impressoras            ║
-║    POST /printers/sector - Configurar por setor          ║
-║    POST /print           - Imprimir pedido               ║
-╚══════════════════════════════════════════════════════════╝
+╔══════════════════════════════════════════════════════╗
+║       NÚCLEO PRINT CONNECTOR v${VERSION}              ║
+╠══════════════════════════════════════════════════════╣
+║  Servidor: http://127.0.0.1:${PORT}                    ║
+║  Status: ONLINE                                      ║
+║                                                      ║
+║  Endpoints:                                          ║
+║    GET  /health    - Status do serviço               ║
+║    GET  /printers  - Listar impressoras              ║
+║    POST /printers/connect - Selecionar impressora    ║
+║    POST /print     - Imprimir pedido                 ║
+║    POST /test      - Página de teste                 ║
+╚══════════════════════════════════════════════════════╝
   `);
   
   logger.info(`Print Connector iniciado na porta ${PORT}`);
@@ -443,14 +442,6 @@ const server = app.listen(PORT, '127.0.0.1', () => {
   } else {
     logger.warn('Nenhuma impressora padrão configurada');
     console.log('\n⚠️  Configure uma impressora padrão via /printers/connect\n');
-  }
-  
-  const sectorPrinters = config.get('sectorPrinters', {});
-  if (Object.keys(sectorPrinters).length > 0) {
-    console.log('📋 Impressoras por setor:');
-    for (const [sector, printer] of Object.entries(sectorPrinters)) {
-      console.log(`   ${sector}: ${printer.name}`);
-    }
   }
 });
 
