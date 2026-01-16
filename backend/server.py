@@ -3107,7 +3107,7 @@ class PrintRequest(BaseModel):
 async def imprimir_pedido(pedido_id: str, data: PrintRequest, current_user: User = Depends(get_current_user)):
     """Imprime 2ª via do cupom de entrega ou preparo"""
     # Buscar pedido
-    pedido = await db_call(sqlite_db.get_pedido, pedido_id)
+    pedido = await db_call(sqlite_db.get_pedido_by_id, pedido_id)
     if not pedido:
         raise HTTPException(status_code=404, detail="Pedido não encontrado")
     
