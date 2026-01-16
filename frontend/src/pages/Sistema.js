@@ -2375,7 +2375,13 @@ function CupomEntregaPreview({ config, pedido }) {
 function CupomPreparoPreview({ pedido }) {
   return (
     <>
-      {/* 2 ESPAÇOS NO INÍCIO */}
+      {/* 8 ESPAÇOS NO INÍCIO */}
+      <div className="h-4" />
+      <div className="h-4" />
+      <div className="h-4" />
+      <div className="h-4" />
+      <div className="h-4" />
+      <div className="h-4" />
       <div className="h-4" />
       <div className="h-4" />
       
