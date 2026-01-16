@@ -2501,16 +2501,14 @@ function RespostasAutomaticasTab({ toast }) {
               </div>
             </div>
             <div className="flex gap-2">
-              {isAlertPlaying ? (
-                <Button 
-                  variant="secondary" 
-                  size="sm"
-                  onClick={ignoreAllClients}
-                  className="bg-white/20 hover:bg-white/30 text-white"
-                >
-                  ❌ IGNORAR TODOS
-                </Button>
-              )}
+              <Button 
+                variant="secondary" 
+                size="sm"
+                onClick={ignoreAllClients}
+                className="bg-white/20 hover:bg-white/30 text-white"
+              >
+                ❌ IGNORAR TODOS
+              </Button>
             </div>
           </div>
           {/* Lista de clientes esperando */}
