@@ -3930,19 +3930,33 @@ class ChatbotProcessMessage(BaseModel):
     message: str
     push_name: Optional[str] = ""
     is_from_human_agent: Optional[bool] = False  # Se a mensagem é de um atendente humano
+    message_type: Optional[str] = "text"  # Tipo da mensagem: text, audio, image, video, gif, sticker, document
+
+# Tipos de mídia que devem pausar o bot quando enviados pelo funcionário
+MEDIA_TYPES_FOR_PAUSE = ["text", "audio", "image", "video", "gif", "sticker", "document", "ptt", "voice"]
 
 @api_router.post("/chatbot/process")
 async def chatbot_process_message(data: ChatbotProcessMessage):
     """Processa mensagem do WhatsApp com IA"""
     try:
-        # Se é mensagem de atendente humano, pausar o bot
+        # Se é mensagem de atendente humano (qualquer tipo de mídia), pausar o bot
         if data.is_from_human_agent:
-            pause_msg = chatbot_ai.pause_bot_for_phone(data.phone)
-            return {"success": True, "response": pause_msg, "bot_paused": True}
+            # Verificar se o tipo de mensagem deve pausar o bot
+            msg_type = (data.message_type or "text").lower()
+            if msg_type in MEDIA_TYPES_FOR_PAUSE or msg_type == "text":
+                pause_msg = chatbot_ai.pause_bot_for_phone(data.phone)
+                return {"success": True, "response": pause_msg, "bot_paused": True, "trigger_type": msg_type}
         
         # Verificar se o bot está pausado para este telefone
         if chatbot_ai.is_bot_paused_for_phone(data.phone):
             return {"success": True, "response": None, "bot_paused": True, "message": "Bot pausado - atendimento humano em andamento"}
+        
+        # Se é uma mensagem de mídia do cliente (não texto), apenas registrar mas não processar com IA
+        msg_type = (data.message_type or "text").lower()
+        if msg_type not in ["text", ""]:
+            # Mensagem de mídia do cliente - registrar mas não responder automaticamente
+            logger.info(f"Mensagem de mídia recebida ({msg_type}) de {data.phone} - não processada pela IA")
+            return {"success": True, "response": None, "bot_paused": False, "message": f"Mídia ({msg_type}) recebida - IA responde apenas mensagens de texto"}
         
         # Processar analytics de palavras (não bloqueia se falhar)
         try:
