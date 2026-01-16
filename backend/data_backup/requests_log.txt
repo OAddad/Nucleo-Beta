@@ -47306,3 +47306,5 @@
 2026-01-16T13:26:26.309337+00:00 | DB_CALL get_user_by_username | P3 | 1.6ms | success
 2026-01-16T13:26:28.100933+00:00 | DB_CALL get_user_by_username | P3 | 0.26ms | success
 2026-01-16T13:26:28.352905+00:00 | DB_CALL get_all_settings | P3 | 0.28ms | success
+2026-01-16T13:26:33.507210+00:00 | DB_CALL get_all_settings | P3 | 0.65ms | success
+2026-01-16T13:26:34.250689+00:00 | DB_CALL get_all_settings | P3 | 0.27ms | success
