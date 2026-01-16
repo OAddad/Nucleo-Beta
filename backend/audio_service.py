@@ -156,6 +156,36 @@ async def transcribe_audio_from_url(audio_url: str) -> Tuple[bool, str]:
         return False, f"Erro ao baixar áudio: {str(e)}"
 
 
+def clean_text_for_tts(text: str) -> str:
+    """
+    Limpa o texto para TTS - apenas remove emojis e formatação.
+    O texto já deve vir no formato de fala humana do LLM.
+    
+    Args:
+        text: Texto já humanizado pelo LLM
+    
+    Returns:
+        Texto limpo para TTS
+    """
+    import re
+    
+    if not text:
+        return text
+    
+    # Remover emojis (TTS não lê bem)
+    text = re.sub(r'[^\w\s\.\,\!\?\:\;\-\(\)\"\'\@\#\$\%\&\*\/\\àáâãäåçèéêëìíîïñòóôõöùúûüýÿÀÁÂÃÄÅÇÈÉÊËÌÍÎÏÑÒÓÔÕÖÙÚÛÜÝ]', '', text)
+    
+    # Remover formatação do WhatsApp
+    text = re.sub(r'\*([^*]+)\*', r'\1', text)  # *negrito*
+    text = re.sub(r'_([^_]+)_', r'\1', text)    # _itálico_
+    text = re.sub(r'~([^~]+)~', r'\1', text)    # ~riscado~
+    
+    # Limpar espaços extras
+    text = re.sub(r'\s+', ' ', text).strip()
+    
+    return text
+
+
 def number_to_words(n: int) -> str:
     """Converte número para texto por extenso em português"""
     if n == 0:
