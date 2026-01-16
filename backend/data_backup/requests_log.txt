@@ -48993,3 +48993,7 @@
 2026-01-16T14:54:03.489455+00:00 | DB_CALL get_all_settings | P3 | 163.95ms | success
 2026-01-16T14:54:03.489792+00:00 | DB_CALL get_all_business_hours | P3 | 164.73ms | success
 2026-01-16T14:54:03.627868+00:00 | DB_CALL get_all_settings | P3 | 0.29ms | success
+2026-01-16T14:54:04.443341+00:00 | DB_CALL get_all_products | P3 | 30.41ms | success
+2026-01-16T14:54:04.677649+00:00 | DB_CALL get_all_bairros | P3 | 0.39ms | success
+2026-01-16T14:54:04.790499+00:00 | DB_CALL get_all_products | P3 | 24.97ms | success
+2026-01-16T14:54:04.999234+00:00 | DB_CALL get_all_bairros | P3 | 0.34ms | success
