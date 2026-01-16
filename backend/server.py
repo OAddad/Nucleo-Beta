@@ -4032,6 +4032,7 @@ class BotSettingsUpdate(BaseModel):
     chatbot_name: Optional[str] = None  # Nome do chatbot
     chatbot_voice: Optional[str] = None  # Voz do TTS (nova, alloy, echo, etc.)
     audio_response_enabled: Optional[bool] = None  # Se deve responder áudios com áudio
+    human_assistance_message: Optional[str] = None  # Mensagem quando cliente pede atendente
 
 @api_router.get("/chatbot/bot-settings")
 async def get_bot_settings(current_user: User = Depends(get_current_user)):
@@ -4043,7 +4044,8 @@ async def get_bot_settings(current_user: User = Depends(get_current_user)):
         "bot_pause_duration": int(settings.get('bot_pause_duration', '15')),
         "chatbot_name": settings.get('chatbot_name', 'Ana'),
         "chatbot_voice": settings.get('chatbot_voice', 'nova'),
-        "audio_response_enabled": settings.get('audio_response_enabled', 'true') == 'true'
+        "audio_response_enabled": settings.get('audio_response_enabled', 'true') == 'true',
+        "human_assistance_message": settings.get('human_assistance_message', 'Entendi! Vou chamar um atendente humano para te ajudar. Por favor, aguarde um momento... 🙋‍♂️')
     }
 
 @api_router.put("/chatbot/bot-settings")
@@ -4065,6 +4067,8 @@ async def update_bot_settings(data: BotSettingsUpdate, current_user: User = Depe
             await db_call(sqlite_db.set_setting, 'chatbot_voice', data.chatbot_voice)
         if data.audio_response_enabled is not None:
             await db_call(sqlite_db.set_setting, 'audio_response_enabled', 'true' if data.audio_response_enabled else 'false')
+        if data.human_assistance_message is not None:
+            await db_call(sqlite_db.set_setting, 'human_assistance_message', data.human_assistance_message)
         
         return {"success": True}
     except Exception as e:
