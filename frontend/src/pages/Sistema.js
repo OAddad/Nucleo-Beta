@@ -2417,25 +2417,15 @@ function CupomPreparoPreview({ pedido }) {
             
             {/* Subitems do combo (bebidas, acompanhamentos) */}
             {isCombo && item.subitems && item.subitems.map((sub, j) => (
-              <div key={`sub-${j}`}>
-                <div className="text-sm ml-4">-&gt; {sub.nome || sub.name}</div>
-                {sub.observacao && (
-                  <div className="text-sm font-bold text-orange-600 ml-8">
-                    &gt;&gt;&gt; {sub.observacao}
-                  </div>
-                )}
+              <div key={`sub-${j}`} className="text-sm ml-4">
+                -&gt; {sub.nome || sub.name}
               </div>
             ))}
             
             {/* Adicionais */}
             {isCombo && item.adicionais && item.adicionais.map((add, j) => (
-              <div key={`add-${j}`}>
-                <div className="text-sm ml-4">-&gt; {add.nome}</div>
-                {add.observacao && (
-                  <div className="text-sm font-bold text-orange-600 ml-8">
-                    &gt;&gt;&gt; {add.observacao}
-                  </div>
-                )}
+              <div key={`add-${j}`} className="text-sm ml-4">
+                -&gt; {add.nome}
               </div>
             ))}
             
@@ -2460,15 +2450,6 @@ function CupomPreparoPreview({ pedido }) {
       })}
       
       <div className="border-t border-dashed border-gray-400 my-2" />
-      
-      {/* OBSERVAÇÃO GERAL */}
-      {pedido.observacao && (
-        <>
-          <div className="text-center font-bold text-orange-600">!!! OBSERVAÇÃO !!!</div>
-          <div className="text-sm">{pedido.observacao}</div>
-          <div className="border-t border-dashed border-gray-400 my-2" />
-        </>
-      )}
       
       {/* RODAPÉ */}
       <div className="text-center text-[10px]">
