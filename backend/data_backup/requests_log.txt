@@ -47312,3 +47312,4 @@
 2026-01-16T13:26:47.359852+00:00 | DB_CALL count_ingredients | P3 | 0.93ms | success
 2026-01-16T13:26:47.360078+00:00 | DB_CALL count_products | P3 | 0.15ms | success
 2026-01-16T13:26:47.360250+00:00 | DB_CALL count_users | P3 | 0.1ms | success
+2026-01-16T13:27:00.019578+00:00 | DB_CALL get_all_settings | P3 | 0.34ms | success
