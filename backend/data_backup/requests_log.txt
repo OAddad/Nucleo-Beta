@@ -48036,3 +48036,11 @@
 2026-01-16T14:34:24.984620+00:00 | DB_CALL get_all_pedidos | P3 | 2.41ms | success
 2026-01-16T14:34:24.986736+00:00 | DB_CALL get_all_entregadores | P3 | 4.0ms | success
 2026-01-16T14:34:24.987029+00:00 | DB_CALL get_all_settings | P3 | 3.9ms | success
+2026-01-16T14:34:29.950920+00:00 | DB_CALL get_all_products | P3 | 27.29ms | success
+2026-01-16T14:34:29.975214+00:00 | DB_CALL get_all_pedidos | P3 | 1.42ms | success
+2026-01-16T14:34:29.978221+00:00 | DB_CALL get_all_settings | P3 | 0.33ms | success
+2026-01-16T14:34:29.978693+00:00 | DB_CALL get_all_entregadores | P3 | 1.08ms | success
+2026-01-16T14:34:34.987737+00:00 | DB_CALL get_all_entregadores | P3 | 1.33ms | success
+2026-01-16T14:34:34.988295+00:00 | DB_CALL get_all_settings | P3 | 1.39ms | success
+2026-01-16T14:34:34.989872+00:00 | DB_CALL get_all_pedidos | P3 | 2.23ms | success
+2026-01-16T14:34:35.392885+00:00 | DB_CALL get_all_products | P3 | 27.87ms | success
