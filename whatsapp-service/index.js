@@ -57,10 +57,61 @@ async function getAIResponse(phone, message, pushName) {
     }
     
     const data = await response.json();
-    return data.response || null;
+    // Retorna objeto completo com texto e áudio
+    return {
+      text: data.response || null,
+      audio_base64: data.response_audio_base64 || null,
+      waiting_for_human: data.waiting_for_human || false
+    };
   } catch (error) {
     console.log('[WhatsApp] Erro ao chamar API de IA:', error.message);
     return null;
+  }
+}
+
+// Função para enviar áudio com indicador de gravação
+async function sendAudioWithRecording(jid, audioBase64) {
+  try {
+    if (!sock || connectionStatus !== 'connected') {
+      console.log('[WhatsApp] Não conectado, não pode enviar áudio');
+      return false;
+    }
+    
+    console.log(`[WhatsApp] Iniciando envio de áudio para ${jid}...`);
+    
+    // Mostrar "gravando áudio..."
+    try {
+      await sock.presenceSubscribe(jid);
+      await sock.sendPresenceUpdate('recording', jid);
+    } catch (presenceErr) {
+      console.log('[WhatsApp] Aviso ao atualizar presença:', presenceErr.message);
+    }
+    
+    // Aguardar um pouco para simular gravação
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    
+    // Enviar áudio
+    console.log('[WhatsApp] Enviando áudio...');
+    const audioBuffer = Buffer.from(audioBase64, 'base64');
+    const result = await sock.sendMessage(jid, {
+      audio: audioBuffer,
+      mimetype: 'audio/mpeg',
+      ptt: true  // Enviar como mensagem de voz
+    });
+    console.log('[WhatsApp] Resultado do envio de áudio:', result?.key?.id ? 'OK' : 'Falha');
+    
+    // Incrementar contador
+    stats.messagesSent++;
+    
+    // Voltar ao status normal
+    try {
+      await sock.sendPresenceUpdate('available', jid);
+    } catch (e) {}
+    
+    return true;
+  } catch (error) {
+    console.log('[WhatsApp] Erro ao enviar áudio:', error.message);
+    return false;
   }
 }
 
