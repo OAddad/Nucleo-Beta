@@ -4849,6 +4849,7 @@ async def download_print_connector():
     connector_path = Path(__file__).parent.parent / "print-connector"
     exe_path = connector_path / "dist" / "NucleoPrintConnector.exe"
     setup_path = connector_path / "NucleoPrintConnector-Setup.zip"
+    source_available = connector_path.exists() and (connector_path / "src").exists()
     
     return {
         "name": "Núcleo Print Connector",
@@ -4857,19 +4858,29 @@ async def download_print_connector():
         "size": "37MB (exe) / 15MB (setup zip)",
         "exe_available": exe_path.exists(),
         "setup_available": setup_path.exists(),
+        "source_available": source_available,
         "download_exe": "/api/print-connector/download/exe" if exe_path.exists() else None,
         "download_setup": "/api/print-connector/download/setup" if setup_path.exists() else None,
+        "download_source": "/api/print-connector/source" if source_available else None,
         "requirements": [
             "Windows 10 ou 11 (64-bit)",
             "Impressora térmica USB (Epson recomendada)",
-            "Papel 80mm"
+            "Papel 80mm",
+            "Node.js 18+ (apenas para compilar)"
         ],
         "features": [
-            "Executável standalone - não precisa de Node.js",
+            "Executável standalone - não precisa de Node.js para rodar",
             "Instalador automático com atalhos",
             "Opção de iniciar com Windows",
             "ESC/POS profissional",
             "Fila de impressão com retry automático"
+        ],
+        "build_instructions": [
+            "1. Baixe o código-fonte (ZIP)",
+            "2. Extraia e abra o terminal na pasta",
+            "3. Execute: npm install",
+            "4. Execute: npm run build",
+            "5. O executável estará em dist/NucleoPrintConnector.exe"
         ]
     }
 
