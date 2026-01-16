@@ -289,7 +289,10 @@ async function connectToWhatsApp() {
               
               // Baixar o áudio
               try {
-                const buffer = await sock.downloadMediaMessage(msg);
+                const buffer = await downloadMediaMessage(msg, 'buffer', {}, { 
+                  logger: pino({ level: 'silent' }),
+                  reuploadRequest: sock.updateMediaMessage 
+                });
                 if (buffer) {
                   const audioBase64 = buffer.toString('base64');
                   console.log(`[WhatsApp] Áudio convertido para base64 (${audioBase64.length} chars)`);
