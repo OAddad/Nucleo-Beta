@@ -47620,3 +47620,7 @@
 2026-01-16T14:06:37.201585+00:00 | DB_CALL get_all_settings | P3 | 0.25ms | success
 2026-01-16T14:06:37.377936+00:00 | DB_CALL get_all_settings | P3 | 0.27ms | success
 2026-01-16T14:06:37.551867+00:00 | DB_CALL get_all_settings | P3 | 0.25ms | success
+2026-01-16T14:06:56.034722+00:00 | DB_CALL get_all_settings | P3 | 0.27ms | success
+2026-01-16T14:06:56.207003+00:00 | DB_CALL get_all_settings | P3 | 0.28ms | success
+2026-01-16T14:06:56.397327+00:00 | DB_CALL get_all_settings | P3 | 0.29ms | success
+2026-01-16T14:06:56.577968+00:00 | DB_CALL get_all_settings | P3 | 0.26ms | success
