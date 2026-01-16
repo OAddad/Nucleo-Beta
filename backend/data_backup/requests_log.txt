@@ -48932,3 +48932,7 @@
 2026-01-16T14:52:59.386188+00:00 | DB_CALL get_pedido_by_id | P3 | 0.3ms | success
 2026-01-16T14:53:04.384774+00:00 | DB_CALL get_pedido_by_id | P3 | 0.38ms | success
 2026-01-16T14:53:09.401476+00:00 | DB_CALL get_pedido_by_id | P3 | 0.44ms | success
+2026-01-16T14:53:13.030004+00:00 | DB_CALL get_all_settings | P3 | 1.41ms | success
+2026-01-16T14:53:13.032067+00:00 | DB_CALL get_all_pedidos | P3 | 3.3ms | success
+2026-01-16T14:53:13.034332+00:00 | DB_CALL get_all_entregadores | P3 | 4.69ms | success
+2026-01-16T14:53:14.383783+00:00 | DB_CALL get_pedido_by_id | P3 | 0.3ms | success
