@@ -2646,7 +2646,31 @@ function RespostasAutomaticasTab({ toast }) {
                   </div>
                   <div>
                     <h3 className="font-semibold">Pausa por Intervenção Humana</h3>
-                    <p className="text-sm text-muted-foreground">Quando um atendente enviar mensagem</p>
+                    <p className="text-sm text-muted-foreground">Quando um atendente enviar qualquer mensagem</p>
+                  </div>
+                </div>
+                {/* Indicador de tipos de mídia suportados */}
+                <div className="mb-4 p-3 bg-purple-50 dark:bg-purple-950/30 rounded-lg border border-purple-200 dark:border-purple-800">
+                  <p className="text-xs font-medium text-purple-700 dark:text-purple-300 mb-2">O bot pausa automaticamente quando o atendente enviar:</p>
+                  <div className="flex flex-wrap gap-2">
+                    <span className="px-2 py-1 bg-white dark:bg-gray-800 rounded text-xs flex items-center gap-1">
+                      <MessageCircle className="w-3 h-3" /> Texto
+                    </span>
+                    <span className="px-2 py-1 bg-white dark:bg-gray-800 rounded text-xs flex items-center gap-1">
+                      🎤 Áudio
+                    </span>
+                    <span className="px-2 py-1 bg-white dark:bg-gray-800 rounded text-xs flex items-center gap-1">
+                      📷 Foto
+                    </span>
+                    <span className="px-2 py-1 bg-white dark:bg-gray-800 rounded text-xs flex items-center gap-1">
+                      🎬 Vídeo
+                    </span>
+                    <span className="px-2 py-1 bg-white dark:bg-gray-800 rounded text-xs flex items-center gap-1">
+                      🎞️ GIF
+                    </span>
+                    <span className="px-2 py-1 bg-white dark:bg-gray-800 rounded text-xs flex items-center gap-1">
+                      📎 Documento
+                    </span>
                   </div>
                 </div>
                 <div className="space-y-4">
