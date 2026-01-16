@@ -2151,7 +2151,9 @@ function RespostasAutomaticasTab({ toast }) {
         setBotSettings({
           bot_pause_message: data.bot_pause_message || "",
           bot_pause_duration: data.bot_pause_duration || 15,
-          chatbot_name: data.chatbot_name || "Ana"
+          chatbot_name: data.chatbot_name || "Ana",
+          chatbot_voice: data.chatbot_voice || "nova",
+          audio_response_enabled: data.audio_response_enabled !== false
         });
       }
     } catch (error) {
