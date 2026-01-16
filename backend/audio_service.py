@@ -156,10 +156,128 @@ async def transcribe_audio_from_url(audio_url: str) -> Tuple[bool, str]:
         return False, f"Erro ao baixar áudio: {str(e)}"
 
 
+def number_to_words(n: int) -> str:
+    """Converte número para texto por extenso em português"""
+    if n == 0:
+        return "zero"
+    
+    units = ["", "um", "dois", "três", "quatro", "cinco", "seis", "sete", "oito", "nove",
+             "dez", "onze", "doze", "treze", "quatorze", "quinze", "dezesseis", "dezessete", "dezoito", "dezenove"]
+    tens = ["", "", "vinte", "trinta", "quarenta", "cinquenta", "sessenta", "setenta", "oitenta", "noventa"]
+    hundreds = ["", "cento", "duzentos", "trezentos", "quatrocentos", "quinhentos", "seiscentos", "setecentos", "oitocentos", "novecentos"]
+    
+    if n < 0:
+        return "menos " + number_to_words(-n)
+    
+    if n < 20:
+        return units[n]
+    
+    if n < 100:
+        if n % 10 == 0:
+            return tens[n // 10]
+        return tens[n // 10] + " e " + units[n % 10]
+    
+    if n == 100:
+        return "cem"
+    
+    if n < 1000:
+        if n % 100 == 0:
+            return hundreds[n // 100]
+        return hundreds[n // 100] + " e " + number_to_words(n % 100)
+    
+    if n < 1000000:
+        thousands = n // 1000
+        remainder = n % 1000
+        if thousands == 1:
+            result = "mil"
+        else:
+            result = number_to_words(thousands) + " mil"
+        if remainder > 0:
+            if remainder < 100:
+                result += " e " + number_to_words(remainder)
+            else:
+                result += " " + number_to_words(remainder)
+        return result
+    
+    return str(n)  # Para números muito grandes, retorna o número
+
+
+def format_money_for_speech(match) -> str:
+    """Formata valor monetário para fala natural"""
+    value = match.group(0)
+    # Remover R$ e espaços
+    value = value.replace("R$", "").replace(" ", "").strip()
+    
+    # Separar reais e centavos
+    if "," in value:
+        parts = value.split(",")
+        reais = int(parts[0]) if parts[0] else 0
+        centavos = int(parts[1][:2]) if len(parts) > 1 and parts[1] else 0
+    elif "." in value:
+        parts = value.split(".")
+        if len(parts[-1]) == 2:  # É centavo
+            reais = int(parts[0]) if parts[0] else 0
+            centavos = int(parts[1]) if parts[1] else 0
+        else:  # É milhar
+            reais = int(value.replace(".", ""))
+            centavos = 0
+    else:
+        reais = int(value) if value else 0
+        centavos = 0
+    
+    result = ""
+    if reais > 0:
+        result = number_to_words(reais) + (" real" if reais == 1 else " reais")
+    
+    if centavos > 0:
+        if result:
+            result += " e "
+        result += number_to_words(centavos) + (" centavo" if centavos == 1 else " centavos")
+    
+    if not result:
+        result = "zero reais"
+    
+    return result
+
+
+def format_time_for_speech(match) -> str:
+    """Formata horário para fala natural"""
+    time_str = match.group(0)
+    parts = time_str.replace("h", ":").replace("H", ":").split(":")
+    
+    hours = int(parts[0]) if parts[0] else 0
+    minutes = int(parts[1]) if len(parts) > 1 and parts[1] else 0
+    
+    if minutes == 0:
+        return number_to_words(hours) + " horas"
+    elif minutes == 30:
+        return number_to_words(hours) + " e meia"
+    else:
+        return number_to_words(hours) + " e " + number_to_words(minutes)
+
+
+def format_phone_for_speech(match) -> str:
+    """Formata telefone para fala natural com pausas"""
+    phone = match.group(0)
+    # Remover caracteres não numéricos
+    digits = ''.join(filter(str.isdigit, phone))
+    
+    # Falar dígito por dígito com pausas
+    result = []
+    for i, digit in enumerate(digits):
+        digit_words = ["zero", "um", "dois", "três", "quatro", "cinco", "seis", "sete", "oito", "nove"]
+        result.append(digit_words[int(digit)])
+        # Adicionar pausa a cada 2-3 dígitos
+        if i in [1, 4, 8] and i < len(digits) - 1:
+            result.append("...")
+    
+    return " ".join(result)
+
+
 def make_text_natural_for_speech(text: str) -> str:
     """
     Transforma o texto para soar mais natural quando falado.
-    Adiciona pausas, hesitações e torna mais conversacional.
+    Adiciona pausas, hesitações, converte números e torna mais conversacional.
     
     Args:
         text: Texto original
@@ -181,11 +299,33 @@ def make_text_natural_for_speech(text: str) -> str:
     text = re.sub(r'_([^_]+)_', r'\1', text)    # _itálico_
     text = re.sub(r'~([^~]+)~', r'\1', text)    # ~riscado~
     
+    # CONVERTER NÚMEROS PARA TEXTO
+    
+    # Valores monetários: R$ 25,90 → vinte e cinco reais e noventa centavos
+    text = re.sub(r'R\$\s*[\d\.,]+', format_money_for_speech, text)
+    
+    # Horários: 08:30, 18h30 → oito e trinta
+    text = re.sub(r'\b(\d{1,2})[h:](\d{2})\b', format_time_for_speech, text)
+    
+    # Telefones: (34) 99672-7535 → três quatro... nove nove...
+    text = re.sub(r'[\(\)0-9\-\s]{10,}', format_phone_for_speech, text)
+    
+    # Números simples (1-999) → por extenso
+    def replace_number(match):
+        num = int(match.group(0))
+        if 1 <= num <= 999:
+            return number_to_words(num)
+        return match.group(0)
+    
+    text = re.sub(r'\b(\d{1,3})\b', replace_number, text)
+    
+    # TORNAR MAIS NATURAL
+    
     # Lista de hesitações naturais para inserir ocasionalmente
-    hesitations = ["hmm, ", "então, ", "bom, ", "olha, ", "ah, ", "é, "]
+    hesitations = ["hmm... ", "então... ", "bom... ", "olha... ", "ah... ", "é... ", "tipo... "]
     
     # Lista de conectores naturais
-    connectors = [" né, ", " sabe, ", " tá, ", " viu, "]
+    fillers = [" né", " sabe", " viu", " tá"]
     
     # Dividir em sentenças
     sentences = re.split(r'([.!?])', text)
@@ -201,23 +341,35 @@ def make_text_natural_for_speech(text: str) -> str:
         
         sentence = part.strip()
         
-        # Adicionar hesitação no início de algumas frases (30% de chance)
-        if i > 0 and random.random() < 0.3 and len(sentence) > 20:
+        # Adicionar hesitação no início de algumas frases (25% de chance)
+        if i > 0 and random.random() < 0.25 and len(sentence) > 15:
             sentence = random.choice(hesitations) + sentence[0].lower() + sentence[1:]
         
-        # Adicionar pausa após vírgulas longas
-        sentence = re.sub(r',\s*', ', ... ', sentence, count=1) if random.random() < 0.2 else sentence
+        # Adicionar filler no meio de frases longas (20% de chance)
+        if random.random() < 0.2 and "," in sentence:
+            parts = sentence.split(",", 1)
+            if len(parts) == 2 and len(parts[0]) > 10:
+                sentence = parts[0] + random.choice(fillers) + "," + parts[1]
         
         result.append(sentence)
     
     text = ''.join(result)
     
     # Adicionar pausas naturais (reticências = pausa no TTS)
-    text = re.sub(r'\.\s+', '. ... ', text, count=2)  # Pausa entre frases
+    text = re.sub(r'\.\s+', '... ', text)  # Pausa entre frases
+    text = re.sub(r',\s*', ', ', text)  # Pausa leve após vírgulas
     
-    # Substituir alguns "você" por "cê" para soar mais natural (50% de chance)
-    if random.random() < 0.5:
+    # Substituir alguns "você" por "cê" para soar mais natural (40% de chance)
+    if random.random() < 0.4:
         text = re.sub(r'\bvocê\b', 'cê', text, count=1, flags=re.IGNORECASE)
+    
+    # Substituir "está" por "tá" ocasionalmente
+    if random.random() < 0.3:
+        text = re.sub(r'\bestá\b', 'tá', text, count=1, flags=re.IGNORECASE)
+    
+    # Substituir "para" por "pra" ocasionalmente
+    if random.random() < 0.4:
+        text = re.sub(r'\bpara\b', 'pra', text, count=2, flags=re.IGNORECASE)
     
     # Limpar espaços extras
     text = re.sub(r'\s+', ' ', text).strip()
