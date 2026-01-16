@@ -194,10 +194,16 @@ export default function Delivery() {
       const idsAnteriores = new Set(pedidosAguardandoAceiteAnteriores.map(p => p.id));
       const novosPedidosAceite = pedidosAguardandoAceiteAtuais.filter(p => !idsAnteriores.has(p.id));
       
-      // Se houver novos pedidos aguardando aceite, tocar o som
+      // Se houver novos pedidos aguardando aceite, tocar o som e IMPRIMIR AUTOMATICAMENTE
       if (novosPedidosAceite.length > 0 && previousPedidosRef.current.length > 0) {
         playNotificationSound();
         console.log(`🔔 Novo(s) pedido(s) detectado(s): ${novosPedidosAceite.map(p => p.codigo).join(', ')}`);
+        
+        // 🖨️ IMPRESSÃO AUTOMÁTICA - Imprimir cada novo pedido
+        for (const novoPedido of novosPedidosAceite) {
+          console.log(`🖨️ Enviando impressão automática - Pedido #${novoPedido.codigo}`);
+          imprimirPedidoAutomatico(novoPedido);
+        }
       }
       
       // Atualizar referência de pedidos anteriores
