@@ -4052,6 +4052,152 @@ async def chatbot_reset_conversation(phone: str, current_user: User = Depends(ge
         return {"success": False, "error": str(e)}
 
 
+# ==================== CHATBOT AUDIO (STT + TTS) ====================
+
+class AudioMessageRequest(BaseModel):
+    phone: str
+    audio_base64: Optional[str] = None  # Áudio em base64
+    audio_url: Optional[str] = None  # URL do áudio (WhatsApp)
+    push_name: Optional[str] = ""
+    respond_with_audio: Optional[bool] = True  # Se deve responder com áudio
+
+@api_router.post("/chatbot/process-audio")
+async def chatbot_process_audio(data: AudioMessageRequest):
+    """
+    Processa mensagem de áudio: transcreve, processa com IA e opcionalmente responde com áudio.
+    
+    - Recebe áudio em base64 ou URL
+    - Transcreve usando OpenAI Whisper
+    - Processa a mensagem transcrita com IA
+    - Gera resposta em áudio (TTS) se solicitado
+    """
+    try:
+        # Verificar se o bot está pausado
+        if chatbot_ai.is_bot_paused_for_phone(data.phone):
+            return {
+                "success": True, 
+                "bot_paused": True, 
+                "message": "Bot pausado - atendimento humano em andamento"
+            }
+        
+        # Verificar se há áudio
+        if not data.audio_base64 and not data.audio_url:
+            return {"success": False, "error": "Nenhum áudio fornecido (audio_base64 ou audio_url)"}
+        
+        # Processar áudio
+        result = await chatbot_ai.process_audio_message(
+            phone=data.phone,
+            audio_base64=data.audio_base64,
+            audio_url=data.audio_url,
+            push_name=data.push_name or "",
+            respond_with_audio=data.respond_with_audio
+        )
+        
+        return {
+            "success": result["success"],
+            "transcription": result["transcription"],
+            "response_text": result["response_text"],
+            "response_audio_base64": result["response_audio_base64"],
+            "response_audio_url": result["response_audio_url"],
+            "error": result["error"],
+            "bot_paused": False
+        }
+        
+    except Exception as e:
+        logger.error(f"Erro ao processar áudio: {e}")
+        return {"success": False, "error": str(e)}
+
+
+class TextToSpeechRequest(BaseModel):
+    text: str
+    voice: Optional[str] = None  # Voz a usar (opcional)
+
+@api_router.post("/chatbot/text-to-speech")
+async def chatbot_text_to_speech(data: TextToSpeechRequest):
+    """
+    Converte texto em áudio usando OpenAI TTS.
+    Útil para gerar áudio de respostas já existentes.
+    """
+    try:
+        if not data.text or len(data.text.strip()) == 0:
+            return {"success": False, "error": "Texto vazio"}
+        
+        result = await chatbot_ai.generate_audio_response(data.text, data.voice)
+        
+        return {
+            "success": result["success"],
+            "audio_base64": result["audio_base64"],
+            "audio_url": result["audio_url"],
+            "error": result["error"]
+        }
+        
+    except Exception as e:
+        logger.error(f"Erro no TTS: {e}")
+        return {"success": False, "error": str(e)}
+
+
+@api_router.get("/chatbot/voices")
+async def get_chatbot_voices():
+    """Retorna as vozes disponíveis para TTS"""
+    voices = chatbot_ai.get_available_voices()
+    settings = await db_call(sqlite_db.get_all_settings)
+    current_voice = settings.get('chatbot_voice', 'nova')
+    
+    return {
+        "success": True,
+        "voices": voices,
+        "current_voice": current_voice,
+        "audio_available": chatbot_ai.is_audio_available()
+    }
+
+
+class SetVoiceRequest(BaseModel):
+    voice: str
+
+@api_router.put("/chatbot/voice")
+async def set_chatbot_voice(data: SetVoiceRequest, current_user: User = Depends(get_current_user)):
+    """Define a voz do chatbot para TTS"""
+    if current_user.role not in ["proprietario", "administrador"]:
+        raise HTTPException(status_code=403, detail="Sem permissão")
+    
+    available_voices = chatbot_ai.get_available_voices()
+    if data.voice not in available_voices:
+        return {"success": False, "error": f"Voz inválida. Opções: {list(available_voices.keys())}"}
+    
+    await db_call(sqlite_db.set_setting, 'chatbot_voice', data.voice)
+    return {"success": True, "voice": data.voice}
+
+
+@api_router.get("/chatbot/audio-status")
+async def get_audio_status():
+    """Verifica se o serviço de áudio está disponível"""
+    return {
+        "success": True,
+        "audio_available": chatbot_ai.is_audio_available(),
+        "stt_available": chatbot_ai.is_audio_available(),  # Whisper
+        "tts_available": chatbot_ai.is_audio_available()   # TTS
+    }
+
+
+# Endpoint para servir arquivos de áudio gerados
+@api_router.get("/audio/{filename}")
+async def serve_audio_file(filename: str):
+    """Serve arquivo de áudio gerado pelo TTS"""
+    from fastapi.responses import FileResponse
+    
+    audio_dir = "/app/backend/audio_files"
+    filepath = os.path.join(audio_dir, filename)
+    
+    if not os.path.exists(filepath):
+        raise HTTPException(status_code=404, detail="Áudio não encontrado")
+    
+    return FileResponse(
+        filepath,
+        media_type="audio/mpeg",
+        filename=filename
+    )
+
+
 # ==================== WHATSAPP STATS ====================
 
 @api_router.get("/whatsapp/stats")
