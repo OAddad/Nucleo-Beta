@@ -3066,8 +3066,11 @@ async def create_pedido(data: PedidoCreate):
     
     # 🖨️ IMPRESSÃO AUTOMÁTICA - Imprimir cupom de entrega e preparo
     if pedido:
-        import asyncio
-        asyncio.create_task(enviar_impressao_automatica(pedido, settings))
+        # 🖨️ IMPRESSÃO AUTOMÁTICA - Imprimir cupom de entrega e preparo
+        try:
+            await enviar_impressao_automatica(pedido, settings)
+        except Exception as e:
+            print(f"[PRINT] ❌ Erro na impressão automática: {e}")
     
     return pedido
 
