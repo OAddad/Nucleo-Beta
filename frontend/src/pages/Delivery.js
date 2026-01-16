@@ -320,28 +320,98 @@ export default function Delivery() {
     }
   };
 
-  // Imprimir 2ª via via API do backend
+  // URL do Print Connector local
+  const PRINT_CONNECTOR_URL = 'http://localhost:3456';
+
+  // Função para imprimir via Print Connector local
+  const imprimirViaPrintConnector = async (pedido, tipo) => {
+    const template = tipo === 'entrega' ? 'caixa' : 'preparo';
+    const sector = tipo === 'entrega' ? 'caixa' : 'cozinha';
+    
+    try {
+      const response = await fetch(`${PRINT_CONNECTOR_URL}/print`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          pedido: {
+            id: pedido.id,
+            codigo: pedido.codigo,
+            cliente_nome: pedido.cliente_nome,
+            cliente_telefone: pedido.cliente_telefone,
+            tipo_entrega: pedido.tipo_entrega,
+            endereco_rua: pedido.endereco_rua,
+            endereco_numero: pedido.endereco_numero,
+            endereco_bairro: pedido.endereco_bairro,
+            endereco_complemento: pedido.endereco_complemento,
+            items: pedido.items || [],
+            total: pedido.total,
+            valor_entrega: pedido.valor_entrega,
+            forma_pagamento: pedido.forma_pagamento,
+            troco_precisa: pedido.troco_precisa,
+            troco_valor: pedido.troco_valor,
+            observacao: pedido.observacao,
+            created_at: pedido.created_at
+          },
+          template,
+          sector,
+          copies: 1,
+          cut: true,
+          empresa: tipo === 'entrega' ? empresaConfig : {},
+          config: tipo === 'entrega' ? { mensagem_rodape: 'NAO E DOCUMENTO FISCAL' } : {}
+        })
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        return { success: data.success, error: data.error };
+      } else {
+        return { success: false, error: `Erro HTTP ${response.status}` };
+      }
+    } catch (error) {
+      if (error.name === 'TypeError' && error.message.includes('fetch')) {
+        return { success: false, offline: true, error: 'Print Connector offline' };
+      }
+      return { success: false, error: error.message };
+    }
+  };
+
+  // 🖨️ Impressão automática de novo pedido (entrega + preparo)
+  const imprimirPedidoAutomatico = async (pedido) => {
+    // Imprimir Cupom de Entrega
+    const resultEntrega = await imprimirViaPrintConnector(pedido, 'entrega');
+    if (resultEntrega.success) {
+      console.log(`✅ Cupom de Entrega impresso - Pedido #${pedido.codigo}`);
+    } else if (!resultEntrega.offline) {
+      console.log(`❌ Erro Cupom de Entrega: ${resultEntrega.error}`);
+    }
+    
+    // Imprimir Cupom de Preparo
+    const resultPreparo = await imprimirViaPrintConnector(pedido, 'preparo');
+    if (resultPreparo.success) {
+      console.log(`✅ Cupom de Preparo impresso - Pedido #${pedido.codigo}`);
+    } else if (!resultPreparo.offline) {
+      console.log(`❌ Erro Cupom de Preparo: ${resultPreparo.error}`);
+    }
+    
+    // Mostrar toast apenas se Print Connector estiver offline
+    if (resultEntrega.offline || resultPreparo.offline) {
+      // Silencioso - não mostrar erro para não atrapalhar
+      console.log(`⚠️ Print Connector offline - Pedido #${pedido.codigo} não impresso automaticamente`);
+    }
+  };
+
+  // Imprimir 2ª via via Print Connector local
   const handlePrint2Via = async (pedido, tipo, e) => {
     if (e) e.stopPropagation();
     
-    try {
-      const response = await axios.post(
-        `${API}/pedidos/${pedido.id}/imprimir`,
-        { tipo },
-        getAuthHeader()
-      );
-      
-      if (response.data.success) {
-        toast.success(`2ª via do ${tipo === 'entrega' ? 'Cupom de Entrega' : 'Cupom de Preparo'} enviada`);
-      } else {
-        toast.error(response.data.message || "Erro ao imprimir");
-      }
-    } catch (error) {
-      if (error.response?.status === 503) {
-        toast.error("Print Connector offline. Verifique se o aplicativo está rodando.");
-      } else {
-        toast.error(error.response?.data?.detail || "Erro ao imprimir 2ª via");
-      }
+    const result = await imprimirViaPrintConnector(pedido, tipo);
+    
+    if (result.success) {
+      toast.success(`2ª via do ${tipo === 'entrega' ? 'Cupom de Entrega' : 'Cupom de Preparo'} enviada`);
+    } else if (result.offline) {
+      toast.error("Print Connector offline. Verifique se o aplicativo está rodando.");
+    } else {
+      toast.error(result.error || "Erro ao imprimir 2ª via");
     }
   };
 
@@ -350,8 +420,16 @@ export default function Delivery() {
     if (e) e.stopPropagation();
     
     // Imprimir ambos os cupons
-    handlePrint2Via(pedido, 'entrega', null);
-    handlePrint2Via(pedido, 'preparo', null);
+    const resultEntrega = await imprimirViaPrintConnector(pedido, 'entrega');
+    const resultPreparo = await imprimirViaPrintConnector(pedido, 'preparo');
+    
+    if (resultEntrega.success && resultPreparo.success) {
+      toast.success("Cupons enviados para impressão");
+    } else if (resultEntrega.offline || resultPreparo.offline) {
+      toast.error("Print Connector offline. Verifique se o aplicativo está rodando.");
+    } else {
+      toast.error("Erro ao imprimir cupons");
+    }
   };
 
   // Marcar como pronto
