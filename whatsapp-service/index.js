@@ -320,6 +320,10 @@ async function connectToWhatsApp() {
                       if (data.response_audio_base64) {
                         console.log('[WhatsApp] Enviando resposta em áudio...');
                         try {
+                          // Mostrar "gravando áudio" antes de enviar
+                          await sock.sendPresenceUpdate('recording', from);
+                          await new Promise(resolve => setTimeout(resolve, 2000)); // Aguardar 2 segundos
+                          
                           const audioBuffer = Buffer.from(data.response_audio_base64, 'base64');
                           await sock.sendMessage(from, {
                             audio: audioBuffer,
@@ -328,6 +332,9 @@ async function connectToWhatsApp() {
                           });
                           stats.messagesSent++;
                           console.log('[WhatsApp] Áudio de resposta enviado!');
+                          
+                          // Voltar ao status normal
+                          await sock.sendPresenceUpdate('available', from);
                         } catch (audioErr) {
                           console.log('[WhatsApp] Erro ao enviar áudio, enviando texto:', audioErr.message);
                           await sendMessageWithTyping(from, data.response);
@@ -340,6 +347,10 @@ async function connectToWhatsApp() {
                       // Cliente pediu atendente humano
                       if (data.response_audio_base64) {
                         try {
+                          // Mostrar "gravando áudio" antes de enviar
+                          await sock.sendPresenceUpdate('recording', from);
+                          await new Promise(resolve => setTimeout(resolve, 1500));
+                          
                           const audioBuffer = Buffer.from(data.response_audio_base64, 'base64');
                           await sock.sendMessage(from, {
                             audio: audioBuffer,
@@ -347,6 +358,8 @@ async function connectToWhatsApp() {
                             ptt: true
                           });
                           stats.messagesSent++;
+                          
+                          await sock.sendPresenceUpdate('available', from);
                         } catch (audioErr) {
                           await sendMessageWithTyping(from, data.response);
                         }
