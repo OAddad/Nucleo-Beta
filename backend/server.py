@@ -3945,7 +3945,13 @@ async def chatbot_process_message(data: ChatbotProcessMessage):
             msg_type = (data.message_type or "text").lower()
             if msg_type in MEDIA_TYPES_FOR_PAUSE or msg_type == "text":
                 pause_msg = chatbot_ai.pause_bot_for_phone(data.phone)
-                return {"success": True, "response": pause_msg, "bot_paused": True, "trigger_type": msg_type}
+                return {
+                    "success": True, 
+                    "response": pause_msg, 
+                    "bot_paused": True, 
+                    "trigger_type": msg_type,
+                    "human_attended": True  # Indica que atendente humano atendeu
+                }
         
         # Verificar se o bot está pausado para este telefone
         if chatbot_ai.is_bot_paused_for_phone(data.phone):
@@ -3957,6 +3963,21 @@ async def chatbot_process_message(data: ChatbotProcessMessage):
             # Mensagem de mídia do cliente - registrar mas não responder automaticamente
             logger.info(f"Mensagem de mídia recebida ({msg_type}) de {data.phone} - não processada pela IA")
             return {"success": True, "response": None, "bot_paused": False, "message": f"Mídia ({msg_type}) recebida - IA responde apenas mensagens de texto"}
+        
+        # Verificar se o cliente está pedindo atendimento humano
+        if chatbot_ai.check_human_assistance_request(data.message):
+            # Adicionar à fila de espera
+            chatbot_ai.add_to_waiting_queue(data.phone, data.push_name or "", data.message)
+            
+            # Retornar mensagem de aguarde
+            response = chatbot_ai.get_human_assistance_response()
+            return {
+                "success": True, 
+                "response": response, 
+                "bot_paused": False,
+                "waiting_for_human": True,  # Indica que cliente está aguardando atendente
+                "alert_sound": True  # Indica que deve tocar som de alerta
+            }
         
         # Processar analytics de palavras (não bloqueia se falhar)
         try:
