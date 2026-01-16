@@ -47574,3 +47574,11 @@
 2026-01-16T13:55:51.544082+00:00 | DB_CALL get_all_products | P3 | 24.58ms | success
 2026-01-16T13:55:53.336696+00:00 | DB_CALL get_all_products | P3 | 25.31ms | success
 2026-01-16T13:56:26.662648+00:00 | DB_CALL get_all_products | P3 | 24.15ms | success
+2026-01-16T13:56:28.407880+00:00 | DB_CALL get_all_products | P3 | 23.25ms | success
+2026-01-16T13:56:28.861796+00:00 | DB_CALL get_all_products | P3 | 24.44ms | success
+2026-01-16T13:56:32.147303+00:00 | DB_CALL get_all_products | P3 | 26.54ms | success
+2026-01-16T13:56:32.286543+00:00 | DB_CALL get_all_settings | P3 | 164.69ms | success
+2026-01-16T13:56:32.288115+00:00 | DB_CALL get_all_categories | P3 | 0.36ms | success
+2026-01-16T13:56:32.288590+00:00 | DB_CALL get_all_business_hours | P3 | 0.99ms | success
+2026-01-16T13:56:33.787497+00:00 | DB_CALL get_all_products | P3 | 31.06ms | success
+2026-01-16T13:56:34.007033+00:00 | DB_CALL get_all_bairros | P3 | 0.39ms | success
