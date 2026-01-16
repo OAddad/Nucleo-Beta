@@ -2502,19 +2502,10 @@ function RespostasAutomaticasTab({ toast }) {
                 <Button 
                   variant="secondary" 
                   size="sm"
-                  onClick={stopAlertSound}
+                  onClick={ignoreAllClients}
                   className="bg-white/20 hover:bg-white/30 text-white"
                 >
-                  🔇 Silenciar
-                </Button>
-              ) : (
-                <Button 
-                  variant="secondary" 
-                  size="sm"
-                  onClick={playAlertSound}
-                  className="bg-white/20 hover:bg-white/30 text-white"
-                >
-                  🔊 Tocar Som
+                  ❌ IGNORAR TODOS
                 </Button>
               )}
             </div>
@@ -2525,12 +2516,17 @@ function RespostasAutomaticasTab({ toast }) {
               <div key={idx} className="bg-white/10 rounded-lg p-2 text-sm">
                 <div className="flex items-center justify-between">
                   <span className="font-medium">{cliente.push_name || 'Cliente'}</span>
-                  <span className="text-xs text-white/70">
-                    {Math.floor(cliente.waiting_time_seconds / 60)}min aguardando
-                  </span>
+                  <Button 
+                    variant="ghost" 
+                    size="sm"
+                    onClick={() => ignoreClient(cliente.phone)}
+                    className="h-6 px-2 text-xs bg-white/10 hover:bg-white/20 text-white"
+                  >
+                    ❌ Ignorar
+                  </Button>
                 </div>
                 <div className="text-xs text-white/80 truncate">
-                  📱 {cliente.phone}
+                  📱 {cliente.phone} • {Math.floor(cliente.waiting_time_seconds / 60)}min
                 </div>
                 {cliente.message && (
                   <div className="text-xs text-white/70 truncate mt-1">
