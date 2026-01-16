@@ -3970,16 +3970,24 @@ async def chatbot_process_message(data: ChatbotProcessMessage):
             
             if audio_url or audio_base64:
                 # Processar áudio completo (transcrição + IA + TTS)
+                logger.info(f"[AUDIO] Iniciando processamento de áudio para {data.phone}")
                 settings = await db_call(sqlite_db.get_all_settings)
                 respond_with_audio = settings.get('audio_response_enabled', 'true') == 'true'
                 
-                result = await chatbot_ai.process_audio_message(
-                    phone=data.phone,
-                    audio_url=audio_url,
-                    audio_base64=audio_base64,
-                    push_name=data.push_name or "",
-                    respond_with_audio=respond_with_audio
-                )
+                try:
+                    result = await chatbot_ai.process_audio_message(
+                        phone=data.phone,
+                        audio_url=audio_url,
+                        audio_base64=audio_base64,
+                        push_name=data.push_name or "",
+                        respond_with_audio=respond_with_audio
+                    )
+                    logger.info(f"[AUDIO] Resultado do processamento: success={result.get('success')}, transcription={result.get('transcription', '')[:50] if result.get('transcription') else 'None'}, error={result.get('error')}")
+                except Exception as proc_err:
+                    logger.error(f"[AUDIO] Exceção no processamento: {proc_err}")
+                    import traceback
+                    traceback.print_exc()
+                    return {"success": False, "error": str(proc_err)}
                 
                 if result["success"]:
                     # Verificar se a transcrição pede atendimento humano
