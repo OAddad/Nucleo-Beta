@@ -47582,3 +47582,6 @@
 2026-01-16T13:56:32.288590+00:00 | DB_CALL get_all_business_hours | P3 | 0.99ms | success
 2026-01-16T13:56:33.787497+00:00 | DB_CALL get_all_products | P3 | 31.06ms | success
 2026-01-16T13:56:34.007033+00:00 | DB_CALL get_all_bairros | P3 | 0.39ms | success
+2026-01-16T13:56:34.318726+00:00 | DB_CALL get_all_products | P3 | 24.06ms | success
+2026-01-16T13:56:35.738847+00:00 | DB_CALL get_all_products | P3 | 24.5ms | success
+2026-01-16T13:56:35.953051+00:00 | DB_CALL get_all_products | P3 | 24.17ms | success
