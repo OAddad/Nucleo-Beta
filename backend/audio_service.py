@@ -43,18 +43,39 @@ async def transcribe_audio(audio_data: bytes, file_extension: str = "ogg") -> Tu
         return False, "Serviço de transcrição não disponível"
     
     try:
-        # Criar arquivo temporário com o áudio
+        import subprocess
+        
+        # Criar arquivo temporário com o áudio original
         temp_filename = f"{uuid.uuid4()}.{file_extension}"
         temp_path = os.path.join(AUDIO_DIR, temp_filename)
         
         with open(temp_path, "wb") as f:
             f.write(audio_data)
         
+        # Se for OGG/OPUS (formato do WhatsApp), converter para MP3
+        final_path = temp_path
+        if file_extension.lower() in ["ogg", "opus", "oga"]:
+            mp3_path = temp_path.replace(f".{file_extension}", ".mp3")
+            try:
+                # Converter usando ffmpeg
+                result = subprocess.run(
+                    ["ffmpeg", "-i", temp_path, "-acodec", "libmp3lame", "-y", mp3_path],
+                    capture_output=True,
+                    timeout=30
+                )
+                if result.returncode == 0 and os.path.exists(mp3_path):
+                    final_path = mp3_path
+                    print(f"[AUDIO SERVICE] Convertido {file_extension} para MP3")
+                else:
+                    print(f"[AUDIO SERVICE] Erro ffmpeg: {result.stderr.decode()[:200]}")
+            except Exception as conv_err:
+                print(f"[AUDIO SERVICE] Erro na conversão: {conv_err}")
+        
         # Inicializar STT
         stt = OpenAISpeechToText(api_key=EMERGENT_LLM_KEY)
         
         # Transcrever
-        with open(temp_path, "rb") as audio_file:
+        with open(final_path, "rb") as audio_file:
             response = await stt.transcribe(
                 file=audio_file,
                 model="whisper-1",
@@ -62,9 +83,11 @@ async def transcribe_audio(audio_data: bytes, file_extension: str = "ogg") -> Tu
                 language="pt"  # Português
             )
         
-        # Limpar arquivo temporário
+        # Limpar arquivos temporários
         try:
             os.remove(temp_path)
+            if final_path != temp_path:
+                os.remove(final_path)
         except:
             pass
         
