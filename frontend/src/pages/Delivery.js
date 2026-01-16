@@ -69,6 +69,36 @@ export default function Delivery() {
   const audioRef = useRef(null);
   const [soundEnabled, setSoundEnabled] = useState(true);
   
+  // State para clientes aguardando atendimento humano (WhatsApp)
+  const [waitingQueueCount, setWaitingQueueCount] = useState(0);
+  const [waitingQueueList, setWaitingQueueList] = useState([]);
+  
+  // Monitorar fila de clientes aguardando atendimento
+  useEffect(() => {
+    let isMounted = true;
+    
+    const checkWaitingQueue = async () => {
+      if (!isMounted) return;
+      try {
+        const res = await axios.get(`${API}/chatbot/waiting-queue`);
+        if (res.data.success) {
+          setWaitingQueueCount(res.data.count || 0);
+          setWaitingQueueList(res.data.queue || []);
+        }
+      } catch (error) {
+        // Silencioso se falhar
+      }
+    };
+    
+    checkWaitingQueue();
+    const interval = setInterval(checkWaitingQueue, 3000);
+    
+    return () => {
+      isMounted = false;
+      clearInterval(interval);
+    };
+  }, []);
+  
   // Inicializar áudio de notificação
   useEffect(() => {
     audioRef.current = new Audio(NOTIFICATION_SOUND_URL);
