@@ -2698,6 +2698,69 @@ function RespostasAutomaticasTab({ toast }) {
                 </div>
               </div>
 
+              {/* Card de Áudio do ChatBot */}
+              <div className="bg-card border rounded-xl p-4">
+                <div className="flex items-start gap-3 mb-4">
+                  <div className="p-2 rounded-lg bg-blue-100 dark:bg-blue-900/30">
+                    🎤
+                  </div>
+                  <div>
+                    <h3 className="font-semibold">Respostas em Áudio</h3>
+                    <p className="text-sm text-muted-foreground">O chatbot entende e responde com áudios</p>
+                  </div>
+                </div>
+                
+                {/* Status do serviço de áudio */}
+                <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-950/30 rounded-lg border border-blue-200 dark:border-blue-800">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+                    <p className="text-xs font-medium text-blue-700 dark:text-blue-300">Funcionalidades de áudio ativas:</p>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    <span className="px-2 py-1 bg-white dark:bg-gray-800 rounded text-xs flex items-center gap-1">
+                      🎤 Entende áudios (Whisper)
+                    </span>
+                    <span className="px-2 py-1 bg-white dark:bg-gray-800 rounded text-xs flex items-center gap-1">
+                      🔊 Responde com áudio (TTS)
+                    </span>
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <div>
+                    <Label>Voz do ChatBot</Label>
+                    <Select 
+                      value={botSettings.chatbot_voice || "nova"} 
+                      onValueChange={(value) => setBotSettings(prev => ({...prev, chatbot_voice: value}))}
+                    >
+                      <SelectTrigger className="mt-1 w-64">
+                        <SelectValue placeholder="Selecione uma voz" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="nova">🎤 Nova - Energética e animada</SelectItem>
+                        <SelectItem value="alloy">🎤 Alloy - Neutra e equilibrada</SelectItem>
+                        <SelectItem value="echo">🎤 Echo - Suave e calma</SelectItem>
+                        <SelectItem value="fable">🎤 Fable - Expressiva</SelectItem>
+                        <SelectItem value="onyx">🎤 Onyx - Profunda e autoritária</SelectItem>
+                        <SelectItem value="shimmer">🎤 Shimmer - Brilhante e alegre</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <p className="text-xs text-muted-foreground mt-1">Voz usada para responder mensagens de áudio</p>
+                  </div>
+                  
+                  <div className="flex items-center gap-2">
+                    <Switch 
+                      checked={botSettings.audio_response_enabled !== false}
+                      onCheckedChange={(checked) => setBotSettings(prev => ({...prev, audio_response_enabled: checked}))}
+                    />
+                    <div>
+                      <Label>Responder áudios com áudio</Label>
+                      <p className="text-xs text-muted-foreground">Quando cliente enviar áudio, responder também em áudio</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
               <Button onClick={saveBotSettings} disabled={savingSettings}>
                 {savingSettings ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
                 Salvar Configurações
