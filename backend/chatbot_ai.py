@@ -679,8 +679,13 @@ MENSAGEM HUMANIZADA:"""
                         ).with_model("openai", "gpt-4o-mini")
                         
                         humanized = await temp_chat.send_message(UserMessage(text=humanize_prompt))
-                        if humanized and humanized.text:
-                            response_text = humanized.text.strip()
+                        if humanized:
+                            # O retorno pode ser string ou objeto com .text
+                            if hasattr(humanized, 'text'):
+                                response_text = humanized.text.strip()
+                            else:
+                                response_text = str(humanized).strip()
+                            print(f"[CHATBOT AI] Resposta humanizada: {response_text[:100]}...")
                     except Exception as e:
                         print(f"[CHATBOT AI] Erro ao humanizar resposta: {e}")
             
