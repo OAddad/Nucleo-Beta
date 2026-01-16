@@ -8,6 +8,7 @@ Sistema completo de gestão para restaurantes com módulos de delivery, cardápi
 - **Backend**: FastAPI (Python)
 - **Banco de Dados**: SQLite
 - **Print Service**: Node.js compilado para Windows (.exe) usando pkg
+- **IA/Audio**: OpenAI GPT-4o-mini, Whisper (STT), TTS
 
 ## Módulos Principais
 
@@ -25,7 +26,9 @@ Sistema completo de gestão para restaurantes com módulos de delivery, cardápi
 - Integração com WhatsApp
 - IA para atendimento automático
 - Respostas por palavras-chave configuráveis
-- **Pausa por Intervenção Humana** - bot pausa quando atendente humano envia qualquer tipo de mensagem (texto, áudio, foto, vídeo, GIF, documento)
+- **Pausa por Intervenção Humana** - bot pausa quando atendente humano envia qualquer tipo de mensagem
+- **🎤 Entende áudios (STT)** - Transcrição via OpenAI Whisper
+- **🔊 Responde com áudio (TTS)** - 9 vozes disponíveis via OpenAI TTS
 
 ### 4. Sistema de Impressão
 - Suporte a múltiplas impressoras por setor
@@ -35,37 +38,74 @@ Sistema completo de gestão para restaurantes com módulos de delivery, cardápi
 
 ## Changelog Recente
 
+### 2025-01-16 - ChatBot com Suporte a Áudio
+- **Implementado**: Speech-to-Text usando OpenAI Whisper
+- **Implementado**: Text-to-Speech usando OpenAI TTS
+- **Novos endpoints**: `/api/chatbot/process-audio`, `/api/chatbot/text-to-speech`, `/api/chatbot/voices`
+- **Novo arquivo**: `/app/backend/audio_service.py`
+- **UI**: Configuração de voz do chatbot na página de Configurações BOT
+
 ### 2025-01-16 - Melhoria na Pausa por Intervenção Humana
-- **Implementado**: Bot agora pausa quando funcionário envia qualquer tipo de mídia (não apenas texto)
-- **Tipos suportados**: text, audio, image, video, gif, sticker, document, ptt, voice
-- **Backend**: Adicionado campo `message_type` no endpoint `/api/chatbot/process`
-- **Frontend**: Atualizado UI para mostrar tipos de mídia que acionam a pausa
+- **Implementado**: Bot agora pausa quando funcionário envia qualquer tipo de mídia
+- **Tipos suportados**: text, audio, image, video, gif, sticker, document
 
 ## Backlog / Tarefas Pendentes
 
 ### P0 - Alta Prioridade
+- [ ] Integrar processamento de áudio com serviço WhatsApp real
 - [ ] Resolver persistência do executável `NucleoPrintConnector.exe` entre sessões
-- [ ] Verificar funcionalidades de impressão automática
 
 ### P1 - Média Prioridade
-- [ ] Verificar reimpressão de 2ª via
-- [ ] Testar exibição de itens combo (estrutura `etapas`)
+- [ ] Verificar funcionalidades de impressão automática
+- [ ] Testar reimpressão de 2ª via
 
 ### P2 - Baixa Prioridade
-- [ ] Refatorar URL do Print Connector (`http://127.0.0.1:9100`) para constante compartilhada
+- [ ] Refatorar URL do Print Connector para constante compartilhada
 
 ## Arquivos de Referência
 
-### ChatBot
-- `/app/backend/chatbot_ai.py` - Lógica de IA e pausa do bot
-- `/app/backend/server.py` - Endpoints de API (linha ~3928)
+### ChatBot e Áudio
+- `/app/backend/chatbot_ai.py` - Lógica de IA, pausa do bot e funções de áudio
+- `/app/backend/audio_service.py` - Serviço STT (Whisper) e TTS (OpenAI)
+- `/app/backend/server.py` - Endpoints de API
 - `/app/frontend/src/pages/ChatBot.js` - Interface do ChatBot
 
 ### Impressão
 - `/app/print-connector/src/print-queue.js` - Templates de cupons
 - `/app/print-connector/src/index.js` - API do Print Connector
-- `/app/frontend/src/pages/Sistema.js` - Configurações de impressoras
-- `/app/frontend/src/pages/Delivery.js` - Impressão automática e manual
+
+## API de Áudio
+
+### Processar Áudio (STT + IA + TTS)
+```bash
+POST /api/chatbot/process-audio
+{
+  "phone": "5511999998888",
+  "audio_base64": "...",  # ou audio_url
+  "push_name": "Cliente",
+  "respond_with_audio": true
+}
+```
+
+### Text-to-Speech
+```bash
+POST /api/chatbot/text-to-speech
+{
+  "text": "Olá, como posso ajudar?",
+  "voice": "nova"
+}
+```
+
+### Vozes Disponíveis
+- `nova` - Energética e animada (padrão)
+- `alloy` - Neutra e equilibrada
+- `echo` - Suave e calma
+- `fable` - Expressiva
+- `onyx` - Profunda e autoritária
+- `shimmer` - Brilhante e alegre
+- `ash` - Clara e articulada
+- `coral` - Calorosa e amigável
+- `sage` - Sábia e ponderada
 
 ## Credenciais de Teste
 - **Login**: admin
