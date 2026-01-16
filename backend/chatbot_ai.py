@@ -577,3 +577,166 @@ async def get_order_status_text(order: Dict) -> str:
         result += f"\nEntregador: {order['entregador_nome']}"
     
     return result
+
+
+
+# ==================== FUNÇÕES DE ÁUDIO ====================
+
+async def process_audio_message(
+    phone: str, 
+    audio_data: bytes = None,
+    audio_base64: str = None,
+    audio_url: str = None,
+    push_name: str = "",
+    respond_with_audio: bool = True
+) -> Dict[str, Any]:
+    """
+    Processa uma mensagem de áudio: transcreve, processa com IA e gera resposta em áudio.
+    
+    Args:
+        phone: Número do telefone
+        audio_data: Bytes do áudio (opcional)
+        audio_base64: Áudio em base64 (opcional)
+        audio_url: URL do áudio (opcional)
+        push_name: Nome do cliente
+        respond_with_audio: Se deve gerar resposta em áudio
+    
+    Returns:
+        Dict com transcription, response_text, response_audio_base64, etc.
+    """
+    result = {
+        "success": False,
+        "transcription": None,
+        "response_text": None,
+        "response_audio_base64": None,
+        "response_audio_url": None,
+        "error": None
+    }
+    
+    if not AUDIO_AVAILABLE:
+        result["error"] = "Serviço de áudio não disponível"
+        return result
+    
+    try:
+        # 1. TRANSCREVER O ÁUDIO
+        if audio_data:
+            success, transcription = await audio_service.transcribe_audio(audio_data)
+        elif audio_base64:
+            success, transcription = await audio_service.transcribe_audio_from_base64(audio_base64)
+        elif audio_url:
+            success, transcription = await audio_service.transcribe_audio_from_url(audio_url)
+        else:
+            result["error"] = "Nenhum áudio fornecido"
+            return result
+        
+        if not success:
+            result["error"] = f"Erro na transcrição: {transcription}"
+            return result
+        
+        result["transcription"] = transcription
+        print(f"[CHATBOT AI] Áudio transcrito: {transcription[:100]}...")
+        
+        # 2. PROCESSAR COM A IA (usando a mensagem transcrita)
+        response_text = await process_message(
+            phone=phone,
+            message=transcription,
+            push_name=push_name
+        )
+        result["response_text"] = response_text
+        
+        # 3. GERAR RESPOSTA EM ÁUDIO (se solicitado)
+        if respond_with_audio and response_text:
+            # Buscar configuração de voz do chatbot
+            settings = db.get_all_settings()
+            voice = settings.get('chatbot_voice', audio_service.DEFAULT_VOICE)
+            
+            success, audio_base64_response, msg = await audio_service.generate_speech_base64(
+                text=response_text,
+                voice=voice
+            )
+            
+            if success:
+                result["response_audio_base64"] = audio_base64_response
+                
+                # Salvar áudio em arquivo para URL
+                import base64
+                audio_bytes = base64.b64decode(audio_base64_response)
+                import uuid
+                filename = f"response_{uuid.uuid4()}.mp3"
+                filepath = await audio_service.save_audio_file(audio_bytes, filename)
+                result["response_audio_url"] = audio_service.get_audio_url(filename)
+            else:
+                print(f"[CHATBOT AI] Erro ao gerar áudio de resposta: {msg}")
+        
+        result["success"] = True
+        return result
+        
+    except Exception as e:
+        print(f"[CHATBOT AI] Erro ao processar áudio: {e}")
+        import traceback
+        traceback.print_exc()
+        result["error"] = str(e)
+        return result
+
+
+async def generate_audio_response(text: str, voice: str = None) -> Dict[str, Any]:
+    """
+    Gera apenas a resposta em áudio para um texto.
+    
+    Args:
+        text: Texto para converter em áudio
+        voice: Voz a usar (opcional, usa padrão se não especificado)
+    
+    Returns:
+        Dict com audio_base64, audio_url, etc.
+    """
+    result = {
+        "success": False,
+        "audio_base64": None,
+        "audio_url": None,
+        "error": None
+    }
+    
+    if not AUDIO_AVAILABLE:
+        result["error"] = "Serviço de áudio não disponível"
+        return result
+    
+    try:
+        # Buscar configuração de voz se não especificada
+        if not voice:
+            settings = db.get_all_settings()
+            voice = settings.get('chatbot_voice', audio_service.DEFAULT_VOICE)
+        
+        success, audio_base64, msg = await audio_service.generate_speech_base64(text, voice)
+        
+        if success:
+            result["success"] = True
+            result["audio_base64"] = audio_base64
+            
+            # Salvar em arquivo
+            import base64
+            import uuid
+            audio_bytes = base64.b64decode(audio_base64)
+            filename = f"tts_{uuid.uuid4()}.mp3"
+            await audio_service.save_audio_file(audio_bytes, filename)
+            result["audio_url"] = audio_service.get_audio_url(filename)
+        else:
+            result["error"] = msg
+        
+        return result
+        
+    except Exception as e:
+        result["error"] = str(e)
+        return result
+
+
+def get_available_voices() -> Dict[str, str]:
+    """Retorna as vozes disponíveis para TTS"""
+    if AUDIO_AVAILABLE:
+        return audio_service.AVAILABLE_VOICES
+    return {}
+
+
+def is_audio_available() -> bool:
+    """Verifica se o serviço de áudio está disponível"""
+    return AUDIO_AVAILABLE
