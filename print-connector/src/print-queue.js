@@ -231,19 +231,29 @@ class PrintQueue {
           .setBold(false)
           .setTextSize(1, 1);
         
-        // Se for combo, mostrar subitems/bebidas com hierarquia
+        // Se for combo, mostrar subitems/bebidas com hierarquia (MESMO TAMANHO E NEGRITO)
         if (isCombo) {
           // Subitems do combo (bebidas, acompanhamentos)
           if (item.subitems && item.subitems.length > 0) {
             for (const sub of item.subitems) {
               const subNome = sub.nome || sub.name;
-              escpos.text(`     -> ${subNome}`);
+              escpos
+                .setTextSize(2, 2)
+                .setBold(true)
+                .text(`  -> ${subNome}`)
+                .setBold(false)
+                .setTextSize(1, 1);
             }
           }
           // Adicionais do combo
           if (item.adicionais && item.adicionais.length > 0) {
             for (const add of item.adicionais) {
-              escpos.text(`     -> ${add.nome}`);
+              escpos
+                .setTextSize(2, 2)
+                .setBold(true)
+                .text(`  -> ${add.nome}`)
+                .setBold(false)
+                .setTextSize(1, 1);
             }
           }
         } else {

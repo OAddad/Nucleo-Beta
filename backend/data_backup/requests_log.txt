@@ -47690,3 +47690,4 @@
 2026-01-16T14:14:56.347893+00:00 | DB_CALL get_all_products | P3 | 24.84ms | success
 2026-01-16T14:14:56.519464+00:00 | DB_CALL get_all_products | P3 | 24.86ms | success
 2026-01-16T14:15:00.320238+00:00 | DB_CALL get_all_products | P3 | 25.92ms | success
+2026-01-16T14:15:03.131442+00:00 | DB_CALL get_all_products | P3 | 24.75ms | success
