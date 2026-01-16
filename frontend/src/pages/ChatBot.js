@@ -2422,6 +2422,69 @@ function RespostasAutomaticasTab({ toast }) {
 
   return (
     <div className="p-6">
+      {/* Banner de Alerta - Clientes Aguardando Atendimento */}
+      {waitingQueue.length > 0 && (
+        <div className="mb-4 bg-red-500 text-white rounded-xl p-4 animate-pulse">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-white/20 rounded-lg">
+                <Bell className="w-6 h-6 animate-bounce" />
+              </div>
+              <div>
+                <h3 className="font-bold text-lg">
+                  🚨 {waitingQueue.length} Cliente{waitingQueue.length > 1 ? 's' : ''} Aguardando Atendimento Humano!
+                </h3>
+                <p className="text-sm text-white/90">
+                  {waitingQueue.map(c => c.push_name || c.phone).join(', ')}
+                </p>
+              </div>
+            </div>
+            <div className="flex gap-2">
+              {isAlertPlaying ? (
+                <Button 
+                  variant="secondary" 
+                  size="sm"
+                  onClick={stopAlertSound}
+                  className="bg-white/20 hover:bg-white/30 text-white"
+                >
+                  🔇 Silenciar
+                </Button>
+              ) : (
+                <Button 
+                  variant="secondary" 
+                  size="sm"
+                  onClick={playAlertSound}
+                  className="bg-white/20 hover:bg-white/30 text-white"
+                >
+                  🔊 Tocar Som
+                </Button>
+              )}
+            </div>
+          </div>
+          {/* Lista de clientes esperando */}
+          <div className="mt-3 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+            {waitingQueue.map((cliente, idx) => (
+              <div key={idx} className="bg-white/10 rounded-lg p-2 text-sm">
+                <div className="flex items-center justify-between">
+                  <span className="font-medium">{cliente.push_name || 'Cliente'}</span>
+                  <span className="text-xs text-white/70">
+                    {Math.floor(cliente.waiting_time_seconds / 60)}min aguardando
+                  </span>
+                </div>
+                <div className="text-xs text-white/80 truncate">
+                  📱 {cliente.phone}
+                </div>
+                {cliente.message && (
+                  <div className="text-xs text-white/70 truncate mt-1">
+                    💬 "{cliente.message}"
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       <div className="flex gap-6">
         {/* Coluna Principal */}
         <div className="flex-1 space-y-6">
