@@ -151,6 +151,64 @@ sudo supervisorctl restart all
 
 ---
 
+## 🖨️ Print Connector - Sistema de Impressão
+
+O sistema inclui um aplicativo de impressão para impressoras térmicas via ESC/POS.
+
+### Arquivos do Print Connector
+```
+/app/print-connector/
+├── src/                    # Código fonte
+│   ├── index.js           # Servidor Express (porta 9100)
+│   ├── print-queue.js     # Fila de impressão e templates
+│   ├── escpos-builder.js  # Construtor de comandos ESC/POS
+│   ├── printer-manager.js # Gerenciador de impressoras
+│   └── config.js          # Persistência de configurações
+├── dist/
+│   └── NucleoPrintConnector.exe  # Executável Windows (37MB)
+└── package.json
+```
+
+### Compilar o Executável (se necessário)
+```bash
+cd /app/print-connector
+npm install
+npm run build
+# Executável gerado em: dist/NucleoPrintConnector.exe
+```
+
+### Funcionalidades do Print Connector
+- ✅ Impressão automática de novos pedidos
+- ✅ Cupom de Entrega (para o caixa)
+- ✅ Cupom de Preparo (para a cozinha)
+- ✅ Suporte a múltiplas impressoras por setor
+- ✅ Fila de impressão com retry automático
+- ✅ Cálculo automático de troco
+
+### Endpoints do Print Connector
+| Endpoint | Método | Descrição |
+|----------|--------|-----------|
+| `/health` | GET | Status do serviço |
+| `/printers` | GET | Lista impressoras disponíveis |
+| `/printers/sectors` | GET | Impressoras configuradas por setor |
+| `/printers/sector` | POST | Configura impressora para setor |
+| `/printers/connect` | POST | Define impressora padrão |
+| `/print` | POST | Envia impressão |
+| `/test` | POST | Página de teste |
+
+### Porta padrão
+- **Print Connector:** http://127.0.0.1:9100
+
+### Como usar
+1. Baixe o executável em **Sistema → Impressão → Download App**
+2. Execute `NucleoPrintConnector.exe` no Windows
+3. Configure as impressoras em **Sistema → Impressão → Configurações**
+4. Selecione impressora para "Cupom de Entrega" (caixa)
+5. Selecione impressora para "Cupom de Preparo" (cozinha)
+6. Mantenha a tela de **Delivery** aberta para impressão automática
+
+---
+
 ## 📝 Notas de Versão
 
 ### v3.1 - WhatsApp Integration
