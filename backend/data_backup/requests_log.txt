@@ -48727,3 +48727,13 @@
 2026-01-16T14:45:49.383006+00:00 | DB_CALL get_pedido_by_id | P3 | 0.37ms | success
 2026-01-16T14:45:54.387872+00:00 | DB_CALL get_pedido_by_id | P3 | 0.3ms | success
 2026-01-16T14:45:59.387544+00:00 | DB_CALL get_pedido_by_id | P3 | 0.32ms | success
+2026-01-16T14:46:06.196521+00:00 | DB_CALL init_database | P3 | 2.65ms | success
+2026-01-16T14:46:06.197134+00:00 | DB_CALL count_ingredients | P3 | 0.36ms | success
+2026-01-16T14:46:06.197363+00:00 | DB_CALL count_products | P3 | 0.17ms | success
+2026-01-16T14:46:06.197509+00:00 | DB_CALL count_users | P3 | 0.1ms | success
+2026-01-16T14:46:06.198949+00:00 | DB_CALL get_pedido_by_id | P3 | 0.28ms | success
+2026-01-16T14:46:09.389792+00:00 | DB_CALL get_pedido_by_id | P3 | 0.33ms | success
+2026-01-16T14:46:14.771218+00:00 | DB_CALL init_database | P3 | 2.8ms | success
+2026-01-16T14:46:14.771746+00:00 | DB_CALL count_ingredients | P3 | 0.26ms | success
+2026-01-16T14:46:14.772011+00:00 | DB_CALL count_products | P3 | 0.2ms | success
+2026-01-16T14:46:14.772198+00:00 | DB_CALL count_users | P3 | 0.13ms | success
