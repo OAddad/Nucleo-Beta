@@ -467,22 +467,25 @@ const server = app.listen(PORT, '0.0.0.0', () => {
   }
   
   console.log(`
-╔══════════════════════════════════════════════════════╗
-║       NÚCLEO PRINT CONNECTOR v${VERSION}              ║
-╠══════════════════════════════════════════════════════╣
-║  Servidor: http://127.0.0.1:${PORT}                    ║
-║  Status: ONLINE                                      ║
-║                                                      ║
-║  Endpoints:                                          ║
-║    GET  /health    - Status do serviço               ║
-║    GET  /printers  - Listar impressoras              ║
-║    POST /printers/connect - Selecionar impressora    ║
-║    POST /print     - Imprimir pedido                 ║
-║    POST /test      - Página de teste                 ║
-╚══════════════════════════════════════════════════════╝
+╔══════════════════════════════════════════════════════════╗
+║       NÚCLEO PRINT CONNECTOR v${VERSION}                  ║
+╠══════════════════════════════════════════════════════════╣
+║  🌐 Acesso Local:  http://127.0.0.1:${PORT}                ║
+║  🌐 Acesso Rede:   http://${localIP}:${PORT}               ║
+║                                                          ║
+║  Status: ONLINE - Aceitando conexões de qualquer máquina ║
+║                                                          ║
+║  Endpoints:                                              ║
+║    GET  /health       - Status do serviço                ║
+║    GET  /printers     - Listar impressoras               ║
+║    GET  /network-info - Info de rede                     ║
+║    POST /printers/sector - Configurar por setor          ║
+║    POST /print        - Imprimir pedido                  ║
+╚══════════════════════════════════════════════════════════╝
   `);
   
-  logger.info(`Print Connector iniciado na porta ${PORT}`);
+  logger.info(`Print Connector iniciado na porta ${PORT} (0.0.0.0)`);
+  logger.info(`Acesso de rede: http://${localIP}:${PORT}`);
   printQueue.startProcessing();
   
   const defaultPrinter = config.get('defaultPrinter');
@@ -491,6 +494,14 @@ const server = app.listen(PORT, '0.0.0.0', () => {
   } else {
     logger.warn('Nenhuma impressora padrão configurada');
     console.log('\n⚠️  Configure uma impressora padrão via /printers/connect\n');
+  }
+  
+  const sectorPrinters = config.get('sectorPrinters', {});
+  if (Object.keys(sectorPrinters).length > 0) {
+    console.log('📋 Impressoras por setor:');
+    for (const [sector, printer] of Object.entries(sectorPrinters)) {
+      console.log(`   ${sector}: ${printer.name}`);
+    }
   }
 });
 
