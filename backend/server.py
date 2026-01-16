@@ -3099,6 +3099,89 @@ async def update_pedido_status(pedido_id: str, status: str):
     return pedido
 
 
+class PrintRequest(BaseModel):
+    tipo: str = Field(..., description="Tipo do cupom: 'entrega' ou 'preparo'")
+
+
+@api_router.post("/pedidos/{pedido_id}/imprimir")
+async def imprimir_pedido(pedido_id: str, data: PrintRequest, current_user: User = Depends(get_current_user)):
+    """Imprime 2ª via do cupom de entrega ou preparo"""
+    # Buscar pedido
+    pedido = await db_call(sqlite_db.get_pedido, pedido_id)
+    if not pedido:
+        raise HTTPException(status_code=404, detail="Pedido não encontrado")
+    
+    # Buscar settings
+    settings = await db_call(sqlite_db.get_all_settings)
+    print_connector_url = settings.get('print_connector_url', 'http://localhost:3456')
+    
+    # Dados da empresa
+    empresa_data = {
+        'nome': settings.get('company_name', 'Nome da Empresa'),
+        'slogan': settings.get('slogan', ''),
+        'endereco': settings.get('address', ''),
+        'cnpj': settings.get('cnpj', ''),
+        'logo_url': settings.get('logo_url', '')
+    }
+    
+    # Preparar dados do pedido
+    pedido_print = {
+        'id': pedido.get('id'),
+        'codigo': pedido.get('codigo'),
+        'cliente_nome': pedido.get('cliente_nome'),
+        'cliente_telefone': pedido.get('cliente_telefone'),
+        'tipo_entrega': pedido.get('tipo_entrega'),
+        'endereco_rua': pedido.get('endereco_rua'),
+        'endereco_numero': pedido.get('endereco_numero'),
+        'endereco_bairro': pedido.get('endereco_bairro'),
+        'endereco_complemento': pedido.get('endereco_complemento'),
+        'items': pedido.get('items', []),
+        'total': pedido.get('total', 0),
+        'valor_entrega': pedido.get('valor_entrega', 0),
+        'forma_pagamento': pedido.get('forma_pagamento'),
+        'troco_precisa': pedido.get('troco_precisa'),
+        'troco_valor': pedido.get('troco_valor'),
+        'observacao': pedido.get('observacao'),
+        'created_at': pedido.get('created_at')
+    }
+    
+    # Determinar template e setor
+    if data.tipo == 'entrega':
+        template = 'caixa'
+        sector = 'caixa'
+        tipo_nome = 'Cupom de Entrega'
+    else:
+        template = 'preparo'
+        sector = 'cozinha'
+        tipo_nome = 'Cupom de Preparo'
+    
+    try:
+        async with httpx.AsyncClient(timeout=10.0) as client:
+            response = await client.post(
+                f"{print_connector_url}/print",
+                json={
+                    'pedido': pedido_print,
+                    'template': template,
+                    'sector': sector,
+                    'copies': 1,
+                    'cut': True,
+                    'empresa': empresa_data if data.tipo == 'entrega' else {},
+                    'config': {'mensagem_rodape': '2a VIA - NAO E DOCUMENTO FISCAL'} if data.tipo == 'entrega' else {}
+                }
+            )
+            
+            if response.status_code == 200:
+                result = response.json()
+                if result.get('success'):
+                    return {"success": True, "message": f"2ª via do {tipo_nome} enviada para impressão"}
+                else:
+                    raise HTTPException(status_code=500, detail=result.get('error', 'Erro na impressão'))
+            else:
+                raise HTTPException(status_code=500, detail=f"Erro ao comunicar com Print Connector: {response.status_code}")
+    except httpx.RequestError as e:
+        raise HTTPException(status_code=503, detail=f"Print Connector não disponível: {str(e)}")
+
+
 class CancelPedidoRequest(BaseModel):
     motivo: str
 

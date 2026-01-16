@@ -48013,3 +48013,12 @@
 2026-01-16T14:33:54.982247+00:00 | DB_CALL get_all_settings | P3 | 1.14ms | success
 2026-01-16T14:33:54.982880+00:00 | DB_CALL get_all_entregadores | P3 | 1.09ms | success
 2026-01-16T14:33:54.985140+00:00 | DB_CALL get_all_pedidos | P3 | 1.53ms | success
+2026-01-16T14:33:59.977054+00:00 | DB_CALL get_all_pedidos | P3 | 1.42ms | success
+2026-01-16T14:33:59.980271+00:00 | DB_CALL get_all_settings | P3 | 0.66ms | success
+2026-01-16T14:33:59.980687+00:00 | DB_CALL get_all_entregadores | P3 | 0.64ms | success
+2026-01-16T14:34:04.981007+00:00 | DB_CALL get_all_entregadores | P3 | 0.95ms | success
+2026-01-16T14:34:04.982838+00:00 | DB_CALL get_all_pedidos | P3 | 2.09ms | success
+2026-01-16T14:34:04.985493+00:00 | DB_CALL get_all_settings | P3 | 0.22ms | success
+2026-01-16T14:34:09.979139+00:00 | DB_CALL get_all_pedidos | P3 | 2.68ms | success
+2026-01-16T14:34:09.981172+00:00 | DB_CALL get_all_settings | P3 | 4.32ms | success
+2026-01-16T14:34:09.981515+00:00 | DB_CALL get_all_entregadores | P3 | 4.06ms | success
