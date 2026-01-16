@@ -39,6 +39,12 @@ Sistema completo de gestão para restaurantes com módulos de delivery, cardápi
 
 ## Changelog Recente
 
+### 2025-01-16 - Sistema de Alerta de Atendimento Humano (v2)
+- **Implementado**: Botão "IGNORAR" que remove cliente da fila (substituiu "Silenciar")
+- **Implementado**: Ícone de notificação no Delivery com badge e dropdown
+- **Implementado**: Som toca com intervalo de 5 segundos entre repetições
+- **Implementado**: Cada cliente tem botão individual de ignorar
+
 ### 2025-01-16 - Sistema de Alerta de Atendimento Humano
 - **Implementado**: Som de alerta tocando em loop quando cliente pede atendente
 - **Implementado**: Banner visual vermelho pulsante com lista de clientes aguardando
