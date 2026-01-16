@@ -2415,16 +2415,16 @@ function CupomPreparoPreview({ pedido }) {
               {item.quantidade}x {item.nome}{isCombo ? ' -> COMBO' : ''}
             </div>
             
-            {/* Subitems do combo (bebidas, acompanhamentos) */}
+            {/* Subitems do combo (bebidas, acompanhamentos) - MESMO TAMANHO */}
             {isCombo && item.subitems && item.subitems.map((sub, j) => (
-              <div key={`sub-${j}`} className="text-sm ml-4">
+              <div key={`sub-${j}`} className="text-lg font-bold ml-2">
                 -&gt; {sub.nome || sub.name}
               </div>
             ))}
             
-            {/* Adicionais */}
+            {/* Adicionais - MESMO TAMANHO */}
             {isCombo && item.adicionais && item.adicionais.map((add, j) => (
-              <div key={`add-${j}`} className="text-sm ml-4">
+              <div key={`add-${j}`} className="text-lg font-bold ml-2">
                 -&gt; {add.nome}
               </div>
             ))}
