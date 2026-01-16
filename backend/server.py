@@ -3927,10 +3927,12 @@ import chatbot_ai
 
 class ChatbotProcessMessage(BaseModel):
     phone: str
-    message: str
+    message: str = ""  # Texto da mensagem (pode ser vazio se for áudio)
     push_name: Optional[str] = ""
     is_from_human_agent: Optional[bool] = False  # Se a mensagem é de um atendente humano
     message_type: Optional[str] = "text"  # Tipo da mensagem: text, audio, image, video, gif, sticker, document
+    audio_url: Optional[str] = None  # URL do áudio (para mensagens de áudio)
+    audio_base64: Optional[str] = None  # Áudio em base64 (para mensagens de áudio)
 
 # Tipos de mídia que devem pausar o bot quando enviados pelo funcionário
 MEDIA_TYPES_FOR_PAUSE = ["text", "audio", "image", "video", "gif", "sticker", "document", "ptt", "voice"]
