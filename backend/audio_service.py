@@ -308,7 +308,7 @@ def make_text_natural_for_speech(text: str) -> str:
     text = re.sub(r'\b(\d{1,2})[h:](\d{2})\b', format_time_for_speech, text)
     
     # Telefones: (34) 99672-7535 → três quatro... nove nove...
-    text = re.sub(r'[\(\)0-9\-\s]{10,}', format_phone_for_speech, text)
+    text = re.sub(r'\(?\d{2}\)?\s*\d{4,5}[\-\s]?\d{4}', format_phone_for_speech, text)
     
     # Números simples (1-999) → por extenso
     def replace_number(match):
