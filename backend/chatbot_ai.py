@@ -650,8 +650,10 @@ async def process_message(phone: str, message: str, push_name: str = "", for_aud
             response_text = replace_variables_in_response(response_text, phone, push_name)
             
             # Se for resposta de áudio, humanizar a resposta de palavra-chave também
+            print(f"[CHATBOT AI] Keyword response found, for_audio_response={for_audio_response}")
             if for_audio_response:
                 # Usar LLM para humanizar a resposta de palavra-chave
+                print(f"[CHATBOT AI] Humanizando resposta de palavra-chave...")
                 if LLM_AVAILABLE and EMERGENT_LLM_KEY:
                     try:
                         humanize_prompt = f"""Reescreva esta mensagem no formato de FALA HUMANA para ser lida em voz alta.
