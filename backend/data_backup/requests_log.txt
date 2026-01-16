@@ -47287,3 +47287,7 @@
 2026-01-16T13:25:46.461274+00:00 | DB_CALL count_ingredients | P3 | 0.3ms | success
 2026-01-16T13:25:46.461538+00:00 | DB_CALL count_products | P3 | 0.19ms | success
 2026-01-16T13:25:46.461684+00:00 | DB_CALL count_users | P3 | 0.1ms | success
+2026-01-16T13:26:09.293052+00:00 | DB_CALL get_all_settings | P3 | 0.3ms | success
+2026-01-16T13:26:09.303773+00:00 | DB_CALL get_all_categories | P3 | 2.14ms | success
+2026-01-16T13:26:09.308270+00:00 | DB_CALL get_all_business_hours | P3 | 5.88ms | success
+2026-01-16T13:26:09.720211+00:00 | DB_CALL get_all_products | P3 | 417.7ms | success
