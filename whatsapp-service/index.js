@@ -258,7 +258,109 @@ async function connectToWhatsApp() {
                                   msg.message.imageMessage?.caption ||
                                   null;
             
-            // Ignorar mensagens sem texto
+            // Verificar se é mensagem de áudio
+            const audioMessage = msg.message.audioMessage || 
+                                msg.message.pttMessage ||  // PTT = Push To Talk (áudio gravado)
+                                null;
+            
+            // Se é áudio, processar com transcrição
+            if (audioMessage) {
+              console.log(`[WhatsApp] Áudio recebido de ${from}`);
+              
+              // Incrementar estatísticas
+              stats.messagesReceived++;
+              stats.clientsServed.add(from);
+              
+              try {
+                await fetch(`${BACKEND_URL}/api/whatsapp/stats/increment?stat_type=messages_received&amount=1`, {
+                  method: 'POST'
+                });
+                await fetch(`${BACKEND_URL}/api/whatsapp/stats/client?phone=${encodeURIComponent(from)}&name=${encodeURIComponent(msg.pushName || '')}`, {
+                  method: 'POST'
+                });
+              } catch (e) {
+                console.log('[WhatsApp] Erro ao salvar estatística no banco:', e.message);
+              }
+              
+              // Marcar como lida
+              try {
+                await sock.readMessages([msg.key]);
+              } catch (e) {}
+              
+              // Baixar o áudio
+              try {
+                const buffer = await sock.downloadMediaMessage(msg);
+                if (buffer) {
+                  const audioBase64 = buffer.toString('base64');
+                  console.log(`[WhatsApp] Áudio convertido para base64 (${audioBase64.length} chars)`);
+                  
+                  // Enviar para processamento com IA
+                  if (autoReplyEnabled) {
+                    console.log('[WhatsApp] Processando áudio com IA...');
+                    const response = await fetch(`${BACKEND_URL}/api/chatbot/process`, {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({
+                        phone: from,
+                        message: '',
+                        push_name: msg.pushName || '',
+                        message_type: 'audio',
+                        audio_base64: audioBase64
+                      })
+                    });
+                    
+                    const data = await response.json();
+                    console.log('[WhatsApp] Resposta da IA (áudio):', data.success ? 'OK' : 'Erro');
+                    
+                    if (data.success && data.response) {
+                      // Se tem áudio de resposta, enviar como áudio
+                      if (data.response_audio_base64) {
+                        console.log('[WhatsApp] Enviando resposta em áudio...');
+                        try {
+                          const audioBuffer = Buffer.from(data.response_audio_base64, 'base64');
+                          await sock.sendMessage(from, {
+                            audio: audioBuffer,
+                            mimetype: 'audio/mpeg',
+                            ptt: true  // Enviar como mensagem de voz
+                          });
+                          stats.messagesSent++;
+                          console.log('[WhatsApp] Áudio de resposta enviado!');
+                        } catch (audioErr) {
+                          console.log('[WhatsApp] Erro ao enviar áudio, enviando texto:', audioErr.message);
+                          await sendMessageWithTyping(from, data.response);
+                        }
+                      } else {
+                        // Enviar como texto
+                        await sendMessageWithTyping(from, data.response);
+                      }
+                    } else if (data.waiting_for_human) {
+                      // Cliente pediu atendente humano
+                      if (data.response_audio_base64) {
+                        try {
+                          const audioBuffer = Buffer.from(data.response_audio_base64, 'base64');
+                          await sock.sendMessage(from, {
+                            audio: audioBuffer,
+                            mimetype: 'audio/mpeg',
+                            ptt: true
+                          });
+                          stats.messagesSent++;
+                        } catch (audioErr) {
+                          await sendMessageWithTyping(from, data.response);
+                        }
+                      } else if (data.response) {
+                        await sendMessageWithTyping(from, data.response);
+                      }
+                    }
+                  }
+                }
+              } catch (downloadErr) {
+                console.log('[WhatsApp] Erro ao baixar áudio:', downloadErr.message);
+              }
+              
+              continue;
+            }
+            
+            // Ignorar outras mensagens sem texto (imagens sem legenda, etc)
             if (!messageContent) {
               console.log(`[WhatsApp] Mensagem sem texto de ${from} (mídia)`);
               continue;
