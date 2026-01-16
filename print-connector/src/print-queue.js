@@ -238,30 +238,12 @@ class PrintQueue {
             for (const sub of item.subitems) {
               const subNome = sub.nome || sub.name;
               escpos.text(`     -> ${subNome}`);
-              // Observação do subitem
-              if (sub.observacao) {
-                escpos
-                  .setTextSize(1, 2)
-                  .setBold(true)
-                  .text(`           >>> ${sub.observacao}`)
-                  .setBold(false)
-                  .setTextSize(1, 1);
-              }
             }
           }
           // Adicionais do combo
           if (item.adicionais && item.adicionais.length > 0) {
             for (const add of item.adicionais) {
               escpos.text(`     -> ${add.nome}`);
-              // Observação do adicional
-              if (add.observacao) {
-                escpos
-                  .setTextSize(1, 2)
-                  .setBold(true)
-                  .text(`           >>> ${add.observacao}`)
-                  .setBold(false)
-                  .setTextSize(1, 1);
-              }
             }
           }
         } else {
@@ -289,20 +271,6 @@ class PrintQueue {
     }
     
     escpos.separator();
-    
-    // ===== OBSERVAÇÃO GERAL (BEM DESTACADA) =====
-    if (pedido.observacao) {
-      escpos
-        .align('center')
-        .setTextSize(1, 2)
-        .setBold(true)
-        .text('!!! OBSERVACAO !!!')
-        .setBold(false)
-        .align('left')
-        .wrapText(pedido.observacao, 48)
-        .setTextSize(1, 1)
-        .separator();
-    }
     
     // ===== RODAPÉ =====
     escpos

@@ -47649,3 +47649,5 @@
 2026-01-16T14:09:58.290484+00:00 | DB_CALL get_all_products | P3 | 25.2ms | success
 2026-01-16T14:09:59.104134+00:00 | DB_CALL get_all_products | P3 | 25.49ms | success
 2026-01-16T14:10:05.178860+00:00 | DB_CALL get_all_products | P3 | 25.23ms | success
+2026-01-16T14:10:12.391050+00:00 | DB_CALL get_all_products | P3 | 26.31ms | success
+2026-01-16T14:10:22.505336+00:00 | DB_CALL get_all_products | P3 | 25.92ms | success
