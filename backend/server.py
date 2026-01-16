@@ -4059,19 +4059,24 @@ async def chatbot_process_message(data: ChatbotProcessMessage):
         except Exception as e:
             logger.warning(f"Erro ao processar analytics de palavras: {e}")
         
-        response = await chatbot_ai.process_message(
-            phone=data.phone,
-            message=data.message,
-            push_name=data.push_name or ""
-        )
-        
-        # Verificar se deve responder com áudio também
+        # Verificar se deve responder com áudio
         settings = await db_call(sqlite_db.get_all_settings)
         respond_with_audio = settings.get('audio_response_enabled', 'true') == 'true'
         
+        # Processar mensagem com IA (texto humanizado se for gerar áudio)
+        response = await chatbot_ai.process_message(
+            phone=data.phone,
+            message=data.message,
+            push_name=data.push_name or "",
+            for_audio_response=respond_with_audio  # Gera texto humanizado se for responder com áudio
+        )
+        
+        # Gerar áudio se habilitado
         response_audio = None
         if respond_with_audio and response:
-            audio_result = await chatbot_ai.generate_audio_response(response)
+            # Texto já está humanizado, apenas limpar para TTS
+            clean_text = audio_service.clean_text_for_tts(response)
+            audio_result = await chatbot_ai.generate_audio_response(clean_text)
             response_audio = audio_result.get("audio_base64") if audio_result.get("success") else None
         
         return {
