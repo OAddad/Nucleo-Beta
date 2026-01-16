@@ -948,14 +948,71 @@ export default function Delivery() {
     <div className="h-full flex flex-col overflow-hidden bg-background">
       {/* Header com botão NOVO PEDIDO */}
       <div className="p-2 sm:p-4">
-        <Button
-          onClick={handleNovoPedido}
-          className="w-full h-12 sm:h-14 text-base sm:text-lg font-bold"
-          size="lg"
-        >
-          <Plus className="w-5 h-5 sm:w-6 sm:h-6 mr-2" />
-          NOVO PEDIDO
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            onClick={handleNovoPedido}
+            className="flex-1 h-12 sm:h-14 text-base sm:text-lg font-bold"
+            size="lg"
+          >
+            <Plus className="w-5 h-5 sm:w-6 sm:h-6 mr-2" />
+            NOVO PEDIDO
+          </Button>
+          
+          {/* Ícone de notificação - Clientes aguardando atendimento WhatsApp */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant={waitingQueueCount > 0 ? "destructive" : "outline"}
+                size="lg"
+                className={`h-12 sm:h-14 px-3 relative ${waitingQueueCount > 0 ? 'animate-pulse' : ''}`}
+              >
+                <Bell className="w-5 h-5 sm:w-6 sm:h-6" />
+                {waitingQueueCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-white text-red-600 text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center border-2 border-red-500">
+                    {waitingQueueCount}
+                  </span>
+                )}
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-80">
+              {waitingQueueCount > 0 ? (
+                <>
+                  <div className="px-3 py-2 bg-red-50 dark:bg-red-950/30 border-b">
+                    <p className="font-semibold text-red-600 dark:text-red-400">
+                      🚨 {waitingQueueCount} cliente{waitingQueueCount > 1 ? 's' : ''} aguardando atendimento
+                    </p>
+                  </div>
+                  {waitingQueueList.map((cliente, idx) => (
+                    <DropdownMenuItem key={idx} className="flex flex-col items-start p-3 cursor-default">
+                      <div className="flex items-center justify-between w-full">
+                        <span className="font-medium">{cliente.push_name || 'Cliente'}</span>
+                        <span className="text-xs text-muted-foreground">
+                          {Math.floor(cliente.waiting_time_seconds / 60)}min
+                        </span>
+                      </div>
+                      <span className="text-xs text-muted-foreground">📱 {cliente.phone}</span>
+                      {cliente.message && (
+                        <span className="text-xs text-muted-foreground truncate w-full">💬 "{cliente.message}"</span>
+                      )}
+                    </DropdownMenuItem>
+                  ))}
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem 
+                    className="text-center justify-center text-primary font-medium"
+                    onClick={() => navigate('/chatbot')}
+                  >
+                    Ver no ChatBot →
+                  </DropdownMenuItem>
+                </>
+              ) : (
+                <div className="px-3 py-4 text-center text-muted-foreground">
+                  <Bell className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                  <p className="text-sm">Nenhum cliente aguardando</p>
+                </div>
+              )}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </div>
 
       {/* Área principal com colunas - responsivo */}
