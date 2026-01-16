@@ -649,6 +649,39 @@ async def process_message(phone: str, message: str, push_name: str = "", for_aud
             # Substituir variáveis na resposta
             response_text = replace_variables_in_response(response_text, phone, push_name)
             
+            # Se for resposta de áudio, humanizar a resposta de palavra-chave também
+            if for_audio_response:
+                # Usar LLM para humanizar a resposta de palavra-chave
+                if LLM_AVAILABLE and EMERGENT_LLM_KEY:
+                    try:
+                        humanize_prompt = f"""Reescreva esta mensagem no formato de FALA HUMANA para ser lida em voz alta.
+
+REGRAS:
+- Números por extenso
+- Horários falados (oito e meia, não 08:30)
+- Sem emojis
+- Sem listas com marcadores
+- Linguagem coloquial (tá, cê, pra)
+- NÃO terminar com pergunta curta isolada
+- Terminar com frase completa e ponto final
+
+MENSAGEM ORIGINAL:
+{response_text}
+
+MENSAGEM HUMANIZADA:"""
+                        
+                        temp_chat = LlmChat(
+                            api_key=EMERGENT_LLM_KEY,
+                            session_id=f"humanize_{phone}",
+                            system_message="Você converte textos para formato de fala natural em português brasileiro."
+                        ).with_model("openai", "gpt-4o-mini")
+                        
+                        humanized = await temp_chat.send_message(UserMessage(text=humanize_prompt))
+                        if humanized and humanized.text:
+                            response_text = humanized.text.strip()
+                    except Exception as e:
+                        print(f"[CHATBOT AI] Erro ao humanizar resposta: {e}")
+            
             # Salvar resposta do bot
             db.add_conversation_message({
                 "id": str(uuid.uuid4()),
