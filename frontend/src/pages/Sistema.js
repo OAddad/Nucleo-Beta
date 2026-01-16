@@ -2017,7 +2017,17 @@ function ConfiguracaoImpressao({ toast }) {
     endereco_bairro: "Centro",
     endereco_complemento: "Casa azul - Meio do quarteirão",
     items: [
-      { nome: "X-Burger", quantidade: 2, preco_unitario: 25.00, observacao: "Sem cebola", tipo_combo: "combo" },
+      { 
+        nome: "X-Burger", 
+        quantidade: 2, 
+        preco_unitario: 25.00, 
+        observacao: "Sem cebola", 
+        tipo_combo: "combo",
+        subitems: [
+          { nome: "Coca Cola 310ml" },
+          { nome: "Batata Individual", observacao: "Bem crocante" }
+        ]
+      },
       { nome: "Batata Frita", quantidade: 1, preco_unitario: 15.00, tipo_combo: "simples" },
     ],
     subtotal: 65.00,
