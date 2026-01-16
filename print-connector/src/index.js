@@ -406,17 +406,66 @@ app.get('/logs', (req, res) => {
 app.get('/config', (req, res) => {
   res.json({
     defaultPrinter: config.get('defaultPrinter'),
+    sectorPrinters: config.get('sectorPrinters', {}),
     paperWidth: 80,
     printableWidth: 72,
     dpi: 203,
     maxColumns: 48,
-    codepage: 'CP850'
+    codepage: 'CP850',
+    networkEnabled: true
+  });
+});
+
+/**
+ * GET /network-info
+ * Informações de rede para conectar de outras máquinas
+ */
+app.get('/network-info', (req, res) => {
+  const networkInterfaces = os.networkInterfaces();
+  const addresses = [];
+  
+  for (const [name, nets] of Object.entries(networkInterfaces)) {
+    for (const net of nets) {
+      // Apenas IPv4 e não localhost
+      if (net.family === 'IPv4' && !net.internal) {
+        addresses.push({
+          interface: name,
+          ip: net.ip || net.address,
+          url: `http://${net.ip || net.address}:${PORT}`
+        });
+      }
+    }
+  }
+  
+  res.json({
+    hostname: os.hostname(),
+    port: PORT,
+    addresses,
+    instructions: [
+      "Para imprimir de outras máquinas na rede:",
+      "1. Use um dos endereços IP acima",
+      "2. Configure o PRINT_CONNECTOR_URL no sistema web",
+      "3. Certifique-se que o firewall permite a porta " + PORT
+    ]
   });
 });
 
 // ==================== INICIALIZAÇÃO ====================
 
-const server = app.listen(PORT, '127.0.0.1', () => {
+// Escuta em 0.0.0.0 para aceitar conexões de qualquer IP na rede
+const server = app.listen(PORT, '0.0.0.0', () => {
+  const networkInterfaces = os.networkInterfaces();
+  let localIP = 'localhost';
+  
+  for (const nets of Object.values(networkInterfaces)) {
+    for (const net of nets) {
+      if (net.family === 'IPv4' && !net.internal) {
+        localIP = net.ip || net.address;
+        break;
+      }
+    }
+  }
+  
   console.log(`
 ╔══════════════════════════════════════════════════════╗
 ║       NÚCLEO PRINT CONNECTOR v${VERSION}              ║

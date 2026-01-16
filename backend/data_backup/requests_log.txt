@@ -47772,3 +47772,6 @@
 2026-01-16T14:24:24.117186+00:00 | DB_CALL get_all_products | P3 | 24.08ms | success
 2026-01-16T14:24:25.954605+00:00 | DB_CALL get_all_products | P3 | 34.78ms | success
 2026-01-16T14:24:33.786101+00:00 | DB_CALL get_all_products | P3 | 23.89ms | success
+2026-01-16T14:24:35.598763+00:00 | DB_CALL get_all_products | P3 | 25.0ms | success
+2026-01-16T14:24:43.020193+00:00 | DB_CALL get_all_products | P3 | 27.08ms | success
+2026-01-16T14:24:44.679440+00:00 | DB_CALL get_all_products | P3 | 25.58ms | success
