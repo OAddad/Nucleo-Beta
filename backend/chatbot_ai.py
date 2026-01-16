@@ -2,6 +2,7 @@
 Serviço de IA para ChatBot WhatsApp
 Integração com LLM para respostas humanizadas e contextuais
 Suporte a áudio: STT (Whisper) e TTS (OpenAI)
+Sistema de alerta para pedidos de atendimento humano
 """
 import os
 import json
@@ -39,6 +40,142 @@ chat_instances: Dict[str, LlmChat] = {}
 # Cache de pausas por telefone (quando atendente humano intervém)
 # Formato: {phone: datetime_expiracao}
 human_intervention_pauses: Dict[str, datetime] = {}
+
+# Fila de clientes aguardando atendimento humano
+# Formato: {phone: {"push_name": str, "timestamp": datetime, "message": str}}
+waiting_for_human: Dict[str, Dict[str, Any]] = {}
+
+# Palavras-chave que indicam pedido de atendimento humano
+HUMAN_ASSISTANCE_KEYWORDS = [
+    # Português
+    "falar com atendente",
+    "falar com humano",
+    "falar com alguem",
+    "falar com alguém",
+    "falar com pessoa",
+    "falar com funcionario",
+    "falar com funcionário",
+    "quero atendente",
+    "quero humano",
+    "quero pessoa",
+    "atendente humano",
+    "atendimento humano",
+    "pessoa real",
+    "humano por favor",
+    "preciso de ajuda",
+    "me ajuda",
+    "nao entendi",
+    "não entendi",
+    "nao entendo",
+    "não entendo",
+    "voce e um robo",
+    "você é um robô",
+    "voce é robo",
+    "isso é bot",
+    "isso e bot",
+    "falar com gerente",
+    "falar com responsavel",
+    "falar com responsável",
+    "chamar alguem",
+    "chamar alguém",
+    "transferir atendimento",
+    "atendente",
+    "operador",
+    "suporte humano",
+]
+
+
+def check_human_assistance_request(message: str) -> bool:
+    """
+    Verifica se a mensagem indica pedido de atendimento humano.
+    
+    Args:
+        message: Texto da mensagem (pode ser transcrita de áudio)
+    
+    Returns:
+        True se o cliente está pedindo atendimento humano
+    """
+    if not message:
+        return False
+    
+    message_lower = message.lower().strip()
+    
+    # Verificar palavras-chave
+    for keyword in HUMAN_ASSISTANCE_KEYWORDS:
+        if keyword in message_lower:
+            return True
+    
+    return False
+
+
+def add_to_waiting_queue(phone: str, push_name: str, message: str) -> Dict[str, Any]:
+    """
+    Adiciona cliente à fila de espera por atendimento humano.
+    
+    Args:
+        phone: Número do telefone
+        push_name: Nome do cliente
+        message: Mensagem que disparou o pedido
+    
+    Returns:
+        Informações do cliente na fila
+    """
+    waiting_for_human[phone] = {
+        "push_name": push_name or "Cliente",
+        "timestamp": datetime.now(timezone.utc),
+        "message": message[:200] if message else "",  # Limitar tamanho
+        "phone": phone
+    }
+    print(f"[CHATBOT AI] Cliente {push_name} ({phone}) aguardando atendimento humano")
+    return waiting_for_human[phone]
+
+
+def remove_from_waiting_queue(phone: str) -> bool:
+    """
+    Remove cliente da fila de espera (quando atendente intervém).
+    
+    Args:
+        phone: Número do telefone
+    
+    Returns:
+        True se foi removido, False se não estava na fila
+    """
+    if phone in waiting_for_human:
+        del waiting_for_human[phone]
+        print(f"[CHATBOT AI] Cliente {phone} removido da fila de espera")
+        return True
+    return False
+
+
+def get_waiting_queue() -> List[Dict[str, Any]]:
+    """
+    Retorna a lista de clientes aguardando atendimento humano.
+    
+    Returns:
+        Lista de dicts com informações dos clientes
+    """
+    result = []
+    for phone, data in waiting_for_human.items():
+        result.append({
+            "phone": phone,
+            "push_name": data.get("push_name", "Cliente"),
+            "timestamp": data.get("timestamp").isoformat() if data.get("timestamp") else None,
+            "message": data.get("message", ""),
+            "waiting_time_seconds": (datetime.now(timezone.utc) - data.get("timestamp", datetime.now(timezone.utc))).total_seconds() if data.get("timestamp") else 0
+        })
+    return sorted(result, key=lambda x: x.get("timestamp") or "", reverse=False)
+
+
+def is_waiting_for_human(phone: str) -> bool:
+    """Verifica se o cliente está na fila de espera"""
+    return phone in waiting_for_human
+
+
+def get_human_assistance_response() -> str:
+    """Retorna a mensagem padrão quando cliente pede atendimento humano"""
+    settings = db.get_all_settings()
+    default_msg = "Entendi! Vou chamar um atendente humano para te ajudar. Por favor, aguarde um momento... 🙋‍♂️"
+    return settings.get('human_assistance_message', default_msg)
 
 
 def get_bot_pause_message() -> str:
