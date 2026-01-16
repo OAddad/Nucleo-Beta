@@ -211,6 +211,14 @@ npm run build
 
 ## 📝 Notas de Versão
 
+### v3.2 - Print Connector
+- 🖨️ Sistema de impressão térmica ESC/POS
+- 📄 Cupom de Entrega e Cupom de Preparo
+- 🔄 Impressão automática de novos pedidos
+- 🏪 Múltiplas impressoras por setor (caixa/cozinha)
+- 💰 Cálculo automático de troco
+- 📥 Executável standalone para Windows
+
 ### v3.1 - WhatsApp Integration
 - 📱 ChatBot WhatsApp com IA
 - 🔄 Inicialização automática do WhatsApp Service
