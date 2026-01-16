@@ -49077,3 +49077,9 @@
 2026-01-16T14:56:44.971804+00:00 | DB_CALL get_all_pedidos | P3 | 2.82ms | success
 2026-01-16T14:56:44.974135+00:00 | DB_CALL get_all_settings | P3 | 4.68ms | success
 2026-01-16T14:56:44.974489+00:00 | DB_CALL get_all_entregadores | P3 | 4.2ms | success
+2026-01-16T14:57:13.270778+00:00 | DB_CALL get_all_products | P3 | 25.57ms | success
+2026-01-16T14:57:15.091662+00:00 | DB_CALL get_all_settings | P3 | 1.72ms | success
+2026-01-16T14:57:15.092265+00:00 | DB_CALL get_all_entregadores | P3 | 1.76ms | success
+2026-01-16T14:57:15.093908+00:00 | DB_CALL get_all_pedidos | P3 | 2.61ms | success
+2026-01-16T14:57:15.101133+00:00 | DB_CALL get_all_settings | P3 | 0.24ms | success
+2026-01-16T14:57:16.227194+00:00 | DB_CALL get_all_settings | P3 | 0.31ms | success

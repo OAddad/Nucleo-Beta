@@ -323,56 +323,72 @@ export default function Delivery() {
   // URL do Print Connector local
   const PRINT_CONNECTOR_URL = 'http://localhost:3456';
 
-  // Função para imprimir via Print Connector local
-  const imprimirViaPrintConnector = async (pedido, tipo) => {
-    const template = tipo === 'entrega' ? 'caixa' : 'preparo';
-    const sector = tipo === 'entrega' ? 'caixa' : 'cozinha';
-    
-    try {
-      const response = await fetch(`${PRINT_CONNECTOR_URL}/print`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          pedido: {
-            id: pedido.id,
-            codigo: pedido.codigo,
-            cliente_nome: pedido.cliente_nome,
-            cliente_telefone: pedido.cliente_telefone,
-            tipo_entrega: pedido.tipo_entrega,
-            endereco_rua: pedido.endereco_rua,
-            endereco_numero: pedido.endereco_numero,
-            endereco_bairro: pedido.endereco_bairro,
-            endereco_complemento: pedido.endereco_complemento,
-            items: pedido.items || [],
-            total: pedido.total,
-            valor_entrega: pedido.valor_entrega,
-            forma_pagamento: pedido.forma_pagamento,
-            troco_precisa: pedido.troco_precisa,
-            troco_valor: pedido.troco_valor,
-            observacao: pedido.observacao,
-            created_at: pedido.created_at
-          },
-          template,
-          sector,
-          copies: 1,
-          cut: true,
-          empresa: tipo === 'entrega' ? empresaConfig : {},
-          config: tipo === 'entrega' ? { mensagem_rodape: 'NAO E DOCUMENTO FISCAL' } : {}
-        })
-      });
+  // Função para imprimir via Print Connector local (usa XMLHttpRequest para evitar erro de clonagem)
+  const imprimirViaPrintConnector = (pedido, tipo) => {
+    return new Promise((resolve) => {
+      const template = tipo === 'entrega' ? 'caixa' : 'preparo';
+      const sector = tipo === 'entrega' ? 'caixa' : 'cozinha';
       
-      if (response.ok) {
-        const data = await response.json();
-        return { success: data.success, error: data.error };
-      } else {
-        return { success: false, error: `Erro HTTP ${response.status}` };
+      const xhr = new XMLHttpRequest();
+      xhr.open('POST', `${PRINT_CONNECTOR_URL}/print`, true);
+      xhr.setRequestHeader('Content-Type', 'application/json');
+      xhr.timeout = 10000; // 10 segundos
+      
+      xhr.onload = function() {
+        if (xhr.status === 200) {
+          try {
+            const data = JSON.parse(xhr.responseText);
+            resolve({ success: data.success, error: data.error });
+          } catch (e) {
+            resolve({ success: false, error: 'Erro ao parsear resposta' });
+          }
+        } else {
+          resolve({ success: false, error: `Erro HTTP ${xhr.status}` });
+        }
+      };
+      
+      xhr.onerror = function() {
+        resolve({ success: false, offline: true, error: 'Print Connector offline' });
+      };
+      
+      xhr.ontimeout = function() {
+        resolve({ success: false, offline: true, error: 'Timeout - Print Connector não respondeu' });
+      };
+      
+      const payload = {
+        pedido: {
+          id: pedido.id,
+          codigo: pedido.codigo,
+          cliente_nome: pedido.cliente_nome,
+          cliente_telefone: pedido.cliente_telefone,
+          tipo_entrega: pedido.tipo_entrega,
+          endereco_rua: pedido.endereco_rua,
+          endereco_numero: pedido.endereco_numero,
+          endereco_bairro: pedido.endereco_bairro,
+          endereco_complemento: pedido.endereco_complemento,
+          items: pedido.items || [],
+          total: pedido.total,
+          valor_entrega: pedido.valor_entrega,
+          forma_pagamento: pedido.forma_pagamento,
+          troco_precisa: pedido.troco_precisa,
+          troco_valor: pedido.troco_valor,
+          observacao: pedido.observacao,
+          created_at: pedido.created_at
+        },
+        template,
+        sector,
+        copies: 1,
+        cut: true,
+        empresa: tipo === 'entrega' ? (empresaConfig || {}) : {},
+        config: tipo === 'entrega' ? { mensagem_rodape: 'NAO E DOCUMENTO FISCAL' } : {}
+      };
+      
+      try {
+        xhr.send(JSON.stringify(payload));
+      } catch (e) {
+        resolve({ success: false, offline: true, error: 'Erro ao enviar requisição' });
       }
-    } catch (error) {
-      if (error.name === 'TypeError' && error.message.includes('fetch')) {
-        return { success: false, offline: true, error: 'Print Connector offline' };
-      }
-      return { success: false, error: error.message };
-    }
+    });
   };
 
   // 🖨️ Impressão automática de novo pedido (entrega + preparo)
