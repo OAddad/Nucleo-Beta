@@ -407,28 +407,44 @@ class PrintQueue {
         const precoStr = precoUnit.toFixed(2);
         const nomeStr = (item.nome || item.product_name || 'Item').substring(0, 16);
         const totalStr = `R$${itemTotal.toFixed(2)}`;
+        const tipo = item.combo_type || item.tipo_combo || '';
+        const isCombo = tipo && tipo.toLowerCase() === 'combo';
         
-        // Item e total na mesma linha
-        escpos.columns(`${qtdStr} x ${precoStr} ${nomeStr}`, totalStr);
+        // Item e total na mesma linha (com indicação de COMBO)
+        escpos.columns(`${qtdStr} x ${precoStr} ${nomeStr}${isCombo ? ' [COMBO]' : ''}`, totalStr);
+        
+        // Se for combo, mostrar etapas (bebidas, batatas, adicionais)
+        if (isCombo && item.etapas && item.etapas.length > 0) {
+          for (const etapa of item.etapas) {
+            if (etapa.itens && etapa.itens.length > 0) {
+              for (const subItem of etapa.itens) {
+                escpos.text(`  -> ${subItem}`);
+              }
+            }
+          }
+        }
+        
+        // Fallback: subitens antigo (para compatibilidade)
+        if (item.subitems && item.subitems.length > 0) {
+          for (const sub of item.subitems) {
+            const subNome = sub.nome || sub.name || sub;
+            const subPreco = sub.preco > 0 ? ` (+R$${sub.preco.toFixed(2)})` : '';
+            escpos.text(`  -> ${subNome}${subPreco}`);
+          }
+        }
+        
+        // Fallback: adicionais antigo (para compatibilidade)
+        if (item.adicionais && item.adicionais.length > 0) {
+          for (const add of item.adicionais) {
+            const addNome = add.nome || add.name || add;
+            const addPreco = add.preco > 0 ? ` (+R$${add.preco.toFixed(2)})` : '';
+            escpos.text(`  -> ${addNome}${addPreco}`);
+          }
+        }
         
         // Observação do item
         if (item.observacao) {
-          escpos.text(`  - ${item.observacao}`);
-        }
-        
-        // Subitens/Adicionais
-        if (item.subitems && item.subitems.length > 0) {
-          for (const sub of item.subitems) {
-            const subNome = sub.nome || sub.name;
-            const subPreco = sub.preco > 0 ? ` (+R$${sub.preco.toFixed(2)})` : '';
-            escpos.text(`  + ${subNome}${subPreco}`);
-          }
-        }
-        if (item.adicionais && item.adicionais.length > 0) {
-          for (const add of item.adicionais) {
-            const addPreco = add.preco > 0 ? ` (+R$${add.preco.toFixed(2)})` : '';
-            escpos.text(`  + ${add.nome}${addPreco}`);
-          }
+          escpos.text(`  >>> ${item.observacao}`);
         }
       }
     }
