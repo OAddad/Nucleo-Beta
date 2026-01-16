@@ -39,7 +39,7 @@ import {
 import { printPedido, addToPrintQueue, printViaUSB, printViaPrintConnector, checkPrintConnectorStatus } from "./Sistema";
 
 const API = '/api';
-const PRINT_CONNECTOR_URL = 'http://localhost:3456';
+const PRINT_CONNECTOR_URL = 'http://127.0.0.1:9100';
 
 const getAuthHeader = () => ({
   headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
