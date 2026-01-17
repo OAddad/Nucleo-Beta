@@ -35,7 +35,9 @@ import database as db
 EMERGENT_LLM_KEY = os.environ.get("EMERGENT_LLM_KEY", "")
 
 # Cache de instâncias de chat por sessão
-chat_instances: Dict[str, LlmChat] = {}
+from typing import Dict, Any
+
+chat_instances: Dict[str, Any] = {}
 
 # Cache de pausas por telefone (quando atendente humano intervém)
 # Formato: {phone: datetime_expiracao}
