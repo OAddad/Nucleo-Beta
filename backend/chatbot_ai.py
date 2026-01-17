@@ -4,30 +4,44 @@ Integração com LLM para respostas humanizadas e contextuais
 Suporte a áudio: STT (Whisper) e TTS (OpenAI)
 Sistema de alerta para pedidos de atendimento humano
 """
+
+from __future__ import annotations  # <- CRÍTICO: evita NameError em type hints
+
 import os
 import json
 import re
 from datetime import datetime, timezone, timedelta
-from typing import Optional, Dict, List, Any, Tuple
+from typing import Optional, Dict, List, Any, Tuple, TYPE_CHECKING
 from dotenv import load_dotenv
 
 load_dotenv()
 
-# Importar integração LLM
-try:
+# Tipos só para o editor/type-checker (não roda em produção)
+if TYPE_CHECKING:
     from emergentintegrations.llm.chat import LlmChat, UserMessage
+else:
+    LlmChat = Any  # type: ignore
+    UserMessage = Any  # type: ignore
+
+# Importar integração LLM (runtime)
+LLM_AVAILABLE = False
+try:
+    from emergentintegrations.llm.chat import LlmChat as _LlmChat, UserMessage as _UserMessage
+    LlmChat = _LlmChat
+    UserMessage = _UserMessage
     LLM_AVAILABLE = True
-except ImportError:
+except Exception as e:
     LLM_AVAILABLE = False
-    print("[CHATBOT AI] emergentintegrations não disponível")
+    print(f"[CHATBOT AI] emergentintegrations não disponível: {e}")
 
 # Importar serviço de áudio
+AUDIO_AVAILABLE = False
 try:
     import audio_service
-    AUDIO_AVAILABLE = audio_service.AUDIO_AVAILABLE
-except ImportError:
+    AUDIO_AVAILABLE = bool(getattr(audio_service, "AUDIO_AVAILABLE", False))
+except Exception as e:
     AUDIO_AVAILABLE = False
-    print("[CHATBOT AI] audio_service não disponível")
+    print(f"[CHATBOT AI] audio_service não disponível: {e}")
 
 import database as db
 
@@ -35,16 +49,13 @@ import database as db
 EMERGENT_LLM_KEY = os.environ.get("EMERGENT_LLM_KEY", "")
 
 # Cache de instâncias de chat por sessão
-from typing import Dict, Any
-
+# (agora isso NUNCA quebra, mesmo sem emergentintegrations)
 chat_instances: Dict[str, Any] = {}
 
 # Cache de pausas por telefone (quando atendente humano intervém)
-# Formato: {phone: datetime_expiracao}
 human_intervention_pauses: Dict[str, datetime] = {}
 
 # Fila de clientes aguardando atendimento humano
-# Formato: {phone: {"push_name": str, "timestamp": datetime, "message": str}}
 waiting_for_human: Dict[str, Dict[str, Any]] = {}
 
 # Palavras-chave que indicam pedido de atendimento humano
