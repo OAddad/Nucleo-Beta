@@ -4,7 +4,7 @@
 FROM node:20-bookworm-slim AS frontend_build
 WORKDIR /app/frontend
 COPY frontend/package*.json ./
-RUN npm ci
+RUN npm ci --legacy-peer-deps
 COPY frontend/ ./
 RUN npm run build
 
@@ -31,7 +31,7 @@ RUN pip install --no-cache-dir -r backend/requirements.prod.txt
 
 # WhatsApp service deps
 WORKDIR /app/whatsapp-service
-RUN npm ci
+RUN npm ci --legacy-peer-deps
 
 # Volta pra raiz
 WORKDIR /app
