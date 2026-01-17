@@ -1,0 +1,11 @@
+fastapi
+uvicorn[standard]
+python-dotenv
+python-multipart
+PyJWT
+passlib[bcrypt]
+requests
+pandas
+openpyxl
+qrcode[pil]
+pillow
